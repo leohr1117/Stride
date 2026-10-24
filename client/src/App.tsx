@@ -101,7 +101,7 @@ const router = createBrowserRouter([
       { path: 'mehr/taetigkeiten', element: <Navigate to="/mehr/inhalte" replace /> },
       { path: 'mehr/sonstiges', element: <Weiter nach="/mehr/funktionen" /> },
       { path: 'handbuch', element: <HandbuchSeite /> },
-      { path: 'demnaechst', element: <Navigate to="/mehr/funktionen#demnaechst" replace /> },
+      { path: 'demnaechst', element: <Navigate to="/mehr/funktionen" replace /> },
       { path: 'verbindungen', element: <Navigate to="/mehr/inhalte/verbindungen" replace /> },
       { path: '*', element: <UebersichtSeite /> },
     ],

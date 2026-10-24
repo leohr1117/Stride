@@ -21,7 +21,7 @@ test.afterEach(async ({ page }) => {
   await schalte(page, false);
 });
 
-test('Als Nächstes und der Satz unter Mehr', async ({ page }, testInfo) => {
+test('Als Nächstes zeigt die nächsten sieben Tage', async ({ page }, testInfo) => {
   const projekt = testInfo.project.name;
   const bild = (name: string) => page.screenshot({ path: `tmp-bau/aufgaben-110/${projekt}-${name}.png` });
   const namen = {
@@ -121,18 +121,6 @@ test('Als Nächstes und der Satz unter Mehr', async ({ page }, testInfo) => {
     await ohneSeitlichenUeberlauf(page);
     await erledigt.scrollIntoViewIfNeeded();
     await bild('kreis');
-
-    await page.goto('/mehr/funktionen');
-    const demnaechst = page.locator('#demnaechst');
-    await demnaechst.scrollIntoViewIfNeeded();
-    const demKopf = demnaechst.getByRole('button', { name: 'Demnächst', exact: true });
-    if ((await demKopf.getAttribute('aria-expanded')) !== 'true') {
-      await demKopf.click();
-    }
-    await expect(demnaechst.getByText('Training, Lernen', { exact: true })).toBeVisible();
-    await expect(demnaechst.getByText('Training, Lernen, Aufgaben')).toHaveCount(0);
-    await ohneSeitlichenUeberlauf(page);
-    await bild('mehr');
   } finally {
     await raeumeBau(page);
   }

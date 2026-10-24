@@ -1,12 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { Hourglass } from 'lucide-react';
 import { funktionsSperre } from '../../../../shared/spiel/abhaengigkeiten.ts';
 import { FUNKTION_BLOECKE, type Funktion } from '../../../../shared/spiel/funktionen.ts';
 import { investitionWegenRessourcen } from '../../../../shared/features/handbuch/handbuchPfad.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { BOSS_SCHALTER } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
-import { Abschnitt } from '../../components/Ausklappbar.tsx';
 import { EbenenWahl } from '../../components/EbenenWahl.tsx';
 import { Fehlermeldung, Ladeanzeige } from '../../ui/index.ts';
 import { ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
@@ -81,16 +79,6 @@ export function MehrFunktionenSeite() {
           </div>
           <EbenenWahl />
           <Fehlermeldung fehler={speichern.error} />
-          <div id="demnaechst" className="scroll-mt-24">
-            <Abschnitt
-              titel={tx("Demnächst")}
-              kennung="funktionen-demnaechst"
-              anfangEingeklappt
-              zusatz={<Hourglass className="size-3.5 text-leise" />}
-            >
-              <p className="text-sm text-leise">{tx("Training, Lernen")}</p>
-            </Abschnitt>
-          </div>
         </div>
       }
     />
