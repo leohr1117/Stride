@@ -1450,4 +1450,12 @@ export const TEXTE: Record<string, string> = {
   "Aufwärmen braucht Sekunden.": "热身需要秒数。",
   "Die Art einer genutzten Übung bleibt.": "已使用的练习不能改类型。",
   "Die Art ist Kraft oder Dauer.": "类型是力量或计时。",
+  "Es läuft schon eine Einheit.": "已有一次训练在进行。",
+  "Der Plan hat keinen Eintrag.": "这个计划没有条目。",
+  "Die Einheit wird nur abgehakt.": "这次训练只能打勾。",
+  "Diese Einheit kann nicht mehr geändert werden.": "这次训练不能再改。",
+  "Der Plan ist archiviert.": "这个计划已归档。",
+  "Nur eine offene Einheit kann verworfen werden.": "只能放弃进行中的训练。",
+  "Die Einheit": "训练",
+  "Der Satz": "组",
 };

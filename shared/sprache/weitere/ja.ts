@@ -1450,4 +1450,12 @@ export const TEXTE: Record<string, string> = {
   "Aufwärmen braucht Sekunden.": "ウォームアップには秒数が必要です。",
   "Die Art einer genutzten Übung bleibt.": "使われている種目の種類はそのままです。",
   "Die Art ist Kraft oder Dauer.": "種類は筋力か時間です。",
+  "Es läuft schon eine Einheit.": "すでにセッションが進行中です。",
+  "Der Plan hat keinen Eintrag.": "プランに項目がありません。",
+  "Die Einheit wird nur abgehakt.": "セッションはチェックするだけです。",
+  "Diese Einheit kann nicht mehr geändert werden.": "このセッションはもう変更できません。",
+  "Der Plan ist archiviert.": "プランはアーカイブ済みです。",
+  "Nur eine offene Einheit kann verworfen werden.": "破棄できるのは進行中のセッションだけです。",
+  "Die Einheit": "セッション",
+  "Der Satz": "セット",
 };

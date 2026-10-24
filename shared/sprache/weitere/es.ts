@@ -1450,4 +1450,12 @@ export const TEXTE: Record<string, string> = {
   "Aufwärmen braucht Sekunden.": "El calentamiento necesita segundos.",
   "Die Art einer genutzten Übung bleibt.": "El tipo de un ejercicio en uso se queda.",
   "Die Art ist Kraft oder Dauer.": "El tipo es fuerza o duración.",
+  "Es läuft schon eine Einheit.": "Ya hay una sesión en curso.",
+  "Der Plan hat keinen Eintrag.": "El plan no tiene ninguna entrada.",
+  "Die Einheit wird nur abgehakt.": "La sesión solo se marca.",
+  "Diese Einheit kann nicht mehr geändert werden.": "Esta sesión ya no se puede cambiar.",
+  "Der Plan ist archiviert.": "El plan está archivado.",
+  "Nur eine offene Einheit kann verworfen werden.": "Solo se puede descartar una sesión abierta.",
+  "Die Einheit": "La sesión",
+  "Der Satz": "La serie",
 };

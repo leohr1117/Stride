@@ -229,7 +229,7 @@ function ergaenzeAnteile(zeilen: EintragZeile[]): Eintrag[] {
   });
 }
 
-function ladeEintrag(id: number): Eintrag {
+export function ladeEintrag(id: number): Eintrag {
   const zeile = eine<EintragZeile>(`${EINTRAG_ABFRAGE} WHERE e.id = ?`, id);
   if (!zeile) {
     throw nichtGefunden('Der Eintrag');
@@ -444,7 +444,7 @@ function bereiteVor(daten: EintragDaten): Vorbereitung {
   return { projekt, gewichte, bestehendesVorhaben, istMeilenstein, faehigkeit };
 }
 
-function ladeAktiveTageDesProjekts(projektId: number | null, ohneEintragId: number): string[] {
+export function ladeAktiveTageDesProjekts(projektId: number | null, ohneEintragId: number): string[] {
   const filter = projektId === null ? 'projekt_id IS NULL' : 'projekt_id = ?';
   const parameter: Parameter[] = projektId === null ? [] : [projektId];
   return alle<{ tag: string }>(

@@ -216,6 +216,14 @@ function speichern(id: number | null, aenderung: TrainingsplanAenderung): Traini
   });
 }
 
+export function ladeTrainingsplan(id: number): Trainingsplan {
+  const zeile = eine<PlanZeile>(`${PLAN_SPALTEN} WHERE p.id = ?`, id);
+  if (!zeile) {
+    throw nichtGefunden('Der Trainingsplan');
+  }
+  return zuPlan(zeile, ladeZuordnungen([id]).get(id) ?? [], loeschbareMenge('trainingsplan'));
+}
+
 export function ladeTrainingsplaene(archiv = false): Trainingsplan[] {
   if (!funktionAktiv('training')) {
     return [];

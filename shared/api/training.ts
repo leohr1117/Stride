@@ -1,4 +1,4 @@
-import type { UebungsArt } from '../spiel/training.ts';
+import type { BestwertArt, UebungsArt } from '../spiel/training.ts';
 
 export interface TrainingsplanUebung {
   id: number;
@@ -60,4 +60,52 @@ export interface Uebung {
 export interface UebungDaten {
   name: string;
   art: UebungsArt;
+}
+
+export interface Trainingssatz {
+  id: number;
+  uebungId: number;
+  reihenfolge: number;
+  gewichtG: number | null;
+  wiederholungen: number | null;
+  sekunden: number | null;
+  aufwaermen: boolean;
+  erledigt: boolean;
+}
+
+export interface EinheitUebung {
+  uebungId: number;
+  name: string;
+  art: UebungsArt;
+  saetze: Trainingssatz[];
+}
+
+export interface Trainingseinheit {
+  id: number;
+  planId: number | null;
+  planName: string;
+  eintragId: number | null;
+  status: 'offen' | 'fertig';
+  begonnenAm: string;
+  beendetAm: string | null;
+  stunden: number;
+  aenderbar: boolean;
+  uebungen: EinheitUebung[];
+}
+
+export interface Bestwert {
+  id: number;
+  art: BestwertArt;
+  wert: number;
+  wiederholungen: number | null;
+  erreichtAm: string;
+}
+
+export interface TrainingHeute {
+  planId: number;
+  name: string;
+  wochentage: number[];
+  uebungNamen: string[];
+  aktion: 'starten' | 'oeffnen';
+  einheitId: number | null;
 }

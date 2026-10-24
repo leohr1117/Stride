@@ -263,6 +263,8 @@ export const PAARE = [
   ['Die Aufgabe', 'The task'],
   ['Die Übung', 'The exercise'],
   ['Der Trainingsplan', 'The training plan'],
+  ['Die Einheit', 'The session'],
+  ['Der Satz', 'The set'],
   ['Die Investition', 'The investment'],
   ['Todoist verbunden', 'Todoist connected'],
   ['{anzahl} Kalender', '{anzahl} calendars'],

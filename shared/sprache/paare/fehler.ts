@@ -175,4 +175,10 @@ export const PAARE = [
   ['Aufwärmen braucht Sekunden.', 'The warm-up needs seconds.'],
   ['Die Art einer genutzten Übung bleibt.', 'The type of an exercise in use stays.'],
   ['Die Art ist Kraft oder Dauer.', 'The type is strength or duration.'],
+  ['Es läuft schon eine Einheit.', 'A session is already running.'],
+  ['Der Plan hat keinen Eintrag.', 'The plan has no entry.'],
+  ['Die Einheit wird nur abgehakt.', 'The session is only checked off.'],
+  ['Diese Einheit kann nicht mehr geändert werden.', 'This session can no longer be changed.'],
+  ['Der Plan ist archiviert.', 'The plan is archived.'],
+  ['Nur eine offene Einheit kann verworfen werden.', 'Only an open session can be discarded.'],
 ] as const;

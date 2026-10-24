@@ -1450,4 +1450,12 @@ export const TEXTE: Record<string, string> = {
   "Aufwärmen braucht Sekunden.": "Разминке нужны секунды.",
   "Die Art einer genutzten Übung bleibt.": "Тип используемого упражнения остаётся.",
   "Die Art ist Kraft oder Dauer.": "Тип — сила или время.",
+  "Es läuft schon eine Einheit.": "Сессия уже идёт.",
+  "Der Plan hat keinen Eintrag.": "В плане нет записи.",
+  "Die Einheit wird nur abgehakt.": "Сессию можно только отмечать.",
+  "Diese Einheit kann nicht mehr geändert werden.": "Эту сессию больше нельзя изменить.",
+  "Der Plan ist archiviert.": "План в архиве.",
+  "Nur eine offene Einheit kann verworfen werden.": "Отменить можно только открытую сессию.",
+  "Die Einheit": "Сессия",
+  "Der Satz": "Подход",
 };

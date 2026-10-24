@@ -285,6 +285,9 @@ export const uebungAenderungSchema = uebungSchema.partial().extend(archiviert);
 export const trainingAbfrageSchema = z.object({
   archiv: z.literal('1').optional(),
 });
+export const einheitStartSchema = z.object({
+  planId: z.number().int().positive(),
+});
 
 export const titelSchema = z.object({
   schluessel: z.string().max(GRENZEN.nameMax).nullable(),

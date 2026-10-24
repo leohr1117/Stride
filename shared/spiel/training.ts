@@ -32,6 +32,12 @@ export const AUFWAERM_BRAUCHT_WIEDERHOLUNGEN = 'Aufwärmen braucht Wiederholunge
 export const AUFWAERM_BRAUCHT_SEKUNDEN = 'Aufwärmen braucht Sekunden.';
 export const ART_GENUTZT = 'Die Art einer genutzten Übung bleibt.';
 export const ART_UNBEKANNT = 'Die Art ist Kraft oder Dauer.';
+export const EINHEIT_LAEUFT = 'Es läuft schon eine Einheit.';
+export const PLAN_OHNE_EINTRAG = 'Der Plan hat keinen Eintrag.';
+export const PLAN_ARCHIVIERT = 'Der Plan ist archiviert.';
+export const NUR_ABHAKEN = 'Die Einheit wird nur abgehakt.';
+export const EINHEIT_GESPERRT = 'Diese Einheit kann nicht mehr geändert werden.';
+export const NUR_OFFEN_VERWERFEN = 'Nur eine offene Einheit kann verworfen werden.';
 
 export const START_UEBUNGEN = [
   'Kniebeuge',
