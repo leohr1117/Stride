@@ -89,7 +89,7 @@ function aufgabe(db: DatabaseSync, vorlageId: number, extra: Record<string, SQLI
 
 describe('Migration 23', () => {
   it('hängt die Aufgaben-Tabellen als 23. Migration an', () => {
-    expect(MIGRATIONEN).toHaveLength(23);
+    expect(MIGRATIONEN.length).toBeGreaterThanOrEqual(23);
     expect(MIGRATIONEN[22]).toContain('CREATE TABLE aufgaben');
     expect(MIGRATIONEN[22]).toContain('CREATE TABLE aufgaben_erledigt');
     expect(MIGRATIONEN[22]).toContain('ADD COLUMN aufgabe_id');
@@ -104,7 +104,7 @@ describe('Migration 23', () => {
     expect(spalten(db, 'eintraege')).not.toContain('aufgabe_id');
     expect(db.prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'aufgaben'`).get()).toBeUndefined();
 
-    migriere(db);
+    migriere(db, 23);
     expect(version(db)).toBe(23);
     expect(spalten(db, 'aufgaben')).toEqual(AUFGABEN_SPALTEN);
     expect(spalten(db, 'aufgaben')).not.toContain('vorhaben_id');
