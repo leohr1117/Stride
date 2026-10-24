@@ -22,6 +22,7 @@ import { sql as m21 } from './21.ts';
 import { sql as m22 } from './22.ts';
 import { sql as m23 } from './23.ts';
 import { sql as m24 } from './24.ts';
+import { sql as m25 } from './25.ts';
 
 export const MIGRATIONEN: string[] = [
   m01,
@@ -48,4 +49,5 @@ export const MIGRATIONEN: string[] = [
   m22,
   m23,
   m24,
+  m25,
 ];

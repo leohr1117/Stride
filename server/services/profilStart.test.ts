@@ -4,6 +4,7 @@ import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { ebenenFuerStufe, standardEbenen } from '../../shared/spiel/ebenen.ts';
 import { FOKUS_IDS, startKennungen, startTaetigkeiten, START_TAETIGKEITEN } from '../../shared/spiel/profil.ts';
+import { START_UEBUNGEN } from '../../shared/spiel/training.ts';
 import { ZIEL_SPRACHEN } from '../../shared/sprache/kern.ts';
 import { zeige } from '../../shared/sprache/index.ts';
 import { mitAnfrageSprache } from '../anfrageSprache.ts';
@@ -37,6 +38,14 @@ function aktiveKennungen(): string[] {
 
 function vorlagenNamen(): string[] {
   return alle<{ name: string }>('SELECT name FROM vorlagen ORDER BY sortierung, id').map((zeile) => zeile.name);
+}
+
+function uebungsNamen(): string[] {
+  return alle<{ name: string }>('SELECT name FROM uebungen ORDER BY id').map((zeile) => zeile.name);
+}
+
+function uebungsArten(): string[] {
+  return alle<{ art: string }>('SELECT art FROM uebungen ORDER BY id').map((zeile) => zeile.art);
 }
 
 function gewichtPaare(name: string): string[] {
@@ -194,6 +203,8 @@ describe('profil beim start', () => {
         const erwartet = startTaetigkeiten(['sport']).map((taetigkeit) => zeige(taetigkeit.name, sprache));
         expect(vorlagenNamen()).toEqual(erwartet);
         expect(vorlagenNamen()).not.toContain('Laufen');
+        expect(uebungsNamen()).toEqual(START_UEBUNGEN.map((name) => zeige(name, sprache)));
+        expect(uebungsArten()).toEqual(START_UEBUNGEN.map(() => 'kraft'));
         expect(ladeAttribute(false).find((attribut) => attribut.kennung === 'vitalitaet')?.name).toBe(zeige('Vitalität', sprache));
         expect(ladeAttribute(false).find((attribut) => attribut.kennung === 'koerper')?.name).toBe(zeige('Körper', sprache));
         expect(ladeAttribute(false).find((attribut) => attribut.name === 'Eigen')?.name).toBe('Eigen');
@@ -250,6 +261,52 @@ describe('profil beim start', () => {
       const neu = aendereEinstellungen({ fokus: ['sport'], profilAngelegt: true, funktionen: { training: false } });
       expect(neu.funktionen.training).toBe(true);
     });
+  });
+
+  it('legt Startübungen nur bei der ersten Anlage mit Sport an, solange die Liste leer ist', () => {
+    const datei = welt();
+    mitWelt(datei, () => {
+      aendereEinstellungen({ fokus: ['weisheit'], profilAngelegt: true });
+      expect(uebungsNamen()).toEqual([]);
+      aendereEinstellungen({ fokus: ['sport'] });
+      expect(uebungsNamen()).toEqual([]);
+      expect(ladeEinstellungen().funktionen.training).toBe(false);
+    });
+    const sport = welt();
+    mitWelt(sport, () => {
+      aendereEinstellungen({ fokus: ['sport'], profilAngelegt: true });
+      expect(uebungsNamen()).toEqual([...START_UEBUNGEN]);
+      expect(uebungsArten()).toEqual(START_UEBUNGEN.map(() => 'kraft'));
+      aendereEinstellungen({ fokus: ['geld'] });
+      expect(uebungsNamen()).toEqual([...START_UEBUNGEN]);
+      ausfuehren('DELETE FROM uebungen');
+      aendereEinstellungen({ fokus: ['sport'] });
+      expect(uebungsNamen()).toEqual([]);
+    });
+    const belegt = welt();
+    mitWelt(belegt, () => {
+      ausfuehren(`INSERT INTO uebungen (name, art) VALUES ('Eigen', 'dauer')`);
+      aendereEinstellungen({ fokus: ['sport'], profilAngelegt: true });
+      expect(uebungsNamen()).toEqual(['Eigen']);
+      expect(uebungsArten()).toEqual(['dauer']);
+      expect(ladeEinstellungen().funktionen.training).toBe(true);
+    });
+  });
+
+  it('zählt Übungen, Pläne und Einheiten als Inhalt', () => {
+    const faelle = [
+      `INSERT INTO uebungen (name, art) VALUES ('Kniebeuge', 'kraft')`,
+      `INSERT INTO trainingsplaene (name) VALUES ('Ganzkörper')`,
+      `INSERT INTO trainingseinheiten (status, begonnen_am) VALUES ('offen', '2026-10-24T10:00:00.000Z')`,
+    ];
+    for (const sql of faelle) {
+      const datei = welt();
+      mitWelt(datei, () => {
+        expect(ladeEinstellungen().weltLeer).toBe(true);
+        ausfuehren(sql);
+        expect(ladeEinstellungen().weltLeer).toBe(false);
+      });
+    }
   });
 
   it('lässt Training aus, wenn die erste Anlage keinen Sport enthält', () => {

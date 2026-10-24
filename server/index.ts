@@ -8,6 +8,7 @@ import { mitWelt, schliesseDatenbank } from './db.ts';
 import { AppFehler } from './fehler.ts';
 import { attributRouten } from './features/attribute/routen.ts';
 import { aufgabenRouten } from './features/aufgaben/routen.ts';
+import { trainingRouten } from './features/training/routen.ts';
 import { basisRouten } from './features/basis/routen.ts';
 import { datenRouten } from './features/daten/daten.ts';
 import { eintragRouten } from './features/eintraege/routen.ts';
@@ -88,6 +89,7 @@ await app.register(
     await api.register(faehigkeitRouten);
     await api.register(basisRouten);
     await api.register(aufgabenRouten);
+    await api.register(trainingRouten);
     await api.register(reflexionRouten);
     await api.register(datenRouten);
     await api.register(verbindungsRouten);

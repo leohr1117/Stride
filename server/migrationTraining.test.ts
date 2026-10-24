@@ -146,7 +146,7 @@ function satz(db: DatabaseSync, einheitId: number, uebungId: number, extra: Reco
 
 describe('Migration 24', () => {
   it('hängt die Trainingstabellen als 24. Migration an', () => {
-    expect(MIGRATIONEN).toHaveLength(24);
+    expect(MIGRATIONEN).toHaveLength(25);
     const sql = MIGRATIONEN[23];
     for (const tabelle of TABELLEN) {
       expect(sql).toContain(`CREATE TABLE ${tabelle}`);
@@ -155,6 +155,8 @@ describe('Migration 24', () => {
     expect(sql).not.toContain('gewicht_einheit');
     expect(sql).not.toContain('ALTER TABLE eintraege');
     expect(sql).not.toContain('ALTER TABLE einstellungen');
+    expect(sql).toContain('ziel_saetze INTEGER NOT NULL');
+    expect(MIGRATIONEN[24]).toContain('ziel_saetze IS NULL OR ziel_saetze BETWEEN 1 AND 20');
   });
 
   it('legt die Spalten an und lässt eintraege und einstellungen unverändert', () => {
@@ -167,8 +169,13 @@ describe('Migration 24', () => {
       expect(tabelleDa(db, tabelle)).toBe(false);
     }
 
-    migriere(db);
+    migriere(db, 24);
     expect(version(db)).toBe(24);
+    const vor25 = grundlage(db);
+    expect(() => zuordnung(db, vor25.planId, vor25.uebungId, { ziel_saetze: null })).toThrow(/constraint/i);
+
+    migriere(db);
+    expect(version(db)).toBe(25);
     expect(spalten(db, 'uebungen')).toEqual(UEBUNGEN_SPALTEN);
     expect(spalten(db, 'trainingsplaene')).toEqual(PLAENE_SPALTEN);
     expect(spalten(db, 'trainingsplan_uebungen')).toEqual(PLAN_UEBUNGEN_SPALTEN);
@@ -212,6 +219,10 @@ describe('Migration 24', () => {
     });
     zuordnung(db, planId, uebungId, { reihenfolge: 3, ziel_saetze: 1, ziel_gewicht_g: null });
     zuordnung(db, planId, uebungId, { reihenfolge: 4, ziel_saetze: 20, ziel_wiederholungen: 1 });
+    const laufband = zuordnung(db, planId, dauerId, {
+      reihenfolge: 5, ziel_saetze: null, ziel_wiederholungen: null, ziel_gewicht_g: null, ziel_sekunden: 600,
+    });
+    expect(db.prepare('SELECT ziel_saetze, ziel_sekunden FROM trainingsplan_uebungen WHERE id = ?').get(laufband)).toEqual({ ziel_saetze: null, ziel_sekunden: 600 });
 
     const einheitId = einheit(db, planId);
     const ohnePlan = einheit(db, null);

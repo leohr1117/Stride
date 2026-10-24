@@ -13,6 +13,8 @@ export type LoeschArt =
   | 'investition'
   | 'basis'
   | 'aufgabe'
+  | 'uebung'
+  | 'trainingsplan'
   | 'knoten'
   | 'vorhaben';
 
@@ -57,7 +59,8 @@ const MENGE: Record<LoeschArt, string> = {
       AND NOT EXISTS (SELECT 1 FROM kalender k WHERE k.projekt_id = p.id)
       AND NOT EXISTS (SELECT 1 FROM investitionen n WHERE n.ziel_art = 'projekt' AND n.ziel_id = p.id)
       AND NOT EXISTS (SELECT 1 FROM projekte i WHERE i.investition_ziel_art = 'projekt' AND i.investition_ziel_id = p.id)
-      AND NOT EXISTS (SELECT 1 FROM ausruestung_projekte a WHERE a.projekt_id = p.id)`,
+      AND NOT EXISTS (SELECT 1 FROM ausruestung_projekte a WHERE a.projekt_id = p.id)
+      AND NOT EXISTS (SELECT 1 FROM trainingsplaene t WHERE t.projekt_id = p.id)`,
   vorlage: `
     SELECT v.id FROM vorlagen v
     WHERE NOT EXISTS (SELECT 1 FROM eintraege e WHERE e.vorlage_id = v.id)
@@ -67,7 +70,8 @@ const MENGE: Record<LoeschArt, string> = {
       AND NOT EXISTS (SELECT 1 FROM aufgaben a WHERE a.vorlage_id = v.id)
       AND NOT EXISTS (SELECT 1 FROM todoist_projekte t WHERE t.vorlage_id = v.id)
       AND NOT EXISTS (SELECT 1 FROM todoist_labels l WHERE l.vorlage_id = v.id)
-      AND NOT EXISTS (SELECT 1 FROM kalender k WHERE k.vorlage_id = v.id)`,
+      AND NOT EXISTS (SELECT 1 FROM kalender k WHERE k.vorlage_id = v.id)
+      AND NOT EXISTS (SELECT 1 FROM trainingsplaene t WHERE t.vorlage_id = v.id)`,
   attribut: `
     SELECT a.id FROM attribute a
     WHERE a.archiv_anteil IS NULL
@@ -115,6 +119,14 @@ const MENGE: Record<LoeschArt, string> = {
   aufgabe: `
     SELECT a.id FROM aufgaben a
     WHERE NOT EXISTS (SELECT 1 FROM aufgaben_erledigt r WHERE r.aufgabe_id = a.id)`,
+  uebung: `
+    SELECT u.id FROM uebungen u
+    WHERE NOT EXISTS (SELECT 1 FROM trainingsplan_uebungen z WHERE z.uebung_id = u.id)
+      AND NOT EXISTS (SELECT 1 FROM trainingssaetze s WHERE s.uebung_id = u.id)
+      AND NOT EXISTS (SELECT 1 FROM bestwerte b WHERE b.uebung_id = u.id)`,
+  trainingsplan: `
+    SELECT p.id FROM trainingsplaene p
+    WHERE NOT EXISTS (SELECT 1 FROM trainingseinheiten e WHERE e.plan_id = p.id)`,
   vorhaben: `
     SELECT v.id FROM vorhaben v
     WHERE v.status = 'offen'
@@ -276,6 +288,18 @@ export function loescheAufgabe(id: number): void {
   vorhanden('aufgaben', id, 'Die Aufgabe');
   pruefe('aufgabe', id, false);
   ausfuehren('DELETE FROM aufgaben WHERE id = ?', id);
+}
+
+export function loescheUebung(id: number): void {
+  vorhanden('uebungen', id, 'Die Übung');
+  pruefe('uebung', id, false);
+  ausfuehren('DELETE FROM uebungen WHERE id = ?', id);
+}
+
+export function loescheTrainingsplan(id: number): void {
+  vorhanden('trainingsplaene', id, 'Der Trainingsplan');
+  pruefe('trainingsplan', id, false);
+  ausfuehren('DELETE FROM trainingsplaene WHERE id = ?', id);
 }
 
 export function loescheVorhaben(id: number): void {

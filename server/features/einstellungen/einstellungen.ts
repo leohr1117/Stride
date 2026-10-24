@@ -35,7 +35,8 @@ import { istSprache, type Sprache } from '../../../shared/sprache/kern.ts';
 import { anfrageSprache } from '../../anfrageSprache.ts';
 import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
-import { istWeltLeer, wendeFokusAn } from '../../services/profilStart.ts';
+import { istWeltLeer, legeStartUebungenAn, wendeFokusAn } from '../../services/profilStart.ts';
+import { istGewichtEinheit, STANDARD_GEWICHT_EINHEIT, type GewichtEinheit } from '../../../shared/spiel/training.ts';
 
 interface Grundeinstellungen {
   charakterName: string;
@@ -189,7 +190,13 @@ export function ladeEinstellungen(): Einstellungen {
     attribute: funktionsAttribute(funktionen),
     sprache: leseSprache(gespeichert.get('sprache')),
     zeitzone: leseZone(gespeichert.get('zeitzone')),
+    gewichtEinheit: leseGewichtEinheit(gespeichert.get('gewicht_einheit')),
   };
+}
+
+function leseGewichtEinheit(roh: string | undefined): GewichtEinheit {
+  const wert = parse(roh);
+  return istGewichtEinheit(wert) ? wert : STANDARD_GEWICHT_EINHEIT;
 }
 
 function leseZone(roh: string | undefined): string | null {
@@ -255,6 +262,7 @@ export function aendereEinstellungen(
     ebenen?: Partial<Ebenen>;
     sprache?: Sprache;
     zeitzone?: string;
+    gewichtEinheit?: GewichtEinheit;
   },
 ): Einstellungen {
   const bisher = ladeEinstellungen();
@@ -286,6 +294,7 @@ export function aendereEinstellungen(
       funktionen = { ...funktionen, ...wendeFokusAn(fokus, new Date(), sprache, ersteAnlage) };
       if (ersteAnlage && fokus.includes('sport')) {
         funktionen = { ...funktionen, training: true };
+        legeStartUebungenAn(sprache);
       }
       speichere('fokus', fokus);
     }
@@ -328,6 +337,9 @@ export function aendereEinstellungen(
         throw ungueltig('Die Zeitzone ist ungültig.');
       }
       speichere('zeitzone', aenderung.zeitzone);
+    }
+    if (aenderung.gewichtEinheit !== undefined) {
+      speichere('gewicht_einheit', aenderung.gewichtEinheit);
     }
   });
   return ladeEinstellungen();

@@ -15,6 +15,41 @@ export const LB_IN_GRAMM = 453.59237;
 export const GRAMM_PRO_KG = 1000;
 export const STANDARD_GEWICHT_EINHEIT: GewichtEinheit = 'kg';
 
+export const SAETZE_BIS = 20;
+
+export const SAETZE_HINWEIS = 'Die Sätze liegen zwischen 1 und 20.';
+export const GEWICHT_MINDEST = 'Das Gewicht ist in Gramm und mindestens 1.';
+export const WIEDERHOLUNGEN_MINDEST = 'Die Wiederholungen sind mindestens 1.';
+export const SEKUNDEN_MINDEST = 'Die Sekunden sind mindestens 1.';
+export const UEBUNG_ART_KONFLIKT = 'Die Übung gibt es schon mit einer anderen Art.';
+export const UEBUNG_SCHON_DA = 'Die Übung gibt es schon.';
+export const VORGABE_MISCHUNG = 'Wiederholungen und Sekunden schließen sich aus.';
+export const KRAFT_BRAUCHT_WIEDERHOLUNGEN = 'Eine Kraftübung braucht Wiederholungen.';
+export const DAUER_BRAUCHT_SEKUNDEN = 'Eine Dauerübung braucht Sekunden.';
+export const DAUER_OHNE_GEWICHT = 'Eine Dauerübung hat kein Gewicht.';
+export const AUFWAERM_BRAUCHT_SAETZE = 'Aufwärmen braucht Sätze.';
+export const AUFWAERM_BRAUCHT_WIEDERHOLUNGEN = 'Aufwärmen braucht Wiederholungen.';
+export const AUFWAERM_BRAUCHT_SEKUNDEN = 'Aufwärmen braucht Sekunden.';
+export const ART_GENUTZT = 'Die Art einer genutzten Übung bleibt.';
+export const ART_UNBEKANNT = 'Die Art ist Kraft oder Dauer.';
+
+export const START_UEBUNGEN = [
+  'Kniebeuge',
+  'Bankdrücken',
+  'Kreuzheben',
+  'Rudern',
+  'Schulterdrücken',
+  'Klimmzug',
+] as const;
+
+export function istGewichtEinheit(wert: unknown): wert is GewichtEinheit {
+  return wert === 'kg' || wert === 'lb';
+}
+
+export function istUebungsArt(wert: unknown): wert is UebungsArt {
+  return wert === 'kraft' || wert === 'dauer';
+}
+
 /** Epley erst ab dieser Wiederholungszahl. Darunter ist die Schätzung das Satzgewicht. */
 export const EPLEY_AB = 3;
 
@@ -27,7 +62,7 @@ const STUNDEN_RUNDUNG = 100;
 export interface PlanVorgabe {
   uebungId: number;
   art: UebungsArt;
-  zielSaetze: number;
+  zielSaetze: number | null;
   zielWiederholungen: number | null;
   zielGewichtG: number | null;
   zielSekunden: number | null;
@@ -173,7 +208,7 @@ export function satzzeilen(vorgaben: readonly PlanVorgabe[]): Satzzeile[] {
   const zeilen: Satzzeile[] = [];
   for (const vorgabe of vorgaben) {
     haengeAn(zeilen, vorgabe, true, satzAnzahl(vorgabe.aufwaermSaetze));
-    haengeAn(zeilen, vorgabe, false, satzAnzahl(vorgabe.zielSaetze));
+    haengeAn(zeilen, vorgabe, false, vorgabe.zielSaetze === null ? 1 : satzAnzahl(vorgabe.zielSaetze));
   }
   return zeilen;
 }

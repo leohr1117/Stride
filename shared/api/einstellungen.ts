@@ -3,6 +3,7 @@ import type { Funktionen } from '../spiel/funktionen.ts';
 import type { FokusId, Zielstrebigkeit } from '../spiel/profil.ts';
 import type { FunktionsAttribute } from '../spiel/sichtbarkeit.ts';
 import type { Stil } from '../features/darstellung/stile.ts';
+import type { GewichtEinheit } from '../spiel/training.ts';
 import type { Sprache } from '../sprache/kern.ts';
 
 export interface Einstellungen {
@@ -29,4 +30,5 @@ export interface Einstellungen {
   sprache: Sprache | null;
   /** IANA-Zone des Geräts. Null, bis der Client sie meldet. */
   zeitzone: string | null;
+  gewichtEinheit: GewichtEinheit;
 }

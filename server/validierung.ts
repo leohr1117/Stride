@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { AKTIVIERUNGS_MODI, INVESTITIONS_ARTEN, SICHERUNG_APP, ZEITRAEUME } from '../shared/api/index.ts';
 import { ABSCHLUESSE, ATTRIBUT_KENNUNGEN, FARBE, GRENZEN, ICONS } from '../shared/spiel/begriffe.ts';
 import { VERFALL_STUFEN } from '../shared/spiel/belastung.ts';
-import { PRIORITAET_FORMAT, WIEDERHOLUNGEN } from '../shared/spiel/aufgabe.ts';
+import { PRIORITAET_FORMAT, WIEDERHOLUNGEN, WOCHENTAG_FORMAT } from '../shared/spiel/aufgabe.ts';
 import { DATUM_HINWEIS } from '../shared/spiel/datum.ts';
 import { EBENEN } from '../shared/spiel/ebenen.ts';
 import { FUNKTIONEN } from '../shared/spiel/funktionen.ts';
@@ -11,6 +11,15 @@ import { FOKUS_IDS, FOKUS_PFLICHT, GEBURTSJAHR_MIN, PROFILNAME_MAX, ZIELSTREBIGK
 import { istHexFarbe } from '../shared/spiel/farben.ts';
 import { STILE } from '../shared/features/darstellung/stile.ts';
 import { SPRACHEN } from '../shared/sprache/kern.ts';
+import {
+  GEWICHT_EINHEITEN,
+  GEWICHT_MINDEST,
+  SAETZE_BIS,
+  SAETZE_HINWEIS,
+  SEKUNDEN_MINDEST,
+  UEBUNGS_ARTEN,
+  WIEDERHOLUNGEN_MINDEST,
+} from '../shared/spiel/training.ts';
 import { VISION } from '../shared/spiel/xp.ts';
 
 z.config(z.locales.de());
@@ -241,6 +250,42 @@ export const aufgabeAbfrageSchema = z.object({
   archiv: z.literal('1').optional(),
 });
 
+const saetze = z.number().int(SAETZE_HINWEIS).min(1, SAETZE_HINWEIS).max(SAETZE_BIS, SAETZE_HINWEIS);
+const wiederholungen = z.number().int(WIEDERHOLUNGEN_MINDEST).min(1, WIEDERHOLUNGEN_MINDEST).nullable();
+const sekunden = z.number().int(SEKUNDEN_MINDEST).min(1, SEKUNDEN_MINDEST).nullable();
+const gramm = z.number().int(GEWICHT_MINDEST).min(1, GEWICHT_MINDEST).nullable();
+const wochentag = z.number().int(WOCHENTAG_FORMAT).min(1, WOCHENTAG_FORMAT).max(7, WOCHENTAG_FORMAT);
+
+const planEintragSchema = z.object({
+  name: pflichtText('Der Name', GRENZEN.nameMax),
+  art: z.enum(UEBUNGS_ARTEN),
+  zielSaetze: saetze.nullable(),
+  zielWiederholungen: wiederholungen,
+  zielGewichtG: gramm,
+  zielSekunden: sekunden,
+  aufwaermSaetze: saetze.nullable(),
+  aufwaermWiederholungen: wiederholungen,
+  aufwaermGewichtG: gramm,
+  aufwaermSekunden: sekunden,
+});
+
+export const trainingsplanSchema = z.object({
+  name: pflichtText('Der Name', GRENZEN.nameMax),
+  wochentage: z.array(wochentag),
+  projektId: optionaleId,
+  vorlageId: optionaleId,
+  uebungen: z.array(planEintragSchema),
+});
+export const trainingsplanAenderungSchema = trainingsplanSchema.partial().extend(archiviert);
+export const uebungSchema = z.object({
+  name: pflichtText('Der Name', GRENZEN.nameMax),
+  art: z.enum(UEBUNGS_ARTEN),
+});
+export const uebungAenderungSchema = uebungSchema.partial().extend(archiviert);
+export const trainingAbfrageSchema = z.object({
+  archiv: z.literal('1').optional(),
+});
+
 export const titelSchema = z.object({
   schluessel: z.string().max(GRENZEN.nameMax).nullable(),
 });
@@ -290,6 +335,7 @@ export const einstellungenAenderungSchema = z.object({
     .max(100)
     .refine((wert) => istZeitzone(wert), 'Die Zeitzone ist ungültig.')
     .optional(),
+  gewichtEinheit: z.enum(GEWICHT_EINHEITEN).optional(),
 });
 
 function istZeitzone(wert: string): boolean {

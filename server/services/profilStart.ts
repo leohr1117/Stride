@@ -1,6 +1,7 @@
 import { attributVorlage } from '../../shared/features/attribute/attributKatalog.ts';
 import type { AttributKennung, AttributTyp } from '../../shared/spiel/begriffe.ts';
 import { FOKUS_PFLICHT, normalisiereFokus, startAttribute, startTaetigkeiten, type FokusId } from '../../shared/spiel/profil.ts';
+import { START_UEBUNGEN } from '../../shared/spiel/training.ts';
 import type { Sprache } from '../../shared/sprache/kern.ts';
 import { gleicherKatalogtext, zeige } from '../../shared/sprache/index.ts';
 import { anfrageSprache } from '../anfrageSprache.ts';
@@ -14,6 +15,9 @@ const INHALT = [
   'xp_ereignisse',
   'basis_aufgaben',
   'aufgaben',
+  'uebungen',
+  'trainingsplaene',
+  'trainingseinheiten',
   'visionen',
   'projekte',
   'vorlagen',
@@ -130,6 +134,15 @@ function benenneKatalog(sprache: Sprache): void {
       continue;
     }
     ausfuehren('UPDATE attribute SET name = ?, beschreibung = ? WHERE id = ?', name, beschreibung, zeile.id);
+  }
+}
+
+export function legeStartUebungenAn(sprache: Sprache): void {
+  if (eine<{ da: number }>('SELECT 1 AS da FROM uebungen LIMIT 1')) {
+    return;
+  }
+  for (const name of START_UEBUNGEN) {
+    ausfuehren('INSERT INTO uebungen (name, art) VALUES (?, ?)', zeige(name, sprache), 'kraft');
   }
 }
 

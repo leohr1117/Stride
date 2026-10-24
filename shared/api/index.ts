@@ -1,5 +1,6 @@
 export * from './attribute.ts';
 export * from './aufgaben.ts';
+export * from './training.ts';
 export * from './basis.ts';
 export * from './belohnung.ts';
 export * from './daten.ts';

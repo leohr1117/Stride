@@ -231,4 +231,22 @@ describe('satzzeilen', () => {
     expect(zeilen[3]).toMatchObject({ aufwaermen: true, gewichtG: null, wiederholungen: null, sekunden: 20, reihenfolge: 4 });
     expect(zeilen[4]).toMatchObject({ aufwaermen: false, gewichtG: null, sekunden: 45, reihenfolge: 5 });
   });
+
+  it('schreibt ohne Satzzahl eine Arbeitszeile und kein Aufwärmen', () => {
+    const zeilen = satzzeilen([
+      vorgabe({
+        art: 'dauer',
+        zielSaetze: null,
+        zielWiederholungen: null,
+        zielGewichtG: null,
+        zielSekunden: 600,
+        aufwaermSaetze: null,
+        aufwaermWiederholungen: null,
+        aufwaermGewichtG: null,
+        aufwaermSekunden: null,
+      }),
+    ]);
+    expect(zeilen).toHaveLength(1);
+    expect(zeilen[0]).toMatchObject({ aufwaermen: false, sekunden: 600, gewichtG: null, wiederholungen: null, reihenfolge: 1 });
+  });
 });

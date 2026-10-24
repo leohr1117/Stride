@@ -261,6 +261,8 @@ export const PAARE = [
   ['Das Todoist-Projekt', 'The Todoist project'],
   ['Die Basis-Aufgabe', 'The basics task'],
   ['Die Aufgabe', 'The task'],
+  ['Die Übung', 'The exercise'],
+  ['Der Trainingsplan', 'The training plan'],
   ['Die Investition', 'The investment'],
   ['Todoist verbunden', 'Todoist connected'],
   ['{anzahl} Kalender', '{anzahl} calendars'],
