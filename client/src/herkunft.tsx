@@ -1,7 +1,7 @@
 import { tx } from './text.ts';
 import { useEffect, useRef, type MouseEvent } from 'react';
 import { useLocation, useNavigate, useNavigationType, type NavigateFunction } from 'react-router';
-import { elternZiel, herkunftsZiel, istHauptseite, type ZurueckZiel } from '../../shared/spiel/herkunft.ts';
+import { elternZiel, herkunftsZiel, istHauptseite, zurueckPasst, type ZurueckZiel } from '../../shared/spiel/herkunft.ts';
 import { pfadAktiv } from '../../shared/spiel/sichtbarkeit.ts';
 import { useEbenen, useFunktionen } from './funktionen.ts';
 import { vorbilderListePfad } from './features/vorbilder/vorbilderAuswahl.ts';
@@ -121,7 +121,7 @@ export function useVerlauf(): void {
         return;
       }
       const eltern = elternZiel(von);
-      if (eltern && ort.pathname !== eltern.pfad) {
+      if (eltern && !zurueckPasst(von, ort.pathname)) {
         vorher.current = eltern.pfad;
         korrigiere(zielAdresse(eltern));
         return;

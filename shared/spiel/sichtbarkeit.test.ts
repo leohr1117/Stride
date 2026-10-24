@@ -61,6 +61,13 @@ describe('pfadAktiv', () => {
     const aus = sicht();
     expect(pfadAktiv('/basis', aus)).toBe(false);
     expect(pfadAktiv('/aufgaben', aus)).toBe(false);
+    expect(pfadAktiv('/training', aus)).toBe(false);
+    expect(pfadAktiv('/training/plaene/neu', aus)).toBe(false);
+    expect(pfadAktiv('/training/plaene/3', aus)).toBe(false);
+    expect(pfadAktiv('/training/einheiten/3', aus)).toBe(false);
+    expect(pfadAktiv('/training/uebungen/3', aus)).toBe(false);
+    expect(pfadAktiv('/training/', aus)).toBe(false);
+    expect(pfadAktiv('/training-alt', aus)).toBe(true);
     expect(pfadAktiv('/chronik', aus)).toBe(false);
     expect(pfadAktiv('/vorbilder', aus)).toBe(false);
     expect(pfadAktiv('/vorbilder/ada', aus)).toBe(false);
@@ -80,6 +87,13 @@ describe('pfadAktiv', () => {
     expect(pfadAktiv('/basis', an)).toBe(true);
     expect(pfadAktiv('/aufgaben', aus)).toBe(false);
     expect(pfadAktiv('/aufgaben', sicht({ aufgaben: true }))).toBe(true);
+    const training = sicht({ training: true });
+    expect(pfadAktiv('/training', training)).toBe(true);
+    expect(pfadAktiv('/training?plan=1', training)).toBe(true);
+    expect(pfadAktiv('/training/plaene/neu', training)).toBe(true);
+    expect(pfadAktiv('/training/einheiten/1', training)).toBe(true);
+    expect(pfadAktiv('/training/uebungen/1', training)).toBe(true);
+    expect(pfadAktiv('/training', aus)).toBe(false);
     expect(pfadAktiv('/chronik', an)).toBe(true);
     expect(pfadAktiv('/vorbilder/ada', an)).toBe(true);
     expect(pfadAktiv('/faehigkeiten/4', an)).toBe(true);

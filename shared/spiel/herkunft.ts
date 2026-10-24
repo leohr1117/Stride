@@ -48,14 +48,68 @@ export interface ZurueckZiel {
   label: string;
 }
 
+/** Herkunft einer Trainingsseite. `von` ist `/`, wenn Starten von der Übersicht kam. */
+export interface TrainingRueckweg {
+  von?: string | null;
+  einheit?: string | null;
+  planName?: string | null;
+}
+
+function ohneEndslash(pfad: string): string {
+  return pfad.length > 1 && pfad.endsWith('/') ? pfad.slice(0, -1) : pfad;
+}
+
+function istTrainingsPlan(pfad: string): boolean {
+  return /^\/training\/plaene\/[^/]+$/.test(pfad);
+}
+
+function istTrainingsEinheit(pfad: string): boolean {
+  return /^\/training\/einheiten\/[^/]+$/.test(pfad);
+}
+
+function istTrainingsUebung(pfad: string): boolean {
+  return /^\/training\/uebungen\/[^/]+$/.test(pfad);
+}
+
+function trainingListe(): ZurueckZiel {
+  return { pfad: '/training', label: 'Training' };
+}
+
+/**
+ * Plan zur Liste. Einheit zur Liste, oder zur Übersicht, wenn Starten dort her kam.
+ * Übung zur Einheit, das Label ist der Planname. Ohne diese Herkunft zur Liste.
+ */
+export function trainingZurueck(pfad: string, weg?: TrainingRueckweg | null): ZurueckZiel | null {
+  const rein = ohneEndslash(pfad);
+  if (istTrainingsPlan(rein)) {
+    return trainingListe();
+  }
+  if (istTrainingsEinheit(rein)) {
+    return weg?.von === '/' ? { pfad: '/', label: 'Übersicht' } : trainingListe();
+  }
+  if (istTrainingsUebung(rein)) {
+    const einheit = weg?.einheit ? ohneEndslash(weg.einheit) : '';
+    const name = weg?.planName?.trim() ?? '';
+    if (istTrainingsEinheit(einheit) && name.length > 0) {
+      return { pfad: einheit, label: name };
+    }
+    return trainingListe();
+  }
+  return null;
+}
+
 export function istHauptseite(pfad: string): boolean {
   return HAUPTSEITEN.has(pfad);
 }
 
 /** Logische Elternseite. Haupt-Tabs haben keine. */
-export function elternZiel(pfad: string): ZurueckZiel | null {
+export function elternZiel(pfad: string, weg?: TrainingRueckweg | null): ZurueckZiel | null {
   if (istHauptseite(pfad) || UMLENKUNGEN.has(pfad)) {
     return null;
+  }
+  const training = trainingZurueck(pfad, weg);
+  if (training) {
+    return training;
   }
   if (pfad === '/charakter') {
     return { pfad: '/', label: 'Übersicht' };
@@ -107,6 +161,16 @@ export function herkunftsLabel(pfad: string): string | null {
   if (/^\/vorbilder\/[^/]+$/.test(pfad)) {
     return 'Vorbild';
   }
+  const training = ohneEndslash(pfad);
+  if (istTrainingsPlan(training)) {
+    return 'Plan';
+  }
+  if (istTrainingsEinheit(training)) {
+    return 'Einheit';
+  }
+  if (istTrainingsUebung(training)) {
+    return 'Übung';
+  }
   const profil = /^\/mehr\/profil\/([^/]+)$/.exec(pfad);
   const teil = profil?.[1];
   return teil ? (PROFIL_TEIL[teil] ?? null) : null;
@@ -118,8 +182,26 @@ export function seiteZeigtEigenenZurueck(pfad: string): boolean {
     pfad.startsWith('/mehr/') ||
     pfad.startsWith('/projekte/') ||
     pfad.startsWith('/faehigkeiten/') ||
-    /^\/vorbilder\/[^/]+$/.test(pfad)
+    /^\/vorbilder\/[^/]+$/.test(pfad) ||
+    istTrainingsPlan(ohneEndslash(pfad)) ||
+    istTrainingsEinheit(ohneEndslash(pfad)) ||
+    istTrainingsUebung(ohneEndslash(pfad))
   );
+}
+
+/**
+ * Browser-Zurück bleibt auf der Elternseite.
+ * Eine Einheit darf auch auf der Übersicht bleiben: dorthin kommt der Verlauf nur, wenn Starten dort her kam.
+ */
+export function zurueckPasst(von: string, nach: string): boolean {
+  const eltern = elternZiel(von);
+  if (!eltern) {
+    return true;
+  }
+  if (ohneEndslash(nach) === eltern.pfad) {
+    return true;
+  }
+  return istTrainingsEinheit(ohneEndslash(von)) && ohneEndslash(nach) === '/';
 }
 
 /**
@@ -146,11 +228,12 @@ export function herkunftsZiel(
   pfad: string,
   leiste: readonly string[],
   standard: ZurueckZiel | null,
+  weg?: TrainingRueckweg | null,
 ): ZurueckZiel | null {
   void stapel;
   void leiste;
   if (istHauptseite(pfad)) {
     return null;
   }
-  return elternZiel(pfad) ?? standard;
+  return elternZiel(pfad, weg) ?? standard;
 }

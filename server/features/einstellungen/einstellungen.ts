@@ -284,6 +284,9 @@ export function aendereEinstellungen(
       const fokus = normalisiereFokus(aenderung.fokus);
       const sprache = aenderung.sprache ?? bisher.sprache ?? anfrageSprache();
       funktionen = { ...funktionen, ...wendeFokusAn(fokus, new Date(), sprache, ersteAnlage) };
+      if (ersteAnlage && fokus.includes('sport')) {
+        funktionen = { ...funktionen, training: true };
+      }
       speichere('fokus', fokus);
     }
     const stufeFunktionen = stufe && stufeWechselt ? funktionenFuerStufe(stufe) : {};

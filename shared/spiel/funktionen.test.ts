@@ -11,6 +11,7 @@ describe('FUNKTION_BLOECKE', () => {
     expect(seiten?.eintraege.map((eintrag) => eintrag.funktion)).toEqual([
       'basis',
       'aufgaben',
+      'training',
       'chronik',
       'rueckblick',
       'statistiken',
@@ -72,6 +73,17 @@ describe('funktionenAusSpeicher', () => {
     expect(funktionenAusSpeicher({ basis: true }).aufgaben).toBe(false);
     expect(funktionenAusSpeicher({ aufgaben: false }).aufgaben).toBe(false);
     expect(funktionenAusSpeicher({ aufgaben: true }).aufgaben).toBe(true);
+  });
+
+  it('lässt Training aus, auch ohne gespeicherte Zeile', () => {
+    expect(standardFunktionen().training).toBe(false);
+    expect(funktionenAusSpeicher(null).training).toBe(false);
+    expect(funktionenAusSpeicher(undefined).training).toBe(false);
+    expect(funktionenAusSpeicher(null).aufgaben).toBe(true);
+    expect(funktionenAusSpeicher({}).training).toBe(false);
+    expect(funktionenAusSpeicher({ basis: true }).training).toBe(false);
+    expect(funktionenAusSpeicher({ training: false }).training).toBe(false);
+    expect(funktionenAusSpeicher({ training: true }).training).toBe(true);
   });
 
   it('lässt neue Welten ohne Verfall', () => {

@@ -344,6 +344,7 @@ export const TEXTE: Record<string, string> = {
   "Eintrag verbessert die Fähigkeit. Ein Vorhaben ist dafür nicht nötig.": "記録がスキルを高めます。タスクは要りません。",
   "Tägliche Aufgaben zum Abhaken.": "毎日チェックする課題。",
   "Eine Erledigung wird ein Eintrag.": "チェックすると記録になる。",
+  "Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert.": "1回のトレーニングは記録です。ウォームアップは自己記録に入りません。",
   "Alle Einträge nach Datum.": "日付ごとのすべての記録。",
   "Rückblick einmal pro Woche.": "振り返りは週に一度。",
   "XP, Tätigkeiten und Zeitverlauf.": "XP、活動、時間の流れ。",

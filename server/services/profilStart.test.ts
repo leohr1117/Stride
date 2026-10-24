@@ -236,6 +236,31 @@ describe('profil beim start', () => {
     });
   });
 
+  it('schaltet Training nur bei der ersten Anlage an, wenn der Fokus Sport enthält', () => {
+    const datei = welt();
+    mitWelt(datei, () => {
+      const sport = aendereEinstellungen({ fokus: ['sport', 'lernen'], profilAngelegt: true });
+      expect(sport.funktionen.training).toBe(true);
+      expect(aendereEinstellungen({ fokus: ['geld'] }).funktionen.training).toBe(true);
+      expect(aendereEinstellungen({ funktionen: { training: false } }).funktionen.training).toBe(false);
+      expect(aendereEinstellungen({ fokus: ['sport'] }).funktionen.training).toBe(false);
+    });
+    const gleichzeitig = welt();
+    mitWelt(gleichzeitig, () => {
+      const neu = aendereEinstellungen({ fokus: ['sport'], profilAngelegt: true, funktionen: { training: false } });
+      expect(neu.funktionen.training).toBe(true);
+    });
+  });
+
+  it('lässt Training aus, wenn die erste Anlage keinen Sport enthält', () => {
+    const datei = welt();
+    mitWelt(datei, () => {
+      expect(aendereEinstellungen({ fokus: ['sport'] }).funktionen.training).toBe(false);
+      expect(aendereEinstellungen({ fokus: ['weisheit'], profilAngelegt: true }).funktionen.training).toBe(false);
+      expect(aendereEinstellungen({ fokus: ['sport'] }).funktionen.training).toBe(false);
+    });
+  });
+
   it('schaltet bei uebung Fähigkeiten an und lässt sie bei einfach an', () => {
     const datei = welt();
     mitWelt(datei, () => {

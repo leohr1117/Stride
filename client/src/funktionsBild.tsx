@@ -3,6 +3,7 @@ import {
   Brain,
   CalendarCheck,
   ChartColumn,
+  Dumbbell,
   Gem,
   Layers,
   ListChecks,
@@ -19,6 +20,7 @@ import type { Funktion } from '../../shared/spiel/funktionen.ts';
 export const FUNKTION_BILD: Record<Funktion, { icon: LucideIcon; pfad?: string }> = {
   basis: { icon: Layers, pfad: '/basis' },
   aufgaben: { icon: ListChecks, pfad: '/aufgaben' },
+  training: { icon: Dumbbell, pfad: '/training' },
   chronik: { icon: Route, pfad: '/chronik' },
   rueckblick: { icon: CalendarCheck, pfad: '/rueckblick' },
   statistiken: { icon: ChartColumn, pfad: '/statistiken' },

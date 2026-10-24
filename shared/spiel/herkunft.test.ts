@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { elternZiel, HERKUNFT_MAX, herkunftsLabel, herkunftsZiel, istHauptseite, schiebeHerkunft, seiteZeigtEigenenZurueck } from './herkunft.ts';
+import { elternZiel, HERKUNFT_MAX, herkunftsLabel, herkunftsZiel, istHauptseite, schiebeHerkunft, seiteZeigtEigenenZurueck, trainingZurueck, zurueckPasst } from './herkunft.ts';
 import { LEISTE_STANDARD } from './leiste.ts';
 
 const MEHR = { pfad: '/mehr', label: 'Mehr' };
@@ -21,6 +21,7 @@ describe('schiebeHerkunft', () => {
     expect(schiebeHerkunft(stapel, '/mehr/inhalte/taetigkeiten')).toBe(stapel);
     expect(schiebeHerkunft(stapel, '/mehr/profil/unbekannt')).toBe(stapel);
     expect(schiebeHerkunft(stapel, '/mehr/profil/stufen')).toBe(stapel);
+    expect(schiebeHerkunft(stapel, '/training/plaene/neu')).toEqual([...stapel, '/training/plaene/neu']);
   });
 
   it('behält nur die letzten Einträge', () => {
@@ -52,6 +53,26 @@ describe('elternZiel', () => {
     expect(elternZiel('/projekte/4')).toEqual({ pfad: '/ziele', label: 'Ziele' });
     expect(elternZiel('/faehigkeiten/2')).toEqual({ pfad: '/charakter', label: 'Charakter' });
     expect(elternZiel('/vorbilder/ronaldo')).toEqual({ pfad: '/vorbilder', label: 'Vorbilder' });
+    expect(istHauptseite('/training')).toBe(true);
+    expect(elternZiel('/training')).toBeNull();
+    expect(elternZiel('/training/plaene/neu')).toEqual({ pfad: '/training', label: 'Training' });
+    expect(elternZiel('/training/plaene/4')).toEqual({ pfad: '/training', label: 'Training' });
+    expect(elternZiel('/training/einheiten/8')).toEqual({ pfad: '/training', label: 'Training' });
+    expect(elternZiel('/training/einheiten/8', { von: '/' })).toEqual({ pfad: '/', label: 'Übersicht' });
+    expect(elternZiel('/training/einheiten/8', { von: '/ziele' })).toEqual({ pfad: '/training', label: 'Training' });
+    expect(elternZiel('/training/uebungen/3')).toEqual({ pfad: '/training', label: 'Training' });
+    expect(elternZiel('/training/uebungen/3', { einheit: '/training/einheiten/8', planName: 'Unterkörper' })).toEqual({
+      pfad: '/training/einheiten/8',
+      label: 'Unterkörper',
+    });
+    expect(elternZiel('/training/uebungen/3', { einheit: '/training/einheiten/8', planName: '  ' })).toEqual({
+      pfad: '/training',
+      label: 'Training',
+    });
+    expect(trainingZurueck('/training/uebungen/3/', { einheit: '/training/einheiten/8/', planName: 'Unterkörper' })).toEqual({
+      pfad: '/training/einheiten/8',
+      label: 'Unterkörper',
+    });
   });
 });
 
@@ -83,8 +104,26 @@ describe('herkunftsZiel', () => {
     expect(herkunftsLabel('/faehigkeiten/2')).toBe('Fähigkeit');
     expect(herkunftsLabel('/vorbilder/ada')).toBe('Vorbild');
     expect(herkunftsLabel('/verbindungen')).toBeNull();
+    expect(herkunftsLabel('/training')).toBe('Training');
+    expect(herkunftsLabel('/training/plaene/neu')).toBe('Plan');
+    expect(herkunftsLabel('/training/einheiten/8')).toBe('Einheit');
+    expect(herkunftsLabel('/training/uebungen/3')).toBe('Übung');
     expect(seiteZeigtEigenenZurueck('/mehr/inhalte')).toBe(true);
     expect(seiteZeigtEigenenZurueck('/ziele')).toBe(false);
     expect(seiteZeigtEigenenZurueck('/mehr')).toBe(false);
+    expect(seiteZeigtEigenenZurueck('/training')).toBe(false);
+    expect(seiteZeigtEigenenZurueck('/training/plaene/4')).toBe(true);
+    expect(seiteZeigtEigenenZurueck('/training/einheiten/8')).toBe(true);
+    expect(seiteZeigtEigenenZurueck('/training/uebungen/3')).toBe(true);
+    expect(zurueckPasst('/training/einheiten/8', '/training')).toBe(true);
+    expect(zurueckPasst('/training/einheiten/8', '/')).toBe(true);
+    expect(zurueckPasst('/training/einheiten/8', '/mehr')).toBe(false);
+    expect(zurueckPasst('/training/plaene/neu', '/')).toBe(false);
+    expect(zurueckPasst('/training/plaene/neu', '/training')).toBe(true);
+    expect(herkunftsZiel(['/'], '/training/einheiten/8', LEISTE_STANDARD, null, { von: '/' })).toEqual({
+      pfad: '/',
+      label: 'Übersicht',
+    });
+    expect(herkunftsZiel(['/training'], '/training', LEISTE_STANDARD, null)).toBeNull();
   });
 });

@@ -8,6 +8,7 @@ export const FUNKTIONEN = [
   'ausruestung',
   'basis',
   'aufgaben',
+  'training',
   'chronik',
   'vorbilder',
   'rueckblick',
@@ -43,6 +44,7 @@ export const FUNKTION_BLOECKE: readonly FunktionsBlock[] = [
     eintraege: [
       { funktion: 'basis', label: 'Basis' },
       { funktion: 'aufgaben', label: 'Aufgaben' },
+      { funktion: 'training', label: 'Training' },
       { funktion: 'chronik', label: 'Chronik' },
       { funktion: 'rueckblick', label: 'Rückblick' },
       { funktion: 'statistiken', label: 'Statistiken' },
@@ -103,6 +105,7 @@ export function verfallFunktion(typ: AttributTyp): 'verfallKoennen' | 'verfallHa
  * solange die getrennten Schalter noch nicht gespeichert sind.
  * Keine Zeile (null oder undefined) ist eine neue Welt und schaltet Aufgaben an.
  * Ein gespeichertes Objekt ohne den Schlüssel lässt Aufgaben aus.
+ * Training bleibt in beiden Fällen aus.
  */
 export function funktionenAusSpeicher(roh: unknown): Funktionen {
   const funktionen = standardFunktionen();

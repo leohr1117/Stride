@@ -23,7 +23,9 @@ describe('istLeiste', () => {
     expect(istLeiste([])).toBe(true);
     const pfade = LEISTEN_SEITEN.map((seite) => seite.pfad);
     expect(pfade[pfade.indexOf('/basis') + 1]).toBe('/aufgaben');
+    expect(pfade[pfade.indexOf('/aufgaben') + 1]).toBe('/training');
     expect(istLeiste(['/', '/aufgaben'])).toBe(true);
+    expect(istLeiste(['/', '/training'])).toBe(true);
   });
 
   it('lehnt Unbekanntes und Doppeltes ab und behält versteckte Seiten', () => {

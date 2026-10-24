@@ -344,6 +344,7 @@ export const TEXTE: Record<string, string> = {
   "Eintrag verbessert die Fähigkeit. Ein Vorhaben ist dafür nicht nötig.": "记录会提升技能。不必有事项。",
   "Tägliche Aufgaben zum Abhaken.": "每天可勾选的任务。",
   "Eine Erledigung wird ein Eintrag.": "勾选一次就会变成一条记录。",
+  "Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert.": "一次训练就是一条记录。热身不算最好成绩。",
   "Alle Einträge nach Datum.": "全部记录按日期。",
   "Rückblick einmal pro Woche.": "每周回顾一次。",
   "XP, Tätigkeiten und Zeitverlauf.": "XP、活动和时间线。",

@@ -34,6 +34,7 @@ const EMPFEHLUNG_INFO: Record<Funktion, string> = {
   faehigkeiten: 'Eintrag verbessert die Fähigkeit. Ein Vorhaben ist dafür nicht nötig.',
   basis: 'Tägliche Aufgaben zum Abhaken.',
   aufgaben: '',
+  training: '',
   chronik: 'Alle Einträge nach Datum.',
   rueckblick: 'Rückblick einmal pro Woche.',
   statistiken: 'XP, Tätigkeiten und Zeitverlauf.',

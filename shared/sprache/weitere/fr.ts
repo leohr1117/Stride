@@ -344,6 +344,7 @@ export const TEXTE: Record<string, string> = {
   "Eintrag verbessert die Fähigkeit. Ein Vorhaben ist dafür nicht nötig.": "Une entrée améliore la compétence. Une tâche n'est pas nécessaire.",
   "Tägliche Aufgaben zum Abhaken.": "Tâches quotidiennes à cocher.",
   "Eine Erledigung wird ein Eintrag.": "Une tâche cochée devient une entrée.",
+  "Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert.": "Une séance est une entrée. L'échauffement ne compte pas pour le record.",
   "Alle Einträge nach Datum.": "Toutes les entrées par date.",
   "Rückblick einmal pro Woche.": "Un bilan une fois par semaine.",
   "XP, Tätigkeiten und Zeitverlauf.": "XP, activités et le temps.",

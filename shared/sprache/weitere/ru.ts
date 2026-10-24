@@ -344,6 +344,7 @@ export const TEXTE: Record<string, string> = {
   "Eintrag verbessert die Fähigkeit. Ein Vorhaben ist dafür nicht nötig.": "Запись усиливает навык. Задача для этого не нужна.",
   "Tägliche Aufgaben zum Abhaken.": "Ежедневные задачи, которые можно отметить.",
   "Eine Erledigung wird ein Eintrag.": "Отмеченная задача становится записью.",
+  "Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert.": "Занятие — это запись. Разминка не идёт в рекорд.",
   "Alle Einträge nach Datum.": "Все записи по дате.",
   "Rückblick einmal pro Woche.": "Итоги раз в неделю.",
   "XP, Tätigkeiten und Zeitverlauf.": "XP, занятия и ход времени.",
