@@ -1,0 +1,113 @@
+:root[data-stil='jade'] {
+  color-scheme: dark;
+  --grund: #0c0d0f;
+  --flaeche: #141518;
+  --flaeche-2: #1b1d21;
+  --rand: #282b30;
+  --haupt: #eceef1;
+  --leise: #979ba3;
+  --akzent: #3dd68c;
+  --akzent-text: #03140b;
+  --xp: #c4b5fd;
+  --gefahr: #ff6b81;
+  --diagramm-vorbild: #c4b5fd;
+  --radius-xl: 10px;
+  --radius-2xl: 14px;
+  --radius-3xl: 18px;
+  --jade-glimmen: color-mix(in srgb, var(--akzent) calc(var(--glimm) * 24%), transparent);
+  --jade-kante: rgba(255, 255, 255, 0.06);
+  scrollbar-color: var(--rand) transparent;
+}
+
+:root[data-stil='jade'] body {
+  background-color: var(--grund);
+}
+
+:root[data-stil='jade'] ::selection {
+  background: color-mix(in srgb, var(--akzent) 30%, transparent);
+}
+
+:root[data-stil='jade'] h1 {
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+:root[data-stil='jade'] .ueberschrift {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+:root[data-stil='jade'] .ueberschrift::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--akzent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--akzent) calc(var(--glimm) * 100%), transparent);
+}
+
+:root[data-stil='jade'] :is(.karte, .dialog-fenster, .bg-flaeche.border-rand:not(.seitenleiste)) {
+  border-color: var(--jade-kante);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 50%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 12px 28px -18px rgba(0, 0, 0, 0.85);
+}
+
+:root[data-stil='jade'] .dialog-fenster h2 {
+  font-weight: 650;
+}
+
+:root[data-stil='jade'] :is(.knopf-primaer, .knopf-rund) {
+  background-image: linear-gradient(180deg, color-mix(in srgb, white 20%, var(--akzent)), color-mix(in srgb, black 14%, var(--akzent)));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 8px 20px -10px var(--jade-glimmen);
+  font-weight: 600;
+}
+
+:root[data-stil='jade'] .knopf-sekundaer {
+  box-shadow: inset 0 0 0 1px var(--jade-kante);
+}
+
+:root[data-stil='jade'] .balken-fuellung {
+  background-image: linear-gradient(90deg, transparent 35%, rgba(255, 255, 255, 0.25));
+  box-shadow: 0 0 8px var(--jade-glimmen);
+}
+
+:root[data-stil='jade'] .seitenleiste {
+  border-right-color: var(--jade-kante);
+  background: color-mix(in srgb, var(--flaeche) 55%, var(--grund));
+}
+
+:root[data-stil='jade'] :is(.seitenleiste, .mobilleiste) a[aria-current='page'] {
+  color: var(--akzent);
+}
+
+:root[data-stil='jade'] .seitenleiste a[aria-current='page'] {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 2px 0 0 var(--akzent);
+}
+
+:root[data-stil='jade'] :is(.mobilkopf, .mobilleiste) {
+  border-color: var(--jade-kante);
+  background-color: color-mix(in srgb, var(--grund) 94%, transparent);
+}
+
+:root[data-stil='jade'] .chip-aktiv {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--akzent) 50%, transparent);
+}
+
+:root[data-stil='jade'] .belohnung {
+  border-color: color-mix(in srgb, var(--xp) 50%, transparent);
+  box-shadow: 0 0 34px -10px color-mix(in srgb, var(--xp) calc(var(--glimm) * 55%), transparent);
+}
+
+:root[data-stil='jade'] .logo-bild {
+  filter: hue-rotate(-100deg) saturate(1.1);
+}
+
+:root[data-stil='jade'] .klassenbild {
+  border-radius: 10px;
+}

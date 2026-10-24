@@ -1,0 +1,299 @@
+@import "tailwindcss";
+@import "@fontsource-variable/exo-2/wght.css";
+
+:root {
+  color-scheme: light dark;
+  --glimm: 1;
+  --grund: #f7f7f8;
+  --flaeche: #ffffff;
+  --flaeche-2: #f0f0f3;
+  --rand: #e4e4e9;
+  --haupt: #17171c;
+  --leise: #6b6b78;
+  --akzent: #6d5efc;
+  --akzent-text: #ffffff;
+  --xp: #d99a16;
+  --gefahr: #e5484d;
+  --diagramm-vorbild: #b07a10;
+}
+
+:root[data-glimmen='aus'] {
+  --glimm: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --grund: #0e0e12;
+    --flaeche: #16161c;
+    --flaeche-2: #1f1f27;
+    --rand: #2a2a34;
+    --haupt: #ececf1;
+    --leise: #8b8b99;
+    --akzent: #8b7dff;
+    --xp: #f5b942;
+    --gefahr: #f2555a;
+    --diagramm-vorbild: #b8841f;
+  }
+}
+
+@theme inline {
+  --color-grund: var(--grund);
+  --color-flaeche: var(--flaeche);
+  --color-flaeche-2: var(--flaeche-2);
+  --color-rand: var(--rand);
+  --color-haupt: var(--haupt);
+  --color-leise: var(--leise);
+  --color-akzent: var(--akzent);
+  --color-akzent-text: var(--akzent-text);
+  --color-xp: var(--xp);
+  --color-gefahr: var(--gefahr);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  scrollbar-gutter: stable;
+  scrollbar-color: var(--rand) transparent;
+  overflow-wrap: break-word;
+}
+
+html:is(:lang(fr), :lang(ru)) {
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+html:is(:lang(zh), :lang(ja)) {
+  line-break: strict;
+}
+
+html:lang(ru) body,
+html:lang(ru)[data-stil] body {
+  font-family: "Exo 2 Variable", "Segoe UI", sans-serif;
+}
+
+html:lang(zh) body,
+html:lang(zh)[data-stil] body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", sans-serif;
+  line-height: 1.6;
+}
+
+html:lang(ja) body,
+html:lang(ja)[data-stil] body {
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", "Meiryo", "Noto Sans JP", "Noto Sans CJK JP", sans-serif;
+  line-height: 1.6;
+}
+
+html:is(:lang(zh), :lang(ja)) :is(h1, h2, h3, .ueberschrift, .uppercase) {
+  letter-spacing: 0;
+}
+
+html:is(:lang(ru), :lang(zh), :lang(ja))[data-stil="antik"] :is(h1, h2, h3, .ueberschrift, .uppercase) {
+  font-family: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+html:is(:lang(es), :lang(fr), :lang(ru), :lang(zh), :lang(ja))[data-stil="antik"] .knopf.knopf-primaer {
+  font-family: inherit;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  white-space: normal;
+}
+
+.sprach-wahl:lang(ru) {
+  font-family: "Exo 2 Variable", "Segoe UI", sans-serif;
+}
+
+.sprach-wahl:lang(zh) {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", sans-serif;
+}
+
+.sprach-wahl:lang(ja) {
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", "Meiryo", "Noto Sans JP", sans-serif;
+}
+
+.seitenleiste nav {
+  scrollbar-width: thin;
+}
+
+html,
+body {
+  background: var(--grund);
+  color: var(--haupt);
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.zahl {
+  font-variant-numeric: tabular-nums;
+}
+
+.balken-verlust {
+  opacity: 0.55;
+  filter: grayscale(0.45) brightness(0.75);
+}
+
+.groesse-regler {
+  width: 100%;
+  height: 2.75rem;
+  margin: 0;
+  accent-color: var(--akzent);
+  touch-action: none;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--akzent);
+  outline-offset: 2px;
+}
+
+.knopf:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.chip-reihe {
+  scrollbar-width: none;
+  mask-image: linear-gradient(to right, black calc(100% - 1.5rem), transparent);
+}
+
+.chip-reihe::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes seite-einblenden {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.seite-einblenden {
+  animation: seite-einblenden 180ms ease-out both;
+}
+
+.bossring-bogen {
+  transition: stroke-dashoffset 600ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seite-einblenden {
+    animation: none;
+  }
+
+  .bossring-bogen {
+    transition: none;
+  }
+}
+
+@keyframes skill-schimmer {
+  0%,
+  100% {
+    box-shadow: 0 0 14px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm) * 55%), transparent);
+  }
+  50% {
+    box-shadow: 0 0 26px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm) * 85%), transparent);
+  }
+}
+
+.skill-leuchten {
+  animation: skill-schimmer 3.2s ease-in-out infinite;
+}
+
+@keyframes baum-puls {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 3px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm) * 65%), transparent));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm) * 100%), transparent));
+  }
+}
+
+.baum-puls {
+  animation: baum-puls 3.2s ease-in-out infinite;
+}
+
+.baum-frei {
+  background-image:
+    radial-gradient(circle at 32% 24%, color-mix(in srgb, white 72%, transparent) 0%, transparent 46%),
+    radial-gradient(circle at 50% 62%, color-mix(in srgb, var(--skillfarbe) 68%, white), var(--skillfarbe));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
+    0 0 10px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm, 1) * 40%), transparent);
+}
+
+.baum-frei .zahl {
+  text-shadow: 0 1px 1px rgb(0 0 0 / 35%);
+}
+
+:root[data-glimmen='aus'] .baum-frei {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 45%, transparent);
+}
+
+:root[data-glimmen='aus'] .baum-puls {
+  animation: none;
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .baum-puls {
+    animation: none;
+    filter: none;
+  }
+}
+
+.pfad-an {
+  box-shadow: 0 0 12px color-mix(in srgb, var(--akzent) calc(var(--glimm) * 70%), transparent);
+}
+
+:root[data-glimmen='aus'] .pfad-an {
+  box-shadow: none;
+}
+
+:root[data-glimmen='aus'] .skill-leuchten {
+  animation: none;
+}
+
+:root[data-glimmen='aus'] .glimm-fleck {
+  opacity: 0;
+}
+
+:root[data-glimmen='aus'] .knopf-rund {
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+}
+
+/* Schein nur als runder Hauch an der Spitze. Kein box-shadow: der wäre eckig. */
+[data-glimmen='aus'] .levelring-spitze-schein {
+  display: none;
+}
+
+.aufgaben-kreis,
+.aufgaben-haken {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.aufgaben-haken {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.aufgaben-kreis[data-an='1'] .aufgaben-haken {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aufgaben-kreis,
+  .aufgaben-haken {
+    transition: none;
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "ascend",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=23.6"
+  },
+  "scripts": {
+    "dev": "concurrently --kill-others -n server,client -c blue,magenta \"node --watch --disable-warning=ExperimentalWarning server/index.ts\" \"node node_modules/vite/bin/vite.js\"",
+    "build": "tsc --noEmit && vite build",
+    "start": "node --disable-warning=ExperimentalWarning server/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "beispieldaten": "node --disable-warning=ExperimentalWarning server/beispieldaten.ts",
+    "testprofile": "node --disable-warning=ExperimentalWarning betrieb/testprofile.ts"
+  },
+  "dependencies": {
+    "@fastify/static": "^10.1.6",
+    "@fontsource-variable/exo-2": "^5.3.0",
+    "@fontsource/barlow-semi-condensed": "^5.3.0",
+    "@fontsource/cinzel": "^5.3.0",
+    "@tanstack/react-query": "^5.104.4",
+    "fastify": "^5.12.7",
+    "framer-motion": "^14.3.1",
+    "lucide-react": "^1.59.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router": "^8.4.0",
+    "recharts": "^3.10.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.6",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vitest": "^4.1.11"
+  }
+}

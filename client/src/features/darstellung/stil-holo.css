@@ -1,0 +1,149 @@
+@import '@fontsource-variable/exo-2/wght.css';
+
+:root[data-stil='holo'] {
+  color-scheme: dark;
+  --grund: #050914;
+  --flaeche: #0a1224;
+  --flaeche-2: #111c36;
+  --rand: #1d3563;
+  --haupt: #e8f1ff;
+  --leise: #849bc6;
+  --akzent: #3ea8ff;
+  --akzent-text: #031020;
+  --xp: #b38cff;
+  --gefahr: #ff5c7a;
+  --diagramm-vorbild: #b38cff;
+  --radius-lg: 3px;
+  --radius-xl: 4px;
+  --radius-2xl: 6px;
+  --radius-3xl: 8px;
+  --holo-leuchten: color-mix(in srgb, var(--akzent) calc(var(--glimm) * 55%), transparent);
+  --holo-glimmen: color-mix(in srgb, var(--akzent) calc(var(--glimm) * 18%), transparent);
+  --holo-kante: color-mix(in srgb, var(--akzent) 36%, transparent);
+  scrollbar-color: var(--rand) transparent;
+}
+
+:root[data-stil='holo'] body {
+  font-family: 'Exo 2 Variable', ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--grund);
+  background-image:
+    radial-gradient(ellipse 80% 45% at 50% -8%, color-mix(in srgb, var(--akzent) calc(var(--glimm) * 18%), transparent), transparent 70%),
+    linear-gradient(color-mix(in srgb, var(--akzent) 3.5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--akzent) 3.5%, transparent) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    36px 36px,
+    36px 36px;
+  background-attachment: fixed;
+}
+
+:root[data-stil='holo'] ::selection {
+  background: color-mix(in srgb, var(--akzent) 35%, transparent);
+}
+
+:root[data-stil='holo'] h1 {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 18px var(--holo-leuchten);
+}
+
+:root[data-stil='holo'] .ueberschrift {
+  color: var(--akzent);
+  letter-spacing: 0.16em;
+}
+
+:root[data-stil='holo'] .ueberschrift::before {
+  content: '[ ';
+  opacity: 0.6;
+}
+
+:root[data-stil='holo'] .ueberschrift::after {
+  content: ' ]';
+  opacity: 0.6;
+}
+
+:root[data-stil='holo'] :is(.karte, .dialog-fenster, .bg-flaeche.border-rand:not(.seitenleiste)) {
+  border-color: var(--holo-kante);
+  background-color: color-mix(in srgb, var(--flaeche) 92%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, color-mix(in srgb, white 45%, var(--akzent)) 8%, transparent),
+    0 0 26px -10px var(--holo-glimmen);
+}
+
+:root[data-stil='holo'] .dialog-fenster {
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, color-mix(in srgb, white 45%, var(--akzent)) 12%, transparent),
+    0 0 40px -6px var(--holo-glimmen);
+}
+
+:root[data-stil='holo'] .dialog-fenster h2 {
+  color: var(--akzent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+html:is(:lang(zh), :lang(ja))[data-stil='holo'] :is(h1, h2, h3, .ueberschrift, .uppercase, .dialog-fenster h2) {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+html:is(:lang(fr), :lang(ru))[data-stil='holo'] :is(h1, h2, .dialog-fenster h2, .knopf-primaer, .knopf-rund) {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+:root[data-stil='holo'] :is(.knopf-primaer, .knopf-rund) {
+  background-image: linear-gradient(180deg, color-mix(in srgb, white 22%, var(--akzent)), color-mix(in srgb, black 18%, var(--akzent)));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, white 45%, var(--akzent)),
+    0 0 22px -4px var(--holo-leuchten);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+:root[data-stil='holo'] .knopf-sekundaer {
+  box-shadow: inset 0 0 0 1px var(--holo-kante);
+}
+
+:root[data-stil='holo'] .balken-fuellung {
+  background-image: linear-gradient(90deg, transparent 40%, rgba(255, 255, 255, 0.35));
+  box-shadow: 0 0 10px var(--holo-leuchten);
+}
+
+:root[data-stil='holo'] .seitenleiste {
+  border-right-color: var(--holo-kante);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--flaeche) 97%, transparent), color-mix(in srgb, var(--grund) 97%, transparent));
+  box-shadow: 1px 0 28px -10px var(--holo-glimmen);
+}
+
+:root[data-stil='holo'] :is(.seitenleiste, .mobilleiste) a[aria-current='page'] {
+  color: var(--akzent);
+  text-shadow: 0 0 10px var(--holo-leuchten);
+}
+
+:root[data-stil='holo'] .seitenleiste a[aria-current='page'] {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--akzent) 16%, transparent), transparent);
+  box-shadow: inset 2px 0 0 var(--akzent);
+}
+
+:root[data-stil='holo'] :is(.mobilkopf, .mobilleiste) {
+  border-color: var(--holo-kante);
+  background-color: color-mix(in srgb, var(--grund) 92%, transparent);
+}
+
+:root[data-stil='holo'] .chip-aktiv {
+  box-shadow: inset 0 0 0 1px var(--holo-leuchten);
+}
+
+:root[data-stil='holo'] .belohnung {
+  border-color: var(--akzent);
+  box-shadow: 0 0 36px -6px var(--holo-leuchten);
+}
+
+:root[data-stil='holo'] .logo-bild {
+  filter: hue-rotate(-38deg) saturate(1.3) drop-shadow(0 0 6px var(--holo-leuchten));
+}
+
+:root[data-stil='holo'] .klassenbild {
+  border-radius: 3px;
+}
