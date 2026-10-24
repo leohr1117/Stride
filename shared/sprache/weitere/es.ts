@@ -1421,4 +1421,9 @@ export const TEXTE: Record<string, string> = {
   "Datum, Uhrzeit, p1 bis p4, #Projekt, +Organisation und *Vision kannst du in den Namen schreiben.": "Puedes escribir la fecha, la hora, p1 a p4, #proyecto, +organización y *visión en el nombre.",
   "{text} nicht erkennen": "No reconocer {text}",
   "Vorschläge": "Sugerencias",
+  "Eigene Aufgaben. Eine Erledigung wird ein Eintrag.": "Tareas propias. Una tarea hecha pasa a ser un registro.",
+  "Eigene Aufgaben. Eine Erledigung wird ein Eintrag. Der Schalter liegt unter Funktionen.": "Tareas propias. Una tarea hecha pasa a ser un registro. El interruptor está en Funciones.",
+  "Datum, Uhrzeit und Wiederholung. Im Namen gehen auch Priorität, Projekt, Organisation und Vision.": "Fecha, hora y repetición. En el nombre también van la prioridad, el proyecto, la organización y la visión.",
+  "Eine normale Aufgabe kann ein Gegner sein. Ein Meilenstein kann ein Boss werden.": "Una tarea normal puede ser un oponente. Un hito puede convertirse en un jefe.",
+  "Heute zeigt, was fällig ist. Als Nächstes zeigt die kommenden sieben Tage.": "Hoy muestra lo que vence. Próximas muestra los próximos siete días.",
 };

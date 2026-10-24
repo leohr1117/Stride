@@ -226,3 +226,31 @@ test('Aufgaben: Kreis, Dialog und Heute', async ({ page }, testInfo) => {
     await raeumeBau(page);
   }
 });
+
+test('Handbuch-Karte nur bei angeschaltetem Schalter', async ({ page }, testInfo) => {
+  const projekt = testInfo.project.name;
+  const bild = (name: string) => page.screenshot({ path: `tmp-bau/aufgaben-111/${projekt}-${name}.png` });
+  const satz = 'Eigene Aufgaben. Eine Erledigung wird ein Eintrag.';
+
+  await page.goto('/handbuch');
+  await expect(page.getByRole('heading', { name: 'Handbuch', exact: true })).toBeVisible();
+  await expect(page.getByText(satz)).toHaveCount(0);
+  await ohneSeitlichenUeberlauf(page);
+  await bild('aus');
+
+  await page.goto('/mehr/funktionen');
+  await schalte(page, true);
+  await page.goto('/handbuch');
+  const karte = page.locator('[data-handbuch-karte="aufgaben"]');
+  await expect(karte).toBeVisible();
+  await expect(karte.getByRole('heading', { name: 'Aufgaben', exact: true })).toBeVisible();
+  await expect(karte.getByText(satz)).toBeVisible();
+  const oeffnen = karte.getByRole('link', { name: 'Öffnen', exact: true });
+  await expect(oeffnen).toHaveAttribute('href', '/aufgaben');
+  await ohneSeitlichenUeberlauf(page);
+  await bild('an');
+
+  await oeffnen.click();
+  await expect(page).toHaveURL('/aufgaben');
+  await expect(page.locator('[data-zurueck]')).toHaveCount(0);
+});

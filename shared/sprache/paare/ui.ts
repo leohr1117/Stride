@@ -336,6 +336,7 @@ export const PAARE = [
   ['Tätigkeit wählen …', 'Choose an activity…'],
   ['Token in Todoist öffnen', 'Open the token in Todoist'],
   ['Training, Lernen', 'Training, learning'],
+  ['Eigene Aufgaben. Eine Erledigung wird ein Eintrag.', 'Tasks of your own. A completion becomes an entry.'],
   ['Überspringen', 'Skip'],
   ['Vorschau', 'Preview'],
   ['Weiter', 'Next'],

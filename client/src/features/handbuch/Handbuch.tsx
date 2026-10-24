@@ -32,6 +32,7 @@ import { FUNKTION_BILD } from '../../funktionsBild.tsx';
 import { Karte, Knopf, Ladeanzeige } from '../../ui/index.ts';
 import { faktorText, zahl, zeitspanne } from '../../format.ts';
 import { TAETIGKEITEN_GESEHEN, leseMerker } from '../../speicher.ts';
+import { AufgabenKarte } from './AufgabenKarte.tsx';
 
 const ZIEL_STATION: Record<Exclude<StartZielArt, 'faehigkeit'>, { titel: string; icon: LucideIcon }> = {
   visionen: { titel: 'Vision anlegen', icon: Mountain },
@@ -165,6 +166,8 @@ export function HandbuchSeite() {
       <header>
         <h1 className="text-2xl font-bold tracking-tight break-words md:text-3xl">{tx("Handbuch")}</h1>
       </header>
+
+      <AufgabenKarte an={istAn('aufgaben', einstellungen)} />
 
       {vorschlagAus.size > 0 && (
         <ZeilenGruppe titel={tx("Empfohlen")}>

@@ -1421,4 +1421,9 @@ export const TEXTE: Record<string, string> = {
   "Datum, Uhrzeit, p1 bis p4, #Projekt, +Organisation und *Vision kannst du in den Namen schreiben.": "可以在名称里写日期、时间、p1 到 p4、#项目、+组织和*愿景。",
   "{text} nicht erkennen": "不再识别{text}",
   "Vorschläge": "建议",
+  "Eigene Aufgaben. Eine Erledigung wird ein Eintrag.": "自己的任务。勾选一次就会变成一条记录。",
+  "Eigene Aufgaben. Eine Erledigung wird ein Eintrag. Der Schalter liegt unter Funktionen.": "自己的任务。勾选一次就会变成一条记录。开关在功能里。",
+  "Datum, Uhrzeit und Wiederholung. Im Namen gehen auch Priorität, Projekt, Organisation und Vision.": "日期、时间和重复。名称里也可以写优先级、项目、组织和愿景。",
+  "Eine normale Aufgabe kann ein Gegner sein. Ein Meilenstein kann ein Boss werden.": "普通任务可以是对手。里程碑可以变成首领。",
+  "Heute zeigt, was fällig ist. Als Nächstes zeigt die kommenden sieben Tage.": "今天显示到期的。接下来显示今后七天。",
 };

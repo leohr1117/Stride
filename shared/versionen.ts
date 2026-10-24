@@ -17,6 +17,21 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.6.0',
+    seiten: 'Aufgaben, Übersicht, Mehr, Handbuch',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Eigene Aufgaben. Eine Erledigung wird ein Eintrag. Der Schalter liegt unter Funktionen.',
+          'Datum, Uhrzeit und Wiederholung. Im Namen gehen auch Priorität, Projekt, Organisation und Vision.',
+          'Eine normale Aufgabe kann ein Gegner sein. Ein Meilenstein kann ein Boss werden.',
+          'Heute zeigt, was fällig ist. Als Nächstes zeigt die kommenden sieben Tage.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.5.1',
     seiten: 'Vorbilder, Profil, Ziele, Rückblick, Statistiken, Übersicht, Verbindungen, Fähigkeiten, Charakter, Basis',
     behoben: 'Vorbilder, Profil, Ziele, Rückblick, Statistiken, Übersicht, Verbindungen, Fähigkeiten, Charakter, Basis',

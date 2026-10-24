@@ -1,5 +1,9 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Eigene Aufgaben. Eine Erledigung wird ein Eintrag. Der Schalter liegt unter Funktionen.', 'Tasks of your own. A completion becomes an entry. The switch is under Features.'],
+  ['Datum, Uhrzeit und Wiederholung. Im Namen gehen auch Priorität, Projekt, Organisation und Vision.', 'Date, time, and repetition. The name can also set priority, project, organization, and vision.'],
+  ['Eine normale Aufgabe kann ein Gegner sein. Ein Meilenstein kann ein Boss werden.', 'A normal task can be an opponent. A milestone can become a boss.'],
+  ['Heute zeigt, was fällig ist. Als Nächstes zeigt die kommenden sieben Tage.', 'Today shows what is due. Upcoming shows the next seven days.'],
   ['Todoist: ein Projekt lässt sich einer Vision, einem Projekt oder einem Vorhaben zuordnen.', 'Todoist: a project can be linked to a vision, a project, or a task.'],
   ['Ein Projekt kann eine Abschlusstätigkeit haben. Keine ist erlaubt.', 'A project can have a closing activity. None is allowed.'],
   ['Abschließen gibt einmalig Bonus-XP und zeigt XP, Level, Zeitraum, Einträge und Stunden.', 'Finishing grants a one-time XP bonus and shows XP, level, time span, entries, and hours.'],

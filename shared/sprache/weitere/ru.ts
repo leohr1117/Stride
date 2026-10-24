@@ -1421,4 +1421,9 @@ export const TEXTE: Record<string, string> = {
   "Datum, Uhrzeit, p1 bis p4, #Projekt, +Organisation und *Vision kannst du in den Namen schreiben.": "Дату, время, p1–p4, #проект, +организацию и *видение можно написать в названии.",
   "{text} nicht erkennen": "Не распознавать {text}",
   "Vorschläge": "Подсказки",
+  "Eigene Aufgaben. Eine Erledigung wird ein Eintrag.": "Свои задачи. Отмеченная задача становится записью.",
+  "Eigene Aufgaben. Eine Erledigung wird ein Eintrag. Der Schalter liegt unter Funktionen.": "Свои задачи. Отмеченная задача становится записью. Переключатель в разделе Функции.",
+  "Datum, Uhrzeit und Wiederholung. Im Namen gehen auch Priorität, Projekt, Organisation und Vision.": "Дата, время и повтор. В названии можно указать приоритет, проект, организацию и видение.",
+  "Eine normale Aufgabe kann ein Gegner sein. Ein Meilenstein kann ein Boss werden.": "Обычная задача может быть противником. Веха может стать боссом.",
+  "Heute zeigt, was fällig ist. Als Nächstes zeigt die kommenden sieben Tage.": "Сегодня показывает то, что пора сделать. Дальше показывает ближайшие семь дней.",
 };

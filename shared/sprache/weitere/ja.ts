@@ -1421,4 +1421,9 @@ export const TEXTE: Record<string, string> = {
   "Datum, Uhrzeit, p1 bis p4, #Projekt, +Organisation und *Vision kannst du in den Namen schreiben.": "名前に日付、時刻、p1からp4、#プロジェクト、+組織、*ビジョンを書けます。",
   "{text} nicht erkennen": "{text}を認識しない",
   "Vorschläge": "候補",
+  "Eigene Aufgaben. Eine Erledigung wird ein Eintrag.": "自分の課題。チェックすると記録になる。",
+  "Eigene Aufgaben. Eine Erledigung wird ein Eintrag. Der Schalter liegt unter Funktionen.": "自分の課題。チェックすると記録になる。スイッチは機能にある。",
+  "Datum, Uhrzeit und Wiederholung. Im Namen gehen auch Priorität, Projekt, Organisation und Vision.": "日付、時刻、繰り返し。名前には優先度、プロジェクト、組織、ビジョンも書けます。",
+  "Eine normale Aufgabe kann ein Gegner sein. Ein Meilenstein kann ein Boss werden.": "普通の課題は相手になれます。節目はボスになれます。",
+  "Heute zeigt, was fällig ist. Als Nächstes zeigt die kommenden sieben Tage.": "今日は期限のものを表示します。次にはこれから7日間を表示します。",
 };

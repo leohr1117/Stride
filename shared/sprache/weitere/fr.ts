@@ -1421,4 +1421,9 @@ export const TEXTE: Record<string, string> = {
   "Datum, Uhrzeit, p1 bis p4, #Projekt, +Organisation und *Vision kannst du in den Namen schreiben.": "Tu peux écrire la date, l'heure, p1 à p4, #projet, +organisation et *vision dans le nom.",
   "{text} nicht erkennen": "Ne plus reconnaître {text}",
   "Vorschläge": "Suggestions",
+  "Eigene Aufgaben. Eine Erledigung wird ein Eintrag.": "Tâches personnelles. Une tâche cochée devient une entrée.",
+  "Eigene Aufgaben. Eine Erledigung wird ein Eintrag. Der Schalter liegt unter Funktionen.": "Tâches personnelles. Une tâche cochée devient une entrée. L'interrupteur est sous Fonctions.",
+  "Datum, Uhrzeit und Wiederholung. Im Namen gehen auch Priorität, Projekt, Organisation und Vision.": "Date, heure et répétition. Le nom peut aussi indiquer la priorité, le projet, l'organisation et la vision.",
+  "Eine normale Aufgabe kann ein Gegner sein. Ein Meilenstein kann ein Boss werden.": "Une tâche normale peut être un adversaire. Un jalon peut devenir un boss.",
+  "Heute zeigt, was fällig ist. Als Nächstes zeigt die kommenden sieben Tage.": "Aujourd'hui montre ce qui est dû. À suivre montre les sept prochains jours.",
 };
