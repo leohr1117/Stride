@@ -1497,4 +1497,7 @@ export const TEXTE: Record<string, string> = {
   "Offen · {dauer} · lb": "进行中 · {dauer} · lb",
   "Fertig · {dauer} · lb": "已完成 · {dauer} · lb",
   "{datum} · {dauer} · fertig": "{datum} · {dauer} · 已完成",
+  "Noch kein Bestwert.": "还没有纪录。",
+  "Aufwärmen zählt nicht. Die Schätzung ist Gewicht mal (1 + Wiederholungen / 30).": "热身不算。估算是重量乘以（1 + 次数 / 30）。",
+  "Schätzung {wert}": "估算 {wert}",
 };

@@ -118,6 +118,8 @@ describe('herkunftsZiel', () => {
     expect(zurueckPasst('/training/einheiten/8', '/training')).toBe(true);
     expect(zurueckPasst('/training/einheiten/8', '/')).toBe(true);
     expect(zurueckPasst('/training/einheiten/8', '/mehr')).toBe(false);
+    expect(zurueckPasst('/training/uebungen/3', '/training/einheiten/8')).toBe(true);
+    expect(zurueckPasst('/training/uebungen/3', '/mehr')).toBe(false);
     expect(zurueckPasst('/training/plaene/neu', '/')).toBe(false);
     expect(zurueckPasst('/training/plaene/neu', '/training')).toBe(true);
     expect(herkunftsZiel(['/'], '/training/einheiten/8', LEISTE_STANDARD, null, { von: '/' })).toEqual({

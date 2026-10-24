@@ -169,6 +169,9 @@ export function EinheitSeite() {
           gewicht={gewicht}
           aenderbar={daten.aenderbar}
           gesperrt={arbeit}
+          einheitId={daten.id}
+          planName={daten.planName}
+          von={wegVon(ort.state)}
           onSatz={(satz) => void schreibe([satz], !satz.erledigt)}
           onUebung={aufUebung}
         />

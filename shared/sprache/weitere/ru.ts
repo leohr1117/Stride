@@ -1497,4 +1497,7 @@ export const TEXTE: Record<string, string> = {
   "Offen · {dauer} · lb": "Открыта · {dauer} · lb",
   "Fertig · {dauer} · lb": "Готово · {dauer} · lb",
   "{datum} · {dauer} · fertig": "{datum} · {dauer} · готово",
+  "Noch kein Bestwert.": "Пока нет рекорда.",
+  "Aufwärmen zählt nicht. Die Schätzung ist Gewicht mal (1 + Wiederholungen / 30).": "Разминка не считается. Оценка — это вес умножить на (1 + повторения / 30).",
+  "Schätzung {wert}": "Оценка {wert}",
 };

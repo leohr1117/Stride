@@ -31,6 +31,7 @@ const ladeVorbilder = () => import('./features/vorbilder/Vorbilder.tsx');
 const ladeTraining = () => import('./features/training/TrainingSeite.tsx');
 const ladePlanEditor = () => import('./features/training/PlanEditor.tsx');
 const ladeEinheit = () => import('./features/training/EinheitSeite.tsx');
+const ladeUebung = () => import('./features/training/UebungSeite.tsx');
 
 const UebersichtSeite = seite(ladeUebersicht, (modul) => modul.UebersichtSeite);
 const LaufendSeite = seite(ladeLaufend, (modul) => modul.LaufendSeite);
@@ -55,6 +56,7 @@ const VorbilderSeite = seite(ladeVorbilder, (modul) => modul.VorbilderSeite);
 const TrainingSeite = seite(ladeTraining, (modul) => modul.TrainingSeite);
 const PlanEditorSeite = seite(ladePlanEditor, (modul) => modul.PlanEditor);
 const EinheitSeite = seite(ladeEinheit, (modul) => modul.EinheitSeite);
+const UebungSeite = seite(ladeUebung, (modul) => modul.UebungSeite);
 
 function Weiter({ nach }: { nach: string }) {
   const ort = useLocation();
@@ -83,6 +85,7 @@ const router = createBrowserRouter([
       { path: 'training/plaene/neu', element: <PlanEditorSeite /> },
       { path: 'training/plaene/:id', element: <PlanEditorSeite /> },
       { path: 'training/einheiten/:id', element: <EinheitSeite /> },
+      { path: 'training/uebungen/:id', element: <UebungSeite /> },
       { path: 'mehr', element: <MehrSeite /> },
       { path: 'mehr/profil', element: <MehrProfilSeite /> },
       { path: 'mehr/profil/:teil', element: <MehrProfilSeite /> },

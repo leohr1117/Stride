@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Check } from 'lucide-react';
+import { Link } from 'react-router';
 import type { EinheitUebung, Trainingssatz } from '../../../../shared/api/training.ts';
 import type { GewichtEinheit } from '../../../../shared/spiel/training.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
@@ -84,6 +85,9 @@ export function EinheitKarte({
   gewicht,
   aenderbar,
   gesperrt,
+  einheitId,
+  planName,
+  von,
   onSatz,
   onUebung,
 }: {
@@ -91,6 +95,9 @@ export function EinheitKarte({
   gewicht: GewichtEinheit;
   aenderbar: boolean;
   gesperrt: boolean;
+  einheitId: number;
+  planName: string;
+  von: '/' | null;
   onSatz: (satz: Trainingssatz) => void;
   onUebung: (uebung: EinheitUebung) => void;
 }) {
@@ -106,7 +113,13 @@ export function EinheitKarte({
           onClick={() => onUebung(uebung)}
         />
         <div className="min-w-0">
-          <p className={`text-lg ${stand === 'an' ? 'font-medium text-leise' : 'font-semibold'}`}>{uebung.name}</p>
+          <Link
+            to={`/training/uebungen/${uebung.uebungId}`}
+            state={{ einheit: `/training/einheiten/${einheitId}`, planName, von }}
+            className={`block truncate text-lg ${stand === 'an' ? 'font-medium text-leise' : 'font-semibold'}`}
+          >
+            {uebung.name}
+          </Link>
           <Zuletzt uebung={uebung} gewicht={gewicht} />
         </div>
       </div>

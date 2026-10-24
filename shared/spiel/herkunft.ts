@@ -192,6 +192,7 @@ export function seiteZeigtEigenenZurueck(pfad: string): boolean {
 /**
  * Browser-Zurück bleibt auf der Elternseite.
  * Eine Einheit darf auch auf der Übersicht bleiben: dorthin kommt der Verlauf nur, wenn Starten dort her kam.
+ * Eine Übung darf auf der Einheit bleiben, von der ihr Name geöffnet wurde.
  */
 export function zurueckPasst(von: string, nach: string): boolean {
   const eltern = elternZiel(von);
@@ -201,7 +202,10 @@ export function zurueckPasst(von: string, nach: string): boolean {
   if (ohneEndslash(nach) === eltern.pfad) {
     return true;
   }
-  return istTrainingsEinheit(ohneEndslash(von)) && ohneEndslash(nach) === '/';
+  if (istTrainingsEinheit(ohneEndslash(von)) && ohneEndslash(nach) === '/') {
+    return true;
+  }
+  return istTrainingsUebung(ohneEndslash(von)) && istTrainingsEinheit(ohneEndslash(nach));
 }
 
 /**
