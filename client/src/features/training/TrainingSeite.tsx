@@ -41,7 +41,7 @@ function Kopf({ mitPlan }: { mitPlan: boolean }) {
   );
 }
 
-function EinheitBanner({ einheit }: { einheit: Trainingseinheit }) {
+function EinheitBanner({ einheit, zustand }: { einheit: Trainingseinheit; zustand: unknown }) {
   const navigiere = useNavigate();
   const minuten = minutenText(einheit.begonnenAm, new Date());
   return (
@@ -53,7 +53,11 @@ function EinheitBanner({ einheit }: { einheit: Trainingseinheit }) {
             {einheit.planName} · {minuten}
           </p>
         </div>
-        <Knopf variante="primaer" className="shrink-0" onClick={() => navigiere(`/training/einheiten/${einheit.id}`)}>
+        <Knopf
+          variante="primaer"
+          className="shrink-0"
+          onClick={() => navigiere(`/training/einheiten/${einheit.id}`, { state: zustand })}
+        >
           {tx('Öffnen')}
         </Knopf>
       </div>
@@ -116,6 +120,7 @@ export function TrainingSeite() {
     );
   }
 
+  const oeffnenZustand = vonHeute ? { von: '/' } : null;
   const offen = einheiten.data?.find((einheitEintrag) => einheitEintrag.status === 'offen') ?? null;
   const fertig = (einheiten.data ?? []).filter((einheitEintrag) => einheitEintrag.status === 'fertig' && einheitEintrag.beendetAm !== null);
   const archivListe = archiv.data ?? [];
@@ -126,7 +131,7 @@ export function TrainingSeite() {
       <Kopf mitPlan />
       {einheiten.isError ? <Fehlermeldung fehler={einheiten.error} /> : null}
       {aktionFehler ? <Fehlermeldung fehler={aktionFehler} /> : null}
-      {offen ? <EinheitBanner einheit={offen} /> : null}
+      {offen ? <EinheitBanner einheit={offen} zustand={oeffnenZustand} /> : null}
       {plaene.data.length === 0 ? <Karte className="py-10 text-center text-sm text-leise">{tx('Noch kein Plan.')}</Karte> : null}
       {plaene.data.map((plan) => (
         <PlanKarte
@@ -137,6 +142,7 @@ export function TrainingSeite() {
           startet={start.isPending}
           onStart={(planId) => start.mutate(planId)}
           onWiederherstellen={(planId) => void wiederherstellen(planId)}
+          oeffnenZustand={oeffnenZustand}
         />
       ))}
       {fertig.length > 0 ? (

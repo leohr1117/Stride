@@ -1,20 +1,8 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 import { anmelden, ohneSeitlichenUeberlauf } from './aufgabenHelfer.ts';
+import { oben, raeume, schalte } from './trainingHelfer.ts';
 
 const INFO = 'Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert.';
-
-async function schalte(seite: Page, an: boolean): Promise<void> {
-  const schalter = seite.locator('#funktion-training').getByRole('switch', { name: 'Training', exact: true });
-  const ist = (await schalter.getAttribute('aria-checked')) === 'true';
-  if (ist === an) {
-    return;
-  }
-  const antwort = seite.waitForResponse(
-    (res) => res.url().includes('/api/einstellungen') && res.request().method() === 'PATCH' && res.ok(),
-  );
-  await schalter.click();
-  await antwort;
-}
 
 test.beforeEach(async ({ page }) => {
   await anmelden(page);
@@ -107,66 +95,9 @@ test('Schalter Training sitzt hinter Aufgaben und blendet die Navigation', async
 });
 
 const PLAN_ROUTE = '**/api/trainingsplaene*';
-const PLAN_NAMEN = ['Unterkörper', 'Rumpf'];
-
-async function oben(seite: Page): Promise<void> {
-  await seite.evaluate(() => {
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
-    window.scrollTo(0, 0);
-  });
-}
 
 function textfeld(haupt: Locator, name: string, index: number): Locator {
   return haupt.getByRole('textbox', { name, exact: true }).nth(index);
-}
-
-async function raeume(seite: Page): Promise<void> {
-  const probleme = await seite.evaluate(async (namen) => {
-    const hinweise: string[] = [];
-    const alsListe = async (pfad: string): Promise<unknown[]> => {
-      const antwort = await fetch(pfad);
-      if (!antwort.ok) {
-        return [];
-      }
-      const daten: unknown = await antwort.json();
-      return Array.isArray(daten) ? daten : [];
-    };
-    const einheiten = (await alsListe('/api/trainingseinheiten')) as { id: number; status: string; planName: string }[];
-    for (const einheit of einheiten) {
-      if (einheit.status !== 'offen' || !namen.includes(einheit.planName)) {
-        continue;
-      }
-      const weg = await fetch(`/api/trainingseinheiten/${einheit.id}`, { method: 'DELETE' });
-      if (!weg.ok) {
-        hinweise.push(`einheit ${einheit.id} ${weg.status}`);
-      }
-    }
-    for (const archiv of [false, true]) {
-      const pfad = archiv ? '/api/trainingsplaene?archiv=1' : '/api/trainingsplaene';
-      const plaene = (await alsListe(pfad)) as { id: number; name: string }[];
-      for (const plan of plaene) {
-        if (!namen.includes(plan.name)) {
-          continue;
-        }
-        const weg = await fetch(`/api/trainingsplaene/${plan.id}`, { method: 'DELETE' });
-        if (!weg.ok) {
-          hinweise.push(`plan ${plan.id} ${weg.status}`);
-        }
-      }
-    }
-    const einheit = await fetch('/api/einstellungen', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ gewichtEinheit: 'kg' }),
-    });
-    if (!einheit.ok) {
-      hinweise.push(`kg ${einheit.status}`);
-    }
-    return hinweise;
-  }, PLAN_NAMEN);
-  expect(probleme).toEqual([]);
 }
 
 test('Liste ohne Feld und Plan-Editor mit Feldern', async ({ page }, testInfo) => {

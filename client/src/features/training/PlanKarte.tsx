@@ -13,6 +13,7 @@ export function PlanKarte({
   startet,
   onStart,
   onWiederherstellen,
+  oeffnenZustand = null,
 }: {
   plan: Trainingsplan;
   einheit: GewichtEinheit;
@@ -20,6 +21,7 @@ export function PlanKarte({
   startet: boolean;
   onStart: (planId: number) => void;
   onWiederherstellen: (planId: number) => void;
+  oeffnenZustand?: unknown;
 }) {
   const navigiere = useNavigate();
   const tage = tageText(plan.wochentage);
@@ -61,7 +63,7 @@ export function PlanKarte({
             {tx('Wiederherstellen')}
           </Knopf>
         ) : offenId !== null ? (
-          <Knopf variante="primaer" onClick={() => navigiere(`/training/einheiten/${offenId}`)}>
+          <Knopf variante="primaer" onClick={() => navigiere(`/training/einheiten/${offenId}`, { state: oeffnenZustand })}>
             {tx('Öffnen')}
           </Knopf>
         ) : (
