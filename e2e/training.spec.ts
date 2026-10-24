@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import { anmelden, ohneSeitlichenUeberlauf } from './aufgabenHelfer.ts';
 
 const INFO = 'Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert.';
@@ -103,5 +103,263 @@ test('Schalter Training sitzt hinter Aufgaben und blendet die Navigation', async
     await expect(sprung).toBeVisible();
     await expect(sprung).toHaveAttribute('href', '/training');
     await expect(leiste.getByRole('link', { name: 'Training', exact: true })).toHaveCount(0);
+  }
+});
+
+const PLAN_ROUTE = '**/api/trainingsplaene*';
+const PLAN_NAMEN = ['Unterkörper', 'Rumpf'];
+
+async function oben(seite: Page): Promise<void> {
+  await seite.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    window.scrollTo(0, 0);
+  });
+}
+
+function textfeld(haupt: Locator, name: string, index: number): Locator {
+  return haupt.getByRole('textbox', { name, exact: true }).nth(index);
+}
+
+async function raeume(seite: Page): Promise<void> {
+  const probleme = await seite.evaluate(async (namen) => {
+    const hinweise: string[] = [];
+    const alsListe = async (pfad: string): Promise<unknown[]> => {
+      const antwort = await fetch(pfad);
+      if (!antwort.ok) {
+        return [];
+      }
+      const daten: unknown = await antwort.json();
+      return Array.isArray(daten) ? daten : [];
+    };
+    const einheiten = (await alsListe('/api/trainingseinheiten')) as { id: number; status: string; planName: string }[];
+    for (const einheit of einheiten) {
+      if (einheit.status !== 'offen' || !namen.includes(einheit.planName)) {
+        continue;
+      }
+      const weg = await fetch(`/api/trainingseinheiten/${einheit.id}`, { method: 'DELETE' });
+      if (!weg.ok) {
+        hinweise.push(`einheit ${einheit.id} ${weg.status}`);
+      }
+    }
+    for (const archiv of [false, true]) {
+      const pfad = archiv ? '/api/trainingsplaene?archiv=1' : '/api/trainingsplaene';
+      const plaene = (await alsListe(pfad)) as { id: number; name: string }[];
+      for (const plan of plaene) {
+        if (!namen.includes(plan.name)) {
+          continue;
+        }
+        const weg = await fetch(`/api/trainingsplaene/${plan.id}`, { method: 'DELETE' });
+        if (!weg.ok) {
+          hinweise.push(`plan ${plan.id} ${weg.status}`);
+        }
+      }
+    }
+    const einheit = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gewichtEinheit: 'kg' }),
+    });
+    if (!einheit.ok) {
+      hinweise.push(`kg ${einheit.status}`);
+    }
+    return hinweise;
+  }, PLAN_NAMEN);
+  expect(probleme).toEqual([]);
+}
+
+test('Liste ohne Feld und Plan-Editor mit Feldern', async ({ page }, testInfo) => {
+  test.setTimeout(120_000);
+  const projekt = testInfo.project.name;
+  const haupt = page.locator('main');
+  const steuerung = { durch: true, wartende: [] as Array<() => void> };
+  const loese = () => {
+    steuerung.durch = true;
+    for (const fn of steuerung.wartende.splice(0)) {
+      fn();
+    }
+  };
+  const bild = (name: string) => page.screenshot({ path: `tmp-bau/training-26/${projekt}-${name}.png` });
+  try {
+    await page.goto('/mehr/funktionen');
+    await schalte(page, true);
+    await raeume(page);
+    await page.goto('/training');
+    await expect(haupt.getByText('Noch kein Plan.')).toBeVisible();
+    await expect(haupt.locator('input, textarea, select')).toHaveCount(0);
+    await expect(haupt.getByRole('button', { name: '+ Plan', exact: true })).toBeVisible();
+    await bild('leer');
+    await ohneSeitlichenUeberlauf(page);
+
+    await page.route(PLAN_ROUTE, async (route) => {
+      if (route.request().method() !== 'GET') {
+        await route.continue();
+        return;
+      }
+      await route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({ fehler: 'Etwas ist schiefgelaufen.' }),
+      });
+    });
+    await page.reload();
+    await expect(haupt.getByText('Etwas ist schiefgelaufen.')).toBeVisible();
+    await expect(haupt.getByRole('button', { name: '+ Plan', exact: true })).toBeVisible();
+    await expect(haupt.getByRole('button', { name: 'kg', exact: true })).toBeVisible();
+    await expect(haupt.getByText('Noch kein Plan.')).toHaveCount(0);
+    await bild('fehler');
+    await page.unroute(PLAN_ROUTE);
+
+    steuerung.durch = false;
+    await page.route(PLAN_ROUTE, async (route) => {
+      try {
+        if (steuerung.durch || route.request().method() !== 'GET') {
+          await route.continue();
+          return;
+        }
+        await new Promise<void>((resolve) => {
+          steuerung.wartende.push(resolve);
+        });
+        await route.continue();
+      } catch {
+        return;
+      }
+    });
+    await page.reload();
+    await expect(haupt.getByRole('heading', { name: 'Training', level: 1 })).toBeVisible();
+    await expect(haupt.getByText(/^Lädt/)).toBeVisible();
+    await expect(haupt.getByRole('button', { name: '+ Plan', exact: true })).toHaveCount(0);
+    await expect(haupt.getByRole('button', { name: 'kg', exact: true })).toBeVisible();
+    await bild('laden');
+    loese();
+    await expect(haupt.getByText('Noch kein Plan.')).toBeVisible();
+    await page.unroute(PLAN_ROUTE);
+
+    await haupt.getByRole('button', { name: '+ Plan', exact: true }).click();
+    await expect(page).toHaveURL(/\/training\/plaene\/neu$/);
+    const taetigkeit = haupt.getByRole('combobox', { name: 'Tätigkeit', exact: true });
+    await expect(taetigkeit.locator('option', { hasText: /^Training$/ })).toHaveCount(1);
+    await taetigkeit.selectOption({ label: 'Training' });
+    await haupt.getByRole('combobox', { name: 'Projekt', exact: true }).selectOption({ value: '' });
+    await expect(haupt.locator('input, textarea, select').first()).toBeVisible();
+    await expect(haupt.getByRole('link', { name: 'Training', exact: true })).toBeVisible();
+    await expect(haupt.getByRole('button', { name: 'Archivieren', exact: true })).toHaveCount(0);
+    await expect(haupt.getByRole('button', { name: 'Löschen', exact: true })).toHaveCount(0);
+    await bild('plan-neu');
+    await ohneSeitlichenUeberlauf(page);
+
+    await haupt.getByRole('textbox', { name: 'Name', exact: true }).fill('Unterkörper');
+    await textfeld(haupt, 'Sätze', 0).fill('3');
+    await textfeld(haupt, 'Wiederholungen', 0).fill('5');
+    await textfeld(haupt, 'Gewicht', 0).fill('80');
+    await haupt.getByRole('button', { name: 'Speichern', exact: true }).click();
+    await expect(page).toHaveURL(/\/training\/plaene\/neu$/);
+    await expect(haupt.getByText('Der Name darf nicht leer sein.')).toBeVisible();
+    await expect(textfeld(haupt, 'Sätze', 0)).toHaveValue('3');
+    await expect(textfeld(haupt, 'Wiederholungen', 0)).toHaveValue('5');
+    await expect(textfeld(haupt, 'Gewicht', 0)).toHaveValue('80');
+    await oben(page);
+    await bild('plan-fehler');
+
+    await haupt.getByRole('textbox', { name: 'Übung oder Gerät', exact: true }).fill('Kniebeuge');
+    await haupt.getByRole('button', { name: 'Aufwärmen hinzufügen', exact: true }).click();
+    await textfeld(haupt, 'Sätze', 1).fill('2');
+    await textfeld(haupt, 'Wiederholungen', 1).fill('5');
+    await textfeld(haupt, 'Gewicht', 1).fill('40');
+    await haupt.getByRole('button', { name: 'Eintrag hinzufügen', exact: true }).click();
+    await haupt.getByRole('textbox', { name: 'Übung oder Gerät', exact: true }).nth(1).fill('Klimmzug');
+    await textfeld(haupt, 'Sätze', 2).fill('3');
+    await textfeld(haupt, 'Wiederholungen', 2).fill('8');
+    await haupt.getByRole('button', { name: 'Mo', exact: true }).click();
+    await haupt.getByRole('button', { name: 'Mi', exact: true }).click();
+    await haupt.getByRole('button', { name: 'Fr', exact: true }).click();
+    const angelegt = page.waitForResponse(
+      (res) => res.url().includes('/api/trainingsplaene') && res.request().method() === 'POST' && res.ok(),
+    );
+    await haupt.getByRole('button', { name: 'Speichern', exact: true }).click();
+    await angelegt;
+    await expect(page).toHaveURL(/\/training$/);
+    await expect(haupt.getByRole('heading', { name: 'Unterkörper', level: 2 })).toBeVisible();
+    await expect(haupt.getByText('Mo · Mi · Fr')).toBeVisible();
+    await expect(haupt.getByText('3 × 5 · 80,0 kg')).toBeVisible();
+    await expect(haupt.getByText('Aufwärmen · 2 × 5 · 40,0 kg')).toBeVisible();
+    await expect(haupt.getByText('3 × 8', { exact: true })).toBeVisible();
+    await expect(haupt.locator('input, textarea, select')).toHaveCount(0);
+    await bild('training');
+    await ohneSeitlichenUeberlauf(page);
+
+    await haupt.getByRole('link', { name: 'Bearbeiten', exact: true }).click();
+    await expect(page).toHaveURL(/\/training\/plaene\/\d+$/);
+    await expect(haupt.getByRole('heading', { name: 'Plan bearbeiten', level: 1 })).toBeVisible();
+    await expect(textfeld(haupt, 'Gewicht', 0)).toHaveValue('80');
+    await expect(textfeld(haupt, 'Gewicht', 1)).toHaveValue('40');
+    await expect(haupt.getByRole('button', { name: 'Löschen', exact: true })).toBeVisible();
+    await expect(haupt.getByRole('button', { name: 'Archivieren', exact: true })).toHaveCount(0);
+    await oben(page);
+    await bild('plan-bearbeiten');
+
+    const aufPfund = page.waitForResponse(
+      (res) => res.url().includes('/api/einstellungen') && res.request().method() === 'PATCH' && res.ok(),
+    );
+    await haupt.getByRole('button', { name: 'lb', exact: true }).click();
+    await aufPfund;
+    await expect(textfeld(haupt, 'Gewicht', 0)).toHaveValue('176,4');
+    await expect(textfeld(haupt, 'Gewicht', 1)).toHaveValue('88,2');
+    await oben(page);
+    await bild('plan-lb');
+    const gespeichert = page.waitForResponse(
+      (res) => /\/api\/trainingsplaene\/\d+$/.test(new URL(res.url()).pathname) && res.request().method() === 'PATCH' && res.ok(),
+    );
+    await haupt.getByRole('button', { name: 'Speichern', exact: true }).click();
+    await gespeichert;
+    await expect(page).toHaveURL(/\/training$/);
+    await expect(haupt.getByText('3 × 5 · 176,4 lb')).toBeVisible();
+    await expect(haupt.getByText('Aufwärmen · 2 × 5 · 88,2 lb')).toBeVisible();
+    await bild('training-lb');
+    const gramm = await page.evaluate(async () => {
+      const antwort = await fetch('/api/trainingsplaene');
+      return antwort.json() as Promise<
+        { name: string; uebungen: { name: string; zielGewichtG: number | null; aufwaermGewichtG: number | null }[] }[]
+      >;
+    });
+    const kniebeuge = gramm.find((plan) => plan.name === 'Unterkörper')?.uebungen.find((uebung) => uebung.name === 'Kniebeuge');
+    const klimmzug = gramm.find((plan) => plan.name === 'Unterkörper')?.uebungen.find((uebung) => uebung.name === 'Klimmzug');
+    expect(kniebeuge?.zielGewichtG).toBe(80000);
+    expect(kniebeuge?.aufwaermGewichtG).toBe(40000);
+    expect(klimmzug?.zielGewichtG).toBeNull();
+
+    await haupt.getByRole('button', { name: '+ Plan', exact: true }).click();
+    await expect(page).toHaveURL(/\/training\/plaene\/neu$/);
+    await expect(haupt.getByRole('combobox', { name: 'Tätigkeit', exact: true })).toBeVisible();
+    await haupt.getByRole('textbox', { name: 'Name', exact: true }).fill('Rumpf');
+    await haupt.getByRole('textbox', { name: 'Übung oder Gerät', exact: true }).fill('Unterarmstütz');
+    await haupt.getByRole('button', { name: 'Dauer', exact: true }).click();
+    await textfeld(haupt, 'Sätze', 0).fill('3');
+    await textfeld(haupt, 'Sekunden', 0).fill('45');
+    await expect(haupt.getByRole('textbox', { name: 'Gewicht', exact: true })).toHaveCount(0);
+    await oben(page);
+    await bild('plan-dauer');
+    await ohneSeitlichenUeberlauf(page);
+    await haupt.locator('[data-zurueck]').click();
+    await expect(page).toHaveURL(/\/training$/);
+    await expect(haupt.getByRole('heading', { name: 'Rumpf', level: 2 })).toHaveCount(0);
+    await expect(haupt.getByRole('heading', { name: 'Unterkörper', level: 2 })).toBeVisible();
+
+    const gestartet = page.waitForResponse(
+      (res) => res.url().includes('/api/trainingseinheiten') && res.request().method() === 'POST' && res.ok(),
+    );
+    await haupt.getByRole('button', { name: 'Starten', exact: true }).click();
+    await gestartet;
+    await expect(haupt.getByText('Einheit läuft')).toBeVisible();
+    await expect(haupt.getByText('Unterkörper · gerade gestartet')).toBeVisible();
+    await expect(haupt.getByRole('button', { name: 'Öffnen', exact: true }).first()).toBeVisible();
+    await expect(haupt.locator('input, textarea, select')).toHaveCount(0);
+    await bild('voll');
+    await ohneSeitlichenUeberlauf(page);
+  } finally {
+    loese();
+    await page.unroute(PLAN_ROUTE).catch(() => undefined);
+    await raeume(page);
   }
 });

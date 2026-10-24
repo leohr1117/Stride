@@ -89,7 +89,7 @@ describe('bestaetigungFuer', () => {
 });
 
 describe('wendeQuery', () => {
-  it('setzt das Archiv-Flag in der Aufgabenliste', () => {
+  it('setzt das Archiv-Flag in der Aufgabenliste und bei Trainingsplänen', () => {
     const daten = [
       { id: 1, archiviert: false },
       { id: 2, archiviert: false },
@@ -98,6 +98,11 @@ describe('wendeQuery', () => {
     expect(neu[0]?.archiviert).toBe(true);
     expect(neu[1]).toBe(daten[1]);
     expect(wendeQuery(['aufgaben', false], daten, 'basis', 1, 'archivieren')).toBe(daten);
+    const plaene = wendeQuery(['trainingsplaene', false], daten, 'trainingsplan', 1, 'archivieren') as typeof daten;
+    expect(plaene[0]?.archiviert).toBe(true);
+    expect(wendeQuery(['trainingsplaene', false], daten, 'uebung', 1, 'archivieren')).toBe(daten);
+    const uebungen = wendeQuery(['uebungen'], daten, 'uebung', 2, 'entfernen') as typeof daten;
+    expect(uebungen.map((eintrag) => eintrag.id)).toEqual([1]);
   });
 
   it('setzt das Archiv-Flag und lässt fremde Zeilen unangetastet', () => {

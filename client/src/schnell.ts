@@ -24,6 +24,8 @@ export type SchnellArt =
   | 'eintrag'
   | 'kalender'
   | 'todoist'
+  | 'trainingsplan'
+  | 'uebung'
   | 'konto';
 
 export interface SchnellZiel {
@@ -230,6 +232,12 @@ export function wendeQuery(key: readonly unknown[], daten: unknown, art: Schnell
     return listeVon(daten, id, modus);
   }
   if (kopf === 'aufgaben' && art === 'aufgabe') {
+    return listeVon(daten, id, modus);
+  }
+  if (kopf === 'trainingsplaene' && art === 'trainingsplan') {
+    return listeVon(daten, id, modus);
+  }
+  if (kopf === 'uebungen' && art === 'uebung') {
     return listeVon(daten, id, modus);
   }
   if (kopf === 'faehigkeiten' && art === 'faehigkeit') {

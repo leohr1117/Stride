@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { setzeAktiveSprache } from '../../shared/sprache/index.ts';
-import { kompakt, prozentText, stunden, zahl, zeitspanne } from './format.ts';
+import { eineNachkommastelle, hoechstensEineStelle, kompakt, prozentText, stunden, zahl, zeitspanne } from './format.ts';
 
 describe('kompakt', () => {
   afterEach(() => {
@@ -41,5 +41,24 @@ describe('kompakt', () => {
     setzeAktiveSprache('ja');
     expect(zeitspanne(400)).toBe('13か月');
     expect(prozentText(0.12)).toBe('12%');
+  });
+});
+
+describe('Gewichtsanzeige', () => {
+  afterEach(() => {
+    setzeAktiveSprache('de');
+  });
+
+  it('zeigt in der Liste immer eine Stelle und im Feld die Null nicht', () => {
+    setzeAktiveSprache('de');
+    expect(eineNachkommastelle(80)).toBe('80,0');
+    expect(eineNachkommastelle(176.4)).toBe('176,4');
+    expect(hoechstensEineStelle(80)).toBe('80');
+    expect(hoechstensEineStelle(176.4)).toBe('176,4');
+    setzeAktiveSprache('en');
+    expect(eineNachkommastelle(80)).toBe('80.0');
+    expect(eineNachkommastelle(176.4)).toBe('176.4');
+    expect(hoechstensEineStelle(80)).toBe('80');
+    expect(hoechstensEineStelle(176.4)).toBe('176.4');
   });
 });

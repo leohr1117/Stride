@@ -9,6 +9,7 @@ export { ausTagesSchluessel, lokalesDatum, wochenbeginn };
 interface Formate {
   zahl: Intl.NumberFormat;
   komma: Intl.NumberFormat;
+  fest: Intl.NumberFormat;
   uhrzeit: Intl.DateTimeFormat;
   tagKurz: Intl.DateTimeFormat;
   tagMitJahr: Intl.DateTimeFormat;
@@ -29,6 +30,7 @@ function formate(): Formate {
   const neu: Formate = {
     zahl: new Intl.NumberFormat(locale),
     komma: new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }),
+    fest: new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
     uhrzeit: new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }),
     tagKurz: new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', month: 'short' }),
     tagMitJahr: new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
@@ -42,6 +44,14 @@ function formate(): Formate {
 
 export function zahl(wert: number): string {
   return formate().zahl.format(wert);
+}
+
+export function hoechstensEineStelle(wert: number): string {
+  return formate().komma.format(wert);
+}
+
+export function eineNachkommastelle(wert: number): string {
+  return formate().fest.format(wert);
 }
 
 export function stunden(wert: number): string {
