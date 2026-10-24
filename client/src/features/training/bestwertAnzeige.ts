@@ -1,14 +1,23 @@
 import type { Bestwert } from '../../../../shared/api/training.ts';
+import { aktiveSprache } from '../../../../shared/sprache/index.ts';
 import { anzeigeAusGramm, epleyGramm, schaetzungSichtbar, type GewichtEinheit } from '../../../../shared/spiel/training.ts';
 import { eineNachkommastelle, kurzesDatum } from '../../format.ts';
 import { tx } from '../../text.ts';
 import { satzText } from './satzAnzeige.ts';
+
+const MIN_SCHAETZPUNKTE = 2;
 
 export interface BestwertZeile {
   id: number;
   haupt: string;
   datum: string;
   schaetzung: string | null;
+}
+
+export interface SchaetzPunkt {
+  label: string;
+  titel: string;
+  wert: number;
 }
 
 function einheitText(gewicht: GewichtEinheit): string {
@@ -45,4 +54,43 @@ export function bestwertZeilen(werte: readonly Bestwert[], gewicht: GewichtEinhe
     }
   }
   return zeilen;
+}
+
+/**
+ * Gespeicherte Schätzungen, älteste links.
+ * Unter zwei Punkten bleibt die Seite ohne Diagramm.
+ */
+export function schaetzPunkte(werte: readonly Bestwert[], gewicht: GewichtEinheit): SchaetzPunkt[] {
+  const roh = werte.filter(istSchaetzpunkt);
+  if (roh.length < MIN_SCHAETZPUNKTE) {
+    return [];
+  }
+  roh.sort(nachZeit);
+  return roh.map((wert) => ({
+    label: achsenTag(wert.erreichtAm),
+    titel: kurzesDatum(wert.erreichtAm),
+    wert: anzeigeAusGramm(wert.wert, gewicht),
+  }));
+}
+
+function istSchaetzpunkt(wert: Bestwert): boolean {
+  return wert.art === 'eins' && Number.isFinite(wert.wert) && !Number.isNaN(new Date(wert.erreichtAm).getTime());
+}
+
+function nachZeit(links: Bestwert, rechts: Bestwert): number {
+  if (links.erreichtAm < rechts.erreichtAm) {
+    return -1;
+  }
+  if (links.erreichtAm > rechts.erreichtAm) {
+    return 1;
+  }
+  return links.id - rechts.id;
+}
+
+function achsenTag(iso: string): string {
+  const tag = String(new Date(iso).getDate());
+  if (aktiveSprache() === 'de') {
+    return `${tag}.`;
+  }
+  return tag;
 }

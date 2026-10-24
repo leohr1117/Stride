@@ -1498,4 +1498,5 @@ export const TEXTE: Record<string, string> = {
   "Noch kein Bestwert.": "Aún no hay una marca.",
   "Aufwärmen zählt nicht. Die Schätzung ist Gewicht mal (1 + Wiederholungen / 30).": "El calentamiento no cuenta. La estimación es el peso por (1 + repeticiones / 30).",
   "Schätzung {wert}": "Estimación {wert}",
+  "Schätzung": "Estimación",
 };

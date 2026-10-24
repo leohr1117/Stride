@@ -446,4 +446,5 @@ export const PAARE = [
   ['Noch kein Bestwert.', 'No record yet.'],
   ['Aufwärmen zählt nicht. Die Schätzung ist Gewicht mal (1 + Wiederholungen / 30).', 'Warm-up does not count. The estimate is weight times (1 + reps / 30).'],
   ['Schätzung {wert}', 'Estimate {wert}'],
+  ['Schätzung', 'Estimate'],
 ] as const;

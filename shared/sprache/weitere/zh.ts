@@ -1498,4 +1498,5 @@ export const TEXTE: Record<string, string> = {
   "Noch kein Bestwert.": "还没有纪录。",
   "Aufwärmen zählt nicht. Die Schätzung ist Gewicht mal (1 + Wiederholungen / 30).": "热身不算。估算是重量乘以（1 + 次数 / 30）。",
   "Schätzung {wert}": "估算 {wert}",
+  "Schätzung": "估算",
 };

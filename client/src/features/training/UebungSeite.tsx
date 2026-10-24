@@ -3,10 +3,11 @@ import { useLocation, useParams } from 'react-router';
 import type { Uebung } from '../../../../shared/api/training.ts';
 import { trainingZurueck } from '../../../../shared/spiel/herkunft.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
+import { SaeulenDiagramm } from '../../components/mitDiagramm.tsx';
 import { ZurueckZumMehr } from '../../components/ZurueckZumMehr.tsx';
 import { tx } from '../../text.ts';
-import { Fehlermeldung, InfoHinweis, Karte, Ladeanzeige } from '../../ui/index.ts';
-import { bestwertZeilen, type BestwertZeile } from './bestwertAnzeige.ts';
+import { Fehlermeldung, InfoHinweis, Karte, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
+import { bestwertZeilen, schaetzPunkte, type BestwertZeile } from './bestwertAnzeige.ts';
 import { useGewichtEinheit } from './kapsel.tsx';
 
 const UEBUNG_INFO = 'Aufwärmen zählt nicht. Die Schätzung ist Gewicht mal (1 + Wiederholungen / 30).';
@@ -107,6 +108,7 @@ export function UebungSeite() {
   }
 
   const zeilen = bestwertZeilen(werte.data, gewicht);
+  const punkte = schaetzPunkte(werte.data, gewicht);
   return (
     <div className="space-y-4 md:space-y-6">
       <div>
@@ -119,16 +121,26 @@ export function UebungSeite() {
         </header>
         <p className="mt-2 text-sm text-leise">{gewicht === 'lb' ? tx('lb') : tx('kg')}</p>
       </div>
-      {zeilen.length === 0 ? (
+      {zeilen.length === 0 && punkte.length === 0 ? (
         <Karte className="py-10 text-center text-sm text-leise">{tx('Noch kein Bestwert.')}</Karte>
       ) : (
-        <Karte>
-          <ul className="space-y-3">
-            {zeilen.map((zeile) => (
-              <WertZeile key={zeile.id} zeile={zeile} />
-            ))}
-          </ul>
-        </Karte>
+        <>
+          {zeilen.length > 0 && (
+            <Karte>
+              <ul className="space-y-3">
+                {zeilen.map((zeile) => (
+                  <WertZeile key={zeile.id} zeile={zeile} />
+                ))}
+              </ul>
+            </Karte>
+          )}
+          {punkte.length > 0 && (
+            <Karte>
+              <Ueberschrift titel={tx('Schätzung')} />
+              <SaeulenDiagramm werte={punkte} einheit={gewicht === 'lb' ? tx('lb') : tx('kg')} />
+            </Karte>
+          )}
+        </>
       )}
     </div>
   );

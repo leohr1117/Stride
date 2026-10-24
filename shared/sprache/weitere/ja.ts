@@ -1498,4 +1498,5 @@ export const TEXTE: Record<string, string> = {
   "Noch kein Bestwert.": "まだ記録がありません。",
   "Aufwärmen zählt nicht. Die Schätzung ist Gewicht mal (1 + Wiederholungen / 30).": "ウォームアップは数えない。推定は重量 ×（1 + 回数 / 30）。",
   "Schätzung {wert}": "推定 {wert}",
+  "Schätzung": "推定",
 };
