@@ -1499,4 +1499,8 @@ export const TEXTE: Record<string, string> = {
   "Aufwärmen zählt nicht. Die Schätzung ist Gewicht mal (1 + Wiederholungen / 30).": "ウォームアップは数えない。推定は重量 ×（1 + 回数 / 30）。",
   "Schätzung {wert}": "推定 {wert}",
   "Schätzung": "推定",
+  "Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert. Der Schalter liegt unter Funktionen.": "1回のトレーニングは記録です。ウォームアップは自己記録に入りません。スイッチは機能にある。",
+  "Ein Plan hat Wochentage, Sätze und Wiederholungen oder eine Zeit. Das Gewicht ist in kg oder lb.": "プランには曜日、セット、回数または時間がある。重量は kg か lb。",
+  "Heute zeigt den Plan. Starten öffnet die Einheit, die Kreise haken ab.": "今日はそのプランを表示する。開始でセッションが開き、円でチェックする。",
+  "Der erste Bestwert ist ein Meilenstein. Ab zwei Schätzungen steht ein Diagramm darunter.": "最初の記録は節目です。推定が二つあると、その下にグラフが出る。",
 };

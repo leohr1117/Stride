@@ -1499,4 +1499,8 @@ export const TEXTE: Record<string, string> = {
   "Aufwärmen zählt nicht. Die Schätzung ist Gewicht mal (1 + Wiederholungen / 30).": "Разминка не считается. Оценка — это вес умножить на (1 + повторения / 30).",
   "Schätzung {wert}": "Оценка {wert}",
   "Schätzung": "Оценка",
+  "Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert. Der Schalter liegt unter Funktionen.": "Занятие — это запись. Разминка не идёт в рекорд. Переключатель в разделе Функции.",
+  "Ein Plan hat Wochentage, Sätze und Wiederholungen oder eine Zeit. Das Gewicht ist in kg oder lb.": "В плане есть дни недели, подходы и повторения или время. Вес в кг или lb.",
+  "Heute zeigt den Plan. Starten öffnet die Einheit, die Kreise haken ab.": "Сегодня показывает план. Начать открывает занятие, кружки отмечают подходы.",
+  "Der erste Bestwert ist ein Meilenstein. Ab zwei Schätzungen steht ein Diagramm darunter.": "Первый рекорд — это веха. От двух оценок ниже стоит диаграмма.",
 };

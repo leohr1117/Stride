@@ -17,6 +17,21 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.7.0',
+    seiten: 'Training, Übersicht, Mehr, Handbuch',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert. Der Schalter liegt unter Funktionen.',
+          'Ein Plan hat Wochentage, Sätze und Wiederholungen oder eine Zeit. Das Gewicht ist in kg oder lb.',
+          'Heute zeigt den Plan. Starten öffnet die Einheit, die Kreise haken ab.',
+          'Der erste Bestwert ist ein Meilenstein. Ab zwei Schätzungen steht ein Diagramm darunter.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.6.0',
     seiten: 'Aufgaben, Übersicht, Mehr, Handbuch',
     abschnitte: [

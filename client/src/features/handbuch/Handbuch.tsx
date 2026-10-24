@@ -33,6 +33,7 @@ import { Karte, Knopf, Ladeanzeige } from '../../ui/index.ts';
 import { faktorText, zahl, zeitspanne } from '../../format.ts';
 import { TAETIGKEITEN_GESEHEN, leseMerker } from '../../speicher.ts';
 import { AufgabenKarte } from './AufgabenKarte.tsx';
+import { TrainingKarte } from './TrainingKarte.tsx';
 
 const ZIEL_STATION: Record<Exclude<StartZielArt, 'faehigkeit'>, { titel: string; icon: LucideIcon }> = {
   visionen: { titel: 'Vision anlegen', icon: Mountain },
@@ -168,6 +169,7 @@ export function HandbuchSeite() {
       </header>
 
       <AufgabenKarte an={istAn('aufgaben', einstellungen)} />
+      <TrainingKarte an={istAn('training', einstellungen)} />
 
       {vorschlagAus.size > 0 && (
         <ZeilenGruppe titel={tx("Empfohlen")}>

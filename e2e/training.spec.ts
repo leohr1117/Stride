@@ -294,3 +294,31 @@ test('Liste ohne Feld und Plan-Editor mit Feldern', async ({ page }, testInfo) =
     await raeume(page);
   }
 });
+
+test('Handbuch-Karte nur bei angeschaltetem Schalter', async ({ page }, testInfo) => {
+  const projekt = testInfo.project.name;
+  const bild = (name: string) => page.screenshot({ path: `tmp-bau/training-211/${projekt}-${name}.png` });
+  const satz = 'Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert.';
+
+  await page.goto('/handbuch');
+  await expect(page.getByRole('heading', { name: 'Handbuch', exact: true })).toBeVisible();
+  await expect(page.getByText(satz)).toHaveCount(0);
+  await ohneSeitlichenUeberlauf(page);
+  await bild('aus');
+
+  await page.goto('/mehr/funktionen');
+  await schalte(page, true);
+  await page.goto('/handbuch');
+  const karte = page.locator('[data-handbuch-karte="training"]');
+  await expect(karte).toBeVisible();
+  await expect(karte.getByText('Training', { exact: true })).toBeVisible();
+  await expect(karte.getByText(satz)).toBeVisible();
+  const oeffnen = karte.getByRole('link', { name: 'Öffnen', exact: true });
+  await expect(oeffnen).toHaveAttribute('href', '/training');
+  await ohneSeitlichenUeberlauf(page);
+  await bild('an');
+
+  await oeffnen.click();
+  await expect(page).toHaveURL(/\/training$/);
+  await expect(page.locator('[data-zurueck]')).toHaveCount(0);
+});

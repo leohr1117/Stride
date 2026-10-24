@@ -1499,4 +1499,8 @@ export const TEXTE: Record<string, string> = {
   "Aufwärmen zählt nicht. Die Schätzung ist Gewicht mal (1 + Wiederholungen / 30).": "热身不算。估算是重量乘以（1 + 次数 / 30）。",
   "Schätzung {wert}": "估算 {wert}",
   "Schätzung": "估算",
+  "Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert. Der Schalter liegt unter Funktionen.": "一次训练就是一条记录。热身不算最好成绩。开关在功能里。",
+  "Ein Plan hat Wochentage, Sätze und Wiederholungen oder eine Zeit. Das Gewicht ist in kg oder lb.": "计划包含星期、组数，以及次数或时间。重量用 kg 或 lb。",
+  "Heute zeigt den Plan. Starten öffnet die Einheit, die Kreise haken ab.": "今天显示计划。开始会打开这次训练，圆圈用来勾选。",
+  "Der erste Bestwert ist ein Meilenstein. Ab zwei Schätzungen steht ein Diagramm darunter.": "第一次纪录是一个里程碑。有两次估算后，下面会出现图。",
 };

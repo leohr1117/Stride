@@ -1,5 +1,9 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert. Der Schalter liegt unter Funktionen.', 'A session is an entry. Warm-up does not count toward the record. The switch is under Features.'],
+  ['Ein Plan hat Wochentage, Sätze und Wiederholungen oder eine Zeit. Das Gewicht ist in kg oder lb.', 'A plan has weekdays, sets, and reps or a time. The weight is in kg or lb.'],
+  ['Heute zeigt den Plan. Starten öffnet die Einheit, die Kreise haken ab.', 'Today shows the plan. Start opens the session, and the circles check it off.'],
+  ['Der erste Bestwert ist ein Meilenstein. Ab zwei Schätzungen steht ein Diagramm darunter.', 'The first record is a milestone. From two estimates, a chart sits below.'],
   ['Eigene Aufgaben. Eine Erledigung wird ein Eintrag. Der Schalter liegt unter Funktionen.', 'Tasks of your own. A completion becomes an entry. The switch is under Features.'],
   ['Datum, Uhrzeit und Wiederholung. Im Namen gehen auch Priorität, Projekt, Organisation und Vision.', 'Date, time, and repetition. The name can also set priority, project, organization, and vision.'],
   ['Eine normale Aufgabe kann ein Gegner sein. Ein Meilenstein kann ein Boss werden.', 'A normal task can be an opponent. A milestone can become a boss.'],

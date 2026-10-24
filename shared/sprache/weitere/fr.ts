@@ -1499,4 +1499,8 @@ export const TEXTE: Record<string, string> = {
   "Aufwärmen zählt nicht. Die Schätzung ist Gewicht mal (1 + Wiederholungen / 30).": "L'échauffement ne compte pas. L'estimation est le poids fois (1 + répétitions / 30).",
   "Schätzung {wert}": "Estimation {wert}",
   "Schätzung": "Estimation",
+  "Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert. Der Schalter liegt unter Funktionen.": "Une séance est une entrée. L'échauffement ne compte pas pour le record. L'interrupteur est sous Fonctions.",
+  "Ein Plan hat Wochentage, Sätze und Wiederholungen oder eine Zeit. Das Gewicht ist in kg oder lb.": "Un plan a des jours de la semaine, des séries et des répétitions ou une durée. Le poids est en kg ou en lb.",
+  "Heute zeigt den Plan. Starten öffnet die Einheit, die Kreise haken ab.": "Aujourd'hui montre le plan. Démarrer ouvre la séance, les cercles la cochent.",
+  "Der erste Bestwert ist ein Meilenstein. Ab zwei Schätzungen steht ein Diagramm darunter.": "Le premier record est un jalon. À partir de deux estimations, un graphique est en dessous.",
 };
