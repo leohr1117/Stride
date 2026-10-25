@@ -17,6 +17,27 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.7.1',
+    seiten: 'Aufgaben, Übersicht',
+    behoben: 'Aufgaben',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: [
+          'Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.',
+        ],
+      },
+      {
+        titel: 'Geändert',
+        punkte: ['Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.'],
+      },
+      {
+        titel: 'Behoben',
+        punkte: ['Die Info-Icons bei Meilenstein und Gegner öffnen wieder.'],
+      },
+    ],
+  },
+  {
     version: '3.7.0',
     seiten: 'Training, Übersicht, Mehr, Handbuch',
     abschnitte: [

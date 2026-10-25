@@ -15,6 +15,10 @@
   --xp: #d99a16;
   --gefahr: #e5484d;
   --diagramm-vorbild: #b07a10;
+  --prio-1: #d1453b;
+  --prio-2: #eb8909;
+  --prio-3: #246fe0;
+  --prio-4: var(--leise);
 }
 
 :root[data-glimmen='aus'] {
@@ -33,7 +37,18 @@
     --xp: #f5b942;
     --gefahr: #f2555a;
     --diagramm-vorbild: #b8841f;
+    --prio-1: #ff6b63;
+    --prio-2: #ff9a14;
+    --prio-3: #5297ff;
   }
+}
+
+:root[data-stil='jade'],
+:root[data-stil='holo'],
+:root[data-stil='antik'] {
+  --prio-1: #ff6b63;
+  --prio-2: #ff9a14;
+  --prio-3: #5297ff;
 }
 
 @theme inline {
@@ -300,4 +315,52 @@ body {
   .aufgaben-haken {
     transition: none;
   }
+}
+
+.prio-farbe[data-prio='1'] { color: var(--prio-1); }
+.prio-farbe[data-prio='2'] { color: var(--prio-2); }
+.prio-farbe[data-prio='3'] { color: var(--prio-3); }
+.prio-farbe[data-prio='4'] { color: var(--prio-4); }
+.aufgaben-kreis[data-prio='1'] { border-color: var(--prio-1); color: var(--prio-1); }
+.aufgaben-kreis[data-prio='2'] { border-color: var(--prio-2); color: var(--prio-2); }
+.aufgaben-kreis[data-prio='3'] { border-color: var(--prio-3); color: var(--prio-3); }
+.aufgaben-kreis[data-prio='4'] { border-color: var(--prio-4); color: var(--prio-4); }
+.prio-chip[data-prio='1'] { --prio: var(--prio-1); }
+.prio-chip[data-prio='2'] { --prio: var(--prio-2); }
+.prio-chip[data-prio='3'] { --prio: var(--prio-3); }
+.prio-chip[data-prio='4'] { --prio: var(--prio-4); }
+
+.prio-punkt {
+  width: 0.45rem;
+  height: 0.45rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--prio);
+}
+
+.prio-chip[data-prio='4'] .prio-punkt {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--prio-4);
+}
+
+button.chip.prio-chip:hover:not([aria-pressed='true']) {
+  color: var(--haupt);
+}
+
+button.chip.prio-chip[aria-pressed='true'] {
+  font-weight: 600;
+  color: var(--prio);
+  border-color: color-mix(in srgb, var(--prio) 70%, transparent);
+  background-color: color-mix(in srgb, var(--prio) 16%, transparent);
+}
+
+button.chip.prio-chip[data-prio='4'][aria-pressed='true'] {
+  color: var(--haupt);
+  border-color: color-mix(in srgb, var(--haupt) 28%, var(--rand));
+  background-color: var(--flaeche-2);
+}
+
+button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
+  background: var(--prio-4);
+  box-shadow: none;
 }

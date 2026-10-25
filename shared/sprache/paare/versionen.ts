@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.', 'Priority is in color. p1 red, p2 orange, p3 blue, p4 quiet. The same color sits on the circle.'],
+  ['Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.', 'The Today only switch is gone. The date sets the day.'],
+  ['Die Info-Icons bei Meilenstein und Gegner öffnen wieder.', 'The info icons on Milestone and Opponent open again.'],
   ['Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert. Der Schalter liegt unter Funktionen.', 'A session is an entry. Warm-up does not count toward the record. The switch is under Features.'],
   ['Ein Plan hat Wochentage, Sätze und Wiederholungen oder eine Zeit. Das Gewicht ist in kg oder lb.', 'A plan has weekdays, sets, and reps or a time. The weight is in kg or lb.'],
   ['Heute zeigt den Plan. Starten öffnet die Einheit, die Kreise haken ab.', 'Today shows the plan. Start opens the session, and the circles check it off.'],

@@ -150,7 +150,7 @@ test('Weiteres, Marken und Uhrzeit', async ({ page }, testInfo) => {
 
     const zeile = page.getByRole('listitem').filter({ hasText: name });
     await expect(zeile).toBeVisible();
-    expect(await sichtbareMarke(zeile, 'text-xp', 'p1')).toBe(1);
+    expect(await sichtbareMarke(zeile, 'prio-farbe', 'p1')).toBe(1);
     await expect(zeile).toContainText('09:00');
     await expect(zeile.locator('.size-9')).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);

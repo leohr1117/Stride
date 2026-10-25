@@ -122,7 +122,7 @@ function AufgabenZeile({
     datum === null ? null : { key: 'datum', knoten: datum },
     projekt === null ? null : { key: 'projekt', knoten: projekt },
     dauer === null ? null : { key: 'dauer', knoten: dauer },
-    prio === null ? null : { key: 'prio', knoten: <span className={aufgabe.prioritaet === 1 ? 'text-xp' : undefined}>{prio}</span> },
+    prio === null ? null : { key: 'prio', knoten: <span data-prio={aufgabe.prioritaet} className="prio-farbe">{prio}</span> },
     kampf === null ? null : { key: 'kampf', knoten: <span className="text-gefahr">{kampf}</span> },
   ].filter((teil) => teil !== null);
 
@@ -143,8 +143,9 @@ function AufgabenZeile({
       >
         <span
           data-an={erledigt ? '1' : '0'}
+          data-prio={erledigt || aufgabe.prioritaet === null ? undefined : aufgabe.prioritaet}
           className={`aufgaben-kreis flex size-[22px] items-center justify-center rounded-full border-[1.5px] ${
-            erledigt ? 'border-transparent bg-xp text-akzent-text' : 'border-current text-leise'
+            erledigt ? 'border-transparent bg-xp text-akzent-text' : aufgabe.prioritaet === null ? 'border-current text-leise' : ''
           }`}
         >
           <Check className="aufgaben-haken size-3.5" strokeWidth={2.5} />
@@ -162,7 +163,7 @@ function AufgabenZeile({
             {aufgabe.name}
           </button>
           {prio && (
-            <span className={`ms-1.5 shrink-0 text-[11px] md:hidden ${aufgabe.prioritaet === 1 ? 'text-xp' : 'text-leise'}`}>
+            <span data-prio={aufgabe.prioritaet} className="prio-farbe ms-1.5 shrink-0 text-[11px] md:hidden">
               {prio}
             </span>
           )}

@@ -1502,4 +1502,7 @@ export const TEXTE: Record<string, string> = {
   "Ein Plan hat Wochentage, Sätze und Wiederholungen oder eine Zeit. Das Gewicht ist in kg oder lb.": "Un plan tiene días de la semana, series y repeticiones o un tiempo. El peso está en kg o lb.",
   "Heute zeigt den Plan. Starten öffnet die Einheit, die Kreise haken ab.": "Hoy muestra el plan. Empezar abre la sesión y los círculos la marcan.",
   "Der erste Bestwert ist ein Meilenstein. Ab zwei Schätzungen steht ein Diagramm darunter.": "La primera marca es un hito. A partir de dos estimaciones hay un gráfico debajo.",
+  "Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.": "La prioridad va en color. p1 rojo, p2 naranja, p3 azul, p4 tranquilo. El mismo color está en el círculo.",
+  "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "El interruptor Solo hoy ya no está. La fecha fija el día.",
+  "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "Los iconos de info en Hito y Oponente vuelven a abrirse.",
 };

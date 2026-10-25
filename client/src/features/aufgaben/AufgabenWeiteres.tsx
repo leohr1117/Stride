@@ -2,7 +2,7 @@ import { tx } from '../../text.ts';
 import { BOSS_BELOHNUNG_INFO, BOSS_DATUM_INFO, GEGNER_INFO, MEILENSTEIN_INFO } from '../../../../shared/spiel/xp.ts';
 import { EinklappKopf } from '../../components/Ausklappbar.tsx';
 import { BossRing } from '../bosse/BossRing.tsx';
-import { Chip, EINGABE_STIL, Feld, InfoHinweis, SchalterBahn } from '../../ui/index.ts';
+import { EINGABE_STIL, Feld, InfoHinweis, SchalterBahn } from '../../ui/index.ts';
 
 function prioText(wert: number): string {
   if (wert === 1) {
@@ -94,9 +94,17 @@ export function AufgabenWeiteres({
           <Feld label={tx('Priorität')}>
             <div role="group" aria-label={tx('Priorität')} className="flex flex-wrap gap-1.5">
               {[1, 2, 3, 4].map((wert) => (
-                <Chip key={wert} aktiv={prioritaet === wert} onClick={() => onPrioritaet(prioritaet === wert ? null : wert)}>
+                <button
+                  key={wert}
+                  type="button"
+                  aria-pressed={prioritaet === wert}
+                  data-prio={wert}
+                  onClick={() => onPrioritaet(prioritaet === wert ? null : wert)}
+                  className="chip prio-chip flex shrink-0 items-center gap-1.5 rounded-full border border-rand px-3 py-1.5 text-sm text-leise transition"
+                >
+                  <span className="prio-punkt" aria-hidden="true" />
                   {prioText(wert)}
-                </Chip>
+                </button>
               ))}
             </div>
           </Feld>
