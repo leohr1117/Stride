@@ -1,4 +1,4 @@
-import { expect, test, type Locator } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import { anmelden, heuteDerWelt, ohneSeitlichenUeberlauf, raeumeBau, schalte } from './aufgabenHelfer.ts';
 
 function plusTage(iso: string, tage: number): string {
@@ -24,6 +24,25 @@ async function infoAbstand(dialog: Locator, label: string): Promise<{ abstand: n
     const delta = knopf ? knopf.top + knopf.height / 2 - (name.top + name.height / 2) : 99;
     return { abstand, delta };
   });
+}
+
+function infoKnopf(dialog: Locator, label: string): Locator {
+  return labelSpan(dialog, label).locator('xpath=..').getByRole('button', { name: 'Info' });
+}
+
+async function oeffneHinweis(dialog: Locator, page: Page, label: string, text: string): Promise<void> {
+  const knopf = infoKnopf(dialog, label);
+  await knopf.click();
+  const hinweis = page.getByRole('tooltip');
+  await expect(hinweis).toHaveText(text);
+  const lage = await hinweis.evaluate((knoten) => {
+    const stil = getComputedStyle(knoten);
+    return { z: Number.parseFloat(stil.zIndex), sichtbar: stil.visibility };
+  });
+  expect(lage.z).toBeGreaterThan(90);
+  expect(lage.sichtbar).toBe('visible');
+  const ring = await knopf.evaluate((knoten) => getComputedStyle(knoten).outlineStyle);
+  expect(ring).toBe('none');
 }
 
 async function sichtbareMarke(zeile: Locator, klasse: string, text: string): Promise<number> {
@@ -56,7 +75,7 @@ test.afterEach(async ({ page }) => {
 
 test('Weiteres, Marken und Uhrzeit', async ({ page }, testInfo) => {
   const projekt = testInfo.project.name;
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/aufgaben-17/${projekt}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-bau/aufgaben-k1/${projekt}-${name}.png` });
   const name = `Bau Marke ${projekt}`;
   const spaet = `Bau Spaet ${projekt}`;
   const frueh = `Bau Frueh ${projekt}`;
@@ -85,10 +104,7 @@ test('Weiteres, Marken und Uhrzeit', async ({ page }, testInfo) => {
     await dialog.getByLabel('Uhrzeit').fill('09:00');
     await dialog.getByRole('button', { name: 'Weiteres', exact: true }).click();
     await dialog.getByRole('button', { name: 'p1', exact: true }).click();
-    await dialog.getByRole('switch', { name: 'Nur heute', exact: true }).click();
-    await expect(dialog.getByLabel('Datum')).toHaveValue('');
-    await expect(dialog.getByLabel('Uhrzeit')).toHaveValue('');
-    await expect(dialog.getByRole('button', { name: 'Einmal', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await expect(dialog.getByRole('switch', { name: 'Nur heute', exact: true })).toHaveCount(0);
     const meilenstein = await infoAbstand(dialog, 'Meilenstein');
     expect(meilenstein.abstand).toBeGreaterThanOrEqual(5);
     expect(meilenstein.abstand).toBeLessThanOrEqual(8);
@@ -96,15 +112,24 @@ test('Weiteres, Marken und Uhrzeit', async ({ page }, testInfo) => {
     const gegner = dialog.getByRole('switch', { name: 'Gegner', exact: true });
     await expect(gegner).toHaveAttribute('aria-checked', 'false');
     await expect(dialog.getByRole('switch', { name: 'Boss', exact: true })).toHaveCount(0);
-    await labelSpan(dialog, 'Gegner').locator('xpath=..').getByRole('button', { name: 'Info' }).click();
-    await expect(page.getByRole('tooltip')).toHaveText('Ein Gegner zahlt weniger als ein Boss.');
-    await expect(gegner).toHaveAttribute('aria-checked', 'false');
+    await oeffneHinweis(
+      dialog,
+      page,
+      'Meilenstein',
+      'Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.',
+    );
+    await expect(dialog.getByRole('switch', { name: 'Meilenstein', exact: true })).toHaveAttribute('aria-checked', 'false');
+    await bild('dialog-info-meilenstein');
     await page.keyboard.press('Escape');
-    await dialog.getByRole('switch', { name: 'Nur heute', exact: true }).scrollIntoViewIfNeeded();
+    await oeffneHinweis(dialog, page, 'Gegner', 'Ein Gegner zahlt weniger als ein Boss.');
+    await expect(gegner).toHaveAttribute('aria-checked', 'false');
+    await bild('dialog-info-gegner');
+    await page.keyboard.press('Escape');
+    await dialog.getByRole('switch', { name: 'Meilenstein', exact: true }).scrollIntoViewIfNeeded();
     await ohneSeitlichenUeberlauf(page);
     await bild('dialog-mehr');
 
-    await dialog.getByRole('switch', { name: 'Nur heute', exact: true }).click();
+    await dialog.getByLabel('Datum').fill('');
     await dialog.getByLabel('Uhrzeit').fill('09:00');
     await expect(dialog.getByRole('button', { name: 'Speichern' })).toBeDisabled();
     await expect(dialog.getByText('Die Uhrzeit braucht ein Datum.')).toBeVisible();
@@ -157,8 +182,7 @@ test('Weiteres, Marken und Uhrzeit', async ({ page }, testInfo) => {
     await expect(bossDialog.getByRole('switch', { name: 'Gegner', exact: true })).toHaveCount(0);
     await expect(bossDialog.getByLabel('Deadline')).toHaveCount(0);
     await bossDialog.getByRole('switch', { name: 'Boss', exact: true }).click();
-    await labelSpan(bossDialog, 'Boss').locator('xpath=..').getByRole('button', { name: 'Info' }).click();
-    await expect(page.getByRole('tooltip')).toHaveText('Volle Boss-Belohnung.');
+    await oeffneHinweis(bossDialog, page, 'Boss', 'Volle Boss-Belohnung.');
     await page.keyboard.press('Escape');
     await bossDialog.getByLabel('Deadline').fill(plusTage(heute, 10));
     await expect(bossDialog.locator('span.size-9')).toBeVisible();

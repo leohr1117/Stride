@@ -21,7 +21,6 @@ import {
   ergebnisVon,
   kreuz,
   nebenweg,
-  nebenwege,
   tippe,
   uebernimmVorschlag,
   vorschlagAmCursor,
@@ -41,7 +40,6 @@ export function useSchnellFelder({
   ziele,
   ebenen,
   onProjekt,
-  onTermin,
 }: {
   anfang: SchnellAnfang;
   heute: string;
@@ -49,7 +47,6 @@ export function useSchnellFelder({
   ziele: Ziele | undefined;
   ebenen: SchnellEbenen;
   onProjekt: (id: number | null) => void;
-  onTermin: () => void;
 }) {
   const kontext = useMemo(
     () => kontextAus(heute, sprache, ziele, ebenen),
@@ -63,15 +60,10 @@ export function useSchnellFelder({
   standRef.current = stand;
   const onProjektRef = useRef(onProjekt);
   onProjektRef.current = onProjekt;
-  const onTerminRef = useRef(onTermin);
-  onTerminRef.current = onTermin;
 
   const melde = (vorher: SchnellStand, nachher: SchnellStand) => {
     if (nachher.projektId !== vorher.projektId) {
       onProjektRef.current(nachher.projektId);
-    }
-    if (nachher.faelligAm !== '' || nachher.faelligUm !== '') {
-      onTerminRef.current();
     }
   };
 
@@ -88,9 +80,6 @@ export function useSchnellFelder({
     }
     if (naechster.projektId !== aktuell.projektId) {
       onProjektRef.current(naechster.projektId);
-    }
-    if (naechster.faelligAm !== '' || naechster.faelligUm !== '') {
-      onTerminRef.current();
     }
     setStand(naechster);
   }, [kontext]);
@@ -129,7 +118,6 @@ export function useSchnellFelder({
     setzeUhrzeit: (wert: string) => wende(nebenweg(stand, 'uhrzeit', wert === '' ? null : wert, kontext)),
     setzePrioritaet: (wert: number | null) => wende(nebenweg(stand, 'prioritaet', wert, kontext)),
     setzeProjekt: (wert: number | null) => wende(nebenweg(stand, 'projekt', wert, kontext)),
-    leereTermin: () => wende(nebenwege(stand, { datum: null, uhrzeit: null }, kontext)),
   };
 }
 

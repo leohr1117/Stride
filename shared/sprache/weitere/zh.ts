@@ -1406,7 +1406,6 @@ export const TEXTE: Record<string, string> = {
   "Gegner besiegt": "对手已击败",
   "Priorität": "优先级",
   "Uhrzeit": "时间",
-  "Nur heute": "仅今天",
   "Weiteres": "更多",
   "Optional": "可选",
   "p1": "p1",

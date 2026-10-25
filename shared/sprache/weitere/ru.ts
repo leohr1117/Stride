@@ -1406,7 +1406,6 @@ export const TEXTE: Record<string, string> = {
   "Gegner besiegt": "Противник побеждён",
   "Priorität": "Приоритет",
   "Uhrzeit": "Время",
-  "Nur heute": "Только сегодня",
   "Weiteres": "Ещё",
   "Optional": "Необязательно",
   "p1": "p1",

@@ -245,6 +245,7 @@ test('Handbuch-Karte nur bei angeschaltetem Schalter', async ({ page }, testInfo
   await expect(karte).toBeVisible();
   await expect(karte.getByRole('heading', { name: 'Aufgaben', exact: true })).toBeVisible();
   await expect(karte.getByText(satz)).toBeVisible();
+  await expect(karte.getByText('Nur heute')).toHaveCount(0);
   const oeffnen = karte.getByRole('link', { name: 'Öffnen', exact: true });
   await expect(oeffnen).toHaveAttribute('href', '/aufgaben');
   await ohneSeitlichenUeberlauf(page);

@@ -1406,7 +1406,6 @@ export const TEXTE: Record<string, string> = {
   "Gegner besiegt": "相手を倒した",
   "Priorität": "優先度",
   "Uhrzeit": "時刻",
-  "Nur heute": "今日だけ",
   "Weiteres": "その他",
   "Optional": "任意",
   "p1": "p1",

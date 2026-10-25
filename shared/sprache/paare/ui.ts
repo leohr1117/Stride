@@ -293,7 +293,6 @@ export const PAARE = [
   ['Wiederholung', 'Repetition'],
   ['Priorität', 'Priority'],
   ['Uhrzeit', 'Time'],
-  ['Nur heute', 'Today only'],
   ['Weiteres', 'More'],
   ['Optional', 'Optional'],
   ['p1', 'p1'],

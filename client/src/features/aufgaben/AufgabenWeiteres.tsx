@@ -38,10 +38,10 @@ function SchalterZeile({
         onClick={() => onAendern(!an)}
         className="absolute inset-0 z-0"
       />
-      <span className="pointer-events-none flex min-w-0 flex-1 items-center">
-        <span className="text-sm font-medium">{tx(label)}</span>
+      <span className="flex min-w-0 flex-1 items-center">
+        <span className="pointer-events-none text-sm font-medium">{tx(label)}</span>
         {info ? (
-          <span className="pointer-events-auto">
+          <span className="relative z-10 inline-flex self-center">
             <InfoHinweis text={info} />
           </span>
         ) : null}
@@ -58,8 +58,6 @@ export function AufgabenWeiteres({
   onOffen,
   prioritaet,
   onPrioritaet,
-  nurHeute,
-  onNurHeute,
   meilenstein,
   onMeilenstein,
   gegner,
@@ -75,8 +73,6 @@ export function AufgabenWeiteres({
   onOffen: (offen: boolean) => void;
   prioritaet: number | null;
   onPrioritaet: (wert: number | null) => void;
-  nurHeute: boolean;
-  onNurHeute: (an: boolean) => void;
   meilenstein: boolean;
   onMeilenstein: (an: boolean) => void;
   gegner: boolean;
@@ -105,7 +101,6 @@ export function AufgabenWeiteres({
             </div>
           </Feld>
           <div>
-            <SchalterZeile an={nurHeute} label="Nur heute" onAendern={onNurHeute} />
             <SchalterZeile an={meilenstein} label="Meilenstein" info={MEILENSTEIN_INFO} onAendern={onMeilenstein} />
             {meilenstein ? (
               <SchalterZeile an={boss} label="Boss" info={BOSS_BELOHNUNG_INFO} onAendern={onBoss} />

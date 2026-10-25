@@ -1406,7 +1406,6 @@ export const TEXTE: Record<string, string> = {
   "Gegner besiegt": "Oponente vencido",
   "Priorität": "Prioridad",
   "Uhrzeit": "Hora",
-  "Nur heute": "Solo hoy",
   "Weiteres": "Más",
   "Optional": "Opcional",
   "p1": "p1",

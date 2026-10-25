@@ -87,7 +87,7 @@ export function InfoHinweis({
     position: 'fixed',
     top: ort?.top ?? 0,
     left: ort?.left ?? 0,
-    zIndex: 80,
+    zIndex: 100,
     visibility: ort ? 'visible' : 'hidden',
   };
 
@@ -100,9 +100,13 @@ export function InfoHinweis({
         type="button"
         aria-label={labelText}
         aria-expanded={offen}
+        onPointerDown={(ereignis) => ereignis.stopPropagation()}
         onClick={(ereignis) => {
           ereignis.stopPropagation();
           setOffen((wert) => !wert);
+          if (ereignis.detail !== 0) {
+            ereignis.currentTarget.blur();
+          }
         }}
         className={knopfKlasse ?? 'inline-flex size-4 items-center justify-center rounded-full text-leise hover:text-haupt'}
       >

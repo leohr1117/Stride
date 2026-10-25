@@ -58,7 +58,6 @@ export function AufgabenFormular({ aufgabe, onFertig }: { aufgabe: Aufgabe | nul
   const [wiederholung, setWiederholung] = useState<Wiederholung>(aufgabe?.wiederholung ?? 'keine');
   const [wochentage, setWochentage] = useState<number[]>(aufgabe?.wochentage ?? []);
   const [stunden, setStunden] = useState<number | null>(aufgabe?.stunden ?? null);
-  const [nurHeute, setNurHeute] = useState(aufgabe?.nurHeuteAm === heute);
   const richteVorlage = (naechstes: number | null) => {
     const ziel = ebenen.projekte ? naechstes : null;
     setVorlageId((aktuell) => {
@@ -84,7 +83,6 @@ export function AufgabenFormular({ aufgabe, onFertig }: { aufgabe: Aufgabe | nul
     ziele,
     ebenen,
     onProjekt: richteVorlage,
-    onTermin: () => setNurHeute(false),
   });
   const { nameRein, faelligAm, faelligUm, prioritaet, projektId } = schnell;
   const [meilenstein, setMeilenstein] = useState(aufgabe?.meilenstein ?? false);
@@ -92,7 +90,7 @@ export function AufgabenFormular({ aufgabe, onFertig }: { aufgabe: Aufgabe | nul
   const [boss, setBoss] = useState(aufgabe?.boss ?? false);
   const [deadline, setDeadline] = useState(aufgabe?.deadline ?? '');
   const [weiteresOffen, setWeiteresOffen] = useState(
-    aufgabe !== null && (aufgabe.prioritaet !== null || aufgabe.nurHeuteAm !== null || aufgabe.meilenstein || aufgabe.gegner || aufgabe.boss || aufgabe.deadline !== null),
+    aufgabe !== null && (aufgabe.prioritaet !== null || aufgabe.meilenstein || aufgabe.gegner || aufgabe.boss || aufgabe.deadline !== null),
   );
   const wirksameProjektId = ebenen.projekte ? projektId : null;
   const vorlagePasst = vorlagen.some(
@@ -135,12 +133,12 @@ export function AufgabenFormular({ aufgabe, onFertig }: { aufgabe: Aufgabe | nul
         icon: 'clipboard-list' as const,
         vorlageId: wirksameVorlageId,
         stunden,
-        faelligAm: nurHeute || faelligAm === '' ? null : faelligAm,
-        faelligUm: nurHeute || faelligUm === '' ? null : faelligUm,
-        wiederholung: nurHeute ? ('keine' as const) : wiederholung,
-        wochentage: !nurHeute && wiederholung === 'woechentlich' ? [...wochentage].sort((a, b) => a - b) : [],
+        faelligAm: faelligAm === '' ? null : faelligAm,
+        faelligUm: faelligUm === '' ? null : faelligUm,
+        wiederholung,
+        wochentage: wiederholung === 'woechentlich' ? [...wochentage].sort((a, b) => a - b) : [],
         prioritaet,
-        nurHeute,
+        nurHeute: false,
         meilenstein,
         gegner: meilenstein ? false : gegner,
         boss: meilenstein && boss,
@@ -185,15 +183,6 @@ export function AufgabenFormular({ aufgabe, onFertig }: { aufgabe: Aufgabe | nul
       setGegner(false);
       setBoss(false);
       setDeadline('');
-    }
-  };
-
-  const setzeNurHeute = (an: boolean) => {
-    setNurHeute(an);
-    if (an) {
-      schnell.leereTermin();
-      setWiederholung('keine');
-      setWochentage([]);
     }
   };
 
@@ -354,8 +343,6 @@ export function AufgabenFormular({ aufgabe, onFertig }: { aufgabe: Aufgabe | nul
         onOffen={setWeiteresOffen}
         prioritaet={prioritaet}
         onPrioritaet={schnell.setzePrioritaet}
-        nurHeute={nurHeute}
-        onNurHeute={setzeNurHeute}
         meilenstein={meilenstein}
         onMeilenstein={setzeMeilenstein}
         gegner={gegner}
