@@ -77,7 +77,7 @@ export function SprachStart({ onFertig }: { onFertig: () => void }) {
     <main className="flex min-h-dvh flex-col px-4 py-6">
       <form onSubmit={weiter} className="mx-auto my-auto w-full max-w-lg shrink-0 space-y-6">
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
-          <img src="/favicon.svg" alt="" className="size-7" />
+          <img src="/logo-v2.svg" alt="" className="size-7" />
           Stride
         </div>
         <div className="flex min-w-0 items-center">

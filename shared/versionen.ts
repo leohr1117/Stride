@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.7.4',
+    seiten: 'Übersicht, Mehr',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Neues Logo erscheint jetzt auch auf dem Handy.'],
+      },
+    ],
+  },
+  {
     version: '3.7.3',
     seiten: 'Übersicht, Mehr',
     abschnitte: [

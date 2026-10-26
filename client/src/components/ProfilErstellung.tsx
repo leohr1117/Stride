@@ -172,7 +172,7 @@ export function ProfilErstellung({ start }: { start: Einstellungen }) {
     <main className="flex min-h-dvh items-center justify-center px-4 py-10">
       <form onSubmit={weiter} className="w-full max-w-lg space-y-6">
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
-          <img src="/favicon.svg" alt="" className="size-7" />
+          <img src="/logo-v2.svg" alt="" className="size-7" />
           Stride
         </div>
         <div

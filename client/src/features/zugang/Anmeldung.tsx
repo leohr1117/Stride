@@ -36,7 +36,7 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
     <main className="flex min-h-dvh items-center justify-center px-4">
       <form onSubmit={(ereignis) => void senden(ereignis)} className="w-full max-w-sm space-y-4 rounded-2xl border border-rand bg-flaeche p-6">
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
-          <img src="/favicon.svg" alt="" className="size-7" />
+          <img src="/logo-v2.svg" alt="" className="size-7" />
           Stride
         </div>
         {mitName && (
@@ -105,7 +105,7 @@ function BenutzernameFestlegen({ onErfolg }: { onErfolg: (status: ZugangStatus) 
     <main className="flex min-h-dvh items-center justify-center px-4">
       <form onSubmit={(ereignis) => void senden(ereignis)} className="w-full max-w-sm space-y-4 rounded-2xl border border-rand bg-flaeche p-6">
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
-          <img src="/favicon.svg" alt="" className="size-7" />
+          <img src="/logo-v2.svg" alt="" className="size-7" />
           Stride
         </div>
         <Feld label={tx("Benutzername")}>

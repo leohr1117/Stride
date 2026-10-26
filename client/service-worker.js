@@ -19,7 +19,7 @@ self.addEventListener('install', (ereignis) => {
   ereignis.waitUntil(
     caches
       .open(CACHE)
-      .then((cache) => cache.addAll(DATEIEN))
+      .then((cache) => cache.addAll(DATEIEN.map((datei) => new Request(datei, { cache: 'reload' }))))
       .then(() => self.skipWaiting()),
   );
 });
