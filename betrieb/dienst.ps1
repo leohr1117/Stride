@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Continue'
+﻿$ErrorActionPreference = 'Continue'
 $root = 'C:\Users\Administrator\ascend'
 $node = 'C:\Program Files\nodejs\node.exe'
 $cloudflared = 'C:\Program Files (x86)\cloudflared\cloudflared.exe'
@@ -10,6 +10,10 @@ $serverOut = Join-Path $logDir 'server.out.log'
 $serverErr = Join-Path $logDir 'server.err.log'
 $tunnelOut = Join-Path $logDir 'tunnel.out.log'
 $tunnelErr = Join-Path $logDir 'tunnel.err.log'
+$domainPid = Join-Path $logDir 'domain.pid'
+$domainErr = Join-Path $logDir 'domain.err.log'
+$domainOut = Join-Path $logDir 'domain.out.log'
+$domainCfg = 'C:\Users\Administrator\.cloudflared\stride.yml'
 $dienstLog = Join-Path $logDir 'dienst.log'
 $urlDatei = Join-Path $logDir 'url.txt'
 $desktopDatei = Join-Path $desktop 'Ascend-Adresse.txt'
@@ -103,6 +107,14 @@ function Start-Tunnel {
   Write-Log "Tunnel gestartet $($prozess.Id)"
 }
 
+function Start-DomainTunnel {
+  Protect-Log $domainOut
+  Protect-Log $domainErr
+  $prozess = Start-Process -FilePath $cloudflared -ArgumentList @('tunnel', '--no-autoupdate', '--config', $domainCfg, 'run') -WindowStyle Hidden -RedirectStandardOutput $domainOut -RedirectStandardError $domainErr -PassThru
+  Set-Content -Path $domainPid -Value $prozess.Id -Encoding ASCII
+  Write-Log "Domain-Tunnel gestartet $($prozess.Id)"
+}
+
 Write-Log 'Dienst gestartet'
 while ($true) {
   $portOffen = Test-PortOffen 3000
@@ -123,6 +135,11 @@ while ($true) {
   if ((Test-PortOffen 3000) -and -not (Test-PidDatei $tunnelPid)) {
     Start-Tunnel
   }
+  if ((Test-PortOffen 3000) -and (Test-Path $domainCfg) -and -not (Test-PidDatei $domainPid)) {
+    Start-DomainTunnel
+  }
   Update-Adresse
   Start-Sleep -Seconds 10
 }
+
+

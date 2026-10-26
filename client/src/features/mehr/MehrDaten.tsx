@@ -87,7 +87,7 @@ function DatenKarte() {
     try {
       daten = JSON.parse(await datei.text());
     } catch {
-      setLesefehler(new Error(tx("Die Datei ist keine gültige Ascend-Sicherung.")));
+      setLesefehler(new Error(tx("Die Datei ist keine gültige Stride-Sicherung.")));
       return;
     }
     if (

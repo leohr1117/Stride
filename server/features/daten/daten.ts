@@ -9,7 +9,7 @@ export async function datenRouten(app: FastifyInstance): Promise<void> {
   app.get('/export', async (_anfrage, antwort) => {
     const jetzt = new Date();
     return antwort
-      .header('Content-Disposition', `attachment; filename="ascend-${lokalesDatum(jetzt)}.json"`)
+      .header('Content-Disposition', `attachment; filename="stride-${lokalesDatum(jetzt)}.json"`)
       .send(exportiereDaten(jetzt));
   });
 

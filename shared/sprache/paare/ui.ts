@@ -339,7 +339,7 @@ export const PAARE = [
   ['Weiter', 'Next'],
   ['Weitere Seiten', 'More pages'],
   ['Weniger', 'Less'],
-  ['Willkommen bei Ascend', 'Welcome to Ascend'],
+  ['Willkommen bei Stride', 'Welcome to Stride'],
   ['Wofür?', 'For what?'],
   ['Wunsch', 'Wish'],
   ['Ziel', 'Goal'],

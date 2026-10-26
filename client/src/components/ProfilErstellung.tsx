@@ -173,7 +173,7 @@ export function ProfilErstellung({ start }: { start: Einstellungen }) {
       <form onSubmit={weiter} className="w-full max-w-lg space-y-6">
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
           <img src="/favicon.svg" alt="" className="size-7" />
-          Ascend
+          Stride
         </div>
         <div
           className="flex gap-1.5"

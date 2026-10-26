@@ -128,7 +128,7 @@ process.on('SIGTERM', () => void beende('SIGTERM'));
 
 try {
   await app.listen({ port: KONFIG.port, host: KONFIG.host });
-  console.log(`Ascend läuft auf http://localhost:${KONFIG.port}`);
+  console.log(`Stride läuft auf http://localhost:${KONFIG.port}`);
   stoppeAbgleich = starteRegelmaessigenAbgleich(weltenPfade, (fehler) => app.log.error({ err: fehler }, 'Abgleich fehlgeschlagen'));
 } catch (fehler) {
   app.log.error({ err: fehler }, 'Server konnte nicht gestartet werden');

@@ -94,7 +94,7 @@ export function UebersichtSeite() {
       {uebersicht.level.xpGesamt === 0 && istAn('handbuch', sichtbarkeit) && (
         <Karte className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="font-semibold">{tx("Willkommen bei Ascend")}</h2>
+            <h2 className="font-semibold">{tx("Willkommen bei Stride")}</h2>
           </div>
           <Link
             to="/handbuch"

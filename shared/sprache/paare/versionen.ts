@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die App heißt jetzt Stride.', 'The app is now called Stride.'],
   ['Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.', 'Priority is in color. p1 red, p2 orange, p3 blue, p4 quiet. The same color sits on the circle.'],
   ['Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.', 'The Today only switch is gone. The date sets the day.'],
   ['Die Info-Icons bei Meilenstein und Gegner öffnen wieder.', 'The info icons on Milestone and Opponent open again.'],

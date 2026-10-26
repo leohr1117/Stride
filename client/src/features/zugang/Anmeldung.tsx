@@ -37,7 +37,7 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
       <form onSubmit={(ereignis) => void senden(ereignis)} className="w-full max-w-sm space-y-4 rounded-2xl border border-rand bg-flaeche p-6">
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
           <img src="/favicon.svg" alt="" className="size-7" />
-          Ascend
+          Stride
         </div>
         {mitName && (
           <Feld label={tx("Benutzername")}>
@@ -106,7 +106,7 @@ function BenutzernameFestlegen({ onErfolg }: { onErfolg: (status: ZugangStatus) 
       <form onSubmit={(ereignis) => void senden(ereignis)} className="w-full max-w-sm space-y-4 rounded-2xl border border-rand bg-flaeche p-6">
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
           <img src="/favicon.svg" alt="" className="size-7" />
-          Ascend
+          Stride
         </div>
         <Feld label={tx("Benutzername")}>
           <input

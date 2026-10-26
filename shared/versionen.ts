@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.7.2',
+    seiten: 'Übersicht, Mehr',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Die App heißt jetzt Stride.'],
+      },
+    ],
+  },
+  {
     version: '3.7.1',
     seiten: 'Aufgaben, Übersicht',
     behoben: 'Aufgaben',

@@ -141,7 +141,7 @@ export const ERFOLGE: ErfolgDefinition[] = [
     label: 'Aktive Tage',
     stufen: [
       { schwelle: 100, name: 'Hundert Tage' },
-      { schwelle: 365, name: 'Ein Jahr Ascend' },
+      { schwelle: 365, name: 'Ein Jahr Stride' },
       { schwelle: 1000, name: 'Tausend Tage' },
     ],
   },

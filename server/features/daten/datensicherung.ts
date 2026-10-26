@@ -106,7 +106,7 @@ function entferneImportDatei(pfad: string): void {
 
 export function importiereDaten(sicherung: DatenExport, jetzt = new Date()): ImportErgebnis {
   if (sicherung.schemaVersion > AKTUELLE_SCHEMA_VERSION) {
-    throw ungueltig('Die Sicherung stammt aus einer neueren Version von Ascend. Bitte zuerst Ascend aktualisieren.');
+    throw ungueltig('Die Sicherung stammt aus einer neueren Version von Stride. Bitte zuerst Stride aktualisieren.');
   }
   const importPfad = path.join(path.dirname(KONFIG.datenbankPfad), `import-${jetzt.getTime()}.db`);
   try {

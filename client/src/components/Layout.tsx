@@ -216,7 +216,7 @@ function Logo() {
   return (
     <span className="flex items-center gap-2 text-lg font-bold tracking-tight">
       <img src="/favicon.svg" alt="" className="logo-bild size-7" />
-      Ascend
+      Stride
     </span>
   );
 }

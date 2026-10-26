@@ -78,7 +78,7 @@ export function SprachStart({ onFertig }: { onFertig: () => void }) {
       <form onSubmit={weiter} className="mx-auto my-auto w-full max-w-lg shrink-0 space-y-6">
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
           <img src="/favicon.svg" alt="" className="size-7" />
-          Ascend
+          Stride
         </div>
         <div className="flex min-w-0 items-center">
           <h1 className="min-w-0 text-2xl font-bold tracking-tight break-words">{tx('Sprache')}</h1>
@@ -160,7 +160,7 @@ export function Einfuehrung({ onFertig }: { onFertig: () => void }) {
   return (
     <main className="flex min-h-dvh items-center justify-center px-4 py-10">
       <div className="w-full max-w-lg space-y-8">
-        <p className="text-lg font-bold tracking-tight">Ascend</p>
+        <p className="text-lg font-bold tracking-tight">Stride</p>
         <div
           className="touch-none space-y-6"
           onPointerDown={zeigerStart}
