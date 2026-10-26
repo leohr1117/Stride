@@ -5,8 +5,7 @@ client/dist
 betrieb/*.log
 betrieb/*.pid
 betrieb/url.txt
-tmp-bau/
+tmp-*/
 test-results/
 playwright-report/
-tmp-vitest/
 *.db
