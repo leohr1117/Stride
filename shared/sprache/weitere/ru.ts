@@ -1503,6 +1503,7 @@ export const TEXTE: Record<string, string> = {
   "Heute zeigt den Plan. Starten öffnet die Einheit, die Kreise haken ab.": "Сегодня показывает план. Начать открывает занятие, кружки отмечают подходы.",
   "Der erste Bestwert ist ein Meilenstein. Ab zwei Schätzungen steht ein Diagramm darunter.": "Первый рекорд — это веха. От двух оценок ниже стоит диаграмма.",
   "Die App heißt jetzt Stride.": "Приложение теперь называется Stride.",
+  "Neues Logo.": "Новый логотип.",
   "Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.": "Приоритет цветной. p1 красный, p2 оранжевый, p3 синий, p4 спокойный. Тот же цвет на круге.",
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "Переключатель «Только сегодня» убран. День задаёт дата.",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "Значки информации у «Веха» и «Противник» снова открываются.",

@@ -1503,6 +1503,7 @@ export const TEXTE: Record<string, string> = {
   "Heute zeigt den Plan. Starten öffnet die Einheit, die Kreise haken ab.": "今天显示计划。开始会打开这次训练，圆圈用来勾选。",
   "Der erste Bestwert ist ein Meilenstein. Ab zwei Schätzungen steht ein Diagramm darunter.": "第一次纪录是一个里程碑。有两次估算后，下面会出现图。",
   "Die App heißt jetzt Stride.": "应用现在叫 Stride。",
+  "Neues Logo.": "新标志。",
   "Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.": "优先级有了颜色。p1 红，p2 橙，p3 蓝，p4 安静。同样的颜色在圆圈上。",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "里程碑和对手旁的信息图标又能打开了。",
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "「仅今天」开关已去掉。日期决定这一天。",

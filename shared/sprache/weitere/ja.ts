@@ -1503,6 +1503,7 @@ export const TEXTE: Record<string, string> = {
   "Heute zeigt den Plan. Starten öffnet die Einheit, die Kreise haken ab.": "今日はそのプランを表示する。開始でセッションが開き、円でチェックする。",
   "Der erste Bestwert ist ein Meilenstein. Ab zwei Schätzungen steht ein Diagramm darunter.": "最初の記録は節目です。推定が二つあると、その下にグラフが出る。",
   "Die App heißt jetzt Stride.": "アプリの名前は Stride になりました。",
+  "Neues Logo.": "新しいロゴ。",
   "Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.": "優先度に色が付いた。p1 は赤、p2 はオレンジ、p3 は青、p4 は落ち着いた色。同じ色が円に付く。",
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "「今日だけ」のスイッチはなくなった。日付がその日を決める。",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "節目と相手の情報アイコンが再び開く。",
