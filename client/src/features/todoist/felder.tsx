@@ -19,24 +19,26 @@ export function DauerWahl({
   disabled: boolean;
 }) {
   return (
-    <select
-      className={EINGABE_STIL}
-      aria-label={tx('Dauer')}
-      disabled={disabled}
-      value={wert === null ? '' : String(wert)}
-      onChange={(ereignis) => {
-        const roh = ereignis.target.value;
-        onAendern(roh === '' ? null : Number(roh));
-      }}
-    >
-      {erben ? <option value="">{tx('Wie das Projekt')}</option> : null}
-      {erben ? <option value="0">{tx('Keine Angabe')}</option> : <option value="">{tx('Dauer: keine Angabe')}</option>}
-      {DAUER_OPTIONEN.map((option) => (
-        <option key={option.stunden} value={option.stunden}>
-          {tx('Dauer: {label}', { label: tx(option.label) })}
-        </option>
-      ))}
-    </select>
+    <Feld label="Dauer">
+      <select
+        className={EINGABE_STIL}
+        aria-label={tx('Dauer')}
+        disabled={disabled}
+        value={wert === null ? '' : String(wert)}
+        onChange={(ereignis) => {
+          const roh = ereignis.target.value;
+          onAendern(roh === '' ? null : Number(roh));
+        }}
+      >
+        {erben ? <option value="">{tx('Wie das Projekt')}</option> : null}
+        {erben ? <option value="0">{tx('Keine Angabe')}</option> : <option value="">{tx('Dauer: keine Angabe')}</option>}
+        {DAUER_OPTIONEN.map((option) => (
+          <option key={option.stunden} value={option.stunden}>
+            {tx('Dauer: {label}', { label: tx(option.label) })}
+          </option>
+        ))}
+      </select>
+    </Feld>
   );
 }
 
@@ -55,20 +57,22 @@ export function TaetigkeitWahl({
 }) {
   const gueltig = taetigkeiten.some((vorlage) => vorlage.id === wert) ? wert : null;
   return (
-    <select
-      className={EINGABE_STIL}
-      aria-label={tx('Tätigkeit')}
-      disabled={disabled}
-      value={gueltig ?? ''}
-      onChange={(ereignis) => onAendern(ereignis.target.value === '' ? null : Number(ereignis.target.value))}
-    >
-      <option value="">{erben ? tx('Wie das Projekt') : tx('Standard des Projekts')}</option>
-      {taetigkeiten.map((vorlage) => (
-        <option key={vorlage.id} value={vorlage.id}>
-          {vorlage.name}
-        </option>
-      ))}
-    </select>
+    <Feld label="Tätigkeit">
+      <select
+        className={EINGABE_STIL}
+        aria-label={tx('Tätigkeit')}
+        disabled={disabled}
+        value={gueltig ?? ''}
+        onChange={(ereignis) => onAendern(ereignis.target.value === '' ? null : Number(ereignis.target.value))}
+      >
+        <option value="">{erben ? tx('Wie das Projekt') : tx('Standard des Projekts')}</option>
+        {taetigkeiten.map((vorlage) => (
+          <option key={vorlage.id} value={vorlage.id}>
+            {vorlage.name}
+          </option>
+        ))}
+      </select>
+    </Feld>
   );
 }
 
@@ -174,35 +178,43 @@ export function ZielWahl({
     (vision) => vision.titel,
   );
   return (
-    <select className={EINGABE_STIL} aria-label={tx('Ziel')} disabled={disabled} value={zielSchluessel(art, id)} onChange={(ereignis) => onAendern(ereignis.target.value)}>
-      {erben ? <option value="">{tx('Wie das Projekt')}</option> : null}
-      {visionen.length > 0 ? (
-        <optgroup label={tx('Visionen')}>
-          {visionen.map((vision) => (
-            <option key={vision.id} value={zielSchluessel('vision', vision.id)}>
-              {vision.titel}
-            </option>
-          ))}
-        </optgroup>
-      ) : null}
-      {projekte.length > 0 ? (
-        <optgroup label={tx('Projekte')}>
-          {projekte.map((projekt) => (
-            <option key={projekt.id} value={zielSchluessel('projekt', projekt.id)}>
-              {projekt.name}
-            </option>
-          ))}
-        </optgroup>
-      ) : null}
-      {vorhaben.length > 0 ? (
-        <optgroup label={tx('Vorhaben')}>
-          {vorhaben.map((eintrag) => (
-            <option key={eintrag.id} value={zielSchluessel('vorhaben', eintrag.id)}>
-              {eintrag.titel}
-            </option>
-          ))}
-        </optgroup>
-      ) : null}
-    </select>
+    <Feld label="Ziel">
+      <select
+        className={EINGABE_STIL}
+        aria-label={tx('Ziel')}
+        disabled={disabled}
+        value={zielSchluessel(art, id)}
+        onChange={(ereignis) => onAendern(ereignis.target.value)}
+      >
+        {erben ? <option value="">{tx('Wie das Projekt')}</option> : null}
+        {visionen.length > 0 ? (
+          <optgroup label={tx('Visionen')}>
+            {visionen.map((vision) => (
+              <option key={vision.id} value={zielSchluessel('vision', vision.id)}>
+                {vision.titel}
+              </option>
+            ))}
+          </optgroup>
+        ) : null}
+        {projekte.length > 0 ? (
+          <optgroup label={tx('Projekte')}>
+            {projekte.map((projekt) => (
+              <option key={projekt.id} value={zielSchluessel('projekt', projekt.id)}>
+                {projekt.name}
+              </option>
+            ))}
+          </optgroup>
+        ) : null}
+        {vorhaben.length > 0 ? (
+          <optgroup label={tx('Vorhaben')}>
+            {vorhaben.map((eintrag) => (
+              <option key={eintrag.id} value={zielSchluessel('vorhaben', eintrag.id)}>
+                {eintrag.titel}
+              </option>
+            ))}
+          </optgroup>
+        ) : null}
+      </select>
+    </Feld>
   );
 }

@@ -4,11 +4,11 @@ import { useState } from 'react';
 import type { Faehigkeit, TodoistAbschluss, TodoistLabel, TodoistLabelDaten, TodoistZielArt, Vorlage } from '../../../../shared/api/index.ts';
 import { taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
 import { api } from '../../api/index.ts';
-import { EINGABE_STIL, Fehlermeldung, Schalter } from '../../ui/index.ts';
+import { EINGABE_STIL, Fehlermeldung, Feld, InfoHinweis, Schalter } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
 import { parseZiel, projekteFuerVision, vorschauTeile, type ZielBlick } from '../../todoistZiel.ts';
 import { DauerWahl, FaehigkeitWahl, TaetigkeitWahl, TextFeld, WeitereFelder, ZielWahl } from './felder.tsx';
-import { dauerLabel, merkeStatus, projektVonZiel, useMitziehText, visionHinweis, vorlagePasst, zielName } from './gemeinsam.ts';
+import { dauerLabel, HINWEIS_MEILENSTEIN, merkeStatus, projektVonZiel, useMitziehText, visionHinweis, vorlagePasst, zielName } from './gemeinsam.ts';
 
 type ErgebnisWert = '' | 'offen' | 'geschafft' | 'gescheitert' | 'meilenstein' | 'kein';
 
@@ -228,20 +228,22 @@ export function LabelZeile({
             }}
           />
           {visionListe.length > 1 ? (
-            <select
-              className={EINGABE_STIL}
-              aria-label={tx('Projekt')}
-              disabled={gesperrt}
-              value={visionListe.some((projekt) => projekt.id === projektId) ? (projektId ?? '') : ''}
-              onChange={(ereignis) => senden({ projektId: ereignis.target.value === '' ? null : Number(ereignis.target.value) })}
-            >
-              <option value="">{tx('Projekt')}</option>
-              {visionListe.map((projekt) => (
-                <option key={projekt.id} value={projekt.id}>
-                  {projekt.name}
-                </option>
-              ))}
-            </select>
+            <Feld label="Projekt">
+              <select
+                className={EINGABE_STIL}
+                aria-label={tx('Projekt')}
+                disabled={gesperrt}
+                value={visionListe.some((projekt) => projekt.id === projektId) ? (projektId ?? '') : ''}
+                onChange={(ereignis) => senden({ projektId: ereignis.target.value === '' ? null : Number(ereignis.target.value) })}
+              >
+                <option value="">{tx('Projekt')}</option>
+                {visionListe.map((projekt) => (
+                  <option key={projekt.id} value={projekt.id}>
+                    {projekt.name}
+                  </option>
+                ))}
+              </select>
+            </Feld>
           ) : null}
           {hinweis ? <p className="text-sm text-gefahr">{hinweis}</p> : null}
           <div className="grid gap-2 sm:grid-cols-2">
@@ -264,19 +266,28 @@ export function LabelZeile({
                 onAendern={(faehigkeitId) => senden({ faehigkeitId })}
               />
             ) : null}
-            <select
-              className={EINGABE_STIL}
-              aria-label={tx('Ergebnis')}
-              disabled={gesperrt}
-              value={optionen.some((option) => option.wert === wert) ? wert : ''}
-              onChange={(ereignis) => senden(ergebnisAus(ereignis.target.value))}
+            <Feld
+              label={
+                <span className="inline-flex items-center">
+                  {tx('Ergebnis')}
+                  <InfoHinweis text={HINWEIS_MEILENSTEIN} />
+                </span>
+              }
             >
-              {optionen.map((option) => (
-                <option key={option.wert || 'erben'} value={option.wert}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
+              <select
+                className={EINGABE_STIL}
+                aria-label={tx('Ergebnis')}
+                disabled={gesperrt}
+                value={optionen.some((option) => option.wert === wert) ? wert : ''}
+                onChange={(ereignis) => senden(ergebnisAus(ereignis.target.value))}
+              >
+                {optionen.map((option) => (
+                  <option key={option.wert || 'erben'} value={option.wert}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
+            </Feld>
             {label.abschluss === 'gescheitert' ? (
               <TextFeld
                 label="Was nimmst du mit?"

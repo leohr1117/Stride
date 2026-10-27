@@ -102,6 +102,12 @@ test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert w
     const summe = (wert: number) => dialog.getByText(`${wert} XP für die letzten Termine`, { exact: true });
     await expect(summe(xp)).toBeVisible();
     await expect(dialog.getByText('Besprechung')).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Überspringen' })).toHaveCount(0);
+    await expect(dialog.getByText('Projekt', { exact: true })).toBeVisible();
+    await expect(dialog.getByRole('combobox', { name: 'Projekt' })).toBeVisible();
+    await expect(dialog.getByText('Tätigkeit', { exact: true })).toBeVisible();
+    await expect(dialog.getByRole('combobox', { name: 'Tätigkeit' })).toBeVisible();
+    await page.screenshot({ path: `tmp-bau/v4-kalender-${info.project.name}.png` });
     await dialog.locator('span').filter({ hasText: /^Titel enthält$/ }).getByRole('button', { name: 'Info' }).click();
     await expect(page.getByRole('tooltip')).toContainText('Ohne passendes Wort');
     await page.keyboard.press('Escape');

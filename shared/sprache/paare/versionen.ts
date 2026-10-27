@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Bei der Todoist-Zuordnung steht über jedem Feld, wofür es gilt. Die Zuordnung am Anfang entfällt.', 'On the Todoist mapping, each field says what it is for. The mapping at the start is gone.'],
   ['Jede Verbindung zeigt den letzten Abgleich, einen klaren Fehler und wie viele Einträge übernommen wurden.', 'Each connection shows the last sync, a clear error, and how many entries were imported.'],
   ['Der Abgleich läuft auch beim Öffnen. Trennen behält die Einträge, nichts kommt doppelt.', 'Sync also runs when you open the app. Disconnecting keeps the entries, and nothing is imported twice.'],
   ['Google- und Apple-Kalender lassen sich mit einer kurzen Anleitung verbinden. Vor dem Speichern erscheinen die letzten Termine und die XP.', 'Google and Apple calendars connect with a short guide. Recent events and the XP appear before saving.'],

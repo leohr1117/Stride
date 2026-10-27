@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei der Todoist-Zuordnung steht über jedem Feld, wofür es gilt. Die Zuordnung am Anfang entfällt.": "在 Todoist 的对应中，每个字段都会标明用途。开头的对应步骤已去掉。",
   "Noch nicht abgeglichen": "尚未同步",
   "Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden.": "连接后，已完成的任务会变成记录。打开应用时会同步，白天每 15 分钟一次，23 点到 6 点之间每 3 小时一次。",
   "Vergangene Termine werden zu Einträgen. Beim Öffnen der App und alle 15 Minuten.": "已结束的日程会变成记录。打开应用时会同步，并且每 15 分钟一次。",

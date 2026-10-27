@@ -3,11 +3,11 @@ import { useState } from 'react';
 import type { Faehigkeit, TodoistZuordnung, TodoistZuordnungDaten, Vorlage } from '../../../../shared/api/index.ts';
 import { taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
 import { api } from '../../api/index.ts';
-import { EINGABE_STIL, Fehlermeldung, Schalter } from '../../ui/index.ts';
+import { EINGABE_STIL, Fehlermeldung, Feld, InfoHinweis, Schalter } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
 import { parseZiel, projekteFuerVision, vorschauTeile, zielVorschlag, type ZielBlick, type ZielProjekt } from '../../todoistZiel.ts';
 import { DauerWahl, FaehigkeitWahl, TaetigkeitWahl, TextFeld, WeitereFelder, ZielWahl } from './felder.tsx';
-import { dauerLabel, merkeStatus, projektVonZiel, useMitziehText, visionHinweis, vorlagePasst, zielName } from './gemeinsam.ts';
+import { dauerLabel, HINWEIS_MEILENSTEIN, merkeStatus, projektVonZiel, useMitziehText, visionHinweis, vorlagePasst, zielName } from './gemeinsam.ts';
 
 export function ProjektZeile({
   zuordnung,
@@ -126,29 +126,31 @@ export function ProjektZeile({
         <>
           <ZielWahl blick={blick} art={zuordnung.zielArt} id={zuordnung.zielId} onAendern={zielAendern} erben={false} disabled={speichern.isPending} />
           {visionListe.length > 1 ? (
-            <select
-              className={EINGABE_STIL}
-              aria-label={tx('Projekt')}
-              disabled={speichern.isPending}
-              value={projektId ?? ''}
-              onChange={(ereignis) => {
-                const naechstes = ereignis.target.value === '' ? null : Number(ereignis.target.value);
-                senden({
-                  zielArt: 'vision',
-                  zielId: zuordnung.zielId,
-                  projektId: naechstes,
-                  vorlageId: vorlagePasst(taetigkeiten, zuordnung.vorlageId, naechstes),
-                  stunden: zuordnung.stunden,
-                });
-              }}
-            >
-              <option value="">{tx('Projekt')}</option>
-              {visionListe.map((projekt) => (
-                <option key={projekt.id} value={projekt.id}>
-                  {projekt.name}
-                </option>
-              ))}
-            </select>
+            <Feld label="Projekt">
+              <select
+                className={EINGABE_STIL}
+                aria-label={tx('Projekt')}
+                disabled={speichern.isPending}
+                value={projektId ?? ''}
+                onChange={(ereignis) => {
+                  const naechstes = ereignis.target.value === '' ? null : Number(ereignis.target.value);
+                  senden({
+                    zielArt: 'vision',
+                    zielId: zuordnung.zielId,
+                    projektId: naechstes,
+                    vorlageId: vorlagePasst(taetigkeiten, zuordnung.vorlageId, naechstes),
+                    stunden: zuordnung.stunden,
+                  });
+                }}
+              >
+                <option value="">{tx('Projekt')}</option>
+                {visionListe.map((projekt) => (
+                  <option key={projekt.id} value={projekt.id}>
+                    {projekt.name}
+                  </option>
+                ))}
+              </select>
+            </Feld>
           ) : null}
           {hinweis ? <p className="text-sm text-gefahr">{hinweis}</p> : null}
           <div className="grid gap-2 sm:grid-cols-2">
@@ -202,43 +204,52 @@ export function ProjektZeile({
               />
             ) : null}
             {vorhaben ? (
-              <select
-                className={EINGABE_STIL}
-                aria-label={tx('Stand')}
-                disabled={speichern.isPending}
-                value={zuordnung.abschluss ?? ''}
-                onChange={(ereignis) => {
-                  const roh = ereignis.target.value;
-                  senden({
-                    zielArt: zuordnung.zielArt,
-                    zielId: zuordnung.zielId,
-                    projektId,
-                    vorlageId: zuordnung.vorlageId,
-                    stunden: zuordnung.stunden,
-                    abschluss: roh === '' ? null : (roh as 'geschafft' | 'gescheitert'),
-                  });
-                }}
-              >
-                <option value="">{tx('Dran geblieben')}</option>
-                <option value="geschafft">{tx('Geschafft')}</option>
-                <option value="gescheitert">{tx('Gescheitert')}</option>
-              </select>
+              <Feld label="Stand">
+                <select
+                  className={EINGABE_STIL}
+                  aria-label={tx('Stand')}
+                  disabled={speichern.isPending}
+                  value={zuordnung.abschluss ?? ''}
+                  onChange={(ereignis) => {
+                    const roh = ereignis.target.value;
+                    senden({
+                      zielArt: zuordnung.zielArt,
+                      zielId: zuordnung.zielId,
+                      projektId,
+                      vorlageId: zuordnung.vorlageId,
+                      stunden: zuordnung.stunden,
+                      abschluss: roh === '' ? null : (roh as 'geschafft' | 'gescheitert'),
+                    });
+                  }}
+                >
+                  <option value="">{tx('Dran geblieben')}</option>
+                  <option value="geschafft">{tx('Geschafft')}</option>
+                  <option value="gescheitert">{tx('Gescheitert')}</option>
+                </select>
+              </Feld>
             ) : (
-              <Schalter
-                label="Meilenstein"
-                an={zuordnung.meilenstein}
-                deaktiviert={speichern.isPending}
-                onAendern={(meilenstein) =>
-                  senden({
-                    zielArt: zuordnung.zielArt,
-                    zielId: zuordnung.zielId,
-                    projektId,
-                    vorlageId: zuordnung.vorlageId,
-                    stunden: zuordnung.stunden,
-                    meilenstein,
-                  })
-                }
-              />
+              <div className="flex items-center justify-between gap-3">
+                <span className="flex min-w-0 items-center text-sm font-medium">
+                  {tx('Meilenstein')}
+                  <InfoHinweis text={HINWEIS_MEILENSTEIN} />
+                </span>
+                <Schalter
+                  kompakt
+                  label="Meilenstein"
+                  an={zuordnung.meilenstein}
+                  deaktiviert={speichern.isPending}
+                  onAendern={(meilenstein) =>
+                    senden({
+                      zielArt: zuordnung.zielArt,
+                      zielId: zuordnung.zielId,
+                      projektId,
+                      vorlageId: zuordnung.vorlageId,
+                      stunden: zuordnung.stunden,
+                      meilenstein,
+                    })
+                  }
+                />
+              </div>
             )}
             {zuordnung.abschluss === 'gescheitert' ? (
               <TextFeld

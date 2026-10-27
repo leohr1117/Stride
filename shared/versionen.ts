@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.9.8',
+    seiten: 'Verbindungen',
+    behoben: 'Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Bei der Todoist-Zuordnung steht über jedem Feld, wofür es gilt. Die Zuordnung am Anfang entfällt.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.9.7',
     seiten: 'Verbindungen',
     abschnitte: [

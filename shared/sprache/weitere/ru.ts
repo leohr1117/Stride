@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei der Todoist-Zuordnung steht über jedem Feld, wofür es gilt. Die Zuordnung am Anfang entfällt.": "В сопоставлении Todoist у каждого поля указано, для чего оно. Начальное сопоставление убрано.",
   "Noch nicht abgeglichen": "Ещё не синхронизировано",
   "Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden.": "Выполненные задачи становятся записями, как только вы подключены. При открытии приложения и каждые 15 минут днём, а между 23 и 6 часами — каждые 3 часа.",
   "Vergangene Termine werden zu Einträgen. Beim Öffnen der App und alle 15 Minuten.": "Прошедшие события становятся записями. При открытии приложения и каждые 15 минут.",

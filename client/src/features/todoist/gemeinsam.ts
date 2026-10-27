@@ -9,6 +9,9 @@ import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
 import { projekteFuerVision, type ZielBlick } from '../../todoistZiel.ts';
 
+export const HINWEIS_MEILENSTEIN =
+  'Eine Aufgabe mit Deadline wird zum Gegner. Mit Meilenstein wird sie zum Boss. Nach der Deadline geht Disziplin verloren.';
+
 export function useTodoistBlick(): {
   blick: ZielBlick;
   taetigkeiten: Vorlage[];
