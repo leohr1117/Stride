@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Jeder Benutzername ist nur einmal vergeben. Du kannst ihn jederzeit ändern. Ist er schon vergeben, bleibt der bisherige.": "每个用户名只能使用一次。你可以随时修改。如果已被占用，则保留现在的名字。",
   "Bei der Todoist-Zuordnung steht über jedem Feld, wofür es gilt. Die Zuordnung am Anfang entfällt.": "在 Todoist 的对应中，每个字段都会标明用途。开头的对应步骤已去掉。",
   "Noch nicht abgeglichen": "尚未同步",
   "Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden.": "连接后，已完成的任务会变成记录。打开应用时会同步，白天每 15 分钟一次，23 点到 6 点之间每 3 小时一次。",

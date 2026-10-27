@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Jeder Benutzername ist nur einmal vergeben. Du kannst ihn jederzeit ändern. Ist er schon vergeben, bleibt der bisherige.": "Chaque nom d'utilisateur n'est utilisé qu'une fois. Tu peux le changer à tout moment. S'il est déjà pris, le nom actuel reste.",
   "Bei der Todoist-Zuordnung steht über jedem Feld, wofür es gilt. Die Zuordnung am Anfang entfällt.": "Dans l'association Todoist, chaque champ indique à quoi il sert. L'association du début disparaît.",
   "Noch nicht abgeglichen": "Pas encore synchronisé",
   "Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden.": "Les tâches terminées deviennent des entrées dès la connexion. À l'ouverture de l'app, toutes les 15 minutes dans la journée, et toutes les 3 heures entre 23 h et 6 h.",

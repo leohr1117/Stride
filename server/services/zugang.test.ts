@@ -1,5 +1,6 @@
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import {
@@ -16,8 +17,11 @@ import {
   istGesperrt,
   legePasswortAn,
   merkeFehlversuch,
+  benenneBenutzer,
   benutzerPasswortStimmt,
   ersetzeZugangspasswort,
+  legeBenutzerAn,
+  listeKonten,
   oeffneSitzung,
   passwortStimmt,
   schliesseZugang,
@@ -34,6 +38,37 @@ import {
 const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-zugang-'));
 const PASSWORT = 'geheimes-passwort';
 let datenbankNummer = 0;
+
+function schreibeAlteBenutzer(pfad: string, namen: string[]): void {
+  const db = new DatabaseSync(pfad);
+  db.exec(`
+    CREATE TABLE benutzer (
+      id INTEGER PRIMARY KEY,
+      benutzername TEXT NOT NULL,
+      name_norm TEXT NOT NULL,
+      salt TEXT NOT NULL,
+      hash TEXT NOT NULL,
+      rolle TEXT NOT NULL,
+      weltdatei TEXT NOT NULL,
+      geaendert_am TEXT NOT NULL
+    );
+  `);
+  const einfuegen = db.prepare(
+    `INSERT INTO benutzer (benutzername, name_norm, salt, hash, rolle, weltdatei, geaendert_am)
+     VALUES (?, ?, 'salt', 'hash', 'mitglied', 'welten/x.db', '2026-01-01T00:00:00.000Z')`,
+  );
+  for (const name of namen) {
+    einfuegen.run(name, name.trim().toLocaleLowerCase('de-DE'));
+  }
+  db.close();
+}
+
+function hatNamensindex(pfad: string): boolean {
+  const db = new DatabaseSync(pfad);
+  const zeile = db.prepare(`SELECT 1 AS da FROM sqlite_master WHERE type = 'index' AND name = 'benutzer_name_norm'`).get();
+  db.close();
+  return zeile !== undefined;
+}
 
 beforeEach(() => {
   datenbankNummer += 1;
@@ -79,6 +114,59 @@ describe('accounts', () => {
     expect(zugangStatus(token)).toEqual({ modus: 'bereit', benutzername: 'Ada', rolle: 'inhaber' });
     expect(passwortStimmt(PASSWORT)).toBe(false);
     expect(benutzerPasswortStimmt('ada', PASSWORT)?.benutzername).toBe('Ada');
+  });
+
+  it('vergibt jeden Namen nur einmal und lässt den eigenen jederzeit ändern', () => {
+    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    expect(() => legeBenutzerAn({ benutzername: ' ada ', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/2.db' })).toThrow(
+      'schon vergeben',
+    );
+    expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada']);
+
+    const bob = legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/3.db' });
+    expect(() => benenneBenutzer(bob.id, 'ADA')).toThrow('schon vergeben');
+    expect(listeKonten().find((konto) => konto.id === bob.id)?.benutzername).toBe('Bob');
+    expect(listeKonten().find((konto) => konto.id === ada.id)?.benutzername).toBe('Ada');
+
+    benenneBenutzer(bob.id, 'Berta');
+    benenneBenutzer(bob.id, 'berta');
+    benenneBenutzer(bob.id, 'Bert');
+    expect(listeKonten().find((konto) => konto.id === bob.id)?.benutzername).toBe('Bert');
+    expect(benutzerPasswortStimmt('bert', PASSWORT)?.id).toBe(bob.id);
+    expect(() => benenneBenutzer(999, 'Neu')).toThrow('existiert nicht');
+  });
+
+  it('übernimmt kein Passwort auf einen vergebenen Namen', () => {
+    legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    legePasswortAn('anderes-passwort-1');
+    expect(() => uebernimmAltesPasswort('ada', 'app.db')).toThrow('schon vergeben');
+    expect(passwortStimmt('anderes-passwort-1')).toBe(true);
+    expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada']);
+  });
+
+  it('benennt vorhandene Doppelte nicht um', () => {
+    const pfad = path.join(ordner, 'doppelt.db');
+    schreibeAlteBenutzer(pfad, ['Ada', 'Ada']);
+    verwendeZugang(pfad);
+    schliesseZugang();
+    expect(hatNamensindex(pfad)).toBe(false);
+
+    verwendeZugang(pfad);
+    const vorher = listeKonten();
+    expect(vorher.map((konto) => konto.benutzername)).toEqual(['Ada', 'Ada']);
+    expect(() => benenneBenutzer(vorher[1]?.id ?? 0, 'ada')).toThrow('schon vergeben');
+    expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada', 'Ada']);
+    benenneBenutzer(vorher[1]?.id ?? 0, 'Berta');
+    expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada', 'Berta']);
+    schliesseZugang();
+
+    verwendeZugang(pfad);
+    expect(() => legeBenutzerAn({ benutzername: 'ADA', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/4.db' })).toThrow(
+      'schon vergeben',
+    );
+    expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada', 'Berta']);
+    schliesseZugang();
+    expect(hatNamensindex(pfad)).toBe(true);
   });
 
   it('setzt das Passwort zurück, ohne das alte zu kennen', () => {

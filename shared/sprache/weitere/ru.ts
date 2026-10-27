@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Jeder Benutzername ist nur einmal vergeben. Du kannst ihn jederzeit ändern. Ist er schon vergeben, bleibt der bisherige.": "Каждое имя пользователя только одно. Его можно изменить в любой момент. Если оно занято, остаётся прежнее.",
   "Bei der Todoist-Zuordnung steht über jedem Feld, wofür es gilt. Die Zuordnung am Anfang entfällt.": "В сопоставлении Todoist у каждого поля указано, для чего оно. Начальное сопоставление убрано.",
   "Noch nicht abgeglichen": "Ещё не синхронизировано",
   "Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden.": "Выполненные задачи становятся записями, как только вы подключены. При открытии приложения и каждые 15 минут днём, а между 23 и 6 часами — каждые 3 часа.",

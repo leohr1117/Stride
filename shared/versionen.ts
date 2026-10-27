@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.10.0',
+    seiten: 'Profil',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Jeder Benutzername ist nur einmal vergeben. Du kannst ihn jederzeit ändern. Ist er schon vergeben, bleibt der bisherige.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.9.8',
     seiten: 'Verbindungen',
     behoben: 'Verbindungen',

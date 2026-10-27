@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Jeder Benutzername ist nur einmal vergeben. Du kannst ihn jederzeit ändern. Ist er schon vergeben, bleibt der bisherige.": "ユーザー名は一度だけ使えます。いつでも変更できます。すでに使われている場合は、今の名前のままです。",
   "Bei der Todoist-Zuordnung steht über jedem Feld, wofür es gilt. Die Zuordnung am Anfang entfällt.": "Todoist の割り当てでは、各項目に用途が表示されます。最初の割り当てはなくなりました。",
   "Noch nicht abgeglichen": "まだ同期していません",
   "Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden.": "接続すると、完了したタスクは記録になります。アプリを開いたとき、日中は 15 分ごと、23 時から 6 時は 3 時間ごとに同期します。",

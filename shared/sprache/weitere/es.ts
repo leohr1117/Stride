@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Jeder Benutzername ist nur einmal vergeben. Du kannst ihn jederzeit ändern. Ist er schon vergeben, bleibt der bisherige.": "Cada nombre de usuario se usa una sola vez. Puedes cambiarlo cuando quieras. Si ya está ocupado, se queda el nombre actual.",
   "Bei der Todoist-Zuordnung steht über jedem Feld, wofür es gilt. Die Zuordnung am Anfang entfällt.": "En la asignación de Todoist, cada campo indica para qué sirve. La asignación del principio desaparece.",
   "Noch nicht abgeglichen": "Aún no sincronizado",
   "Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden.": "Las tareas completadas se convierten en entradas en cuanto te conectas. Al abrir la app, cada 15 minutos durante el día y cada 3 horas entre las 23 y las 6.",

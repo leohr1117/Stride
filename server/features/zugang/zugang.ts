@@ -69,7 +69,19 @@ function oeffne(pfad: string): DatabaseSync {
   if (!spalten.some((spalte) => spalte.name === 'benutzer_id')) {
     datenbank.exec('ALTER TABLE sitzungen ADD COLUMN benutzer_id INTEGER REFERENCES benutzer(id)');
   }
+  sichereNamensindex(datenbank);
   return datenbank;
+}
+
+/** Vorhandene Doppelte bleiben. Ein Index entstünde sonst nur durch stilles Umbenennen. */
+function sichereNamensindex(db: DatabaseSync): void {
+  const doppelt = db
+    .prepare('SELECT name_norm FROM benutzer GROUP BY name_norm HAVING COUNT(*) > 1 LIMIT 1')
+    .get();
+  if (doppelt) {
+    return;
+  }
+  db.exec('CREATE UNIQUE INDEX IF NOT EXISTS benutzer_name_norm ON benutzer(name_norm)');
 }
 
 export function verwendeZugang(pfad: string): void {
@@ -255,6 +267,24 @@ function nameNorm(benutzername: string): string {
   return benutzername.trim().toLocaleLowerCase('de-DE');
 }
 
+function nameVergeben(benutzername: string, ausserId?: number): boolean {
+  const zeile =
+    ausserId === undefined
+      ? (datenbank().prepare('SELECT id FROM benutzer WHERE name_norm = ?').get(nameNorm(benutzername)) as { id: number } | undefined)
+      : (datenbank()
+          .prepare('SELECT id FROM benutzer WHERE name_norm = ? AND id != ?')
+          .get(nameNorm(benutzername), ausserId) as { id: number } | undefined);
+  return zeile !== undefined;
+}
+
+function istNamenkollision(fehler: unknown): boolean {
+  if (!(fehler instanceof Error)) {
+    return false;
+  }
+  const extra = fehler as { code?: string; errcode?: number };
+  return fehler.message.includes('UNIQUE') || extra.code === 'SQLITE_CONSTRAINT_UNIQUE' || extra.errcode === 2067;
+}
+
 function pruefeBenutzername(benutzername: string): string {
   const name = benutzername.trim();
   if (name.length < 1) {
@@ -301,6 +331,9 @@ export function legeBenutzerAn(
 ): { id: number; benutzername: string; rolle: Rolle } {
   const benutzername = pruefeBenutzername(daten.benutzername);
   pruefePasswortLaenge(daten.passwort);
+  if (nameVergeben(benutzername)) {
+    throw ungueltig('Der Benutzername ist schon vergeben.');
+  }
   const salt = randomBytes(ZUGANG.saltBytes);
   const hash = scryptSync(daten.passwort, salt, ZUGANG.hashLaenge, SCRYPT);
   try {
@@ -312,7 +345,7 @@ export function legeBenutzerAn(
       .run(benutzername, nameNorm(benutzername), salt.toString('hex'), hash.toString('hex'), daten.rolle, daten.weltdatei, jetzt.toISOString());
     return { id: Number(ergebnis.lastInsertRowid), benutzername, rolle: daten.rolle };
   } catch (fehler) {
-    if ((fehler as { code?: string }).code === 'SQLITE_CONSTRAINT_UNIQUE' || (fehler as Error).message.includes('UNIQUE')) {
+    if (istNamenkollision(fehler)) {
       throw ungueltig('Der Benutzername ist schon vergeben.');
     }
     throw fehler;
@@ -346,6 +379,12 @@ export function loescheBenutzer(id: number): { weltdatei: string; rolle: Rolle }
 
 export function benenneBenutzer(id: number, benutzername: string, jetzt = new Date()): void {
   const name = pruefeBenutzername(benutzername);
+  if (!holeBenutzer(id)) {
+    throw ungueltig('Der Account existiert nicht.');
+  }
+  if (nameVergeben(name, id)) {
+    throw ungueltig('Der Benutzername ist schon vergeben.');
+  }
   try {
     const ergebnis = datenbank()
       .prepare('UPDATE benutzer SET benutzername = ?, name_norm = ?, geaendert_am = ? WHERE id = ?')
@@ -354,7 +393,7 @@ export function benenneBenutzer(id: number, benutzername: string, jetzt = new Da
       throw ungueltig('Der Account existiert nicht.');
     }
   } catch (fehler) {
-    if ((fehler as Error).message.includes('UNIQUE') || (fehler as Error).message.includes('vergeben')) {
+    if (istNamenkollision(fehler)) {
       throw ungueltig('Der Benutzername ist schon vergeben.');
     }
     throw fehler;
@@ -363,6 +402,9 @@ export function benenneBenutzer(id: number, benutzername: string, jetzt = new Da
 
 export function uebernimmAltesPasswort(benutzername: string, weltdatei: string, jetzt = new Date()): number {
   const name = pruefeBenutzername(benutzername);
+  if (nameVergeben(name)) {
+    throw ungueltig('Der Benutzername ist schon vergeben.');
+  }
   const alt = datenbank().prepare('SELECT salt, hash FROM passwort WHERE id = 1').get() as PasswortZeile | undefined;
   if (!alt) {
     throw ungueltig('Es ist noch kein Passwort festgelegt.');
@@ -383,7 +425,7 @@ export function uebernimmAltesPasswort(benutzername: string, weltdatei: string, 
     return id;
   } catch (fehler) {
     db.exec('ROLLBACK');
-    if ((fehler as Error).message.includes('UNIQUE')) {
+    if (istNamenkollision(fehler)) {
       throw ungueltig('Der Benutzername ist schon vergeben.');
     }
     throw fehler;
