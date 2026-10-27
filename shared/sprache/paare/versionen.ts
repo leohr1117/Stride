@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Jede Verbindung zeigt den letzten Abgleich, einen klaren Fehler und wie viele Einträge übernommen wurden.', 'Each connection shows the last sync, a clear error, and how many entries were imported.'],
+  ['Der Abgleich läuft auch beim Öffnen. Trennen behält die Einträge, nichts kommt doppelt.', 'Sync also runs when you open the app. Disconnecting keeps the entries, and nothing is imported twice.'],
   ['Google- und Apple-Kalender lassen sich mit einer kurzen Anleitung verbinden. Vor dem Speichern erscheinen die letzten Termine und die XP.', 'Google and Apple calendars connect with a short guide. Recent events and the XP appear before saving.'],
   ['Ein Termin zählt erst nach dem Verbinden, sobald er vorbei ist. Ohne Zuordnung zählt er nicht.', 'An event counts only after connecting, once it has ended. Without a mapping, it does not count.'],
   ['Todoist lässt sich Schritt für Schritt verbinden. Aufgaben ohne Zuordnung zählen als gewählte Tätigkeit oder gar nicht.', 'Todoist connects step by step. Tasks without a mapping count as a chosen activity, or not at all.'],

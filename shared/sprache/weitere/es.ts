@@ -1,5 +1,18 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Noch nicht abgeglichen": "Aún no sincronizado",
+  "Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden.": "Las tareas completadas se convierten en entradas en cuanto te conectas. Al abrir la app, cada 15 minutos durante el día y cada 3 horas entre las 23 y las 6.",
+  "Vergangene Termine werden zu Einträgen. Beim Öffnen der App und alle 15 Minuten.": "Los eventos pasados se convierten en entradas. Al abrir la app y cada 15 minutos.",
+  "Jede Verbindung zeigt den letzten Abgleich, einen klaren Fehler und wie viele Einträge übernommen wurden.": "Cada conexión muestra la última sincronización, un error claro y cuántas entradas se han añadido.",
+  "Der Abgleich läuft auch beim Öffnen. Trennen behält die Einträge, nichts kommt doppelt.": "La sincronización también ocurre al abrir la app. Al desconectar, las entradas se quedan y nada se añade dos veces.",
+  "Der Kalender ist gerade nicht erreichbar.": "El calendario no está disponible ahora mismo.",
+  "Der Kalender lehnt den Zugriff ab. Prüfe die Adresse.": "El calendario rechaza el acceso. Comprueba la dirección.",
+  "Der Kalender bremst gerade zu viele Anfragen. Der nächste Abgleich versucht es erneut.": "El calendario está limitando las solicitudes. La próxima sincronización lo intentará de nuevo.",
+  "Der Kalender hat die Anfrage abgelehnt.": "El calendario ha rechazado la solicitud.",
+  "Unter dieser Adresse liegt kein Kalender.": "En esa dirección no hay ningún calendario.",
+  "Todoist hat die Anfrage abgelehnt. Der nächste Abgleich versucht es erneut.": "Todoist ha rechazado la solicitud. La próxima sincronización lo intentará de nuevo.",
+  "Unerwarteter Fehler beim Abgleich mit Todoist.": "Error inesperado al sincronizar con Todoist.",
+  "Unerwarteter Fehler beim Abgleich mit dem Kalender.": "Error inesperado al sincronizar con el calendario.",
   "Google": "Google",
   "Andere": "Otra",
   "Öffne Google Kalender am Computer.": "Abrir Google Calendar en un ordenador.",

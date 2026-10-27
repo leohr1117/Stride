@@ -6,7 +6,7 @@ import { eintragXp } from '../../../shared/spiel/xp.ts';
 import { alle, eine, mitWeltAsync, schliesseWelt } from '../../db.ts';
 import { erstelleProjekt, erstelleVision } from '../../services/struktur.ts';
 import { erstelleVorlage } from '../taetigkeiten/vorlagen.ts';
-import { erstelleKalender, gleicheKalenderAb, pruefeKalender } from './kalender.ts';
+import { erstelleKalender, gleicheKalenderAb, loescheKalender, pruefeKalender } from './kalender.ts';
 
 const basis = path.join('tmp-bau', 'kalender-vitest');
 mkdirSync(basis, { recursive: true });
@@ -87,6 +87,22 @@ function icsServer(text: string): Promise<string> {
       const adresse = http.address();
       const port = typeof adresse === 'object' && adresse ? adresse.port : 0;
       resolve(`http://127.0.0.1:${port}/kalender.ics`);
+    });
+  });
+}
+
+function schaltServer(text: string): Promise<{ url: string; lage: { status: number } }> {
+  const lage = { status: 200 };
+  return new Promise((resolve) => {
+    const http = createServer((_anfrage, antwort) => {
+      antwort.writeHead(lage.status, { 'content-type': 'text/calendar; charset=utf-8' });
+      antwort.end(lage.status === 200 ? text : '');
+    });
+    server.push(http);
+    http.listen(0, '127.0.0.1', () => {
+      const adresse = http.address();
+      const port = typeof adresse === 'object' && adresse ? adresse.port : 0;
+      resolve({ url: `http://127.0.0.1:${port}/kalender.ics`, lage });
     });
   });
 }
@@ -174,6 +190,53 @@ describe('Kalenderprüfung und Abgleich', () => {
       const ergebnis = await gleicheKalenderAb(SPAETER);
       expect(ergebnis.neu).toBe(1);
       expect(notizen()).toEqual(['Fokus Meeting']);
+    });
+  });
+
+  it('übernimmt denselben Termin kein zweites Mal, auch nicht nach dem Entfernen', async () => {
+    const adresse = await icsServer(kalenderText());
+    await mitWeltAsync(welt(), async () => {
+      const { projektId, vorlageId } = ziel();
+      const daten = { name: 'Arbeit', adresse, projektId, vorlageId, filter: '' };
+      const kalender = await erstelleKalender(daten, VERBINDET);
+      expect((await gleicheKalenderAb(SPAETER)).neu).toBe(3);
+      expect((await gleicheKalenderAb(SPAETER)).neu).toBe(0);
+
+      const zweiter = await erstelleKalender({ ...daten, name: 'Zweite' }, VERBINDET);
+      expect((await gleicheKalenderAb(SPAETER)).neu).toBe(0);
+      expect(notizen()).toEqual(['Danach', 'Fokus Meeting', 'Ueberlappt']);
+
+      loescheKalender(kalender.id);
+      loescheKalender(zweiter.id);
+      expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM kalender')?.wert).toBe(0);
+      expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM kalender_termine')?.wert).toBe(0);
+      expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM kalender_importe')?.wert).toBe(3);
+      expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM eintraege')?.wert).toBe(3);
+
+      const wieder = await erstelleKalender(daten, VERBINDET);
+      expect((await gleicheKalenderAb(SPAETER)).neu).toBe(0);
+      expect(notizen()).toEqual(['Danach', 'Fokus Meeting', 'Ueberlappt']);
+      expect(
+        eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM kalender_termine WHERE kalender_id = ? AND eintrag_id IS NOT NULL', wieder.id)?.wert,
+      ).toBe(3);
+    });
+  });
+
+  it.each([
+    [500, 'Der Kalender hat die Anfrage abgelehnt.'],
+    [404, 'Unter dieser Adresse liegt kein Kalender.'],
+  ])('speichert bei HTTP %s einen Klartext ohne Statuszahl', async (status, satz) => {
+    const schalter = await schaltServer(kalenderText());
+    await mitWeltAsync(welt(), async () => {
+      const { projektId, vorlageId } = ziel();
+      await erstelleKalender({ name: 'Arbeit', adresse: schalter.url, projektId, vorlageId, filter: '' }, VERBINDET);
+      schalter.lage.status = status;
+      const ergebnis = await gleicheKalenderAb(SPAETER);
+      const gespeichert = eine<{ fehler: string | null }>('SELECT fehler FROM kalender')?.fehler;
+      expect(ergebnis).toEqual({ neu: 0, fehler: [satz] });
+      expect(gespeichert).toBe(satz);
+      expect(gespeichert).not.toContain('Arbeit');
+      expect(gespeichert).not.toMatch(/\d/);
     });
   });
 });

@@ -173,6 +173,10 @@ export function loeseZiel(art: ZielArt, zielId: number, projektWahl: number | nu
   throw ungueltig('Wähle ein Projekt für diese Vision.');
 }
 
+function zaehleUebernommen(): number {
+  return eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM todoist_erledigt WHERE eintrag_id IS NOT NULL')?.wert ?? 0;
+}
+
 function ladeZuordnungen(): TodoistZuordnung[] {
   return ladeProjektZeilen().map(zuZuordnung);
 }
@@ -193,6 +197,7 @@ export function ladeTodoistStatus(): TodoistStatus {
     seit: leseWert(SCHLUESSEL.seit),
     letzterAbgleich: leseWert(SCHLUESSEL.abgleich),
     fehler: leseWert(SCHLUESSEL.fehler),
+    uebernommen: zaehleUebernommen(),
     ohneZuordnung: ohne.art,
     standardVorlageId: ohne.vorlageId,
     projekte: verbunden ? ladeZuordnungen() : [],

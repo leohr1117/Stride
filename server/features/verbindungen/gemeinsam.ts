@@ -31,11 +31,30 @@ export function setzeWert(schluessel: string, wert: string | null): void {
   );
 }
 
+const FEHLER_SICHTBAR = 3;
+
 export function fehlertext(fehler: unknown, bereich: string): string {
   if (fehler instanceof AppFehler) {
     return fehler.message;
   }
-  return `Unerwarteter Fehler beim Abgleich mit ${bereich}: ${(fehler as Error).message}`;
+  if (bereich === 'Todoist') {
+    return 'Unerwarteter Fehler beim Abgleich mit Todoist.';
+  }
+  return 'Unerwarteter Fehler beim Abgleich mit dem Kalender.';
+}
+
+export function fasseFehler(fehler: readonly string[]): string | null {
+  const einzig: string[] = [];
+  for (const eintrag of fehler) {
+    if (einzig.includes(eintrag)) {
+      continue;
+    }
+    einzig.push(eintrag);
+    if (einzig.length === FEHLER_SICHTBAR) {
+      break;
+    }
+  }
+  return einzig.length > 0 ? einzig.join('\n') : null;
 }
 
 export function pruefeProjekt(projektId: number): number {

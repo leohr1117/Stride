@@ -1,5 +1,18 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Noch nicht abgeglichen": "まだ同期していません",
+  "Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden.": "接続すると、完了したタスクは記録になります。アプリを開いたとき、日中は 15 分ごと、23 時から 6 時は 3 時間ごとに同期します。",
+  "Vergangene Termine werden zu Einträgen. Beim Öffnen der App und alle 15 Minuten.": "終了した予定は記録になります。アプリを開いたときと、15 分ごとに同期します。",
+  "Jede Verbindung zeigt den letzten Abgleich, einen klaren Fehler und wie viele Einträge übernommen wurden.": "各接続は、前回の同期、わかりやすいエラー、取り込んだ記録の数を表示します。",
+  "Der Abgleich läuft auch beim Öffnen. Trennen behält die Einträge, nichts kommt doppelt.": "アプリを開いたときにも同期します。切断しても記録は残り、二重には取り込まれません。",
+  "Der Kalender ist gerade nicht erreichbar.": "カレンダーに今は接続できません。",
+  "Der Kalender lehnt den Zugriff ab. Prüfe die Adresse.": "カレンダーがアクセスを拒否しました。アドレスを確認してください。",
+  "Der Kalender bremst gerade zu viele Anfragen. Der nächste Abgleich versucht es erneut.": "カレンダーがリクエストを制限しています。次の同期で再試行します。",
+  "Der Kalender hat die Anfrage abgelehnt.": "カレンダーがリクエストを拒否しました。",
+  "Unter dieser Adresse liegt kein Kalender.": "このアドレスにカレンダーはありません。",
+  "Todoist hat die Anfrage abgelehnt. Der nächste Abgleich versucht es erneut.": "Todoist がリクエストを拒否しました。次の同期で再試行します。",
+  "Unerwarteter Fehler beim Abgleich mit Todoist.": "Todoist との同期中に予期しないエラーが起きました。",
+  "Unerwarteter Fehler beim Abgleich mit dem Kalender.": "カレンダーとの同期中に予期しないエラーが起きました。",
   "Google": "Google",
   "Andere": "その他",
   "Öffne Google Kalender am Computer.": "パソコンで Google カレンダーを開きます。",

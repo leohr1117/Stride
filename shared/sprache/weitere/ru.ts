@@ -1,5 +1,18 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Noch nicht abgeglichen": "Ещё не синхронизировано",
+  "Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden.": "Выполненные задачи становятся записями, как только вы подключены. При открытии приложения и каждые 15 минут днём, а между 23 и 6 часами — каждые 3 часа.",
+  "Vergangene Termine werden zu Einträgen. Beim Öffnen der App und alle 15 Minuten.": "Прошедшие события становятся записями. При открытии приложения и каждые 15 минут.",
+  "Jede Verbindung zeigt den letzten Abgleich, einen klaren Fehler und wie viele Einträge übernommen wurden.": "У каждого подключения видны последняя синхронизация, понятная ошибка и число перенесённых записей.",
+  "Der Abgleich läuft auch beim Öffnen. Trennen behält die Einträge, nichts kommt doppelt.": "Синхронизация идёт и при открытии. Отключение сохраняет записи, и ничего не переносится дважды.",
+  "Der Kalender ist gerade nicht erreichbar.": "Календарь сейчас недоступен.",
+  "Der Kalender lehnt den Zugriff ab. Prüfe die Adresse.": "Календарь отклоняет доступ. Проверьте адрес.",
+  "Der Kalender bremst gerade zu viele Anfragen. Der nächste Abgleich versucht es erneut.": "Календарь сейчас ограничивает запросы. Следующая синхронизация попробует снова.",
+  "Der Kalender hat die Anfrage abgelehnt.": "Календарь отклонил запрос.",
+  "Unter dieser Adresse liegt kein Kalender.": "По этому адресу нет календаря.",
+  "Todoist hat die Anfrage abgelehnt. Der nächste Abgleich versucht es erneut.": "Todoist отклонил запрос. Следующая синхронизация попробует снова.",
+  "Unerwarteter Fehler beim Abgleich mit Todoist.": "Неожиданная ошибка при синхронизации с Todoist.",
+  "Unerwarteter Fehler beim Abgleich mit dem Kalender.": "Неожиданная ошибка при синхронизации с календарём.",
   "Google": "Google",
   "Andere": "Другое",
   "Öffne Google Kalender am Computer.": "Откройте Google Календарь на компьютере.",

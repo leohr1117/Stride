@@ -1,14 +1,15 @@
 import { tx } from '../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CalendarDays, ListChecks, Pencil, Plus, RefreshCw } from 'lucide-react';
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useState, type FormEvent } from 'react';
 import { type Kalender, type TodoistStatus } from '../../../shared/api/index.ts';
 import { istAn } from '../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useSichtbarkeit } from '../funktionen.ts';
 import { Dialog } from '../components/Dialog.tsx';
 import { SchnellZeile } from '../components/SchnellAktion.tsx';
-import { Fehlermeldung, Formular, InfoHinweis, Karte, Knopf, Ladeanzeige, PasswortFeld, Ueberschrift } from '../ui/index.ts';
+import { fehlerAnzeige } from '../features/mehr/verbindungsStand.ts';
+import { Fehlermeldung, Formular, InfoHinweis, Karte, Knopf, Ladeanzeige, PasswortFeld } from '../ui/index.ts';
 import { KalenderFormular } from '../features/kalender/Einrichtung.tsx';
 import { TodoistEinrichtung, TodoistTokenSchritte } from '../features/todoist/Einrichtung.tsx';
 import { TodoistZuordnungen } from '../features/todoist/Zuordnungen.tsx';
@@ -23,18 +24,20 @@ function useProjekte() {
   return (ziele?.projekte ?? []).filter((projekt) => projekt.aktiv);
 }
 
-function Status({ letzter, fehler, zusatz }: { letzter: string | null; fehler: string | null; zusatz?: ReactNode }) {
+function Status({ letzter, fehler, uebernommen }: { letzter: string | null; fehler: string | null; uebernommen: number }) {
   const zeit = zeitpunktText(letzter);
+  const zeilen = fehler ? fehlerAnzeige(fehler).split('\n') : [];
   return (
     <div className="space-y-1 text-xs">
-      {(zeit || zusatz) && (
-        <p className="text-leise">
-          {zeit && tx('Abgeglichen {zeit}', { zeit })}
-          {zeit && zusatz && ' · '}
-          {zusatz}
+      <p className="text-leise">
+        {zeit ? tx('Abgeglichen {zeit}', { zeit }) : tx('Noch nicht abgeglichen')}
+        <span className="whitespace-nowrap">{` · ${tx('{anzahl} übernommen', { anzahl: zahl(uebernommen) })}`}</span>
+      </p>
+      {zeilen.map((zeile) => (
+        <p key={zeile} className="break-words text-gefahr">
+          {zeile}
         </p>
-      )}
-      {fehler && <p className="text-gefahr">{fehler}</p>}
+      ))}
     </div>
   );
 }
@@ -103,7 +106,7 @@ function TodoistKarte({ status }: { status: TodoistStatus }) {
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center">
           <h2 className="ueberschrift text-sm font-semibold tracking-wide text-leise uppercase">{tx("Todoist")}</h2>
-          <InfoHinweis text="Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden." />
+          <InfoHinweis text="Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden." />
         </div>
       </div>
       {status.verbunden ? (
@@ -116,7 +119,7 @@ function TodoistKarte({ status }: { status: TodoistStatus }) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{status.nutzer}</p>
-                  <Status letzter={status.letzterAbgleich} fehler={status.fehler} />
+                  <Status letzter={status.letzterAbgleich} fehler={status.fehler} uebernommen={status.uebernommen} />
                 </div>
                 {menue}
               </div>
@@ -154,17 +157,18 @@ function KalenderKarte({ kalender }: { kalender: Kalender[] }) {
 
   return (
     <Karte className="space-y-4">
-      <Ueberschrift
-        titel={tx("Kalender")}
-        aktion={
-          projekteAn ? (
-            <Knopf variante="leise" className="px-2 py-1" onClick={() => setDialog({ kalender: null })}>
-              <Plus className="size-4" />
-              {tx("Kalender")}
-            </Knopf>
-          ) : undefined
-        }
-      />
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+        <div className="flex min-w-0 items-center">
+          <h2 className="ueberschrift min-w-0 text-sm font-semibold tracking-wide text-leise uppercase">{tx("Kalender")}</h2>
+          <InfoHinweis text="Vergangene Termine werden zu Einträgen. Beim Öffnen der App und alle 15 Minuten." />
+        </div>
+        {projekteAn ? (
+          <Knopf variante="leise" className="px-2 py-1" onClick={() => setDialog({ kalender: null })}>
+            <Plus className="size-4" />
+            {tx("Kalender")}
+          </Knopf>
+        ) : null}
+      </div>
       {kalender.length > 0 ? (
         <div className="divide-y divide-rand">
           {kalender.map((eintrag) => (
@@ -183,11 +187,7 @@ function KalenderKarte({ kalender }: { kalender: Kalender[] }) {
                           .join(' · ')}
                       </p>
                     )}
-                    <Status
-                      letzter={eintrag.letzterAbgleich}
-                      fehler={eintrag.fehler}
-                      zusatz={tx('{anzahl} übernommen', { anzahl: zahl(eintrag.uebernommen) })}
-                    />
+                    <Status letzter={eintrag.letzterAbgleich} fehler={eintrag.fehler} uebernommen={eintrag.uebernommen} />
                   </div>
                   {menue}
                   <Knopf

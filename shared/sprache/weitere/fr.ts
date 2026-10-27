@@ -1,5 +1,18 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Noch nicht abgeglichen": "Pas encore synchronisé",
+  "Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden.": "Les tâches terminées deviennent des entrées dès la connexion. À l'ouverture de l'app, toutes les 15 minutes dans la journée, et toutes les 3 heures entre 23 h et 6 h.",
+  "Vergangene Termine werden zu Einträgen. Beim Öffnen der App und alle 15 Minuten.": "Les événements passés deviennent des entrées. À l'ouverture de l'app et toutes les 15 minutes.",
+  "Jede Verbindung zeigt den letzten Abgleich, einen klaren Fehler und wie viele Einträge übernommen wurden.": "Chaque connexion montre la dernière synchro, une erreur claire et le nombre d'entrées reprises.",
+  "Der Abgleich läuft auch beim Öffnen. Trennen behält die Einträge, nichts kommt doppelt.": "La synchro se lance aussi à l'ouverture. Déconnecter garde les entrées, et rien n'est repris deux fois.",
+  "Der Kalender ist gerade nicht erreichbar.": "Le calendrier est inaccessible pour le moment.",
+  "Der Kalender lehnt den Zugriff ab. Prüfe die Adresse.": "Le calendrier refuse l'accès. Vérifie l'adresse.",
+  "Der Kalender bremst gerade zu viele Anfragen. Der nächste Abgleich versucht es erneut.": "Le calendrier limite les requêtes pour le moment. La prochaine synchro réessaiera.",
+  "Der Kalender hat die Anfrage abgelehnt.": "Le calendrier a refusé la requête.",
+  "Unter dieser Adresse liegt kein Kalender.": "Il n'y a pas de calendrier à cette adresse.",
+  "Todoist hat die Anfrage abgelehnt. Der nächste Abgleich versucht es erneut.": "Todoist a refusé la requête. La prochaine synchro réessaiera.",
+  "Unerwarteter Fehler beim Abgleich mit Todoist.": "Erreur inattendue pendant la synchro avec Todoist.",
+  "Unerwarteter Fehler beim Abgleich mit dem Kalender.": "Erreur inattendue pendant la synchro avec le calendrier.",
   "Google": "Google",
   "Andere": "Autre",
   "Öffne Google Kalender am Computer.": "Ouvrir Google Agenda sur un ordinateur.",

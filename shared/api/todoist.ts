@@ -73,6 +73,7 @@ export interface TodoistStatus {
   seit: string | null;
   letzterAbgleich: string | null;
   fehler: string | null;
+  uebernommen: number;
   /** Erledigte Aufgaben ohne Projekt- oder Label-Zuordnung. */
   ohneZuordnung: TodoistOhne;
   standardVorlageId: number | null;

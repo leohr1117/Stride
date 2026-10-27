@@ -168,7 +168,7 @@ async function anfrage(
     if (still) {
       return null;
     }
-    throw new TodoistFehler(`Todoist hat mit Fehler ${antwort.status} geantwortet.`);
+    throw new TodoistFehler('Todoist hat die Anfrage abgelehnt. Der nächste Abgleich versucht es erneut.');
   }
   try {
     return await antwort.json();

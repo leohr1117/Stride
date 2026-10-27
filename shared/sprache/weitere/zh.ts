@@ -1,5 +1,18 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Noch nicht abgeglichen": "尚未同步",
+  "Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden.": "连接后，已完成的任务会变成记录。打开应用时会同步，白天每 15 分钟一次，23 点到 6 点之间每 3 小时一次。",
+  "Vergangene Termine werden zu Einträgen. Beim Öffnen der App und alle 15 Minuten.": "已结束的日程会变成记录。打开应用时会同步，并且每 15 分钟一次。",
+  "Jede Verbindung zeigt den letzten Abgleich, einen klaren Fehler und wie viele Einträge übernommen wurden.": "每个连接都会显示上次同步、清楚的错误，以及已导入的记录数。",
+  "Der Abgleich läuft auch beim Öffnen. Trennen behält die Einträge, nichts kommt doppelt.": "打开应用时也会同步。断开连接后记录仍在，而且不会重复导入。",
+  "Der Kalender ist gerade nicht erreichbar.": "日历暂时无法访问。",
+  "Der Kalender lehnt den Zugriff ab. Prüfe die Adresse.": "日历拒绝访问。请检查地址。",
+  "Der Kalender bremst gerade zu viele Anfragen. Der nächste Abgleich versucht es erneut.": "日历正在限制请求。下次同步会再试。",
+  "Der Kalender hat die Anfrage abgelehnt.": "日历拒绝了这次请求。",
+  "Unter dieser Adresse liegt kein Kalender.": "这个地址上没有日历。",
+  "Todoist hat die Anfrage abgelehnt. Der nächste Abgleich versucht es erneut.": "Todoist 拒绝了这次请求。下次同步会再试。",
+  "Unerwarteter Fehler beim Abgleich mit Todoist.": "与 Todoist 同步时出现意外错误。",
+  "Unerwarteter Fehler beim Abgleich mit dem Kalender.": "与日历同步时出现意外错误。",
   "Google": "Google",
   "Andere": "其他",
   "Öffne Google Kalender am Computer.": "在电脑上打开 Google 日历。",

@@ -10,7 +10,7 @@ import { fuehreRegelnZusammen, notizFuerEintrag, stundenAusDauer, type RegelErge
 import { aktivesAttribut, ladeAttributXp } from '../attribute/attribute.ts';
 import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
 import { ladeVorlage } from '../taetigkeiten/vorlagen.ts';
-import { fehlertext, legeEintragAn, leseWert, pruefeProjekt, setzeWert } from './gemeinsam.ts';
+import { fasseFehler, fehlertext, legeEintragAn, leseWert, pruefeProjekt, setzeWert } from './gemeinsam.ts';
 import {
   alsZiel,
   ladeLabelZeilen,
@@ -291,7 +291,7 @@ export async function gleicheTodoistAb(jetzt = new Date()): Promise<AbgleichErge
     speichereLabels(labels);
     const ergebnis = uebernimmErledigungen(erledigungen, jetzt);
     setzeWert(SCHLUESSEL.abgleich, jetzt.toISOString());
-    setzeWert(SCHLUESSEL.fehler, ergebnis.fehler[0] ?? null);
+    setzeWert(SCHLUESSEL.fehler, fasseFehler(ergebnis.fehler));
     return ergebnis;
   } catch (ausnahme) {
     const nachricht = fehlertext(ausnahme, 'Todoist');

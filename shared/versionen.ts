@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.9.7',
+    seiten: 'Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: [
+          'Jede Verbindung zeigt den letzten Abgleich, einen klaren Fehler und wie viele Einträge übernommen wurden.',
+          'Der Abgleich läuft auch beim Öffnen. Trennen behält die Einträge, nichts kommt doppelt.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.9.6',
     seiten: 'Verbindungen',
     abschnitte: [

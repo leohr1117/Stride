@@ -1,10 +1,30 @@
 import type { Verbindungen } from '../../../../shared/api/index.ts';
 import { tx } from '../../text.ts';
 
+export function fehlerAnzeige(fehler: string): string {
+  return fehler
+    .split('\n')
+    .map((zeile) => zeile.trim())
+    .filter((zeile) => zeile !== '')
+    .map((zeile) => {
+      const trenn = zeile.indexOf(': ');
+      if (trenn > 0) {
+        const name = zeile.slice(0, trenn);
+        const rest = zeile.slice(trenn + 2);
+        const satz = tx(rest);
+        if (satz !== rest) {
+          return `${name}: ${satz}`;
+        }
+      }
+      return tx(zeile);
+    })
+    .join('\n');
+}
+
 export function verbindungsStand(daten: Verbindungen): { text: string; fehler: boolean } | null {
   const fehler = daten.todoist.fehler ?? daten.kalender.find((kalender) => kalender.fehler)?.fehler ?? null;
   if (fehler) {
-    return { text: fehler, fehler: true };
+    return { text: fehlerAnzeige(fehler).split('\n')[0] ?? fehler, fehler: true };
   }
   const teile: string[] = [];
   if (daten.todoist.verbunden) {

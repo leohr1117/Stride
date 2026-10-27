@@ -2,10 +2,10 @@ import type { AbgleichErgebnis, Kalender, KalenderAenderung, KalenderDaten, Kale
 import { GRENZEN } from '../../../shared/spiel/begriffe.ts';
 import { titelPasstZumFilter } from '../../../shared/spiel/kalender.ts';
 import { eintragXp } from '../../../shared/spiel/xp.ts';
-import { aktualisiere, alle, ausfuehren, eine } from '../../db.ts';
+import { aktualisiere, alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { kalenderName, liesEreignisse, termineDieEnden, type Termin } from '../../integrationen/ical.ts';
-import { fehlertext, legeEintragAn, pruefeZiel } from './gemeinsam.ts';
+import { fasseFehler, fehlertext, legeEintragAn, pruefeZiel } from './gemeinsam.ts';
 
 const ZEITLIMIT_MS = 15_000;
 const KALENDER_MAX_BYTES = 5 * 1024 * 1024;
@@ -71,11 +71,20 @@ async function ladeKalenderText(adresse: string): Promise<string> {
   let antwort: Response;
   try {
     antwort = await fetch(adresse, { signal: AbortSignal.timeout(ZEITLIMIT_MS) });
-  } catch (fehler) {
-    throw ungueltig(`Der Kalender ist nicht erreichbar (${(fehler as Error).message}).`);
+  } catch {
+    throw ungueltig('Der Kalender ist gerade nicht erreichbar.');
+  }
+  if (antwort.status === 401 || antwort.status === 403) {
+    throw ungueltig('Der Kalender lehnt den Zugriff ab. Prüfe die Adresse.');
+  }
+  if (antwort.status === 404) {
+    throw ungueltig('Unter dieser Adresse liegt kein Kalender.');
+  }
+  if (antwort.status === 429) {
+    throw ungueltig('Der Kalender bremst gerade zu viele Anfragen. Der nächste Abgleich versucht es erneut.');
   }
   if (!antwort.ok) {
-    throw ungueltig(`Der Kalender hat mit Fehler ${antwort.status} geantwortet.`);
+    throw ungueltig('Der Kalender hat die Anfrage abgelehnt.');
   }
   const text = await antwort.text();
   if (text.length > KALENDER_MAX_BYTES) {
@@ -99,6 +108,12 @@ export async function erstelleKalender(daten: KalenderDaten, jetzt = new Date())
     daten.vorlageId,
     daten.filter,
     jetzt.toISOString(),
+  );
+  ausfuehren(
+    `INSERT INTO kalender_termine (kalender_id, termin_id, eintrag_id)
+     SELECT ?, termin_id, eintrag_id FROM kalender_importe WHERE adresse = ?`,
+    id,
+    adresse,
   );
   return zuKalender(ladeKalenderZeile(id));
 }
@@ -140,9 +155,13 @@ async function gleicheEinenKalenderAb(kalender: KalenderZeile, jetzt: Date): Pro
     );
     const fehler = new Set<string>();
     const bekannt = new Set(
-      alle<{ terminId: string }>('SELECT termin_id AS terminId FROM kalender_termine WHERE kalender_id = ?', kalender.id).map(
-        (zeile) => zeile.terminId,
-      ),
+      alle<{ terminId: string }>(
+        `SELECT termin_id AS terminId FROM kalender_termine WHERE kalender_id = ?
+         UNION
+         SELECT termin_id AS terminId FROM kalender_importe WHERE adresse = ?`,
+        kalender.id,
+        kalender.adresse,
+      ).map((zeile) => zeile.terminId),
     );
     let neu = 0;
     for (const termin of termine) {
@@ -157,22 +176,32 @@ async function gleicheEinenKalenderAb(kalender: KalenderZeile, jetzt: Date): Pro
           termin.ende,
           jetzt,
         );
-        ausfuehren(
-          'INSERT INTO kalender_termine (kalender_id, termin_id, eintrag_id) VALUES (?, ?, ?)',
-          kalender.id,
-          termin.id,
-          eintragId,
-        );
+        inTransaktion(() => {
+          ausfuehren(
+            'INSERT INTO kalender_termine (kalender_id, termin_id, eintrag_id) VALUES (?, ?, ?)',
+            kalender.id,
+            termin.id,
+            eintragId,
+          );
+          ausfuehren(
+            `INSERT INTO kalender_importe (adresse, termin_id, eintrag_id) VALUES (?, ?, ?)
+             ON CONFLICT (adresse, termin_id) DO NOTHING`,
+            kalender.adresse,
+            termin.id,
+            eintragId,
+          );
+        });
         bekannt.add(termin.id);
         neu++;
       } catch (ausnahme) {
-        fehler.add(`${kalender.name}: ${fehlertext(ausnahme, 'dem Kalender')}`);
+        fehler.add(fehlertext(ausnahme, 'dem Kalender'));
       }
     }
-    aktualisiere('kalender', kalender.id, { letzter_abgleich: jetzt.toISOString(), fehler: [...fehler][0] ?? null });
+    const hinweis = fasseFehler([...fehler]);
+    aktualisiere('kalender', kalender.id, { letzter_abgleich: jetzt.toISOString(), fehler: hinweis });
     return { neu, fehler: [...fehler] };
   } catch (ausnahme) {
-    const nachricht = `${kalender.name}: ${fehlertext(ausnahme, 'dem Kalender')}`;
+    const nachricht = fehlertext(ausnahme, 'dem Kalender');
     aktualisiere('kalender', kalender.id, { fehler: nachricht });
     return { neu: 0, fehler: [nachricht] };
   }

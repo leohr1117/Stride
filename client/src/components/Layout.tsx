@@ -8,6 +8,7 @@ import { seiteZeigtEigenenZurueck } from '../../../shared/spiel/herkunft.ts';
 import { LEISTE_STANDARD, leistenMitte, sichtbareLeiste, zurueckFuerSeite } from '../../../shared/spiel/leiste.ts';
 import { istAn, pfadAktiv } from '../../../shared/spiel/sichtbarkeit.ts';
 import { EINSTELLUNGEN, HANDBUCH, navAusLeiste, sichtbareGruppen, type NavEintrag } from '../navigation.ts';
+import { AbgleichBeimOeffnen } from '../abgleichBeimOeffnen.tsx';
 import { useStilAbgleich } from '../features/darstellung/stil.ts';
 import type { EintragVorgabe } from '../features/eintraege/EintragDialog.tsx';
 
@@ -189,6 +190,7 @@ function AppGeruest() {
 
   return (
       <div className="min-h-dvh md:flex">
+        <AbgleichBeimOeffnen />
         <Seitenleiste />
 
         <div className="min-w-0 flex-1">
