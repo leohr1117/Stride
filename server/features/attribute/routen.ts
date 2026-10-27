@@ -1,12 +1,13 @@
 import type { FastifyInstance } from 'fastify';
 import { aendereAttribut, aktiviereAttribut, ladeAttribute } from './attribute.ts';
 import { loescheAttribut, loescheVorlage } from '../../services/loeschen.ts';
-import { aendereVorlage, erstelleVorlage, ladeVorlagen } from '../taetigkeiten/vorlagen.ts';
+import { aendereVorlage, erstelleVorlage, ladeVorlagen, ordneVorlagen } from '../taetigkeiten/vorlagen.ts';
 import {
   attributAenderungSchema,
   attributAktivierungSchema,
   idParameter,
   vorlageAenderungSchema,
+  vorlageReihenfolgeSchema,
   vorlageSchema,
 } from '../../validierung.ts';
 
@@ -30,6 +31,11 @@ export async function attributRouten(app: FastifyInstance): Promise<void> {
   });
 
   app.get('/vorlagen', async () => ladeVorlagen());
+
+  app.put('/vorlagen/reihenfolge', async (anfrage) => {
+    const { ids } = vorlageReihenfolgeSchema.parse(anfrage.body);
+    return ordneVorlagen(ids);
+  });
 
   app.post('/vorlagen', async (anfrage, antwort) => {
     const vorlage = erstelleVorlage(vorlageSchema.parse(anfrage.body));

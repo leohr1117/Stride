@@ -3,6 +3,7 @@ import { anfrage, type MitArchiv } from './kern.ts';
 
 export const taetigkeitenApi = {
   vorlagen: () => anfrage<Vorlage[]>('/vorlagen'),
+  ordneVorlagen: (ids: number[]) => anfrage<Vorlage[]>('/vorlagen/reihenfolge', 'PUT', { ids }),
   erstelleVorlage: (daten: VorlageDaten) => anfrage<Vorlage>('/vorlagen', 'POST', daten),
   aendereVorlage: (id: number, daten: MitArchiv<VorlageDaten>) => anfrage<Vorlage>(`/vorlagen/${id}`, 'PATCH', daten),
   loescheVorlage: (id: number) => anfrage<void>(`/vorlagen/${id}`, 'DELETE'),

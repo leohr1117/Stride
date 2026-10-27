@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Unter Tätigkeiten legst du die Reihenfolge fest. Die oberste steht zuerst.', 'Under Activities, you set the order. The top one comes first.'],
   ['Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.', 'Under More, you choose which cards the overview shows. Hidden cards disappear. The section stays on.'],
   ['Benutzernamen ändert nur der Admin. Der eigene Name wird angezeigt und bleibt eindeutig.', 'Only the admin changes usernames. Your own name is shown and stays unique.'],
   ['Neu unter Mehr: Übersicht. Die Seite listet die Karten der Übersicht und wann sie erscheinen.', 'New under More: Overview. The page lists the overview cards and when they appear.'],

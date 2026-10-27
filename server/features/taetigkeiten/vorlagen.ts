@@ -176,3 +176,17 @@ export function aendereVorlage(id: number, aenderung: Partial<VorlageDaten> & { 
   });
   return ladeVorlage(id);
 }
+
+export function ordneVorlagen(ids: number[]): Vorlage[] {
+  const aktiv = alle<{ id: number }>('SELECT id FROM vorlagen WHERE archiviert = 0');
+  const menge = new Set(aktiv.map((zeile) => zeile.id));
+  if (ids.length !== menge.size || new Set(ids).size !== ids.length || ids.some((id) => !menge.has(id))) {
+    throw ungueltig('Die Angaben sind unvollständig.');
+  }
+  inTransaktion(() => {
+    ids.forEach((id, index) => {
+      ausfuehren('UPDATE vorlagen SET sortierung = ? WHERE id = ?', index, id);
+    });
+  });
+  return ladeVorlagen();
+}

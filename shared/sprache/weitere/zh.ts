@@ -1,5 +1,8 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Tätigkeiten legst du die Reihenfolge fest. Die oberste steht zuerst.": "在“活动”中可以设定顺序。最上面的排在最前。",
+  "Reihenfolge": "顺序",
+  "Die oberste Tätigkeit steht zuerst, auch beim Eintragen.": "最上面的活动排在最前，记录时也一样。",
   "Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.": "在「更多」中可以选择总览显示哪些卡片。隐藏的卡片会消失。区域保持开启。",
   "Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.": "在这里选择总览显示哪些卡片。区域在“应用与关联”中开启。",
   "Bereich für {name}": "{name}的区域",

@@ -85,6 +85,9 @@ export const vorlageSchema = z.object({
   projektId: optionaleId.nullish(),
 });
 export const vorlageAenderungSchema = vorlageSchema.omit({ projektId: true }).partial().extend(archiviert);
+export const vorlageReihenfolgeSchema = z.object({
+  ids: z.array(z.number().int().positive()).max(500),
+});
 
 export const visionSchema = z.object({
   titel: pflichtText('Der Titel', GRENZEN.nameMax),

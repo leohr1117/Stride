@@ -3,6 +3,7 @@ import { AnimatePresence, usePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { InfoHinweis } from '../ui/Info.tsx';
 
 const offeneDialoge: symbol[] = [];
 const AUSBLENDEN_MS = 180;
@@ -13,10 +14,12 @@ function istOberster(kennung: symbol): boolean {
 
 function DialogSchicht({
   titel,
+  info,
   onSchliessen,
   children,
 }: {
   titel: string;
+  info?: string;
   onSchliessen: () => void;
   children: ReactNode;
 }) {
@@ -58,13 +61,20 @@ function DialogSchicht({
             anwesend ? 'translate-y-0 opacity-100' : 'translate-y-7 opacity-0'
           }`}
         >
-          <header className="flex shrink-0 items-center justify-between px-5 pt-5 pb-3">
-            <h2 className="text-lg font-semibold">{titel}</h2>
+          <header className="flex shrink-0 items-center justify-between gap-3 px-5 pt-5 pb-3">
+            {info ? (
+              <div className="flex min-w-0 items-center">
+                <h2 className="min-w-0 text-lg font-semibold text-balance break-words">{titel}</h2>
+                <InfoHinweis text={info} />
+              </div>
+            ) : (
+              <h2 className="text-lg font-semibold">{titel}</h2>
+            )}
             <button
               type="button"
               onClick={onSchliessen}
               aria-label={tx('Schließen')}
-              className="rounded-full p-1.5 text-leise transition hover:bg-flaeche-2 hover:text-haupt"
+              className="shrink-0 rounded-full p-1.5 text-leise transition hover:bg-flaeche-2 hover:text-haupt"
             >
               <X className="size-5" />
             </button>
@@ -79,11 +89,13 @@ function DialogSchicht({
 export function Dialog({
   offen,
   titel,
+  info,
   onSchliessen,
   children,
 }: {
   offen: boolean;
   titel: string;
+  info?: string;
   onSchliessen: () => void;
   children: ReactNode;
 }) {
@@ -114,7 +126,7 @@ export function Dialog({
   return createPortal(
     <AnimatePresence>
       {offen && (
-        <DialogSchicht key="dialog" titel={titel} onSchliessen={onSchliessen}>
+        <DialogSchicht key="dialog" titel={titel} info={info} onSchliessen={onSchliessen}>
           {children}
         </DialogSchicht>
       )}

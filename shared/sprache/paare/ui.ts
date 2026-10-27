@@ -1,5 +1,7 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Reihenfolge', 'Order'],
+  ['Die oberste Tätigkeit steht zuerst, auch beim Eintragen.', 'The top activity comes first, including when you log an entry.'],
   ['Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.', 'Choose here which cards the overview shows. Turn the section on under App & connections.'],
   ['Bereich für {name}', 'Section for {name}'],
   ['Bereich', 'Section'],

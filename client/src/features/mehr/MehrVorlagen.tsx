@@ -6,6 +6,7 @@ import { api, SCHLUESSEL } from '../../api/index.ts';
 import { KurzListe } from '../../components/Ausklappbar.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
+import { ReihenfolgeKnopf } from '../taetigkeiten/Reihenfolge.tsx';
 import { Fehlermeldung, Karte, Knopf, Ladeanzeige } from '../../ui/index.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
@@ -25,10 +26,13 @@ export function VorlagenVerwaltung({ onBearbeiten }: { onBearbeiten: (vorlage: V
 
   return (
     <div className="space-y-3">
-      <Knopf className="w-full md:w-auto" onClick={() => onBearbeiten(null)}>
-        <Plus className="size-4" />
-        {tx("Tätigkeit anlegen")}
-      </Knopf>
+      <div className="flex flex-col gap-2 md:flex-row">
+        <Knopf className="w-full md:w-auto" onClick={() => onBearbeiten(null)}>
+          <Plus className="size-4" />
+          {tx("Tätigkeit anlegen")}
+        </Knopf>
+        <ReihenfolgeKnopf vorlagen={vorlagen ?? []} />
+      </div>
       <Karte dicht>
         {isPending && (
           <div className="px-4">

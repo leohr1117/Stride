@@ -1,5 +1,8 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Tätigkeiten legst du die Reihenfolge fest. Die oberste steht zuerst.": "「活動」で順番を決めます。一番上が先頭です。",
+  "Reihenfolge": "順番",
+  "Die oberste Tätigkeit steht zuerst, auch beim Eintragen.": "一番上の活動が先頭です。記録するときも同じです。",
   "Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.": "「その他」で、概要に表示するカードを選べます。非表示のカードは消え、セクションはオンのままです。",
   "Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.": "ここで、概要に表示するカードを決めます。セクションは「アプリとつながり」でオンにします。",
   "Bereich für {name}": "{name}のセクション",

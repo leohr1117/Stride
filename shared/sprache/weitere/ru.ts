@@ -1,5 +1,8 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Tätigkeiten legst du die Reihenfolge fest. Die oberste steht zuerst.": "В «Занятиях» задаётся порядок. Верхнее идёт первым.",
+  "Reihenfolge": "Порядок",
+  "Die oberste Tätigkeit steht zuerst, auch beim Eintragen.": "Верхнее занятие идёт первым, в том числе при записи.",
   "Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.": "В разделе «Ещё» можно выбрать, какие карточки показывает обзор. Скрытые карточки исчезают. Раздел остаётся включённым.",
   "Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.": "Здесь выбирается, какие карточки показывает обзор. Раздел включается в «Приложение и связи».",
   "Bereich für {name}": "Раздел для {name}",

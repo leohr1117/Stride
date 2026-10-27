@@ -1,5 +1,8 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Tätigkeiten legst du die Reihenfolge fest. Die oberste steht zuerst.": "En Actividades fijas el orden. La de arriba va primero.",
+  "Reihenfolge": "Orden",
+  "Die oberste Tätigkeit steht zuerst, auch beim Eintragen.": "La actividad de arriba va primero, también al registrar.",
   "Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.": "En Más eliges qué tarjetas muestra el resumen. Las tarjetas ocultas desaparecen. La sección sigue activa.",
   "Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.": "Aquí eliges qué tarjetas muestra el resumen. La sección se activa en App y conexiones.",
   "Bereich für {name}": "Sección para {name}",

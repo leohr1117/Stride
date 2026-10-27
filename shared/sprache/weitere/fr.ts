@@ -1,5 +1,8 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Tätigkeiten legst du die Reihenfolge fest. Die oberste steht zuerst.": "Sous Activités, vous fixez l'ordre. Celle du haut passe en premier.",
+  "Reihenfolge": "Ordre",
+  "Die oberste Tätigkeit steht zuerst, auch beim Eintragen.": "L'activité du haut passe en premier, aussi lors de la saisie.",
   "Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.": "Dans Plus, vous choisissez quelles cartes l'aperçu affiche. Les cartes masquées disparaissent. La section reste activée.",
   "Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.": "Ici, vous choisissez quelles cartes l'aperçu affiche. La section s'active sous App et connexions.",
   "Bereich für {name}": "Section pour {name}",
