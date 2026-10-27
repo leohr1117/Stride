@@ -17,6 +17,17 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.7.6',
+    seiten: 'Chronik',
+    behoben: 'Chronik',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Löschen in der Chronik erscheint nur beim Wischen.'],
+      },
+    ],
+  },
+  {
     version: '3.7.5',
     seiten: 'Mehr',
     behoben: 'Mehr',

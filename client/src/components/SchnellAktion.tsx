@@ -34,6 +34,15 @@ import {
 import { useBestaetigung } from './Bestaetigung.tsx';
 import { Knopf } from '../ui/index.ts';
 
+const STREIFEN_PX = AUSLOESEN_PX + 24;
+const SCHIEBE_ZEIT = '200ms cubic-bezier(0, 0, 0.2, 1)';
+
+/** Bei Ruhe ganz weg, sonst nur der noch verdeckte Teil. Sonst scheint der Streifen durch transparente Deckel. */
+function streifenClip(x: number): string {
+  const links = x >= 0 ? STREIFEN_PX : Math.max(0, STREIFEN_PX + x);
+  return `inset(0 0 0 ${links}px)`;
+}
+
 interface Meldung {
   art: 'status' | 'fehler';
   text: string;
@@ -520,13 +529,22 @@ export function SchnellZeile({
       onClickCapture={beiKlick}
       onContextMenu={beiKontext}
     >
-      <div className={`absolute inset-y-0 right-0 flex w-[156px] justify-end ${farbe}`}>
+      <div
+        data-schnell-streifen=""
+        className={`absolute inset-y-0 right-0 flex justify-end ${farbe}`}
+        style={{
+          width: STREIFEN_PX,
+          clipPath: streifenClip(x),
+          transition: zieht ? 'none' : `clip-path ${SCHIEBE_ZEIT}`,
+        }}
+      >
         <button
           type="button"
           data-schnell-frei=""
           tabIndex={x === 0 ? -1 : 0}
           aria-hidden={x === 0}
-          className="w-[88px] text-sm font-medium"
+          className="shrink-0 text-sm font-medium"
+          style={{ width: ZEIGE_PX }}
           onClick={() => {
             if (primaer) {
               setX(0);
@@ -538,7 +556,13 @@ export function SchnellZeile({
           {primaer ? tx(primaer.label) : null}
         </button>
       </div>
-      <div className={`relative min-w-full ${hintergrund} ${zieht ? '' : 'transition-transform duration-200 ease-out'}`} style={{ transform: `translateX(${x}px)` }}>
+      <div
+        className={`relative min-w-full ${hintergrund}`}
+        style={{
+          transform: `translateX(${x}px)`,
+          transition: zieht ? 'none' : `transform ${SCHIEBE_ZEIT}`,
+        }}
+      >
         {inhalt}
       </div>
       {offen && anker ? <Menue punkte={punkte} anker={anker} onWahl={beiWahl} onSchliessen={schliessen} /> : null}
