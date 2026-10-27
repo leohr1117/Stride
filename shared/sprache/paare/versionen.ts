@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Attributnamen lassen sich nicht mehr ändern.', 'Attribute names can no longer be changed.'],
   ['Paletten, der Durchschnittsmensch und weitere Texte sind in allen Sprachen übersetzt.', 'Palettes, the average person, and other text are translated in every language.'],
   ['Fehlende Übersetzungen werden in allen sieben Sprachen erkannt.', 'Missing translations are detected in all seven languages.'],
   ['Seiten, Dialoge und Diagramme bleiben auf dem Handy und am PC im Bild.', 'Pages, dialogs, and charts stay on the screen on phones and computers.'],

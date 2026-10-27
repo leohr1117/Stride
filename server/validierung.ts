@@ -52,7 +52,6 @@ export const attributAktivierungSchema = z.object({
 
 export const attributAenderungSchema = z
   .object({
-    name: pflichtText('Der Name', GRENZEN.nameMax),
     beschreibung: freiText('Die Beschreibung', GRENZEN.beschreibungMax),
     farbe,
     icon: z.enum(ICONS),

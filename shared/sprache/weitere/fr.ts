@@ -2,6 +2,7 @@
 export const TEXTE: Record<string, string> = {
   "Sprache": "Langue",
   "Fehlende Übersetzungen werden in allen sieben Sprachen erkannt.": "Les traductions manquantes sont détectées dans les sept langues.",
+  "Attributnamen lassen sich nicht mehr ändern.": "Les noms des attributs ne peuvent plus être modifiés.",
   "Paletten, der Durchschnittsmensch und weitere Texte sind in allen Sprachen übersetzt.": "Les palettes, la personne moyenne et d'autres textes sont traduits dans toutes les langues.",
   "Hell": "Clair",
   "Dunkel": "Sombre",

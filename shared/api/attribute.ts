@@ -33,6 +33,9 @@ export interface AttributDaten {
   erschoepfungZiel: number | null;
 }
 
+/** Änderung ohne Namen. Der gespeicherte Name bleibt. */
+export type AttributAenderung = Omit<AttributDaten, 'name'>;
+
 export const AKTIVIERUNGS_MODI = ['behalten', 'anteil', 'level'] as const;
 export type AktivierungsModus = (typeof AKTIVIERUNGS_MODI)[number];
 

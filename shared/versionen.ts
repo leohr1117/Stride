@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.9.4',
+    seiten: 'Charakter',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Attributnamen lassen sich nicht mehr ändern.'],
+      },
+    ],
+  },
+  {
     version: '3.9.3',
     seiten: 'Darstellung, Vorbilder, Verbindungen, Ziele',
     behoben: 'Darstellung, Vorbilder, Verbindungen, Ziele',

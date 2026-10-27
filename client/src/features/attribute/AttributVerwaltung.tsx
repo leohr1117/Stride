@@ -156,7 +156,6 @@ export function AttributFormular({
 }) {
   const queryClient = useQueryClient();
   const funktionen = useFunktionen();
-  const [name, setName] = useState(attribut.name);
   const [beschreibung, setBeschreibung] = useState(attribut.beschreibung);
   const [farbe, setFarbe] = useState(attribut.farbe);
   const [icon, setIcon] = useState<IconName>(attribut.icon as IconName);
@@ -169,7 +168,6 @@ export function AttributFormular({
   const speichern = useMutation({
     mutationFn: () =>
       api.aendereAttribut(attribut.id, {
-        name,
         beschreibung,
         farbe,
         icon,
@@ -192,13 +190,7 @@ export function AttributFormular({
   return (
     <Formular onAbsenden={absenden}>
       <Feld label={tx("Name")}>
-        <input
-          className={EINGABE_STIL}
-          value={name}
-          maxLength={GRENZEN.nameMax}
-          onChange={(ereignis) => setName(ereignis.target.value)}
-          autoFocus
-        />
+        <p className="break-words text-sm">{attributName(attribut)}</p>
       </Feld>
       <Feld label={tx("Beschreibung")}>
         <input
@@ -254,7 +246,7 @@ export function AttributFormular({
           }}
           onErledigt={onFertig}
         />
-        <Knopf type="submit" variante="primaer" className="flex-1" disabled={!name.trim() || speichern.isPending}>
+        <Knopf type="submit" variante="primaer" className="flex-1" disabled={speichern.isPending}>
           {tx("Speichern")}
         </Knopf>
       </div>

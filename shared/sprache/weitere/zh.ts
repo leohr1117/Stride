@@ -2,6 +2,7 @@
 export const TEXTE: Record<string, string> = {
   "Sprache": "语言",
   "Fehlende Übersetzungen werden in allen sieben Sprachen erkannt.": "会在全部七种语言里找出缺少的翻译。",
+  "Attributnamen lassen sich nicht mehr ändern.": "属性名称不能再更改。",
   "Paletten, der Durchschnittsmensch und weitere Texte sind in allen Sprachen übersetzt.": "调色板、普通人和其余文字已译成所有语言。",
   "Hell": "浅色",
   "Dunkel": "深色",

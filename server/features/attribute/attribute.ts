@@ -1,4 +1,4 @@
-import type { AktivierungsModus, Attribut, AttributDaten } from '../../../shared/api/index.ts';
+import type { AktivierungsModus, Attribut, AttributAenderung } from '../../../shared/api/index.ts';
 import { attributVorlage } from '../../../shared/features/attribute/attributKatalog.ts';
 import { ATTRIBUT_TYP_INFO, type AttributKennung, type AttributTyp } from '../../../shared/spiel/begriffe.ts';
 import { erschoepfungsFaktor, type VerfallStufe } from '../../../shared/spiel/belastung.ts';
@@ -299,7 +299,7 @@ function pruefeErschoepfungsZiel(attributId: number, zielId: number | null | und
 
 export function aendereAttribut(
   id: number,
-  aenderung: Partial<AttributDaten> & { archiviert?: boolean },
+  aenderung: Partial<AttributAenderung> & { archiviert?: boolean },
   jetzt = new Date(),
 ): Attribut {
   const bisher = ladeAttribut(id);
@@ -318,8 +318,8 @@ export function aendereAttribut(
     (aenderung.archiviert === false && bisher.archiviert);
   const gesamtXp = ladeGesamtXp();
 
+  // Der Name bleibt, wie er gespeichert ist. Ein mitgeschickter Name wird nicht geschrieben.
   aktualisiere('attribute', id, {
-    name: aenderung.name,
     beschreibung: aenderung.beschreibung,
     farbe: aenderung.farbe,
     icon: aenderung.icon,
