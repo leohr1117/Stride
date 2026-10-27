@@ -7,7 +7,6 @@ export const FUNKTIONEN = [
   'faehigkeiten',
   'ausruestung',
   'basis',
-  'aufgaben',
   'training',
   'chronik',
   'vorbilder',
@@ -43,7 +42,6 @@ export const FUNKTION_BLOECKE: readonly FunktionsBlock[] = [
     seite: 'Seiten',
     eintraege: [
       { funktion: 'basis', label: 'Basis' },
-      { funktion: 'aufgaben', label: 'Aufgaben' },
       { funktion: 'training', label: 'Training' },
       { funktion: 'chronik', label: 'Chronik' },
       { funktion: 'rueckblick', label: 'Rückblick' },
@@ -103,17 +101,12 @@ export function verfallFunktion(typ: AttributTyp): 'verfallKoennen' | 'verfallHa
 /**
  * Liest gespeicherte Schalter. Der alte Schalter Attributverfall gilt für Können und Haben,
  * solange die getrennten Schalter noch nicht gespeichert sind.
- * Keine Zeile (null oder undefined) ist eine neue Welt und schaltet Aufgaben an.
- * Ein gespeichertes Objekt ohne den Schlüssel lässt Aufgaben aus.
- * Training bleibt in beiden Fällen aus.
+ * Der alte Schlüssel aufgaben wird ignoriert und schaltet nichts ein.
+ * Training bleibt aus, auch ohne gespeicherte Zeile.
  */
 export function funktionenAusSpeicher(roh: unknown): Funktionen {
   const funktionen = standardFunktionen();
-  if (roh === null || roh === undefined) {
-    funktionen.aufgaben = true;
-    return funktionen;
-  }
-  if (typeof roh !== 'object') {
+  if (roh === null || roh === undefined || typeof roh !== 'object') {
     return funktionen;
   }
   const quelle = roh as Record<string, unknown>;

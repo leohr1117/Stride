@@ -20,6 +20,7 @@ import {
 } from '../../../shared/spiel/aufgabe.ts';
 import { GEGNER, meilensteinBonus } from '../../../shared/spiel/xp.ts';
 import { ausfuehren, eine, mitWelt, schliesseWelt } from '../../db.ts';
+import { einstellungenAenderungSchema } from '../../validierung.ts';
 import { aendereAttribut } from '../attribute/attribute.ts';
 import { aendereEinstellungen } from '../einstellungen/einstellungen.ts';
 import { erstelleEintrag, loescheEintrag } from '../eintraege/eintraege.ts';
@@ -218,18 +219,22 @@ describe('Aufgaben', () => {
     });
   });
 
-  it('lässt bei ausgeschaltetem Schalter die Zeile stehen', () => {
+  it('lässt einen gespeicherten Aufgaben-Schalter die Zeile nicht blockieren', () => {
     mitWelt(welt(), () => {
       const vorlageId = grund();
       const aufgabe = lege({ vorlageId, name: 'Bleibt' });
-      aendereEinstellungen({ funktionen: { aufgaben: false } });
-      expect(ladeAufgaben(false, JETZT)).toEqual([]);
+      ausfuehren(
+        `INSERT INTO einstellungen (schluessel, wert) VALUES ('funktionen', ?)
+         ON CONFLICT (schluessel) DO UPDATE SET wert = excluded.wert`,
+        JSON.stringify({ aufgaben: false, koennen: true, status: true, handbuch: true }),
+      );
+      expect(ladeAufgaben(false, JETZT).map((zeile) => zeile.name)).toEqual(['Bleibt']);
       expect(anzahl('aufgaben')).toBe(1);
-      expect(() => erledigeAufgabe(aufgabe.id, JETZT)).toThrow('Aufgaben ist ausgeschaltet.');
-      expect(() => lege({ vorlageId, name: 'Neu' })).toThrow('Aufgaben ist ausgeschaltet.');
-      expect(() => loescheAufgabe(aufgabe.id)).toThrow('Aufgaben ist ausgeschaltet.');
-      expect(anzahl('aufgaben')).toBe(1);
-      expect(anzahl('eintraege')).toBe(0);
+      erledigeAufgabe(aufgabe.id, JETZT);
+      expect(anzahl('eintraege')).toBe(1);
+      expect(
+        einstellungenAenderungSchema.parse({ funktionen: { aufgaben: true, basis: true } }).funktionen,
+      ).toEqual({ basis: true });
     });
   });
 

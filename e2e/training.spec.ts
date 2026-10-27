@@ -1,5 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
-import { anmelden, ohneSeitlichenUeberlauf } from './aufgabenHelfer.ts';
+import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { oben, raeume, schalte } from './trainingHelfer.ts';
 
 const INFO = 'Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert.';
@@ -15,7 +15,7 @@ test.afterEach(async ({ page }) => {
   await schalte(page, false);
 });
 
-test('Schalter Training sitzt hinter Aufgaben und blendet die Navigation', async ({ page }, testInfo) => {
+test('Schalter Training sitzt hinter Basis und blendet die Navigation', async ({ page }, testInfo) => {
   const breit = testInfo.project.name === 'desktop';
   const bild = (name: string) =>
     page.screenshot({ path: `tmp-bau/training-schalter/${testInfo.project.name}-${name}.png` });
@@ -27,8 +27,8 @@ test('Schalter Training sitzt hinter Aufgaben und blendet die Navigation', async
   await expect(schalter).toHaveAttribute('aria-checked', 'false');
 
   const reihenfolge = await page.locator('[id^="funktion-"]').evaluateAll((knoten) => knoten.map((knoten) => knoten.id));
-  const aufgaben = reihenfolge.indexOf('funktion-aufgaben');
-  expect(reihenfolge[aufgaben + 1]).toBe('funktion-training');
+  const basis = reihenfolge.indexOf('funktion-basis');
+  expect(reihenfolge[basis + 1]).toBe('funktion-training');
 
   const lage = await zeile.locator('button[aria-label="Info"]').evaluate((knopf) => {
     const kasten = knopf.getBoundingClientRect();

@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { anmelden, ohneSeitlichenUeberlauf } from './aufgabenHelfer.ts';
+import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { oben, raeume, schalte } from './trainingHelfer.ts';
 
 const SATZ_ROUTE = '**/api/trainingssaetze/**';

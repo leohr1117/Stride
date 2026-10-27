@@ -307,6 +307,21 @@ export const statistikAbfrageSchema = z.object({
   zeitraum: z.enum(ZEITRAEUME).default('3m'),
 });
 
+/** Alter Schlüssel `aufgaben` und andere Unbekannte fallen weg, der Rest der Änderung bleibt gültig. */
+function bekannteFunktionen(wert: unknown): unknown {
+  if (typeof wert !== 'object' || wert === null || Array.isArray(wert)) {
+    return wert;
+  }
+  const bekannt = new Set<string>(FUNKTIONEN);
+  const kopie: Record<string, boolean> = {};
+  for (const [schluessel, eintrag] of Object.entries(wert)) {
+    if (bekannt.has(schluessel) && typeof eintrag === 'boolean') {
+      kopie[schluessel] = eintrag;
+    }
+  }
+  return kopie;
+}
+
 export const einstellungenAenderungSchema = z.object({
   charakterName: pflichtText('Der Name', PROFILNAME_MAX).optional(),
   sound: z.boolean().optional(),
@@ -324,7 +339,7 @@ export const einstellungenAenderungSchema = z.object({
   hintergrund: z.string().refine(istHexFarbe, 'Die Hintergrundfarbe braucht das Format #rrggbb.').optional(),
   farbenZuruecksetzen: z.boolean().optional(),
   glimmen: z.boolean().optional(),
-  funktionen: z.partialRecord(z.enum(FUNKTIONEN), z.boolean()).optional(),
+  funktionen: z.preprocess(bekannteFunktionen, z.partialRecord(z.enum(FUNKTIONEN), z.boolean())).optional(),
   ebenen: z.partialRecord(z.enum(EBENEN), z.boolean()).optional(),
   mobilLeiste: z
     .array(z.string())

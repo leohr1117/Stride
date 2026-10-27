@@ -85,9 +85,6 @@ export function pfadAktiv(pfad: string, sichtbarkeit: Sichtbarkeit): boolean {
   if (rein === '/basis') {
     return istAn('basis', sichtbarkeit);
   }
-  if (rein === '/aufgaben') {
-    return istAn('aufgaben', sichtbarkeit);
-  }
   if (rein === '/training' || rein.startsWith('/training/')) {
     return istAn('training', sichtbarkeit);
   }

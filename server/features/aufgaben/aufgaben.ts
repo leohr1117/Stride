@@ -8,7 +8,7 @@ import { alle, ausfuehren, eine, inTransaktion, platzhalter } from '../../db.ts'
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { loeschbareMenge, loescheAufgabe as loescheAufgabenZeile } from '../../services/loeschen.ts';
 import { pruefeProjektUndVorlage } from '../basis/basis.ts';
-import { funktionAktiv, ladeEinstellungen, pruefeEbene, pruefeFunktion } from '../einstellungen/einstellungen.ts';
+import { ladeEinstellungen, pruefeEbene } from '../einstellungen/einstellungen.ts';
 import { erstelleEintrag } from '../eintraege/eintraege.ts';
 import { KONTEXT_JOINS } from '../ziele/kontext.ts';
 
@@ -265,7 +265,6 @@ function schreibe(id: number | null, bezug: Bezug, termin: AufgabeTermin): numbe
 }
 
 function speichern(id: number | null, aenderung: AufgabeAenderung, jetzt: Date): Aufgabe {
-  pruefeFunktion('aufgaben');
   const heute = heuteVon(jetzt);
   const bisher = id === null ? null : ladeZeile(id, heute);
   if (bisher && nurArchiv(aenderung)) {
@@ -282,9 +281,6 @@ function speichern(id: number | null, aenderung: AufgabeAenderung, jetzt: Date):
 }
 
 export function ladeAufgaben(archiv = false, jetzt = new Date()): Aufgabe[] {
-  if (!funktionAktiv('aufgaben')) {
-    return [];
-  }
   const loeschbar = loeschbareMenge('aufgabe');
   const zeilen = alle<AufgabeZeile>(`${AUFGABE_ABFRAGE} WHERE a.archiviert = ?`, heuteVon(jetzt), Number(archiv));
   return sortiereAufgaben(zeilen.map((zeile) => zuAufgabe(zeile, loeschbar)));
@@ -299,12 +295,10 @@ export function aendereAufgabe(id: number, aenderung: AufgabeAenderung, jetzt = 
 }
 
 export function loescheAufgabe(id: number): void {
-  pruefeFunktion('aufgaben');
   loescheAufgabenZeile(id);
 }
 
 export function erledigeAufgabe(id: number, jetzt = new Date()): EintragErgebnis {
-  pruefeFunktion('aufgaben');
   const einstellungen = ladeEinstellungen();
   const heute = datumInZone(jetzt, einstellungen.zeitzone);
   const zeile = ladeZeile(id, heute);

@@ -60,7 +60,6 @@ describe('pfadAktiv', () => {
   it('sperrt Seiten und Deep Links der ausgeschalteten Funktion', () => {
     const aus = sicht();
     expect(pfadAktiv('/basis', aus)).toBe(false);
-    expect(pfadAktiv('/aufgaben', aus)).toBe(false);
     expect(pfadAktiv('/training', aus)).toBe(false);
     expect(pfadAktiv('/training/plaene/neu', aus)).toBe(false);
     expect(pfadAktiv('/training/plaene/3', aus)).toBe(false);
@@ -85,8 +84,6 @@ describe('pfadAktiv', () => {
       statistiken: true,
     });
     expect(pfadAktiv('/basis', an)).toBe(true);
-    expect(pfadAktiv('/aufgaben', aus)).toBe(false);
-    expect(pfadAktiv('/aufgaben', sicht({ aufgaben: true }))).toBe(true);
     const training = sicht({ training: true });
     expect(pfadAktiv('/training', training)).toBe(true);
     expect(pfadAktiv('/training?plan=1', training)).toBe(true);
@@ -111,6 +108,11 @@ describe('pfadAktiv', () => {
     expect(pfadAktiv('/ziele', nurVorhaben)).toBe(true);
     expect(pfadAktiv('/projekte/3', nurVorhaben)).toBe(false);
     expect(pfadAktiv('/laufend', nurVorhaben)).toBe(true);
+  });
+
+  it('lässt den alten Aufgaben-Pfad durch, die Route leitet auf die Übersicht', () => {
+    expect(pfadAktiv('/aufgaben', sicht())).toBe(true);
+    expect(pfadAktiv('/aufgaben', sicht({ basis: true }))).toBe(true);
   });
 
   it('lässt Übersicht, Charakter und Einstellungen immer zu', () => {

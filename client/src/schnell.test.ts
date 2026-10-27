@@ -89,14 +89,11 @@ describe('bestaetigungFuer', () => {
 });
 
 describe('wendeQuery', () => {
-  it('setzt das Archiv-Flag in der Aufgabenliste und bei Trainingsplänen', () => {
+  it('setzt das Archiv-Flag bei Trainingsplänen', () => {
     const daten = [
       { id: 1, archiviert: false },
       { id: 2, archiviert: false },
     ];
-    const neu = wendeQuery(['aufgaben', false], daten, 'aufgabe', 1, 'archivieren') as typeof daten;
-    expect(neu[0]?.archiviert).toBe(true);
-    expect(neu[1]).toBe(daten[1]);
     expect(wendeQuery(['aufgaben', false], daten, 'basis', 1, 'archivieren')).toBe(daten);
     const plaene = wendeQuery(['trainingsplaene', false], daten, 'trainingsplan', 1, 'archivieren') as typeof daten;
     expect(plaene[0]?.archiviert).toBe(true);

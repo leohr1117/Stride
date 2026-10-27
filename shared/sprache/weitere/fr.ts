@@ -1508,6 +1508,7 @@ export const TEXTE: Record<string, string> = {
   "Zurück auf Unterseiten bleibt auf dem Handy sichtbar.": "Retour sur les sous-pages reste visible sur le téléphone.",
   "Löschen in der Chronik erscheint nur beim Wischen.": "Supprimer dans l'historique apparaît seulement en glissant.",
   "Eigene Farben bleiben in jeder Ansicht erhalten.": "Tes couleurs restent pour chaque style.",
+  "Aufgaben gibt es nicht mehr. Bisherige Einträge bleiben.": "Les tâches n'existent plus. Les entrées existantes restent.",
   "Speichern bleibt bei offener Tastatur erreichbar.": "Enregistrer reste accessible lorsque le clavier est ouvert.",
   "Beim Schieben eines Reglers bleibt die Tastatur zu. Der Fokus-Ring erscheint nur bei der Tastatur.": "En faisant glisser un curseur, le clavier reste fermé. L'anneau de focus n'apparaît qu'avec le clavier.",
   "Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.": "La priorité est en couleur. p1 rouge, p2 orange, p3 bleu, p4 calme. La même couleur est sur le cercle.",

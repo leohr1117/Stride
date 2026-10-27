@@ -19,7 +19,6 @@ const ladeMehr = () => import('./features/mehr/Mehr.tsx');
 const ladeCharakter = () => import('./features/attribute/Charakter.tsx');
 const ladeMehrBereiche = () => import('./features/mehr/bereiche.ts');
 const ladeBasis = () => import('./features/basis/BasisSeite.tsx');
-const ladeAufgaben = () => import('./features/aufgaben/AufgabenSeite.tsx');
 const ladeChronik = () => import('./features/eintraege/Chronik.tsx');
 const ladeFaehigkeit = () => import('./features/faehigkeiten/Faehigkeit.tsx');
 const ladeHandbuch = () => import('./features/handbuch/Handbuch.tsx');
@@ -44,7 +43,6 @@ const MehrDarstellungSeite = seite(ladeMehrBereiche, (modul) => modul.MehrDarste
 const MehrFunktionenSeite = seite(ladeMehrBereiche, (modul) => modul.MehrFunktionenSeite);
 const MehrDatenSeite = seite(ladeMehrBereiche, (modul) => modul.MehrDatenSeite);
 const BasisSeite = seite(ladeBasis, (modul) => modul.BasisSeite);
-const AufgabenSeite = seite(ladeAufgaben, (modul) => modul.AufgabenSeite);
 const ChronikSeite = seite(ladeChronik, (modul) => modul.ChronikSeite);
 const FaehigkeitSeite = seite(ladeFaehigkeit, (modul) => modul.FaehigkeitSeite);
 const HandbuchSeite = seite(ladeHandbuch, (modul) => modul.HandbuchSeite);
@@ -80,7 +78,7 @@ const router = createBrowserRouter([
       { path: 'vorbilder', element: <VorbilderSeite /> },
       { path: 'vorbilder/:schluessel', element: <VorbildProfilSeite /> },
       { path: 'basis', element: <BasisSeite /> },
-      { path: 'aufgaben', element: <AufgabenSeite /> },
+      { path: 'aufgaben', element: <Navigate to="/" replace /> },
       { path: 'training', element: <TrainingSeite /> },
       { path: 'training/plaene/neu', element: <PlanEditorSeite /> },
       { path: 'training/plaene/:id', element: <PlanEditorSeite /> },

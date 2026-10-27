@@ -1,4 +1,4 @@
-import { angriffsTage, BOSS, bossLevelAusKampfXp, GEGNER } from '../../../shared/spiel/xp.ts';
+import { angriffsTage, BOSS, bossLevelAusKampfXp } from '../../../shared/spiel/xp.ts';
 import { alle, ausfuehren, inTransaktion } from '../../db.ts';
 import { aktivesAttribut, ladeAttributXp } from '../attribute/attribute.ts';
 import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
@@ -12,13 +12,6 @@ interface UeberfaelligerBoss {
   id: number;
   deadline: string;
   angriffBis: string | null;
-}
-
-interface UeberfaelligeAufgabe {
-  id: number;
-  deadline: string;
-  angriffBis: string | null;
-  gegner: number;
 }
 
 export function rechneBossangriffeAb(jetzt = new Date()): void {
@@ -62,50 +55,6 @@ export function rechneBossangriffeAb(jetzt = new Date()): void {
       schalteErfolgeFrei(jetzt);
     }
   }
-
-  if (!istAn('aufgaben', einstellungen)) {
-    return;
-  }
-
-  const aufgaben = alle<UeberfaelligeAufgabe>(
-    `SELECT a.id, a.deadline, a.angriff_bis AS angriffBis, a.gegner
-     FROM aufgaben a
-     WHERE a.archiviert = 0 AND (a.gegner = 1 OR a.boss = 1)
-       AND a.deadline IS NOT NULL AND a.deadline < ?
-       AND (a.angriff_bis IS NULL OR a.angriff_bis < ?)
-       AND NOT EXISTS (SELECT 1 FROM aufgaben_erledigt r WHERE r.aufgabe_id = a.id)
-     ORDER BY a.id`,
-    heute,
-    heute,
-  );
-  if (aufgaben.length === 0) {
-    return;
-  }
-
-  inTransaktion(() => {
-    for (const aufgabe of aufgaben) {
-      const tage = angriffsTage(aufgabe.deadline, aufgabe.angriffBis, heute);
-      const proTag =
-        aufgabe.gegner === 1 ? Math.floor(BOSS.angriffXpProTag / GEGNER.angriffTeiler) : BOSS.angriffXpProTag;
-      if (disziplinId !== null && tage > 0) {
-        const schaden = Math.min(Math.max(0, ladeAttributXp(disziplinId)), tage * proTag);
-        if (schaden > 0) {
-          bucheAttributXp(
-            {
-              quelle: 'bossangriff',
-              attributId: disziplinId,
-              xp: -schaden,
-              eintragId: null,
-              vorhabenId: null,
-              aufgabeId: aufgabe.id,
-            },
-            zeitpunkt,
-          );
-        }
-      }
-      ausfuehren('UPDATE aufgaben SET angriff_bis = ? WHERE id = ?', heute, aufgabe.id);
-    }
-  });
 }
 
 /** Besiegte Bosse ohne Level bekommen es einmal aus der Kampf-XP, sobald Bosse wirken. */

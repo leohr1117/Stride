@@ -78,7 +78,6 @@ async function sende(ziel: SchnellZiel, punkt: SchnellPunktArt): Promise<void> {
     if (ziel.art === 'faehigkeit') return api.loescheFaehigkeit(ziel.id);
     if (ziel.art === 'investition') return api.loescheInvestition(ziel.id);
     if (ziel.art === 'basis') return api.loescheBasisAufgabe(ziel.id);
-    if (ziel.art === 'aufgabe') return api.loescheAufgabe(ziel.id);
     if (ziel.art === 'knoten') {
       await api.loescheKnoten(ziel.id);
       return;
@@ -99,7 +98,6 @@ async function sende(ziel: SchnellZiel, punkt: SchnellPunktArt): Promise<void> {
   else if (ziel.art === 'faehigkeit') await api.aendereFaehigkeit(ziel.id, { archiviert });
   else if (ziel.art === 'investition') await api.aendereInvestition(ziel.id, { archiviert });
   else if (ziel.art === 'basis') await api.aendereBasisAufgabe(ziel.id, { archiviert });
-  else if (ziel.art === 'aufgabe') await api.aendereAufgabe(ziel.id, { archiviert });
   else if (ziel.art === 'trainingsplan') await api.aendereTrainingsplan(ziel.id, { archiviert });
   else if (ziel.art === 'uebung') await api.aendereUebung(ziel.id, { archiviert });
 }

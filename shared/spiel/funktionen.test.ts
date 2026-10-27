@@ -10,7 +10,6 @@ describe('FUNKTION_BLOECKE', () => {
     const seiten = FUNKTION_BLOECKE.find((block) => block.seite === 'Seiten');
     expect(seiten?.eintraege.map((eintrag) => eintrag.funktion)).toEqual([
       'basis',
-      'aufgaben',
       'training',
       'chronik',
       'rueckblick',
@@ -63,23 +62,25 @@ describe('funktionenAusSpeicher', () => {
     expect(getrennt.verfallHaben).toBe(false);
   });
 
-  it('schaltet Aufgaben nur ohne gespeicherte Zeile an', () => {
-    expect(standardFunktionen().aufgaben).toBe(false);
-    expect(funktionenAusSpeicher(null).aufgaben).toBe(true);
-    expect(funktionenAusSpeicher(undefined).aufgaben).toBe(true);
+  it('ignoriert einen gespeicherten Aufgaben-Schalter', () => {
+    const an = funktionenAusSpeicher({ aufgaben: true, basis: true });
+    expect(an.basis).toBe(true);
+    expect('aufgaben' in an).toBe(false);
+    expect(Object.keys(an).sort()).toEqual([...FUNKTIONEN].sort());
+    const aus = funktionenAusSpeicher({ aufgaben: false });
+    expect('aufgaben' in aus).toBe(false);
+    expect(aus.handbuch).toBe(true);
+    expect(aus.basis).toBe(false);
+    expect('aufgaben' in funktionenAusSpeicher(null)).toBe(false);
+    expect('aufgaben' in funktionenAusSpeicher(undefined)).toBe(false);
     expect(funktionenAusSpeicher(null).basis).toBe(false);
-    expect(funktionenAusSpeicher(null).handbuch).toBe(true);
-    expect(funktionenAusSpeicher({}).aufgaben).toBe(false);
-    expect(funktionenAusSpeicher({ basis: true }).aufgaben).toBe(false);
-    expect(funktionenAusSpeicher({ aufgaben: false }).aufgaben).toBe(false);
-    expect(funktionenAusSpeicher({ aufgaben: true }).aufgaben).toBe(true);
+    expect(funktionenAusSpeicher({ basis: true }).training).toBe(false);
   });
 
   it('lässt Training aus, auch ohne gespeicherte Zeile', () => {
     expect(standardFunktionen().training).toBe(false);
     expect(funktionenAusSpeicher(null).training).toBe(false);
     expect(funktionenAusSpeicher(undefined).training).toBe(false);
-    expect(funktionenAusSpeicher(null).aufgaben).toBe(true);
     expect(funktionenAusSpeicher({}).training).toBe(false);
     expect(funktionenAusSpeicher({ basis: true }).training).toBe(false);
     expect(funktionenAusSpeicher({ training: false }).training).toBe(false);

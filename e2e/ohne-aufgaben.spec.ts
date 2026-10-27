@@ -1,0 +1,28 @@
+import { expect, test } from '@playwright/test';
+import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+
+test.beforeEach(async ({ page }) => {
+  await anmelden(page);
+});
+
+test('Aufgaben sind aus Navigation, Funktionen und Übersicht', async ({ page }, testInfo) => {
+  const projekt = testInfo.project.name;
+  const bild = (name: string) => page.screenshot({ path: `tmp-bau/r1/${projekt}-${name}.png`, fullPage: true });
+
+  await page.goto('/mehr/funktionen');
+  await expect(page.locator('#funktion-aufgaben')).toHaveCount(0);
+  await expect(page.locator('#funktion-training')).toBeVisible();
+  const reihenfolge = await page.locator('[id^="funktion-"]').evaluateAll((knoten) => knoten.map((knoten) => knoten.id));
+  const basis = reihenfolge.indexOf('funktion-basis');
+  expect(reihenfolge[basis + 1]).toBe('funktion-training');
+  await ohneSeitlichenUeberlauf(page);
+  await bild('funktionen');
+
+  await expect(page.locator('a[href="/aufgaben"]')).toHaveCount(0);
+  await page.goto('/aufgaben');
+  await expect(page).toHaveURL('/');
+  await expect(page.locator('a[href="/aufgaben"]')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Test Voll', level: 1 })).toBeVisible();
+  await ohneSeitlichenUeberlauf(page);
+  await bild('uebersicht');
+});

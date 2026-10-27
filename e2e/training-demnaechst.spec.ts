@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { anmelden, ohneSeitlichenUeberlauf } from './aufgabenHelfer.ts';
+import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { oben, schalte } from './trainingHelfer.ts';
 
 test.beforeEach(async ({ page }) => {
@@ -32,6 +32,7 @@ test('Demnächst fehlt und /demnaechst hat keinen Hash', async ({ page }, testIn
   const training = page.locator('#funktion-training');
   const schalter = training.getByRole('switch', { name: 'Training', exact: true });
   await expect(schalter).toBeVisible();
+  await schalte(page, false);
   await expect(schalter).toHaveAttribute('aria-checked', 'false');
   await expect(page.locator('form').filter({ has: training })).toHaveCount(0);
   await expect(training.getByRole('button', { name: 'Info', exact: true })).toBeVisible();

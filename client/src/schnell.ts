@@ -18,7 +18,6 @@ export type SchnellArt =
   | 'faehigkeit'
   | 'investition'
   | 'basis'
-  | 'aufgabe'
   | 'knoten'
   | 'vorhaben'
   | 'eintrag'
@@ -229,9 +228,6 @@ export function wendeQuery(key: readonly unknown[], daten: unknown, art: Schnell
     return listeVon(daten, id, modus);
   }
   if (kopf === 'basis' && art === 'basis') {
-    return listeVon(daten, id, modus);
-  }
-  if (kopf === 'aufgaben' && art === 'aufgabe') {
     return listeVon(daten, id, modus);
   }
   if (kopf === 'trainingsplaene' && art === 'trainingsplan') {

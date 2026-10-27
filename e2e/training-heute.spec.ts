@@ -1,10 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
-import { anmelden, heuteDerWelt, ohneSeitlichenUeberlauf, raeumeBau, schalte as aufgabenAn } from './aufgabenHelfer.ts';
+import { anmelden, heuteDerWelt, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { oben, raeume, schalte } from './trainingHelfer.ts';
 
 const BESTWERT_ROUTE = '**/api/uebungen/*/bestwerte';
 const HEUTE_ROUTE = '**/api/training/heute';
-const AUFGABEN_ROUTE = '**/api/aufgaben';
 const INFO = 'Aufwärmen zählt nicht. Die Schätzung ist Gewicht mal (1 + Wiederholungen / 30).';
 
 const BESTWERTE = [
@@ -92,38 +91,6 @@ async function einheit(seite: Page, wert: 'kg' | 'lb'): Promise<void> {
   expect(antwort.ok()).toBe(true);
 }
 
-async function legeAufgaben(seite: Page, projekt: string, heute: string): Promise<void> {
-  const vorlagenAntwort = await seite.request.get('/api/vorlagen');
-  expect(vorlagenAntwort.ok()).toBe(true);
-  const vorlagen = (await vorlagenAntwort.json()) as { id: number; archiviert: boolean }[];
-  const vorlage = vorlagen.find((eintrag) => !eintrag.archiviert);
-  expect(vorlage).toBeTruthy();
-  for (let index = 1; index <= 6; index += 1) {
-    const angelegt = await seite.request.post('/api/aufgaben', {
-      data: {
-        name: `Bau ${projekt} ${index}`,
-        icon: 'clipboard-list',
-        projektId: null,
-        organisationId: null,
-        visionId: null,
-        vorlageId: vorlage?.id,
-        stunden: null,
-        faelligAm: heute,
-        faelligUm: null,
-        wiederholung: 'keine',
-        wochentage: [],
-        prioritaet: null,
-        nurHeute: false,
-        meilenstein: false,
-        gegner: false,
-        boss: false,
-        deadline: null,
-      },
-    });
-    expect(angelegt.ok()).toBe(true);
-  }
-}
-
 async function zurUebung(seite: Page): Promise<void> {
   await seite.goto('/training');
   await seite.locator('main').getByRole('button', { name: 'Öffnen', exact: true }).first().click();
@@ -144,10 +111,8 @@ test('Heute, Bestwerte und Pfund', async ({ page }, testInfo) => {
   };
   try {
     await page.goto('/mehr/funktionen');
-    await aufgabenAn(page, true);
     await schalte(page, true);
     await raeume(page);
-    await raeumeBau(page);
     const planId = await legePlan(page);
     expect(planId).toBeGreaterThan(0);
 
@@ -178,10 +143,8 @@ test('Heute, Bestwerte und Pfund', async ({ page }, testInfo) => {
     await karteBild('uebersicht');
     await ohneSeitlichenUeberlauf(page);
 
-    await legeAufgaben(page, projekt, heute);
-    await page.goto('/');
     const voll = heuteKarte(page);
-    await expect(voll.getByRole('link', { name: 'Alle', exact: true })).toBeVisible();
+    await expect(voll.getByRole('link', { name: 'Alle', exact: true })).toHaveCount(0);
     const trainingZeile = voll.locator('li').filter({ hasText: 'Unterkörper' });
     await expect(trainingZeile.getByRole('button', { name: 'Starten', exact: true })).toBeVisible();
     await trainingZeile.scrollIntoViewIfNeeded();
@@ -287,7 +250,7 @@ test('Heute, Bestwerte und Pfund', async ({ page }, testInfo) => {
     const fehlerKarte = heuteKarte(page);
     const meldung = fehlerKarte.getByText('Etwas ist schiefgelaufen.');
     await expect(meldung).toBeVisible();
-    await expect(fehlerKarte.locator('.aufgaben-kreis').first()).toBeVisible();
+    await expect(fehlerKarte.locator('.aufgaben-kreis')).toHaveCount(0);
     await expect(fehlerKarte.getByText('Unterkörper')).toHaveCount(0);
     await meldung.evaluate((knoten) => knoten.scrollIntoView({ block: 'center' }));
     await page.screenshot({ path: `tmp-bau/training-28/${projekt}-uebersicht-fehler-sicht.png` });
@@ -297,19 +260,9 @@ test('Heute, Bestwerte und Pfund', async ({ page }, testInfo) => {
     const fertig = await page.request.post(`/api/trainingseinheiten/${einheitId}/abschliessen`);
     expect(fertig.ok()).toBe(true);
     await page.goto('/');
-    const danach = heuteKarte(page);
-    await expect(danach.getByText('Unterkörper')).toHaveCount(0);
-    await expect(danach.locator('.aufgaben-kreis').first()).toBeVisible();
-    await karteBild('uebersicht-danach');
+    await expect(page.getByRole('heading', { name: 'Heute', level: 2 })).toHaveCount(0);
+    await bild('uebersicht-danach');
 
-    await page.route(AUFGABEN_ROUTE, async (route) => {
-      const url = new URL(route.request().url());
-      if (route.request().method() !== 'GET' || url.pathname !== '/api/aufgaben') {
-        await route.continue();
-        return;
-      }
-      await route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
-    });
     await page.route(HEUTE_ROUTE, async (route) => {
       if (route.request().method() !== 'GET') {
         await route.continue();
@@ -327,11 +280,6 @@ test('Heute, Bestwerte und Pfund', async ({ page }, testInfo) => {
   } finally {
     await page.unroute(BESTWERT_ROUTE).catch(() => undefined);
     await page.unroute(HEUTE_ROUTE).catch(() => undefined);
-    await page.unroute(AUFGABEN_ROUTE).catch(() => undefined);
-    try {
-      await raeume(page);
-    } finally {
-      await raeumeBau(page);
-    }
+    await raeume(page);
   }
 });
