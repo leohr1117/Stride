@@ -448,7 +448,7 @@ function ProjektFormular({
                   </option>
                 ))}
               </select>
-              <Knopf className="shrink-0 px-3" aria-label={tx("Neue Tätigkeit")} onClick={() => setNeueTaetigkeit(true)}>
+              <Knopf className="shrink-0 px-3" aria-label={tx("Tätigkeit anlegen")} onClick={() => setNeueTaetigkeit(true)}>
                 <Plus className="size-4" />
               </Knopf>
             </div>

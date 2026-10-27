@@ -200,7 +200,7 @@ export function NeueTaetigkeit({
   onAngelegt?: (vorlage: Vorlage) => void;
 }) {
   return (
-    <Dialog offen={offen} titel={tx("Neue Tätigkeit")} onSchliessen={onSchliessen}>
+    <Dialog offen={offen} titel={tx("Tätigkeit anlegen")} onSchliessen={onSchliessen}>
       {offen && (
         <TaetigkeitFormular
           vorlage={null}

@@ -1520,4 +1520,5 @@ export const TEXTE: Record<string, string> = {
   "Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.": "La prioridad va en color. p1 rojo, p2 naranja, p3 azul, p4 tranquilo. El mismo color está en el círculo.",
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "El interruptor Solo hoy ya no está. La fecha fija el día.",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "Los iconos de info en Hito y Oponente vuelven a abrirse.",
+  "Tätigkeit anlegen ist ein Knopf und öffnet das Formular direkt.": "Crear una actividad es un botón y abre el formulario directamente.",
 };

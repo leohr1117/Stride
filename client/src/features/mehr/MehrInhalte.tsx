@@ -24,7 +24,7 @@ function InhalteListe() {
           </div>
           <Dialog
             offen={bearbeitung !== null}
-            titel={bearbeitung?.vorlage ? tx("Tätigkeit bearbeiten") : tx("Neue Tätigkeit")}
+            titel={bearbeitung?.vorlage ? tx("Tätigkeit bearbeiten") : tx("Tätigkeit anlegen")}
             onSchliessen={() => setBearbeitung(null)}
           >
             {bearbeitung && (

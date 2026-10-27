@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.9.3',
+    seiten: 'Mehr',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Tätigkeit anlegen ist ein Knopf und öffnet das Formular direkt.'],
+      },
+    ],
+  },
+  {
     version: '3.8.3',
     seiten: 'Mehr',
     abschnitte: [

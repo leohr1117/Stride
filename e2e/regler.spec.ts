@@ -79,8 +79,8 @@ test('Regler lässt das Textfeld los', async ({ page }, testInfo) => {
   const bild = `tmp-bau/b1/${testInfo.project.name}`;
 
   await page.goto('/mehr/inhalte');
-  await page.getByRole('button', { name: 'Neue Tätigkeit' }).click();
-  const taetigkeit = page.getByRole('dialog', { name: 'Neue Tätigkeit' });
+  await page.getByRole('button', { name: 'Tätigkeit anlegen' }).click();
+  const taetigkeit = page.getByRole('dialog', { name: 'Tätigkeit anlegen' });
   await expect(taetigkeit).toBeVisible();
   const name = taetigkeit.getByRole('textbox', { name: 'Name' });
   await name.click();

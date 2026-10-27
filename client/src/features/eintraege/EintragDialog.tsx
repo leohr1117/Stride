@@ -312,7 +312,7 @@ export function EintragDialog({
           </div>
           <Knopf className="mt-2" onClick={() => setNeueTaetigkeit(true)}>
             <Plus className="size-4" />
-            {tx("Neue Tätigkeit")}
+            {tx("Tätigkeit anlegen")}
           </Knopf>
         </Feld>
 

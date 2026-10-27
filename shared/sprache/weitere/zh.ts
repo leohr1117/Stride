@@ -1520,4 +1520,5 @@ export const TEXTE: Record<string, string> = {
   "Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.": "优先级有了颜色。p1 红，p2 橙，p3 蓝，p4 安静。同样的颜色在圆圈上。",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "里程碑和对手旁的信息图标又能打开了。",
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "「仅今天」开关已去掉。日期决定这一天。",
+  "Tätigkeit anlegen ist ein Knopf und öffnet das Formular direkt.": "「新建活动」是按钮，直接打开表单。",
 };
