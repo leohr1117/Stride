@@ -25,9 +25,6 @@ describe('Diagramme laden', () => {
     const attribute = readFileSync('client/src/features/attribute/AttributVerwaltung.tsx', 'utf8');
     expect(attribute).toContain('werte.length >= MIN_RADAR_ACHSEN');
     expect(attribute).toContain("from '../../components/mitDiagramm.tsx'");
-    const uebung = readFileSync('client/src/features/training/UebungSeite.tsx', 'utf8');
-    expect(uebung).toContain("from '../../components/mitDiagramm.tsx'");
-    expect(uebung).not.toMatch(/from 'recharts'/);
     expect(readFileSync('client/src/components/Diagramme.tsx', 'utf8')).toMatch(/from 'recharts'/);
     expect(readFileSync('client/src/components/AttributRadar.tsx', 'utf8')).toMatch(/from 'recharts'/);
   });

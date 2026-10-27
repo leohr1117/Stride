@@ -59,7 +59,7 @@ describe('Einheiten Buchung', () => {
   it('ersetzt die Buchung, lässt krit und erstellt_am und verdoppelt weitermachen nicht', () => {
     mitWelt(welt(), () => {
       an();
-      aendereEinstellungen({ funktionen: { training: true, verfallKoennen: true } });
+      aendereEinstellungen({ funktionen: { verfallKoennen: true } });
       const vorlageId = vorlage('Kraft');
       const gestern = new Date(START.getTime() - 24 * 60 * 60 * 1000);
       ausfuehren(`INSERT INTO eintraege (vorlage_id, stunden, notiz, erstellt_am) VALUES (?, 1, '', ?)`, vorlageId, gestern.toISOString());
@@ -149,7 +149,7 @@ describe('Einheiten Buchung', () => {
     });
   });
 
-  it('liefert Heute nach Zone und bei ausgeschaltetem Schalter leere Listen', () => {
+  it('liefert Heute nach Zone und ignoriert den gespeicherten Schalter', () => {
     mitWelt(welt(), () => {
       an();
       const vorlageId = vorlage('Kraft');
@@ -169,15 +169,20 @@ describe('Einheiten Buchung', () => {
       const fertig = starteEinheit(freitag.id, freitagZeit);
       hakeSatzAb(saetze(fertig)[0]?.id ?? 0, true, freitagZeit);
       schliesseEinheitAb(fertig.id, freitagZeit);
-      expect(ladeTrainingHeute(freitagZeit).map((zeile) => zeile.planId)).not.toContain(freitag.id);
-      aendereEinstellungen({ funktionen: { training: false } });
-      expect(ladeEinheiten()).toEqual([]);
-      expect(ladeTrainingHeute()).toEqual([]);
-      expect(ladeBestwerte(freitag.uebungen[0]?.uebungId ?? 0)).toEqual([]);
-      expect(() => starteEinheit(beide.id)).toThrow('Training ist ausgeschaltet.');
-      expect(() => hakeSatzAb(1, true)).toThrow('Training ist ausgeschaltet.');
-      expect(() => schliesseEinheitAb(1)).toThrow('Training ist ausgeschaltet.');
-      expect(() => verwirfEinheit(1)).toThrow('Training ist ausgeschaltet.');
+      const heuteVorher = ladeTrainingHeute(freitagZeit).map((zeile) => zeile.planId);
+      const einheiten = ladeEinheiten().length;
+      const bestwerte = ladeBestwerte(freitag.uebungen[0]?.uebungId ?? 0).length;
+      expect(heuteVorher).not.toContain(freitag.id);
+      expect(einheiten).toBeGreaterThan(0);
+      expect(bestwerte).toBeGreaterThan(0);
+      ausfuehren(
+        `INSERT INTO einstellungen (schluessel, wert) VALUES ('funktionen', ?)
+         ON CONFLICT (schluessel) DO UPDATE SET wert = excluded.wert`,
+        JSON.stringify({ training: false, koennen: true, status: true, handbuch: true }),
+      );
+      expect(ladeEinheiten().length).toBe(einheiten);
+      expect(ladeTrainingHeute(freitagZeit).map((zeile) => zeile.planId)).toEqual(heuteVorher);
+      expect(ladeBestwerte(freitag.uebungen[0]?.uebungId ?? 0).length).toBe(bestwerte);
     });
   });
 });

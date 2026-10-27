@@ -86,8 +86,7 @@ async function sende(ziel: SchnellZiel, punkt: SchnellPunktArt): Promise<void> {
     if (ziel.art === 'eintrag') return api.loescheEintrag(ziel.id);
     if (ziel.art === 'kalender') return api.loescheKalender(ziel.id);
     if (ziel.art === 'todoist') return api.trenneTodoist();
-    if (ziel.art === 'trainingsplan') return api.loescheTrainingsplan(ziel.id);
-    if (ziel.art === 'uebung') return api.loescheUebung(ziel.id);
+    if (ziel.art === 'trainingsplan' || ziel.art === 'uebung') return;
     return api.loescheKonto(ziel.id);
   }
   if (ziel.art === 'vision') await api.aendereVision(ziel.id, { archiviert });
@@ -98,8 +97,6 @@ async function sende(ziel: SchnellZiel, punkt: SchnellPunktArt): Promise<void> {
   else if (ziel.art === 'faehigkeit') await api.aendereFaehigkeit(ziel.id, { archiviert });
   else if (ziel.art === 'investition') await api.aendereInvestition(ziel.id, { archiviert });
   else if (ziel.art === 'basis') await api.aendereBasisAufgabe(ziel.id, { archiviert });
-  else if (ziel.art === 'trainingsplan') await api.aendereTrainingsplan(ziel.id, { archiviert });
-  else if (ziel.art === 'uebung') await api.aendereUebung(ziel.id, { archiviert });
 }
 
 function modusVon(punkt: SchnellPunktArt): CacheModus {

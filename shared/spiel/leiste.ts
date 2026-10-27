@@ -14,7 +14,6 @@ export const LEISTEN_SEITEN: readonly LeistenSeite[] = [
   { pfad: '/', label: 'Übersicht' },
   { pfad: '/laufend', label: 'Laufend' },
   { pfad: '/basis', label: 'Basis', funktion: 'basis' },
-  { pfad: '/training', label: 'Training', funktion: 'training' },
   { pfad: '/ziele', label: 'Ziele' },
   { pfad: '/chronik', label: 'Chronik', funktion: 'chronik' },
   { pfad: '/rueckblick', label: 'Rückblick', funktion: 'rueckblick' },

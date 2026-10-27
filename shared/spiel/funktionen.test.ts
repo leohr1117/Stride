@@ -10,7 +10,6 @@ describe('FUNKTION_BLOECKE', () => {
     const seiten = FUNKTION_BLOECKE.find((block) => block.seite === 'Seiten');
     expect(seiten?.eintraege.map((eintrag) => eintrag.funktion)).toEqual([
       'basis',
-      'training',
       'chronik',
       'rueckblick',
       'statistiken',
@@ -62,29 +61,22 @@ describe('funktionenAusSpeicher', () => {
     expect(getrennt.verfallHaben).toBe(false);
   });
 
-  it('ignoriert einen gespeicherten Aufgaben-Schalter', () => {
-    const an = funktionenAusSpeicher({ aufgaben: true, basis: true });
+  it('ignoriert gespeicherte Schalter für Aufgaben und Training', () => {
+    const an = funktionenAusSpeicher({ aufgaben: true, training: true, basis: true });
     expect(an.basis).toBe(true);
     expect('aufgaben' in an).toBe(false);
+    expect('training' in an).toBe(false);
     expect(Object.keys(an).sort()).toEqual([...FUNKTIONEN].sort());
-    const aus = funktionenAusSpeicher({ aufgaben: false });
+    const aus = funktionenAusSpeicher({ aufgaben: false, training: false });
     expect('aufgaben' in aus).toBe(false);
+    expect('training' in aus).toBe(false);
     expect(aus.handbuch).toBe(true);
     expect(aus.basis).toBe(false);
     expect('aufgaben' in funktionenAusSpeicher(null)).toBe(false);
-    expect('aufgaben' in funktionenAusSpeicher(undefined)).toBe(false);
+    expect('training' in funktionenAusSpeicher(null)).toBe(false);
+    expect('training' in funktionenAusSpeicher(undefined)).toBe(false);
     expect(funktionenAusSpeicher(null).basis).toBe(false);
-    expect(funktionenAusSpeicher({ basis: true }).training).toBe(false);
-  });
-
-  it('lässt Training aus, auch ohne gespeicherte Zeile', () => {
-    expect(standardFunktionen().training).toBe(false);
-    expect(funktionenAusSpeicher(null).training).toBe(false);
-    expect(funktionenAusSpeicher(undefined).training).toBe(false);
-    expect(funktionenAusSpeicher({}).training).toBe(false);
-    expect(funktionenAusSpeicher({ basis: true }).training).toBe(false);
-    expect(funktionenAusSpeicher({ training: false }).training).toBe(false);
-    expect(funktionenAusSpeicher({ training: true }).training).toBe(true);
+    expect(funktionenAusSpeicher({}).handbuch).toBe(true);
   });
 
   it('lässt neue Welten ohne Verfall', () => {

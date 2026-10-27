@@ -1508,6 +1508,7 @@ export const TEXTE: Record<string, string> = {
   "Zurück auf Unterseiten bleibt auf dem Handy sichtbar.": "Atrás en las subpáginas sigue visible en el móvil.",
   "Löschen in der Chronik erscheint nur beim Wischen.": "Eliminar en el historial solo aparece al deslizar.",
   "Eigene Farben bleiben in jeder Ansicht erhalten.": "Tus colores se conservan en cada estilo.",
+  "Training gibt es nicht mehr. Bisherige Einträge bleiben.": "El entrenamiento ya no está. Las entradas anteriores permanecen.",
   "Aufgaben gibt es nicht mehr. Bisherige Einträge bleiben.": "Las tareas ya no están. Las entradas anteriores permanecen.",
   "Speichern bleibt bei offener Tastatur erreichbar.": "Guardar permanece al alcance con el teclado abierto.",
   "Beim Schieben eines Reglers bleibt die Tastatur zu. Der Fokus-Ring erscheint nur bei der Tastatur.": "Al mover un control el teclado permanece cerrado. El anillo de foco solo aparece con el teclado.",

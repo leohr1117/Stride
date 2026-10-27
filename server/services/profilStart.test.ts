@@ -4,7 +4,6 @@ import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { ebenenFuerStufe, standardEbenen } from '../../shared/spiel/ebenen.ts';
 import { FOKUS_IDS, startKennungen, startTaetigkeiten, START_TAETIGKEITEN } from '../../shared/spiel/profil.ts';
-import { START_UEBUNGEN } from '../../shared/spiel/training.ts';
 import { ZIEL_SPRACHEN } from '../../shared/sprache/kern.ts';
 import { zeige } from '../../shared/sprache/index.ts';
 import { mitAnfrageSprache } from '../anfrageSprache.ts';
@@ -42,10 +41,6 @@ function vorlagenNamen(): string[] {
 
 function uebungsNamen(): string[] {
   return alle<{ name: string }>('SELECT name FROM uebungen ORDER BY id').map((zeile) => zeile.name);
-}
-
-function uebungsArten(): string[] {
-  return alle<{ art: string }>('SELECT art FROM uebungen ORDER BY id').map((zeile) => zeile.art);
 }
 
 function gewichtPaare(name: string): string[] {
@@ -203,8 +198,7 @@ describe('profil beim start', () => {
         const erwartet = startTaetigkeiten(['sport']).map((taetigkeit) => zeige(taetigkeit.name, sprache));
         expect(vorlagenNamen()).toEqual(erwartet);
         expect(vorlagenNamen()).not.toContain('Laufen');
-        expect(uebungsNamen()).toEqual(START_UEBUNGEN.map((name) => zeige(name, sprache)));
-        expect(uebungsArten()).toEqual(START_UEBUNGEN.map(() => 'kraft'));
+        expect(uebungsNamen()).toEqual([]);
         expect(ladeAttribute(false).find((attribut) => attribut.kennung === 'vitalitaet')?.name).toBe(zeige('Vitalität', sprache));
         expect(ladeAttribute(false).find((attribut) => attribut.kennung === 'koerper')?.name).toBe(zeige('Körper', sprache));
         expect(ladeAttribute(false).find((attribut) => attribut.name === 'Eigen')?.name).toBe('Eigen');
@@ -247,49 +241,19 @@ describe('profil beim start', () => {
     });
   });
 
-  it('schaltet Training nur bei der ersten Anlage an, wenn der Fokus Sport enthält', () => {
+  it('legt bei Sport keine Übungen an und ignoriert den alten Schalter', () => {
     const datei = welt();
     mitWelt(datei, () => {
       const sport = aendereEinstellungen({ fokus: ['sport', 'lernen'], profilAngelegt: true });
-      expect(sport.funktionen.training).toBe(true);
-      expect(aendereEinstellungen({ fokus: ['geld'] }).funktionen.training).toBe(true);
-      expect(aendereEinstellungen({ funktionen: { training: false } }).funktionen.training).toBe(false);
-      expect(aendereEinstellungen({ fokus: ['sport'] }).funktionen.training).toBe(false);
-    });
-    const gleichzeitig = welt();
-    mitWelt(gleichzeitig, () => {
-      const neu = aendereEinstellungen({ fokus: ['sport'], profilAngelegt: true, funktionen: { training: false } });
-      expect(neu.funktionen.training).toBe(true);
-    });
-  });
-
-  it('legt Startübungen nur bei der ersten Anlage mit Sport an, solange die Liste leer ist', () => {
-    const datei = welt();
-    mitWelt(datei, () => {
-      aendereEinstellungen({ fokus: ['weisheit'], profilAngelegt: true });
+      expect('training' in sport.funktionen).toBe(false);
       expect(uebungsNamen()).toEqual([]);
-      aendereEinstellungen({ fokus: ['sport'] });
+      ausfuehren(
+        `INSERT INTO einstellungen (schluessel, wert) VALUES ('funktionen', ?)
+         ON CONFLICT (schluessel) DO UPDATE SET wert = excluded.wert`,
+        JSON.stringify({ training: true, koennen: true, status: true, handbuch: true }),
+      );
+      expect('training' in ladeEinstellungen().funktionen).toBe(false);
       expect(uebungsNamen()).toEqual([]);
-      expect(ladeEinstellungen().funktionen.training).toBe(false);
-    });
-    const sport = welt();
-    mitWelt(sport, () => {
-      aendereEinstellungen({ fokus: ['sport'], profilAngelegt: true });
-      expect(uebungsNamen()).toEqual([...START_UEBUNGEN]);
-      expect(uebungsArten()).toEqual(START_UEBUNGEN.map(() => 'kraft'));
-      aendereEinstellungen({ fokus: ['geld'] });
-      expect(uebungsNamen()).toEqual([...START_UEBUNGEN]);
-      ausfuehren('DELETE FROM uebungen');
-      aendereEinstellungen({ fokus: ['sport'] });
-      expect(uebungsNamen()).toEqual([]);
-    });
-    const belegt = welt();
-    mitWelt(belegt, () => {
-      ausfuehren(`INSERT INTO uebungen (name, art) VALUES ('Eigen', 'dauer')`);
-      aendereEinstellungen({ fokus: ['sport'], profilAngelegt: true });
-      expect(uebungsNamen()).toEqual(['Eigen']);
-      expect(uebungsArten()).toEqual(['dauer']);
-      expect(ladeEinstellungen().funktionen.training).toBe(true);
     });
   });
 
@@ -307,15 +271,6 @@ describe('profil beim start', () => {
         expect(ladeEinstellungen().weltLeer).toBe(false);
       });
     }
-  });
-
-  it('lässt Training aus, wenn die erste Anlage keinen Sport enthält', () => {
-    const datei = welt();
-    mitWelt(datei, () => {
-      expect(aendereEinstellungen({ fokus: ['sport'] }).funktionen.training).toBe(false);
-      expect(aendereEinstellungen({ fokus: ['weisheit'], profilAngelegt: true }).funktionen.training).toBe(false);
-      expect(aendereEinstellungen({ fokus: ['sport'] }).funktionen.training).toBe(false);
-    });
   });
 
   it('schaltet bei uebung Fähigkeiten an und lässt sie bei einfach an', () => {

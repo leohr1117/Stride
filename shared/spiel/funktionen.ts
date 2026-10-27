@@ -7,7 +7,6 @@ export const FUNKTIONEN = [
   'faehigkeiten',
   'ausruestung',
   'basis',
-  'training',
   'chronik',
   'vorbilder',
   'rueckblick',
@@ -42,7 +41,6 @@ export const FUNKTION_BLOECKE: readonly FunktionsBlock[] = [
     seite: 'Seiten',
     eintraege: [
       { funktion: 'basis', label: 'Basis' },
-      { funktion: 'training', label: 'Training' },
       { funktion: 'chronik', label: 'Chronik' },
       { funktion: 'rueckblick', label: 'Rückblick' },
       { funktion: 'statistiken', label: 'Statistiken' },
@@ -101,8 +99,7 @@ export function verfallFunktion(typ: AttributTyp): 'verfallKoennen' | 'verfallHa
 /**
  * Liest gespeicherte Schalter. Der alte Schalter Attributverfall gilt für Können und Haben,
  * solange die getrennten Schalter noch nicht gespeichert sind.
- * Der alte Schlüssel aufgaben wird ignoriert und schaltet nichts ein.
- * Training bleibt aus, auch ohne gespeicherte Zeile.
+ * Die alten Schlüssel aufgaben und training werden ignoriert und schalten nichts ein.
  */
 export function funktionenAusSpeicher(roh: unknown): Funktionen {
   const funktionen = standardFunktionen();

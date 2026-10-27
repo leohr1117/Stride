@@ -3,7 +3,7 @@ import { alle, ausfuehren, eine, inTransaktion, platzhalter } from '../../db.ts'
 import { nichtGefunden } from '../../fehler.ts';
 import { loeschbareMenge, loescheTrainingsplan as loeschePlanZeile } from '../../services/loeschen.ts';
 import { pruefeProjektUndVorlage } from '../basis/basis.ts';
-import { funktionAktiv, pruefeEbene, pruefeFunktion } from '../einstellungen/einstellungen.ts';
+import { pruefeEbene } from '../einstellungen/einstellungen.ts';
 import { uebungFuerEintrag } from './uebungen.ts';
 import { normalisiereWochentage, pruefeEintrag, pruefeName, pruefeArt } from './vorgabe.ts';
 
@@ -170,7 +170,6 @@ function ersetzeEintraege(planId: number, eintraege: readonly PlanEintragDaten[]
 }
 
 function speichern(id: number | null, aenderung: TrainingsplanAenderung): Trainingsplan {
-  pruefeFunktion('training');
   return inTransaktion(() => {
     const bisher = id === null ? null : ladeZeile(id);
     if (bisher && nurArchiv(aenderung)) {
@@ -225,9 +224,6 @@ export function ladeTrainingsplan(id: number): Trainingsplan {
 }
 
 export function ladeTrainingsplaene(archiv = false): Trainingsplan[] {
-  if (!funktionAktiv('training')) {
-    return [];
-  }
   const zeilen = alle<PlanZeile>(
     `${PLAN_SPALTEN} WHERE p.archiviert = ? ORDER BY p.name COLLATE NOCASE, p.id`,
     Number(archiv),
@@ -246,6 +242,5 @@ export function aendereTrainingsplan(id: number, aenderung: TrainingsplanAenderu
 }
 
 export function loescheTrainingsplan(id: number): void {
-  pruefeFunktion('training');
   loeschePlanZeile(id);
 }

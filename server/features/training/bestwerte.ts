@@ -8,7 +8,6 @@ import {
 } from '../../../shared/spiel/training.ts';
 import { alle, ausfuehren, eine, platzhalter } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
-import { funktionAktiv } from '../einstellungen/einstellungen.ts';
 
 interface SatzZeile {
   id: number;
@@ -119,9 +118,6 @@ export function ersterBestwert(einheitId: number): boolean {
 }
 
 export function ladeBestwerte(uebungId: number): Bestwert[] {
-  if (!funktionAktiv('training')) {
-    return [];
-  }
   if (!eine('SELECT id FROM uebungen WHERE id = ?', uebungId)) {
     throw nichtGefunden('Die Übung');
   }

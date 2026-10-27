@@ -22,9 +22,9 @@ describe('istLeiste', () => {
     expect(istLeiste(LEISTE_STANDARD)).toBe(true);
     expect(istLeiste([])).toBe(true);
     const pfade = LEISTEN_SEITEN.map((seite) => seite.pfad);
-    expect(pfade[pfade.indexOf('/basis') + 1]).toBe('/training');
+    expect(pfade[pfade.indexOf('/basis') + 1]).toBe('/ziele');
     expect(istLeiste(['/', '/aufgaben'])).toBe(false);
-    expect(istLeiste(['/', '/training'])).toBe(true);
+    expect(istLeiste(['/', '/training'])).toBe(false);
   });
 
   it('lehnt Unbekanntes und Doppeltes ab und behält versteckte Seiten', () => {
@@ -156,6 +156,8 @@ describe('zurueckFuerSeite', () => {
 describe('bereinigteLeiste', () => {
   it('lässt Charakter und Unbekanntes weg und behält den Rest', () => {
     expect(bereinigteLeiste(['/', '/aufgaben', '/mehr'])).toEqual(['/', '/mehr']);
+    expect(bereinigteLeiste(['/', '/training', '/mehr'])).toEqual(['/', '/mehr']);
+    expect(bereinigteLeiste(['/', '/training/plaene/1', '/ziele'])).toEqual(['/', '/ziele']);
     expect(bereinigteLeiste(['/', '/charakter', '/ziele', '/mehr'])).toEqual(['/', '/ziele', '/mehr']);
     expect(bereinigteLeiste(['/', '/'])).toEqual(['/']);
     expect(bereinigteLeiste([])).toEqual([]);

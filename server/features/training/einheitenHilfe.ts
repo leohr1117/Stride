@@ -33,7 +33,7 @@ export function anzahl(tabelle: string): number {
 }
 
 export function an(): void {
-  aendereEinstellungen({ funktionen: { training: true }, zeitzone: 'UTC' });
+  aendereEinstellungen({ zeitzone: 'UTC' });
 }
 
 export function attributId(kennung: string): number {

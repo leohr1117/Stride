@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Training gibt es nicht mehr. Bisherige Einträge bleiben.', 'Training is no longer available. Existing entries stay.'],
   ['Aufgaben gibt es nicht mehr. Bisherige Einträge bleiben.', 'Tasks are no longer available. Existing entries stay.'],
   ['Speichern bleibt bei offener Tastatur erreichbar.', 'Save stays reachable while the keyboard is open.'],
   ['Beim Schieben eines Reglers bleibt die Tastatur zu. Der Fokus-Ring erscheint nur bei der Tastatur.', 'The keyboard stays closed when you slide a slider. The focus ring appears only with the keyboard.'],

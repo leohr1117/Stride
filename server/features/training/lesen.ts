@@ -3,7 +3,7 @@ import { datumInZone } from '../../../shared/spiel/datum.ts';
 import { ART_UNBEKANNT, EINHEIT_GESPERRT, einheitStunden, istUebungsArt, planLiegtAmTag } from '../../../shared/spiel/training.ts';
 import { alle, eine, platzhalter } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
-import { funktionAktiv, ladeEinstellungen, pruefeFunktion } from '../einstellungen/einstellungen.ts';
+import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
 import { ladeTrainingsplaene } from './plaene.ts';
 
 export interface RohEinheit {
@@ -132,16 +132,12 @@ function zuEinheit(zeile: EinheitZeile, uebungen: EinheitUebung[], jetzt: Date):
 }
 
 export function ladeEinheiten(jetzt = new Date()): Trainingseinheit[] {
-  if (!funktionAktiv('training')) {
-    return [];
-  }
   const zeilen = alle<EinheitZeile>(`${EINHEIT_SQL} ORDER BY e.begonnen_am DESC, e.id DESC`);
   const saetze = ladeSatzGruppen(zeilen.map((zeile) => zeile.id));
   return zeilen.map((zeile) => zuEinheit(zeile, saetze.get(zeile.id) ?? [], jetzt));
 }
 
 export function ladeEinheit(id: number, jetzt = new Date()): Trainingseinheit {
-  pruefeFunktion('training');
   const zeile = eine<EinheitZeile>(`${EINHEIT_SQL} WHERE e.id = ?`, id);
   if (!zeile) {
     throw nichtGefunden('Die Einheit');
@@ -150,9 +146,6 @@ export function ladeEinheit(id: number, jetzt = new Date()): Trainingseinheit {
 }
 
 export function ladeTrainingHeute(jetzt = new Date()): TrainingHeute[] {
-  if (!funktionAktiv('training')) {
-    return [];
-  }
   const zone = ladeEinstellungen().zeitzone;
   const heute = datumInZone(jetzt, zone);
   const plaene = ladeTrainingsplaene(false).filter((plan) => planLiegtAmTag(plan.wochentage, heute));

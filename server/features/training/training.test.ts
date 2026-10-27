@@ -17,7 +17,7 @@ import {
 import { ausfuehren, eine, mitWelt, schliesseWelt } from '../../db.ts';
 import { loescheProjekt, loescheVorlage } from '../../services/loeschen.ts';
 import { erstelleProjekt } from '../../services/struktur.ts';
-import { trainingsplanSchema } from '../../validierung.ts';
+import { einstellungenAenderungSchema, trainingsplanSchema } from '../../validierung.ts';
 import { aendereEinstellungen, ladeEinstellungen } from '../einstellungen/einstellungen.ts';
 import { erstelleVorlage } from '../taetigkeiten/vorlagen.ts';
 import {
@@ -52,7 +52,7 @@ function anzahl(tabelle: string): number {
 }
 
 function an(): void {
-  aendereEinstellungen({ funktionen: { training: true } });
+  aendereEinstellungen({ zeitzone: 'UTC' });
 }
 
 function vorlage(name = 'Training'): number {
@@ -84,20 +84,24 @@ function plan(name: string, uebungen: PlanEintragDaten[] = [], vorlageId = vorla
 }
 
 describe('Übungen und Pläne', () => {
-  it('liefert bei ausgeschaltetem Schalter nichts und lässt die Zeilen stehen', () => {
+  it('lässt einen gespeicherten Training-Schalter die Zeilen nicht blockieren', () => {
     mitWelt(welt(), () => {
-      expect(ladeTrainingsplaene()).toEqual([]);
-      expect(ladeUebungen()).toEqual([]);
-      expect(() => plan('Leer', [])).toThrow('Training ist ausgeschaltet.');
       an();
       const angelegt = plan('Bleibt', [kraft('Kniebeuge')]);
-      aendereEinstellungen({ funktionen: { training: false } });
-      expect(ladeTrainingsplaene()).toEqual([]);
-      expect(ladeUebungen()).toEqual([]);
-      expect(() => loescheTrainingsplan(angelegt.id)).toThrow('Training ist ausgeschaltet.');
-      expect(() => loescheUebung(angelegt.uebungen[0]?.uebungId ?? 0)).toThrow('Training ist ausgeschaltet.');
+      ausfuehren(
+        `INSERT INTO einstellungen (schluessel, wert) VALUES ('funktionen', ?)
+         ON CONFLICT (schluessel) DO UPDATE SET wert = excluded.wert`,
+        JSON.stringify({ training: false, koennen: true, status: true, handbuch: true }),
+      );
+      expect(ladeTrainingsplaene().map((zeile) => zeile.name)).toEqual(['Bleibt']);
+      expect(ladeUebungen().map((zeile) => zeile.name)).toEqual(['Kniebeuge']);
       expect(anzahl('trainingsplaene')).toBe(1);
       expect(anzahl('uebungen')).toBe(1);
+      loescheTrainingsplan(angelegt.id);
+      expect(anzahl('trainingsplaene')).toBe(0);
+      expect(
+        einstellungenAenderungSchema.parse({ funktionen: { training: true, basis: true } }).funktionen,
+      ).toEqual({ basis: true });
     });
   });
 

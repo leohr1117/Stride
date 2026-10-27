@@ -60,12 +60,6 @@ describe('pfadAktiv', () => {
   it('sperrt Seiten und Deep Links der ausgeschalteten Funktion', () => {
     const aus = sicht();
     expect(pfadAktiv('/basis', aus)).toBe(false);
-    expect(pfadAktiv('/training', aus)).toBe(false);
-    expect(pfadAktiv('/training/plaene/neu', aus)).toBe(false);
-    expect(pfadAktiv('/training/plaene/3', aus)).toBe(false);
-    expect(pfadAktiv('/training/einheiten/3', aus)).toBe(false);
-    expect(pfadAktiv('/training/uebungen/3', aus)).toBe(false);
-    expect(pfadAktiv('/training/', aus)).toBe(false);
     expect(pfadAktiv('/training-alt', aus)).toBe(true);
     expect(pfadAktiv('/chronik', aus)).toBe(false);
     expect(pfadAktiv('/vorbilder', aus)).toBe(false);
@@ -84,13 +78,6 @@ describe('pfadAktiv', () => {
       statistiken: true,
     });
     expect(pfadAktiv('/basis', an)).toBe(true);
-    const training = sicht({ training: true });
-    expect(pfadAktiv('/training', training)).toBe(true);
-    expect(pfadAktiv('/training?plan=1', training)).toBe(true);
-    expect(pfadAktiv('/training/plaene/neu', training)).toBe(true);
-    expect(pfadAktiv('/training/einheiten/1', training)).toBe(true);
-    expect(pfadAktiv('/training/uebungen/1', training)).toBe(true);
-    expect(pfadAktiv('/training', aus)).toBe(false);
     expect(pfadAktiv('/chronik', an)).toBe(true);
     expect(pfadAktiv('/vorbilder/ada', an)).toBe(true);
     expect(pfadAktiv('/faehigkeiten/4', an)).toBe(true);
@@ -110,9 +97,16 @@ describe('pfadAktiv', () => {
     expect(pfadAktiv('/laufend', nurVorhaben)).toBe(true);
   });
 
-  it('lässt den alten Aufgaben-Pfad durch, die Route leitet auf die Übersicht', () => {
+  it('lässt die alten Pfade Aufgaben und Training durch, die Route leitet auf die Übersicht', () => {
     expect(pfadAktiv('/aufgaben', sicht())).toBe(true);
     expect(pfadAktiv('/aufgaben', sicht({ basis: true }))).toBe(true);
+    expect(pfadAktiv('/training', sicht())).toBe(true);
+    expect(pfadAktiv('/training?plan=1', sicht())).toBe(true);
+    expect(pfadAktiv('/training/', sicht())).toBe(true);
+    expect(pfadAktiv('/training/plaene/neu', sicht())).toBe(true);
+    expect(pfadAktiv('/training/plaene/3', sicht())).toBe(true);
+    expect(pfadAktiv('/training/einheiten/3', sicht())).toBe(true);
+    expect(pfadAktiv('/training/uebungen/3', sicht())).toBe(true);
   });
 
   it('lässt Übersicht, Charakter und Einstellungen immer zu', () => {

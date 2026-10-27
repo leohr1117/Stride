@@ -10,7 +10,6 @@ import {
 } from '../../../shared/spiel/training.ts';
 import { ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
-import { pruefeFunktion } from '../einstellungen/einstellungen.ts';
 import { erstelleEintrag, loescheEintrag } from '../eintraege/eintraege.ts';
 import { ersterBestwert } from './bestwerte.ts';
 import { ladeEinheit, ladeRohEinheit, stundenDer, type RohEinheit } from './lesen.ts';
@@ -19,7 +18,6 @@ import { ladeTrainingsplan } from './plaene.ts';
 import { gewichtePassen, projektFuerPlan, vorlageFuerPlan } from './zuordnung.ts';
 
 export function starteEinheit(planId: number, jetzt = new Date()): Trainingseinheit {
-  pruefeFunktion('training');
   const plan = ladeTrainingsplan(planId);
   const offen = eine<{ id: number; planId: number }>(
     `SELECT id, plan_id AS planId FROM trainingseinheiten WHERE status = 'offen' ORDER BY id LIMIT 1`,
@@ -112,7 +110,6 @@ export function bucheEinheit(einheitId: number, meilenstein: boolean): EintragEr
 }
 
 export function schliesseEinheitAb(id: number, jetzt = new Date()): EintragErgebnis {
-  pruefeFunktion('training');
   const roh = ladeRohEinheit(id);
   if (roh.status === 'fertig' && roh.eintragId !== null) {
     return gespeichertesErgebnis(roh.eintragId);
@@ -133,7 +130,6 @@ function schliesseOffene(id: number, roh: RohEinheit, jetzt: Date): EintragErgeb
 }
 
 export function verwirfEinheit(id: number): void {
-  pruefeFunktion('training');
   const einheit = ladeRohEinheit(id);
   if (einheit.status !== 'offen') {
     throw ungueltig(NUR_OFFEN_VERWERFEN);

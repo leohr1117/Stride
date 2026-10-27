@@ -35,7 +35,7 @@ import { istSprache, type Sprache } from '../../../shared/sprache/kern.ts';
 import { anfrageSprache } from '../../anfrageSprache.ts';
 import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
-import { istWeltLeer, legeStartUebungenAn, wendeFokusAn } from '../../services/profilStart.ts';
+import { istWeltLeer, wendeFokusAn } from '../../services/profilStart.ts';
 import { istGewichtEinheit, STANDARD_GEWICHT_EINHEIT, type GewichtEinheit } from '../../../shared/spiel/training.ts';
 
 interface Grundeinstellungen {
@@ -362,10 +362,6 @@ export function aendereEinstellungen(
       const fokus = normalisiereFokus(aenderung.fokus);
       const sprache = aenderung.sprache ?? bisher.sprache ?? anfrageSprache();
       funktionen = { ...funktionen, ...wendeFokusAn(fokus, new Date(), sprache, ersteAnlage) };
-      if (ersteAnlage && fokus.includes('sport')) {
-        funktionen = { ...funktionen, training: true };
-        legeStartUebungenAn(sprache);
-      }
       speichere('fokus', fokus);
     }
     const stufeFunktionen = stufe && stufeWechselt ? funktionenFuerStufe(stufe) : {};

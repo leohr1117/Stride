@@ -1508,6 +1508,7 @@ export const TEXTE: Record<string, string> = {
   "Zurück auf Unterseiten bleibt auf dem Handy sichtbar.": "スマホの下層ページでも戻るが表示されたままになる。",
   "Löschen in der Chronik erscheint nur beim Wischen.": "履歴の削除はスワイプしたときだけ表示される。",
   "Eigene Farben bleiben in jeder Ansicht erhalten.": "自分の色は見た目ごとに残る。",
+  "Training gibt es nicht mehr. Bisherige Einträge bleiben.": "トレーニングはなくなりました。これまでの記録は残ります。",
   "Aufgaben gibt es nicht mehr. Bisherige Einträge bleiben.": "タスクはなくなりました。これまでの記録は残ります。",
   "Speichern bleibt bei offener Tastatur erreichbar.": "キーボードを開いたままでも保存できる。",
   "Beim Schieben eines Reglers bleibt die Tastatur zu. Der Fokus-Ring erscheint nur bei der Tastatur.": "スライダーを動かすとキーボードは閉じたまま。フォーカスの輪はキーボードのときだけ出る。",

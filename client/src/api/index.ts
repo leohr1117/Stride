@@ -1,5 +1,4 @@
 import { attributeApi, attributeSchluessel } from './attribute.ts';
-import { trainingApi, trainingSchluessel } from './training.ts';
 import { basisApi, basisSchluessel } from './basis.ts';
 import { EXPORT_ADRESSE, datenApi } from './daten.ts';
 import { einstellungenApi, einstellungenSchluessel } from './einstellungen.ts';
@@ -30,7 +29,6 @@ export const api = {
   ...eintraegeApi,
   ...faehigkeitenApi,
   ...basisApi,
-  ...trainingApi,
   ...erfolgeApi,
   ...rueckblickApi,
   ...statistikenApi,
@@ -50,7 +48,6 @@ export const SCHLUESSEL = {
   ...eintraegeSchluessel,
   ...faehigkeitenSchluessel,
   ...basisSchluessel,
-  ...trainingSchluessel,
   ...erfolgeSchluessel,
   ...rueckblickSchluessel,
   ...statistikenSchluessel,

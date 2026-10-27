@@ -307,7 +307,7 @@ export const statistikAbfrageSchema = z.object({
   zeitraum: z.enum(ZEITRAEUME).default('3m'),
 });
 
-/** Alter Schlüssel `aufgaben` und andere Unbekannte fallen weg, der Rest der Änderung bleibt gültig. */
+/** Alte Schlüssel `aufgaben` und `training` und andere Unbekannte fallen weg, der Rest der Änderung bleibt gültig. */
 function bekannteFunktionen(wert: unknown): unknown {
   if (typeof wert !== 'object' || wert === null || Array.isArray(wert)) {
     return wert;

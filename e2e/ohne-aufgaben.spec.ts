@@ -10,11 +10,12 @@ test('Aufgaben sind aus Navigation, Funktionen und Übersicht', async ({ page },
   const bild = (name: string) => page.screenshot({ path: `tmp-bau/r1/${projekt}-${name}.png`, fullPage: true });
 
   await page.goto('/mehr/funktionen');
+  await expect(page.locator('#funktion-basis')).toBeVisible();
   await expect(page.locator('#funktion-aufgaben')).toHaveCount(0);
-  await expect(page.locator('#funktion-training')).toBeVisible();
+  await expect(page.locator('#funktion-training')).toHaveCount(0);
   const reihenfolge = await page.locator('[id^="funktion-"]').evaluateAll((knoten) => knoten.map((knoten) => knoten.id));
   const basis = reihenfolge.indexOf('funktion-basis');
-  expect(reihenfolge[basis + 1]).toBe('funktion-training');
+  expect(reihenfolge[basis + 1]).toBe('funktion-chronik');
   await ohneSeitlichenUeberlauf(page);
   await bild('funktionen');
 

@@ -14,7 +14,6 @@ import { Bereich, useEinstellungen, useSprungmarke } from './rahmen.tsx';
 
 const FUNKTION_INFO: Partial<Record<Funktion, string>> = {
   basis: 'Tägliche Aufgaben zum Abhaken.',
-  training: 'Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert.',
   bossAngriffe: BOSS_SCHALTER,
   verfallKoennen: 'Ungenutzte Können-Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.',
   verfallHaben: 'Ungenutzte Haben-Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.',

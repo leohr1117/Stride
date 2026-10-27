@@ -53,7 +53,7 @@ describe('elternZiel', () => {
     expect(elternZiel('/projekte/4')).toEqual({ pfad: '/ziele', label: 'Ziele' });
     expect(elternZiel('/faehigkeiten/2')).toEqual({ pfad: '/charakter', label: 'Charakter' });
     expect(elternZiel('/vorbilder/ronaldo')).toEqual({ pfad: '/vorbilder', label: 'Vorbilder' });
-    expect(istHauptseite('/training')).toBe(true);
+    expect(istHauptseite('/training')).toBe(false);
     expect(elternZiel('/training')).toBeNull();
     expect(elternZiel('/training/plaene/neu')).toEqual({ pfad: '/training', label: 'Training' });
     expect(elternZiel('/training/plaene/4')).toEqual({ pfad: '/training', label: 'Training' });
@@ -104,7 +104,7 @@ describe('herkunftsZiel', () => {
     expect(herkunftsLabel('/faehigkeiten/2')).toBe('Fähigkeit');
     expect(herkunftsLabel('/vorbilder/ada')).toBe('Vorbild');
     expect(herkunftsLabel('/verbindungen')).toBeNull();
-    expect(herkunftsLabel('/training')).toBe('Training');
+    expect(herkunftsLabel('/training')).toBeNull();
     expect(herkunftsLabel('/training/plaene/neu')).toBe('Plan');
     expect(herkunftsLabel('/training/einheiten/8')).toBe('Einheit');
     expect(herkunftsLabel('/training/uebungen/3')).toBe('Übung');

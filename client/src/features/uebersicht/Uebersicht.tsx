@@ -13,7 +13,6 @@ import { BossRing } from '../bosse/BossRing.tsx';
 import { bossZeile } from '../../components/VorhabenInfo.tsx';
 import { Abschnitt, KurzListe } from '../../components/Ausklappbar.tsx';
 import { BasisKarte } from '../basis/Basis.tsx';
-import { Heute } from './Heute.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
@@ -114,7 +113,6 @@ export function UebersichtSeite() {
         <Comebacks comebacks={uebersicht.comebacks} projekteAn={istAn('projekte', sichtbarkeit)} />
       )}
 
-      <Heute />
       {funktionen.basis && <BasisKarte />}
 
       {(funktionen.koennen || funktionen.status) && (

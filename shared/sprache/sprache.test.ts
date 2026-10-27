@@ -155,7 +155,6 @@ function katalogTexte(): string[] {
     faehigkeiten: false,
     ausruestung: false,
     basis: false,
-    training: false,
     chronik: false,
     vorbilder: false,
     rueckblick: false,

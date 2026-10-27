@@ -33,7 +33,6 @@ const FOKUS_FUNKTION: Record<FokusId, readonly Funktion[]> = {
 const EMPFEHLUNG_INFO: Record<Funktion, string> = {
   faehigkeiten: 'Eintrag verbessert die Fähigkeit. Ein Vorhaben ist dafür nicht nötig.',
   basis: 'Tägliche Aufgaben zum Abhaken.',
-  training: '',
   chronik: 'Alle Einträge nach Datum.',
   rueckblick: 'Rückblick einmal pro Woche.',
   statistiken: 'XP, Tätigkeiten und Zeitverlauf.',

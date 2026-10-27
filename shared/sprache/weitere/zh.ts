@@ -1508,6 +1508,7 @@ export const TEXTE: Record<string, string> = {
   "Zurück auf Unterseiten bleibt auf dem Handy sichtbar.": "手机上子页面的返回会保持可见。",
   "Löschen in der Chronik erscheint nur beim Wischen.": "历史里的删除只在滑动时出现。",
   "Eigene Farben bleiben in jeder Ansicht erhalten.": "每种样式都会保留自己的颜色。",
+  "Training gibt es nicht mehr. Bisherige Einträge bleiben.": "训练已取消。已有的记录保留。",
   "Aufgaben gibt es nicht mehr. Bisherige Einträge bleiben.": "任务已取消。已有的记录保留。",
   "Speichern bleibt bei offener Tastatur erreichbar.": "键盘打开时，保存按钮仍然可以点到。",
   "Beim Schieben eines Reglers bleibt die Tastatur zu. Der Fokus-Ring erscheint nur bei der Tastatur.": "拖动滑块时键盘保持关闭。焦点环只在使用键盘时出现。",

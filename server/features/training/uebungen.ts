@@ -8,7 +8,6 @@ import {
 import { alle, ausfuehren, eine } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { loeschbareMenge, loescheUebung as loescheUebungsZeile } from '../../services/loeschen.ts';
-import { pruefeFunktion, funktionAktiv } from '../einstellungen/einstellungen.ts';
 import { pruefeArt, pruefeName } from './vorgabe.ts';
 
 export type UebungAenderung = Partial<UebungDaten> & { archiviert?: boolean };
@@ -68,9 +67,6 @@ export function uebungFuerEintrag(name: string, art: UebungsArt): number {
 }
 
 export function ladeUebungen(archiv = false): Uebung[] {
-  if (!funktionAktiv('training')) {
-    return [];
-  }
   const loeschbar = loeschbareMenge('uebung');
   return alle<UebungZeile>(`${UEBUNG_ABFRAGE} WHERE archiviert = ? ORDER BY name COLLATE NOCASE, id`, Number(archiv)).map(
     (zeile) => zuUebung(zeile, loeschbar),
@@ -78,7 +74,6 @@ export function ladeUebungen(archiv = false): Uebung[] {
 }
 
 export function erstelleUebung(daten: UebungDaten): Uebung {
-  pruefeFunktion('training');
   const sauber = pruefeName(daten.name);
   const art = pruefeArt(daten.art);
   const vorhanden = gleicheArt(sauber);
@@ -90,7 +85,6 @@ export function erstelleUebung(daten: UebungDaten): Uebung {
 }
 
 export function aendereUebung(id: number, aenderung: UebungAenderung): Uebung {
-  pruefeFunktion('training');
   const bisher = ladeZeile(id);
   if (nurArchiv(aenderung)) {
     ausfuehren('UPDATE uebungen SET archiviert = ? WHERE id = ?', Number(aenderung.archiviert), id);
@@ -116,6 +110,5 @@ export function aendereUebung(id: number, aenderung: UebungAenderung): Uebung {
 }
 
 export function loescheUebung(id: number): void {
-  pruefeFunktion('training');
   loescheUebungsZeile(id);
 }
