@@ -316,6 +316,35 @@ function liesEreignis(eigenschaften: Eigenschaft[]): Ereignis | null {
   };
 }
 
+export function kalenderName(text: string): string {
+  let tiefe = 0;
+  let name = '';
+  let geheim = '';
+  for (const zeile of entfalte(text)) {
+    const eigenschaft = zerlege(zeile);
+    if (!eigenschaft) {
+      continue;
+    }
+    if (eigenschaft.name === 'BEGIN') {
+      tiefe += 1;
+      continue;
+    }
+    if (eigenschaft.name === 'END') {
+      tiefe = Math.max(0, tiefe - 1);
+      continue;
+    }
+    if (tiefe !== 1) {
+      continue;
+    }
+    if (eigenschaft.name === 'X-WR-CALNAME') {
+      geheim = entschluessele(eigenschaft.wert);
+    } else if (eigenschaft.name === 'NAME' && name === '') {
+      name = entschluessele(eigenschaft.wert);
+    }
+  }
+  return (geheim || name).trim();
+}
+
 export function liesEreignisse(text: string): Ereignis[] {
   const ereignisse: Ereignis[] = [];
   let aktuell: Eigenschaft[] | null = null;
@@ -479,7 +508,7 @@ function* vorkommen(ereignis: Ereignis, von: Date, bis: Date): Generator<Date> {
   }
 }
 
-export function termineZwischen(text: string, von: Date, bis: Date): Termin[] {
+function sammleTermine(text: string, von: Date, bis: Date, drin: (beginn: Date, ende: Date) => boolean): Termin[] {
   const ereignisse = liesEreignisse(text);
   const ersetzte = new Map<string, Set<number>>();
   for (const ereignis of ereignisse) {
@@ -502,7 +531,7 @@ export function termineZwischen(text: string, von: Date, bis: Date): Termin[] {
         continue;
       }
       const ende = new Date(zeit + ereignis.dauerMs);
-      if (beginn >= von && ende <= bis) {
+      if (drin(beginn, ende)) {
         termine.push({
           id: `${ereignis.uid}|${beginn.toISOString()}`,
           titel: ereignis.titel,
@@ -514,4 +543,12 @@ export function termineZwischen(text: string, von: Date, bis: Date): Termin[] {
     }
   }
   return termine.sort((a, b) => a.beginn.getTime() - b.beginn.getTime());
+}
+
+export function termineZwischen(text: string, von: Date, bis: Date): Termin[] {
+  return sammleTermine(text, von, bis, (beginn, ende) => beginn >= von && ende <= bis);
+}
+
+export function termineDieEnden(text: string, von: Date, bis: Date): Termin[] {
+  return sammleTermine(text, von, bis, (_beginn, ende) => ende > von && ende <= bis);
 }

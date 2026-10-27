@@ -1,15 +1,19 @@
-import type { AbgleichErgebnis, Kalender, KalenderAenderung, KalenderDaten } from '../../../shared/api/index.ts';
+import type { AbgleichErgebnis, Kalender, KalenderAenderung, KalenderDaten, KalenderPruefung } from '../../../shared/api/index.ts';
 import { GRENZEN } from '../../../shared/spiel/begriffe.ts';
+import { titelPasstZumFilter } from '../../../shared/spiel/kalender.ts';
+import { eintragXp } from '../../../shared/spiel/xp.ts';
 import { aktualisiere, alle, ausfuehren, eine } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
-import { liesEreignisse, termineZwischen, type Termin } from '../../integrationen/ical.ts';
-import { tagesbeginn } from '../../services/zeit.ts';
+import { kalenderName, liesEreignisse, termineDieEnden, type Termin } from '../../integrationen/ical.ts';
 import { fehlertext, legeEintragAn, pruefeZiel } from './gemeinsam.ts';
 
 const ZEITLIMIT_MS = 15_000;
 const KALENDER_MAX_BYTES = 5 * 1024 * 1024;
 const MS_PRO_STUNDE = 60 * 60 * 1000;
+const MS_PRO_TAG = 24 * MS_PRO_STUNDE;
 const STUNDEN_RUNDUNG = 100;
+const VORSCHAU_TAGE = 7;
+const VORSCHAU_MAX = 8;
 const KALENDER_KENNUNG = 'BEGIN:VCALENDAR';
 const ERLAUBTE_PROTOKOLLE = ['http:', 'https:'];
 
@@ -94,7 +98,7 @@ export async function erstelleKalender(daten: KalenderDaten, jetzt = new Date())
     daten.projektId,
     daten.vorlageId,
     daten.filter,
-    tagesbeginn(jetzt).toISOString(),
+    jetzt.toISOString(),
   );
   return zuKalender(ladeKalenderZeile(id));
 }
@@ -120,18 +124,6 @@ export function loescheKalender(id: number): void {
   ausfuehren('DELETE FROM kalender WHERE id = ?', id);
 }
 
-function passtZumFilter(termin: Termin, filter: string): boolean {
-  const woerter = filter
-    .split(',')
-    .map((wort) => wort.trim().toLowerCase())
-    .filter((wort) => wort !== '');
-  if (woerter.length === 0) {
-    return true;
-  }
-  const titel = termin.titel.toLowerCase();
-  return woerter.some((wort) => titel.includes(wort));
-}
-
 function stundenVon(termin: Termin): number | null {
   const stunden = Math.round(((termin.ende.getTime() - termin.beginn.getTime()) / MS_PRO_STUNDE) * STUNDEN_RUNDUNG) / STUNDEN_RUNDUNG;
   if (stunden < GRENZEN.stundenMin) {
@@ -143,8 +135,8 @@ function stundenVon(termin: Termin): number | null {
 async function gleicheEinenKalenderAb(kalender: KalenderZeile, jetzt: Date): Promise<AbgleichErgebnis> {
   try {
     const text = await ladeKalenderText(kalender.adresse);
-    const termine = termineZwischen(text, new Date(kalender.seit), jetzt).filter(
-      (termin) => !termin.ganztags && passtZumFilter(termin, kalender.filter),
+    const termine = termineDieEnden(text, new Date(kalender.seit), jetzt).filter(
+      (termin) => !termin.ganztags && titelPasstZumFilter(termin.titel, kalender.filter) && stundenVon(termin) !== null,
     );
     const fehler = new Set<string>();
     const bekannt = new Set(
@@ -184,6 +176,28 @@ async function gleicheEinenKalenderAb(kalender: KalenderZeile, jetzt: Date): Pro
     aktualisiere('kalender', kalender.id, { fehler: nachricht });
     return { neu: 0, fehler: [nachricht] };
   }
+}
+
+export async function pruefeKalender(adresseEingabe: string, jetzt = new Date()): Promise<KalenderPruefung> {
+  const adresse = normalisiereAdresse(adresseEingabe);
+  const text = await ladeKalenderText(adresse);
+  const name = kalenderName(text).slice(0, GRENZEN.nameMax);
+  const von = new Date(jetzt.getTime() - VORSCHAU_TAGE * MS_PRO_TAG);
+  const termine = termineDieEnden(text, von, jetzt)
+    .filter((termin) => !termin.ganztags && termin.titel.trim() !== '' && stundenVon(termin) !== null)
+    .sort((a, b) => b.ende.getTime() - a.ende.getTime())
+    .slice(0, VORSCHAU_MAX)
+    .map((termin) => {
+      const stunden = stundenVon(termin) ?? 0;
+      return {
+        titel: termin.titel,
+        beginn: termin.beginn.toISOString(),
+        ende: termin.ende.toISOString(),
+        stunden,
+        xp: eintragXp(stunden),
+      };
+    });
+  return { name, termine };
 }
 
 export async function gleicheKalenderAb(jetzt = new Date()): Promise<AbgleichErgebnis> {

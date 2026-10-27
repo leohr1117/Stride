@@ -102,10 +102,11 @@ test('übersetzte Funde sind in jeder Sprache sichtbar', async ({ page }, info) 
       await page.goto('/mehr/inhalte/verbindungen');
       await page.getByRole('button', { name: zeige('Kalender', code), exact: true }).click();
       const kalender = page.getByRole('dialog');
+      await kalender.getByRole('button', { name: zeige('Google', code), exact: true }).click();
+      const schritt = kalender.getByText(zeige('Kopiere die geheime Adresse im iCal-Format.', code));
+      await expect(schritt).toBeVisible();
       await expect(kalender.getByText(zeige('iCal-Adresse', code), { exact: true })).toBeVisible();
-      const hilfe = kalender.locator('p').filter({ hasText: zeige('iCal-Adresse finden:', code) });
-      await expect(hilfe).toContainText(zeige('iCal-Adresse finden:', code));
-      await hilfe.evaluate((element) => element.scrollIntoView({ block: 'center' }));
+      await schritt.evaluate((element) => element.scrollIntoView({ block: 'center' }));
       await page.screenshot({ path: bild(info, code, 'ical') });
       await kalender.getByRole('button', { name: zeige('Schließen', code) }).click();
 

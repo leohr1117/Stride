@@ -444,6 +444,10 @@ export const todoistOhneSchema = z.object({
   vorlageId: optionaleId,
 });
 
+export const kalenderPruefSchema = z.object({
+  adresse: pflichtText('Die Adresse', ADRESSE_MAX),
+});
+
 export const kalenderSchema = z.object({
   name: pflichtText('Der Name', GRENZEN.nameMax),
   adresse: pflichtText('Die Adresse', ADRESSE_MAX),

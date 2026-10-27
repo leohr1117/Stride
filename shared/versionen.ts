@@ -17,6 +17,22 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.9.6',
+    seiten: 'Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Google- und Apple-Kalender lassen sich mit einer kurzen Anleitung verbinden. Vor dem Speichern erscheinen die letzten Termine und die XP.',
+        ],
+      },
+      {
+        titel: 'Geändert',
+        punkte: ['Ein Termin zählt erst nach dem Verbinden, sobald er vorbei ist. Ohne Zuordnung zählt er nicht.'],
+      },
+    ],
+  },
+  {
     version: '3.9.5',
     seiten: 'Verbindungen',
     abschnitte: [

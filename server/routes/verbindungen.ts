@@ -4,6 +4,7 @@ import {
   erstelleKalender,
   ladeKalenderListe,
   loescheKalender,
+  pruefeKalender,
 } from '../features/verbindungen/kalender.ts';
 import { gleicheAllesAb } from '../features/verbindungen/abgleich.ts';
 import { todoistVorschau } from '../features/verbindungen/todoistAbgleich.ts';
@@ -21,6 +22,7 @@ import {
 import {
   idParameter,
   kalenderAenderungSchema,
+  kalenderPruefSchema,
   kalenderSchema,
   todoistLabelSchema,
   todoistParameter,
@@ -64,6 +66,11 @@ export async function verbindungsRouten(app: FastifyInstance): Promise<void> {
   });
 
   app.get('/verbindungen/todoist/vorschau', async () => todoistVorschau());
+
+  app.post('/verbindungen/kalender/pruefen', async (anfrage) => {
+    const { adresse } = kalenderPruefSchema.parse(anfrage.body);
+    return pruefeKalender(adresse);
+  });
 
   app.post('/verbindungen/kalender', async (anfrage, antwort) => {
     return antwort.status(201).send(await erstelleKalender(kalenderSchema.parse(anfrage.body)));

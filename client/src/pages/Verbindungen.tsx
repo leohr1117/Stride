@@ -1,110 +1,26 @@
 import { tx } from '../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CalendarDays, ExternalLink, ListChecks, Pencil, Plus, RefreshCw } from 'lucide-react';
+import { CalendarDays, ListChecks, Pencil, Plus, RefreshCw } from 'lucide-react';
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { type Kalender, type Projekt, type TodoistStatus, type Vorlage } from '../../../shared/api/index.ts';
-import { GRENZEN } from '../../../shared/spiel/begriffe.ts';
+import { type Kalender, type TodoistStatus } from '../../../shared/api/index.ts';
 import { istAn } from '../../../shared/spiel/sichtbarkeit.ts';
-import { taetigkeitPasst, taetigkeitenFuerProjekt } from '../../../shared/spiel/taetigkeit.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useSichtbarkeit } from '../funktionen.ts';
 import { Dialog } from '../components/Dialog.tsx';
-import { SchnellNebenaktion, SchnellZeile } from '../components/SchnellAktion.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Formular, InfoHinweis, Karte, Knopf, Ladeanzeige, PasswortFeld, Ueberschrift } from '../ui/index.ts';
+import { SchnellZeile } from '../components/SchnellAktion.tsx';
+import { Fehlermeldung, Formular, InfoHinweis, Karte, Knopf, Ladeanzeige, PasswortFeld, Ueberschrift } from '../ui/index.ts';
+import { KalenderFormular } from '../features/kalender/Einrichtung.tsx';
 import { TodoistEinrichtung, TodoistTokenSchritte } from '../features/todoist/Einrichtung.tsx';
 import { TodoistZuordnungen } from '../features/todoist/Zuordnungen.tsx';
-import { ZielMarke } from '../components/ZielMarke.tsx';
 import { kurzesDatum, uhrzeit, zahl } from '../format.ts';
-
-const KALENDER_HILFEN = [
-  { name: 'Google', adresse: 'https://support.google.com/calendar/answer/37648?hl=de' },
-  { name: 'Apple', adresse: 'https://support.apple.com/de-de/guide/icloud/mm6b1a9479/icloud' },
-  { name: 'Outlook', adresse: 'https://support.microsoft.com/de-DE/Outlook/share-your-calendar-in-outlook-com' },
-];
-const KEINE_AUSWAHL = '';
 
 function zeitpunktText(iso: string | null): string | null {
   return iso ? `${kurzesDatum(iso)}, ${uhrzeit(iso)}` : null;
 }
 
-function alsId(wert: string): number | null {
-  return wert === KEINE_AUSWAHL ? null : Number(wert);
-}
-
-function useAuswahl() {
+function useProjekte() {
   const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
-  const { data: vorlagen = [] } = useQuery({ queryKey: SCHLUESSEL.vorlagen, queryFn: api.vorlagen });
-  return {
-    projekte: (ziele?.projekte ?? []).filter((projekt) => projekt.aktiv),
-    taetigkeiten: vorlagen.filter((vorlage) => !vorlage.archiviert),
-  };
-}
-
-function ProjektAuswahl({
-  projekte,
-  wert,
-  onAendern,
-}: {
-  projekte: Projekt[];
-  wert: number | null;
-  onAendern: (id: number | null) => void;
-}) {
-  return (
-    <select className={EINGABE_STIL} value={wert ?? KEINE_AUSWAHL} onChange={(ereignis) => onAendern(alsId(ereignis.target.value))}>
-      {projekte.map((projekt) => (
-        <option key={projekt.id} value={projekt.id}>
-          {projekt.name}
-        </option>
-      ))}
-    </select>
-  );
-}
-
-function passendeTaetigkeiten(taetigkeiten: Vorlage[], projektId: number | null): Vorlage[] {
-  return taetigkeitenFuerProjekt(taetigkeiten, projektId);
-}
-
-function TaetigkeitAuswahl({
-  taetigkeiten,
-  wert,
-  onAendern,
-  standardLabel,
-}: {
-  taetigkeiten: Vorlage[];
-  wert: number | null;
-  onAendern: (id: number | null) => void;
-  standardLabel?: string;
-}) {
-  return (
-    <select className={EINGABE_STIL} value={wert ?? KEINE_AUSWAHL} onChange={(ereignis) => onAendern(alsId(ereignis.target.value))}>
-      <option value={KEINE_AUSWAHL}>{standardLabel ?? tx("Standard des Projekts")}</option>
-      {taetigkeiten.map((vorlage) => (
-        <option key={vorlage.id} value={vorlage.id}>
-          {vorlage.name}
-        </option>
-      ))}
-    </select>
-  );
-}
-
-function KalenderHilfe() {
-  return (
-    <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-leise">
-      {tx('iCal-Adresse finden:')}
-      {KALENDER_HILFEN.map((hilfe) => (
-        <a
-          key={hilfe.name}
-          href={hilfe.adresse}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1 text-akzent hover:underline"
-        >
-          {hilfe.name}
-          <ExternalLink className="size-3.5" />
-        </a>
-      ))}
-    </p>
-  );
+  return (ziele?.projekte ?? []).filter((projekt) => projekt.aktiv);
 }
 
 function Status({ letzter, fehler, zusatz }: { letzter: string | null; fehler: string | null; zusatz?: ReactNode }) {
@@ -233,7 +149,7 @@ function TodoistKarte({ status }: { status: TodoistStatus }) {
 function KalenderKarte({ kalender }: { kalender: Kalender[] }) {
   const projekteAn = istAn('projekte', useSichtbarkeit());
   const [dialog, setDialog] = useState<{ kalender: Kalender | null } | null>(null);
-  const { projekte } = useAuswahl();
+  const projekte = useProjekte();
   const projektName = new Map(projekte.map((projekt) => [projekt.id, projekt.name]));
 
   return (
@@ -249,9 +165,7 @@ function KalenderKarte({ kalender }: { kalender: Kalender[] }) {
           ) : undefined
         }
       />
-      {kalender.length === 0 ? (
-        <KalenderHilfe />
-      ) : (
+      {kalender.length > 0 ? (
         <div className="divide-y divide-rand">
           {kalender.map((eintrag) => (
             <SchnellZeile key={eintrag.id} ziel={{ art: 'kalender', id: eintrag.id, name: eintrag.name }}>
@@ -289,7 +203,7 @@ function KalenderKarte({ kalender }: { kalender: Kalender[] }) {
             </SchnellZeile>
           ))}
         </div>
-      )}
+      ) : null}
       <Dialog
         offen={dialog !== null}
         titel={dialog?.kalender ? dialog.kalender.name : tx("Kalender verbinden")}
@@ -298,94 +212,5 @@ function KalenderKarte({ kalender }: { kalender: Kalender[] }) {
         {dialog && <KalenderFormular key={dialog.kalender?.id ?? 'neu'} kalender={dialog.kalender} onFertig={() => setDialog(null)} />}
       </Dialog>
     </Karte>
-  );
-}
-
-function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | null; onFertig: () => void }) {
-  const queryClient = useQueryClient();
-  const projekteAn = istAn('projekte', useSichtbarkeit());
-  const { projekte, taetigkeiten } = useAuswahl();
-  const [name, setName] = useState(kalender?.name ?? '');
-  const [adresse, setAdresse] = useState('');
-  const [projektId, setProjektId] = useState<number | null>(kalender?.projektId ?? null);
-  const [vorlageId, setVorlageId] = useState<number | null>(kalender?.vorlageId ?? null);
-  const [filter, setFilter] = useState(kalender?.filter ?? '');
-  const gewaehltesProjekt = projekteAn ? (projektId ?? projekte[0]?.id ?? null) : (kalender?.projektId ?? null);
-  const taetigkeitenZumProjekt = passendeTaetigkeiten(taetigkeiten, gewaehltesProjekt);
-  const wirksameVorlageId = taetigkeitenZumProjekt.some((vorlage) => vorlage.id === vorlageId) ? vorlageId : null;
-
-  const fertig = () => {
-    void queryClient.invalidateQueries({ queryKey: SCHLUESSEL.verbindungen });
-    onFertig();
-  };
-  const speichern = useMutation({
-    mutationFn: () => {
-      if (gewaehltesProjekt === null) {
-        throw new Error(tx("Lege zuerst ein Projekt an."));
-      }
-      const daten = { name: name.trim(), projektId: gewaehltesProjekt, vorlageId: wirksameVorlageId, filter: filter.trim() };
-      return kalender ? api.aendereKalender(kalender.id, daten) : api.erstelleKalender({ ...daten, adresse: adresse.trim() });
-    },
-    onSuccess: fertig,
-  });
-  const absenden = (ereignis: FormEvent) => {
-    ereignis.preventDefault();
-    speichern.mutate();
-  };
-  const kannSpeichern =
-    name.trim() !== '' && gewaehltesProjekt !== null && (kalender !== null || adresse.trim() !== '') && !speichern.isPending;
-
-  return (
-    <Formular onAbsenden={absenden}>
-      <Feld label={tx("Name")}>
-        <input className={EINGABE_STIL} value={name} maxLength={GRENZEN.nameMax} onChange={(ereignis) => setName(ereignis.target.value)} autoFocus />
-      </Feld>
-      {!kalender && (
-        <div className="space-y-2">
-          <Feld label={tx('iCal-Adresse')}>
-            <input className={EINGABE_STIL} type="url" autoComplete="off" value={adresse} onChange={(ereignis) => setAdresse(ereignis.target.value)} />
-          </Feld>
-          <KalenderHilfe />
-        </div>
-      )}
-      {projekteAn && (
-        <Feld label={<ZielMarke ebene="projekte" />}>
-          <ProjektAuswahl
-            projekte={projekte}
-            wert={gewaehltesProjekt}
-            onAendern={(id) => {
-              setProjektId(id);
-              setVorlageId((aktuell) => {
-                if (aktuell === null) {
-                  return null;
-                }
-                const vorlage = taetigkeiten.find((eintrag) => eintrag.id === aktuell);
-                return vorlage && taetigkeitPasst(vorlage.projektId, id) ? aktuell : null;
-              });
-            }}
-          />
-        </Feld>
-      )}
-      <Feld label={tx("Tätigkeit")}>
-        <TaetigkeitAuswahl
-          taetigkeiten={taetigkeitenZumProjekt}
-          wert={wirksameVorlageId}
-          onAendern={setVorlageId}
-          standardLabel={projekteAn ? tx("Standard des Projekts") : tx("Standard")}
-        />
-      </Feld>
-      <Feld label={tx("Titel enthält")}>
-        <input className={EINGABE_STIL} value={filter} maxLength={GRENZEN.nameMax} onChange={(ereignis) => setFilter(ereignis.target.value)} />
-      </Feld>
-      <Fehlermeldung fehler={speichern.error} />
-      <div className="flex gap-2">
-        {kalender ? (
-          <SchnellNebenaktion ziel={{ art: 'kalender', id: kalender.id, name: kalender.name }} onErledigt={fertig} />
-        ) : null}
-        <Knopf type="submit" variante="primaer" className="flex-1" disabled={!kannSpeichern}>
-          {speichern.isPending ? tx("Prüfe …") : tx("Speichern")}
-        </Knopf>
-      </div>
-    </Formular>
   );
 }

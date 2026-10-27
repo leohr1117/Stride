@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { termineZwischen } from './ical.ts';
+import { kalenderName, termineDieEnden, termineZwischen } from './ical.ts';
 
 function kalender(...ereignisse: string[][]): string {
   return ['BEGIN:VCALENDAR', 'VERSION:2.0', ...ereignisse.flatMap((zeilen) => ['BEGIN:VEVENT', ...zeilen, 'END:VEVENT']), 'END:VCALENDAR'].join('\r\n');
@@ -7,6 +7,40 @@ function kalender(...ereignisse: string[][]): string {
 
 const VON = new Date('2026-10-01T00:00:00Z');
 const BIS = new Date('2026-11-01T00:00:00Z');
+
+describe('kalenderName', () => {
+  it('nimmt den Kalendernamen und nicht den Termintitel', () => {
+    const text = [
+      'BEGIN:VCALENDAR',
+      'X-WR-CALNAME:Arbeit\\, Projekt',
+      'NAME:Anders',
+      'BEGIN:VEVENT',
+      'UID:a',
+      'SUMMARY:Training',
+      'DTSTART:20261005T170000Z',
+      'DTEND:20261005T180000Z',
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n');
+    expect(kalenderName(text)).toBe('Arbeit, Projekt');
+  });
+
+  it('fällt auf NAME zurück', () => {
+    const text = ['BEGIN:VCALENDAR', 'NAME:Haus', 'END:VCALENDAR'].join('\r\n');
+    expect(kalenderName(text)).toBe('Haus');
+  });
+});
+
+describe('termineDieEnden', () => {
+  it('nimmt einen Termin, der vor dem Fenster beginnt und darin endet', () => {
+    const text = kalender(['UID:ende', 'SUMMARY:Ueberlappt', 'DTSTART:20261027T140000Z', 'DTEND:20261027T160000Z']);
+    const von = new Date('2026-10-27T15:00:00.000Z');
+    const bis = new Date('2026-10-27T18:00:00.000Z');
+    const termine = termineDieEnden(text, von, bis);
+    expect(termine.map((termin) => termin.titel)).toEqual(['Ueberlappt']);
+    expect(termineZwischen(text, von, bis)).toEqual([]);
+  });
+});
 
 describe('termineZwischen', () => {
   it('liest einen einfachen UTC-Termin mit Dauer', () => {
