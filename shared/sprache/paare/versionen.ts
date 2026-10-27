@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Neu unter Mehr: Übersicht. Die Seite listet die Karten der Übersicht und wann sie erscheinen.', 'New under More: Overview. The page lists the overview cards and when they appear.'],
   ['Jeder Benutzername ist nur einmal vergeben. Du kannst ihn jederzeit ändern. Ist er schon vergeben, bleibt der bisherige.', 'Each username is used only once. You can change it at any time. If it is already taken, the current name stays.'],
   ['Bei der Todoist-Zuordnung steht über jedem Feld, wofür es gilt. Die Zuordnung am Anfang entfällt.', 'On the Todoist mapping, each field says what it is for. The mapping at the start is gone.'],
   ['Jede Verbindung zeigt den letzten Abgleich, einen klaren Fehler und wie viele Einträge übernommen wurden.', 'Each connection shows the last sync, a clear error, and how many entries were imported.'],

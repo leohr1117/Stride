@@ -50,6 +50,7 @@ describe('elternZiel', () => {
     expect(elternZiel('/mehr/darstellung/ansicht')).toBeNull();
     expect(elternZiel('/mehr/profil/fokus')).toEqual({ pfad: '/mehr/profil', label: 'Profil' });
     expect(elternZiel('/mehr/inhalte/verbindungen')).toEqual({ pfad: '/mehr/funktionen', label: 'App & Verbindungen' });
+    expect(elternZiel('/mehr/uebersicht')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/projekte/4')).toEqual({ pfad: '/ziele', label: 'Ziele' });
     expect(elternZiel('/faehigkeiten/2')).toEqual({ pfad: '/charakter', label: 'Charakter' });
     expect(elternZiel('/vorbilder/ronaldo')).toEqual({ pfad: '/vorbilder', label: 'Vorbilder' });
@@ -99,6 +100,7 @@ describe('herkunftsZiel', () => {
   });
 
   it('benennt bekannte Seiten', () => {
+    expect(herkunftsLabel('/mehr/uebersicht')).toBe('Übersicht');
     expect(herkunftsLabel('/mehr/profil/fokus')).toBe('Fokus');
     expect(herkunftsLabel('/mehr/profil/ziel')).toBe('Was willst du erreichen?');
     expect(herkunftsLabel('/faehigkeiten/2')).toBe('Fähigkeit');

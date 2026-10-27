@@ -38,6 +38,7 @@ const FEST = [
   '/mehr/inhalte/verbindungen',
   '/mehr/darstellung',
   '/mehr/darstellung/leiste',
+  '/mehr/uebersicht',
   '/mehr/funktionen',
   '/mehr/daten',
 ];

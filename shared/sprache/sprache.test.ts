@@ -12,6 +12,8 @@ import {
 import { ZIEL_MARKE } from '../spiel/ebenen.ts';
 import { ERFOLGE } from '../spiel/erfolge.ts';
 import { FUNKTION_BLOECKE } from '../spiel/funktionen.ts';
+import { MEHR_BEREICHE } from '../spiel/mehrBereiche.ts';
+import { UEBERSICHT_KARTEN } from '../spiel/uebersichtKarten.ts';
 import { ARCHETYP, KLASSE } from '../spiel/klassen.ts';
 import { VISION_BEISPIELE } from '../spiel/orientierung.ts';
 import { FOKUS_IDS, FOKUS_LISTE, FOKUS_PFLICHT, START_TAETIGKEITEN, startTaetigkeiten, ZIEL_FRAGE, ZIELSTREBIGKEIT_INFO, ZIELSTREBIGKEITEN } from '../spiel/profil.ts';
@@ -172,6 +174,13 @@ function katalogTexte(): string[] {
   const organisation = ebenenSperre('organisationen', ebenen);
   if (organisation) {
     texte.push(organisation);
+  }
+  texte.push('Jede Karte folgt dem Bereich, der sie einschaltet. Identität und Aktivität bleiben.', 'Karten');
+  for (const bereich of MEHR_BEREICHE) {
+    texte.push(bereich.label);
+  }
+  for (const karte of UEBERSICHT_KARTEN) {
+    texte.push(karte.label, karte.regel, karte.info);
   }
   return texte;
 }

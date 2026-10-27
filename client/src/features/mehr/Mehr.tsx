@@ -1,9 +1,10 @@
 import { tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronDown, ChevronRight, HardDrive, ListChecks, Palette, SlidersHorizontal, User, type LucideIcon } from 'lucide-react';
+import { Bell, ChevronDown, ChevronRight, HardDrive, LayoutDashboard, ListChecks, Palette, SlidersHorizontal, User, type LucideIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { LEISTE_STANDARD, sichtbareLeiste } from '../../../../shared/spiel/leiste.ts';
+import { sichtbareMehrBereiche, type MehrBereichId } from '../../../../shared/spiel/mehrBereiche.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { STIL_INFO } from '../../../../shared/features/darstellung/stile.ts';
 import { AKTUELLE_VERSION, VERSIONEN } from '../../../../shared/versionen.ts';
@@ -11,6 +12,16 @@ import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { HANDBUCH, sichtbareGruppen } from '../../navigation.ts';
 import { verbindungsStand } from './verbindungsStand.ts';
+
+const BEREICH_ICON: Record<MehrBereichId, LucideIcon> = {
+  profil: User,
+  taetigkeiten: ListChecks,
+  darstellung: Palette,
+  uebersicht: LayoutDashboard,
+  app: SlidersHorizontal,
+  benachrichtigungen: Bell,
+  daten: HardDrive,
+};
 
 function Kachel({ to, icon: KachelIcon, titel, text, gefahr = false }: { to: string; icon: LucideIcon; titel: string; text?: string; gefahr?: boolean }) {
   return (
@@ -78,11 +89,26 @@ export function MehrSeite() {
       <h1 className="text-2xl font-bold tracking-tight break-words md:text-3xl">{tx("Mehr")}</h1>
       <Schnellzugriff />
       <div className="grid gap-3 sm:grid-cols-2">
-        <Kachel to="/mehr/profil" icon={User} titel={tx("Profil")} text={profil || undefined} />
-        <Kachel to="/mehr/inhalte" icon={ListChecks} titel={tx("Tätigkeiten")} />
-        <Kachel to="/mehr/darstellung" icon={Palette} titel={tx("Darstellung")} text={darstellung} />
-        <Kachel to="/mehr/funktionen" icon={SlidersHorizontal} titel={tx("App & Verbindungen")} text={verbindungsText} gefahr={stand?.fehler} />
-        <Kachel to="/mehr/daten" icon={HardDrive} titel={tx("Daten")} />
+        {sichtbareMehrBereiche().map((bereich) => (
+          <Kachel
+            key={bereich.id}
+            to={bereich.pfad}
+            icon={BEREICH_ICON[bereich.id]}
+            titel={tx(bereich.label)}
+            text={
+              bereich.id === 'profil'
+                ? profil || undefined
+                : bereich.id === 'darstellung'
+                  ? darstellung
+                  : bereich.id === 'uebersicht'
+                    ? tx("Karten")
+                    : bereich.id === 'app'
+                      ? verbindungsText
+                      : undefined
+            }
+            gefahr={bereich.id === 'app' && stand?.fehler === true}
+          />
+        ))}
       </div>
       <Versionshinweis />
     </div>

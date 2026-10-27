@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.11.0',
+    seiten: 'Mehr, Übersicht',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Neu unter Mehr: Übersicht. Die Seite listet die Karten der Übersicht und wann sie erscheinen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.10.0',
     seiten: 'Profil',
     abschnitte: [
