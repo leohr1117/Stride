@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Handbuch und Einführung nennen die Bereiche Aufgaben und Training nicht mehr.', 'The guide and onboarding no longer mention the Tasks and Training sections.'],
   ['Training gibt es nicht mehr. Bisherige Einträge bleiben.', 'Training is no longer available. Existing entries stay.'],
   ['Aufgaben gibt es nicht mehr. Bisherige Einträge bleiben.', 'Tasks are no longer available. Existing entries stay.'],
   ['Speichern bleibt bei offener Tastatur erreichbar.', 'Save stays reachable while the keyboard is open.'],

@@ -162,6 +162,15 @@ describe('empfohleneFunktionen', () => {
     ]);
   });
 
+  it('nennt die entfernten Bereiche Aufgaben und Training nicht', () => {
+    const texte = empfohleneFunktionen([...FOKUS_IDS], { ressourcen: true }).map((eintrag) => eintrag.info);
+    expect(texte).toContain('Tägliche Aufgaben zum Abhaken.');
+    const zusammen = texte.join('\n');
+    expect(zusammen).not.toContain('Eigene Aufgaben');
+    expect(zusammen).not.toContain('Eine Einheit ist ein Eintrag');
+    expect(zusammen).not.toContain('Trainingsplan');
+  });
+
   it('empfiehlt Investitionen, sobald Ressourcen an ist, und nennt sie nur einmal', () => {
     expect(investitionWegenRessourcen(false, [{ kennung: 'ressourcen', archiviert: false }])).toBe(false);
     expect(investitionWegenRessourcen(true, [{ kennung: 'ressourcen', archiviert: true }])).toBe(false);

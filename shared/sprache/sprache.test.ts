@@ -137,8 +137,6 @@ function katalogTexte(): string[] {
   texte.push(
     'Eintrag verbessert die Fähigkeit. Ein Vorhaben ist dafür nicht nötig.',
     'Tägliche Aufgaben zum Abhaken.',
-    'Eine Erledigung wird ein Eintrag.',
-    'Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert.',
     'Alle Einträge nach Datum.',
     'Rückblick einmal pro Woche.',
     'XP, Tätigkeiten und Zeitverlauf.',

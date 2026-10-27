@@ -1508,6 +1508,7 @@ export const TEXTE: Record<string, string> = {
   "Zurück auf Unterseiten bleibt auf dem Handy sichtbar.": "Atrás en las subpáginas sigue visible en el móvil.",
   "Löschen in der Chronik erscheint nur beim Wischen.": "Eliminar en el historial solo aparece al deslizar.",
   "Eigene Farben bleiben in jeder Ansicht erhalten.": "Tus colores se conservan en cada estilo.",
+  "Handbuch und Einführung nennen die Bereiche Aufgaben und Training nicht mehr.": "La guía y la introducción ya no nombran las secciones Tareas y Entrenamiento.",
   "Training gibt es nicht mehr. Bisherige Einträge bleiben.": "El entrenamiento ya no está. Las entradas anteriores permanecen.",
   "Aufgaben gibt es nicht mehr. Bisherige Einträge bleiben.": "Las tareas ya no están. Las entradas anteriores permanecen.",
   "Speichern bleibt bei offener Tastatur erreichbar.": "Guardar permanece al alcance con el teclado abierto.",

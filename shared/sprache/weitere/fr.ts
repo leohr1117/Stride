@@ -1508,6 +1508,7 @@ export const TEXTE: Record<string, string> = {
   "Zurück auf Unterseiten bleibt auf dem Handy sichtbar.": "Retour sur les sous-pages reste visible sur le téléphone.",
   "Löschen in der Chronik erscheint nur beim Wischen.": "Supprimer dans l'historique apparaît seulement en glissant.",
   "Eigene Farben bleiben in jeder Ansicht erhalten.": "Tes couleurs restent pour chaque style.",
+  "Handbuch und Einführung nennen die Bereiche Aufgaben und Training nicht mehr.": "Le guide et l'introduction ne nomment plus les sections Tâches et Entraînement.",
   "Training gibt es nicht mehr. Bisherige Einträge bleiben.": "L'entraînement n'existe plus. Les entrées existantes restent.",
   "Aufgaben gibt es nicht mehr. Bisherige Einträge bleiben.": "Les tâches n'existent plus. Les entrées existantes restent.",
   "Speichern bleibt bei offener Tastatur erreichbar.": "Enregistrer reste accessible lorsque le clavier est ouvert.",

@@ -90,8 +90,6 @@ export const PAARE = [
   ['Ressourcen werden mit investiert und bekommen denselben Bonus.', 'Resources are invested too and get the same bonus.'],
   ['Eintrag verbessert die Fähigkeit. Ein Vorhaben ist dafür nicht nötig.', 'An entry improves the skill. A task isn’t required.'],
   ['Tägliche Aufgaben zum Abhaken.', 'Daily tasks to check off.'],
-  ['Eine Erledigung wird ein Eintrag.', 'A completion becomes an entry.'],
-  ['Eine Einheit ist ein Eintrag. Aufwärmen zählt nicht zum Bestwert.', 'A session is an entry. Warm-up does not count toward the record.'],
   ['Alle Einträge nach Datum.', 'Every entry by date.'],
   ['Rückblick einmal pro Woche.', 'A review once a week.'],
   ['XP, Tätigkeiten und Zeitverlauf.', 'XP, activities, and the timeline.'],

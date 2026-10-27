@@ -1508,6 +1508,7 @@ export const TEXTE: Record<string, string> = {
   "Zurück auf Unterseiten bleibt auf dem Handy sichtbar.": "«Назад» на внутренних страницах остаётся видимым на телефоне.",
   "Löschen in der Chronik erscheint nur beim Wischen.": "«Удалить» в хронике появляется только при свайпе.",
   "Eigene Farben bleiben in jeder Ansicht erhalten.": "Свои цвета сохраняются для каждого стиля.",
+  "Handbuch und Einführung nennen die Bereiche Aufgaben und Training nicht mehr.": "Справка и введение больше не называют разделы «Задачи» и «Тренировка».",
   "Training gibt es nicht mehr. Bisherige Einträge bleiben.": "Тренировок больше нет. Прежние записи остаются.",
   "Aufgaben gibt es nicht mehr. Bisherige Einträge bleiben.": "Задач больше нет. Прежние записи остаются.",
   "Speichern bleibt bei offener Tastatur erreichbar.": "Кнопка сохранения остаётся доступной при открытой клавиатуре.",

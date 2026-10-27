@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.8.2',
+    seiten: 'Handbuch, Mehr',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Handbuch und Einführung nennen die Bereiche Aufgaben und Training nicht mehr.'],
+      },
+    ],
+  },
+  {
     version: '3.8.1',
     seiten: 'Übersicht, Mehr',
     abschnitte: [
