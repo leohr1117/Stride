@@ -25,23 +25,23 @@ export const FOKUS_PFLICHT = 'Wähle mindestens einen Fokus.';
 export const ZIELSTREBIGKEIT_INFO: Record<Zielstrebigkeit, { titel: string; text: string }> = {
   traeumer: {
     titel: 'Ein Lebensziel',
-    text: 'Vision, Projekt und Vorhaben.',
+    text: 'Großes Ziel, mittlere Ziele und kleine Ziele.',
   },
   macher: {
     titel: 'Projekte umsetzen',
-    text: 'Projekte und Vorhaben.',
+    text: 'Mittlere Ziele und kleine Ziele.',
   },
   bodenstaendig: {
     titel: 'Konkrete Ziele',
-    text: 'Vorhaben in Projekten.',
+    text: 'Kleine Ziele in einem mittleren Ziel.',
   },
   uebung: {
-    titel: '(In etwas) besser werden',
-    text: 'Tätigkeiten und Fähigkeiten.',
+    titel: 'Besser werden',
+    text: 'Fähigkeiten, ohne Ziele.',
   },
   einfach: {
-    titel: 'Dranbleiben',
-    text: 'Nur Einträge.',
+    titel: 'Nur Einträge',
+    text: 'Festhalten, ohne Ziele.',
   },
 };
 

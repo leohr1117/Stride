@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.', 'Onboarding explains entries, goals, and the streak in plain sentences. The questions say what the choice turns on.'],
   ['Unter Darstellung speicherst du eigene Farbpaletten. Auswählen übernimmt die Farben. Anlegen, Bearbeiten und Löschen liegt auf einer eigenen Seite.', 'Under Appearance, you save your own color palettes. Choosing applies the colors. Creating, editing, and deleting is on a separate page.'],
   ['Schlicht ist die neue Standardansicht, in Schwarz, Grau und Weiß.', 'Plain is the new standard look, in black, gray, and white.'],
   ['Unter Tätigkeiten legst du die Reihenfolge fest. Die oberste steht zuerst.', 'Under Activities, you set the order. The top one comes first.'],

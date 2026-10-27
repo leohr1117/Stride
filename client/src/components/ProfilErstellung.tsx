@@ -28,10 +28,10 @@ import { useSprache } from '../sprache.tsx';
 import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf } from '../ui/index.ts';
 
 const SCHRITT_TEXT: Record<ProfilSchritt, { titel: string; text: string }> = {
-  profilname: { titel: 'Profilname', text: 'Angezeigter Name.' },
-  geburtsjahr: { titel: 'Geburtsjahr', text: 'Für dein Alter.' },
-  ziel: { titel: ZIEL_FRAGE, text: 'Welche Ziele und Fähigkeiten an sind.' },
-  fokus: { titel: 'Fokus', text: 'Start-Werte und Tätigkeiten.' },
+  profilname: { titel: 'Profilname', text: 'Name auf dem Charakter.' },
+  geburtsjahr: { titel: 'Geburtsjahr', text: 'Daraus wird das Alter.' },
+  ziel: { titel: ZIEL_FRAGE, text: 'Welche Ziele es gibt, und ob Fähigkeiten dazu kommen.' },
+  fokus: { titel: 'Fokus', text: 'Erste Werte und Tätigkeiten.' },
 };
 const SCHRITTE = PROFIL_SCHRITTE.map((id) => ({ id, ...SCHRITT_TEXT[id] }));
 

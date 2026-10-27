@@ -27,19 +27,19 @@ function spracheMerken(code: Sprache, queryClient: QueryClient): Promise<Einstel
 
 const SEITEN: { text: string; bild: ReactNode }[] = [
   {
-    text: 'Fortschritt und Ziele werden als Level sichtbar.',
+    text: 'Einträge werden als Level sichtbar.',
     bild: <BildFortschritt />,
   },
   {
-    text: 'Auch große Ziele starten mit einem Schritt.',
+    text: 'Ziele gibt es groß, mittel und klein.',
     bild: <BildSchritt />,
   },
   {
-    text: 'Dranbleiben zählt als Serie.',
+    text: 'Tage mit einem Eintrag bilden den Streak.',
     bild: <BildSerie />,
   },
   {
-    text: 'Einträge festhalten reicht.',
+    text: 'Ohne Ziele genügt das Festhalten.',
     bild: <BildEintrag />,
   },
 ];

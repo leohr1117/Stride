@@ -308,13 +308,13 @@ test('Einführung führt durch Sprache, Folien und Profil', async ({ page }) => 
     await page.getByRole('button', { name: 'Anmelden' }).click();
     await page.getByRole('radio', { name: 'English', exact: true }).click();
     await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await expect(page.getByText('Progress and goals show up as levels.')).toBeVisible();
+    await expect(page.getByText('Entries show up as levels.')).toBeVisible();
     await page.getByRole('button', { name: 'Next' }).click();
     await page.getByRole('button', { name: 'Next' }).click();
     await page.getByRole('button', { name: 'Next' }).click();
     await page.getByRole('button', { name: 'To the questions' }).click();
     await expect(page.getByRole('heading', { name: 'Profile name' })).toBeVisible();
-    await expect(page.getByText('The name that’s shown.')).toBeVisible();
+    await expect(page.getByText('Name on the character.')).toBeVisible();
   } finally {
     await page
       .evaluate(async () => {

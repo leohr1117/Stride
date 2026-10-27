@@ -59,15 +59,18 @@ describe('profilfragen', () => {
     expect(ZIEL_FRAGE).toBe('Was willst du erreichen?');
     expect(ZIELSTREBIGKEIT_INFO.traeumer).toEqual({
       titel: 'Ein Lebensziel',
-      text: 'Vision, Projekt und Vorhaben.',
+      text: 'Großes Ziel, mittlere Ziele und kleine Ziele.',
     });
-    expect(ZIELSTREBIGKEIT_INFO.macher).toEqual({ titel: 'Projekte umsetzen', text: 'Projekte und Vorhaben.' });
-    expect(ZIELSTREBIGKEIT_INFO.bodenstaendig).toEqual({ titel: 'Konkrete Ziele', text: 'Vorhaben in Projekten.' });
+    expect(ZIELSTREBIGKEIT_INFO.macher).toEqual({ titel: 'Projekte umsetzen', text: 'Mittlere Ziele und kleine Ziele.' });
+    expect(ZIELSTREBIGKEIT_INFO.bodenstaendig).toEqual({
+      titel: 'Konkrete Ziele',
+      text: 'Kleine Ziele in einem mittleren Ziel.',
+    });
     expect(ZIELSTREBIGKEIT_INFO.uebung).toEqual({
-      titel: '(In etwas) besser werden',
-      text: 'Tätigkeiten und Fähigkeiten.',
+      titel: 'Besser werden',
+      text: 'Fähigkeiten, ohne Ziele.',
     });
-    expect(ZIELSTREBIGKEIT_INFO.einfach).toEqual({ titel: 'Dranbleiben', text: 'Nur Einträge.' });
+    expect(ZIELSTREBIGKEIT_INFO.einfach).toEqual({ titel: 'Nur Einträge', text: 'Festhalten, ohne Ziele.' });
     expect(normalisiereFokus(['sport', 'sport', 'quatsch', 'geld'])).toEqual(['sport', 'geld']);
     expect(normalisiereFokus({ sport: true })).toEqual([]);
   });

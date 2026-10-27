@@ -4,11 +4,15 @@ import { SPRACH_NAME, SPRACHEN, type Sprache } from '../shared/sprache/kern.ts';
 import { zeige } from '../shared/sprache/index.ts';
 
 const FOLIEN = [
-  'Fortschritt und Ziele werden als Level sichtbar.',
-  'Auch große Ziele starten mit einem Schritt.',
-  'Dranbleiben zählt als Serie.',
-  'Einträge festhalten reicht.',
+  'Einträge werden als Level sichtbar.',
+  'Ziele gibt es groß, mittel und klein.',
+  'Tage mit einem Eintrag bilden den Streak.',
+  'Ohne Ziele genügt das Festhalten.',
 ] as const;
+
+async function merkbild(seite: Page, name: string): Promise<void> {
+  await seite.screenshot({ path: `tmp-bau/n6/${test.info().project.name}-${name}.png`, fullPage: true });
+}
 
 async function passwort(): Promise<string> {
   const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
@@ -88,27 +92,56 @@ async function einfuehrung(seite: Page, sprache: Sprache): Promise<void> {
   await seite.getByRole('button', { name: zeige('Weiter', sprache), exact: true }).click();
   for (let index = 0; index < FOLIEN.length; index += 1) {
     await expect(seite.getByText(zeige(FOLIEN[index], sprache))).toBeVisible();
+    await expect(seite.getByText('Trainingsplan')).toHaveCount(0);
+    await expect(seite.getByText('Eigene Aufgaben')).toHaveCount(0);
+    await ohneSeitlichenUeberhang(seite);
+    await merkbild(seite, `folie-${index + 1}`);
     const letzter = index === FOLIEN.length - 1;
     await seite.getByRole('button', { name: zeige(letzter ? 'Zu den Fragen' : 'Weiter', sprache), exact: true }).click();
   }
   await expect(seite.getByRole('heading', { name: zeige('Profilname', sprache), exact: true })).toBeVisible();
+  await expect(seite.getByText(zeige('Name auf dem Charakter.', sprache))).toBeVisible();
   await expect(seite.getByRole('heading', { name: zeige('Geburtsjahr', sprache), exact: true })).toHaveCount(0);
+  await ohneSeitlichenUeberhang(seite);
+  await merkbild(seite, 'name');
   await seite.locator('input[name="nickname"]').fill('Lauf76');
   await seite.getByRole('button', { name: zeige('Weiter', sprache), exact: true }).click();
 
   await expect(seite.getByRole('heading', { name: zeige('Geburtsjahr', sprache), exact: true })).toBeVisible();
+  await expect(seite.getByText(zeige('Daraus wird das Alter.', sprache))).toBeVisible();
   await expect(seite.getByRole('heading', { name: zeige('Was willst du erreichen?', sprache), exact: true })).toHaveCount(0);
+  await ohneSeitlichenUeberhang(seite);
+  await merkbild(seite, 'jahr');
   await seite.locator('input[name="bday-year"]').fill('1994');
   await seite.getByRole('button', { name: zeige('Weiter', sprache), exact: true }).click();
 
   await expect(seite.getByRole('heading', { name: zeige('Was willst du erreichen?', sprache), exact: true })).toBeVisible();
+  await expect(seite.getByText(zeige('Welche Ziele es gibt, und ob Fähigkeiten dazu kommen.', sprache))).toBeVisible();
+  await expect(seite.getByText('Vision, Projekt und Vorhaben.')).toHaveCount(0);
+  await expect(seite.getByRole('radio', { name: zeige('Besser werden', sprache) })).toBeVisible();
+  await expect(seite.getByRole('radio', { name: zeige('Nur Einträge', sprache) })).toBeVisible();
+  await expect(seite.getByText('Trainingsplan')).toHaveCount(0);
+  await expect(seite.getByText('Eigene Aufgaben')).toHaveCount(0);
+  await ohneSeitlichenUeberhang(seite);
+  await merkbild(seite, 'ziel');
   await seite.getByRole('radio', { name: zeige('Ein Lebensziel', sprache) }).click();
   await seite.getByRole('button', { name: zeige('Weiter', sprache), exact: true }).click();
 
   await expect(seite.getByRole('heading', { name: zeige('Fokus', sprache), exact: true })).toBeVisible();
+  await expect(seite.getByText(zeige('Erste Werte und Tätigkeiten.', sprache))).toBeVisible();
+  await ohneSeitlichenUeberhang(seite);
+  await merkbild(seite, 'fokus');
   await seite.getByRole('button', { name: zeige('Sport', sprache) }).click();
+  await merkbild(seite, 'fokus-sport');
   await seite.getByRole('button', { name: zeige('Zum Handbuch', sprache), exact: true }).click();
   await expect(seite.getByRole('heading', { name: zeige('Handbuch', sprache), exact: true })).toBeVisible();
+
+  await seite.goto('/mehr/profil/ziel');
+  await expect(seite.getByRole('heading', { name: zeige('Was willst du erreichen?', sprache), exact: true })).toBeVisible();
+  await expect(seite.getByRole('radio', { name: zeige('Ein Lebensziel', sprache) })).toBeChecked();
+  await expect(seite.getByText(zeige('Großes Ziel, mittlere Ziele und kleine Ziele.', sprache))).toBeVisible();
+  await ohneSeitlichenUeberhang(seite);
+  await merkbild(seite, 'einstellung-ziel');
 }
 
 async function vorlagenNamen(seite: Page): Promise<string[]> {
@@ -139,8 +172,11 @@ test('Deutsch: Sprache, Folien, Name, Jahr, dann die übrigen Fragen', async ({ 
   await onboarding(page);
   await sprachwahlSichtbar(page, 'de');
   await expect(page.getByText('Gilt für die ganze App und für die Start-Tätigkeiten.')).toHaveCount(0);
+  await merkbild(page, 'sprache');
   await page.getByRole('button', { name: 'Info', exact: true }).click();
   await expect(page.getByRole('tooltip')).toContainText('Gilt für die ganze App und für die Start-Tätigkeiten.');
+  await expect(page.getByRole('tooltip')).toBeVisible();
+  await merkbild(page, 'sprache-info');
   await page.keyboard.press('Escape');
   await einfuehrung(page, 'de');
   const namen = await vorlagenNamen(page);
@@ -161,7 +197,7 @@ test.describe('Englisch', () => {
     await page.getByRole('radio', { name: 'Deutsch', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Sprache', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Weiter', exact: true })).toBeVisible();
-    await expect(page.getByText('Progress and goals show up as levels.')).toHaveCount(0);
+    await expect(page.getByText('Entries show up as levels.')).toHaveCount(0);
     await page.getByRole('radio', { name: 'English', exact: true }).click();
     await sprachwahlSichtbar(page, 'en');
     await einfuehrung(page, 'en');
