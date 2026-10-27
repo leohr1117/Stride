@@ -68,7 +68,7 @@ export function MehrSeite() {
   const { data: verbindungen } = useQuery({ queryKey: SCHLUESSEL.verbindungen, queryFn: api.verbindungen });
   const stand = verbindungen ? verbindungsStand(verbindungen) : null;
   const profil = [einstellungen?.charakterName, zugang?.benutzername].filter((teil) => teil).join(' · ');
-  const inhalte = stand?.fehler ? tx(stand.text) : stand ? tx('Tätigkeiten · {stand}', { stand: stand.text }) : tx('Tätigkeiten');
+  const verbindungsText = stand ? tx(stand.text) : undefined;
   const darstellung = einstellungen
     ? tx('Leiste · {stil}', { stil: tx(STIL_INFO[einstellungen.stil].label) })
     : undefined;
@@ -79,9 +79,9 @@ export function MehrSeite() {
       <Schnellzugriff />
       <div className="grid gap-3 sm:grid-cols-2">
         <Kachel to="/mehr/profil" icon={User} titel={tx("Profil")} text={profil || undefined} />
-        <Kachel to="/mehr/inhalte" icon={ListChecks} titel={tx("Inhalte")} text={inhalte} gefahr={stand?.fehler} />
+        <Kachel to="/mehr/inhalte" icon={ListChecks} titel={tx("Tätigkeiten")} />
         <Kachel to="/mehr/darstellung" icon={Palette} titel={tx("Darstellung")} text={darstellung} />
-        <Kachel to="/mehr/funktionen" icon={SlidersHorizontal} titel={tx("Funktionen")} />
+        <Kachel to="/mehr/funktionen" icon={SlidersHorizontal} titel={tx("App & Verbindungen")} text={verbindungsText} gefahr={stand?.fehler} />
         <Kachel to="/mehr/daten" icon={HardDrive} titel={tx("Daten")} />
       </div>
       <Versionshinweis />

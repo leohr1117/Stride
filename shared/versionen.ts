@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.8.3',
+    seiten: 'Mehr',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Die Einstellungen Inhalte und Funktionen heißen jetzt Tätigkeiten und App & Verbindungen. Verbindungen stehen unter App & Verbindungen.',
+          'Am PC sagt die Leiste-Einstellung, dass sie nur auf dem Handy gilt.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.8.2',
     seiten: 'Handbuch, Mehr',
     abschnitte: [

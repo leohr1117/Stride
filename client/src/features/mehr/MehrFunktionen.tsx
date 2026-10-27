@@ -7,10 +7,11 @@ import { BOSS_SCHALTER } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { EbenenWahl } from '../../components/EbenenWahl.tsx';
 import { Fehlermeldung, Ladeanzeige } from '../../ui/index.ts';
-import { ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
+import { Zeile, ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { FUNKTION_BILD } from '../../funktionsBild.tsx';
 import { tx } from '../../text.ts';
 import { Bereich, useEinstellungen, useSprungmarke } from './rahmen.tsx';
+import { verbindungsStand } from './verbindungsStand.ts';
 
 const FUNKTION_INFO: Partial<Record<Funktion, string>> = {
   basis: 'Tägliche Aufgaben zum Abhaken.',
@@ -31,21 +32,24 @@ export function MehrFunktionenSeite() {
     queryFn: api.attribute,
     enabled: Boolean(einstellungen?.funktionen.status),
   });
+  const { data: verbindungen } = useQuery({ queryKey: SCHLUESSEL.verbindungen, queryFn: api.verbindungen });
+  const stand = verbindungen ? verbindungsStand(verbindungen) : null;
   const ressourcenAn = investitionWegenRessourcen(Boolean(einstellungen?.funktionen.status), attribute);
   useSprungmarke(!isPending && Boolean(einstellungen));
 
   if (isPending) {
-    return <Bereich titel={tx("Funktionen")} kinder={<Ladeanzeige />} />;
+    return <Bereich titel={tx("App & Verbindungen")} kinder={<Ladeanzeige />} />;
   }
   if (error || !einstellungen) {
-    return <Bereich titel={tx("Funktionen")} kinder={<Fehlermeldung fehler={error} />} />;
+    return <Bereich titel={tx("App & Verbindungen")} kinder={<Fehlermeldung fehler={error} />} />;
   }
 
   return (
     <Bereich
-      titel={tx("Funktionen")}
+      titel={tx("App & Verbindungen")}
       kinder={
         <div className="space-y-8">
+          <h2 className="text-lg font-semibold">{tx("Funktionen")}</h2>
           <div className="space-y-6">
             {FUNKTION_BLOECKE.map((block) => (
               <ZeilenGruppe key={block.seite} titel={block.seite}>
@@ -76,6 +80,17 @@ export function MehrFunktionenSeite() {
             ))}
           </div>
           <EbenenWahl />
+          <section id="verbindungen" className="scroll-mt-24 space-y-3">
+            <h2 className="text-lg font-semibold">{tx("Verbindungen")}</h2>
+            <ZeilenGruppe>
+              <Zeile
+                titel={tx("Verbindungen")}
+                wert={stand?.text ?? tx("Nicht verbunden")}
+                gefahr={stand?.fehler}
+                nach="/mehr/inhalte/verbindungen"
+              />
+            </ZeilenGruppe>
+          </section>
           <Fehlermeldung fehler={speichern.error} />
         </div>
       }

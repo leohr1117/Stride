@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die Einstellungen Inhalte und Funktionen heißen jetzt Tätigkeiten und App & Verbindungen. Verbindungen stehen unter App & Verbindungen.', 'The Contents and Features settings are now called Activities and App & connections. Connections are under App & connections.'],
+  ['Am PC sagt die Leiste-Einstellung, dass sie nur auf dem Handy gilt.', 'On a computer, the bar setting says it only applies on phones.'],
   ['Handbuch und Einführung nennen die Bereiche Aufgaben und Training nicht mehr.', 'The guide and onboarding no longer mention the Tasks and Training sections.'],
   ['Training gibt es nicht mehr. Bisherige Einträge bleiben.', 'Training is no longer available. Existing entries stay.'],
   ['Aufgaben gibt es nicht mehr. Bisherige Einträge bleiben.', 'Tasks are no longer available. Existing entries stay.'],

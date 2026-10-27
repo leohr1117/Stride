@@ -23,12 +23,12 @@ const FEST = new Map<string, string>([
   ...LEISTEN_SEITEN.map((seite) => [seite.pfad, seite.label] as const),
   ['/charakter', 'Charakter'],
   ['/mehr/profil', 'Profil'],
-  ['/mehr/inhalte', 'Inhalte'],
+  ['/mehr/inhalte', 'Tätigkeiten'],
   ['/mehr/inhalte/verbindungen', 'Verbindungen'],
   ['/mehr/darstellung', 'Darstellung'],
   ['/mehr/darstellung/leiste', 'Leiste'],
   ['/mehr/darstellung/ansicht', 'Ansicht'],
-  ['/mehr/funktionen', 'Funktionen'],
+  ['/mehr/funktionen', 'App & Verbindungen'],
   ['/mehr/daten', 'Daten'],
 ]);
 
@@ -132,8 +132,11 @@ export function elternZiel(pfad: string, weg?: TrainingRueckweg | null): Zurueck
   if (pfad === '/mehr/inhalte') {
     return { pfad: '/mehr', label: 'Mehr' };
   }
+  if (pfad === '/mehr/inhalte/verbindungen') {
+    return { pfad: '/mehr/funktionen', label: 'App & Verbindungen' };
+  }
   if (pfad.startsWith('/mehr/inhalte/')) {
-    return { pfad: '/mehr/inhalte', label: 'Inhalte' };
+    return { pfad: '/mehr/inhalte', label: 'Tätigkeiten' };
   }
   if (pfad === '/mehr/darstellung') {
     return { pfad: '/mehr', label: 'Mehr' };

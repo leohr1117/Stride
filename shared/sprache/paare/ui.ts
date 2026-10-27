@@ -394,4 +394,6 @@ export const PAARE = [
   ['Ordne das Todoist-Projekt einer Vision, einem Projekt oder einem Vorhaben zu. Die Tätigkeit und die Dauer gelten, wenn kein Label sie setzt.', 'Link the Todoist project to a vision, a project, or a task. The activity and the duration apply when no label sets them.'],
   ['Ein Label setzt Felder des Eintrags und gilt vor dem Todoist-Projekt. Bei mehreren Labels füllt jedes Feld die oberste Regel, die es setzt. Die Dauer der Aufgabe zählt zuerst. Der Aufgabentitel wird die Notiz, ein Text hier kommt dahinter. Meilenstein gilt ohne Vorhaben, Geschafft nur mit Vorhaben.', 'A label sets fields on the entry and takes priority over the Todoist project. With several labels, each field uses the top rule that sets it. The task duration comes first. The task title becomes the note, and any text here follows it. Milestone applies without a task, Done only with a task.'],
   ['Der Name darf nicht leer sein.', 'The name must not be empty.'],
+  ['App & Verbindungen', 'App & connections'],
+  ['Die Leiste gibt es nur auf dem Handy. Am PC findest du alle Seiten links in der Seitenleiste.', 'The bar only exists on phones. On a computer, all pages are in the sidebar on the left.'],
 ] as const;

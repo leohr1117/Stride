@@ -49,7 +49,7 @@ describe('elternZiel', () => {
     expect(elternZiel('/mehr/darstellung/leiste')).toEqual({ pfad: '/mehr/darstellung', label: 'Darstellung' });
     expect(elternZiel('/mehr/darstellung/ansicht')).toBeNull();
     expect(elternZiel('/mehr/profil/fokus')).toEqual({ pfad: '/mehr/profil', label: 'Profil' });
-    expect(elternZiel('/mehr/inhalte/verbindungen')).toEqual({ pfad: '/mehr/inhalte', label: 'Inhalte' });
+    expect(elternZiel('/mehr/inhalte/verbindungen')).toEqual({ pfad: '/mehr/funktionen', label: 'App & Verbindungen' });
     expect(elternZiel('/projekte/4')).toEqual({ pfad: '/ziele', label: 'Ziele' });
     expect(elternZiel('/faehigkeiten/2')).toEqual({ pfad: '/charakter', label: 'Charakter' });
     expect(elternZiel('/vorbilder/ronaldo')).toEqual({ pfad: '/vorbilder', label: 'Vorbilder' });
