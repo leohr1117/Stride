@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import type { Einstellungen } from '../../../shared/api/index.ts';
 import type { AttributTyp } from '../../../shared/spiel/begriffe.ts';
 import { istTypAktiv } from '../../../shared/spiel/funktionen.ts';
@@ -22,6 +23,15 @@ import {
 } from '../../../shared/spiel/funktionen.ts';
 import { bereinigteLeiste, LEISTE_STANDARD } from '../../../shared/spiel/leiste.ts';
 import { istHexFarbe, normaleHex } from '../../../shared/spiel/farben.ts';
+import {
+  PALETTEN_SCHLUESSEL,
+  PalettenFehler,
+  lesePaletten,
+  paletteAendern,
+  paletteAnlegen,
+  paletteLoeschen,
+  type PaletteEingabe,
+} from '../../../shared/features/darstellung/eigenePaletten.ts';
 import { standardVorlage, type Farbtrio } from '../../../shared/features/darstellung/paletten.ts';
 import { istStil, STANDARD_STIL, STILE, type Stil } from '../../../shared/features/darstellung/stile.ts';
 import {
@@ -267,6 +277,7 @@ export function ladeEinstellungen(): Einstellungen {
     zeitzone: leseZone(gespeichert.get('zeitzone')),
     gewichtEinheit: leseGewichtEinheit(gespeichert.get('gewicht_einheit')),
     uebersichtKarten: leseUebersichtKarten(gespeichert.get(UEBERSICHT_KARTEN_SCHLUESSEL)),
+    paletten: lesePaletten(parse(gespeichert.get(PALETTEN_SCHLUESSEL))),
   };
 }
 
@@ -332,6 +343,49 @@ function speichere(schluessel: string, wert: unknown): void {
   );
 }
 
+function neuePaletteId(liste: readonly { id: string }[]): string {
+  for (let versuch = 0; versuch < 4; versuch += 1) {
+    const id = randomUUID();
+    if (!liste.some((palette) => palette.id === id)) {
+      return id;
+    }
+  }
+  throw new PalettenFehler('Die Palette wurde nicht gefunden.');
+}
+
+function wendePaletten(aenderung: {
+  paletteNeu?: PaletteEingabe;
+  paletteAendern?: PaletteEingabe & { id: string };
+  paletteLoeschen?: string;
+}): void {
+  if (
+    aenderung.paletteNeu === undefined &&
+    aenderung.paletteAendern === undefined &&
+    aenderung.paletteLoeschen === undefined
+  ) {
+    return;
+  }
+  try {
+    let liste = lesePaletten(parse(liesSchluessel().get(PALETTEN_SCHLUESSEL)));
+    if (aenderung.paletteLoeschen !== undefined) {
+      liste = paletteLoeschen(liste, aenderung.paletteLoeschen);
+    }
+    if (aenderung.paletteAendern !== undefined) {
+      const { id, name, primaer, akzent, hintergrund } = aenderung.paletteAendern;
+      liste = paletteAendern(liste, id, { name, primaer, akzent, hintergrund });
+    }
+    if (aenderung.paletteNeu !== undefined) {
+      liste = paletteAnlegen(liste, aenderung.paletteNeu, neuePaletteId(liste));
+    }
+    speichere(PALETTEN_SCHLUESSEL, liste);
+  } catch (fehler) {
+    if (fehler instanceof PalettenFehler) {
+      throw ungueltig(fehler.message);
+    }
+    throw fehler;
+  }
+}
+
 export function aendereEinstellungen(
   aenderung: Partial<Grundeinstellungen> & {
     funktionen?: Partial<Funktionen>;
@@ -341,6 +395,9 @@ export function aendereEinstellungen(
     gewichtEinheit?: GewichtEinheit;
     uebersichtKarten?: Partial<UebersichtKartenWahl>;
     farbenZuruecksetzen?: boolean;
+    paletteNeu?: PaletteEingabe;
+    paletteAendern?: PaletteEingabe & { id: string };
+    paletteLoeschen?: string;
   },
 ): Einstellungen {
   const bisher = ladeEinstellungen();
@@ -449,6 +506,7 @@ export function aendereEinstellungen(
         kartenWahl({ ...bisher.uebersichtKarten, ...aenderung.uebersichtKarten }),
       );
     }
+    wendePaletten(aenderung);
   });
   return ladeEinstellungen();
 }

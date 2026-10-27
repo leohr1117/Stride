@@ -1,9 +1,10 @@
-export const STILE = ['minimal', 'jade', 'holo', 'antik'] as const;
+export const STILE = ['schlicht', 'minimal', 'jade', 'holo', 'antik'] as const;
 export type Stil = (typeof STILE)[number];
 
-export const STANDARD_STIL = 'minimal' satisfies Stil;
+export const STANDARD_STIL = 'schlicht' satisfies Stil;
 
 export const STIL_INFO: Record<Stil, { label: string }> = {
+  schlicht: { label: 'Schlicht' },
   minimal: { label: 'Minimal' },
   jade: { label: 'Jade' },
   holo: { label: 'Hologramm' },

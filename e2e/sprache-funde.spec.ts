@@ -72,8 +72,8 @@ test('übersetzte Funde sind in jeder Sprache sichtbar', async ({ page }, info) 
       await expect(farben).toBeVisible();
       await zeigeAbschnitt(page, '#farben');
       const hell = farben.getByRole('button', { name: zeige('Hell', code), exact: true });
-      await expect(hell).toBeVisible();
-      await expect(farben.getByRole('button', { name: zeige('Dunkel', code), exact: true })).toBeVisible();
+      await expect(hell.first()).toBeVisible();
+      await expect(farben.getByRole('button', { name: zeige('Dunkel', code), exact: true }).first()).toBeVisible();
       await expect(farben.getByRole('button', { name: zeige('Tinte', code), exact: true })).toBeVisible();
       await expect(farben.getByRole('button', { name: zeige('Purpur', code), exact: true })).toBeVisible();
       if (code !== 'de') {

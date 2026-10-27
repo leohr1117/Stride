@@ -29,6 +29,61 @@ export interface Erscheinung extends Farbtrio {
   flaechen: Flaechen;
 }
 
+const SCHLICHT_HELL: Vorlage = {
+  name: 'Hell',
+  primaer: '#141414',
+  akzent: '#707070',
+  hintergrund: '#f2f2f2',
+  text: '#f2f2f2',
+  flaechen: {
+    flaeche: '#ffffff',
+    flaeche2: '#e8e8e8',
+    rand: '#d4d4d4',
+    haupt: '#141414',
+    leise: '#6e6e6e',
+    gefahr: '#e5484d',
+    diagramm: '#707070',
+    schema: 'light',
+  },
+};
+
+/** Logo-Grau #707070 liegt auf #141414 unter dem Mindestkontrast. Für Text gilt #8a8a8a, der Rand bleibt ruhig. */
+const SCHLICHT_DUNKEL: Vorlage = {
+  name: 'Dunkel',
+  primaer: '#f2f2f2',
+  akzent: '#8a8a8a',
+  hintergrund: '#141414',
+  text: '#141414',
+  flaechen: {
+    flaeche: '#1c1c1c',
+    flaeche2: '#262626',
+    rand: '#333333',
+    haupt: '#f2f2f2',
+    leise: '#8a8a8a',
+    gefahr: '#f2555a',
+    diagramm: '#8a8a8a',
+    schema: 'dark',
+  },
+};
+
+const SCHLICHT_NEBEL: Vorlage = {
+  name: 'Nebel',
+  primaer: '#f2f2f2',
+  akzent: '#8a8a8a',
+  hintergrund: '#101010',
+  text: '#141414',
+  flaechen: {
+    flaeche: '#1a1a1a',
+    flaeche2: '#242424',
+    rand: '#333333',
+    haupt: '#f2f2f2',
+    leise: '#8a8a8a',
+    gefahr: '#f2555a',
+    diagramm: '#8a8a8a',
+    schema: 'dark',
+  },
+};
+
 const MINIMAL_HELL: Vorlage = {
   name: 'Hell',
   primaer: '#6d5efc',
@@ -65,7 +120,18 @@ const MINIMAL_DUNKEL: Vorlage = {
   },
 };
 
+const SYSTEM_HELL: Partial<Record<Stil, Vorlage>> = {
+  minimal: MINIMAL_HELL,
+  schlicht: SCHLICHT_HELL,
+};
+
+const SYSTEM_DUNKEL: Partial<Record<Stil, Vorlage>> = {
+  minimal: MINIMAL_DUNKEL,
+  schlicht: SCHLICHT_DUNKEL,
+};
+
 const VORLAGEN: Record<Stil, readonly Vorlage[]> = {
+  schlicht: [SCHLICHT_HELL, SCHLICHT_DUNKEL, SCHLICHT_NEBEL],
   minimal: [
     MINIMAL_HELL,
     MINIMAL_DUNKEL,
@@ -265,10 +331,7 @@ export function palettenNachDesign(aktiv: Stil): readonly PalettenGruppe[] {
 }
 
 export function standardVorlage(stil: Stil, dunkel: boolean): Vorlage {
-  if (stil === 'minimal') {
-    return dunkel ? MINIMAL_DUNKEL : MINIMAL_HELL;
-  }
-  return VORLAGEN[stil][0];
+  return (dunkel ? SYSTEM_DUNKEL[stil] : SYSTEM_HELL[stil]) ?? VORLAGEN[stil][0];
 }
 
 function normalisiere(trio: Farbtrio): Farbtrio {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { kontrast, MINDEST_KONTRAST } from './farben.ts';
 import { erscheinungAus, palettenNachDesign, standardVorlage, vorlagen, type Farbtrio } from '../features/darstellung/paletten.ts';
-import { STILE } from '../features/darstellung/stile.ts';
+import { STANDARD_STIL, STILE } from '../features/darstellung/stile.ts';
 
 function gleichesTrio(a: Farbtrio, b: Farbtrio): boolean {
   return a.primaer === b.primaer && a.akzent === b.akzent && a.hintergrund === b.hintergrund;
@@ -17,7 +17,21 @@ describe('paletten', () => {
     }
   });
 
-  it('nimmt für Minimal das System und für die anderen Ansichten ihre dunkle Vorlage', () => {
+  it('nimmt für Schlicht und Minimal das System und für die anderen Ansichten ihre dunkle Vorlage', () => {
+    expect(STANDARD_STIL).toBe('schlicht');
+    const hell = standardVorlage('schlicht', false);
+    const dunkel = standardVorlage('schlicht', true);
+    expect(hell.name).toBe('Hell');
+    expect(hell.primaer).toBe('#141414');
+    expect(hell.akzent).toBe('#707070');
+    expect(hell.hintergrund).toBe('#f2f2f2');
+    expect(dunkel.name).toBe('Dunkel');
+    expect(dunkel.primaer).toBe('#f2f2f2');
+    expect(dunkel.hintergrund).toBe('#141414');
+    expect(dunkel.akzent).not.toBe('#707070');
+    expect(dunkel.flaechen.rand).not.toBe('#707070');
+    expect(kontrast('#707070', dunkel.hintergrund)).toBeLessThan(MINDEST_KONTRAST);
+    expect(kontrast(dunkel.akzent, dunkel.flaechen.flaeche)).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
     expect(standardVorlage('minimal', false).name).toBe('Hell');
     expect(standardVorlage('minimal', true).name).toBe('Dunkel');
     expect(standardVorlage('jade', false).primaer).toBe('#3dd68c');

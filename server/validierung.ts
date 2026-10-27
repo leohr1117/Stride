@@ -9,6 +9,7 @@ import { FUNKTIONEN } from '../shared/spiel/funktionen.ts';
 import { istLeiste, LEISTEN_SEITEN } from '../shared/spiel/leiste.ts';
 import { FOKUS_IDS, FOKUS_PFLICHT, GEBURTSJAHR_MIN, PROFILNAME_MAX, ZIELSTREBIGKEITEN } from '../shared/spiel/profil.ts';
 import { istHexFarbe } from '../shared/spiel/farben.ts';
+import { PALETTE_NAME_MAX } from '../shared/features/darstellung/eigenePaletten.ts';
 import { STILE } from '../shared/features/darstellung/stile.ts';
 import { SPRACHEN } from '../shared/sprache/kern.ts';
 import {
@@ -355,6 +356,24 @@ export const einstellungenAenderungSchema = z.object({
   akzent: z.string().refine(istHexFarbe, 'Die Akzentfarbe braucht das Format #rrggbb.').optional(),
   hintergrund: z.string().refine(istHexFarbe, 'Die Hintergrundfarbe braucht das Format #rrggbb.').optional(),
   farbenZuruecksetzen: z.boolean().optional(),
+  paletteNeu: z
+    .object({
+      name: z.string().trim().min(1, 'Der Name darf nicht leer sein.').max(PALETTE_NAME_MAX, 'Der Name darf höchstens 40 Zeichen haben.'),
+      primaer: z.string().refine(istHexFarbe, 'Die Primärfarbe braucht das Format #rrggbb.'),
+      akzent: z.string().refine(istHexFarbe, 'Die Akzentfarbe braucht das Format #rrggbb.'),
+      hintergrund: z.string().refine(istHexFarbe, 'Die Hintergrundfarbe braucht das Format #rrggbb.'),
+    })
+    .optional(),
+  paletteAendern: z
+    .object({
+      id: z.string().trim().min(1).max(80),
+      name: z.string().trim().min(1, 'Der Name darf nicht leer sein.').max(PALETTE_NAME_MAX, 'Der Name darf höchstens 40 Zeichen haben.'),
+      primaer: z.string().refine(istHexFarbe, 'Die Primärfarbe braucht das Format #rrggbb.'),
+      akzent: z.string().refine(istHexFarbe, 'Die Akzentfarbe braucht das Format #rrggbb.'),
+      hintergrund: z.string().refine(istHexFarbe, 'Die Hintergrundfarbe braucht das Format #rrggbb.'),
+    })
+    .optional(),
+  paletteLoeschen: z.string().trim().min(1).max(80).optional(),
   glimmen: z.boolean().optional(),
   funktionen: z.preprocess(bekannteFunktionen, z.partialRecord(z.enum(FUNKTIONEN), z.boolean())).optional(),
   ebenen: z.partialRecord(z.enum(EBENEN), z.boolean()).optional(),

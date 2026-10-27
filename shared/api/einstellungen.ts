@@ -1,3 +1,4 @@
+import type { EigenePalette, PaletteEingabe } from '../features/darstellung/eigenePaletten.ts';
 import type { Farbtrio } from '../features/darstellung/paletten.ts';
 import type { Stil } from '../features/darstellung/stile.ts';
 import type { Ebenen, EbenenZahlen } from '../spiel/ebenen.ts';
@@ -25,6 +26,8 @@ export interface Einstellungen {
   eigeneFarben: boolean;
   /** Eigene Farben je Ansicht. Ansichten ohne Eintrag nutzen die Standardpalette. */
   ansichtFarben: Partial<Record<Stil, Farbtrio>>;
+  /** Benannte Farbtrios. Auswählen kopiert sie in die aktuelle Ansicht. */
+  paletten: readonly EigenePalette[];
   funktionen: Funktionen;
   mobilLeiste: string[];
   ebenen: Ebenen;
@@ -41,6 +44,9 @@ export interface Einstellungen {
 }
 
 /** PATCH-Körper. `farbenZuruecksetzen` löscht die eigenen Farben der Zielansicht. */
-export type EinstellungenAenderung = Partial<Einstellungen> & {
+export type EinstellungenAenderung = Partial<Omit<Einstellungen, 'paletten'>> & {
   farbenZuruecksetzen?: boolean;
+  paletteNeu?: PaletteEingabe;
+  paletteAendern?: PaletteEingabe & { id: string };
+  paletteLoeschen?: string;
 };

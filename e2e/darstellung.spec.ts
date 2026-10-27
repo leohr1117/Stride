@@ -13,6 +13,7 @@ interface Darstellung {
 }
 
 const ANSICHT_NAME: Record<Stil, string> = {
+  schlicht: 'Schlicht',
   minimal: 'Minimal',
   jade: 'Jade',
   holo: 'Hologramm',
@@ -219,12 +220,12 @@ test('Darstellung: alle Ansichten, Farben getrennt, Glühen unter Sound', async 
   for (const name of ['Ansichten', 'Farben', 'Standardfarben', 'Eigene Farben']) {
     await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
   }
-  for (const name of ['Minimal', 'Jade', 'Hologramm', 'Antik']) {
+  for (const name of ['Schlicht', 'Minimal', 'Jade', 'Hologramm', 'Antik']) {
     await expect(page.locator('button.rounded-xl').filter({ hasText: name })).toBeVisible();
   }
   await expect(page.getByRole('region').first()).toBeVisible();
   const regionen = await page.getByRole('region').evaluateAll((liste) => liste.map((element) => element.getAttribute('aria-label')));
-  expect(regionen.every((name) => ['Minimal', 'Jade', 'Hologramm', 'Antik'].includes(name ?? ''))).toBe(true);
+  expect(regionen.every((name) => ['Schlicht', 'Minimal', 'Jade', 'Hologramm', 'Antik'].includes(name ?? ''))).toBe(true);
 
   const kartenText = await page
     .locator('section')
@@ -359,7 +360,7 @@ test('Eigene Farben bleiben beim Ansichtswechsel erhalten', async ({ page }, tes
     await expect(akzent).toHaveValue('#ff00aa');
     await ohneSeitlichenUeberlauf(page);
   } finally {
-    for (const stil of ['minimal', 'jade', 'holo', 'antik'] as const) {
+    for (const stil of ['schlicht', 'minimal', 'jade', 'holo', 'antik'] as const) {
       await loescheEigeneFarben(page, stil);
     }
   }

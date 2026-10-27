@@ -161,7 +161,7 @@ async function oeffneProfil(seite: Page, schluessel: string, name: string, stil?
   await seite.goto(`/vorbilder/${schluessel}`);
   await expect(seite.getByRole('heading', { name, exact: true })).toBeVisible();
   if (stil) {
-    await expect.poll(() => seite.evaluate(() => document.documentElement.dataset.stil ?? 'minimal')).toBe(stil);
+    await expect.poll(() => seite.evaluate(() => document.documentElement.dataset.stil ?? 'schlicht')).toBe(stil);
   }
   await schriftBereit(seite);
   await pruefeKopf(seite, name);

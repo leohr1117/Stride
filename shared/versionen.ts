@@ -17,6 +17,22 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.14.0',
+    seiten: 'Darstellung',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Unter Darstellung speicherst du eigene Farbpaletten. Auswählen übernimmt die Farben. Anlegen, Bearbeiten und Löschen liegt auf einer eigenen Seite.',
+        ],
+      },
+      {
+        titel: 'Geändert',
+        punkte: ['Schlicht ist die neue Standardansicht, in Schwarz, Grau und Weiß.'],
+      },
+    ],
+  },
+  {
     version: '3.13.0',
     seiten: 'Tätigkeiten',
     abschnitte: [

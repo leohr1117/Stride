@@ -17,7 +17,7 @@ export interface Farbwahl extends Farbtrio {
   glimmen?: boolean;
 }
 
-const LADER: Record<Exclude<Stil, 'minimal'>, () => Promise<unknown>> = {
+const LADER: Partial<Record<Stil, () => Promise<unknown>>> = {
   jade: () => import('./stil-jade.css'),
   holo: () => import('./stil-holo.css'),
   antik: () => import('./stil-antik.css'),
@@ -98,9 +98,10 @@ export async function wendeStilAn(stil: Stil): Promise<boolean> {
   }
   const anfrage = ++letzteAnfrage;
   let ziel = stil;
-  if (stil !== STANDARD_STIL) {
+  const lade = stil === STANDARD_STIL ? undefined : LADER[stil];
+  if (lade) {
     try {
-      await LADER[stil]();
+      await lade();
     } catch (fehler) {
       console.error(`Der Stil "${stil}" konnte nicht geladen werden.`, fehler);
       ziel = STANDARD_STIL;

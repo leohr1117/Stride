@@ -9,6 +9,7 @@ import { wendeErscheinung } from '../darstellung/stil.ts';
 import { useSprache } from '../../sprache.tsx';
 import { tx } from '../../text.ts';
 import { AnsichtSteuerung, systemDunkel } from './MehrAnsicht.tsx';
+import { PalettenSeite } from './MehrPaletten.tsx';
 import { Bereich, DARSTELLUNG_HASH, DARSTELLUNG_ZURUECK, useEinstellungen, useHashWeiter } from './rahmen.tsx';
 
 function LeisteSeite() {
@@ -123,6 +124,9 @@ export function MehrDarstellungSeite() {
   useHashWeiter(DARSTELLUNG_HASH);
   if (teil === 'leiste') {
     return <LeisteSeite />;
+  }
+  if (teil === 'paletten') {
+    return <PalettenSeite />;
   }
   if (teil === 'ansicht') {
     return <Navigate to="/mehr/darstellung" replace />;

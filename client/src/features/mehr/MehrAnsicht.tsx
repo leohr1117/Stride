@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import type { EigenePalette } from '../../../../shared/features/darstellung/eigenePaletten.ts';
 import { palettenNachDesign, standardVorlage, type Farbtrio } from '../../../../shared/features/darstellung/paletten.ts';
 import { STIL_INFO, STILE, type Stil } from '../../../../shared/features/darstellung/stile.ts';
+import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { farbAnfang, farbLoslassen, farbUebernehmen, farbZiehen, type FarbZustand } from '../darstellung/ansichtFarbe.ts';
 import { Fehlermeldung, InfoHinweis, Knopf, Ladeanzeige } from '../../ui/index.ts';
 import { wendeErscheinung, wendeStilAn } from '../darstellung/stil.ts';
@@ -8,6 +10,7 @@ import { tx } from '../../text.ts';
 import { useEinstellungen } from './rahmen.tsx';
 
 const STIL_FORM: Record<Stil, { radius: string; balken: string; schrift: string; sperrung: string; gross: 'uppercase' | 'none' }> = {
+  schlicht: { radius: '10px', balken: '6px', schrift: 'inherit', sperrung: '0', gross: 'none' },
   minimal: { radius: '12px', balken: '999px', schrift: 'inherit', sperrung: '0', gross: 'none' },
   jade: { radius: '10px', balken: '2px', schrift: 'inherit', sperrung: '-0.02em', gross: 'none' },
   holo: { radius: '4px', balken: '0', schrift: 'ui-sans-serif, system-ui, sans-serif', sperrung: '0.08em', gross: 'uppercase' },
@@ -34,7 +37,7 @@ function farbenDerAnsicht(stil: Stil, gemerkt: Partial<Record<Stil, Farbtrio>> |
 function StilAuswahl({ wert, werte = STILE, onAendern }: { wert: Stil; werte?: readonly Stil[]; onAendern: (stil: Stil) => void }) {
   const dunkel = systemDunkel();
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
       {werte.map((stil) => {
         const info = STIL_INFO[stil];
         const form = STIL_FORM[stil];
@@ -68,10 +71,21 @@ function StilAuswahl({ wert, werte = STILE, onAendern }: { wert: Stil; werte?: r
   );
 }
 
+function Farbpunkte({ farben }: { farben: Farbtrio }) {
+  return (
+    <span className="flex shrink-0" aria-hidden="true">
+      <span className="size-3 rounded-full" style={{ background: farben.primaer }} />
+      <span className="-ml-1 size-3 rounded-full" style={{ background: farben.akzent }} />
+      <span className="-ml-1 size-3 rounded-full border border-rand" style={{ background: farben.hintergrund }} />
+    </span>
+  );
+}
+
 function AnsichtWahl({
   stil,
   farben: gespeichert,
   gemerkt,
+  paletten,
   glimmen,
   onStil,
   onFarben,
@@ -80,6 +94,7 @@ function AnsichtWahl({
   stil: Stil;
   farben: Farbtrio;
   gemerkt: Partial<Record<Stil, Farbtrio>>;
+  paletten: readonly EigenePalette[];
   glimmen: boolean;
   onStil: (stil: Stil) => void;
   onFarben: (farben: Farbtrio) => void;
@@ -159,11 +174,7 @@ function AnsichtWahl({
                         onClick={() => sofort({ primaer: vorlage.primaer, akzent: vorlage.akzent, hintergrund: vorlage.hintergrund })}
                         className={`flex max-w-full items-center gap-2 rounded-full border px-2.5 py-1 text-xs ${aktiv ? 'border-akzent' : 'border-rand'}`}
                       >
-                        <span className="flex shrink-0" aria-hidden="true">
-                          <span className="size-3 rounded-full" style={{ background: vorlage.primaer }} />
-                          <span className="-ml-1 size-3 rounded-full" style={{ background: vorlage.akzent }} />
-                          <span className="-ml-1 size-3 rounded-full border border-rand" style={{ background: vorlage.hintergrund }} />
-                        </span>
+                        <Farbpunkte farben={vorlage} />
                         {tx(vorlage.name)}
                       </button>
                     );
@@ -172,6 +183,37 @@ function AnsichtWahl({
               </section>
             ))}
           </div>
+        </div>
+        <div className="space-y-3 border-t border-rand pt-5">
+          <Abschnittskopf
+            ebene="h3"
+            titel={tx("Eigene Paletten")}
+            info={tx("Auswählen übernimmt die Farben. Anlegen und Löschen liegt unter Paletten.")}
+          />
+          {paletten.length === 0 ? (
+            <p className="text-sm text-leise">{tx("Noch keine Palette.")}</p>
+          ) : (
+            <div className="flex flex-wrap gap-2" role="group" aria-label={tx("Eigene Paletten")}>
+              {paletten.map((palette) => {
+                const aktiv = gleicheFarben(farben, palette);
+                return (
+                  <button
+                    key={palette.id}
+                    type="button"
+                    aria-pressed={aktiv}
+                    onClick={() => sofort({ primaer: palette.primaer, akzent: palette.akzent, hintergrund: palette.hintergrund })}
+                    className={`flex max-w-full items-center gap-2 rounded-full border px-2.5 py-1 text-left text-xs break-words ${aktiv ? 'border-akzent' : 'border-rand'}`}
+                  >
+                    <Farbpunkte farben={palette} />
+                    {palette.name}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          <ZeilenGruppe>
+            <Zeile titel={tx("Paletten")} nach="/mehr/darstellung/paletten" />
+          </ZeilenGruppe>
         </div>
         <div className="space-y-3 border-t border-rand pt-5">
           <Abschnittskopf
@@ -273,6 +315,7 @@ export function AnsichtSteuerung() {
         stil={data.stil}
         farben={farbenDerAnsicht(data.stil, data.ansichtFarben)}
         gemerkt={data.ansichtFarben}
+        paletten={data.paletten}
         glimmen={data.glimmen}
         onStil={(stil) => {
           const farben = farbenDerAnsicht(stil, data.ansichtFarben);
