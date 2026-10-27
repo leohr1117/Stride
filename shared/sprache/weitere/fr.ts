@@ -1507,6 +1507,7 @@ export const TEXTE: Record<string, string> = {
   "Neues Logo erscheint jetzt auch auf dem Handy.": "Le nouveau logo s’affiche aussi sur le téléphone.",
   "Zurück auf Unterseiten bleibt auf dem Handy sichtbar.": "Retour sur les sous-pages reste visible sur le téléphone.",
   "Löschen in der Chronik erscheint nur beim Wischen.": "Supprimer dans l'historique apparaît seulement en glissant.",
+  "Eigene Farben bleiben in jeder Ansicht erhalten.": "Tes couleurs restent pour chaque style.",
   "Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.": "La priorité est en couleur. p1 rouge, p2 orange, p3 bleu, p4 calme. La même couleur est sur le cercle.",
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "L'interrupteur Aujourd'hui seulement n'est plus là. La date fixe le jour.",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "Les icônes d'info sur Jalon et Adversaire s'ouvrent de nouveau.",

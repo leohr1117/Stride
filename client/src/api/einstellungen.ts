@@ -1,9 +1,9 @@
-import type { Einstellungen } from '../../../shared/api/einstellungen.ts';
+import type { Einstellungen, EinstellungenAenderung } from '../../../shared/api/einstellungen.ts';
 import { anfrage } from './kern.ts';
 
 export const einstellungenApi = {
   einstellungen: () => anfrage<Einstellungen>('/einstellungen'),
-  aendereEinstellungen: (daten: Partial<Einstellungen>) => anfrage<Einstellungen>('/einstellungen', 'PATCH', daten),
+  aendereEinstellungen: (daten: EinstellungenAenderung) => anfrage<Einstellungen>('/einstellungen', 'PATCH', daten),
   setzeProfilZurueck: () => anfrage<Einstellungen>('/profil/zuruecksetzen', 'POST', {}),
 };
 

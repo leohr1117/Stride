@@ -9,7 +9,15 @@ interface Darstellung {
   akzent: string;
   hintergrund: string;
   glimmen: boolean;
+  eigeneFarben?: boolean;
 }
+
+const ANSICHT_NAME: Record<Stil, string> = {
+  minimal: 'Minimal',
+  jade: 'Jade',
+  holo: 'Hologramm',
+  antik: 'Antik',
+};
 
 interface Abstand {
   seite: string;
@@ -23,6 +31,7 @@ interface Abstand {
 }
 
 let original: Darstellung | null = null;
+let spracheVorher: string | null = null;
 
 async function passwort(): Promise<string> {
   const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
@@ -38,6 +47,24 @@ async function anmelden(seite: Page): Promise<void> {
   await seite.locator('input[name="username"]').fill('testvoll');
   await seite.locator('input[name="password"]').fill(await passwort());
   await seite.getByRole('button', { name: 'Anmelden' }).click();
+  await seite.getByRole('button', { name: /Eintrag loggen|Log entry/ }).waitFor();
+  spracheVorher = await seite.evaluate(async () => {
+    const daten = (await fetch('/api/einstellungen').then((antwort) => antwort.json())) as { sprache: string | null };
+    return daten.sprache;
+  });
+  if (spracheVorher === 'de') {
+    return;
+  }
+  const ok = await seite.evaluate(async () => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sprache: 'de' }),
+    });
+    return antwort.ok;
+  });
+  expect(ok).toBe(true);
+  await seite.reload();
   await seite.getByRole('button', { name: 'Eintrag loggen' }).waitFor();
 }
 
@@ -57,6 +84,7 @@ async function leseDarstellung(seite: Page): Promise<Darstellung> {
       akzent: daten.akzent,
       hintergrund: daten.hintergrund,
       glimmen: daten.glimmen,
+      eigeneFarben: daten.eigeneFarben,
     };
   });
 }
@@ -170,6 +198,15 @@ test.afterEach(async ({ page }) => {
   if (original) {
     await speichereDarstellung(page, original);
   }
+  if (spracheVorher && spracheVorher !== 'de') {
+    await page.evaluate(async (sprache) => {
+      await fetch('/api/einstellungen', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sprache }),
+      });
+    }, spracheVorher);
+  }
 });
 
 test('Darstellung: alle Ansichten, Farben getrennt, Glühen unter Sound', async ({ page }) => {
@@ -238,7 +275,94 @@ test('Eigene Farben bleiben gespeichert und lassen sich zurücksetzen', async ({
   expect(nachReset.primaer).toBe(soll.primaer);
   expect(nachReset.akzent).toBe(soll.akzent);
   expect(nachReset.hintergrund).toBe(soll.hintergrund);
+  expect(nachReset.eigeneFarben).toBe(false);
   expect(nachReset.stil).toBe(vorher.stil);
+});
+
+async function setzeFarbe(seite: Page, label: string, wert: string): Promise<void> {
+  const gespeichert = seite.waitForResponse(
+    (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
+  );
+  await seite.locator('label', { hasText: label }).locator('input[type="color"]').evaluate((element, farbe) => {
+    const feld = element as HTMLInputElement;
+    const setze = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+    setze?.call(feld, farbe);
+    feld.dispatchEvent(new Event('input', { bubbles: true }));
+    feld.dispatchEvent(new Event('change', { bubbles: true }));
+  }, wert);
+  await gespeichert;
+}
+
+async function waehleAnsicht(seite: Page, name: string): Promise<void> {
+  const gespeichert = seite.waitForResponse(
+    (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
+  );
+  await seite.locator('button.rounded-xl').filter({ hasText: name }).click();
+  await gespeichert;
+}
+
+async function loescheEigeneFarben(seite: Page, stil: Stil): Promise<void> {
+  const ok = await seite.evaluate(async (ziel) => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stil: ziel, farbenZuruecksetzen: true }),
+    });
+    return antwort.ok;
+  }, stil);
+  expect(ok).toBe(true);
+}
+
+test('Eigene Farben bleiben beim Ansichtswechsel erhalten', async ({ page }, testInfo) => {
+  await page.goto('/mehr/darstellung');
+  await expect(page.getByRole('heading', { name: 'Eigene Farben', exact: true })).toBeVisible();
+  const vorher = await leseDarstellung(page);
+  const andere: Stil = vorher.stil === 'jade' ? 'minimal' : 'jade';
+  const akzent = page.locator('label', { hasText: 'Akzent' }).locator('input[type="color"]');
+
+  try {
+    await setzeFarbe(page, 'Akzent', '#ff00aa');
+    await expect(akzent).toHaveValue('#ff00aa');
+    const gespeichert = await leseDarstellung(page);
+    expect(gespeichert.akzent).toBe('#ff00aa');
+    expect(gespeichert.stil).toBe(vorher.stil);
+    await page.screenshot({ path: `tmp-bau/a3-${testInfo.project.name}-eigene.png`, fullPage: true });
+
+    await waehleAnsicht(page, ANSICHT_NAME[andere]);
+    await expect(akzent).not.toHaveValue('#ff00aa');
+    const fremd = await leseDarstellung(page);
+    expect(fremd.stil).toBe(andere);
+    expect(fremd.akzent).not.toBe('#ff00aa');
+    await page.screenshot({ path: `tmp-bau/a3-${testInfo.project.name}-wechsel.png`, fullPage: true });
+
+    await setzeFarbe(page, 'Akzent', '#00cc88');
+    await expect(akzent).toHaveValue('#00cc88');
+
+    await waehleAnsicht(page, ANSICHT_NAME[vorher.stil]);
+    await expect(akzent).toHaveValue('#ff00aa');
+    expect((await leseDarstellung(page)).akzent).toBe('#ff00aa');
+    await page.screenshot({ path: `tmp-bau/a3-${testInfo.project.name}-zurueck.png`, fullPage: true });
+
+    await page.reload();
+    await expect(page.getByRole('heading', { name: 'Eigene Farben', exact: true })).toBeVisible();
+    await expect(akzent).toHaveValue('#ff00aa');
+
+    await waehleAnsicht(page, ANSICHT_NAME[andere]);
+    await expect(akzent).toHaveValue('#00cc88');
+    const dunkel = await page.evaluate(() => window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const soll = standardVorlage(andere, dunkel);
+    await page.getByRole('button', { name: 'Zurücksetzen', exact: true }).click();
+    await expect.poll(async () => (await leseDarstellung(page)).eigeneFarben).toBe(false);
+    await expect(akzent).toHaveValue(soll.akzent);
+
+    await waehleAnsicht(page, ANSICHT_NAME[vorher.stil]);
+    await expect(akzent).toHaveValue('#ff00aa');
+    await ohneSeitlichenUeberlauf(page);
+  } finally {
+    for (const stil of ['minimal', 'jade', 'holo', 'antik'] as const) {
+      await loescheEigeneFarben(page, stil);
+    }
+  }
 });
 
 test('Info-Icon hat überall Abstand zum Namen', async ({ page }) => {

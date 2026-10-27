@@ -22,7 +22,8 @@ import {
 } from '../../../shared/spiel/funktionen.ts';
 import { bereinigteLeiste, LEISTE_STANDARD } from '../../../shared/spiel/leiste.ts';
 import { istHexFarbe, normaleHex } from '../../../shared/spiel/farben.ts';
-import { standardVorlage } from '../../../shared/features/darstellung/paletten.ts';
+import { standardVorlage, type Farbtrio } from '../../../shared/features/darstellung/paletten.ts';
+import { istStil, STANDARD_STIL, STILE, type Stil } from '../../../shared/features/darstellung/stile.ts';
 import {
   leseZielstrebigkeit,
   normalisiereFokus,
@@ -30,7 +31,6 @@ import {
   type FokusId,
   type Zielstrebigkeit,
 } from '../../../shared/spiel/profil.ts';
-import { istStil, STANDARD_STIL, type Stil } from '../../../shared/features/darstellung/stile.ts';
 import { istSprache, type Sprache } from '../../../shared/sprache/kern.ts';
 import { anfrageSprache } from '../../anfrageSprache.ts';
 import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
@@ -71,6 +71,7 @@ const STANDARD: Grundeinstellungen = {
 };
 
 const FUNKTIONEN_SCHLUESSEL = 'funktionen';
+const ANSICHT_FARBEN = 'ansichtFarben';
 
 function istGleicherTyp<T>(wert: unknown, vorlage: T): wert is T {
   return typeof wert === typeof vorlage;
@@ -120,6 +121,74 @@ function leseFarbe(roh: string | undefined): string | undefined {
   return istHexFarbe(wert) ? normaleHex(wert) : undefined;
 }
 
+function alsTrio(wert: unknown): Farbtrio | undefined {
+  if (wert === null || typeof wert !== 'object') {
+    return undefined;
+  }
+  const eintrag = wert as Record<string, unknown>;
+  if (!istHexFarbe(eintrag.primaer) || !istHexFarbe(eintrag.akzent) || !istHexFarbe(eintrag.hintergrund)) {
+    return undefined;
+  }
+  return {
+    primaer: normaleHex(eintrag.primaer),
+    akzent: normaleHex(eintrag.akzent),
+    hintergrund: normaleHex(eintrag.hintergrund),
+  };
+}
+
+/**
+ * Fehlt der Schlüssel, gehört ein vorhandenes Tripel zur aktuellen Ansicht.
+ * Ein gespeichertes Objekt, auch ein leeres, gilt allein.
+ */
+function leseAnsichtFarben(
+  roh: string | undefined,
+  stil: Stil,
+  alt: { primaer?: string; akzent?: string; hintergrund?: string },
+): Partial<Record<Stil, Farbtrio>> {
+  if (roh !== undefined) {
+    const wert = parse(roh);
+    const ergebnis: Partial<Record<Stil, Farbtrio>> = {};
+    if (wert !== null && typeof wert === 'object' && !Array.isArray(wert)) {
+      const eintrag = wert as Record<string, unknown>;
+      for (const name of STILE) {
+        const trio = alsTrio(eintrag[name]);
+        if (trio) {
+          ergebnis[name] = trio;
+        }
+      }
+    }
+    return ergebnis;
+  }
+  if (alt.primaer && alt.akzent && alt.hintergrund) {
+    return { [stil]: { primaer: alt.primaer, akzent: alt.akzent, hintergrund: alt.hintergrund } };
+  }
+  return {};
+}
+
+function liesSchluessel(): Map<string, string> {
+  const gespeichert = new Map<string, string>();
+  for (const zeile of alle<{ schluessel: string; wert: string }>('SELECT schluessel, wert FROM einstellungen')) {
+    gespeichert.set(zeile.schluessel, zeile.wert);
+  }
+  return gespeichert;
+}
+
+function loescheSchluessel(schluessel: string): void {
+  ausfuehren('DELETE FROM einstellungen WHERE schluessel = ?', schluessel);
+}
+
+function schreibeAktiveFarben(trio: Farbtrio | undefined): void {
+  if (!trio) {
+    loescheSchluessel('primaer');
+    loescheSchluessel('akzent');
+    loescheSchluessel('hintergrund');
+    return;
+  }
+  speichere('primaer', trio.primaer);
+  speichere('akzent', trio.akzent);
+  speichere('hintergrund', trio.hintergrund);
+}
+
 function leseGlimmen(roh: string | undefined): boolean {
   const wert = parse(roh);
   return typeof wert === 'boolean' ? wert : STANDARD.glimmen;
@@ -158,16 +227,15 @@ function funktionsAttribute(funktionen: Funktionen): FunktionsAttribute {
 }
 
 export function ladeEinstellungen(): Einstellungen {
-  const gespeichert = new Map<string, string>();
-  for (const zeile of alle<{ schluessel: string; wert: string }>('SELECT schluessel, wert FROM einstellungen')) {
-    gespeichert.set(zeile.schluessel, zeile.wert);
-  }
+  const gespeichert = liesSchluessel();
   const stil = leseStil(gespeichert.get('stil'));
   const vorlage = standardVorlage(stil, false);
-  const primaer = leseFarbe(gespeichert.get('primaer'));
-  const akzent = leseFarbe(gespeichert.get('akzent'));
-  const hintergrund = leseFarbe(gespeichert.get('hintergrund'));
-  const eigeneFarben = primaer !== undefined && akzent !== undefined && hintergrund !== undefined;
+  const ansichtFarben = leseAnsichtFarben(gespeichert.get(ANSICHT_FARBEN), stil, {
+    primaer: leseFarbe(gespeichert.get('primaer')),
+    akzent: leseFarbe(gespeichert.get('akzent')),
+    hintergrund: leseFarbe(gespeichert.get('hintergrund')),
+  });
+  const eigene = ansichtFarben[stil];
   const funktionen = leseFunktionen(gespeichert.get(FUNKTIONEN_SCHLUESSEL));
   return {
     charakterName: leseWert(gespeichert.get('charakterName'), STANDARD.charakterName),
@@ -178,11 +246,12 @@ export function ladeEinstellungen(): Einstellungen {
     profilAngelegt: leseAngelegt(gespeichert.get('profilAngelegt')),
     weltLeer: istWeltLeer(),
     stil,
-    primaer: primaer ?? vorlage.primaer,
-    akzent: akzent ?? vorlage.akzent,
-    hintergrund: hintergrund ?? vorlage.hintergrund,
+    primaer: eigene?.primaer ?? vorlage.primaer,
+    akzent: eigene?.akzent ?? vorlage.akzent,
+    hintergrund: eigene?.hintergrund ?? vorlage.hintergrund,
     glimmen: leseGlimmen(gespeichert.get('glimmen')),
-    eigeneFarben,
+    eigeneFarben: eigene !== undefined,
+    ansichtFarben,
     funktionen,
     mobilLeiste: leseLeiste(gespeichert.get('mobilLeiste')),
     ebenen: leseEbenen(parse(gespeichert.get('ebenen'))),
@@ -263,6 +332,7 @@ export function aendereEinstellungen(
     sprache?: Sprache;
     zeitzone?: string;
     gewichtEinheit?: GewichtEinheit;
+    farbenZuruecksetzen?: boolean;
   },
 ): Einstellungen {
   const bisher = ladeEinstellungen();
@@ -309,17 +379,45 @@ export function aendereEinstellungen(
     if (aenderung.profilAngelegt !== undefined) {
       speichere('profilAngelegt', aenderung.profilAngelegt);
     }
-    if (aenderung.stil !== undefined) {
-      speichere('stil', aenderung.stil);
-    }
-    if (aenderung.primaer !== undefined) {
-      speichere('primaer', normaleHex(aenderung.primaer));
-    }
-    if (aenderung.akzent !== undefined) {
-      speichere('akzent', normaleHex(aenderung.akzent));
-    }
-    if (aenderung.hintergrund !== undefined) {
-      speichere('hintergrund', normaleHex(aenderung.hintergrund));
+    const farbenBeruehrt =
+      aenderung.stil !== undefined ||
+      aenderung.primaer !== undefined ||
+      aenderung.akzent !== undefined ||
+      aenderung.hintergrund !== undefined ||
+      aenderung.farbenZuruecksetzen === true;
+    if (farbenBeruehrt) {
+      const roh = liesSchluessel();
+      const map = leseAnsichtFarben(roh.get(ANSICHT_FARBEN), bisher.stil, {
+        primaer: leseFarbe(roh.get('primaer')),
+        akzent: leseFarbe(roh.get('akzent')),
+        hintergrund: leseFarbe(roh.get('hintergrund')),
+      });
+      const stil = aenderung.stil ?? bisher.stil;
+      if (aenderung.stil !== undefined) {
+        speichere('stil', aenderung.stil);
+      }
+      const setztFarben =
+        aenderung.primaer !== undefined || aenderung.akzent !== undefined || aenderung.hintergrund !== undefined;
+      if (setztFarben && aenderung.farbenZuruecksetzen !== true) {
+        const basis = map[stil] ?? {
+          primaer: bisher.primaer,
+          akzent: bisher.akzent,
+          hintergrund: bisher.hintergrund,
+        };
+        const trio = {
+          primaer: normaleHex(aenderung.primaer ?? basis.primaer),
+          akzent: normaleHex(aenderung.akzent ?? basis.akzent),
+          hintergrund: normaleHex(aenderung.hintergrund ?? basis.hintergrund),
+        };
+        map[stil] = trio;
+        schreibeAktiveFarben(trio);
+      } else if (aenderung.farbenZuruecksetzen === true) {
+        delete map[stil];
+        schreibeAktiveFarben(undefined);
+      } else {
+        schreibeAktiveFarben(map[stil]);
+      }
+      speichere(ANSICHT_FARBEN, map);
     }
     if (aenderung.glimmen !== undefined) {
       speichere('glimmen', aenderung.glimmen);

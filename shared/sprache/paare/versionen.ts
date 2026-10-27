@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Eigene Farben bleiben in jeder Ansicht erhalten.', 'Your colors stay with each look.'],
   ['Löschen in der Chronik erscheint nur beim Wischen.', 'Delete in History appears only when you swipe.'],
   ['Zurück auf Unterseiten bleibt auf dem Handy sichtbar.', 'Back on subpages stays visible on the phone.'],
   ['Neues Logo erscheint jetzt auch auf dem Handy.', 'The new logo now shows on phones too.'],

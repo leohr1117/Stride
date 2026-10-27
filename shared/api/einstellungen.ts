@@ -1,8 +1,9 @@
+import type { Farbtrio } from '../features/darstellung/paletten.ts';
+import type { Stil } from '../features/darstellung/stile.ts';
 import type { Ebenen, EbenenZahlen } from '../spiel/ebenen.ts';
 import type { Funktionen } from '../spiel/funktionen.ts';
 import type { FokusId, Zielstrebigkeit } from '../spiel/profil.ts';
 import type { FunktionsAttribute } from '../spiel/sichtbarkeit.ts';
-import type { Stil } from '../features/darstellung/stile.ts';
 import type { GewichtEinheit } from '../spiel/training.ts';
 import type { Sprache } from '../sprache/kern.ts';
 
@@ -19,7 +20,10 @@ export interface Einstellungen {
   akzent: string;
   hintergrund: string;
   glimmen: boolean;
+  /** True, wenn die aktuelle Ansicht eigene Farben hat. Sonst gilt ihre Standardpalette. */
   eigeneFarben: boolean;
+  /** Eigene Farben je Ansicht. Ansichten ohne Eintrag nutzen die Standardpalette. */
+  ansichtFarben: Partial<Record<Stil, Farbtrio>>;
   funktionen: Funktionen;
   mobilLeiste: string[];
   ebenen: Ebenen;
@@ -32,3 +36,8 @@ export interface Einstellungen {
   zeitzone: string | null;
   gewichtEinheit: GewichtEinheit;
 }
+
+/** PATCH-Körper. `farbenZuruecksetzen` löscht die eigenen Farben der Zielansicht. */
+export type EinstellungenAenderung = Partial<Einstellungen> & {
+  farbenZuruecksetzen?: boolean;
+};

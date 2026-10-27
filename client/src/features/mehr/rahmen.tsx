@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import type { Einstellungen } from '../../../../shared/api/index.ts';
+import type { Einstellungen, EinstellungenAenderung } from '../../../../shared/api/index.ts';
+import { standardVorlage } from '../../../../shared/features/darstellung/paletten.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { ZurueckZumMehr } from '../../components/ZurueckZumMehr.tsx';
 import { InfoHinweis } from '../../ui/index.ts';
@@ -20,16 +21,16 @@ const DARSTELLUNGS_FELDER = new Set<keyof Einstellungen>([
   'sprache',
 ]);
 
-function nurDarstellung(aenderung: Partial<Einstellungen>): boolean {
-  const felder = Object.keys(aenderung) as (keyof Einstellungen)[];
-  return felder.length > 0 && felder.every((feld) => DARSTELLUNGS_FELDER.has(feld));
+function nurDarstellung(aenderung: EinstellungenAenderung): boolean {
+  const felder = (Object.keys(aenderung) as (keyof EinstellungenAenderung)[]).filter((feld) => feld !== 'farbenZuruecksetzen');
+  return (felder.length > 0 || aenderung.farbenZuruecksetzen === true) && felder.every((feld) => DARSTELLUNGS_FELDER.has(feld as keyof Einstellungen));
 }
 
 export function useEinstellungen() {
   const queryClient = useQueryClient();
   const abfrage = useQuery({ queryKey: SCHLUESSEL.einstellungen, queryFn: api.einstellungen });
   const speichern = useMutation({
-    mutationFn: (aenderung: Partial<Einstellungen>) => api.aendereEinstellungen(aenderung),
+    mutationFn: (aenderung: EinstellungenAenderung) => api.aendereEinstellungen(aenderung),
     onMutate: async (aenderung) => {
       if (!nurDarstellung(aenderung)) {
         return;
@@ -39,12 +40,52 @@ export function useEinstellungen() {
       if (!bisher) {
         return { bisher };
       }
+      const stil = aenderung.stil ?? bisher.stil;
       const farbenDabei = aenderung.primaer !== undefined || aenderung.akzent !== undefined || aenderung.hintergrund !== undefined;
+      const ansichtFarben = { ...bisher.ansichtFarben };
+      let primaer = bisher.primaer;
+      let akzent = bisher.akzent;
+      let hintergrund = bisher.hintergrund;
+      let eigeneFarben = bisher.eigeneFarben;
+      if (aenderung.farbenZuruecksetzen === true) {
+        delete ansichtFarben[stil];
+        const vorlage = standardVorlage(stil, false);
+        primaer = vorlage.primaer;
+        akzent = vorlage.akzent;
+        hintergrund = vorlage.hintergrund;
+        eigeneFarben = false;
+      } else if (farbenDabei) {
+        primaer = aenderung.primaer ?? primaer;
+        akzent = aenderung.akzent ?? akzent;
+        hintergrund = aenderung.hintergrund ?? hintergrund;
+        ansichtFarben[stil] = { primaer, akzent, hintergrund };
+        eigeneFarben = true;
+      } else if (aenderung.stil !== undefined) {
+        const gemerkt = ansichtFarben[aenderung.stil];
+        if (gemerkt) {
+          primaer = gemerkt.primaer;
+          akzent = gemerkt.akzent;
+          hintergrund = gemerkt.hintergrund;
+          eigeneFarben = true;
+        } else {
+          const vorlage = standardVorlage(aenderung.stil, false);
+          primaer = vorlage.primaer;
+          akzent = vorlage.akzent;
+          hintergrund = vorlage.hintergrund;
+          eigeneFarben = false;
+        }
+      }
+      const sichtbar: EinstellungenAenderung = { ...aenderung };
+      delete sichtbar.farbenZuruecksetzen;
       queryClient.setQueryData<Einstellungen>(SCHLUESSEL.einstellungen, {
         ...bisher,
-        ...aenderung,
-        // Ohne das Flag setzt der Abgleich wieder die Standardpalette und überschreibt die Wahl.
-        eigeneFarben: farbenDabei ? true : bisher.eigeneFarben,
+        ...sichtbar,
+        stil,
+        primaer,
+        akzent,
+        hintergrund,
+        eigeneFarben,
+        ansichtFarben,
       });
       return { bisher };
     },

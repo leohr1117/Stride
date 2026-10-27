@@ -19,6 +19,7 @@ interface Darstellung {
 }
 
 let original: Darstellung | null = null;
+let spracheVorher: string | null = null;
 let loeseSperre: (() => void) | null = null;
 
 async function passwort(): Promise<string> {
@@ -35,6 +36,24 @@ async function anmelden(seite: Page): Promise<void> {
   await seite.locator('input[name="username"]').fill('testvoll');
   await seite.locator('input[name="password"]').fill(await passwort());
   await seite.getByRole('button', { name: 'Anmelden' }).click();
+  await seite.getByRole('button', { name: /Eintrag loggen|Log entry/ }).waitFor();
+  spracheVorher = await seite.evaluate(async () => {
+    const daten = (await fetch('/api/einstellungen').then((antwort) => antwort.json())) as { sprache: string | null };
+    return daten.sprache;
+  });
+  if (spracheVorher === 'de') {
+    return;
+  }
+  const ok = await seite.evaluate(async () => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sprache: 'de' }),
+    });
+    return antwort.ok;
+  });
+  expect(ok).toBe(true);
+  await seite.reload();
   await seite.getByRole('button', { name: 'Eintrag loggen' }).waitFor();
 }
 
@@ -164,6 +183,15 @@ test.afterEach(async ({ page }) => {
   if (original) {
     await speichereDarstellung(page, original);
   }
+  if (spracheVorher && spracheVorher !== 'de') {
+    await page.evaluate(async (sprache) => {
+      await fetch('/api/einstellungen', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sprache }),
+      });
+    }, spracheVorher);
+  }
 });
 
 test('Profil: langer Titel und Level überlappen sich nicht', async ({ page }, testInfo) => {
@@ -219,8 +247,17 @@ test('Darstellung: Farben anderer Designs, sofort und auf jeder Seite', async ({
 
   await page.goto('/mehr/darstellung');
   await expect(page.getByRole('heading', { name: 'Darstellung', exact: true })).toBeVisible();
+  const ansichtGespeichert = page.waitForResponse(
+    (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
+  );
   await waehleDesign(page, 'Antik');
+  await ansichtGespeichert;
+  const paletteGespeichert = page.waitForResponse(
+    (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
+  );
   const antikGruppe = page.getByRole('region', { name: 'Antik' });
+  await antikGruppe.getByRole('button', { name: 'Antik', exact: true }).click();
+  await paletteGespeichert;
   await expect(antikGruppe.getByRole('button', { name: 'Antik', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByRole('region', { name: 'Minimal' }).getByRole('button', { name: 'Hell', exact: true })).toHaveAttribute(
     'aria-pressed',

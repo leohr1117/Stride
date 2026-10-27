@@ -1507,6 +1507,7 @@ export const TEXTE: Record<string, string> = {
   "Neues Logo erscheint jetzt auch auf dem Handy.": "Новый логотип теперь виден и на телефоне.",
   "Zurück auf Unterseiten bleibt auf dem Handy sichtbar.": "«Назад» на внутренних страницах остаётся видимым на телефоне.",
   "Löschen in der Chronik erscheint nur beim Wischen.": "«Удалить» в хронике появляется только при свайпе.",
+  "Eigene Farben bleiben in jeder Ansicht erhalten.": "Свои цвета сохраняются для каждого стиля.",
   "Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.": "Приоритет цветной. p1 красный, p2 оранжевый, p3 синий, p4 спокойный. Тот же цвет на круге.",
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "Переключатель «Только сегодня» убран. День задаёт дата.",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "Значки информации у «Веха» и «Противник» снова открываются.",

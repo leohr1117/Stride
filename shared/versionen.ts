@@ -17,6 +17,17 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.7.7',
+    seiten: 'Darstellung',
+    behoben: 'Darstellung',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Eigene Farben bleiben in jeder Ansicht erhalten.'],
+      },
+    ],
+  },
+  {
     version: '3.7.6',
     seiten: 'Chronik',
     behoben: 'Chronik',

@@ -322,6 +322,7 @@ export const einstellungenAenderungSchema = z.object({
   primaer: z.string().refine(istHexFarbe, 'Die Primärfarbe braucht das Format #rrggbb.').optional(),
   akzent: z.string().refine(istHexFarbe, 'Die Akzentfarbe braucht das Format #rrggbb.').optional(),
   hintergrund: z.string().refine(istHexFarbe, 'Die Hintergrundfarbe braucht das Format #rrggbb.').optional(),
+  farbenZuruecksetzen: z.boolean().optional(),
   glimmen: z.boolean().optional(),
   funktionen: z.partialRecord(z.enum(FUNKTIONEN), z.boolean()).optional(),
   ebenen: z.partialRecord(z.enum(EBENEN), z.boolean()).optional(),

@@ -22,6 +22,15 @@ function gleicheFarben(a: Farbtrio, b: Farbtrio): boolean {
   return a.primaer === b.primaer && a.akzent === b.akzent && a.hintergrund === b.hintergrund;
 }
 
+function farbenDerAnsicht(stil: Stil, gemerkt: Partial<Record<Stil, Farbtrio>> | undefined): Farbtrio {
+  const gespeichert = gemerkt?.[stil];
+  if (gespeichert) {
+    return gespeichert;
+  }
+  const vorlage = standardVorlage(stil, systemDunkel());
+  return { primaer: vorlage.primaer, akzent: vorlage.akzent, hintergrund: vorlage.hintergrund };
+}
+
 function StilAuswahl({ wert, werte = STILE, onAendern }: { wert: Stil; werte?: readonly Stil[]; onAendern: (stil: Stil) => void }) {
   const dunkel = systemDunkel();
   return (
@@ -62,6 +71,7 @@ function StilAuswahl({ wert, werte = STILE, onAendern }: { wert: Stil; werte?: r
 function AnsichtWahl({
   stil,
   farben: gespeichert,
+  gemerkt,
   glimmen,
   onStil,
   onFarben,
@@ -69,6 +79,7 @@ function AnsichtWahl({
 }: {
   stil: Stil;
   farben: Farbtrio;
+  gemerkt: Partial<Record<Stil, Farbtrio>>;
   glimmen: boolean;
   onStil: (stil: Stil) => void;
   onFarben: (farben: Farbtrio) => void;
@@ -115,8 +126,7 @@ function AnsichtWahl({
   const istStandard = gleicheFarben(farben, soll);
 
   const waehleStil = (neu: Stil) => {
-    const vorlage = standardVorlage(neu, systemDunkel());
-    uebernehmen(farbAnfang({ primaer: vorlage.primaer, akzent: vorlage.akzent, hintergrund: vorlage.hintergrund }));
+    uebernehmen(farbAnfang(farbenDerAnsicht(neu, gemerkt)));
     onStil(neu);
   };
 
@@ -261,28 +271,28 @@ export function AnsichtSteuerung() {
     <>
       <AnsichtWahl
         stil={data.stil}
-        farben={
-          data.eigeneFarben
-            ? { primaer: data.primaer, akzent: data.akzent, hintergrund: data.hintergrund }
-            : standardVorlage(data.stil, systemDunkel())
-        }
+        farben={farbenDerAnsicht(data.stil, data.ansichtFarben)}
+        gemerkt={data.ansichtFarben}
         glimmen={data.glimmen}
         onStil={(stil) => {
-          const vorlage = standardVorlage(stil, systemDunkel());
-          const farben = { primaer: vorlage.primaer, akzent: vorlage.akzent, hintergrund: vorlage.hintergrund };
+          const farben = farbenDerAnsicht(stil, data.ansichtFarben);
           void wendeStilAn(stil).then((bereit) => {
             if (bereit) {
               wendeErscheinung({ ...farben, glimmen: data.glimmen });
             }
           });
-          speichern.mutate({ stil, ...farben });
+          speichern.mutate({ stil });
         }}
         onFarben={(farben) => speichern.mutate(farben)}
         onStandard={() => {
           const vorlage = standardVorlage(data.stil, systemDunkel());
-          const farben = { primaer: vorlage.primaer, akzent: vorlage.akzent, hintergrund: vorlage.hintergrund };
-          wendeErscheinung({ ...farben, glimmen: data.glimmen });
-          speichern.mutate(farben);
+          wendeErscheinung({
+            primaer: vorlage.primaer,
+            akzent: vorlage.akzent,
+            hintergrund: vorlage.hintergrund,
+            glimmen: data.glimmen,
+          });
+          speichern.mutate({ farbenZuruecksetzen: true });
         }}
       />
       <Fehlermeldung fehler={speichern.error} />
