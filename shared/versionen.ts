@@ -17,6 +17,17 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.9.3',
+    seiten: 'Darstellung, Vorbilder, Verbindungen, Ziele',
+    behoben: 'Darstellung, Vorbilder, Verbindungen, Ziele',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Paletten, der Durchschnittsmensch und weitere Texte sind in allen Sprachen übersetzt.'],
+      },
+    ],
+  },
+  {
     version: '3.9.2',
     seiten: 'Darstellung, Vorbilder',
     abschnitte: [

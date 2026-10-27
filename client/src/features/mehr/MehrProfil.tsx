@@ -145,7 +145,7 @@ function TitelSeite() {
   }
   const optionen: { schluessel: string | null; name: string }[] = [
     { schluessel: null, name: tx("Kein Titel") },
-    ...waehlbareTitel(erfolge, sichtbarkeit).map((stufe) => ({ schluessel: stufe.schluessel, name: stufe.name })),
+    ...waehlbareTitel(erfolge, sichtbarkeit).map((stufe) => ({ schluessel: stufe.schluessel, name: tx(stufe.name) })),
   ];
   const aktuell = erfolge.titel;
   return (

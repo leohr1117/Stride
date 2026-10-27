@@ -3,14 +3,14 @@ import type { Attribut } from '../../../shared/api/index.ts';
 import type { AttributTyp } from '../../../shared/spiel/begriffe.ts';
 import { MIN_RADAR_ACHSEN, radarMaximum, radarWert } from '../../../shared/spiel/radar.ts';
 import { zahl } from '../format.ts';
-import { tx } from '../text.ts';
+import { attributName, tx } from '../text.ts';
 import { DIAGRAMM_ANIMATION_MS, DiagrammTooltip } from './DiagrammBasis.tsx';
 
 export function AttributRadar({ typ, werte }: { typ: AttributTyp; werte: Attribut[] }) {
   if (werte.length < MIN_RADAR_ACHSEN) {
     return null;
   }
-  const radarDaten = werte.map((attribut) => ({ name: attribut.name, wert: radarWert(attribut.level) }));
+  const radarDaten = werte.map((attribut) => ({ name: attributName(attribut), wert: radarWert(attribut.level) }));
   const radarRand = radarMaximum(werte.map((attribut) => attribut.level));
   const farbe = typ === 'status' ? 'var(--xp)' : 'var(--akzent)';
 

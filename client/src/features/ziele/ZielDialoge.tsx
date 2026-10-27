@@ -193,7 +193,7 @@ function VisionFormular({ vision, onFertig }: { vision: Vision | null; onFertig:
       </div>
       <TextFeld label={tx("Ergebnis")} wert={woopErgebnis} onAendern={setWoopErgebnis} />
       <TextFeld label={tx("Hindernis")} wert={woopHindernis} onAendern={setWoopHindernis} />
-      <TextFeld label="Wenn-dann-Plan" wert={woopPlan} onAendern={setWoopPlan} />
+      <TextFeld label={tx('Wenn-dann-Plan')} wert={woopPlan} onAendern={setWoopPlan} />
       <Feld label={tx("Farbe")}>
         <Farbauswahl wert={farbe} onAendern={setFarbe} />
       </Feld>

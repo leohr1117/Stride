@@ -344,7 +344,7 @@ function richtungZelle(richtung: string | null): ReactNode {
 }
 
 function vorbildZeilen(): ReactNode[][] {
-  return beispielVorbilder().map((vorbild) => [vorbild.name, richtungZelle(vorbild.richtung), zahl(vorbild.level)]);
+  return beispielVorbilder().map((vorbild) => [tx(vorbild.name), richtungZelle(vorbild.richtung), zahl(vorbild.level)]);
 }
 
 function beispielZeilen(beispiele: LevelBeispiel[], beute: (level: number) => number): ReactNode[][] {

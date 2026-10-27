@@ -103,7 +103,7 @@ export function RueckblickSeite() {
                     titel: meilenstein.titel,
                     zusatz: projekteAn ? meilenstein.projektName : null,
                   })),
-                  ...rueckblick.erfolge.map((erfolg) => ({ schluessel: `e-${erfolg}`, icon: Award, titel: erfolg, zusatz: null })),
+                  ...rueckblick.erfolge.map((erfolg) => ({ schluessel: `e-${erfolg}`, icon: Award, titel: tx(erfolg), zusatz: null })),
                 ]}
                 anzahl={HOEHEPUNKTE_SICHTBAR}
                 className="space-y-2 text-sm"

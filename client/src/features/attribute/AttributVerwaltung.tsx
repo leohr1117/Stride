@@ -86,7 +86,7 @@ export function AttributBereich({
               ziel={{
                 art: 'attribut',
                 id: attribut.id,
-                name: attribut.name,
+                name: attributName(attribut),
                 archiviert: attribut.archiviert,
                 loeschbar: attribut.loeschbar,
                 gesperrt: werte.length <= 1,
@@ -247,7 +247,7 @@ export function AttributFormular({
           ziel={{
             art: 'attribut',
             id: attribut.id,
-            name: attribut.name,
+            name: attributName(attribut),
             archiviert: attribut.archiviert,
             loeschbar: attribut.loeschbar,
             gesperrt: !archivierbar,

@@ -386,14 +386,14 @@ function Archiv({ onAttributWiederherstellen }: { onAttributWiederherstellen: (a
       .filter((attribut) => attribut.archiviert && istTypAktiv(funktionen, attribut.typ))
       .map((attribut) => ({
         schluessel: `a-${attribut.id}`,
-        name: attribut.name,
-        art: ATTRIBUT_TYP_INFO[attribut.typ].label,
+        name: attributName(attribut),
+        art: tx(ATTRIBUT_TYP_INFO[attribut.typ].label),
         icon: attribut.icon,
         farbe: attribut.farbe,
         ziel: {
           art: 'attribut' as const,
           id: attribut.id,
-          name: attribut.name,
+          name: attributName(attribut),
           archiviert: true,
           loeschbar: attribut.loeschbar,
           onWiederherstellen: attribut.kennung !== null ? () => onAttributWiederherstellen(attribut) : undefined,

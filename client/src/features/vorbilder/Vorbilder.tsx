@@ -163,7 +163,7 @@ function VorbildKarte({ auswertung }: { auswertung: VorbildAuswertung }) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="truncate font-semibold">{vorbild.name}</h2>
+          <h2 className="truncate font-semibold">{tx(vorbild.name)}</h2>
           <p className="text-xs text-leise break-words">{tx(vorbild.bekanntFuer)}</p>
         </div>
         <p className="shrink-0 whitespace-nowrap text-xl leading-tight font-bold">{tx('Lvl {level}', { level: zahl(vorbild.level) })}</p>

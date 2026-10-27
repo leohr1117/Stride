@@ -164,7 +164,7 @@ function AnsichtWahl({
                           <span className="-ml-1 size-3 rounded-full" style={{ background: vorlage.akzent }} />
                           <span className="-ml-1 size-3 rounded-full border border-rand" style={{ background: vorlage.hintergrund }} />
                         </span>
-                        {vorlage.name}
+                        {tx(vorlage.name)}
                       </button>
                     );
                   })}

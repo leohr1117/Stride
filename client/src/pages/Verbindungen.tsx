@@ -90,7 +90,7 @@ function TaetigkeitAuswahl({
 function KalenderHilfe() {
   return (
     <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-leise">
-      iCal-Adresse finden:
+      {tx('iCal-Adresse finden:')}
       {KALENDER_HILFEN.map((hilfe) => (
         <a
           key={hilfe.name}
@@ -349,7 +349,7 @@ function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | null; o
       </Feld>
       {!kalender && (
         <div className="space-y-2">
-          <Feld label="iCal-Adresse">
+          <Feld label={tx('iCal-Adresse')}>
             <input className={EINGABE_STIL} type="url" autoComplete="off" value={adresse} onChange={(ereignis) => setAdresse(ereignis.target.value)} />
           </Feld>
           <KalenderHilfe />

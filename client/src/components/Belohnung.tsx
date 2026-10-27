@@ -1,4 +1,4 @@
-import { tx } from '../text.ts';
+import { attributName, tx } from '../text.ts';
 import { useQuery } from '@tanstack/react-query';
 import { animate, AnimatePresence, motion, useMotionValue, type PanInfo } from 'framer-motion';
 import { Award, ChevronUp, CircleCheck, Swords, Trophy, X } from 'lucide-react';
@@ -232,7 +232,7 @@ function MeldungInhalt({ belohnung }: { belohnung: Belohnung }) {
         {belohnung.anteile.map((anteil) => (
           <span key={anteil.attributId} className={`flex items-center gap-1 ${anteil.xp < 0 ? 'text-gefahr' : ''}`}>
             <span className="size-2 rounded-full" style={{ backgroundColor: anteil.farbe }} />
-            {anteil.name} {mitVorzeichen(anteil.xp)}
+            {attributName({ name: anteil.name })} {mitVorzeichen(anteil.xp)}
           </span>
         ))}
       </div>
@@ -245,7 +245,7 @@ function MeldungInhalt({ belohnung }: { belohnung: Belohnung }) {
           className="mt-2 flex items-center justify-center gap-1.5 rounded-lg bg-xp/10 py-1 text-xs font-semibold text-xp"
         >
           <Award className="size-4" />
-          Erfolg: {erfolg}
+          {tx('Erfolg: {name}', { name: tx(erfolg) })}
         </p>
       ))}
 
@@ -379,7 +379,9 @@ function LevelAufstiegAnzeige({
                   >
                     <span className="flex items-center gap-2">
                       <span className="size-2 rounded-full" style={{ backgroundColor: aufstieg.farbe ?? 'var(--akzent)' }} />
-                      {aufstieg.name}
+                      {aufstieg.art === 'attribut' || aufstieg.art === 'status'
+                        ? attributName({ name: aufstieg.name })
+                        : aufstieg.name}
                     </span>
                     <span className="zahl font-semibold">
                       {aufstieg.vorher} → {aufstieg.nachher}
