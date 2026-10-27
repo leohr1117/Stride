@@ -17,6 +17,17 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.7.9',
+    seiten: 'Fähigkeiten',
+    behoben: 'Fähigkeiten',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Speichern bleibt bei offener Tastatur erreichbar.'],
+      },
+    ],
+  },
+  {
     version: '3.7.8',
     seiten: 'Charakter, Projekte, Inhalte',
     behoben: 'Charakter, Projekte, Inhalte',

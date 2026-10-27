@@ -25,7 +25,7 @@ import {
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { zahl } from '../format.ts';
 import { useSprache } from '../sprache.tsx';
-import { EINGABE_STIL, Fehlermeldung, Feld, Knopf } from '../ui/index.ts';
+import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf } from '../ui/index.ts';
 
 const SCHRITT_TEXT: Record<ProfilSchritt, { titel: string; text: string }> = {
   profilname: { titel: 'Profilname', text: 'Angezeigter Name.' },
@@ -169,8 +169,8 @@ export function ProfilErstellung({ start }: { start: Einstellungen }) {
   };
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-4 py-10">
-      <form onSubmit={weiter} className="w-full max-w-lg space-y-6">
+    <main className="flex sicht-mitte items-center justify-center px-4 py-10">
+      <Formular onAbsenden={weiter} abstand="space-y-6" className="w-full max-w-lg">
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
           <img src="/logo-v2.svg" alt="" className="size-7" />
           Stride
@@ -243,7 +243,7 @@ export function ProfilErstellung({ start }: { start: Einstellungen }) {
             {letzter ? tx("Zum Handbuch") : tx("Weiter")}
           </Knopf>
         </div>
-      </form>
+      </Formular>
     </main>
   );
 }

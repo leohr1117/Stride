@@ -3,6 +3,9 @@
 
 :root {
   color-scheme: light dark;
+  --sicht-oben: 0px;
+  --sicht-hoehe: 100dvh;
+  --tastatur: 0px;
   --glimm: 1;
   --grund: #f7f7f8;
   --flaeche: #ffffff;
@@ -370,4 +373,91 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] {
 button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
   background: var(--prio-4);
   box-shadow: none;
+}
+
+/* Dialog sitzt im sichtbaren Fenster, auch wenn die Tastatur das Layout nicht verkleinert. */
+.dialog-schicht {
+  top: var(--sicht-oben);
+  height: var(--sicht-hoehe);
+}
+
+.dialog-fenster {
+  max-height: 92%;
+  overflow: hidden;
+}
+
+.dialog-koerper:not(:has(> .formular)) {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.dialog-koerper:has(> .formular) {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dialog-koerper > .formular {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dialog-koerper > .formular > .formular-felder {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.formular > .formular-fuss {
+  padding-top: 1rem;
+}
+
+.dialog-fenster .formular-fuss {
+  position: relative;
+  z-index: 1;
+  background: var(--flaeche);
+}
+
+html[data-tastatur='an'] .formular-fuss {
+  position: sticky;
+  bottom: var(--tastatur);
+  z-index: 35;
+  background: var(--grund);
+}
+
+html[data-tastatur='an'] .dialog-fenster .formular-fuss {
+  position: relative;
+  bottom: auto;
+  z-index: 1;
+  background: var(--flaeche);
+}
+
+html[data-tastatur='an'] main {
+  padding-bottom: var(--tastatur);
+}
+
+html[data-tastatur='an'] {
+  scroll-padding-bottom: var(--tastatur);
+}
+
+.sicht-mitte {
+  box-sizing: border-box;
+  min-height: var(--sicht-hoehe);
+  margin-top: var(--sicht-oben);
+}
+
+html[data-tastatur='an'] .sicht-mitte {
+  max-height: var(--sicht-hoehe);
+  overflow-y: auto;
+  align-items: flex-start;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.dialog-fenster :is(input, textarea, select) {
+  scroll-margin-top: 0.75rem;
+  scroll-margin-bottom: 0.75rem;
 }

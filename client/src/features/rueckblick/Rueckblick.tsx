@@ -12,7 +12,7 @@ import { useSichtbarkeit } from '../../funktionen.ts';
 import { KurzListe } from '../../components/Ausklappbar.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { BalkenListe } from '../../components/DiagrammBasis.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Karte, Knopf, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
+import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
 import {
   ausTagesSchluessel,
   datumLang,
@@ -201,7 +201,7 @@ function RueckblickFormular({ rueckblick }: { rueckblick: Rueckblick }) {
   return (
     <Karte>
       <Ueberschrift titel={tx("Reflexion")} />
-      <form onSubmit={absenden} className="space-y-4">
+      <Formular onAbsenden={absenden}>
         {FRAGEN.map(({ feld, frage }) => (
           <Feld key={feld} label={frage}>
             <textarea
@@ -221,7 +221,7 @@ function RueckblickFormular({ rueckblick }: { rueckblick: Rueckblick }) {
               })
             : tx('Speichern')}
         </Knopf>
-      </form>
+      </Formular>
     </Karte>
   );
 }

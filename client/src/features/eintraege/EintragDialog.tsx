@@ -15,7 +15,7 @@ import { useFeiern } from '../../components/Belohnung.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { NeueTaetigkeit } from '../taetigkeiten/TaetigkeitFormular.tsx';
-import { Chip, EINGABE_STIL, Feld, Fehlermeldung, InfoHinweis, Knopf, SchalterBahn, Segmentauswahl } from '../../ui/index.ts';
+import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Formular as FormularKasten, InfoHinweis, Knopf, SchalterBahn, Segmentauswahl } from '../../ui/index.ts';
 
 export interface EintragVorgabe {
   projektId?: number;
@@ -300,7 +300,7 @@ export function EintragDialog({
   return (
     <>
     <Dialog offen={offen} titel={tx("Was hast du getan?")} onSchliessen={onSchliessen}>
-      <form onSubmit={absenden} className="space-y-5">
+      <FormularKasten onAbsenden={absenden} abstand="space-y-5">
         <Feld label={tx("Tätigkeit")}>
           <div className="chip-reihe -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
             {aktiveVorlagen.map((eintrag) => (
@@ -499,7 +499,7 @@ export function EintragDialog({
         <Knopf type="submit" variante="primaer" className="w-full py-3 text-base" disabled={!kannSpeichern}>
           {eintragen.isPending ? tx("Wird eingetragen …") : eintragAktion(nachtragen, zahl(basisXp(formular.stunden)), istMeilenstein)}
         </Knopf>
-      </form>
+      </FormularKasten>
     </Dialog>
     <NeueTaetigkeit
       offen={neueTaetigkeit}

@@ -38,9 +38,7 @@ function DialogSchicht({
   const eingabe = anwesend && bereit;
 
   return (
-    <div
-      className={`fixed inset-0 z-[90] flex items-end justify-center md:items-center md:p-6 ${eingabe ? '' : 'pointer-events-none'}`}
-    >
+    <div className={`fixed inset-0 z-[90] ${eingabe ? '' : 'pointer-events-none'}`}>
       <div
         className={`absolute inset-0 bg-black/50 backdrop-blur-[2px] transition-opacity duration-150 ${anwesend ? 'opacity-100' : 'opacity-0'}`}
         onPointerDown={(ereignis) => {
@@ -49,28 +47,30 @@ function DialogSchicht({
           }
         }}
       />
-      <div
-        role={anwesend ? 'dialog' : undefined}
-        aria-modal={anwesend ? true : undefined}
-        aria-hidden={anwesend ? undefined : true}
-        inert={anwesend ? undefined : true}
-        aria-label={anwesend ? titel : undefined}
-        className={`dialog-fenster relative flex max-h-[92dvh] w-full flex-col rounded-t-3xl border border-rand bg-flaeche transition duration-150 md:max-w-lg md:rounded-3xl ${
-          anwesend ? 'translate-y-0 opacity-100' : 'translate-y-7 opacity-0'
-        }`}
-      >
-        <header className="flex items-center justify-between px-5 pt-5 pb-3">
-          <h2 className="text-lg font-semibold">{titel}</h2>
-          <button
-            type="button"
-            onClick={onSchliessen}
-            aria-label={tx('Schließen')}
-            className="rounded-full p-1.5 text-leise transition hover:bg-flaeche-2 hover:text-haupt"
-          >
-            <X className="size-5" />
-          </button>
-        </header>
-        <div className="overflow-y-auto overscroll-contain px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">{children}</div>
+      <div className="dialog-schicht pointer-events-none absolute inset-x-0 flex items-end justify-center md:items-center md:p-6">
+        <div
+          role={anwesend ? 'dialog' : undefined}
+          aria-modal={anwesend ? true : undefined}
+          aria-hidden={anwesend ? undefined : true}
+          inert={anwesend ? undefined : true}
+          aria-label={anwesend ? titel : undefined}
+          className={`dialog-fenster pointer-events-auto relative flex w-full min-h-0 flex-col rounded-t-3xl border border-rand bg-flaeche transition duration-150 md:max-w-lg md:rounded-3xl ${
+            anwesend ? 'translate-y-0 opacity-100' : 'translate-y-7 opacity-0'
+          }`}
+        >
+          <header className="flex shrink-0 items-center justify-between px-5 pt-5 pb-3">
+            <h2 className="text-lg font-semibold">{titel}</h2>
+            <button
+              type="button"
+              onClick={onSchliessen}
+              aria-label={tx('Schließen')}
+              className="rounded-full p-1.5 text-leise transition hover:bg-flaeche-2 hover:text-haupt"
+            >
+              <X className="size-5" />
+            </button>
+          </header>
+          <div className="dialog-koerper min-h-0 px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">{children}</div>
+        </div>
       </div>
     </div>
   );

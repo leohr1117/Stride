@@ -11,7 +11,7 @@ import { Dialog } from '../../components/Dialog.tsx';
 import { SchnellNebenaktion } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Knopf, Regler } from '../../ui/index.ts';
+import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Regler } from '../../ui/index.ts';
 
 const GEWICHT_SCHRITT = 10;
 
@@ -84,7 +84,7 @@ export function TaetigkeitFormular({
   };
 
   return (
-    <form onSubmit={absenden} className="space-y-4">
+    <Formular onAbsenden={absenden}>
       <Feld label={tx("Name")}>
         <input
           className={EINGABE_STIL}
@@ -136,7 +136,7 @@ export function TaetigkeitFormular({
           {tx("Speichern")}
         </Knopf>
       </div>
-    </form>
+    </Formular>
   );
 }
 

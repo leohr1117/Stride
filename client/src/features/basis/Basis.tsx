@@ -15,7 +15,7 @@ import { SchnellNebenaktion, SchnellZeile } from '../../components/SchnellAktion
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
-import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Karte, Knopf } from '../../ui/index.ts';
+import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf } from '../../ui/index.ts';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 
 export function useBasisAufgaben() {
@@ -239,7 +239,7 @@ export function BasisFormular({
   const zuordnungHinweis = fehlendeZuordnung({ ebene: 'vorhaben', ebenen, projektId: wirksameProjektId });
 
   return (
-    <form onSubmit={absenden} className="space-y-4">
+    <Formular onAbsenden={absenden}>
       <Feld label={tx("Name")}>
         <input
           className={EINGABE_STIL}
@@ -331,6 +331,6 @@ export function BasisFormular({
           {tx("Speichern")}
         </Knopf>
       </div>
-    </form>
+    </Formular>
   );
 }

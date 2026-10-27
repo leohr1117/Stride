@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Speichern bleibt bei offener Tastatur erreichbar.', 'Save stays reachable while the keyboard is open.'],
   ['Beim Schieben eines Reglers bleibt die Tastatur zu. Der Fokus-Ring erscheint nur bei der Tastatur.', 'The keyboard stays closed when you slide a slider. The focus ring appears only with the keyboard.'],
   ['Eigene Farben bleiben in jeder Ansicht erhalten.', 'Your colors stay with each look.'],
   ['Löschen in der Chronik erscheint nur beim Wischen.', 'Delete in History appears only when you swipe.'],

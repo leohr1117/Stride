@@ -24,6 +24,7 @@ import { BossRing } from '../bosse/BossRing.tsx';
 import {
   EINGABE_STIL,
   Fehlermeldung,
+  Formular,
   InfoHinweis,
   Karte,
   Knopf,
@@ -555,7 +556,7 @@ function BossFormular({ vorhaben, onFertig }: { vorhaben: Vorhaben; onFertig: ()
   };
 
   return (
-    <form onSubmit={absenden} className="space-y-4">
+    <Formular onAbsenden={absenden}>
       <p className="font-medium">{vorhaben.titel}</p>
       <div className="space-y-1.5">
         <span className="flex items-center text-sm font-medium">
@@ -583,7 +584,7 @@ function BossFormular({ vorhaben, onFertig }: { vorhaben: Vorhaben; onFertig: ()
           {tx("Speichern")}
         </Knopf>
       </div>
-    </form>
+    </Formular>
   );
 }
 

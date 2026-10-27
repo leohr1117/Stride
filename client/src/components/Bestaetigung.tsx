@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { tx } from '../text.ts';
 import { Dialog } from './Dialog.tsx';
-import { EINGABE_STIL, Knopf } from '../ui/index.ts';
+import { EINGABE_STIL, Formular, Knopf } from '../ui/index.ts';
 
 export interface BestaetigungsAnfrage {
   titel: string;
@@ -130,7 +130,7 @@ export function BestaetigungProvider({ children }: { children: ReactNode }) {
       <EingabeKontext.Provider value={eingeben}>
       {children}
       <Dialog offen={offen} titel={anfrage ? tx(anfrage.titel) : ''} onSchliessen={abbrechen}>
-        <form onSubmit={senden} className="space-y-5">
+        <Formular onAbsenden={senden} abstand="space-y-5">
           <p className="text-sm leading-relaxed text-leise">{anfrage ? tx(anfrage.text) : ''}</p>
           {anfrage?.eingabe && (
             <label className="block space-y-1.5">
@@ -161,10 +161,10 @@ export function BestaetigungProvider({ children }: { children: ReactNode }) {
               {anfrage ? tx(anfrage.knopf) : ''}
             </Knopf>
           </div>
-        </form>
+        </Formular>
       </Dialog>
       <Dialog offen={freiOffen} titel={freiAnfrage ? tx(freiAnfrage.titel) : ''} onSchliessen={freiAbbrechen}>
-        <form onSubmit={freiSenden} className="space-y-5">
+        <Formular onAbsenden={freiSenden} abstand="space-y-5">
           <input
             className={EINGABE_STIL}
             aria-label={freiAnfrage ? tx(freiAnfrage.label) : tx('Eingabe')}
@@ -183,7 +183,7 @@ export function BestaetigungProvider({ children }: { children: ReactNode }) {
               {tx('Speichern')}
             </Knopf>
           </div>
-        </form>
+        </Formular>
       </Dialog>
       </EingabeKontext.Provider>
     </BestaetigungKontext.Provider>

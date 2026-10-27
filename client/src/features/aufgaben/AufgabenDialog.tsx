@@ -13,7 +13,7 @@ import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { useEbenen } from '../../funktionen.ts';
 import { useSprache } from '../../sprache.tsx';
-import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Knopf } from '../../ui/index.ts';
+import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf } from '../../ui/index.ts';
 import { AufgabenName, useSchnellFelder } from './AufgabenSchnell.tsx';
 import { AufgabenWeiteres } from './AufgabenWeiteres.tsx';
 
@@ -219,7 +219,7 @@ export function AufgabenFormular({ aufgabe, onFertig }: { aufgabe: Aufgabe | nul
   };
 
   return (
-    <form onSubmit={absenden} className="space-y-4">
+    <Formular onAbsenden={absenden}>
       <AufgabenName
         name={schnell.name}
         ergebnis={schnell.ergebnis}
@@ -373,6 +373,6 @@ export function AufgabenFormular({ aufgabe, onFertig }: { aufgabe: Aufgabe | nul
           {tx('Speichern')}
         </Knopf>
       </div>
-    </form>
+    </Formular>
   );
 }

@@ -1,7 +1,17 @@
 import { Check, Eye, EyeOff } from 'lucide-react';
-import { Children, isValidElement, useId, useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from 'react';
+import {
+  Children,
+  isValidElement,
+  useId,
+  useState,
+  type ButtonHTMLAttributes,
+  type FormEvent,
+  type InputHTMLAttributes,
+  type ReactNode,
+} from 'react';
 import { FARBEN } from '../../../shared/spiel/begriffe.ts';
 import { tx } from '../text.ts';
+import { Fehlermeldung } from './Anzeige.tsx';
 
 type KnopfVariante = 'primaer' | 'sekundaer' | 'leise' | 'gefahr';
 
@@ -11,6 +21,61 @@ const KNOPF_STIL: Record<KnopfVariante, string> = {
   leise: 'text-leise hover:text-haupt hover:bg-flaeche-2',
   gefahr: 'text-gefahr hover:bg-gefahr/10',
 };
+
+function istFehler(knoten: ReactNode): boolean {
+  return isValidElement(knoten) && knoten.type === Fehlermeldung;
+}
+
+function enthaeltAbsenden(knoten: ReactNode): boolean {
+  if (!isValidElement(knoten)) {
+    return false;
+  }
+  const props = knoten.props as { type?: string; children?: ReactNode };
+  if (props.type === 'submit') {
+    return true;
+  }
+  const typ = knoten.type;
+  if (typeof typ === 'function' && (typ as { fuss?: boolean }).fuss === true) {
+    return true;
+  }
+  return Children.toArray(props.children).some(enthaeltAbsenden);
+}
+
+function teileFuss(kinder: ReactNode[]): { felder: ReactNode[]; fuss: ReactNode[] } {
+  let aktion = -1;
+  for (let index = kinder.length - 1; index >= 0; index -= 1) {
+    if (enthaeltAbsenden(kinder[index])) {
+      aktion = index;
+      break;
+    }
+  }
+  if (aktion <= 0) {
+    return { felder: kinder, fuss: [] };
+  }
+  const start = istFehler(kinder[aktion - 1]) ? aktion - 1 : aktion;
+  return { felder: kinder.slice(0, start), fuss: kinder.slice(start) };
+}
+
+/** Formular mit festem Fuß: die Aktionszeile bleibt sichtbar, die Felder scrollen. */
+export function Formular({
+  onAbsenden,
+  className = '',
+  abstand = 'space-y-4',
+  children,
+}: {
+  onAbsenden: (ereignis: FormEvent<HTMLFormElement>) => void;
+  className?: string;
+  abstand?: string;
+  children: ReactNode;
+}) {
+  const { felder, fuss } = teileFuss(Children.toArray(children));
+  return (
+    <form onSubmit={onAbsenden} className={`formular min-h-0 ${className}`}>
+      {felder.length > 0 ? <div className={`formular-felder min-h-0 ${abstand}`}>{felder}</div> : null}
+      {fuss.length > 0 ? <div className="formular-fuss shrink-0 space-y-4">{fuss}</div> : null}
+    </form>
+  );
+}
 
 export function Knopf({
   variante = 'sekundaer',

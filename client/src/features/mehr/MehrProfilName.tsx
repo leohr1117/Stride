@@ -3,7 +3,7 @@ import { ebenenFuerStufe, hinweisAusblenden } from '../../../../shared/spiel/ebe
 import { GEBURTSJAHR_MIN, PROFILNAME_MAX, ZIEL_FRAGE, geburtsjahrGueltig, type Zielstrebigkeit } from '../../../../shared/spiel/profil.ts';
 import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { ZielWahl } from '../../components/ProfilErstellung.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Knopf, Ladeanzeige } from '../../ui/index.ts';
+import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Ladeanzeige } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
 import { FormularSeite, PROFIL_ZURUECK, useEinstellungen } from './rahmen.tsx';
 
@@ -33,7 +33,7 @@ export function NameSeite() {
       titel={tx("Profilname")}
       zurueck={PROFIL_ZURUECK}
       kinder={
-        <form onSubmit={senden} className="space-y-4">
+        <Formular onAbsenden={senden}>
           <Feld label={tx("Profilname")}>
             <input
               className={EINGABE_STIL}
@@ -51,7 +51,7 @@ export function NameSeite() {
             {tx("Speichern")}
           </Knopf>
           <Fehlermeldung fehler={speichern.error} />
-        </form>
+        </Formular>
       }
     />
   );
@@ -85,7 +85,7 @@ export function JahrSeite() {
       titel={tx("Geburtsjahr")}
       zurueck={PROFIL_ZURUECK}
       kinder={
-        <form onSubmit={senden} className="space-y-4">
+        <Formular onAbsenden={senden}>
           <Feld label={tx("Geburtsjahr")}>
             <input
               className={EINGABE_STIL}
@@ -102,7 +102,7 @@ export function JahrSeite() {
             {tx("Speichern")}
           </Knopf>
           <Fehlermeldung fehler={speichern.error} />
-        </form>
+        </Formular>
       }
     />
   );
@@ -147,13 +147,13 @@ export function ZielSeite() {
       titel={ZIEL_FRAGE}
       zurueck={PROFIL_ZURUECK}
       kinder={
-        <form onSubmit={(ereignis) => void senden(ereignis)} className="space-y-4">
+        <Formular onAbsenden={(ereignis) => void senden(ereignis)}>
           <ZielWahl wert={ziel} onAendern={setZiel} />
           <Knopf type="submit" variante="primaer" className="w-full" disabled={!geaendert || speichern.isPending}>
             {tx("Speichern")}
           </Knopf>
           <Fehlermeldung fehler={speichern.error} />
-        </form>
+        </Formular>
       }
     />
   );

@@ -184,7 +184,7 @@ function PlanFormular({
         onVorlage={setVorlageId}
       />
       {serverFehler ? <Fehlermeldung fehler={serverFehler} /> : null}
-      <div className="flex flex-col items-stretch gap-1 md:items-start">
+      <div className="formular-fuss flex flex-col items-stretch gap-1 md:items-start">
         <Knopf variante="primaer" className="w-full md:w-auto md:min-w-48" disabled={arbeit} onClick={() => void speichern()}>
           {tx('Speichern')}
         </Knopf>

@@ -1,7 +1,7 @@
 import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { Organisation, Projekt, Vision } from '../../../../shared/api/index.ts';
 import { FARBEN, GRENZEN } from '../../../../shared/spiel/begriffe.ts';
 import { VISION_BEISPIELE } from '../../../../shared/spiel/orientierung.ts';
@@ -15,7 +15,7 @@ import { Dialog } from '../../components/Dialog.tsx';
 import { SchnellNebenaktion } from '../../components/SchnellAktion.tsx';
 import { LevelBeispiele } from '../../components/Orientierung.tsx';
 import { NeueTaetigkeit } from '../taetigkeiten/TaetigkeitFormular.tsx';
-import { EINGABE_STIL, Farbauswahl, Feld, Fehlermeldung, InfoHinweis, Knopf } from '../../ui/index.ts';
+import { EINGABE_STIL, Farbauswahl, Feld, Fehlermeldung, Formular as FormularKasten, InfoHinweis, Knopf } from '../../ui/index.ts';
 
 export type ZielBearbeitung =
   | { art: 'vision'; vision: Vision | null }
@@ -106,15 +106,18 @@ function Aktionen({
   );
 }
 
+(Aktionen as typeof Aktionen & { fuss: boolean }).fuss = true;
+
 function Formular({ onAbsenden, children }: { onAbsenden: () => void; children: ReactNode }) {
-  const absenden = (ereignis: FormEvent) => {
-    ereignis.preventDefault();
-    onAbsenden();
-  };
   return (
-    <form onSubmit={absenden} className="space-y-4">
+    <FormularKasten
+      onAbsenden={(ereignis) => {
+        ereignis.preventDefault();
+        onAbsenden();
+      }}
+    >
       {children}
-    </form>
+    </FormularKasten>
   );
 }
 

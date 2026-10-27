@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from
 import type { ZugangModus, ZugangStatus } from '../../../../shared/api/index.ts';
 import { api, beobachteAnmeldung } from '../../api/index.ts';
 import { SpracheAbgleich } from '../../sprache.tsx';
-import { Fehlermeldung, Feld, Knopf, Ladeanzeige, EINGABE_STIL, PasswortFeld } from '../../ui/index.ts';
+import { Fehlermeldung, Feld, Formular, Knopf, Ladeanzeige, EINGABE_STIL, PasswortFeld } from '../../ui/index.ts';
 
 function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' | 'benutzername'>; onErfolg: (status: ZugangStatus) => void }) {
   const [benutzername, setBenutzername] = useState('');
@@ -33,8 +33,8 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
   };
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-4">
-      <form onSubmit={(ereignis) => void senden(ereignis)} className="w-full max-w-sm space-y-4 rounded-2xl border border-rand bg-flaeche p-6">
+    <main className="flex sicht-mitte items-center justify-center px-4">
+      <Formular onAbsenden={(ereignis) => void senden(ereignis)} className="w-full max-w-sm rounded-2xl border border-rand bg-flaeche p-6">
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
           <img src="/logo-v2.svg" alt="" className="size-7" />
           Stride
@@ -78,7 +78,7 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
         <Knopf type="submit" variante="primaer" className="w-full" disabled={laeuft || passwort === '' || (mitName && benutzername.trim() === '')}>
           {neu ? tx("Festlegen") : tx("Anmelden")}
         </Knopf>
-      </form>
+      </Formular>
     </main>
   );
 }
@@ -102,8 +102,8 @@ function BenutzernameFestlegen({ onErfolg }: { onErfolg: (status: ZugangStatus) 
   };
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-4">
-      <form onSubmit={(ereignis) => void senden(ereignis)} className="w-full max-w-sm space-y-4 rounded-2xl border border-rand bg-flaeche p-6">
+    <main className="flex sicht-mitte items-center justify-center px-4">
+      <Formular onAbsenden={(ereignis) => void senden(ereignis)} className="w-full max-w-sm rounded-2xl border border-rand bg-flaeche p-6">
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
           <img src="/logo-v2.svg" alt="" className="size-7" />
           Stride
@@ -126,7 +126,7 @@ function BenutzernameFestlegen({ onErfolg }: { onErfolg: (status: ZugangStatus) 
         <Knopf type="submit" variante="primaer" className="w-full" disabled={laeuft || benutzername.trim() === ''}>
           {tx("Festlegen")}
         </Knopf>
-      </form>
+      </Formular>
     </main>
   );
 }
@@ -161,7 +161,7 @@ export function ZugangTor({ children }: { children: ReactNode }) {
 
   if (!status && fehler) {
     return (
-      <main className="flex min-h-dvh items-center justify-center px-4">
+      <main className="flex sicht-mitte items-center justify-center px-4">
         <div className="w-full max-w-sm space-y-3">
           <Fehlermeldung fehler={fehler} />
           <Knopf variante="primaer" onClick={() => void lade()}>

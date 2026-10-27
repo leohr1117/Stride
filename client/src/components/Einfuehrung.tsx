@@ -5,7 +5,7 @@ import type { Einstellungen } from '../../../shared/api/index.ts';
 import { SPRACH_NAME, SPRACHEN, type Sprache } from '../../../shared/sprache/kern.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useSprache } from '../sprache.tsx';
-import { Fehlermeldung, InfoHinweis, Knopf } from '../ui/index.ts';
+import { Fehlermeldung, Formular, InfoHinweis, Knopf } from '../ui/index.ts';
 
 /** Überlebt den Neuaufbau beim Sprachwechsel, damit ältere Speichern nicht gewinnen. */
 let speicherKette: Promise<void> = Promise.resolve();
@@ -74,8 +74,8 @@ export function SprachStart({ onFertig }: { onFertig: () => void }) {
   };
 
   return (
-    <main className="flex min-h-dvh flex-col px-4 py-6">
-      <form onSubmit={weiter} className="mx-auto my-auto w-full max-w-lg shrink-0 space-y-6">
+    <main className="flex sicht-mitte flex-col px-4 py-6">
+      <Formular onAbsenden={weiter} abstand="space-y-6" className="mx-auto my-auto w-full max-w-lg shrink-0">
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
           <img src="/logo-v2.svg" alt="" className="size-7" />
           Stride
@@ -108,7 +108,7 @@ export function SprachStart({ onFertig }: { onFertig: () => void }) {
             {tx('Weiter')}
           </Knopf>
         </div>
-      </form>
+      </Formular>
     </main>
   );
 }
@@ -158,7 +158,7 @@ export function Einfuehrung({ onFertig }: { onFertig: () => void }) {
   };
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-4 py-10">
+    <main className="flex sicht-mitte items-center justify-center px-4 py-10">
       <div className="w-full max-w-lg space-y-8">
         <p className="text-lg font-bold tracking-tight">Stride</p>
         <div

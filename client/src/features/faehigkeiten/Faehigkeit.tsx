@@ -21,6 +21,7 @@ import {
   EINGABE_STIL,
   Feld,
   Fehlermeldung,
+  Formular,
   Fortschrittsbalken,
   Karte,
   Knopf,
@@ -396,7 +397,7 @@ function KnotenFormular({
   };
 
   return (
-    <form onSubmit={absenden} className="space-y-4">
+    <Formular onAbsenden={absenden}>
       <Feld label={tx("Titel")}>
         <input
           className={EINGABE_STIL}
@@ -418,6 +419,6 @@ function KnotenFormular({
       <Knopf type="submit" variante="primaer" className="w-full" disabled={!titel.trim() || speichern.isPending}>
         {tx("Speichern")}
       </Knopf>
-    </form>
+    </Formular>
   );
 }

@@ -25,6 +25,7 @@ import {
   Farbauswahl,
   Feld,
   Fehlermeldung,
+  Formular,
   Fortschrittsbalken,
   Karte,
   Knopf,
@@ -189,7 +190,7 @@ export function AttributFormular({
   };
 
   return (
-    <form onSubmit={absenden} className="space-y-4">
+    <Formular onAbsenden={absenden}>
       <Feld label={tx("Name")}>
         <input
           className={EINGABE_STIL}
@@ -257,7 +258,7 @@ export function AttributFormular({
           {tx("Speichern")}
         </Knopf>
       </div>
-    </form>
+    </Formular>
   );
 }
 

@@ -10,7 +10,7 @@ import { api, SCHLUESSEL } from '../api/index.ts';
 import { useSichtbarkeit } from '../funktionen.ts';
 import { Dialog } from '../components/Dialog.tsx';
 import { SchnellNebenaktion, SchnellZeile } from '../components/SchnellAktion.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, InfoHinweis, Karte, Knopf, Ladeanzeige, PasswortFeld, Ueberschrift } from '../ui/index.ts';
+import { EINGABE_STIL, Feld, Fehlermeldung, Formular, InfoHinweis, Karte, Knopf, Ladeanzeige, PasswortFeld, Ueberschrift } from '../ui/index.ts';
 import { TodoistZuordnungen } from '../features/todoist/Zuordnungen.tsx';
 import { ZielMarke } from '../components/ZielMarke.tsx';
 import { kurzesDatum, uhrzeit, zahl } from '../format.ts';
@@ -209,7 +209,7 @@ function TodoistKarte({ status }: { status: TodoistStatus }) {
           {projekteAn ? <TodoistZuordnungen status={status} /> : null}
         </>
       ) : (
-        <form onSubmit={absenden} className="space-y-3">
+        <Formular onAbsenden={absenden} abstand="space-y-3">
           <PasswortFeld
             label={tx("API-Token")}
             autoComplete="off"
@@ -231,7 +231,7 @@ function TodoistKarte({ status }: { status: TodoistStatus }) {
             </Knopf>
           </div>
           <Fehlermeldung fehler={verbinden.error} />
-        </form>
+        </Formular>
       )}
     </Karte>
   );
@@ -343,7 +343,7 @@ function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | null; o
     name.trim() !== '' && gewaehltesProjekt !== null && (kalender !== null || adresse.trim() !== '') && !speichern.isPending;
 
   return (
-    <form onSubmit={absenden} className="space-y-4">
+    <Formular onAbsenden={absenden}>
       <Feld label={tx("Name")}>
         <input className={EINGABE_STIL} value={name} maxLength={GRENZEN.nameMax} onChange={(ereignis) => setName(ereignis.target.value)} autoFocus />
       </Feld>
@@ -393,6 +393,6 @@ function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | null; o
           {speichern.isPending ? tx("Prüfe …") : tx("Speichern")}
         </Knopf>
       </div>
-    </form>
+    </Formular>
   );
 }

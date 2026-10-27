@@ -3,7 +3,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { FOKUS_PFLICHT, type FokusId } from '../../../../shared/spiel/profil.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { FokusWahl } from '../../components/ProfilErstellung.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
+import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
 import { FormularSeite, PROFIL_ZURUECK, useEinstellungen } from './rahmen.tsx';
 
@@ -44,14 +44,14 @@ export function FokusSeite() {
       info={FOKUS_INFO}
       zurueck={PROFIL_ZURUECK}
       kinder={
-        <form onSubmit={senden} className="space-y-4">
+        <Formular onAbsenden={senden}>
           <FokusWahl wert={fokus} onAendern={setFokus} />
           {fokus.length === 0 && <p className="text-xs text-leise">{FOKUS_PFLICHT}</p>}
           <Knopf type="submit" variante="primaer" className="w-full" disabled={!geaendert || speichern.isPending}>
             {tx("Speichern")}
           </Knopf>
           <Fehlermeldung fehler={speichern.error} />
-        </form>
+        </Formular>
       }
     />
   );
@@ -81,12 +81,11 @@ export function BenutzerSeite() {
       titel={tx("Benutzername")}
       zurueck={PROFIL_ZURUECK}
       kinder={
-        <form
-          onSubmit={(ereignis) => {
+        <Formular
+          onAbsenden={(ereignis) => {
             ereignis.preventDefault();
             speichern.mutate();
           }}
-          className="space-y-4"
         >
           <Feld label={tx("Benutzername")}>
             <input
@@ -109,7 +108,7 @@ export function BenutzerSeite() {
             {tx("Speichern")}
           </Knopf>
           <Fehlermeldung fehler={fehler ?? speichern.error} />
-        </form>
+        </Formular>
       }
     />
   );
@@ -149,7 +148,7 @@ export function PasswortSeite() {
       titel={tx("Passwort")}
       zurueck={PROFIL_ZURUECK}
       kinder={
-        <form onSubmit={senden} className="space-y-4">
+        <Formular onAbsenden={senden}>
           <PasswortFeld
             label={tx("Bisheriges Passwort")}
             name="current-password"
@@ -176,7 +175,7 @@ export function PasswortSeite() {
           </Knopf>
           {gespeichert && <p className="text-sm text-leise">{tx("Passwort gespeichert.")}</p>}
           <Fehlermeldung fehler={fehler ?? aendern.error} />
-        </form>
+        </Formular>
       }
     />
   );

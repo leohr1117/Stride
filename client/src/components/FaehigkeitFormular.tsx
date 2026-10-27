@@ -6,7 +6,7 @@ import { FARBEN, GRENZEN, type IconName } from '../../../shared/spiel/begriffe.t
 import { api } from '../api/index.ts';
 import { IconAuswahl } from './IconAuswahl.tsx';
 import { SchnellNebenaktion } from './SchnellAktion.tsx';
-import { EINGABE_STIL, Farbauswahl, Feld, Fehlermeldung, Knopf } from '../ui/index.ts';
+import { EINGABE_STIL, Farbauswahl, Feld, Fehlermeldung, Formular, Knopf } from '../ui/index.ts';
 
 export function FaehigkeitFormular({
   faehigkeit,
@@ -41,7 +41,7 @@ export function FaehigkeitFormular({
   };
 
   return (
-    <form onSubmit={absenden} className="space-y-4">
+    <Formular onAbsenden={absenden}>
       <Feld label={tx("Name")}>
         <input
           className={EINGABE_STIL}
@@ -83,6 +83,6 @@ export function FaehigkeitFormular({
           {tx("Speichern")}
         </Knopf>
       </div>
-    </form>
+    </Formular>
   );
 }

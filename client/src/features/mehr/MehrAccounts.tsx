@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Navigate } from 'react-router';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Karte, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
+import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
 import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { tx } from '../../text.ts';
 import { Bereich, PROFIL_ZURUECK } from './rahmen.tsx';
@@ -78,12 +78,12 @@ export function AccountsBereich() {
             ))}
           </ZeilenGruppe>
           <Karte>
-            <form
-              onSubmit={(ereignis) => {
+            <Formular
+              onAbsenden={(ereignis) => {
                 ereignis.preventDefault();
                 anlegen.mutate();
               }}
-              className="space-y-3"
+              abstand="space-y-3"
             >
               <Feld label={tx("Benutzername")}>
                 <input
@@ -121,7 +121,7 @@ export function AccountsBereich() {
               <Knopf type="submit" variante="primaer" className="w-full" disabled={anlegen.isPending || kontoName.trim() === '' || kontoPasswort === ''}>
                 {tx("Account anlegen")}
               </Knopf>
-            </form>
+            </Formular>
             <Fehlermeldung fehler={fehler ?? anlegen.error} />
           </Karte>
         </div>

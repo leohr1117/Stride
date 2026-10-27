@@ -15,7 +15,7 @@ import { Dialog } from '../../components/Dialog.tsx';
 import { SchnellNebenaktion, SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
 import { Zeile, ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
-import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Karte, Knopf, Regler, Segmentauswahl } from '../../ui/index.ts';
+import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf, Regler, Segmentauswahl } from '../../ui/index.ts';
 
 const LISTE_SICHTBAR = 4;
 
@@ -480,7 +480,7 @@ function InvestitionFormular({
   };
 
   return (
-    <form className="space-y-4" onSubmit={senden}>
+    <Formular onAbsenden={senden}>
       <Feld label={tx("Name")}>
         <input
           className={EINGABE_STIL}
@@ -535,7 +535,7 @@ function InvestitionFormular({
           {tx("Speichern")}
         </Knopf>
       </div>
-    </form>
+    </Formular>
   );
 }
 
