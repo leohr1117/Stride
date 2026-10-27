@@ -134,6 +134,9 @@ export function useVerlauf(): void {
     } else {
       merkeUnterseite();
     }
+    if (typ !== 'POP') {
+      window.scrollTo(0, 0);
+    }
   }, [navigiere, ort.pathname, ort.search, ort.key, typ]);
 }
 

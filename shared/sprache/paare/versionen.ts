@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Zurück auf Unterseiten bleibt auf dem Handy sichtbar.', 'Back on subpages stays visible on the phone.'],
   ['Neues Logo erscheint jetzt auch auf dem Handy.', 'The new logo now shows on phones too.'],
   ['Neues Logo.', 'New logo.'],
   ['Die App heißt jetzt Stride.', 'The app is now called Stride.'],

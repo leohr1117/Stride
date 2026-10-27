@@ -17,6 +17,17 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.7.5',
+    seiten: 'Mehr',
+    behoben: 'Mehr',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Zurück auf Unterseiten bleibt auf dem Handy sichtbar.'],
+      },
+    ],
+  },
+  {
     version: '3.7.4',
     seiten: 'Übersicht, Mehr',
     abschnitte: [

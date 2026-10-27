@@ -324,11 +324,33 @@ function ZurueckLeiste({ pathname }: { pathname: string }) {
 function MobilKopf() {
   const charakter = useCharakterKurz();
   const { pathname } = useLocation();
+  const kopf = useRef<HTMLElement>(null);
   const name = charakter?.name ?? '';
   const mehrAktiv = pathname === '/mehr' || pathname.startsWith('/mehr/');
 
+  useEffect(() => {
+    const knoten = kopf.current;
+    if (!knoten) {
+      return;
+    }
+    const setzen = () => {
+      const hoehe = getComputedStyle(knoten).display === 'none' ? 0 : knoten.getBoundingClientRect().height;
+      document.documentElement.style.setProperty('--mobilkopf-hoehe', `${hoehe}px`);
+    };
+    setzen();
+    const beobachter = new ResizeObserver(setzen);
+    beobachter.observe(knoten);
+    return () => {
+      beobachter.disconnect();
+      document.documentElement.style.removeProperty('--mobilkopf-hoehe');
+    };
+  }, []);
+
   return (
-    <header className="mobilkopf sticky top-0 z-30 flex items-center gap-2 border-b border-rand bg-grund/90 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 backdrop-blur md:hidden">
+    <header
+      ref={kopf}
+      className="mobilkopf sticky top-0 z-30 flex items-center gap-2 border-b border-rand bg-grund/90 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 backdrop-blur md:hidden"
+    >
       <NavLink
         to="/charakter"
         aria-label={

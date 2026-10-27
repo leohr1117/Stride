@@ -1505,6 +1505,7 @@ export const TEXTE: Record<string, string> = {
   "Die App heißt jetzt Stride.": "アプリの名前は Stride になりました。",
   "Neues Logo.": "新しいロゴ。",
   "Neues Logo erscheint jetzt auch auf dem Handy.": "新しいロゴがスマホでも表示されるようになりました。",
+  "Zurück auf Unterseiten bleibt auf dem Handy sichtbar.": "スマホの下層ページでも戻るが表示されたままになる。",
   "Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.": "優先度に色が付いた。p1 は赤、p2 はオレンジ、p3 は青、p4 は落ち着いた色。同じ色が円に付く。",
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "「今日だけ」のスイッチはなくなった。日付がその日を決める。",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "節目と相手の情報アイコンが再び開く。",

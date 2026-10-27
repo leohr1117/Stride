@@ -1505,6 +1505,7 @@ export const TEXTE: Record<string, string> = {
   "Die App heißt jetzt Stride.": "L'app s'appelle maintenant Stride.",
   "Neues Logo.": "Nouveau logo.",
   "Neues Logo erscheint jetzt auch auf dem Handy.": "Le nouveau logo s’affiche aussi sur le téléphone.",
+  "Zurück auf Unterseiten bleibt auf dem Handy sichtbar.": "Retour sur les sous-pages reste visible sur le téléphone.",
   "Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.": "La priorité est en couleur. p1 rouge, p2 orange, p3 bleu, p4 calme. La même couleur est sur le cercle.",
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "L'interrupteur Aujourd'hui seulement n'est plus là. La date fixe le jour.",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "Les icônes d'info sur Jalon et Adversaire s'ouvrent de nouveau.",
