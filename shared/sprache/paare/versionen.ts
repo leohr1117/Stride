@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Seiten, Dialoge und Diagramme bleiben auf dem Handy und am PC im Bild.', 'Pages, dialogs, and charts stay on the screen on phones and computers.'],
   ['Tätigkeit anlegen ist ein Knopf und öffnet das Formular direkt.', 'Create an activity is a button and opens the form directly.'],
   ['Die Einstellungen Inhalte und Funktionen heißen jetzt Tätigkeiten und App & Verbindungen. Verbindungen stehen unter App & Verbindungen.', 'The Contents and Features settings are now called Activities and App & connections. Connections are under App & connections.'],
   ['Am PC sagt die Leiste-Einstellung, dass sie nur auf dem Handy gilt.', 'On a computer, the bar setting says it only applies on phones.'],

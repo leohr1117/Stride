@@ -1521,4 +1521,5 @@ export const TEXTE: Record<string, string> = {
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "El interruptor Solo hoy ya no está. La fecha fija el día.",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "Los iconos de info en Hito y Oponente vuelven a abrirse.",
   "Tätigkeit anlegen ist ein Knopf und öffnet das Formular direkt.": "Crear una actividad es un botón y abre el formulario directamente.",
+  "Seiten, Dialoge und Diagramme bleiben auf dem Handy und am PC im Bild.": "Las páginas, los diálogos y los gráficos permanecen en la pantalla del móvil y del ordenador.",
 };

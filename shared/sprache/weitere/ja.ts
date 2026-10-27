@@ -1521,4 +1521,5 @@ export const TEXTE: Record<string, string> = {
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "「今日だけ」のスイッチはなくなった。日付がその日を決める。",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "節目と相手の情報アイコンが再び開く。",
   "Tätigkeit anlegen ist ein Knopf und öffnet das Formular direkt.": "「活動を作る」はボタンで、フォームがすぐに開く。",
+  "Seiten, Dialoge und Diagramme bleiben auf dem Handy und am PC im Bild.": "ページ、ダイアログ、グラフはスマホでもパソコンでも画面内に収まる。",
 };

@@ -1521,4 +1521,5 @@ export const TEXTE: Record<string, string> = {
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "Переключатель «Только сегодня» убран. День задаёт дата.",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "Значки информации у «Веха» и «Противник» снова открываются.",
   "Tätigkeit anlegen ist ein Knopf und öffnet das Formular direkt.": "«Создать занятие» — кнопка, форма открывается сразу.",
+  "Seiten, Dialoge und Diagramme bleiben auf dem Handy und am PC im Bild.": "Страницы, диалоги и диаграммы остаются на экране на телефоне и на компьютере.",
 };

@@ -17,7 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
-    version: '3.9.3',
+    version: '3.9.1',
+    seiten: 'Übersicht, Charakter, Vorbilder, Mehr',
+    behoben: 'Übersicht, Charakter, Vorbilder, Mehr',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Seiten, Dialoge und Diagramme bleiben auf dem Handy und am PC im Bild.'],
+      },
+    ],
+  },
+  {
+    version: '3.9.0',
     seiten: 'Mehr',
     abschnitte: [
       {
