@@ -147,6 +147,10 @@ body {
   filter: grayscale(0.45) brightness(0.75);
 }
 
+.regler {
+  touch-action: none;
+}
+
 .groesse-regler {
   width: 100%;
   height: 2.75rem;
@@ -163,6 +167,11 @@ body {
 :focus-visible {
   outline: 2px solid var(--akzent);
   outline-offset: 2px;
+}
+
+/* iOS setzt :focus-visible auch nach Antippen. Der Ring gilt nur für die Tastatur. */
+html[data-eingabe='zeiger'] :focus {
+  outline: none;
 }
 
 .knopf:not(:disabled):active {

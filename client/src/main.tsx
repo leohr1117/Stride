@@ -7,6 +7,7 @@ import { ZugangTor } from './features/zugang/Anmeldung.tsx';
 import { BelohnungProvider } from './components/Belohnung.tsx';
 import { BestaetigungProvider } from './components/Bestaetigung.tsx';
 import { SchnellProvider } from './components/SchnellAktion.tsx';
+import { beobachteFokusArt } from './fokus.ts';
 import { ladeBeiVeraltetenDateienNeu, registriereServiceWorker } from './pwa.ts';
 import { standardVorlage } from '../../shared/features/darstellung/paletten.ts';
 import { SpracheProvider } from './sprache.tsx';
@@ -32,6 +33,7 @@ if (!wurzel) {
   throw new Error('Element #root fehlt in index.html.');
 }
 
+beobachteFokusArt();
 ladeBeiVeraltetenDateienNeu();
 registriereServiceWorker();
 const startStil = gespeicherterStil();

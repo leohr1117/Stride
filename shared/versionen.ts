@@ -17,6 +17,17 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.7.8',
+    seiten: 'Charakter, Projekte, Inhalte',
+    behoben: 'Charakter, Projekte, Inhalte',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Beim Schieben eines Reglers bleibt die Tastatur zu. Der Fokus-Ring erscheint nur bei der Tastatur.'],
+      },
+    ],
+  },
+  {
     version: '3.7.7',
     seiten: 'Darstellung',
     behoben: 'Darstellung',

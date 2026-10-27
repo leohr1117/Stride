@@ -1508,6 +1508,7 @@ export const TEXTE: Record<string, string> = {
   "Zurück auf Unterseiten bleibt auf dem Handy sichtbar.": "Atrás en las subpáginas sigue visible en el móvil.",
   "Löschen in der Chronik erscheint nur beim Wischen.": "Eliminar en el historial solo aparece al deslizar.",
   "Eigene Farben bleiben in jeder Ansicht erhalten.": "Tus colores se conservan en cada estilo.",
+  "Beim Schieben eines Reglers bleibt die Tastatur zu. Der Fokus-Ring erscheint nur bei der Tastatur.": "Al mover un control el teclado permanece cerrado. El anillo de foco solo aparece con el teclado.",
   "Priorität ist farbig. p1 rot, p2 orange, p3 blau, p4 ruhig. Dieselbe Farbe steht am Kreis.": "La prioridad va en color. p1 rojo, p2 naranja, p3 azul, p4 tranquilo. El mismo color está en el círculo.",
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "El interruptor Solo hoy ya no está. La fecha fija el día.",
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "Los iconos de info en Hito y Oponente vuelven a abrirse.",

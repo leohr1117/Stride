@@ -11,7 +11,7 @@ import { Dialog } from '../../components/Dialog.tsx';
 import { SchnellNebenaktion } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Knopf } from '../../ui/index.ts';
+import { EINGABE_STIL, Feld, Fehlermeldung, Knopf, Regler } from '../../ui/index.ts';
 
 const GEWICHT_SCHRITT = 10;
 
@@ -165,8 +165,7 @@ function GewichtGruppe({
             <div key={attribut.id} className="flex items-center gap-3">
               <Icon name={attribut.icon} className="size-4 shrink-0" style={{ color: attribut.farbe }} />
               <span className="min-w-0 flex-1 text-sm break-words">{attributName(attribut)}</span>
-              <input
-                type="range"
+              <Regler
                 min={0}
                 max={GRENZEN.vorlageGewichtMax}
                 step={GEWICHT_SCHRITT}
