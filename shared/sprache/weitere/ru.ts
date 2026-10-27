@@ -1,6 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "Sprache": "Язык",
+  "Fehlende Übersetzungen werden in allen sieben Sprachen erkannt.": "Недостающие переводы обнаруживаются на всех семи языках.",
   "Deutsch": "Deutsch",
   "English": "English",
   "Übersicht": "Обзор",

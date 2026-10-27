@@ -1,6 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "Sprache": "言語",
+  "Fehlende Übersetzungen werden in allen sieben Sprachen erkannt.": "7つの言語のすべてで、欠けている翻訳を検出します。",
   "Deutsch": "Deutsch",
   "English": "English",
   "Übersicht": "概要",

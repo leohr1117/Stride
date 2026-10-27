@@ -1,6 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "Sprache": "语言",
+  "Fehlende Übersetzungen werden in allen sieben Sprachen erkannt.": "会在全部七种语言里找出缺少的翻译。",
   "Deutsch": "Deutsch",
   "English": "English",
   "Übersicht": "总览",

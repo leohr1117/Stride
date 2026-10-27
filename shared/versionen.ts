@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.9.2',
+    seiten: 'Darstellung, Vorbilder',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: ['Fehlende Übersetzungen werden in allen sieben Sprachen erkannt.'],
+      },
+    ],
+  },
+  {
     version: '3.9.1',
     seiten: 'Übersicht, Charakter, Vorbilder, Mehr',
     behoben: 'Übersicht, Charakter, Vorbilder, Mehr',
