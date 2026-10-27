@@ -20,6 +20,7 @@ import {
   UEBUNGS_ARTEN,
   WIEDERHOLUNGEN_MINDEST,
 } from '../shared/spiel/training.ts';
+import { UEBERSICHT_KARTEN_IDS } from '../shared/spiel/uebersichtKarten.ts';
 import { VISION } from '../shared/spiel/xp.ts';
 
 z.config(z.locales.de());
@@ -307,6 +308,20 @@ export const statistikAbfrageSchema = z.object({
 });
 
 /** Alte Schlüssel `aufgaben` und `training` und andere Unbekannte fallen weg, der Rest der Änderung bleibt gültig. */
+function bekannteKarten(wert: unknown): unknown {
+  if (typeof wert !== 'object' || wert === null || Array.isArray(wert)) {
+    return wert;
+  }
+  const bekannt = new Set<string>(UEBERSICHT_KARTEN_IDS);
+  const kopie: Record<string, boolean> = {};
+  for (const [schluessel, eintrag] of Object.entries(wert)) {
+    if (bekannt.has(schluessel) && typeof eintrag === 'boolean') {
+      kopie[schluessel] = eintrag;
+    }
+  }
+  return kopie;
+}
+
 function bekannteFunktionen(wert: unknown): unknown {
   if (typeof wert !== 'object' || wert === null || Array.isArray(wert)) {
     return wert;
@@ -354,6 +369,7 @@ export const einstellungenAenderungSchema = z.object({
     .refine((wert) => istZeitzone(wert), 'Die Zeitzone ist ungültig.')
     .optional(),
   gewichtEinheit: z.enum(GEWICHT_EINHEITEN).optional(),
+  uebersichtKarten: z.preprocess(bekannteKarten, z.partialRecord(z.enum(UEBERSICHT_KARTEN_IDS), z.boolean())).optional(),
 });
 
 function istZeitzone(wert: string): boolean {

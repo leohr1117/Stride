@@ -2,14 +2,19 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
+import Fastify, { type FastifyInstance } from 'fastify';
+import { ZodError } from 'zod';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { AppFehler } from '../fehler.ts';
 import {
+  SITZUNG_COOKIE,
   abmeldeCookie,
   clientAdresse,
   istOeffentlicherZugang,
   leseSitzungsToken,
   sitzungsCookie,
   verbindungIstSicher,
+  zugangRouten,
 } from '../features/zugang/routen.ts';
 import {
   aenderePasswort,
@@ -71,6 +76,7 @@ function hatNamensindex(pfad: string): boolean {
 }
 
 beforeEach(() => {
+  delete process.env.ASCEND_ADMIN;
   datenbankNummer += 1;
   verwendeZugang(path.join(ordner, `${datenbankNummer}.db`));
   setzeSperrenZurueck();
@@ -111,12 +117,12 @@ describe('accounts', () => {
     legePasswortAn(PASSWORT);
     const token = oeffneSitzung();
     uebernimmAltesPasswort('Ada', 'app.db');
-    expect(zugangStatus(token)).toEqual({ modus: 'bereit', benutzername: 'Ada', rolle: 'inhaber' });
+    expect(zugangStatus(token)).toEqual({ modus: 'bereit', benutzername: 'Ada', rolle: 'inhaber', admin: false });
     expect(passwortStimmt(PASSWORT)).toBe(false);
     expect(benutzerPasswortStimmt('ada', PASSWORT)?.benutzername).toBe('Ada');
   });
 
-  it('vergibt jeden Namen nur einmal und lässt den eigenen jederzeit ändern', () => {
+  it('vergibt jeden Namen nur einmal', () => {
     const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
     expect(() => legeBenutzerAn({ benutzername: ' ada ', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/2.db' })).toThrow(
       'schon vergeben',
@@ -251,5 +257,126 @@ describe('cookie', () => {
     );
     expect(clientAdresse('127.0.0.1', { xForwardedFor: '1.1.1.1, 203.0.113.8' })).toBe('203.0.113.8');
     expect(clientAdresse('', {})).toBe('unbekannt');
+  });
+});
+
+function cookie(token: string): { cookie: string } {
+  return { cookie: `${SITZUNG_COOKIE}=${encodeURIComponent(token)}` };
+}
+
+async function mitRouten<T>(arbeit: (app: FastifyInstance) => Promise<T>): Promise<T> {
+  const app = Fastify({ logger: false });
+  app.setErrorHandler((fehler, _anfrage, antwort) => {
+    if (fehler instanceof ZodError) {
+      return antwort.status(400).send({ fehler: fehler.message });
+    }
+    if (fehler instanceof AppFehler) {
+      return antwort.status(fehler.statusCode).send({ fehler: fehler.message });
+    }
+    return antwort.status(500).send({ fehler: 'Interner Fehler. Details stehen im Server-Log.' });
+  });
+  await app.register(zugangRouten, { prefix: '/api' });
+  try {
+    return await arbeit(app);
+  } finally {
+    await app.close();
+  }
+}
+
+describe('admin', () => {
+  it('lässt einen angemeldeten Nutzer den eigenen Namen nicht ändern', async () => {
+    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const token = oeffneSitzung(new Date(), ada.id);
+    await mitRouten(async (app) => {
+      const antwort = await app.inject({
+        method: 'POST',
+        url: '/api/zugang/benutzername',
+        headers: cookie(token),
+        payload: { benutzername: 'Neu' },
+      });
+      expect(antwort.statusCode).toBe(403);
+      expect(antwort.json()).toEqual({ fehler: 'Nur der Admin ändert Benutzernamen.' });
+    });
+    expect(listeKonten().find((konto) => konto.id === ada.id)?.benutzername).toBe('Ada');
+  });
+
+  it('legt den ersten Benutzernamen weiter über die Anmeldung fest', async () => {
+    legePasswortAn(PASSWORT);
+    const token = oeffneSitzung();
+    await mitRouten(async (app) => {
+      const antwort = await app.inject({
+        method: 'POST',
+        url: '/api/zugang/benutzername',
+        headers: cookie(token),
+        payload: { benutzername: 'Ada' },
+      });
+      expect(antwort.statusCode).toBe(200);
+    });
+    expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada']);
+  });
+
+  it('verweigert die Admin-Route ohne Admin und ändert nichts', async () => {
+    process.env.ASCEND_ADMIN = 'Ada';
+    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
+    const bob = legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'welten/2.db' });
+    const token = oeffneSitzung(new Date(), bob.id);
+    await mitRouten(async (app) => {
+      const liste = await app.inject({ method: 'GET', url: '/api/zugang/admin/konten', headers: cookie(token) });
+      expect(liste.statusCode).toBe(403);
+      expect(liste.body).not.toContain('Ada');
+      const umbenennen = await app.inject({
+        method: 'POST',
+        url: `/api/zugang/admin/konten/${ada.id}/benutzername`,
+        headers: { ...cookie(token), 'content-type': 'application/json' },
+        payload: { benutzername: 'Carlo' },
+      });
+      expect(umbenennen.statusCode).toBe(403);
+      const ohne = await app.inject({ method: 'GET', url: '/api/zugang/admin/konten' });
+      expect(ohne.statusCode).toBe(401);
+    });
+    expect(listeKonten().find((konto) => konto.id === ada.id)?.benutzername).toBe('Ada');
+    expect(zugangStatus(token).admin).toBe(false);
+  });
+
+  it('ändert jeden Namen nur als Admin und lässt einen vergebenen Namen stehen', async () => {
+    process.env.ASCEND_ADMIN = 'ADA';
+    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
+    const bob = legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/3.db' });
+    const token = oeffneSitzung(new Date(), ada.id);
+    expect(zugangStatus(token).admin).toBe(true);
+    await mitRouten(async (app) => {
+      const kopf = { ...cookie(token), 'content-type': 'application/json' };
+      const selbst = await app.inject({
+        method: 'POST',
+        url: '/api/zugang/benutzername',
+        headers: kopf,
+        payload: { benutzername: 'Anders' },
+      });
+      expect(selbst.statusCode).toBe(403);
+      const vergeben = await app.inject({
+        method: 'POST',
+        url: `/api/zugang/admin/konten/${bob.id}/benutzername`,
+        headers: kopf,
+        payload: { benutzername: ' ada ' },
+      });
+      expect(vergeben.statusCode).toBe(400);
+      expect(vergeben.json()).toEqual({ fehler: 'Der Benutzername ist schon vergeben.' });
+      const ok = await app.inject({
+        method: 'POST',
+        url: `/api/zugang/admin/konten/${bob.id}/benutzername`,
+        headers: kopf,
+        payload: { benutzername: 'Berta' },
+      });
+      expect(ok.statusCode).toBe(200);
+      expect(ok.json()).toEqual({ id: bob.id, benutzername: 'Berta' });
+      const liste = await app.inject({ method: 'GET', url: '/api/zugang/admin/konten', headers: cookie(token) });
+      expect(liste.statusCode).toBe(200);
+      expect(liste.json()).toEqual([
+        { id: ada.id, benutzername: 'Ada' },
+        { id: bob.id, benutzername: 'Berta' },
+      ]);
+    });
+    expect(listeKonten().find((konto) => konto.id === ada.id)?.benutzername).toBe('Ada');
+    expect(listeKonten().find((konto) => konto.id === bob.id)?.benutzername).toBe('Berta');
   });
 });

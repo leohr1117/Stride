@@ -1,5 +1,14 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.": "「その他」で、概要に表示するカードを選べます。非表示のカードは消え、セクションはオンのままです。",
+  "Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.": "ここで、概要に表示するカードを決めます。セクションは「アプリとつながり」でオンにします。",
+  "Bereich für {name}": "{name}のセクション",
+  "Bereich": "セクション",
+  "Benutzernamen ändert nur der Admin. Der eigene Name wird angezeigt und bleibt eindeutig.": "ユーザー名を変更できるのは管理者だけです。自分の名前は表示され、一意のままです。",
+  "Den Benutzernamen ändert der Admin.": "ユーザー名は管理者が変更します。",
+  "Benutzernamen": "ユーザー名一覧",
+  "Jeder Name ist nur einmal vergeben. Ist er schon vergeben, bleibt der bisherige.": "各名前は一度だけ使われます。すでに使われている場合は、今の名前のままです。",
+  "Nur der Admin ändert Benutzernamen.": "ユーザー名を変更できるのは管理者だけです。",
   "Neu unter Mehr: Übersicht. Die Seite listet die Karten der Übersicht und wann sie erscheinen.": "「その他」に「概要」を追加。ページには概要のカードと、表示される条件が並びます。",
   "Karten": "カード",
   "Benachrichtigungen": "通知",

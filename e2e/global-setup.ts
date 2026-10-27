@@ -89,6 +89,7 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
     env: {
       ...process.env,
       ASCEND_TEST: '1',
+      ASCEND_ADMIN: 'testvoll',
       PORT: String(TEST_PORT),
       DB_PFAD: TEST_APP,
       ZUGANG_PFAD: TEST_ZUGANG,

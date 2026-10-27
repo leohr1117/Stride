@@ -1,9 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState, type FormEvent } from 'react';
 import { FOKUS_PFLICHT, type FokusId } from '../../../../shared/spiel/profil.ts';
-import { api, SCHLUESSEL } from '../../api/index.ts';
+import { api } from '../../api/index.ts';
 import { FokusWahl } from '../../components/ProfilErstellung.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
+import { Fehlermeldung, Formular, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
 import { FormularSeite, PROFIL_ZURUECK, useEinstellungen } from './rahmen.tsx';
 
@@ -51,63 +51,6 @@ export function FokusSeite() {
             {tx("Speichern")}
           </Knopf>
           <Fehlermeldung fehler={speichern.error} />
-        </Formular>
-      }
-    />
-  );
-}
-
-export function BenutzerSeite() {
-  const queryClient = useQueryClient();
-  const { data: zugang } = useQuery({ queryKey: SCHLUESSEL.zugang, queryFn: api.zugang });
-  const [benutzername, setBenutzername] = useState('');
-  const [fehler, setFehler] = useState<unknown>(null);
-  useEffect(() => {
-    if (zugang?.benutzername) {
-      setBenutzername(zugang.benutzername);
-    }
-  }, [zugang?.benutzername]);
-  const speichern = useMutation({
-    mutationFn: () => api.setzeBenutzername(benutzername.trim()),
-    onSuccess: (status) => {
-      queryClient.setQueryData(SCHLUESSEL.zugang, status);
-      setFehler(null);
-      void queryClient.invalidateQueries({ queryKey: SCHLUESSEL.konten });
-    },
-    onError: setFehler,
-  });
-  return (
-    <FormularSeite
-      titel={tx("Benutzername")}
-      zurueck={PROFIL_ZURUECK}
-      kinder={
-        <Formular
-          onAbsenden={(ereignis) => {
-            ereignis.preventDefault();
-            speichern.mutate();
-          }}
-        >
-          <Feld label={tx("Benutzername")}>
-            <input
-              className={EINGABE_STIL}
-              name="username"
-              autoComplete="username"
-              autoCapitalize="none"
-              autoCorrect="off"
-              spellCheck={false}
-              value={benutzername}
-              onChange={(ereignis) => setBenutzername(ereignis.target.value)}
-            />
-          </Feld>
-          <Knopf
-            type="submit"
-            variante="primaer"
-            className="w-full"
-            disabled={speichern.isPending || benutzername.trim() === '' || benutzername.trim() === zugang?.benutzername}
-          >
-            {tx("Speichern")}
-          </Knopf>
-          <Fehlermeldung fehler={fehler ?? speichern.error} />
         </Formular>
       }
     />

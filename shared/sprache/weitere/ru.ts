@@ -1,5 +1,14 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.": "В разделе «Ещё» можно выбрать, какие карточки показывает обзор. Скрытые карточки исчезают. Раздел остаётся включённым.",
+  "Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.": "Здесь выбирается, какие карточки показывает обзор. Раздел включается в «Приложение и связи».",
+  "Bereich für {name}": "Раздел для {name}",
+  "Bereich": "Раздел",
+  "Benutzernamen ändert nur der Admin. Der eigene Name wird angezeigt und bleibt eindeutig.": "Имена пользователей меняет только администратор. Своё имя видно, и оно остаётся уникальным.",
+  "Den Benutzernamen ändert der Admin.": "Имя пользователя меняет администратор.",
+  "Benutzernamen": "Имена пользователей",
+  "Jeder Name ist nur einmal vergeben. Ist er schon vergeben, bleibt der bisherige.": "Каждое имя используется только один раз. Если оно занято, остаётся прежнее.",
+  "Nur der Admin ändert Benutzernamen.": "Имена пользователей меняет только администратор.",
   "Neu unter Mehr: Übersicht. Die Seite listet die Karten der Übersicht und wann sie erscheinen.": "Новое в «Ещё»: Обзор. Страница перечисляет карточки обзора и когда они появляются.",
   "Karten": "Карточки",
   "Benachrichtigungen": "Уведомления",

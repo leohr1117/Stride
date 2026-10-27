@@ -1,5 +1,14 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.": "Dans Plus, vous choisissez quelles cartes l'aperçu affiche. Les cartes masquées disparaissent. La section reste activée.",
+  "Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.": "Ici, vous choisissez quelles cartes l'aperçu affiche. La section s'active sous App et connexions.",
+  "Bereich für {name}": "Section pour {name}",
+  "Bereich": "Section",
+  "Benutzernamen ändert nur der Admin. Der eigene Name wird angezeigt und bleibt eindeutig.": "Seul l'administrateur change les noms d'utilisateur. Le nom personnel s'affiche et reste unique.",
+  "Den Benutzernamen ändert der Admin.": "L'administrateur change le nom d'utilisateur.",
+  "Benutzernamen": "Noms d'utilisateur",
+  "Jeder Name ist nur einmal vergeben. Ist er schon vergeben, bleibt der bisherige.": "Chaque nom n'est attribué qu'une fois. S'il est déjà pris, le nom actuel reste.",
+  "Nur der Admin ändert Benutzernamen.": "Seul l'administrateur change les noms d'utilisateur.",
   "Neu unter Mehr: Übersicht. Die Seite listet die Karten der Übersicht und wann sie erscheinen.": "Nouveau dans Plus : Aperçu. La page liste les cartes de l'aperçu et quand elles apparaissent.",
   "Karten": "Cartes",
   "Benachrichtigungen": "Notifications",

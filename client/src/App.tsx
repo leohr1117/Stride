@@ -76,6 +76,8 @@ const router = createBrowserRouter([
       { path: 'training/*', element: <Navigate to="/" replace /> },
       { path: 'mehr', element: <MehrSeite /> },
       { path: 'mehr/profil', element: <MehrProfilSeite /> },
+      { path: 'mehr/profil/benutzernamen/:kontoId', element: <MehrProfilSeite /> },
+      { path: 'mehr/profil/benutzernamen', element: <MehrProfilSeite /> },
       { path: 'mehr/profil/:teil', element: <MehrProfilSeite /> },
       { path: 'mehr/inhalte', element: <MehrInhalteSeite /> },
       { path: 'mehr/inhalte/:teil', element: <MehrInhalteSeite /> },

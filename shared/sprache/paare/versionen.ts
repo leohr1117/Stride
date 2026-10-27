@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.', 'Under More, you choose which cards the overview shows. Hidden cards disappear. The section stays on.'],
+  ['Benutzernamen ändert nur der Admin. Der eigene Name wird angezeigt und bleibt eindeutig.', 'Only the admin changes usernames. Your own name is shown and stays unique.'],
   ['Neu unter Mehr: Übersicht. Die Seite listet die Karten der Übersicht und wann sie erscheinen.', 'New under More: Overview. The page lists the overview cards and when they appear.'],
   ['Jeder Benutzername ist nur einmal vergeben. Du kannst ihn jederzeit ändern. Ist er schon vergeben, bleibt der bisherige.', 'Each username is used only once. You can change it at any time. If it is already taken, the current name stays.'],
   ['Bei der Todoist-Zuordnung steht über jedem Feld, wofür es gilt. Die Zuordnung am Anfang entfällt.', 'On the Todoist mapping, each field says what it is for. The mapping at the start is gone.'],

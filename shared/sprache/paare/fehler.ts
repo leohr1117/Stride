@@ -5,6 +5,7 @@ export const PAARE = [
   ['Anmeldung fehlgeschlagen.', 'Sign-in failed.'],
   ['Der Benutzername fehlt.', 'The username is missing.'],
   ['Das Passwort ist falsch.', 'The password is wrong.'],
+  ['Nur der Admin ändert Benutzernamen.', 'Only the admin changes usernames.'],
   ['Nur der Inhaber sieht die Accounts.', 'Only the owner can see the accounts.'],
   ['Nur der Inhaber legt Accounts an.', 'Only the owner can create accounts.'],
   ['Nur der Inhaber entfernt Accounts.', 'Only the owner can remove accounts.'],

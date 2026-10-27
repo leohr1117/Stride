@@ -30,19 +30,20 @@ test('Einstellungen zeigen die Übersicht und lassen Benachrichtigungen frei', a
   await expect(inhalt.locator('h1')).toHaveText('Übersicht');
   await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr');
   await expect(inhalt.getByRole('link', { name: 'Identität', exact: true })).toHaveCount(0);
-  await expect(inhalt.getByText('Identität', { exact: true })).toBeVisible();
+  await expect(inhalt.getByRole('switch', { name: 'Identität', exact: true })).toBeChecked();
   await expect(inhalt.getByText('Immer', { exact: true }).first()).toBeVisible();
-  await expect(inhalt.getByRole('link', { name: 'Bosse', exact: true })).toHaveAttribute('href', '/mehr/funktionen#funktion-bossAngriffe');
-  await expect(inhalt.getByRole('link', { name: 'Zurück aufstehen', exact: true })).toHaveAttribute('href', '/mehr/funktionen#ziel-stufen');
-  await expect(inhalt.getByRole('link', { name: 'Basis', exact: true })).toHaveAttribute('href', '/mehr/funktionen#funktion-basis');
-  await expect(inhalt.getByRole('link', { name: 'Werte', exact: true })).toHaveAttribute('href', '/mehr/funktionen#funktion-koennen');
+  await expect(inhalt.getByRole('link', { name: 'Bereich für Bosse', exact: true })).toHaveAttribute('href', '/mehr/funktionen#funktion-bossAngriffe');
+  await expect(inhalt.getByRole('link', { name: 'Bereich für Zurück aufstehen', exact: true })).toHaveAttribute('href', '/mehr/funktionen#ziel-stufen');
+  await expect(inhalt.getByRole('link', { name: 'Bereich für Basis', exact: true })).toHaveAttribute('href', '/mehr/funktionen#funktion-basis');
+  await expect(inhalt.getByRole('link', { name: 'Bereich für Werte', exact: true })).toHaveAttribute('href', '/mehr/funktionen#funktion-koennen');
+  await expect(inhalt.getByRole('switch', { name: 'Aktivität', exact: true })).toBeChecked();
   await expect(inhalt.getByRole('link', { name: 'Aktivität', exact: true })).toHaveCount(0);
 
   const info = inhalt.getByRole('button', { name: 'Info' }).first();
   await info.click();
   const hinweis = page.getByRole('tooltip');
   await expect(hinweis).toBeVisible();
-  await expect(hinweis).toHaveText('Jede Karte folgt dem Bereich, der sie einschaltet. Identität und Aktivität bleiben.');
+  await expect(hinweis).toHaveText('Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.');
   const kasten = await hinweis.boundingBox();
   const fenster = page.viewportSize();
   expect(kasten).not.toBeNull();
@@ -58,7 +59,7 @@ test('Einstellungen zeigen die Übersicht und lassen Benachrichtigungen frei', a
 
   await page.keyboard.press('Escape');
   await expect(hinweis).toHaveCount(0);
-  await inhalt.getByRole('link', { name: 'Bosse', exact: true }).click();
+  await inhalt.getByRole('link', { name: 'Bereich für Bosse', exact: true }).click();
   await expect(page).toHaveURL(/\/mehr\/funktionen#funktion-bossAngriffe$/);
   await expect(page.locator('#funktion-bossAngriffe')).toBeInViewport();
   await expect(page.locator('#funktion-bossAngriffe').getByRole('switch', { name: 'Bosse' })).toBeVisible();

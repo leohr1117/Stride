@@ -1,4 +1,4 @@
-import type { Konto, ZugangStatus } from '../../../shared/api/zugang.ts';
+import type { AdminKonto, Konto, ZugangStatus } from '../../../shared/api/zugang.ts';
 import { anfrage } from './kern.ts';
 
 export const zugangApi = {
@@ -11,9 +11,13 @@ export const zugangApi = {
   erstelleKonto: (daten: { benutzername: string; passwort: string; profilname?: string }) =>
     anfrage<Konto>('/zugang/konten', 'POST', daten),
   loescheKonto: (id: number) => anfrage<void>(`/zugang/konten/${id}`, 'DELETE'),
+  adminKonten: () => anfrage<AdminKonto[]>('/zugang/admin/konten'),
+  aendereAdminBenutzername: (id: number, benutzername: string) =>
+    anfrage<AdminKonto>(`/zugang/admin/konten/${id}/benutzername`, 'POST', { benutzername }),
 };
 
 export const zugangSchluessel = {
   zugang: ['zugang'],
   konten: ['konten'],
+  adminKonten: ['admin-konten'],
 } as const;

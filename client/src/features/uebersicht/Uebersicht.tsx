@@ -29,8 +29,9 @@ import {
 } from '../../ui/index.ts';
 
 import { ausTagesSchluessel, faktorText, kurzesDatum, monatKurz, zahl } from '../../format.ts';
-import { useSichtbarkeit } from '../../funktionen.ts';
+import { useSichtbarkeit, useUebersichtKarten } from '../../funktionen.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
+import { karteGewaehlt } from '../../../../shared/spiel/uebersichtKarten.ts';
 
 const HEATMAP_STUFEN = [0.25, 0.5, 0.75, 1];
 const WOCHENTAG_LABEL = ['Mo', '', 'Mi', '', 'Fr', '', ''];
@@ -38,6 +39,7 @@ const WOCHENTAG_LABEL = ['Mo', '', 'Mi', '', 'Fr', '', ''];
 export function UebersichtSeite() {
   const { data: uebersicht, error, isPending } = useQuery({ queryKey: SCHLUESSEL.uebersicht, queryFn: api.uebersicht });
   const sichtbarkeit = useSichtbarkeit();
+  const karten = useUebersichtKarten();
   const funktionen = sichtbarkeit.funktionen;
 
   if (isPending) {
@@ -56,6 +58,7 @@ export function UebersichtSeite() {
 
   return (
     <div className="space-y-6">
+      {karteGewaehlt('identitaet', karten) && (
       <Karte className="flex flex-col gap-5 sm:flex-row sm:items-center">
         <div className="flex items-center gap-5">
           <LevelRing level={uebersicht.level.level} anteil={uebersicht.level.fortschritt} />
@@ -89,6 +92,7 @@ export function UebersichtSeite() {
           </div>
         </div>
       </Karte>
+      )}
 
       {uebersicht.level.xpGesamt === 0 && istAn('handbuch', sichtbarkeit) && (
         <Karte className="flex flex-wrap items-center justify-between gap-3">
@@ -105,17 +109,17 @@ export function UebersichtSeite() {
         </Karte>
       )}
 
-      {istAn('bossAngriffe', sichtbarkeit) && uebersicht.angriffe.length > 0 && (
+      {karteGewaehlt('bosse', karten) && istAn('bossAngriffe', sichtbarkeit) && uebersicht.angriffe.length > 0 && (
         <Angriffe bosse={uebersicht.angriffe} projekteAn={istAn('projekte', sichtbarkeit)} />
       )}
 
-      {istAn('vorhaben', sichtbarkeit) && uebersicht.comebacks.length > 0 && (
+      {karteGewaehlt('comeback', karten) && istAn('vorhaben', sichtbarkeit) && uebersicht.comebacks.length > 0 && (
         <Comebacks comebacks={uebersicht.comebacks} projekteAn={istAn('projekte', sichtbarkeit)} />
       )}
 
-      {funktionen.basis && <BasisKarte />}
+      {karteGewaehlt('basis', karten) && funktionen.basis && <BasisKarte />}
 
-      {(funktionen.koennen || funktionen.status) && (
+      {karteGewaehlt('werte', karten) && (funktionen.koennen || funktionen.status) && (
         <Abschnitt titel={tx("Werte")} kennung="uebersicht-werte" anfangEingeklappt>
           <div className="grid gap-4 md:grid-cols-2">
             {funktionen.koennen && (
@@ -128,11 +132,13 @@ export function UebersichtSeite() {
         </Abschnitt>
       )}
 
+      {karteGewaehlt('aktivitaet', karten) && (
       <Abschnitt titel={tx("Aktivität")} kennung="uebersicht-aktivitaet" anfangEingeklappt>
         <Karte>
           <Heatmap tage={uebersicht.heatmap} />
         </Karte>
       </Abschnitt>
+      )}
     </div>
   );
 }

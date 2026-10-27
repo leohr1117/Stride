@@ -7,9 +7,11 @@ import {
   benenneBenutzer,
   benutzerPasswortStimmt,
   hatKeinKonto,
+  istAdminName,
   istGesperrt,
   kontenSichtbar,
   legeBenutzerAn,
+  listeKonten,
   merkeFehlversuch,
   oeffneSitzung,
   passwortDerSitzungStimmt,
@@ -118,6 +120,16 @@ function setzeSitzung(anfrage: FastifyRequest, antwort: FastifyReply, token: str
   antwort.header('set-cookie', sitzungsCookie(token, sicherVon(anfrage)));
 }
 
+function fordereAdmin(token: string | undefined): void {
+  const selbst = sitzungsBenutzer(token);
+  if (!selbst) {
+    throw new AppFehler(401, 'Anmeldung erforderlich.');
+  }
+  if (!istAdminName(selbst.benutzername)) {
+    throw new AppFehler(403, 'Nur der Admin ändert Benutzernamen.');
+  }
+}
+
 export async function zugangRouten(app: FastifyInstance): Promise<void> {
   app.get('/zugang', async (anfrage) => zugangStatus(leseSitzungsToken(anfrage.headers.cookie)));
 
@@ -188,20 +200,33 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
 
   app.post('/zugang/benutzername', async (anfrage) => {
     const token = leseSitzungsToken(anfrage.headers.cookie);
-    if (!token || zugangStatus(token).modus === 'anmelden' || zugangStatus(token).modus === 'passwort' || zugangStatus(token).modus === 'einrichten') {
+    const status = token ? zugangStatus(token) : null;
+    if (!token || !status || status.modus === 'anmelden' || status.modus === 'passwort' || status.modus === 'einrichten') {
       throw new AppFehler(401, 'Anmeldung erforderlich.');
     }
     const { benutzername } = benutzernameSchema.parse(anfrage.body);
-    if (zugangStatus(token).modus === 'benutzername') {
+    if (status.modus === 'benutzername') {
       uebernimmAltesPasswort(benutzername, hauptweltdatei());
       return zugangStatus(token);
     }
-    const selbst = sitzungsBenutzer(token);
-    if (!selbst) {
-      throw new AppFehler(401, 'Anmeldung erforderlich.');
+    throw new AppFehler(403, 'Nur der Admin ändert Benutzernamen.');
+  });
+
+  app.get('/zugang/admin/konten', async (anfrage) => {
+    fordereAdmin(leseSitzungsToken(anfrage.headers.cookie));
+    return listeKonten().map(({ id, benutzername }) => ({ id, benutzername }));
+  });
+
+  app.post('/zugang/admin/konten/:id/benutzername', async (anfrage) => {
+    fordereAdmin(leseSitzungsToken(anfrage.headers.cookie));
+    const { id } = idParameter.parse(anfrage.params);
+    const { benutzername } = benutzernameSchema.parse(anfrage.body);
+    benenneBenutzer(id, benutzername);
+    const konto = listeKonten().find((eintrag) => eintrag.id === id);
+    if (!konto) {
+      throw new AppFehler(404, 'Der Account existiert nicht.');
     }
-    benenneBenutzer(selbst.id, benutzername);
-    return zugangStatus(token);
+    return { id: konto.id, benutzername: konto.benutzername };
   });
 
   app.get('/zugang/konten', async (anfrage) => {

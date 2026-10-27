@@ -1,5 +1,14 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.": "En Más eliges qué tarjetas muestra el resumen. Las tarjetas ocultas desaparecen. La sección sigue activa.",
+  "Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.": "Aquí eliges qué tarjetas muestra el resumen. La sección se activa en App y conexiones.",
+  "Bereich für {name}": "Sección para {name}",
+  "Bereich": "Sección",
+  "Benutzernamen ändert nur der Admin. Der eigene Name wird angezeigt und bleibt eindeutig.": "Solo el administrador cambia los nombres de usuario. El nombre propio se muestra y sigue siendo único.",
+  "Den Benutzernamen ändert der Admin.": "El administrador cambia el nombre de usuario.",
+  "Benutzernamen": "Nombres de usuario",
+  "Jeder Name ist nur einmal vergeben. Ist er schon vergeben, bleibt der bisherige.": "Cada nombre se usa solo una vez. Si ya está ocupado, se queda el actual.",
+  "Nur der Admin ändert Benutzernamen.": "Solo el administrador cambia los nombres de usuario.",
   "Neu unter Mehr: Übersicht. Die Seite listet die Karten der Übersicht und wann sie erscheinen.": "Nuevo en Más: Resumen. La página lista las tarjetas del resumen y cuándo aparecen.",
   "Karten": "Tarjetas",
   "Benachrichtigungen": "Avisos",

@@ -267,6 +267,15 @@ function nameNorm(benutzername: string): string {
   return benutzername.trim().toLocaleLowerCase('de-DE');
 }
 
+/** Admin ist der Benutzername aus ASCEND_ADMIN. Keine Rolle, kein Passwort im Code. */
+export function istAdminName(benutzername: string | null | undefined): boolean {
+  const erwartet = (process.env.ASCEND_ADMIN ?? '').trim();
+  if (erwartet.length === 0 || !benutzername) {
+    return false;
+  }
+  return nameNorm(erwartet) === nameNorm(benutzername);
+}
+
 function nameVergeben(benutzername: string, ausserId?: number): boolean {
   const zeile =
     ausserId === undefined
@@ -560,20 +569,26 @@ export function zugangStatus(token: string | undefined, jetzt = new Date()): Zug
   const sitzung = leseSitzung(token, jetzt);
   const benutzer = sitzung?.benutzerId ? holeBenutzer(sitzung.benutzerId) : undefined;
   if (benutzer) {
-    return { modus: 'bereit', benutzername: benutzer.benutzername, rolle: benutzer.rolle };
+    return {
+      modus: 'bereit',
+      benutzername: benutzer.benutzername,
+      rolle: benutzer.rolle,
+      admin: istAdminName(benutzer.benutzername),
+    };
   }
   const hatBenutzer = anzahlBenutzer() > 0;
   const hatPasswort = hatAltesPasswort();
+  const ohneAdmin = { benutzername: null, rolle: null, admin: false } as const;
   if (sitzung && hatPasswort && !hatBenutzer) {
-    return { modus: 'benutzername', benutzername: null, rolle: null };
+    return { modus: 'benutzername', ...ohneAdmin };
   }
   if (!hatPasswort && !hatBenutzer) {
-    return { modus: 'einrichten', benutzername: null, rolle: null };
+    return { modus: 'einrichten', ...ohneAdmin };
   }
   if (hatPasswort && !hatBenutzer) {
-    return { modus: 'passwort', benutzername: null, rolle: null };
+    return { modus: 'passwort', ...ohneAdmin };
   }
-  return { modus: 'anmelden', benutzername: null, rolle: null };
+  return { modus: 'anmelden', ...ohneAdmin };
 }
 
 function holeSperre(schluessel: string, jetzt: number): Sperre {

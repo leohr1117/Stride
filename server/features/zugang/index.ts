@@ -17,6 +17,7 @@ export {
   setzeWeltdatei,
   loescheBenutzer,
   benenneBenutzer,
+  istAdminName,
   uebernimmAltesPasswort,
   benutzerPasswortStimmt,
   passwortDerSitzungStimmt,

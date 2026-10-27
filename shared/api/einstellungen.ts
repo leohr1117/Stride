@@ -5,6 +5,7 @@ import type { Funktionen } from '../spiel/funktionen.ts';
 import type { FokusId, Zielstrebigkeit } from '../spiel/profil.ts';
 import type { FunktionsAttribute } from '../spiel/sichtbarkeit.ts';
 import type { GewichtEinheit } from '../spiel/training.ts';
+import type { UebersichtKartenWahl } from '../spiel/uebersichtKarten.ts';
 import type { Sprache } from '../sprache/kern.ts';
 
 export interface Einstellungen {
@@ -35,6 +36,8 @@ export interface Einstellungen {
   /** IANA-Zone des Geräts. Null, bis der Client sie meldet. */
   zeitzone: string | null;
   gewichtEinheit: GewichtEinheit;
+  /** Welche Karten die Übersicht zeigt. Ein fehlender Eintrag gilt als an. */
+  uebersichtKarten: UebersichtKartenWahl;
 }
 
 /** PATCH-Körper. `farbenZuruecksetzen` löscht die eigenen Farben der Zielansicht. */

@@ -37,6 +37,7 @@ import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
 import { istWeltLeer, wendeFokusAn } from '../../services/profilStart.ts';
 import { istGewichtEinheit, STANDARD_GEWICHT_EINHEIT, type GewichtEinheit } from '../../../shared/spiel/training.ts';
+import { kartenWahl, type UebersichtKartenWahl } from '../../../shared/spiel/uebersichtKarten.ts';
 
 interface Grundeinstellungen {
   charakterName: string;
@@ -72,6 +73,7 @@ const STANDARD: Grundeinstellungen = {
 
 const FUNKTIONEN_SCHLUESSEL = 'funktionen';
 const ANSICHT_FARBEN = 'ansichtFarben';
+const UEBERSICHT_KARTEN_SCHLUESSEL = 'uebersichtKarten';
 
 function istGleicherTyp<T>(wert: unknown, vorlage: T): wert is T {
   return typeof wert === typeof vorlage;
@@ -207,6 +209,10 @@ function leseFunktionen(roh: string | undefined): Funktionen {
   return funktionenAusSpeicher(parse(roh));
 }
 
+function leseUebersichtKarten(roh: string | undefined): UebersichtKartenWahl {
+  return kartenWahl(parse(roh));
+}
+
 function funktionsAttribute(funktionen: Funktionen): FunktionsAttribute {
   const attribute: FunktionsAttribute = { disziplin: false, ressourcen: false };
   const zeilen = alle<{ kennung: string; typ: AttributTyp }>(
@@ -260,6 +266,7 @@ export function ladeEinstellungen(): Einstellungen {
     sprache: leseSprache(gespeichert.get('sprache')),
     zeitzone: leseZone(gespeichert.get('zeitzone')),
     gewichtEinheit: leseGewichtEinheit(gespeichert.get('gewicht_einheit')),
+    uebersichtKarten: leseUebersichtKarten(gespeichert.get(UEBERSICHT_KARTEN_SCHLUESSEL)),
   };
 }
 
@@ -332,6 +339,7 @@ export function aendereEinstellungen(
     sprache?: Sprache;
     zeitzone?: string;
     gewichtEinheit?: GewichtEinheit;
+    uebersichtKarten?: Partial<UebersichtKartenWahl>;
     farbenZuruecksetzen?: boolean;
   },
 ): Einstellungen {
@@ -434,6 +442,12 @@ export function aendereEinstellungen(
     }
     if (aenderung.gewichtEinheit !== undefined) {
       speichere('gewicht_einheit', aenderung.gewichtEinheit);
+    }
+    if (aenderung.uebersichtKarten !== undefined) {
+      speichere(
+        UEBERSICHT_KARTEN_SCHLUESSEL,
+        kartenWahl({ ...bisher.uebersichtKarten, ...aenderung.uebersichtKarten }),
+      );
     }
   });
   return ladeEinstellungen();

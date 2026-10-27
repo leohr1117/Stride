@@ -17,6 +17,30 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.12.0',
+    seiten: 'Mehr, Übersicht',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.',
+        ],
+      },
+    ],
+  },
+  {
+    version: '3.11.1',
+    seiten: 'Profil',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Benutzernamen ändert nur der Admin. Der eigene Name wird angezeigt und bleibt eindeutig.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.11.0',
     seiten: 'Mehr, Übersicht',
     abschnitte: [

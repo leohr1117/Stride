@@ -1,5 +1,14 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Mehr wählst du, welche Karten die Übersicht zeigt. Ausgeblendete Karten verschwinden. Der Bereich bleibt eingeschaltet.": "在「更多」中可以选择总览显示哪些卡片。隐藏的卡片会消失。区域保持开启。",
+  "Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.": "在这里选择总览显示哪些卡片。区域在“应用与关联”中开启。",
+  "Bereich für {name}": "{name}的区域",
+  "Bereich": "区域",
+  "Benutzernamen ändert nur der Admin. Der eigene Name wird angezeigt und bleibt eindeutig.": "只有管理员可以更改用户名。自己的名字会显示，并且保持唯一。",
+  "Den Benutzernamen ändert der Admin.": "用户名由管理员更改。",
+  "Benutzernamen": "所有用户名",
+  "Jeder Name ist nur einmal vergeben. Ist er schon vergeben, bleibt der bisherige.": "每个名字只能使用一次。如果已被占用，则保留当前名字。",
+  "Nur der Admin ändert Benutzernamen.": "只有管理员可以更改用户名。",
   "Neu unter Mehr: Übersicht. Die Seite listet die Karten der Übersicht und wann sie erscheinen.": "「更多」中新增「总览」。这一页列出总览的卡片以及它们何时出现。",
   "Karten": "卡片",
   "Benachrichtigungen": "通知",

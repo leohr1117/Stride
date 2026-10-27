@@ -1,5 +1,11 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.', 'Choose here which cards the overview shows. Turn the section on under App & connections.'],
+  ['Bereich für {name}', 'Section for {name}'],
+  ['Bereich', 'Section'],
+  ['Benutzernamen', 'Usernames'],
+  ['Den Benutzernamen ändert der Admin.', 'The admin changes the username.'],
+  ['Jeder Name ist nur einmal vergeben. Ist er schon vergeben, bleibt der bisherige.', 'Each name is used only once. If it is already taken, the current name stays.'],
   ['angeknackst', 'cracked'],
   ['archiviert', 'archived'],
   ['Geist', 'Mind'],

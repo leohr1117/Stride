@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check } from 'lucide-react';
 import { useState } from 'react';
-import { Navigate, useParams } from 'react-router';
+import { Navigate, useLocation, useParams } from 'react-router';
 import type { ErfolgStufe, Erfolge } from '../../../../shared/api/index.ts';
 import { EBENEN, ZIEL_MARKE, type Ebenen } from '../../../../shared/spiel/ebenen.ts';
 import { FOKUS_LISTE, ZIEL_FRAGE, ZIELSTREBIGKEIT_INFO, type FokusId } from '../../../../shared/spiel/profil.ts';
@@ -12,7 +12,8 @@ import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
 import { AccountsBereich } from './MehrAccounts.tsx';
-import { BenutzerSeite, FokusSeite, PasswortSeite } from './MehrProfilZugang.tsx';
+import { BenutzerAdminBearbeiten, BenutzerAdminListe } from './MehrBenutzerAdmin.tsx';
+import { FokusSeite, PasswortSeite } from './MehrProfilZugang.tsx';
 import { JahrSeite, NameSeite, ZielSeite } from './MehrProfilName.tsx';
 import { Bereich, FormularSeite, PROFIL_HASH, PROFIL_ZURUECK, useEinstellungen, useHashWeiter } from './rahmen.tsx';
 
@@ -109,8 +110,15 @@ function ProfilListe() {
           </ZeilenGruppe>
           <ZeilenGruppe titel={tx("Anmeldung")}>
             {zugang?.benutzername ? (
-              <Zeile titel={tx("Benutzername")} wert={zugang.benutzername} nach="/mehr/profil/benutzer" />
+              <Zeile
+                id="profil-benutzername"
+                titel={tx("Benutzername")}
+                wert={zugang.benutzername}
+                pfeil={false}
+                info="Den Benutzernamen ändert der Admin."
+              />
             ) : null}
+            {zugang?.admin ? <Zeile titel={tx("Benutzernamen")} nach="/mehr/profil/benutzernamen" /> : null}
             <Zeile titel={tx("Passwort")} nach="/mehr/profil/passwort" />
             <Zeile titel={tx("Abmelden")} gefahr pfeil={false} onKlick={() => void abmelden()} />
           </ZeilenGruppe>
@@ -185,8 +193,15 @@ function TitelSeite() {
 }
 
 export function MehrProfilSeite() {
-  const { teil } = useParams();
+  const { teil, kontoId } = useParams();
+  const { pathname } = useLocation();
   useHashWeiter(PROFIL_HASH);
+  if (pathname.startsWith('/mehr/profil/benutzernamen/')) {
+    return <BenutzerAdminBearbeiten kontoId={kontoId ?? pathname.split('/').pop() ?? ''} />;
+  }
+  if (teil === 'benutzernamen' || pathname === '/mehr/profil/benutzernamen') {
+    return <BenutzerAdminListe />;
+  }
   if (teil === 'name') {
     return <NameSeite />;
   }
@@ -206,7 +221,7 @@ export function MehrProfilSeite() {
     return <Navigate to="/mehr/funktionen#ziel-stufen" replace />;
   }
   if (teil === 'benutzer') {
-    return <BenutzerSeite />;
+    return <Navigate to="/mehr/profil" replace />;
   }
   if (teil === 'passwort') {
     return <PasswortSeite />;

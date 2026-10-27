@@ -14,6 +14,7 @@ const UMLENKUNGEN = new Set([
   '/verbindungen',
   '/mehr/inhalte/taetigkeiten',
   '/mehr/profil/stufen',
+  '/mehr/profil/benutzer',
   '/mehr/darstellung/ansicht',
 ]);
 
@@ -40,6 +41,7 @@ const PROFIL_TEIL: Record<string, string> = {
   fokus: 'Fokus',
   stufen: 'Ziel-Stufen',
   benutzer: 'Benutzername',
+  benutzernamen: 'Benutzernamen',
   passwort: 'Passwort',
   accounts: 'Accounts',
 };
@@ -127,6 +129,9 @@ export function elternZiel(pfad: string, weg?: TrainingRueckweg | null): Zurueck
   if (pfad === '/mehr/profil') {
     return { pfad: '/mehr', label: 'Mehr' };
   }
+  if (/^\/mehr\/profil\/benutzernamen\/[^/]+$/.test(pfad)) {
+    return { pfad: '/mehr/profil/benutzernamen', label: 'Benutzernamen' };
+  }
   if (pfad.startsWith('/mehr/profil/')) {
     return { pfad: '/mehr/profil', label: 'Profil' };
   }
@@ -174,6 +179,9 @@ export function herkunftsLabel(pfad: string): string | null {
   }
   if (istTrainingsUebung(training)) {
     return 'Übung';
+  }
+  if (/^\/mehr\/profil\/benutzernamen\/[^/]+$/.test(pfad)) {
+    return 'Benutzername';
   }
   const profil = /^\/mehr\/profil\/([^/]+)$/.exec(pfad);
   const teil = profil?.[1];

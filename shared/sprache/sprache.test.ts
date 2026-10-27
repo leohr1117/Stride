@@ -175,7 +175,7 @@ function katalogTexte(): string[] {
   if (organisation) {
     texte.push(organisation);
   }
-  texte.push('Jede Karte folgt dem Bereich, der sie einschaltet. Identität und Aktivität bleiben.', 'Karten');
+  texte.push('Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.', 'Karten');
   for (const bereich of MEHR_BEREICHE) {
     texte.push(bereich.label);
   }

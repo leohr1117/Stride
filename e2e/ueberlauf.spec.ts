@@ -31,7 +31,7 @@ const FEST = [
   '/mehr/profil/jahr',
   '/mehr/profil/ziel',
   '/mehr/profil/fokus',
-  '/mehr/profil/benutzer',
+  '/mehr/profil/benutzernamen',
   '/mehr/profil/passwort',
   '/mehr/profil/accounts',
   '/mehr/inhalte',
@@ -59,6 +59,13 @@ async function pfade(seite: Page): Promise<string[]> {
     const faehigkeit = faehigkeiten[0];
     if (faehigkeit) {
       liste.push(`/faehigkeiten/${faehigkeit.id}`);
+    }
+    const admin = (await fetch('/api/zugang/admin/konten').then((antwort) =>
+      antwort.ok ? antwort.json() : [],
+    )) as { id: number }[];
+    const erstes = admin[0];
+    if (erstes) {
+      liste.push(`/mehr/profil/benutzernamen/${erstes.id}`);
     }
     return liste;
   });

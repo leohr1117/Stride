@@ -14,8 +14,25 @@ export interface UebersichtKarte {
   label: string;
   regel: string;
   info: string;
-  /** Sprung zur bestehenden Einstellung. Die Karte selbst hat keinen zweiten Schalter. */
+  /** Sprung zum bestehenden Schalter des Bereichs. Die Kartenwahl schaltet den Bereich nicht um. */
   nach?: string;
+}
+
+export type UebersichtKartenWahl = Record<UebersichtKarteId, boolean>;
+
+/** Fehlende, unbekannte oder kaputte Einträge zählen als an. Nur `false` blendet aus. */
+export function kartenWahl(roh: unknown): UebersichtKartenWahl {
+  const quelle =
+    typeof roh === 'object' && roh !== null && !Array.isArray(roh) ? (roh as Record<string, unknown>) : {};
+  const wahl = {} as UebersichtKartenWahl;
+  for (const id of UEBERSICHT_KARTEN_IDS) {
+    wahl[id] = quelle[id] !== false;
+  }
+  return wahl;
+}
+
+export function karteGewaehlt(id: UebersichtKarteId, wahl: Partial<UebersichtKartenWahl> | undefined): boolean {
+  return wahl?.[id] !== false;
 }
 
 /** Karten der Übersicht, in der Reihenfolge auf der Startseite. Die Willkommenskarte entfällt. */
