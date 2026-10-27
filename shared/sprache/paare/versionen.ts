@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Todoist lässt sich Schritt für Schritt verbinden. Aufgaben ohne Zuordnung zählen als gewählte Tätigkeit oder gar nicht.', 'Todoist connects step by step. Tasks without a mapping count as a chosen activity, or not at all.'],
+  ['Eine erledigte Todoist-Aufgabe mit Deadline zählt als Gegner, mit Meilenstein als Boss. Nur Aufgaben nach dem Verbinden zählen.', 'A completed Todoist task with a deadline counts as an opponent, and with a milestone as a boss. Only tasks after connecting count.'],
   ['Attributnamen lassen sich nicht mehr ändern.', 'Attribute names can no longer be changed.'],
   ['Paletten, der Durchschnittsmensch und weitere Texte sind in allen Sprachen übersetzt.', 'Palettes, the average person, and other text are translated in every language.'],
   ['Fehlende Übersetzungen werden in allen sieben Sprachen erkannt.', 'Missing translations are detected in all seven languages.'],

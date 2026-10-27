@@ -46,7 +46,7 @@ test('Handbuch und Einführung nennen die Bereiche nicht mehr', async ({ page },
   await page.keyboard.press('Escape');
 
   await page.goto('/mehr');
-  await page.getByRole('button', { name: /Version 3\.8\.2/ }).click();
+  await page.getByRole('button', { name: /^Version / }).click();
   const satz = page.getByText('Handbuch und Einführung nennen die Bereiche Aufgaben und Training nicht mehr.');
   await satz.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'nearest' }));
   await expect(satz).toBeVisible();

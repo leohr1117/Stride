@@ -11,6 +11,8 @@ export interface AttrappenAufgabe {
   projectId: string;
   labels: string[];
   duration: AttrappenDauer | null;
+  /** JJJJ-MM-TT. null heißt keine Deadline, weglassen heißt das Feld fehlt. */
+  deadline?: string | null;
   erledigt?: boolean;
   wiederkehrend?: boolean;
   erledigtAm?: string;
@@ -24,6 +26,8 @@ export interface AttrappenEreignis {
   inhalt: string;
   labels?: string[];
   dauer?: AttrappenDauer | null;
+  /** JJJJ-MM-TT. null heißt keine Deadline, weglassen heißt das Feld fehlt. */
+  deadline?: string | null;
 }
 
 export interface AttrappenDaten {
@@ -66,6 +70,10 @@ function tokenOk(anfrage: IncomingMessage): boolean {
   return token.length >= 8;
 }
 
+function deadlineJson(datum: string | null): { date: string; lang: string } | null {
+  return datum === null ? null : { date: datum, lang: 'de' };
+}
+
 function aufgabeJson(aufgabe: AttrappenAufgabe) {
   return {
     id: aufgabe.id,
@@ -74,6 +82,7 @@ function aufgabeJson(aufgabe: AttrappenAufgabe) {
     labels: aufgabe.labels,
     duration: aufgabe.duration,
     completed_at: aufgabe.erledigtAm ?? null,
+    ...(aufgabe.deadline !== undefined ? { deadline: deadlineJson(aufgabe.deadline) } : {}),
   };
 }
 
@@ -124,6 +133,9 @@ function bearbeite(daten: AttrappenDaten, anfrage: IncomingMessage, antwort: Ser
         }
         if (ereignis.dauer !== undefined) {
           extra.duration = ereignis.dauer;
+        }
+        if (ereignis.deadline !== undefined) {
+          extra.deadline = deadlineJson(ereignis.deadline);
         }
         return {
           id: ereignis.id,

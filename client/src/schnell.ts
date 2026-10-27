@@ -293,7 +293,18 @@ export function wendeQuery(key: readonly unknown[], daten: unknown, art: Schnell
       return feld(daten, 'kalender', id, modus) ?? daten;
     }
     if (art === 'todoist' && modus === 'entfernen' && daten.todoist?.verbunden) {
-      return { ...daten, todoist: { ...daten.todoist, verbunden: false, nutzer: null, projekte: [], labels: [] } };
+      return {
+        ...daten,
+        todoist: {
+          ...daten.todoist,
+          verbunden: false,
+          nutzer: null,
+          projekte: [],
+          labels: [],
+          ohneZuordnung: 'keine',
+          standardVorlageId: null,
+        },
+      };
     }
   }
   if (kopf === 'konten' && art === 'konto' && modus === 'entfernen') {

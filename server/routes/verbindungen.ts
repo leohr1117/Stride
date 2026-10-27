@@ -6,8 +6,10 @@ import {
   loescheKalender,
 } from '../features/verbindungen/kalender.ts';
 import { gleicheAllesAb } from '../features/verbindungen/abgleich.ts';
+import { todoistVorschau } from '../features/verbindungen/todoistAbgleich.ts';
 import {
   ladeTodoistStatus,
+  setzeTodoistOhne,
   trenneTodoist,
   verbindeTodoist,
 } from '../features/verbindungen/todoist.ts';
@@ -22,6 +24,7 @@ import {
   kalenderSchema,
   todoistLabelSchema,
   todoistParameter,
+  todoistOhneSchema,
   todoistReihenfolgeSchema,
   todoistTokenSchema,
   todoistZuordnungSchema,
@@ -54,6 +57,13 @@ export async function verbindungsRouten(app: FastifyInstance): Promise<void> {
     const { todoistId } = todoistParameter.parse(anfrage.params);
     return ordneTodoistLabel(todoistId, todoistLabelSchema.parse(anfrage.body));
   });
+
+  app.patch('/verbindungen/todoist/ohne', async (anfrage) => {
+    const { art, vorlageId } = todoistOhneSchema.parse(anfrage.body);
+    return setzeTodoistOhne(art, vorlageId);
+  });
+
+  app.get('/verbindungen/todoist/vorschau', async () => todoistVorschau());
 
   app.post('/verbindungen/kalender', async (anfrage, antwort) => {
     return antwort.status(201).send(await erstelleKalender(kalenderSchema.parse(anfrage.body)));

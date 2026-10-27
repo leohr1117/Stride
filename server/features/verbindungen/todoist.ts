@@ -1,10 +1,10 @@
-import type { TodoistLabel, TodoistStatus, TodoistZuordnung } from '../../../shared/api/index.ts';
+import type { TodoistLabel, TodoistOhne, TodoistStatus, TodoistZuordnung } from '../../../shared/api/index.ts';
 import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { ladeLabels, ladeNutzername, ladeProjekte, type TodoistLabelQuelle, type TodoistProjekt } from '../../integrationen/todoist.ts';
 import { KONTEXT_JOINS, PROJEKT_AKTIV } from '../ziele/kontext.ts';
+import { pruefeAktiveVorlage } from '../taetigkeiten/vorlagen.ts';
 import { type RegelAbschluss, type RegelQuelle, type ZielArt } from '../../services/todoistRegeln.ts';
-import { tagesbeginn } from '../../services/zeit.ts';
 import { leseWert, pruefeProjekt, setzeWert } from './gemeinsam.ts';
 
 export const SCHLUESSEL = {
@@ -13,6 +13,8 @@ export const SCHLUESSEL = {
   seit: 'todoistSeit',
   abgleich: 'todoistAbgleich',
   fehler: 'todoistFehler',
+  ohne: 'todoistOhne',
+  standard: 'todoistStandard',
 } as const;
 
 export interface TodoistZeile {
@@ -175,17 +177,45 @@ function ladeZuordnungen(): TodoistZuordnung[] {
   return ladeProjektZeilen().map(zuZuordnung);
 }
 
+export function liesTodoistOhne(): { art: TodoistOhne; vorlageId: number | null } {
+  const art: TodoistOhne = leseWert(SCHLUESSEL.ohne) === 'standard' ? 'standard' : 'keine';
+  const roh = leseWert(SCHLUESSEL.standard);
+  const vorlageId = roh !== null && /^\d+$/.test(roh) ? Number(roh) : null;
+  return { art, vorlageId: art === 'standard' ? vorlageId : null };
+}
+
 export function ladeTodoistStatus(): TodoistStatus {
   const verbunden = leseWert(SCHLUESSEL.token) !== null;
+  const ohne = liesTodoistOhne();
   return {
     verbunden,
     nutzer: leseWert(SCHLUESSEL.nutzer),
     seit: leseWert(SCHLUESSEL.seit),
     letzterAbgleich: leseWert(SCHLUESSEL.abgleich),
     fehler: leseWert(SCHLUESSEL.fehler),
+    ohneZuordnung: ohne.art,
+    standardVorlageId: ohne.vorlageId,
     projekte: verbunden ? ladeZuordnungen() : [],
     labels: verbunden ? sortiereLabels(ladeLabelZeilen()).map(zuLabel) : [],
   };
+}
+
+export function setzeTodoistOhne(art: TodoistOhne, vorlageId: number | null): TodoistStatus {
+  if (leseWert(SCHLUESSEL.token) === null) {
+    return ladeTodoistStatus();
+  }
+  if (art === 'standard') {
+    if (vorlageId === null) {
+      throw ungueltig('Wähle eine Tätigkeit.');
+    }
+    pruefeAktiveVorlage(vorlageId);
+    setzeWert(SCHLUESSEL.ohne, 'standard');
+    setzeWert(SCHLUESSEL.standard, String(vorlageId));
+  } else {
+    setzeWert(SCHLUESSEL.ohne, 'keine');
+    setzeWert(SCHLUESSEL.standard, null);
+  }
+  return ladeTodoistStatus();
 }
 
 export function speichereProjekte(projekte: TodoistProjekt[]): void {
@@ -236,7 +266,7 @@ export async function verbindeTodoist(token: string, jetzt = new Date()): Promis
   inTransaktion(() => {
     setzeWert(SCHLUESSEL.token, token);
     setzeWert(SCHLUESSEL.nutzer, nutzer);
-    setzeWert(SCHLUESSEL.seit, tagesbeginn(jetzt).toISOString());
+    setzeWert(SCHLUESSEL.seit, jetzt.toISOString());
     setzeWert(SCHLUESSEL.fehler, null);
   });
   speichereProjekte(projekte);

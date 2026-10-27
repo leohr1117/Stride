@@ -163,7 +163,14 @@ describe('wendeQuery', () => {
     const getrennt = wendeQuery(['verbindungen'], daten, 'todoist', 0, 'entfernen') as {
       todoist: { verbunden: boolean; nutzer: string | null; projekte: unknown[]; labels: unknown[] };
     };
-    expect(getrennt.todoist).toEqual({ verbunden: false, nutzer: null, projekte: [], labels: [] });
+    expect(getrennt.todoist).toEqual({
+      verbunden: false,
+      nutzer: null,
+      projekte: [],
+      labels: [],
+      ohneZuordnung: 'keine',
+      standardVorlageId: null,
+    });
   });
 });
 

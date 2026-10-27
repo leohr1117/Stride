@@ -70,6 +70,18 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
       { id: 'l-lesen', name: 'Lesen' },
       { id: 'l-sport', name: 'Sport' },
     ],
+    ereignisse: [
+      {
+        id: 'e-alt',
+        aufgabeId: 'a-alt',
+        datum: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        projektId: 'p-post',
+        inhalt: 'Alte Aufgabe',
+        labels: [],
+        dauer: null,
+        deadline: null,
+      },
+    ],
   });
 
   const kind = spawn(process.execPath, ['--disable-warning=ExperimentalWarning', 'server/index.ts'], {

@@ -11,11 +11,11 @@ import { useSichtbarkeit } from '../funktionen.ts';
 import { Dialog } from '../components/Dialog.tsx';
 import { SchnellNebenaktion, SchnellZeile } from '../components/SchnellAktion.tsx';
 import { EINGABE_STIL, Feld, Fehlermeldung, Formular, InfoHinweis, Karte, Knopf, Ladeanzeige, PasswortFeld, Ueberschrift } from '../ui/index.ts';
+import { TodoistEinrichtung, TodoistTokenSchritte } from '../features/todoist/Einrichtung.tsx';
 import { TodoistZuordnungen } from '../features/todoist/Zuordnungen.tsx';
 import { ZielMarke } from '../components/ZielMarke.tsx';
 import { kurzesDatum, uhrzeit, zahl } from '../format.ts';
 
-const TODOIST_TOKEN_SEITE = 'https://app.todoist.com/app/settings/integrations/developer';
 const KALENDER_HILFEN = [
   { name: 'Google', adresse: 'https://support.google.com/calendar/answer/37648?hl=de' },
   { name: 'Apple', adresse: 'https://support.apple.com/de-de/guide/icloud/mm6b1a9479/icloud' },
@@ -187,7 +187,7 @@ function TodoistKarte({ status }: { status: TodoistStatus }) {
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center">
           <h2 className="ueberschrift text-sm font-semibold tracking-wide text-leise uppercase">{tx("Todoist")}</h2>
-          <InfoHinweis text="Erledigte Aufgaben werden zu Einträgen, ab heute. Tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden." />
+          <InfoHinweis text="Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden." />
         </div>
       </div>
       {status.verbunden ? (
@@ -206,26 +206,19 @@ function TodoistKarte({ status }: { status: TodoistStatus }) {
               </div>
             )}
           </SchnellZeile>
+          <TodoistEinrichtung status={status} />
           {projekteAn ? <TodoistZuordnungen status={status} /> : null}
         </>
       ) : (
         <Formular onAbsenden={absenden} abstand="space-y-3">
+          <TodoistTokenSchritte />
           <PasswortFeld
             label={tx("API-Token")}
             autoComplete="off"
             value={token}
             onChange={(ereignis) => setToken(ereignis.target.value)}
           />
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <a
-              href={TODOIST_TOKEN_SEITE}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 text-sm text-akzent hover:underline"
-            >
-              {tx("Token in Todoist öffnen")}
-              <ExternalLink className="size-3.5" />
-            </a>
+          <div className="flex justify-end">
             <Knopf type="submit" variante="primaer" disabled={token.trim() === '' || verbinden.isPending}>
               {verbinden.isPending ? tx("Prüfe …") : tx("Verbinden")}
             </Knopf>

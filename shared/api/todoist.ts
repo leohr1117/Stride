@@ -60,12 +60,22 @@ export interface TodoistLabelDaten {
   meilenstein: boolean | null;
 }
 
+export type TodoistOhne = 'keine' | 'standard';
+
+export interface TodoistVorschau {
+  xp: number;
+  anzahl: number;
+}
+
 export interface TodoistStatus {
   verbunden: boolean;
   nutzer: string | null;
   seit: string | null;
   letzterAbgleich: string | null;
   fehler: string | null;
+  /** Erledigte Aufgaben ohne Projekt- oder Label-Zuordnung. */
+  ohneZuordnung: TodoistOhne;
+  standardVorlageId: number | null;
   projekte: TodoistZuordnung[];
   labels: TodoistLabel[];
 }

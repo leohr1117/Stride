@@ -9,11 +9,14 @@ import { aendereEinstellungen, ladeEinstellungen } from '../features/einstellung
 import { erstelleFaehigkeit } from '../features/faehigkeiten/faehigkeiten.ts';
 import { erstelleProjekt, erstelleVision } from './struktur.ts';
 import { gleicheGeplantAb } from '../features/verbindungen/abgleich.ts';
-import { gleicheTodoistAb } from '../features/verbindungen/todoistAbgleich.ts';
+import { gleicheTodoistAb, todoistVorschau } from '../features/verbindungen/todoistAbgleich.ts';
 import { ordneTodoistLabel, ordneTodoistProjektZu } from '../features/verbindungen/todoistZuordnung.ts';
-import { verbindeTodoist } from '../features/verbindungen/todoist.ts';
+import { setzeTodoistOhne, verbindeTodoist } from '../features/verbindungen/todoist.ts';
 import { erstelleVorhaben } from '../features/ziele/vorhaben.ts';
 import { erstelleVorlage } from '../features/taetigkeiten/vorlagen.ts';
+import { lokalesDatum, plusTage } from '../../shared/spiel/datum.ts';
+import { tageZwischen } from '../../shared/spiel/kette.ts';
+import { BOSS, eintragXp, GEGNER, meilensteinBonus } from '../../shared/spiel/xp.ts';
 
 const TOKEN = 'test-token-1234';
 const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-todoist-'));
@@ -140,8 +143,48 @@ function ereignis(id: string, inhalt: string, extra: Partial<AttrappenEreignis> 
     inhalt,
     labels: [],
     dauer: null,
+    deadline: null,
     ...extra,
   };
+}
+
+function disziplinId(): number {
+  const id = eine<{ id: number }>(`SELECT id FROM attribute WHERE kennung = 'disziplin'`)?.id;
+  if (id === undefined) {
+    throw new Error('Disziplin fehlt.');
+  }
+  return id;
+}
+
+function bucheDisziplin(xp: number): void {
+  ausfuehren(
+    `INSERT INTO xp_ereignisse (quelle, attribut_id, xp, erstellt_am) VALUES ('eintrag', ?, ?, ?)`,
+    disziplinId(),
+    xp,
+    '2026-10-01T10:00:00.000Z',
+  );
+}
+
+function disziplinSumme(): number {
+  return eine<{ xp: number }>('SELECT COALESCE(SUM(xp), 0) AS xp FROM xp_ereignisse WHERE attribut_id = ?', disziplinId())?.xp ?? 0;
+}
+
+function basisDesEintrags(notiz: string): number {
+  const zeile = eine<{ faktor: number; stunden: number | null }>('SELECT faktor, stunden FROM eintraege WHERE notiz = ?', notiz);
+  if (!zeile) {
+    throw new Error(`Eintrag fehlt: ${notiz}`);
+  }
+  return eintragXp(zeile.stunden, zeile.faktor);
+}
+
+function quelleXp(notiz: string, quelle: string): number {
+  const id = eine<{ id: number }>('SELECT id FROM eintraege WHERE notiz = ?', notiz)?.id;
+  if (id === undefined) {
+    throw new Error(`Eintrag fehlt: ${notiz}`);
+  }
+  return (
+    eine<{ xp: number }>('SELECT COALESCE(SUM(xp), 0) AS xp FROM xp_ereignisse WHERE quelle = ? AND eintrag_id = ?', quelle, id)?.xp ?? 0
+  );
 }
 
 describe('Todoist-Abgleich', () => {
@@ -209,7 +252,7 @@ describe('Todoist-Abgleich', () => {
       const ziel = projekt('Ziel', vorlage);
       const offenVorhaben = erstelleVorhaben(ziel.id, 'Offen lassen');
       const zweites = erstelleVorhaben(ziel.id, 'Wieder offen');
-      await verbindeTodoist(TOKEN, jetzt);
+      await verbindeTodoist(TOKEN, new Date(jetzt.getTime() - 120_000));
       ordneTodoistProjektZu('p1', {
         projektId: ziel.id,
         vorlageId: null,
@@ -301,6 +344,180 @@ describe('Todoist-Abgleich', () => {
       await gleicheGeplantAb(tag);
       expect(attrappe.anfragen.some((anfrage) => anfrage.pfad.endsWith('/activities'))).toBe(true);
       expect(JSON.stringify(attrappe.anfragen)).not.toContain(TOKEN);
+    });
+  });
+
+  it('übernimmt nur Erledigungen ab dem Verbinden', async () => {
+    const jetzt = new Date();
+    await mitApi({
+      projekte: [{ id: 'p1', name: 'Post' }],
+      ereignisse: [
+        ereignis('e-davor', 'Davor', { datum: new Date(jetzt.getTime() - 60_000).toISOString() }),
+        ereignis('e-jetzt', 'Genau jetzt', { datum: jetzt.toISOString() }),
+      ],
+    });
+    await mitWeltAsync(welt(), async () => {
+      const vorlage = taetigkeit('Allgemein');
+      const ziel = projekt('Ziel', vorlage);
+      await verbindeTodoist(TOKEN, jetzt);
+      zuProjekt('p1', ziel.id);
+      const ergebnis = await gleicheTodoistAb(jetzt);
+      expect(ergebnis.fehler).toEqual([]);
+      expect(ergebnis.neu).toBe(1);
+      expect(eintrag('Genau jetzt').projektId).toBe(ziel.id);
+      expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM eintraege')?.wert).toBe(1);
+      expect(eine<{ wert: number }>("SELECT COUNT(*) AS wert FROM todoist_erledigt WHERE ereignis_id = 'e-davor'")?.wert).toBe(0);
+    });
+  });
+
+  it('zählt ohne Zuordnung als Standard-Tätigkeit oder gar nicht', async () => {
+    const jetzt = new Date();
+    const daten: AttrappenDaten = {
+      projekte: [
+        { id: 'p1', name: 'Post' },
+        { id: 'p2', name: 'Offen' },
+      ],
+      ereignisse: [
+        ereignis('e-zugeordnet', 'Zugeordnet', { projektId: 'p1', datum: jetzt.toISOString() }),
+        ereignis('e-offen', 'Offen', { projektId: 'p2', datum: jetzt.toISOString() }),
+      ],
+    };
+    await mitApi(daten);
+    await mitWeltAsync(welt(), async () => {
+      const allgemein = taetigkeit('Allgemein');
+      const ziel = projekt('Ziel', allgemein);
+      const eigene = taetigkeit('Lesen', ziel.id);
+      await verbindeTodoist(TOKEN, jetzt);
+      zuProjekt('p1', ziel.id);
+
+      const erster = await gleicheTodoistAb(jetzt);
+      expect(erster.fehler).toEqual([]);
+      expect(erster.neu).toBe(1);
+      expect(eine<{ wert: number }>("SELECT COUNT(*) AS wert FROM todoist_erledigt WHERE ereignis_id = 'e-offen'")?.wert).toBe(0);
+
+      setzeTodoistOhne('standard', eigene);
+      const zweiter = await gleicheTodoistAb(jetzt);
+      expect(zweiter.fehler).toEqual([]);
+      expect(zweiter.neu).toBe(1);
+      expect(eintrag('Offen')).toMatchObject({ vorlageId: eigene, projektId: ziel.id, meilenstein: 0 });
+
+      setzeTodoistOhne('keine', null);
+      daten.ereignisse?.push(ereignis('e-spaeter', 'Später', { projektId: 'p2', datum: jetzt.toISOString() }));
+      const dritter = await gleicheTodoistAb(jetzt);
+      expect(dritter.fehler).toEqual([]);
+      expect(dritter.neu).toBe(0);
+      expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM eintraege')?.wert).toBe(2);
+    });
+  });
+
+  it('macht eine Deadline zum Gegner und mit Meilenstein zum Boss', async () => {
+    const jetzt = new Date();
+    const morgen = lokalesDatum(plusTage(jetzt, 1));
+    await mitApi({
+      projekte: [{ id: 'p1', name: 'Post' }],
+      labels: [
+        { id: 'stein', name: 'Stein' },
+        { id: 'boss', name: 'Boss' },
+      ],
+      ereignisse: [
+        ereignis('e-gegner', 'Gegner', { deadline: morgen, datum: jetzt.toISOString() }),
+        ereignis('e-boss', 'Boss', { labels: ['Boss'], deadline: morgen, datum: jetzt.toISOString() }),
+        ereignis('e-stein', 'Stein', { labels: ['Stein'], deadline: null, datum: jetzt.toISOString() }),
+      ],
+    });
+    await mitWeltAsync(welt(), async () => {
+      aendereEinstellungen({ funktionen: { bossAngriffe: true } });
+      bucheDisziplin(100);
+      const vorher = disziplinSumme();
+      const vorlage = taetigkeit('Allgemein');
+      const ziel = projekt('Ziel', vorlage);
+      await verbindeTodoist(TOKEN, jetzt);
+      zuProjekt('p1', ziel.id);
+      labelAn('stein', { zielArt: 'projekt', zielId: ziel.id, projektId: ziel.id, meilenstein: true });
+      labelAn('boss', { zielArt: 'projekt', zielId: ziel.id, projektId: ziel.id, meilenstein: true });
+
+      const ergebnis = await gleicheTodoistAb(jetzt);
+      expect(ergebnis.fehler).toEqual([]);
+      expect(ergebnis.neu).toBe(3);
+      const gegnerXp = basisDesEintrags('Gegner');
+      const bossXp = basisDesEintrags('Boss');
+      const steinXp = basisDesEintrags('Stein');
+      expect(eintrag('Gegner').meilenstein).toBe(0);
+      expect(quelleXp('Gegner', 'meilenstein')).toBe(Math.round(meilensteinBonus(gegnerXp, false) / GEGNER.belohnungTeiler));
+      expect(quelleXp('Gegner', 'bossangriff')).toBe(0);
+      expect(eintrag('Boss').meilenstein).toBe(1);
+      expect(quelleXp('Boss', 'meilenstein')).toBe(meilensteinBonus(bossXp, false, true));
+      expect(eintrag('Stein').meilenstein).toBe(1);
+      expect(quelleXp('Stein', 'meilenstein')).toBe(meilensteinBonus(steinXp, false));
+      expect(quelleXp('Boss', 'meilenstein')).toBeGreaterThan(quelleXp('Stein', 'meilenstein'));
+      expect(quelleXp('Stein', 'meilenstein')).toBeGreaterThan(quelleXp('Gegner', 'meilenstein'));
+      expect(disziplinSumme()).toBe(vorher);
+    });
+  });
+
+  it('zieht nach einer vergangenen Deadline Disziplin ab', async () => {
+    const jetzt = new Date();
+    const deadline = lokalesDatum(plusTage(jetzt, -2));
+    expect(tageZwischen(deadline, lokalesDatum(jetzt))).toBe(2);
+    await mitApi({
+      projekte: [{ id: 'p1', name: 'Post' }],
+      ereignisse: [ereignis('e-spaet', 'Spät', { deadline, datum: jetzt.toISOString() })],
+    });
+    await mitWeltAsync(welt(), async () => {
+      aendereEinstellungen({ funktionen: { bossAngriffe: true } });
+      bucheDisziplin(100);
+      const vorlage = taetigkeit('Allgemein');
+      const ziel = projekt('Ziel', vorlage);
+      await verbindeTodoist(TOKEN, new Date(jetzt.getTime() - 60_000));
+      zuProjekt('p1', ziel.id);
+      const ergebnis = await gleicheTodoistAb(jetzt);
+      expect(ergebnis.fehler).toEqual([]);
+      expect(ergebnis.neu).toBe(1);
+      expect(eintrag('Spät').meilenstein).toBe(0);
+      const proTag = Math.floor(BOSS.angriffXpProTag / GEGNER.angriffTeiler);
+      expect(quelleXp('Spät', 'bossangriff')).toBe(-(2 * proTag));
+      expect(disziplinSumme()).toBe(100 - 2 * proTag);
+    });
+  });
+
+  it('zieht ohne Boss-Angriffe nichts ab', async () => {
+    const jetzt = new Date();
+    const deadline = lokalesDatum(plusTage(jetzt, -2));
+    await mitApi({
+      projekte: [{ id: 'p1', name: 'Post' }],
+      ereignisse: [ereignis('e-aus', 'Aus', { deadline, datum: jetzt.toISOString() })],
+    });
+    await mitWeltAsync(welt(), async () => {
+      bucheDisziplin(40);
+      const vorlage = taetigkeit('Allgemein');
+      const ziel = projekt('Ziel', vorlage);
+      await verbindeTodoist(TOKEN, new Date(jetzt.getTime() - 60_000));
+      zuProjekt('p1', ziel.id);
+      const ergebnis = await gleicheTodoistAb(jetzt);
+      expect(ergebnis.neu).toBe(1);
+      expect(quelleXp('Aus', 'bossangriff')).toBe(0);
+      expect(disziplinSumme()).toBe(40);
+    });
+  });
+
+  it('rechnet die Vorschau der letzten 7 Tage und schreibt keinen Eintrag', async () => {
+    const jetzt = new Date();
+    await mitApi({
+      projekte: [{ id: 'p1', name: 'Post' }],
+      ereignisse: [
+        ereignis('e-nah', 'Nah', { datum: new Date(jetzt.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString() }),
+        ereignis('e-alt', 'Alt', { datum: new Date(jetzt.getTime() - 10 * 24 * 60 * 60 * 1000).toISOString() }),
+      ],
+    });
+    await mitWeltAsync(welt(), async () => {
+      const allgemein = taetigkeit('Allgemein');
+      const ziel = projekt('Ziel', allgemein);
+      const eigene = taetigkeit('Lesen', ziel.id);
+      await verbindeTodoist(TOKEN, jetzt);
+      setzeTodoistOhne('standard', eigene);
+      const vorschau = await todoistVorschau(jetzt);
+      expect(vorschau).toEqual({ anzahl: 1, xp: eintragXp(null) });
+      expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM eintraege')?.wert).toBe(0);
     });
   });
 });

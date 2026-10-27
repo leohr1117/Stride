@@ -58,6 +58,10 @@ const dauerSchema = z.object({
   unit: z.enum(['minute', 'day']),
 });
 
+const deadlineSchema = z.object({
+  date: z.string(),
+});
+
 const ereignisSchema = z.object({
   id: kennung,
   object_type: z.string(),
@@ -74,6 +78,7 @@ const aufgabeSchema = z.object({
   project_id: kennung.nullable().optional(),
   labels: z.array(z.string()).optional(),
   duration: dauerSchema.nullable().optional(),
+  deadline: deadlineSchema.nullable().optional(),
 });
 
 const erledigtSchema = aufgabeSchema.extend({
@@ -114,11 +119,14 @@ export interface TodoistErledigung {
   labels: string[] | null;
   /** undefined, solange unbekannt. null heißt ausdrücklich keine Dauer. */
   dauer: TodoistDauer | null | undefined;
+  /** JJJJ-MM-TT. undefined, solange unbekannt. null heißt keine Deadline. */
+  deadline: string | null | undefined;
 }
 
 interface AufgabeDetail {
   labels: string[] | null;
   dauer: TodoistDauer | null | undefined;
+  deadline: string | null | undefined;
 }
 
 function apiBasis(): string {
@@ -212,10 +220,27 @@ function dauerVon(daten: Record<string, unknown> | null | undefined): TodoistDau
   return geparst.success ? geparst.data : undefined;
 }
 
-function detailVon(daten: { labels?: string[]; duration?: TodoistDauer | null }): AufgabeDetail {
+function deadlineText(datum: string): string | undefined {
+  return /^\d{4}-\d{2}-\d{2}$/.test(datum) ? datum : undefined;
+}
+
+/** Die Todoist-API v1 liefert `deadline` am Task (`{ date, lang }`). Fehlt das Feld, bleibt es unbekannt. */
+function deadlineVon(daten: Record<string, unknown> | null | undefined): string | null | undefined {
+  if (!daten || !Object.hasOwn(daten, 'deadline')) {
+    return undefined;
+  }
+  if (daten.deadline === null) {
+    return null;
+  }
+  const geparst = deadlineSchema.safeParse(daten.deadline);
+  return geparst.success ? deadlineText(geparst.data.date) : undefined;
+}
+
+function detailVon(daten: { labels?: string[]; duration?: TodoistDauer | null; deadline?: { date: string } | null }): AufgabeDetail {
   return {
     labels: daten.labels === undefined ? null : daten.labels,
     dauer: daten.duration === undefined ? undefined : daten.duration,
+    deadline: daten.deadline === undefined ? undefined : daten.deadline === null ? null : deadlineText(daten.deadline.date),
   };
 }
 
@@ -286,6 +311,7 @@ async function ladeEreignisse(token: string, seit: Date): Promise<TodoistErledig
           erledigtAm,
           labels: labelsVon(ereignis.extra_data),
           dauer: dauerVon(ereignis.extra_data),
+          deadline: deadlineVon(ereignis.extra_data),
         });
       }
     }
@@ -352,10 +378,15 @@ function uebernimmDetail(erledigung: TodoistErledigung, detail: AufgabeDetail | 
   if (erledigung.dauer === undefined && detail.dauer !== undefined) {
     erledigung.dauer = detail.dauer;
   }
+  if (erledigung.deadline === undefined && detail.deadline !== undefined) {
+    erledigung.deadline = detail.deadline;
+  }
 }
 
 async function ergaenzeDetails(token: string, erledigungen: TodoistErledigung[], seit: Date): Promise<void> {
-  const offen = erledigungen.filter((eintrag) => eintrag.labels === null || eintrag.dauer === undefined);
+  const offen = erledigungen.filter(
+    (eintrag) => eintrag.labels === null || eintrag.dauer === undefined || eintrag.deadline === undefined,
+  );
   if (offen.length === 0) {
     return;
   }
@@ -367,7 +398,7 @@ async function ergaenzeDetails(token: string, erledigungen: TodoistErledigung[],
     if (liste) {
       uebernimmDetail(eintrag, liste.get(eintrag.aufgabeId));
     }
-    if (eintrag.labels === null || eintrag.dauer === undefined) {
+    if (eintrag.labels === null || eintrag.dauer === undefined || eintrag.deadline === undefined) {
       rest.push(eintrag);
     }
   }
@@ -378,6 +409,9 @@ async function ergaenzeDetails(token: string, erledigungen: TodoistErledigung[],
     }
     if (eintrag.dauer === undefined) {
       eintrag.dauer = null;
+    }
+    if (eintrag.deadline === undefined) {
+      eintrag.deadline = null;
     }
   }
 }

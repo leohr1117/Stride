@@ -1,7 +1,7 @@
 import { type Abschluss, GRENZEN } from '../../../shared/spiel/begriffe.ts';
 import { ausfuehren, eine } from '../../db.ts';
 import { AppFehler, ungueltig } from '../../fehler.ts';
-import { erstelleEintrag } from '../eintraege/eintraege.ts';
+import { erstelleEintrag, type EintragSonder } from '../eintraege/eintraege.ts';
 import { KONTEXT_JOINS, PROJEKT_AKTIV } from '../ziele/kontext.ts';
 import { pruefeAktiveVorlage, pruefeVorlageZumProjekt } from '../taetigkeiten/vorlagen.ts';
 
@@ -51,7 +51,7 @@ export function pruefeProjekt(projektId: number): number {
 }
 
 export function legeEintragAn(
-  ziel: { projektId: number; vorlageId: number | null },
+  ziel: { projektId: number | null; vorlageId: number | null },
   stunden: number | null,
   notiz: string,
   zeitpunkt: Date,
@@ -63,12 +63,19 @@ export function legeEintragAn(
     erkenntnis: string;
     meilenstein: boolean;
   },
+  sonder?: EintragSonder,
 ): number {
-  const standard = pruefeProjekt(ziel.projektId);
+  let vorlageId = ziel.vorlageId;
+  if (ziel.projektId !== null) {
+    const standard = pruefeProjekt(ziel.projektId);
+    vorlageId = vorlageId ?? standard;
+  } else if (vorlageId === null) {
+    throw ungueltig('Wähle eine Tätigkeit.');
+  }
   const ergebnis = erstelleEintrag(
     {
       projektId: ziel.projektId,
-      vorlageId: ziel.vorlageId ?? standard,
+      vorlageId,
       vorhaben: extra?.vorhabenId ? { art: 'bestehend', id: extra.vorhabenId } : null,
       abschluss: extra?.abschluss ?? null,
       erkenntnis: extra?.erkenntnis ?? '',
@@ -79,6 +86,7 @@ export function legeEintragAn(
       datum: null,
     },
     zeitpunkt > jetzt ? jetzt : zeitpunkt,
+    sonder ?? {},
   );
   return ergebnis.eintrag.id;
 }

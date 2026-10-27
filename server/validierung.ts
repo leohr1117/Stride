@@ -439,6 +439,11 @@ export const todoistReihenfolgeSchema = z.object({
   ids: z.array(z.string().min(1).max(TOKEN_MAX)).max(500),
 });
 
+export const todoistOhneSchema = z.object({
+  art: z.enum(['keine', 'standard']),
+  vorlageId: optionaleId,
+});
+
 export const kalenderSchema = z.object({
   name: pflichtText('Der Name', GRENZEN.nameMax),
   adresse: pflichtText('Die Adresse', ADRESSE_MAX),

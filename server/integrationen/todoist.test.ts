@@ -43,6 +43,7 @@ describe('Todoist-Attrappe', () => {
           inhalt: 'Mit Dauer',
           labels: ['Lesen'],
           dauer: { amount: 30, unit: 'minute' },
+          deadline: null,
         },
       ],
     });
@@ -50,6 +51,7 @@ describe('Todoist-Attrappe', () => {
     expect(liste).toHaveLength(1);
     expect(liste[0]?.labels).toEqual(['Lesen']);
     expect(liste[0]?.dauer).toEqual({ amount: 30, unit: 'minute' });
+    expect(liste[0]?.deadline).toBeNull();
     expect(server.anfragen.some((anfrage) => anfrage.pfad.includes('/tasks/'))).toBe(false);
   });
 
@@ -63,6 +65,7 @@ describe('Todoist-Attrappe', () => {
           projectId: 'p1',
           labels: ['Lesen'],
           duration: { amount: 10, unit: 'minute' },
+          deadline: '2026-11-02',
           erledigt: true,
           erledigtAm: jetzt.toISOString(),
         },
@@ -72,6 +75,7 @@ describe('Todoist-Attrappe', () => {
           projectId: 'p1',
           labels: ['Sport'],
           duration: { amount: 1, unit: 'day' },
+          deadline: '2026-11-03',
           wiederkehrend: true,
           erledigtAm: jetzt.toISOString(),
         },
@@ -86,8 +90,10 @@ describe('Todoist-Attrappe', () => {
     const wieder = liste.find((eintrag) => eintrag.aufgabeId === 'wieder');
     expect(einmal?.labels).toEqual(['Lesen']);
     expect(einmal?.dauer).toEqual({ amount: 10, unit: 'minute' });
+    expect(einmal?.deadline).toBe('2026-11-02');
     expect(wieder?.labels).toEqual(['Sport']);
     expect(wieder?.dauer).toEqual({ amount: 1, unit: 'day' });
+    expect(wieder?.deadline).toBe('2026-11-03');
     const pfade = server.anfragen.map((anfrage) => anfrage.pfad);
     expect(pfade.filter((pfad) => pfad.endsWith('/tasks/completed/by_completion_date'))).toHaveLength(1);
     expect(pfade.filter((pfad) => pfad.endsWith('/tasks/wieder'))).toHaveLength(1);

@@ -17,6 +17,24 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.9.5',
+    seiten: 'Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Todoist lässt sich Schritt für Schritt verbinden. Aufgaben ohne Zuordnung zählen als gewählte Tätigkeit oder gar nicht.',
+        ],
+      },
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Eine erledigte Todoist-Aufgabe mit Deadline zählt als Gegner, mit Meilenstein als Boss. Nur Aufgaben nach dem Verbinden zählen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.9.4',
     seiten: 'Charakter',
     abschnitte: [
