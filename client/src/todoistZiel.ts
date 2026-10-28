@@ -18,11 +18,15 @@ export interface ZielVorhaben {
 export interface ZielVision {
   id: number;
   titel: string;
+  farbe?: string;
 }
 
 export interface ZielOrganisation {
   id: number;
+  name?: string;
+  farbe?: string;
   visionId: number | null;
+  archiviert?: boolean;
 }
 
 export interface ZielBlick {

@@ -553,4 +553,12 @@ export const PAARE = [
   ['Benachrichtigungen auf diesem Gerät einschalten?', 'Turn on notifications on this device?'],
   ['Nicht jetzt', 'Not now'],
   ['Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag. Eine Benachrichtigung gibt keine XP.', 'Under More, you turn on notifications for this device. At most one a day. A notification grants no XP.'],
+  ['Funktionen ein- und ausschalten', 'Turn functions on and off'],
+  ['Hier schaltest du Bereiche der App ein und aus. Ausgeblendetes bleibt gespeichert.', 'Here you turn areas of the app on and off. What you hide stays saved.'],
+  ['Was die App kann. Einschalten geht unter App & Verbindungen.', 'What the app can do. You turn it on under App & connections.'],
+  ['Sie gilt nur für dieses Projekt und erscheint nicht als allgemeine Tätigkeit.', 'It applies only to this project and does not appear as a general activity.'],
+  ['Diese Tätigkeiten gelten nur für dieses Projekt.', 'These activities apply only to this project.'],
+  ['Tätigkeit für {name}', 'Activity for {name}'],
+  ['{name} · nur dieses Projekt', '{name} · this project only'],
+  ['Voreinstellung für Einträge in diesem Projekt.', 'Default for entries in this project.'],
 ] as const;

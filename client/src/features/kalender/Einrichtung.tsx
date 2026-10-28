@@ -1,12 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
-import type { Kalender, KalenderPruefung, KalenderTerminVorschau, Projekt, Vorlage } from '../../../../shared/api/index.ts';
+import type { Kalender, KalenderPruefung, KalenderTerminVorschau, Organisation, Projekt, Vision, Vorlage } from '../../../../shared/api/index.ts';
 import { GRENZEN } from '../../../../shared/spiel/begriffe.ts';
 import { titelPasstZumFilter } from '../../../../shared/spiel/kalender.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { taetigkeitPasst, taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
+import { HierarchieWahl } from '../../components/HierarchieWahl.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
+import { gliedereProjekte, wahlBaum } from '../../projektHierarchie.ts';
 import { SchnellNebenaktion } from '../../components/SchnellAktion.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { kurzesDatum, uhrzeit, zahl } from '../../format.ts';
@@ -25,27 +27,34 @@ function useAuswahl() {
   const { data: vorlagen = [] } = useQuery({ queryKey: SCHLUESSEL.vorlagen, queryFn: api.vorlagen });
   return {
     projekte: (ziele?.projekte ?? []).filter((projekt) => projekt.aktiv),
+    visionen: (ziele?.visionen ?? []).filter((vision) => !vision.archiviert),
+    organisationen: (ziele?.organisationen ?? []).filter((organisation) => !organisation.archiviert),
     taetigkeiten: vorlagen.filter((vorlage) => !vorlage.archiviert),
   };
 }
 
 function ProjektAuswahl({
   projekte,
+  visionen,
+  organisationen,
   wert,
   onAendern,
 }: {
   projekte: Projekt[];
+  visionen: Vision[];
+  organisationen: Organisation[];
   wert: number | null;
   onAendern: (id: number | null) => void;
 }) {
   return (
-    <select aria-label={tx('Projekt')} className={EINGABE_STIL} value={wert ?? KEINE_AUSWAHL} onChange={(ereignis) => onAendern(alsId(ereignis.target.value))}>
-      {projekte.map((projekt) => (
-        <option key={projekt.id} value={projekt.id}>
-          {projekt.name}
-        </option>
-      ))}
-    </select>
+    <HierarchieWahl
+      label={tx('Projekt')}
+      wert={wert === null ? '' : String(wert)}
+      knoten={wahlBaum(gliedereProjekte(projekte, visionen, organisationen), {
+        ohneVision: tx('Ohne {name}', { name: tx('Vision') }),
+      })}
+      onAendern={(roh) => onAendern(alsId(roh))}
+    />
   );
 }
 
@@ -137,7 +146,7 @@ function AnbieterWahl({ wert, onAendern }: { wert: KalenderAnbieter | null; onAe
 export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | null; onFertig: () => void }) {
   const queryClient = useQueryClient();
   const projekteAn = istAn('projekte', useSichtbarkeit());
-  const { projekte, taetigkeiten } = useAuswahl();
+  const { projekte, visionen, organisationen, taetigkeiten } = useAuswahl();
   const [anbieter, setAnbieter] = useState<KalenderAnbieter | null>(null);
   const [name, setName] = useState(kalender?.name ?? '');
   const [vorschlag, setVorschlag] = useState('');
@@ -196,6 +205,8 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
         <Feld label={<ZielMarke ebene="projekte" />}>
           <ProjektAuswahl
             projekte={projekte}
+            visionen={visionen}
+            organisationen={organisationen}
             wert={gewaehltesProjekt}
             onAendern={(id) => {
               setProjektId(id);

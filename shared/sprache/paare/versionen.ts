@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Unter einer Vision stehen ihre Projekte und Organisationen klar untereinander.', 'Under a vision, its projects and organizations stand clearly one below the other.'],
+  ['Unter Mehr steht, dass du Bereiche unter App & Verbindungen ein- und ausschaltest.', 'Under More it says that you turn areas on and off under App & connections.'],
+  ['Eine Tätigkeit nur für ein Projekt ist als solche gekennzeichnet.', 'An activity only for one project is marked as such.'],
   ['Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag.', 'Under More, you turn on notifications for this device. At most one a day.'],
   ['Sie gelten für einen angeschlagenen Streak, für die Rückkehr und für das Boss-Datum am Vortag.', 'They cover a cracked streak, Return, and the boss date on the day before.'],
   ['In der Ruhezeit bleibt es still. Danach kommt höchstens eine, wenn sie noch stimmt.', 'Quiet hours stay silent. After that, at most one arrives, if it still applies.'],

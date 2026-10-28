@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.18.0',
+    seiten: 'Ziele, Mehr, Handbuch, Projekt',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: [
+          'Unter einer Vision stehen ihre Projekte und Organisationen klar untereinander.',
+          'Unter Mehr steht, dass du Bereiche unter App & Verbindungen ein- und ausschaltest.',
+          'Eine Tätigkeit nur für ein Projekt ist als solche gekennzeichnet.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.17.0',
     seiten: 'Mehr, Übersicht, Handbuch',
     abschnitte: [

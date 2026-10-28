@@ -429,7 +429,14 @@ function ProjektFormular({
             {zuordnungHinweis && <p className="text-xs text-leise">{zuordnungHinweis}</p>}
           </Feld>
         )}
-        <Feld label={tx("Standard-Tätigkeit")}>
+        <Feld
+          label={
+            <span className="inline-flex min-w-0 items-center">
+              {tx("Standard-Tätigkeit")}
+              <InfoHinweis text="Voreinstellung für Einträge in diesem Projekt." />
+            </span>
+          }
+        >
           {aktiveVorlagen.length === 0 ? (
             <Knopf className="w-full" onClick={() => setNeueTaetigkeit(true)}>
               <Plus className="size-4" />
@@ -444,7 +451,7 @@ function ProjektFormular({
               >
                 {aktiveVorlagen.map((vorlage) => (
                   <option key={vorlage.id} value={vorlage.id}>
-                    {vorlage.name}
+                    {vorlage.projektId !== null ? tx('{name} · nur dieses Projekt', { name: vorlage.name }) : vorlage.name}
                   </option>
                 ))}
               </select>
@@ -470,7 +477,7 @@ function ProjektFormular({
             <option value="">{tx('Keine')}</option>
             {abschlussVorlagen.map((vorlage) => (
               <option key={vorlage.id} value={vorlage.id}>
-                {vorlage.name}
+                {vorlage.projektId !== null ? tx('{name} · nur dieses Projekt', { name: vorlage.name }) : vorlage.name}
               </option>
             ))}
           </select>

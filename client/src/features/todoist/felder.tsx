@@ -2,9 +2,11 @@ import { ChevronDown } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { Faehigkeit, TodoistZielArt, Vorlage } from '../../../../shared/api/index.ts';
 import { DAUER_OPTIONEN, GRENZEN } from '../../../../shared/spiel/begriffe.ts';
+import { HierarchieWahl } from '../../components/HierarchieWahl.tsx';
+import { gliedereProjekte, wahlBaum, type GliedProjekt, type WahlKnoten } from '../../projektHierarchie.ts';
 import { EINGABE_STIL, Feld } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
-import { projekteFuerVision, zielSchluessel, type ZielBlick } from '../../todoistZiel.ts';
+import { projekteFuerVision, zielSchluessel, type ZielBlick, type ZielVorhaben } from '../../todoistZiel.ts';
 import { sortiert } from './gemeinsam.ts';
 
 export function DauerWahl({
@@ -177,44 +179,91 @@ export function ZielWahl({
     blick.visionen.filter((vision) => projekteFuerVision(blick, vision.id).length > 0 || (art === 'vision' && vision.id === id)),
     (vision) => vision.titel,
   );
+  const vorhabenNachProjekt = new Map<number, ZielVorhaben[]>();
+  for (const eintrag of vorhaben) {
+    if (eintrag.projektId === null) {
+      continue;
+    }
+    const liste = vorhabenNachProjekt.get(eintrag.projektId) ?? [];
+    liste.push(eintrag);
+    vorhabenNachProjekt.set(eintrag.projektId, liste);
+  }
+  const knotenFuerProjekt = (projekt: GliedProjekt, farbe: string | undefined): WahlKnoten => ({
+    schluessel: zielSchluessel('projekt', projekt.id),
+    wert: zielSchluessel('projekt', projekt.id),
+    name: projekt.name,
+    waehlbar: true,
+    farbe,
+    ast: 'projekt',
+    kinder: (vorhabenNachProjekt.get(projekt.id) ?? []).map((eintrag) => ({
+      schluessel: zielSchluessel('vorhaben', eintrag.id),
+      wert: zielSchluessel('vorhaben', eintrag.id),
+      name: eintrag.titel,
+      waehlbar: true,
+      farbe,
+      ast: 'vorhaben' as const,
+      kinder: [],
+    })),
+  });
+  const gliederung = gliedereProjekte(
+    projekte,
+    visionen.map((vision) => ({ id: vision.id, titel: vision.titel, farbe: vision.farbe ?? 'var(--leise)' })),
+    blick.organisationen
+      .filter((organisation) => organisation.archiviert !== true)
+      .map((organisation) => ({
+        id: organisation.id,
+        name: organisation.name ?? tx('Organisation'),
+        farbe: organisation.farbe ?? 'var(--leise)',
+        visionId: organisation.visionId,
+      })),
+    { leereVisionen: true },
+  );
+  const knoten = wahlBaum(
+    gliederung,
+    {
+      ...(erben ? { leer: tx('Wie das Projekt') } : {}),
+      ohneVision: tx('Ohne {name}', { name: tx('Vision') }),
+    },
+    knotenFuerProjekt,
+    true,
+  );
+  const gezeigt = new Set<string>();
+  const merke = (liste: WahlKnoten[]) => {
+    for (const eintrag of liste) {
+      if (eintrag.waehlbar) {
+        gezeigt.add(eintrag.wert);
+      }
+      merke(eintrag.kinder);
+    }
+  };
+  merke(knoten);
+  const rest = vorhaben.filter((eintrag) => !gezeigt.has(zielSchluessel('vorhaben', eintrag.id)));
+  if (rest.length > 0) {
+    knoten.push({
+      schluessel: 'vorhaben-rest',
+      wert: 'vorhaben-rest',
+      name: tx('Vorhaben'),
+      waehlbar: false,
+      ast: 'hinweis',
+      kinder: rest.map((eintrag) => ({
+        schluessel: zielSchluessel('vorhaben', eintrag.id),
+        wert: zielSchluessel('vorhaben', eintrag.id),
+        name: eintrag.titel,
+        waehlbar: true,
+        ast: 'vorhaben' as const,
+        kinder: [],
+      })),
+    });
+  }
   return (
     <Feld label="Ziel">
-      <select
-        className={EINGABE_STIL}
-        aria-label={tx('Ziel')}
+      <HierarchieWahl
+        label={tx('Ziel')}
+        wert={zielSchluessel(art, id)}
+        knoten={knoten}
         disabled={disabled}
-        value={zielSchluessel(art, id)}
-        onChange={(ereignis) => onAendern(ereignis.target.value)}
-      >
-        {erben ? <option value="">{tx('Wie das Projekt')}</option> : null}
-        {visionen.length > 0 ? (
-          <optgroup label={tx('Visionen')}>
-            {visionen.map((vision) => (
-              <option key={vision.id} value={zielSchluessel('vision', vision.id)}>
-                {vision.titel}
-              </option>
-            ))}
-          </optgroup>
-        ) : null}
-        {projekte.length > 0 ? (
-          <optgroup label={tx('Projekte')}>
-            {projekte.map((projekt) => (
-              <option key={projekt.id} value={zielSchluessel('projekt', projekt.id)}>
-                {projekt.name}
-              </option>
-            ))}
-          </optgroup>
-        ) : null}
-        {vorhaben.length > 0 ? (
-          <optgroup label={tx('Vorhaben')}>
-            {vorhaben.map((eintrag) => (
-              <option key={eintrag.id} value={zielSchluessel('vorhaben', eintrag.id)}>
-                {eintrag.titel}
-              </option>
-            ))}
-          </optgroup>
-        ) : null}
-      </select>
+        onAendern={onAendern}
+      />
     </Feld>
   );
 }

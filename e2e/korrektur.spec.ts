@@ -97,9 +97,11 @@ test('Projekt-Tätigkeiten nur beim eigenen Projekt', async ({ page }, testInfo)
   const auswahl = dialog.getByRole('combobox', { name: 'Tätigkeit', exact: true });
   const projektFeld = dialog.getByRole('combobox', { name: /^Projekt\b/ });
   await expect(auswahl.locator('option', { hasText: gebunden.name })).toHaveCount(0);
-  await projektFeld.selectOption({ label: eigenes.name });
+  await projektFeld.click();
+  await page.getByRole('option', { name: eigenes.name, exact: true }).click();
   await expect(auswahl.locator('option', { hasText: gebunden.name })).toHaveCount(1);
-  await projektFeld.selectOption({ label: fremdes.name });
+  await projektFeld.click();
+  await page.getByRole('option', { name: fremdes.name, exact: true }).click();
   await expect(auswahl.locator('option', { hasText: gebunden.name })).toHaveCount(0);
   await page.keyboard.press('Escape');
 

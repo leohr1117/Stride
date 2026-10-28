@@ -18,7 +18,9 @@ import { useFeiern } from '../../components/Belohnung.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
 import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf } from '../../ui/index.ts';
+import { HierarchieWahl } from '../../components/HierarchieWahl.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
+import { gliedereProjekte, wahlBaum } from '../../projektHierarchie.ts';
 
 export function useBasisAufgaben() {
   return useQuery({ queryKey: SCHLUESSEL.basis, queryFn: api.basis });
@@ -259,11 +261,19 @@ export function BasisFormular({
       <div className={ebenen.projekte ? 'grid grid-cols-2 gap-3' : ''}>
         {ebenen.projekte && (
           <Feld label={<ZielMarke ebene="projekte" />}>
-            <select
-              className={EINGABE_STIL}
-              value={projektId ?? ''}
-              onChange={(ereignis) => {
-                const naechstes = ereignis.target.value ? Number(ereignis.target.value) : null;
+            <HierarchieWahl
+              label={tx("Projekt")}
+              wert={projektId === null ? '' : String(projektId)}
+              knoten={wahlBaum(
+                gliedereProjekte(
+                  projekte,
+                  (ziele?.visionen ?? []).filter((vision) => !vision.archiviert),
+                  (ziele?.organisationen ?? []).filter((organisation) => !organisation.archiviert),
+                ),
+                { leer: tx("Keins"), ohneVision: tx("Ohne {name}", { name: tx("Vision") }) },
+              )}
+              onAendern={(roh) => {
+                const naechstes = roh === '' ? null : Number(roh);
                 setProjektId(naechstes);
                 const ziel = ebenen.projekte ? naechstes : null;
                 setVorlageId((aktuell) => {
@@ -274,14 +284,7 @@ export function BasisFormular({
                   return gewaehlt && taetigkeitPasst(gewaehlt.projektId, ziel) ? aktuell : null;
                 });
               }}
-            >
-              <option value="">{tx("Keins")}</option>
-              {projekte.map((projekt) => (
-                <option key={projekt.id} value={projekt.id}>
-                  {projekt.name}
-                </option>
-              ))}
-            </select>
+            />
             {zuordnungHinweis && <p className="text-xs text-leise">{zuordnungHinweis}</p>}
           </Feld>
         )}

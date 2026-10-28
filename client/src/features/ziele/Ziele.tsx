@@ -17,6 +17,7 @@ import { ZielDialog, type ZielBearbeitung } from './ZielDialoge.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { kurzesDatum, zahl } from '../../format.ts';
 import { useEbenen } from '../../funktionen.ts';
+import { gliedereProjekte } from '../../projektHierarchie.ts';
 
 export function ZieleSeite() {
   const ebenen = useEbenen();
@@ -226,21 +227,21 @@ export function ZieleSeite() {
   );
 }
 
-function projekteZurVision(
+function projekteDerKarte(
   projekte: Projekt[],
   organisationen: Organisation[],
   projekteVonOrganisation: (organisationId: number) => Projekt[],
 ): Projekt[] {
   const gesehen = new Set<number>();
-  return [...projekte, ...organisationen.flatMap((organisation) => projekteVonOrganisation(organisation.id))].filter(
-    (projekt) => {
-      if (gesehen.has(projekt.id)) {
-        return false;
-      }
-      gesehen.add(projekt.id);
-      return true;
-    },
-  );
+  const alle: Projekt[] = [];
+  for (const projekt of [...projekte, ...organisationen.flatMap((organisation) => projekteVonOrganisation(organisation.id))]) {
+    if (gesehen.has(projekt.id)) {
+      continue;
+    }
+    gesehen.add(projekt.id);
+    alle.push(projekt);
+  }
+  return alle;
 }
 
 function VisionKarte({
@@ -256,7 +257,13 @@ function VisionKarte({
   projekteVonOrganisation: (organisationId: number) => Projekt[];
   onOeffnen: () => void;
 }) {
-  const alle = projekteZurVision(projekte, organisationen, projekteVonOrganisation);
+  const ast = gliedereProjekte(projekteDerKarte(projekte, organisationen, projekteVonOrganisation), [vision], organisationen, {
+    leereOrganisationen: true,
+    leereVisionen: true,
+  }).visionen[0];
+  const direkte = ast?.direkte ?? [];
+  const gruppen = ast?.organisationen ?? [];
+  const hatKinder = direkte.length > 0 || gruppen.length > 0;
   return (
     <Karte className="overflow-hidden p-0">
       <div className="h-1" style={{ backgroundColor: vision.farbe }} />
@@ -268,7 +275,7 @@ function VisionKarte({
             <button
               type="button"
               onClick={onOeffnen}
-              className={`flex min-w-0 flex-1 items-start gap-2 px-4 text-left ${alle.length > 0 ? 'pt-3 pb-2' : 'py-4'}`}
+              className={`flex min-w-0 flex-1 items-start gap-2 px-4 text-left ${hatKinder ? 'pt-3 pb-2' : 'py-4'}`}
             >
               <h2 className="min-w-0 flex-1 text-lg leading-snug font-semibold">{vision.titel}</h2>
               <ChevronRight className="mt-1 size-4 shrink-0 text-leise" />
@@ -277,9 +284,26 @@ function VisionKarte({
           </div>
         )}
       </SchnellZeile>
-      {alle.length > 0 && (
-        <div className="px-4 pb-4">
-          <ProjektListe projekte={alle} />
+      {hatKinder && (
+        <div className="space-y-3 px-4 pb-4">
+          {direkte.length > 0 && (
+            <div data-ast="vision" className="border-s-2 ps-3" style={{ borderColor: vision.farbe }}>
+              <ProjektListe projekte={direkte} />
+            </div>
+          )}
+          {gruppen.map((gruppe) => (
+            <div key={gruppe.organisation.id} data-ast="organisation" className="space-y-2">
+              <h3 className="flex min-w-0 items-center gap-2 text-sm font-medium">
+                <Landmark className="size-4 shrink-0" style={{ color: gruppe.organisation.farbe }} />
+                <span className="truncate">{gruppe.organisation.name}</span>
+              </h3>
+              {gruppe.projekte.length > 0 && (
+                <div className="border-s-2 ps-3" style={{ borderColor: gruppe.organisation.farbe }}>
+                  <ProjektListe projekte={gruppe.projekte} />
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </Karte>
@@ -473,7 +497,11 @@ function OrganisationBlock({
           </div>
         )}
       </SchnellZeile>
-      <ProjektListe projekte={projekte} />
+      {projekte.length > 0 && (
+        <div className="border-s-2 ps-3" style={{ borderColor: organisation.farbe }}>
+          <ProjektListe projekte={projekte} />
+        </div>
+      )}
       {mitProjekten && (
         <Knopf variante="leise" className="px-2 py-1" onClick={onProjektNeu}>
           <Plus className="size-4" />

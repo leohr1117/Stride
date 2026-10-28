@@ -11,7 +11,10 @@ test('Handbuch und Einführung nennen die Bereiche nicht mehr', async ({ page },
 
   await page.goto('/handbuch');
   await expect(page.getByRole('heading', { name: 'Handbuch', level: 1 })).toBeVisible();
-  await page.getByRole('button', { name: 'Nach Vorliebe' }).click();
+  const nachVorliebe = page.getByRole('button', { name: 'Nach Vorliebe' });
+  if ((await nachVorliebe.getAttribute('aria-expanded')) !== 'true') {
+    await nachVorliebe.click();
+  }
   await page.getByRole('button', { name: 'Nachschlagen' }).click();
   await expect(page.getByRole('link', { name: 'Aufgaben', exact: true })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Training', exact: true })).toHaveCount(0);

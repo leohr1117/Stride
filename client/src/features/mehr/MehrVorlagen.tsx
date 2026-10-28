@@ -67,7 +67,9 @@ export function VorlagenVerwaltung({ onBearbeiten }: { onBearbeiten: (vorlage: V
                     <Icon name={vorlage.icon} className="size-5 shrink-0 text-leise" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{vorlage.name}</p>
-                      {vorlage.projektName ? <p className="truncate text-xs text-leise">{vorlage.projektName}</p> : null}
+                      {vorlage.projektName ? (
+                        <p className="truncate text-xs text-leise">{tx('Nur für {name}', { name: vorlage.projektName })}</p>
+                      ) : null}
                       <div className="mt-1 flex h-1.5 overflow-hidden rounded-full bg-flaeche-2">
                         {gewichte.map((gewicht) => (
                           <span

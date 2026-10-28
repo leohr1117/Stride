@@ -71,6 +71,9 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
   for (const name of ['Ziel', 'Tätigkeit', 'Dauer']) {
     await expect(sport.getByText(name, { exact: true })).toBeVisible();
     await expect(sport.getByRole('combobox', { name })).toBeVisible();
+  }
+  await expect(sport.getByRole('combobox', { name: 'Ziel' })).toHaveText('Wie das Projekt');
+  for (const name of ['Tätigkeit', 'Dauer']) {
     await expect(sport.getByRole('combobox', { name }).locator('option:checked')).toHaveText('Wie das Projekt');
   }
   const taetigkeit = sport.getByRole('combobox', { name: 'Tätigkeit' });

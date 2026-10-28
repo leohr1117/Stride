@@ -11,9 +11,19 @@ import { Dialog } from '../../components/Dialog.tsx';
 import { SchnellNebenaktion } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Regler } from '../../ui/index.ts';
+import { EINGABE_STIL, Feld, Fehlermeldung, Formular, InfoHinweis, Knopf, Regler } from '../../ui/index.ts';
 
 const GEWICHT_SCHRITT = 10;
+
+function gebundenerName(vorlage: Vorlage | null, projektId: number | null, projektName: string | null): string | null {
+  if (!vorlage && projektId !== null) {
+    return projektName;
+  }
+  if (vorlage?.projektId != null) {
+    return vorlage.projektName ?? projektName;
+  }
+  return null;
+}
 
 function prozente(gewichte: Map<number, number>): Map<number, number> {
   let summe = 0;
@@ -54,6 +64,7 @@ export function TaetigkeitFormular({
     .map(([attributId, gewicht]) => ({ attributId, gewicht }));
   const anteile = prozente(new Map(gewaehlt.map((gewicht) => [gewicht.attributId, gewicht.gewicht])));
   const zuViele = gewaehlt.length > GRENZEN.vorlageAttributeMax;
+  const nurFuer = gebundenerName(vorlage, projektId, projektName);
 
   const speichern = useMutation({
     mutationFn: () => {
@@ -97,10 +108,11 @@ export function TaetigkeitFormular({
       <Feld label={tx("Symbol")}>
         <IconAuswahl wert={icon} farbe="var(--akzent)" onAendern={setIcon} />
       </Feld>
-      {!vorlage && projektName ? (
-        <Feld label={tx("Projekt")}>
-          <p className="text-sm">{projektName}</p>
-        </Feld>
+      {nurFuer ? (
+        <p className="flex items-center text-sm">
+          <span>{tx('Nur für {name}', { name: nurFuer })}</span>
+          <InfoHinweis text="Sie gilt nur für dieses Projekt und erscheint nicht als allgemeine Tätigkeit." />
+        </p>
       ) : null}
 
       {typen.map((typ) => (
@@ -200,7 +212,11 @@ export function NeueTaetigkeit({
   onAngelegt?: (vorlage: Vorlage) => void;
 }) {
   return (
-    <Dialog offen={offen} titel={tx("Tätigkeit anlegen")} onSchliessen={onSchliessen}>
+    <Dialog
+      offen={offen}
+      titel={projektId !== null && projektName ? tx('Tätigkeit für {name}', { name: projektName }) : tx('Tätigkeit anlegen')}
+      onSchliessen={onSchliessen}
+    >
       {offen && (
         <TaetigkeitFormular
           vorlage={null}

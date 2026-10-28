@@ -6,7 +6,7 @@ import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { BOSS_SCHALTER } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { EbenenWahl } from '../../components/EbenenWahl.tsx';
-import { Fehlermeldung, Ladeanzeige } from '../../ui/index.ts';
+import { Fehlermeldung, InfoHinweis, Ladeanzeige } from '../../ui/index.ts';
 import { Zeile, ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { FUNKTION_BILD } from '../../funktionsBild.tsx';
 import { tx } from '../../text.ts';
@@ -49,7 +49,10 @@ export function MehrFunktionenSeite() {
       titel={tx("App & Verbindungen")}
       kinder={
         <div className="space-y-8">
-          <h2 className="text-lg font-semibold">{tx("Funktionen")}</h2>
+          <div className="inline-flex items-center">
+            <h2 className="text-lg font-semibold">{tx("Funktionen")}</h2>
+            <InfoHinweis text="Hier schaltest du Bereiche der App ein und aus. Ausgeblendetes bleibt gespeichert." />
+          </div>
           <div className="space-y-6">
             {FUNKTION_BLOECKE.map((block) => (
               <ZeilenGruppe key={block.seite} titel={block.seite}>

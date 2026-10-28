@@ -201,7 +201,11 @@ export function HandbuchSeite() {
         </ol>
       </Abschnitt>
 
-      <Abschnitt titel={tx("Nach Vorliebe")} kennung="handbuch-nach-vorliebe" anfangEingeklappt>
+      <Abschnitt
+        titel={tx("Nach Vorliebe")}
+        kennung="handbuch-nach-vorliebe"
+        info="Was die App kann. Einschalten geht unter App & Verbindungen."
+      >
         <div className="space-y-8">
           {FUNKTION_BLOECKE.map((block) => {
             const eintraege = block.eintraege.filter(

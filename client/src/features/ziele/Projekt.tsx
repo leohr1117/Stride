@@ -353,6 +353,7 @@ function ProjektTaetigkeiten({
     <Abschnitt
       titel={tx("Tätigkeiten")}
       kennung="projekt-taetigkeiten"
+      info="Diese Tätigkeiten gelten nur für dieses Projekt."
       aktion={
         <Knopf variante="leise" className="px-2 py-1" onClick={() => setBearbeitung({ vorlage: null })}>
           <Plus className="size-4" />
@@ -371,7 +372,10 @@ function ProjektTaetigkeiten({
               {(menue) => (
                 <div className="flex items-center gap-1 py-1 pr-1 pl-3">
                   <Icon name={vorlage.icon} className="size-4 shrink-0" />
-                  <span className="min-w-0 flex-1 truncate text-sm font-medium">{vorlage.name}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">{vorlage.name}</span>
+                    <span className="block truncate text-xs text-leise">{tx('Nur für {name}', { name: projektName })}</span>
+                  </span>
                   {menue}
                   <Knopf
                     variante="leise"
@@ -389,7 +393,11 @@ function ProjektTaetigkeiten({
       )}
       <Dialog
         offen={bearbeitung !== null}
-        titel={bearbeitung?.vorlage ? tx("Tätigkeit bearbeiten") : tx("Tätigkeit anlegen")}
+        titel={
+          bearbeitung?.vorlage
+            ? tx("Tätigkeit bearbeiten")
+            : tx('Tätigkeit für {name}', { name: projektName })
+        }
         onSchliessen={() => setBearbeitung(null)}
       >
         {bearbeitung && (
@@ -397,7 +405,7 @@ function ProjektTaetigkeiten({
             key={bearbeitung.vorlage?.id ?? 'neu'}
             vorlage={bearbeitung.vorlage}
             projektId={bearbeitung.vorlage ? null : projektId}
-            projektName={bearbeitung.vorlage ? null : projektName}
+            projektName={bearbeitung.vorlage ? bearbeitung.vorlage.projektName ?? projektName : projektName}
             onFertig={() => setBearbeitung(null)}
           />
         )}

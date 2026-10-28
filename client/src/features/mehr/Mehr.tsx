@@ -81,7 +81,8 @@ export function MehrSeite() {
   const { data: hinweise } = useQuery({ queryKey: SCHLUESSEL.hinweise, queryFn: api.hinweise });
   const stand = verbindungen ? verbindungsStand(verbindungen) : null;
   const profil = [einstellungen?.charakterName, zugang?.benutzername].filter((teil) => teil).join(' · ');
-  const verbindungsText = stand ? tx(stand.text) : undefined;
+  const funktionsZeile = tx('Funktionen ein- und ausschalten');
+  const verbindungsText = stand ? `${funktionsZeile} · ${tx(stand.text)}` : funktionsZeile;
   const darstellung = einstellungen
     ? tx('Leiste · {stil}', { stil: tx(STIL_INFO[einstellungen.stil].label) })
     : undefined;
