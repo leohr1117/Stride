@@ -550,4 +550,6 @@ export const PAARE = [
   ['In dieser Zeit geht nichts raus. Danach höchstens eine Benachrichtigung, wenn sie noch stimmt.', 'Nothing goes out during this time. After that, at most one notification, if it still applies.'],
   ['An', 'On'],
   ['{n} Geräte', '{n} devices'],
+  ['Benachrichtigungen auf diesem Gerät einschalten?', 'Turn on notifications on this device?'],
+  ['Nicht jetzt', 'Not now'],
 ] as const;

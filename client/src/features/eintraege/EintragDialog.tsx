@@ -9,6 +9,7 @@ import { taetigkeitPasst, taetigkeitenFuerProjekt } from '../../../../shared/spi
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { basisXp, MEILENSTEIN_INFO } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
+import { merkeAngebotFaellig } from '../uebersicht/angebotStand.ts';
 import { merkeBewertungFaellig } from '../uebersicht/bewertungStand.ts';
 import { lokalesDatum, tagesUeberschrift, zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
@@ -210,6 +211,7 @@ export function EintragDialog({
     mutationFn: (daten: EintragDaten) => api.erstelleEintrag(daten),
     onSuccess: (ergebnis) => {
       merkeBewertungFaellig(queryClient, ergebnis);
+      merkeAngebotFaellig(queryClient, ergebnis);
       void queryClient.invalidateQueries();
       onSchliessen();
       feiern(ergebnis.belohnung);

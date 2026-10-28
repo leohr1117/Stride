@@ -20,8 +20,10 @@ export const hinweiseApi = {
   hinweisAbo: (koerper: HinweisAboKoerper) => anfrage<HinweisStand>('/hinweise/abo', 'POST', koerper),
   hinweisAboWeg: (endpoint: string) => anfrage<HinweisStand>('/hinweise/abo', 'DELETE', { endpoint }),
   hinweisWahl: (teil: HinweisWahl) => anfrage<HinweisStand>('/hinweise', 'PATCH', teil),
+  hinweisAngebot: () => anfrage<{ gesehen: true }>('/hinweise/angebot', 'POST', { nie: true }),
 };
 
 export const hinweiseSchluessel = {
   hinweise: ['hinweise'] as const,
+  angebot: ['hinweis-angebot'] as const,
 };

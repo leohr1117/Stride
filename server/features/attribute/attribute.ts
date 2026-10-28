@@ -7,7 +7,7 @@ import { bestimmeKlasse, type KennungsWert } from '../../../shared/spiel/klassen
 import { berechneLevel, LEVEL_KURVEN, xpBisLevel, type LevelInfo } from '../../../shared/spiel/level.ts';
 import { planeUmverteilung, zielXpNachAnteil } from '../../../shared/spiel/umverteilung.ts';
 import type { Gewicht } from '../../../shared/spiel/xp.ts';
-import { zeige } from '../../../shared/sprache/index.ts';
+import { zeige, zeigeKatalogname } from '../../../shared/sprache/index.ts';
 import { anfrageSprache } from '../../anfrageSprache.ts';
 import { aktualisiere, alle, alsZahl, ausfuehren, eine, inTransaktion, platzhalter } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
@@ -271,7 +271,7 @@ export function aktiviereAttribut(
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         vorlage.typ,
         vorlage.kennung,
-        zeige(vorlage.name, sprache),
+        zeigeKatalogname(vorlage.name, sprache),
         zeige(vorlage.beschreibung, sprache),
         vorlage.farbe,
         vorlage.icon,

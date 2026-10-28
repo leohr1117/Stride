@@ -49,7 +49,7 @@ import { istWeltLeer, wendeFokusAn } from '../../services/profilStart.ts';
 import { wendeStartAn } from '../../services/startAnlage.ts';
 import { istGewichtEinheit, STANDARD_GEWICHT_EINHEIT, type GewichtEinheit } from '../../../shared/spiel/training.ts';
 import { kartenWahl, type UebersichtKartenWahl } from '../../../shared/spiel/uebersichtKarten.ts';
-import { setzeHinweisNichtVorWennFehlt } from './hinweisSchluessel.ts';
+import { schreibeHinweisAngebotTesten, setzeHinweisNichtVorWennFehlt } from './hinweisSchluessel.ts';
 
 interface Grundeinstellungen {
   charakterName: string;
@@ -505,6 +505,7 @@ export function aendereEinstellungen(
     startVorbild?: string | null;
     startBoss?: boolean;
     bewertungTesten?: boolean;
+    angebotTesten?: boolean;
   },
 ): Einstellungen {
   const bisher = ladeEinstellungen();
@@ -620,6 +621,9 @@ export function aendereEinstellungen(
     wendePaletten(aenderung);
     if (aenderung.bewertungTesten !== undefined && process.env.ASCEND_TEST === '1') {
       schreibeBewertungTesten(aenderung.bewertungTesten);
+    }
+    if (aenderung.angebotTesten !== undefined && process.env.ASCEND_TEST === '1') {
+      schreibeHinweisAngebotTesten(aenderung.angebotTesten);
     }
     wendeStartAn({
       startVorbild: aenderung.startVorbild,

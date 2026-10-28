@@ -253,7 +253,8 @@ export const TEXTE: Record<string, string> = {
   "Ressourcen": "Ресурсы",
   "Autorität": "Авторитет",
   "Reichweite": "Охват",
-  "Ansehen": "Репутация",
+  "Ansehen": "Посмотреть",
+  "Status Ansehen": "Репутация",
   "Netzwerk": "Сеть",
   "Freiheit": "Свобода",
   "Vermächtnis": "Наследие",
@@ -1712,4 +1713,6 @@ export const TEXTE: Record<string, string> = {
   "In dieser Zeit geht nichts raus. Danach höchstens eine Benachrichtigung, wenn sie noch stimmt.": "В это время ничего не уходит. Потом не больше одного уведомления, если оно ещё верно.",
   "An": "Вкл.",
   "{n} Geräte": "{n} устройств",
+  "Benachrichtigungen auf diesem Gerät einschalten?": "Включить уведомления на этом устройстве?",
+  "Nicht jetzt": "Не сейчас",
 };

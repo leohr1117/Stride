@@ -2,7 +2,7 @@ import { attributVorlage } from '../../shared/features/attribute/attributKatalog
 import type { AttributKennung, AttributTyp } from '../../shared/spiel/begriffe.ts';
 import { FOKUS_PFLICHT, normalisiereFokus, startAttribute, startTaetigkeiten, type FokusId } from '../../shared/spiel/profil.ts';
 import type { Sprache } from '../../shared/sprache/kern.ts';
-import { gleicherKatalogtext, zeige } from '../../shared/sprache/index.ts';
+import { gleicherKatalogtext, zeige, zeigeKatalogname } from '../../shared/sprache/index.ts';
 import { anfrageSprache } from '../anfrageSprache.ts';
 import { alle, ausfuehren, eine } from '../db.ts';
 import { ungueltig } from '../fehler.ts';
@@ -84,7 +84,7 @@ export function wendeFokusAn(
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         vorlage.typ,
         vorlage.kennung,
-        zeige(vorlage.name, sprache),
+        zeigeKatalogname(vorlage.name, sprache),
         zeige(vorlage.beschreibung, sprache),
         vorlage.farbe,
         vorlage.icon,
@@ -125,7 +125,7 @@ function benenneKatalog(sprache: Sprache): void {
     } catch {
       continue;
     }
-    const name = gleicherKatalogtext(vorlage.name, zeile.name) ? zeige(vorlage.name, sprache) : zeile.name;
+    const name = gleicherKatalogtext(vorlage.name, zeile.name) ? zeigeKatalogname(vorlage.name, sprache) : zeile.name;
     const beschreibung = gleicherKatalogtext(vorlage.beschreibung, zeile.beschreibung)
       ? zeige(vorlage.beschreibung, sprache)
       : zeile.beschreibung;

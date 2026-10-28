@@ -10,6 +10,7 @@ import {
   schreibeBewertungNie,
   schreibeBewertungWert,
 } from '../einstellungen/einstellungen.ts';
+import { leseHinweisAngebotGesehen, leseHinweisAngebotTesten, leseHinweisNichtVor } from '../einstellungen/hinweisSchluessel.ts';
 
 export { schreibeBewertungNie };
 
@@ -69,15 +70,36 @@ export function bewertungFaellig(jetzt = new Date(), profilGeradeAngelegt = fals
   return erfolgErreicht();
 }
 
+/** Dieselben Erfolge wie die Bewertung. Die erste Minute nach der Anlage wartet `hinweis_nicht_vor` ab. */
+export function angebotFaellig(jetzt = new Date(), profilGeradeAngelegt = false): boolean {
+  if (profilGeradeAngelegt || leseHinweisAngebotGesehen()) {
+    return false;
+  }
+  if (process.env.ASCEND_TEST === '1' && !leseHinweisAngebotTesten()) {
+    return false;
+  }
+  const nichtVor = leseHinweisNichtVor();
+  if (nichtVor !== null && Date.parse(nichtVor) > jetzt.getTime()) {
+    return false;
+  }
+  if (heuteBlockiert(lokalesDatum(jetzt))) {
+    return false;
+  }
+  return erfolgErreicht();
+}
+
 export function mitBewertung<T extends object>(
   ergebnis: T,
   jetzt = new Date(),
   profilGeradeAngelegt = false,
-): T & { bewertungFaellig?: true } {
-  if (!bewertungFaellig(jetzt, profilGeradeAngelegt)) {
+): T & { bewertungFaellig?: true; angebotFaellig?: true } {
+  if (bewertungFaellig(jetzt, profilGeradeAngelegt)) {
+    return { ...ergebnis, bewertungFaellig: true };
+  }
+  if (!angebotFaellig(jetzt, profilGeradeAngelegt)) {
     return ergebnis;
   }
-  return { ...ergebnis, bewertungFaellig: true };
+  return { ...ergebnis, angebotFaellig: true };
 }
 
 export function speichereBewertung(eingabe: { wert: number } | { nie: true }, jetzt = new Date()): BewertungStand {

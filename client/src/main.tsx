@@ -7,6 +7,7 @@ import { ZugangTor } from './features/zugang/Anmeldung.tsx';
 import { BelohnungProvider } from './components/Belohnung.tsx';
 import { BestaetigungProvider } from './components/Bestaetigung.tsx';
 import { SchnellProvider } from './components/SchnellAktion.tsx';
+import { beobachteAngebotAbmeldung } from './features/uebersicht/angebotStand.ts';
 import { beobachteFokusArt } from './fokus.ts';
 import { beobachteSichtfeld } from './sichtfeld.ts';
 import { ladeBeiVeraltetenDateienNeu, registriereServiceWorker } from './pwa.ts';
@@ -35,6 +36,7 @@ if (!wurzel) {
 }
 
 beobachteFokusArt();
+beobachteAngebotAbmeldung();
 beobachteSichtfeld();
 ladeBeiVeraltetenDateienNeu();
 registriereServiceWorker();

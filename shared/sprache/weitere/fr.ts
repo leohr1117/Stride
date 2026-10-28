@@ -253,7 +253,8 @@ export const TEXTE: Record<string, string> = {
   "Ressourcen": "Ressources",
   "Autorität": "Autorité",
   "Reichweite": "Portée",
-  "Ansehen": "Réputation",
+  "Ansehen": "Voir",
+  "Status Ansehen": "Réputation",
   "Netzwerk": "Réseau",
   "Freiheit": "Liberté",
   "Vermächtnis": "Héritage",
@@ -1712,4 +1713,6 @@ export const TEXTE: Record<string, string> = {
   "In dieser Zeit geht nichts raus. Danach höchstens eine Benachrichtigung, wenn sie noch stimmt.": "Pendant ce temps, rien ne part. Ensuite, au plus une notification, si elle est encore juste.",
   "An": "Activé",
   "{n} Geräte": "{n} appareils",
+  "Benachrichtigungen auf diesem Gerät einschalten?": "Activer les notifications sur cet appareil ?",
+  "Nicht jetzt": "Pas maintenant",
 };

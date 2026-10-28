@@ -1,4 +1,12 @@
-import { aktiveSprache, klasseAnzeigen, zeige, zeigeAttributName, zeigeAttributText, zeigeErfolg } from '../../shared/sprache/index.ts';
+import {
+  aktiveSprache,
+  klasseAnzeigen,
+  zeige,
+  zeigeAttributName,
+  zeigeAttributText,
+  zeigeErfolg,
+  zeigeKatalogname,
+} from '../../shared/sprache/index.ts';
 
 /** Oberfläche übersetzen. Nutzernamen und Einträge nicht hier durchreichen. */
 export function tx(text: string, werte?: Record<string, string | number>): string {
@@ -8,6 +16,11 @@ export function tx(text: string, werte?: Record<string, string | number>): strin
 /** Katalogname eines Attributs. Eigene Namen bleiben. */
 export function attributName(eintrag: { kennung?: string | null; name: string }): string {
   return zeigeAttributName(eintrag, aktiveSprache());
+}
+
+/** Vorlagenname. „Ansehen“ bleibt der Status, nicht der Knopf der Angebotskarte. */
+export function katalogName(name: string): string {
+  return zeigeKatalogname(name, aktiveSprache());
 }
 
 /** Katalogtext eines Attributs. Eigene Beschreibungen bleiben. */

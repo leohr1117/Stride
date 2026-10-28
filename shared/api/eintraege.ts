@@ -52,6 +52,8 @@ export interface EintragErgebnis {
   belohnung: Belohnung;
   /** Nur nach einem echten Erfolg, und nur solange die Frage fällig ist. Sonst fehlt das Feld. */
   bewertungFaellig?: true;
+  /** Nur nach einem echten Erfolg, und nur wenn `bewertungFaellig` in dieser Antwort fehlt. */
+  angebotFaellig?: true;
 }
 
 export interface SkillEreignis {

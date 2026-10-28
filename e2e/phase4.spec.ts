@@ -1,8 +1,10 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { expect, test, type Page } from '@playwright/test';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
-import { TEST_URL } from './testdaten.ts';
+import { TEST_KOPIE, TEST_URL } from './testdaten.ts';
 
 const ENDPUNKTE = ['https://geraet.example/phase4', 'https://geraet.example/phase4-zwei'] as const;
 const HINWEIS = ['hinweis_streak', 'hinweis_rueckkehr', 'hinweis_boss', 'hinweis_ruhe_von', 'hinweis_ruhe_bis'] as const;
@@ -307,4 +309,251 @@ test('eine abgelehnte Erlaubnis sendet kein Abo', async ({ page }) => {
   await expect(knopf).toBeEnabled();
   await knopf.click();
   expect(posts).toBe(0);
+});
+
+const FRAGE = 'Benachrichtigungen auf diesem Gerät einschalten?';
+
+function teilWelt(): string {
+  return verweigereEchteDatenbank(path.join(TEST_KOPIE, 'welten', '4.db'));
+}
+
+function setzeNichtVor(iso: string): void {
+  const db = new DatabaseSync(teilWelt(), { timeout: 5_000 });
+  try {
+    db.prepare(
+      `INSERT INTO einstellungen (schluessel, wert) VALUES ('hinweis_nicht_vor', ?)
+       ON CONFLICT (schluessel) DO UPDATE SET wert = excluded.wert`,
+    ).run(JSON.stringify(iso));
+  } finally {
+    db.close();
+  }
+}
+
+async function passwortTeil(): Promise<string> {
+  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
+  const wert = text.match(/Benutzername: testteil\s+Passwort:\s*(\S+)/)?.[1];
+  if (!wert) {
+    throw new Error('Testzugang fehlt.');
+  }
+  return wert;
+}
+
+async function profilZurueck(seite: Page): Promise<void> {
+  await seite.evaluate(async () => {
+    await fetch('/api/profil/zuruecksetzen', { method: 'POST' });
+  });
+}
+
+async function vorbereitenTeil(seite: Page): Promise<void> {
+  await seite.goto('/');
+  await seite.locator('input[name="username"]').fill('testteil');
+  await seite.locator('input[name="password"]').fill(await passwortTeil());
+  await seite.locator('button[type="submit"]').click();
+  await seite.waitForFunction(async () => (await fetch('/api/einstellungen')).ok);
+  await seite.evaluate(async () => {
+    const reset = await fetch('/api/profil/zuruecksetzen', { method: 'POST' });
+    if (!reset.ok) {
+      throw new Error(`zuruecksetzen ${reset.status}`);
+    }
+    const stil = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stil: 'antik' }),
+    });
+    if (!stil.ok) {
+      throw new Error(`stil ${stil.status}`);
+    }
+    localStorage.removeItem('ascend-sprache');
+    sessionStorage.clear();
+  });
+  await seite.goto('/');
+  await expect(seite.locator('html')).toHaveAttribute('data-stil', 'antik');
+}
+
+async function zumStartTeil(seite: Page): Promise<void> {
+  await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
+  for (let index = 0; index < 4; index += 1) {
+    await seite.getByRole('button', { name: index === 3 ? 'Zu den Fragen' : 'Weiter', exact: true }).click();
+  }
+  await seite.locator('input[name="nickname"]').fill('Start');
+  await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
+  await seite.locator('input[name="bday-year"]').fill('1994');
+  await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
+  await seite.getByRole('radio', { name: 'Besser werden' }).click();
+  await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
+  await seite.getByRole('button', { name: 'Sport' }).click();
+  await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
+  await expect(seite.getByRole('heading', { name: 'Zum Start', exact: true })).toBeVisible();
+}
+
+async function angebotTesten(seite: Page, an: boolean): Promise<void> {
+  const ok = await seite.evaluate(async (testen) => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ angebotTesten: testen }),
+    });
+    return antwort.ok;
+  }, an);
+  expect(ok).toBe(true);
+}
+
+async function eintraegeLegen(seite: Page, anzahl: number): Promise<void> {
+  const status = await seite.evaluate(async (menge) => {
+    const vorlagen = (await fetch('/api/vorlagen').then((antwort) => antwort.json())) as {
+      id: number;
+      archiviert: boolean;
+      projektId: number | null;
+    }[];
+    const vorlageId = vorlagen.find((vorlage) => !vorlage.archiviert && vorlage.projektId === null)?.id;
+    if (!vorlageId) {
+      return 0;
+    }
+    for (let index = 0; index < menge; index += 1) {
+      const antwort = await fetch('/api/eintraege', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projektId: null,
+          vorlageId,
+          vorhaben: null,
+          abschluss: null,
+          erkenntnis: '',
+          stunden: 1,
+          notiz: '',
+          meilenstein: false,
+          faehigkeitId: null,
+          datum: null,
+        }),
+      });
+      if (!antwort.ok) {
+        return antwort.status;
+      }
+    }
+    return 201;
+  }, anzahl);
+  expect(status).toBe(201);
+}
+
+async function tragEin(seite: Page): Promise<void> {
+  await seite.getByRole('button', { name: 'Eintrag loggen' }).click();
+  const dialog = seite.getByRole('dialog', { name: 'Was hast du getan?' });
+  const knopf = dialog.getByRole('button', { name: /Eintragen/ });
+  await expect(knopf).toBeEnabled();
+  await knopf.click();
+  await expect(dialog).toHaveCount(0);
+  const schleier = seite.locator('div.fixed.inset-0').filter({ hasText: 'Level aufgestiegen' });
+  try {
+    await schleier.waitFor({ state: 'visible', timeout: 1500 });
+    await schleier.click({ position: { x: 8, y: 8 } });
+    await expect(schleier).toHaveCount(0);
+  } catch {
+    // Kein Level-Aufstieg bei diesem Eintrag.
+  }
+  const schliessen = seite.getByRole('button', { name: 'Schließen' });
+  const da = await schliessen.waitFor({ state: 'visible', timeout: 2000 }).then(() => true).catch(() => false);
+  if (!da) {
+    return;
+  }
+  await schliessen.click();
+  await expect(schliessen).toBeHidden();
+}
+
+async function erlaubnisZaehler(seite: Page): Promise<number> {
+  return seite.evaluate(() => {
+    const fenster = window as Window & { __erlaubnis?: number };
+    return fenster.__erlaubnis ?? 0;
+  });
+}
+
+test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt merkt gesehen', async ({ page }, testInfo) => {
+  test.setTimeout(180_000);
+  await page.addInitScript(() => {
+    const fenster = window as Window & { __erlaubnis?: number };
+    fenster.__erlaubnis = 0;
+    const meldung = window.Notification;
+    if (!meldung || typeof meldung.requestPermission !== 'function') {
+      return;
+    }
+    const original = meldung.requestPermission.bind(meldung);
+    meldung.requestPermission = ((...args: unknown[]) => {
+      fenster.__erlaubnis = (fenster.__erlaubnis ?? 0) + 1;
+      return original(...(args as []));
+    }) as typeof meldung.requestPermission;
+  });
+  fs.mkdirSync('tmp-bau/48', { recursive: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-bau/48/${testInfo.project.name}-${name}.png`, fullPage: true });
+  try {
+    await vorbereitenTeil(page);
+    await zumStartTeil(page);
+    await page.getByRole('region', { name: 'Vorbild' }).getByRole('button', { name: 'Überspringen', exact: true }).click();
+    await page.getByRole('button', { name: 'Zum Handbuch', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Handbuch', exact: true })).toBeVisible();
+    setzeNichtVor('2000-01-01T00:00:00.000Z');
+    await page.goto('/');
+    await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
+    await eintraegeLegen(page, 9);
+    await tragEin(page);
+    await expect(page.getByRole('region', { name: FRAGE })).toHaveCount(0);
+    expect(await erlaubnisZaehler(page)).toBe(0);
+
+    await angebotTesten(page, true);
+    await tragEin(page);
+    const karte = page.getByRole('region', { name: FRAGE });
+    await expect(karte).toBeVisible();
+    await expect(karte.getByRole('button', { name: 'Info', exact: true })).toHaveCount(0);
+    await expect(karte.getByRole('link', { name: 'Ansehen', exact: true })).toBeVisible();
+    await expect(karte.getByRole('button', { name: 'Nicht jetzt', exact: true })).toBeVisible();
+    const ident = page.locator('section').filter({ has: page.getByRole('heading', { level: 1, name: 'Start' }) }).first();
+    const oben = await ident.boundingBox();
+    const kasten = await karte.boundingBox();
+    expect(oben).not.toBeNull();
+    expect(kasten).not.toBeNull();
+    if (oben && kasten) {
+      expect(kasten.y).toBeGreaterThanOrEqual(oben.y + oben.height - 1);
+    }
+    const heute = page.getByRole('heading', { name: 'Heute', exact: true });
+    if ((await heute.count()) > 0 && (await heute.isVisible())) {
+      const heuteKasten = await heute.boundingBox();
+      if (heuteKasten && kasten) {
+        expect(heuteKasten.y).toBeGreaterThan(kasten.y);
+      }
+    }
+    await ohneSeitlichenUeberlauf(page);
+    await bild('angebot');
+
+    await page.reload();
+    await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
+    await expect(karte).toBeVisible();
+    await karte.getByRole('link', { name: 'Ansehen', exact: true }).click();
+    await expect(page).toHaveURL(/\/mehr\/benachrichtigungen$/);
+    await expect(page.getByRole('heading', { name: 'Benachrichtigungen', exact: true })).toBeVisible();
+    expect(await erlaubnisZaehler(page)).toBe(0);
+    await page.locator('a[data-zurueck]').click();
+    await expect(page).toHaveURL(/\/mehr$/);
+    await page.goto('/');
+    await expect(karte).toBeVisible();
+
+    await page.route('**/api/hinweise/angebot', async (route) => {
+      if (route.request().method() === 'POST') {
+        await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ fehler: 'weg' }) });
+        return;
+      }
+      await route.continue();
+    });
+    await karte.getByRole('button', { name: 'Nicht jetzt', exact: true }).click();
+    await expect(karte).toBeVisible();
+    await expect(karte.getByText('Etwas ist schiefgelaufen.')).toBeVisible();
+    await ohneSeitlichenUeberlauf(page);
+    await bild('angebot-fehler');
+    await page.unroute('**/api/hinweise/angebot');
+
+    await karte.getByRole('button', { name: 'Nicht jetzt', exact: true }).click();
+    await expect(karte).toHaveCount(0);
+    await tragEin(page);
+    await expect(karte).toHaveCount(0);
+    expect(await erlaubnisZaehler(page)).toBe(0);
+  } finally {
+    await profilZurueck(page);
+  }
 });

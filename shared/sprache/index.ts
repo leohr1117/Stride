@@ -226,17 +226,34 @@ export function zeige(text: string, sprache: Sprache = aktiv, werte?: Record<str
 
 const katalogNachKennung = new Map(ATTRIBUT_KATALOG.map((eintrag) => [eintrag.kennung, eintrag]));
 
+/** Der Status „Ansehen“ bleibt Reputation. Der Knopf der Angebotskarte benutzt das bloße Wort. */
+function katalogNameSchluessel(name: string): string {
+  return name === 'Ansehen' ? 'Status Ansehen' : name;
+}
+
 /** True, wenn der Text der deutsche Katalogtext oder eine seiner Übersetzungen ist. */
 export function gleicherKatalogtext(original: string, text: string): boolean {
   if (text === original) {
     return true;
   }
+  const sonder = katalogNameSchluessel(original);
   for (const sprache of ZIEL_SPRACHEN) {
     if (textVon(sprache, original) === text) {
       return true;
     }
+    if (sonder !== original && textVon(sprache, sonder) === text) {
+      return true;
+    }
   }
   return false;
+}
+
+/** Katalogname speichern. Deutsch bleibt der Vorlagenname, auch wenn die Oberfläche das Wort anders nutzt. */
+export function zeigeKatalogname(name: string, sprache: Sprache = aktiv): string {
+  if (sprache === 'de') {
+    return name;
+  }
+  return zeige(katalogNameSchluessel(name), sprache);
 }
 
 export function zeigeAttributName(
@@ -249,7 +266,7 @@ export function zeigeAttributName(
       if (sprache === 'de') {
         return vorlage.name;
       }
-      return textVon(sprache, vorlage.name) ?? vorlage.name;
+      return textVon(sprache, katalogNameSchluessel(vorlage.name)) ?? vorlage.name;
     }
     return eintrag.name;
   }

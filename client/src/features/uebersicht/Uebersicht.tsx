@@ -30,6 +30,7 @@ import {
 } from '../../ui/index.ts';
 import { BewertungKarte } from './Bewertung.tsx';
 import { HeuteKarte } from './Heute.tsx';
+import { HinweisAngebot } from './HinweisAngebot.tsx';
 
 import { ausTagesSchluessel, faktorText, kurzesDatum, monatKurz, zahl } from '../../format.ts';
 import { useSichtbarkeit, useUebersichtKarten } from '../../funktionen.ts';
@@ -105,6 +106,7 @@ export function UebersichtSeite() {
       )}
 
       <BewertungKarte />
+      <HinweisAngebot />
 
       {uebersicht.level.xpGesamt === 0 && istAn('handbuch', sichtbarkeit) && (
         <Karte className="flex flex-wrap items-center justify-between gap-3">

@@ -253,7 +253,8 @@ export const TEXTE: Record<string, string> = {
   "Ressourcen": "资源",
   "Autorität": "权威",
   "Reichweite": "覆盖",
-  "Ansehen": "声誉",
+  "Ansehen": "查看",
+  "Status Ansehen": "声誉",
   "Netzwerk": "人脉",
   "Freiheit": "自由",
   "Vermächtnis": "传承",
@@ -1712,4 +1713,6 @@ export const TEXTE: Record<string, string> = {
   "In dieser Zeit geht nichts raus. Danach höchstens eine Benachrichtigung, wenn sie noch stimmt.": "这段时间不会发出。之后最多一条通知，前提是它仍然适用。",
   "An": "开",
   "{n} Geräte": "{n} 台设备",
+  "Benachrichtigungen auf diesem Gerät einschalten?": "在这台设备上打开通知？",
+  "Nicht jetzt": "暂时不要",
 };

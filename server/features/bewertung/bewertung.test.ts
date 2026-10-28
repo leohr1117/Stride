@@ -23,7 +23,12 @@ import { schliesseEinheitAb, starteEinheit } from '../training/einheiten.ts';
 import { an, DANACH, kraft, plan, raeumeAuf, START, vorlage, welt as trainingWelt } from '../training/einheitenHilfe.ts';
 import { ladeUebersicht } from '../uebersicht/uebersicht.ts';
 import { bewertungSchema, einstellungenAenderungSchema } from '../../validierung.ts';
-import { BEWERTUNG_SCHON, bewertungFaellig, schreibeBewertungNie, speichereBewertung } from './bewertung.ts';
+import {
+  leseHinweisAngebotTesten,
+  schreibeHinweisAngebotGesehen,
+  setzeHinweisNichtVorWennFehlt,
+} from '../einstellungen/hinweisSchluessel.ts';
+import { angebotFaellig, BEWERTUNG_SCHON, bewertungFaellig, mitBewertung, schreibeBewertungNie, speichereBewertung } from './bewertung.ts';
 import { bewertungRouten } from './routen.ts';
 
 const MONTAG = '2026-10-19';
@@ -143,10 +148,16 @@ describe('Bewertung fällig', () => {
     mitWelt(welt(), () => {
       const id = tunId();
       fuelle(id, 8, MONTAG);
-      expect(logge(id, MONTAG).bewertungFaellig).toBeUndefined();
+      const neunter = logge(id, MONTAG);
+      expect(neunter.bewertungFaellig).toBeUndefined();
+      expect(neunter.angebotFaellig).toBeUndefined();
       expect(ladeUebersicht(mittag(MONTAG))).not.toHaveProperty('bewertungFaellig');
-      expect(logge(id, DIENSTAG).bewertungFaellig).toBe(true);
+      expect(ladeUebersicht(mittag(MONTAG))).not.toHaveProperty('angebotFaellig');
+      const zehnter = logge(id, DIENSTAG);
+      expect(zehnter.bewertungFaellig).toBe(true);
+      expect(zehnter.angebotFaellig).toBeUndefined();
       expect(ladeUebersicht(mittag(DIENSTAG))).not.toHaveProperty('bewertungFaellig');
+      expect(ladeUebersicht(mittag(DIENSTAG))).not.toHaveProperty('angebotFaellig');
     });
   });
 
@@ -197,8 +208,10 @@ describe('Bewertung fällig', () => {
       const einheit = starteEinheit(plan('Kraft', [kraft('Kniebeuge')], vorlage('Kraft')).id, START);
       const erste = schliesseEinheitAb(einheit.id, START);
       expect(erste.bewertungFaellig).toBe(true);
+      expect(erste.angebotFaellig).toBeUndefined();
       const zweite = schliesseEinheitAb(einheit.id, DANACH);
       expect(zweite.bewertungFaellig).toBeUndefined();
+      expect(zweite.angebotFaellig).toBeUndefined();
     });
   });
 
@@ -207,13 +220,17 @@ describe('Bewertung fällig', () => {
       const id = tunId();
       schreibeBewertungNie();
       fuelle(id, 9, MONTAG);
-      expect(logge(id, MONTAG).bewertungFaellig).toBeUndefined();
+      const nie = logge(id, MONTAG);
+      expect(nie.bewertungFaellig).toBeUndefined();
+      expect(nie.angebotFaellig).toBe(true);
     });
     mitWelt(welt(), () => {
       const id = tunId();
       schreibeBewertungWert(4, MONTAG);
       fuelle(id, 9, MONTAG);
-      expect(logge(id, MONTAG).bewertungFaellig).toBeUndefined();
+      const wert = logge(id, MONTAG);
+      expect(wert.bewertungFaellig).toBeUndefined();
+      expect(wert.angebotFaellig).toBe(true);
     });
   });
 
@@ -222,12 +239,17 @@ describe('Bewertung fällig', () => {
       mitWelt(welt(), () => {
         const id = tunId();
         fuelle(id, 9, MONTAG);
-        expect(logge(id, MONTAG).bewertungFaellig).toBeUndefined();
+        const ohne = logge(id, MONTAG);
+        expect(ohne.bewertungFaellig).toBeUndefined();
+        expect(ohne.angebotFaellig).toBeUndefined();
         const geladen = aendereEinstellungen({ bewertungTesten: true });
         expect(geladen).not.toHaveProperty('bewertungTesten');
+        expect(geladen).not.toHaveProperty('angebotTesten');
         expect(JSON.stringify(geladen)).not.toContain('bewertung');
         expect(leseBewertungTesten()).toBe(true);
-        expect(logge(id, DIENSTAG).bewertungFaellig).toBe(true);
+        const mit = logge(id, DIENSTAG);
+        expect(mit.bewertungFaellig).toBe(true);
+        expect(mit.angebotFaellig).toBeUndefined();
       });
     });
     mitUmgebung(undefined, () => {
@@ -245,8 +267,12 @@ describe('Bewertung fällig', () => {
       const id = tunId();
       fuelle(id, 8, MONTAG);
       roh(id, MONTAG, 'gescheitert');
-      expect(logge(id, MONTAG).bewertungFaellig).toBeUndefined();
-      expect(logge(id, DIENSTAG).bewertungFaellig).toBe(true);
+      const montag = logge(id, MONTAG);
+      expect(montag.bewertungFaellig).toBeUndefined();
+      expect(montag.angebotFaellig).toBeUndefined();
+      const dienstag = logge(id, DIENSTAG);
+      expect(dienstag.bewertungFaellig).toBe(true);
+      expect(dienstag.angebotFaellig).toBeUndefined();
     });
     mitWelt(welt(), () => {
       const id = tunId();
@@ -288,6 +314,76 @@ describe('Bewertung fällig', () => {
       fuelle(id, 10, MONTAG);
       expect(bewertungFaellig(mittag(MONTAG), true)).toBe(false);
       expect(bewertungFaellig(mittag(MONTAG), false)).toBe(true);
+      expect(angebotFaellig(mittag(MONTAG), true)).toBe(false);
+      expect(mitBewertung({ ok: true }, mittag(MONTAG), false)).toEqual({ ok: true, bewertungFaellig: true });
+    });
+  });
+});
+
+describe('Angebot fällig', () => {
+  it('kommt nach der Bewertung, wartet die erste Minute und bleibt nach gesehen aus', () => {
+    mitWelt(welt(), () => {
+      const id = tunId();
+      fuelle(id, 9, MONTAG);
+      schreibeBewertungNie();
+      setzeHinweisNichtVorWennFehlt(mittag(MONTAG));
+      const zuFrueh = logge(id, MONTAG);
+      expect(zuFrueh.angebotFaellig).toBeUndefined();
+      const spaeter = logge(id, DIENSTAG);
+      expect(spaeter.bewertungFaellig).toBeUndefined();
+      expect(spaeter.angebotFaellig).toBe(true);
+      schreibeHinweisAngebotGesehen();
+      expect(logge(id, DIENSTAG).angebotFaellig).toBeUndefined();
+    });
+  });
+
+  it('lässt einen ungültigen oder fehlenden Zeitpunkt durch', () => {
+    mitWelt(welt(), () => {
+      const id = tunId();
+      fuelle(id, 9, MONTAG);
+      schreibeBewertungNie();
+      ausfuehren(
+        `INSERT INTO einstellungen (schluessel, wert) VALUES ('hinweis_nicht_vor', ?)
+         ON CONFLICT (schluessel) DO UPDATE SET wert = excluded.wert`,
+        JSON.stringify('kein-datum'),
+      );
+      expect(logge(id, MONTAG).angebotFaellig).toBe(true);
+    });
+  });
+
+  it('braucht unter ASCEND_TEST den eigenen Schlüssel und verliert gegen die Bewertung', () => {
+    mitUmgebung('1', () => {
+      mitWelt(welt(), () => {
+        const id = tunId();
+        fuelle(id, 9, MONTAG);
+        schreibeBewertungNie();
+        expect(logge(id, MONTAG).angebotFaellig).toBeUndefined();
+        const geladen = aendereEinstellungen({ angebotTesten: true });
+        expect(geladen).not.toHaveProperty('angebotTesten');
+        expect(JSON.stringify(geladen)).not.toContain('angebot');
+        expect(leseHinweisAngebotTesten()).toBe(true);
+        const mit = logge(id, DIENSTAG);
+        expect(mit.bewertungFaellig).toBeUndefined();
+        expect(mit.angebotFaellig).toBe(true);
+      });
+    });
+    mitUmgebung('1', () => {
+      mitWelt(welt(), () => {
+        const id = tunId();
+        fuelle(id, 9, MONTAG);
+        aendereEinstellungen({ bewertungTesten: true, angebotTesten: true });
+        const beide = logge(id, DIENSTAG);
+        expect(beide.bewertungFaellig).toBe(true);
+        expect(beide.angebotFaellig).toBeUndefined();
+      });
+    });
+    mitUmgebung(undefined, () => {
+      mitWelt(welt(), () => {
+        const geladen = aendereEinstellungen({ angebotTesten: true });
+        expect(geladen).not.toHaveProperty('angebotTesten');
+        expect(leseHinweisAngebotTesten()).toBe(false);
+        expect(einstellungenAenderungSchema.parse({ angebotTesten: true }).angebotTesten).toBe(true);
+      });
     });
   });
 });

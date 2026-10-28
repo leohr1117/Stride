@@ -404,6 +404,7 @@ export const einstellungenAenderungSchema = z.object({
   gewichtEinheit: z.enum(GEWICHT_EINHEITEN).optional(),
   uebersichtKarten: z.preprocess(bekannteKarten, z.partialRecord(z.enum(UEBERSICHT_KARTEN_IDS), z.boolean())).optional(),
   bewertungTesten: z.boolean().optional(),
+  angebotTesten: z.boolean().optional(),
 });
 
 function istZeitzone(wert: string): boolean {

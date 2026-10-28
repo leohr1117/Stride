@@ -253,7 +253,8 @@ export const TEXTE: Record<string, string> = {
   "Ressourcen": "資源",
   "Autorität": "権威",
   "Reichweite": "到達",
-  "Ansehen": "評判",
+  "Ansehen": "見る",
+  "Status Ansehen": "評判",
   "Netzwerk": "人脈",
   "Freiheit": "自由",
   "Vermächtnis": "遺産",
@@ -1712,4 +1713,6 @@ export const TEXTE: Record<string, string> = {
   "In dieser Zeit geht nichts raus. Danach höchstens eine Benachrichtigung, wenn sie noch stimmt.": "この時間は何も出ません。その後は、まだ当てはまる通知が最大1件です。",
   "An": "オン",
   "{n} Geräte": "{n} 台",
+  "Benachrichtigungen auf diesem Gerät einschalten?": "このデバイスで通知をオンにしますか？",
+  "Nicht jetzt": "今はしない",
 };

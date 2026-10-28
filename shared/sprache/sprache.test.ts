@@ -34,7 +34,17 @@ import {
 } from '../spiel/xp.ts';
 import { ABSCHNITTE, VERSIONEN } from '../versionen.ts';
 import { localeFuer, platzhalter, SPRACH_NAME, spracheAusBrowser, spracheAusKopf, ZIEL_SPRACHEN } from './kern.ts';
-import { allePaare, hatSchluessel, klasseAnzeigen, setzeAktiveSprache, texteDer, zeige, zeigeAttributName } from './index.ts';
+import {
+  allePaare,
+  gleicherKatalogtext,
+  hatSchluessel,
+  klasseAnzeigen,
+  setzeAktiveSprache,
+  texteDer,
+  zeige,
+  zeigeAttributName,
+  zeigeKatalogname,
+} from './index.ts';
 
 const WURZEL = join(import.meta.dirname, '../..');
 
@@ -245,6 +255,16 @@ describe('sprachen', () => {
     expect(zeige('Mein eigenes Projekt')).toBe('Mein eigenes Projekt');
     expect(zeige('Anfrage fehlgeschlagen (Status {status}).', 'en', { status: 500 })).toBe('Request failed (status 500).');
     expect(zeige('Anfrage fehlgeschlagen (Status 500).')).toBe('Request failed (status 500).');
+    expect(zeige('Ansehen', 'en')).toBe('View');
+    expect(zeige('Status Ansehen', 'en')).toBe('Reputation');
+    expect(zeigeKatalogname('Ansehen', 'de')).toBe('Ansehen');
+    expect(zeigeKatalogname('Ansehen', 'en')).toBe('Reputation');
+    expect(zeigeKatalogname('Ansehen', 'es')).toBe('Reputación');
+    expect(gleicherKatalogtext('Ansehen', 'View')).toBe(true);
+    expect(gleicherKatalogtext('Ansehen', 'Reputation')).toBe(true);
+    expect(zeigeAttributName({ kennung: 'ansehen', name: 'Ansehen' }, 'en')).toBe('Reputation');
+    expect(zeigeAttributName({ kennung: 'ansehen', name: 'Reputation' }, 'de')).toBe('Ansehen');
+    expect(zeigeAttributName({ kennung: 'ansehen', name: 'View' }, 'de')).toBe('Ansehen');
     expect(zeigeAttributName({ kennung: 'koerper', name: 'Körper' })).toBe('Body');
     expect(zeigeAttributName({ kennung: 'koerper', name: 'Krafttraining' })).toBe('Krafttraining');
     expect(zeigeAttributName({ name: 'Eigenes Attribut' })).toBe('Eigenes Attribut');

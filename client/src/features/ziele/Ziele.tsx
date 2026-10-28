@@ -1,4 +1,4 @@
-import { tx } from '../../text.ts';
+import { katalogName, tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Archive, ChevronRight, Landmark, Pencil, Plus } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
@@ -462,7 +462,7 @@ function OrganisationBlock({
               {organisation.archiviert && <span className="text-xs text-leise">{tx('archiviert')}</span>}
             </div>
             <div className="flex shrink-0 items-center gap-1">
-              <span className="zahl mr-2 text-xs text-leise" title={tx("Ansehen")}>
+              <span className="zahl mr-2 text-xs text-leise" title={katalogName('Ansehen')}>
                 {tx('Ansehen Lvl {level}', { level: organisation.ansehen.level })}
               </span>
               {menue}
