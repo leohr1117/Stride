@@ -182,11 +182,10 @@ describe('Hinweis-Schlüssel', () => {
       expect(() =>
         aendereEinstellungen({
           profilAngelegt: true,
-          fokus: ['sport'],
-          startVorbild: 'gibt-es-nicht',
-          startBoss: true,
+          zielstrebigkeit: 'einfach',
+          startZiel: { art: 'vision', name: 'Daneben' },
         }),
-      ).toThrow(/Das Vorbild ist unbekannt/);
+      ).toThrow(/Das erste Ziel passt nicht/);
       expect(ladeEinstellungen().profilAngelegt).toBe(false);
       expect(leseHinweisNichtVor()).toBeNull();
       expect(hinweisZeilen()).toEqual([]);

@@ -14,12 +14,11 @@ import type { EintragVorgabe } from '../features/eintraege/EintragDialog.tsx';
 const EintragDialog = lazy(() => import('../features/eintraege/EintragDialog.tsx').then((modul) => ({ default: modul.EintragDialog })));
 import { Kopf, KopfRahmen } from './Kopf.tsx';
 import { KlassenBild } from './KlassenBild.tsx';
-import { einfuehrungZurueck, profilFragenOffen } from '../../../shared/spiel/profil.ts';
+import { profilFragenOffen } from '../../../shared/spiel/profil.ts';
 import { klickeHauptseite, useAktiverPlatz, useVerlauf } from '../herkunft.tsx';
 import { setzeNavLage } from '../herkunftLauf.ts';
-import { leseSitzung, merkeSitzung, vergiss } from '../speicher.ts';
-import { Einfuehrung, SprachStart } from './Einfuehrung.tsx';
-import { ProfilErstellung } from './ProfilErstellung.tsx';
+import { merkeSitzung, vergiss } from '../speicher.ts';
+import { EinfuehrungAblauf } from './Einfuehrung.tsx';
 import { klassenText, tx } from '../text.ts';
 import { Fehlermeldung, Fortschrittsbalken, Ladeanzeige } from '../ui/index.ts';
 const EintragOeffnenKontext = createContext<((vorgabe?: EintragVorgabe) => void) | null>(null);
@@ -90,11 +89,6 @@ export function Layout() {
   );
 }
 
-const EINFUEHRUNG_ALT = 'ascend.einfuehrung';
-const FRAGEN_OFFEN = 'ascend.fragen.offen';
-const EINFUEHRUNG_WEG = 'ascend.einfuehrung.weg';
-const SPRACHE_WEG = 'ascend.sprache.weg';
-
 function AppGeruest() {
   useStilAbgleich();
   const pc = useIstPc();
@@ -102,27 +96,13 @@ function AppGeruest() {
   const einstellungen = useQuery({ queryKey: SCHLUESSEL.einstellungen, queryFn: api.einstellungen });
   const client = useQueryClient();
   const zoneGemeldet = useRef<string | null>(null);
-  const seiteBleibt = useRef(false);
-  const [runde, setRunde] = useState(() => ({
-    offen: leseSitzung(FRAGEN_OFFEN),
-    weg: leseSitzung(EINFUEHRUNG_WEG),
-    spracheWeg: leseSitzung(SPRACHE_WEG),
-  }));
+  const [gehalten, setGehalten] = useState(false);
 
   useEffect(() => {
-    vergiss(EINFUEHRUNG_ALT);
-    const beiSeiteWeg = () => {
-      seiteBleibt.current = true;
-    };
-    window.addEventListener('pagehide', beiSeiteWeg);
-    return () => {
-      window.removeEventListener('pagehide', beiSeiteWeg);
-      if (seiteBleibt.current) {
-        return;
-      }
-      merkeSitzung(FRAGEN_OFFEN, false);
-      merkeSitzung(EINFUEHRUNG_WEG, false);
-    };
+    vergiss('ascend.einfuehrung');
+    merkeSitzung('ascend.einfuehrung.weg', false);
+    merkeSitzung('ascend.sprache.weg', false);
+    merkeSitzung('ascend.fragen.offen', false);
   }, []);
 
   const daten = einstellungen.data;
@@ -134,16 +114,7 @@ function AppGeruest() {
       verlaufAn: istAn('chronik', { funktionen: daten.funktionen, ebenen: daten.ebenen }),
     });
   }
-  useVerlauf(Boolean(daten) && offen === false);
-  const neu = offen !== null && einfuehrungZurueck(runde.offen, offen);
-  const weg = neu ? false : runde.weg;
-  const spracheWeg = neu ? false : runde.spracheWeg;
-  if (offen !== null && offen !== runde.offen) {
-    merkeSitzung(FRAGEN_OFFEN, offen);
-    merkeSitzung(EINFUEHRUNG_WEG, weg);
-    merkeSitzung(SPRACHE_WEG, spracheWeg);
-    setRunde({ offen, weg, spracheWeg });
-  }
+  useVerlauf(Boolean(daten) && offen === false && !gehalten);
 
   useEffect(() => {
     if (!daten) {
@@ -183,28 +154,8 @@ function AppGeruest() {
       </main>
     );
   }
-  if (offen && daten) {
-    if (!spracheWeg) {
-      return (
-        <SprachStart
-          onFertig={() => {
-            merkeSitzung(SPRACHE_WEG, true);
-            setRunde((aktuell) => ({ ...aktuell, spracheWeg: true }));
-          }}
-        />
-      );
-    }
-    if (!weg) {
-      return (
-        <Einfuehrung
-          onFertig={() => {
-            merkeSitzung(EINFUEHRUNG_WEG, true);
-            setRunde((aktuell) => ({ ...aktuell, weg: true }));
-          }}
-        />
-      );
-    }
-    return <ProfilErstellung start={daten} />;
+  if ((offen || gehalten) && daten) {
+    return <EinfuehrungAblauf onHalten={() => setGehalten(true)} onLos={() => setGehalten(false)} />;
   }
 
   return (

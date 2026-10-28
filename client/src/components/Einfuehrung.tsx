@@ -1,22 +1,31 @@
 import { tx } from '../text.ts';
-import { useQueryClient, type QueryClient } from '@tanstack/react-query';
-import { useRef, useState, type FormEvent, type PointerEvent, type ReactNode } from 'react';
-import type { Einstellungen } from '../../../shared/api/index.ts';
+import { useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
+import { ChevronLeft } from 'lucide-react';
+import { useEffect, useLayoutEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { useNavigate } from 'react-router';
+import type { EinstellungenAenderung } from '../../../shared/api/index.ts';
 import { SPRACH_NAME, SPRACHEN, type Sprache } from '../../../shared/sprache/kern.ts';
+import {
+  PROFILNAME_MAX,
+  PROFILNAME_PLATZHALTER,
+  ZIELSTREBIGKEIT_INFO,
+  type FokusId,
+  type ZielAuswahl,
+} from '../../../shared/spiel/profil.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useSprache } from '../sprache.tsx';
-import { Fehlermeldung, Formular, InfoHinweis, Knopf } from '../ui/index.ts';
+import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf, Ladeanzeige } from '../ui/index.ts';
+import { FokusVorschau, FokusWahl, ZielWahl } from './ProfilErstellung.tsx';
 
 /** Überlebt den Neuaufbau beim Sprachwechsel, damit ältere Speichern nicht gewinnen. */
 let speicherKette: Promise<void> = Promise.resolve();
 
-function spracheMerken(code: Sprache, queryClient: QueryClient): Promise<Einstellungen> {
+function spracheMerken(code: Sprache, queryClient: QueryClient): Promise<void> {
   const naechste = speicherKette
     .catch(() => undefined)
     .then(() => api.aendereEinstellungen({ sprache: code }))
     .then((neu) => {
       queryClient.setQueryData(SCHLUESSEL.einstellungen, neu);
-      return neu;
     });
   speicherKette = naechste.then(
     () => undefined,
@@ -25,234 +34,421 @@ function spracheMerken(code: Sprache, queryClient: QueryClient): Promise<Einstel
   return naechste;
 }
 
-const SEITEN: { text: string; bild: ReactNode }[] = [
-  {
-    text: 'Einträge werden als Level sichtbar.',
-    bild: <BildFortschritt />,
-  },
-  {
-    text: 'Ziele gibt es groß, mittel und klein.',
-    bild: <BildSchritt />,
-  },
-  {
-    text: 'Tage mit einem Eintrag bilden den Streak.',
-    bild: <BildSerie />,
-  },
-  {
-    text: 'Ohne Ziele genügt das Festhalten.',
-    bild: <BildEintrag />,
-  },
-];
+const SCHRITTE = ['sprache', 'profilname', 'fokus', 'ziel', 'erstesZiel', 'abschluss'] as const;
+type Schritt = (typeof SCHRITTE)[number];
 
-const WISCH_MIN = 48;
+const ERSTES: Record<Exclude<ZielAuswahl, 'einfach'>, { titel: string; label: string; platz: string; art: 'vision' | 'projekt' | 'faehigkeit' }> = {
+  traeumer: { titel: 'Dein großes Ziel', label: 'Vision', platz: 'z. B. Marathon laufen', art: 'vision' },
+  macher: { titel: 'Dein erstes Projekt', label: 'Projekt', platz: 'z. B. Wohnung einrichten', art: 'projekt' },
+  uebung: { titel: 'Worin zuerst?', label: 'Fähigkeit', platz: 'z. B. Gitarre', art: 'faehigkeit' },
+};
 
-export function SprachStart({ onFertig }: { onFertig: () => void }) {
+function schrittAus(zustand: unknown): Schritt | null {
+  if (typeof zustand !== 'object' || zustand === null) {
+    return null;
+  }
+  const wert = (zustand as { einfuehrung?: unknown }).einfuehrung;
+  return SCHRITTE.includes(wert as Schritt) ? (wert as Schritt) : null;
+}
+
+function schreibeSchritt(schritt: Schritt, ersetzen: boolean): void {
+  const basis = { ...((history.state ?? {}) as Record<string, unknown>) };
+  delete basis.dialog;
+  const zustand = { ...basis, einfuehrung: schritt };
+  if (ersetzen) {
+    history.replaceState(zustand, '');
+  } else {
+    history.pushState(zustand, '');
+  }
+}
+
+function nummerVon(schritt: Schritt): number {
+  if (schritt === 'sprache') return 1;
+  if (schritt === 'profilname') return 2;
+  if (schritt === 'fokus') return 3;
+  if (schritt === 'ziel') return 4;
+  return 5;
+}
+
+function Fortschritt({ schritt, gesamt }: { schritt: number; gesamt: number }) {
+  return (
+    <div
+      role="progressbar"
+      aria-valuemin={1}
+      aria-valuemax={gesamt}
+      aria-valuenow={schritt}
+      aria-valuetext={tx('Schritt {nr} von {gesamt}', { nr: schritt, gesamt })}
+      className="mx-auto flex h-1 w-full max-w-36 gap-1"
+    >
+      {Array.from({ length: gesamt }, (_, index) => (
+        <span
+          key={index}
+          className={`h-1 flex-1 rounded-full ${index < schritt ? '' : 'bg-rand'}`}
+          style={index < schritt ? { backgroundColor: 'var(--fortschritt, var(--akzent))' } : undefined}
+        />
+      ))}
+    </div>
+  );
+}
+
+function AbschlussZeile({ titel, wert }: { titel: string; wert: string }) {
+  return (
+    <div className="flex min-h-14 items-center gap-3 border-b border-rand">
+      <span className="shrink-0 text-sm">{titel}</span>
+      <span className="min-w-0 flex-1 truncate text-right text-sm text-leise">{wert}</span>
+    </div>
+  );
+}
+
+export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; onLos: () => void }) {
   const { sprache, waehle } = useSprache();
-  const queryClient = useQueryClient();
-  const [wartet, setWartet] = useState(false);
+  const client = useQueryClient();
+  const navigiere = useNavigate();
+  const zugang = useQuery({ queryKey: SCHLUESSEL.zugang, queryFn: api.zugang });
+  const [schritt, setSchritt] = useState<Schritt>('sprache');
+  const [name, setName] = useState('');
+  const [nameBeruehrt, setNameBeruehrt] = useState(false);
+  const [fokus, setFokus] = useState<FokusId[]>([]);
+  const [ziel, setZiel] = useState<ZielAuswahl>('macher');
+  const [zielName, setZielName] = useState('');
   const [fehler, setFehler] = useState<unknown>(null);
+  const [speichert, setSpeichert] = useState(false);
+
+  const vorbelegung = zugang.data?.benutzername?.trim() || PROFILNAME_PLATZHALTER;
+  const gesamt = ziel === 'einfach' ? 4 : 5;
+  const erstes = ziel === 'einfach' ? null : ERSTES[ziel];
+
+  useEffect(() => {
+    const vorbelegt = zugang.data?.benutzername?.trim();
+    if (!nameBeruehrt && name === '' && vorbelegt) {
+      setName(vorbelegt);
+    }
+  }, [zugang.data, nameBeruehrt, name]);
+
+  useLayoutEffect(() => {
+    schreibeSchritt('sprache', true);
+    const beiPop = () => {
+      const gefunden = schrittAus(history.state);
+      if (gefunden) {
+        setSchritt(gefunden);
+        setFehler(null);
+      }
+    };
+    window.addEventListener('popstate', beiPop);
+    return () => window.removeEventListener('popstate', beiPop);
+  }, []);
+
+  const vor = (nach: Schritt) => {
+    setFehler(null);
+    schreibeSchritt(nach, false);
+    setSchritt(nach);
+  };
 
   const waehleSprache = (code: Sprache) => {
     waehle(code);
-    void spracheMerken(code, queryClient).catch(() => undefined);
+    void spracheMerken(code, client).catch(() => undefined);
   };
 
-  const weiter = (ereignis: FormEvent) => {
-    ereignis.preventDefault();
-    if (wartet) {
+  const spracheWeiter = () => {
+    if (speichert) {
       return;
     }
-    waehle(sprache);
-    setWartet(true);
+    setSpeichert(true);
     setFehler(null);
-    void spracheMerken(sprache, queryClient)
-      .then(() => onFertig())
-      .catch((grund: unknown) => {
-        setFehler(grund);
-        setWartet(false);
-      });
+    void spracheMerken(sprache, client)
+      .then(() => vor('profilname'))
+      .catch((grund: unknown) => setFehler(grund))
+      .finally(() => setSpeichert(false));
   };
 
+  const speichern = (mitZiel: boolean) => {
+    if (speichert) {
+      return;
+    }
+    setSpeichert(true);
+    setFehler(null);
+    onHalten();
+    const charakterName = (name.trim() || vorbelegung).slice(0, PROFILNAME_MAX);
+    const koerper: EinstellungenAenderung = {
+      charakterName,
+      zielstrebigkeit: ziel,
+      fokus: [...fokus],
+      profilAngelegt: true,
+      sprache,
+    };
+    if (mitZiel && erstes) {
+      koerper.startZiel = { art: erstes.art, name: zielName.trim() };
+    }
+    void api
+      .aendereEinstellungen(koerper)
+      .then(async (neu) => {
+        client.setQueryData(SCHLUESSEL.einstellungen, neu);
+        await client.invalidateQueries({ queryKey: SCHLUESSEL.vorlagen });
+        await client.invalidateQueries({ queryKey: SCHLUESSEL.attribute });
+        await client.invalidateQueries({ queryKey: SCHLUESSEL.ziele });
+        await client.invalidateQueries({ queryKey: SCHLUESSEL.faehigkeiten });
+        schreibeSchritt('abschluss', false);
+        setSchritt('abschluss');
+      })
+      .catch((grund: unknown) => setFehler(grund))
+      .finally(() => setSpeichert(false));
+  };
+
+  const ueberspringen = () => {
+    if (speichert) {
+      return;
+    }
+    if (schritt === 'profilname') {
+      if (!name.trim()) {
+        setName(vorbelegung);
+      }
+      vor('fokus');
+      return;
+    }
+    if (schritt === 'fokus') {
+      setFokus([]);
+      vor('ziel');
+      return;
+    }
+    if (schritt === 'ziel') {
+      setZiel('macher');
+      vor('erstesZiel');
+      return;
+    }
+    if (schritt === 'erstesZiel') {
+      speichern(false);
+    }
+  };
+
+  const absenden = (ereignis: FormEvent) => {
+    ereignis.preventDefault();
+    if (speichert) {
+      return;
+    }
+    if (schritt === 'sprache') {
+      spracheWeiter();
+      return;
+    }
+    if (schritt === 'profilname') {
+      if (!name.trim()) {
+        return;
+      }
+      vor('fokus');
+      return;
+    }
+    if (schritt === 'fokus') {
+      if (fokus.length === 0) {
+        return;
+      }
+      vor('ziel');
+      return;
+    }
+    if (schritt === 'ziel') {
+      if (ziel === 'einfach') {
+        speichern(false);
+        return;
+      }
+      vor('erstesZiel');
+      return;
+    }
+    if (schritt === 'erstesZiel') {
+      if (!zielName.trim()) {
+        return;
+      }
+      speichern(true);
+      return;
+    }
+    onLos();
+    navigiere('/', { replace: true });
+  };
+
+  const listenAn = schritt === 'abschluss';
+  const stand = useQuery({ queryKey: SCHLUESSEL.einstellungen, queryFn: api.einstellungen, enabled: listenAn });
+  const vorlagen = useQuery({ queryKey: SCHLUESSEL.vorlagen, queryFn: api.vorlagen, enabled: listenAn });
+  const attribute = useQuery({ queryKey: SCHLUESSEL.attribute, queryFn: api.attribute, enabled: listenAn });
+  const ziele = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele, enabled: listenAn });
+  const faehigkeiten = useQuery({ queryKey: SCHLUESSEL.faehigkeiten, queryFn: api.faehigkeiten, enabled: listenAn });
+  const abschlussFehler = stand.error ?? vorlagen.error ?? attribute.error ?? ziele.error ?? faehigkeiten.error;
+  const abschlussBereit = Boolean(stand.data && vorlagen.data && attribute.data && ziele.data && faehigkeiten.data);
+
+  const wiederholen = () => {
+    void stand.refetch();
+    void vorlagen.refetch();
+    void attribute.refetch();
+    void ziele.refetch();
+    void faehigkeiten.refetch();
+  };
+
+  let titel = '';
+  let untertitel = '';
+  let inhalt: ReactNode = null;
+  let knopf = 'Weiter';
+  let knopfAus = speichert;
+
+  if (schritt === 'sprache') {
+    titel = 'Sprache';
+    knopf = fehler ? 'Erneut versuchen' : 'Weiter';
+    inhalt = (
+      <div role="radiogroup" aria-label={tx('Sprache')} className="space-y-2">
+        {SPRACHEN.map((code) => {
+          const aktiv = sprache === code;
+          return (
+            <button
+              key={code}
+              type="button"
+              role="radio"
+              lang={code}
+              aria-checked={aktiv}
+              onClick={() => waehleSprache(code)}
+              className={`sprach-wahl min-h-14 w-full rounded-2xl border px-4 text-left text-sm font-medium break-words transition ${aktiv ? 'border-akzent bg-akzent/10' : 'border-rand bg-flaeche hover:border-leise/50'}`}
+            >
+              {SPRACH_NAME[code]}
+            </button>
+          );
+        })}
+      </div>
+    );
+  } else if (schritt === 'profilname') {
+    titel = 'Wie heißt du in Stride?';
+    untertitel = 'Halte fest, was du tust. Daraus werden Level und Streak.';
+    knopfAus = speichert || name.trim().length === 0;
+    inhalt = (
+      <Feld label="Profilname">
+        <input
+          name="nickname"
+          autoComplete="nickname"
+          maxLength={PROFILNAME_MAX}
+          value={name}
+          onChange={(ereignis) => {
+            setNameBeruehrt(true);
+            setName(ereignis.target.value);
+          }}
+          className={EINGABE_STIL}
+        />
+      </Feld>
+    );
+  } else if (schritt === 'fokus') {
+    titel = 'Worin willst du wachsen?';
+    untertitel = 'Wähle eins oder mehrere.';
+    knopfAus = speichert || fokus.length === 0;
+    inhalt = (
+      <div className="space-y-3">
+        <FokusWahl wert={fokus} onAendern={setFokus} />
+        <FokusVorschau fokus={fokus} />
+      </div>
+    );
+  } else if (schritt === 'ziel') {
+    titel = 'Was willst du erreichen?';
+    knopf = fehler ? 'Erneut versuchen' : 'Weiter';
+    inhalt = <ZielWahl wert={ziel} onAendern={setZiel} />;
+  } else if (schritt === 'erstesZiel' && erstes) {
+    titel = erstes.titel;
+    knopf = fehler ? 'Erneut versuchen' : 'Jetzt anlegen';
+    knopfAus = speichert || zielName.trim().length === 0;
+    inhalt = (
+      <Feld label={erstes.label}>
+        <input
+          name="zielname"
+          maxLength={80}
+          value={zielName}
+          placeholder={tx(erstes.platz)}
+          onChange={(ereignis) => setZielName(ereignis.target.value)}
+          className={EINGABE_STIL}
+        />
+      </Feld>
+    );
+  } else if (schritt === 'abschluss') {
+    titel = 'Eingerichtet';
+    knopf = abschlussFehler ? 'Erneut versuchen' : 'Fertig';
+    knopfAus = !abschlussBereit && !abschlussFehler;
+    const daten = stand.data;
+    const aktiveVorlagen = (vorlagen.data ?? []).filter((eintrag) => !eintrag.archiviert);
+    const aktiveAttribute = (attribute.data ?? []).filter((eintrag) => !eintrag.archiviert);
+    const koennen = aktiveAttribute.filter((eintrag) => eintrag.typ === 'attribut');
+    const haben = aktiveAttribute.filter((eintrag) => eintrag.typ === 'status');
+    const stufe = daten?.zielstrebigkeit;
+    const bereiche = stufe ? tx(ZIELSTREBIGKEIT_INFO[stufe].text) : '—';
+    const spracheName = daten?.sprache ? SPRACH_NAME[daten.sprache] : '—';
+    const vision = ziele.data?.visionen.find((eintrag) => !eintrag.archiviert);
+    const projekt = ziele.data?.projekte.find((eintrag) => !eintrag.archiviert);
+    const faehigkeit = faehigkeiten.data?.find((eintrag) => !eintrag.archiviert);
+    const angelegt = vision
+      ? { art: tx('Vision'), name: vision.titel }
+      : projekt
+        ? { art: tx('Projekt'), name: projekt.name }
+        : faehigkeit
+          ? { art: tx('Fähigkeit'), name: faehigkeit.name }
+          : null;
+    inhalt = abschlussFehler ? null : !abschlussBereit || !daten ? (
+      <Ladeanzeige />
+    ) : (
+      <div>
+        <AbschlussZeile titel={tx('Profilname')} wert={daten.charakterName} />
+        <AbschlussZeile titel={tx('Sprache')} wert={spracheName} />
+        <AbschlussZeile titel={tx('Tätigkeiten')} wert={aktiveVorlagen.length > 0 ? aktiveVorlagen.map((eintrag) => eintrag.name).join(', ') : '—'} />
+        {daten.funktionen.koennen && koennen.length > 0 ? (
+          <AbschlussZeile titel={tx('Können')} wert={koennen.map((eintrag) => eintrag.name).join(', ')} />
+        ) : null}
+        {daten.funktionen.status && haben.length > 0 ? (
+          <AbschlussZeile titel={tx('Haben')} wert={haben.map((eintrag) => eintrag.name).join(', ')} />
+        ) : null}
+        <AbschlussZeile titel={tx('Bereiche')} wert={bereiche} />
+        {angelegt ? <AbschlussZeile titel={angelegt.art} wert={angelegt.name} /> : null}
+        <p className="pt-3 text-[13px] text-leise break-words">{tx('Alles änderst du unter Mehr.')}</p>
+      </div>
+    );
+  }
+
+  const zeigenKopf = schritt !== 'abschluss';
+  const pfeil = schritt !== 'sprache' && schritt !== 'abschluss';
+  const darfSpringen = schritt !== 'sprache' && schritt !== 'abschluss';
+
   return (
-    <main className="flex sicht-mitte flex-col px-4 py-6">
-      <Formular onAbsenden={weiter} abstand="space-y-6" className="mx-auto my-auto w-full max-w-lg shrink-0">
-        <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
-          <img src="/logo-v2.svg" alt="" className="size-7" />
-          Stride
-        </div>
-        <div className="flex min-w-0 items-center">
-          <h1 className="min-w-0 text-2xl font-bold tracking-tight break-words">{tx('Sprache')}</h1>
-          <InfoHinweis text="Gilt für die ganze App und für die Start-Tätigkeiten." />
-        </div>
-        <div role="radiogroup" aria-label={tx('Sprache')} className="space-y-2">
-          {SPRACHEN.map((code) => {
-            const aktiv = sprache === code;
-            return (
-              <button
-                key={code}
-                type="button"
-                role="radio"
-                lang={code}
-                aria-checked={aktiv}
-                onClick={() => waehleSprache(code)}
-                className={`sprach-wahl min-h-11 w-full rounded-2xl border px-4 py-3 text-left text-sm font-medium break-words transition ${aktiv ? 'border-akzent bg-akzent/10' : 'border-rand bg-flaeche hover:border-leise/50'}`}
-              >
-                {SPRACH_NAME[code]}
-              </button>
-            );
-          })}
-        </div>
-        <Fehlermeldung fehler={fehler} />
-        <div className="flex justify-end">
-          <Knopf type="submit" variante="primaer" disabled={wartet}>
-            {tx('Weiter')}
-          </Knopf>
-        </div>
+    <main className="mx-auto flex h-dvh w-full max-w-[480px] flex-col px-4">
+      {zeigenKopf ? (
+        <header className="grid h-14 shrink-0 grid-cols-[2.75rem_minmax(0,1fr)_auto] items-center gap-2">
+          {pfeil ? (
+            <button
+              type="button"
+              aria-label={tx('Zurück')}
+              onClick={() => history.back()}
+              className="inline-flex size-11 items-center justify-center rounded-xl text-haupt"
+            >
+              <ChevronLeft className="size-5" aria-hidden />
+            </button>
+          ) : (
+            <span />
+          )}
+          <Fortschritt schritt={nummerVon(schritt)} gesamt={gesamt} />
+          {darfSpringen ? (
+            <button type="button" onClick={ueberspringen} className="px-1 text-sm text-leise">
+              {tx('Überspringen')}
+            </button>
+          ) : (
+            <span />
+          )}
+        </header>
+      ) : (
+        <div className="h-6 shrink-0" />
+      )}
+      <Formular
+        onAbsenden={schritt === 'abschluss' && abschlussFehler ? (ereignis) => { ereignis.preventDefault(); wiederholen(); } : absenden}
+        className="flex min-h-0 flex-1 flex-col [&_.formular-felder]:flex [&_.formular-felder]:min-h-0 [&_.formular-felder]:flex-1 [&_.formular-felder]:flex-col [&_.formular-felder]:overflow-y-auto"
+      >
+        {schritt === 'sprache' ? (
+          <div className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+            <img src="/logo-v2.svg" alt="" className="size-7" />
+            Stride
+          </div>
+        ) : null}
+        <h1 className="text-2xl leading-8 font-semibold break-words">{tx(titel)}</h1>
+        {untertitel ? <p className="text-[13px] leading-5 text-leise break-words">{tx(untertitel)}</p> : null}
+        {inhalt}
+        <Fehlermeldung fehler={schritt === 'abschluss' ? abschlussFehler : fehler} />
+        <Knopf type="submit" variante="primaer" className="w-full" disabled={knopfAus}>
+          {tx(knopf)}
+        </Knopf>
       </Formular>
     </main>
-  );
-}
-
-export function Einfuehrung({ onFertig }: { onFertig: () => void }) {
-  const [seite, setSeite] = useState(0);
-  const startX = useRef<number | null>(null);
-  const aktuell = SEITEN[seite] ?? SEITEN[0];
-  const letzte = seite === SEITEN.length - 1;
-
-  const weiter = () => {
-    if (letzte) {
-      onFertig();
-      return;
-    }
-    setSeite(seite + 1);
-  };
-
-  const zurueck = () => {
-    if (seite > 0) {
-      setSeite(seite - 1);
-    }
-  };
-
-  const zeigerStart = (ereignis: PointerEvent<HTMLDivElement>) => {
-    if (ereignis.pointerType === 'mouse' && ereignis.button !== 0) {
-      return;
-    }
-    if (ereignis.target instanceof Element && ereignis.target.closest('button')) {
-      return;
-    }
-    startX.current = ereignis.clientX;
-    ereignis.currentTarget.setPointerCapture(ereignis.pointerId);
-  };
-
-  const zeigerEnde = (ereignis: PointerEvent<HTMLDivElement>) => {
-    if (startX.current === null) {
-      return;
-    }
-    const delta = ereignis.clientX - startX.current;
-    startX.current = null;
-    if (delta <= -WISCH_MIN) {
-      weiter();
-    } else if (delta >= WISCH_MIN) {
-      zurueck();
-    }
-  };
-
-  return (
-    <main className="flex sicht-mitte items-center justify-center px-4 py-10">
-      <div className="w-full max-w-lg space-y-8">
-        <p className="text-lg font-bold tracking-tight">Stride</p>
-        <div
-          className="touch-none space-y-6"
-          onPointerDown={zeigerStart}
-          onPointerUp={zeigerEnde}
-          onPointerCancel={() => {
-            startX.current = null;
-          }}
-        >
-          <div className="flex justify-center text-akzent" aria-hidden="true">
-            {aktuell.bild}
-          </div>
-          <p className="sr-only">
-            {tx('Folie {seite} von {anzahl}', { seite: seite + 1, anzahl: SEITEN.length })}
-          </p>
-          <p className="text-center text-lg font-medium text-balance break-words">{tx(aktuell.text)}</p>
-          <div className="flex justify-center gap-2" role="tablist" aria-label={tx("Folien")}>
-            {SEITEN.map((eintrag, index) => (
-              <button
-                key={eintrag.text}
-                type="button"
-                role="tab"
-                aria-selected={index === seite}
-                aria-label={tx('Folie {index}', { index: index + 1 })}
-                className="flex size-8 items-center justify-center"
-                onClick={() => setSeite(index)}
-              >
-                <span className={`size-2.5 rounded-full ${index === seite ? 'bg-akzent' : 'bg-leise/40'}`} />
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center justify-between gap-2">
-          <Knopf type="button" variante="leise" onClick={onFertig}>
-            {tx("Überspringen")}
-          </Knopf>
-          <Knopf type="button" variante="primaer" onClick={weiter}>
-            {letzte ? tx('Zu den Fragen') : tx('Weiter')}
-          </Knopf>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-function BildRahmen({ children }: { children: ReactNode }) {
-  return (
-    <svg viewBox="0 0 160 112" className="h-32 w-44" fill="none">
-      {children}
-    </svg>
-  );
-}
-
-function BildFortschritt() {
-  return (
-    <BildRahmen>
-      <path d="M16 100h128" stroke="currentColor" strokeWidth="8" strokeLinecap="round" opacity="0.35" />
-      <rect x="24" y="68" width="28" height="32" rx="8" fill="currentColor" opacity="0.4" />
-      <rect x="66" y="44" width="28" height="56" rx="8" fill="currentColor" opacity="0.7" />
-      <rect x="108" y="20" width="28" height="80" rx="8" fill="currentColor" />
-    </BildRahmen>
-  );
-}
-
-function BildSchritt() {
-  return (
-    <BildRahmen>
-      <circle cx="108" cy="56" r="34" stroke="currentColor" strokeWidth="12" opacity="0.35" />
-      <rect x="16" y="40" width="32" height="32" rx="8" fill="currentColor" />
-      <path d="M48 56h22" stroke="currentColor" strokeWidth="10" strokeLinecap="round" />
-    </BildRahmen>
-  );
-}
-
-function BildSerie() {
-  return (
-    <BildRahmen>
-      <circle cx="28" cy="56" r="16" fill="currentColor" />
-      <path d="M44 56h24" stroke="currentColor" strokeWidth="10" strokeLinecap="round" />
-      <circle cx="80" cy="56" r="16" fill="currentColor" />
-      <path d="M96 56h24" stroke="currentColor" strokeWidth="10" strokeLinecap="round" />
-      <circle cx="132" cy="56" r="16" fill="currentColor" />
-    </BildRahmen>
-  );
-}
-
-function BildEintrag() {
-  return (
-    <BildRahmen>
-      <rect x="40" y="16" width="80" height="80" rx="16" fill="currentColor" opacity="0.12" stroke="currentColor" strokeWidth="8" />
-      <path d="M56 42h48" stroke="currentColor" strokeWidth="8" strokeLinecap="round" opacity="0.45" />
-      <path d="M56 60h36" stroke="currentColor" strokeWidth="8" strokeLinecap="round" opacity="0.45" />
-      <path d="M56 78l10 10 18-20" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-    </BildRahmen>
   );
 }

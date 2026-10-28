@@ -376,18 +376,16 @@ async function vorbereitenTeil(seite: Page): Promise<void> {
 
 async function zumStartTeil(seite: Page): Promise<void> {
   await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
-  for (let index = 0; index < 4; index += 1) {
-    await seite.getByRole('button', { name: index === 3 ? 'Zu den Fragen' : 'Weiter', exact: true }).click();
-  }
   await seite.locator('input[name="nickname"]').fill('Start');
-  await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
-  await seite.locator('input[name="bday-year"]').fill('1994');
-  await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
-  await seite.getByRole('radio', { name: 'Besser werden' }).click();
   await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
   await seite.getByRole('button', { name: 'Sport' }).click();
   await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
-  await expect(seite.getByRole('heading', { name: 'Zum Start', exact: true })).toBeVisible();
+  await seite.getByRole('radio', { name: 'In etwas besser werden' }).click();
+  await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
+  await seite.getByRole('button', { name: 'Überspringen', exact: true }).click();
+  await expect(seite.getByRole('heading', { name: 'Eingerichtet', exact: true })).toBeVisible();
+  await seite.getByRole('button', { name: 'Fertig', exact: true }).click();
+  await expect(seite.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
 }
 
 async function angebotTesten(seite: Page, an: boolean): Promise<void> {
@@ -490,9 +488,6 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
   try {
     await vorbereitenTeil(page);
     await zumStartTeil(page);
-    await page.getByRole('region', { name: 'Vorbild' }).getByRole('button', { name: 'Überspringen', exact: true }).click();
-    await page.getByRole('button', { name: 'Zum Handbuch', exact: true }).click();
-    await expect(page.getByRole('heading', { name: 'Handbuch', exact: true })).toBeVisible();
     setzeNichtVor('2000-01-01T00:00:00.000Z');
     await page.goto('/');
     await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();

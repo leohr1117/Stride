@@ -2,11 +2,12 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
+import { FARBEN } from '../../../shared/spiel/begriffe.ts';
 import type { FokusId, Zielstrebigkeit } from '../../../shared/spiel/profil.ts';
+import { VISION } from '../../../shared/spiel/xp.ts';
 import { zeige } from '../../../shared/sprache/index.ts';
 import { einstellungenAenderungSchema } from '../../validierung.ts';
 import { alle, eine, mitWelt, schliesseWelt } from '../../db.ts';
-import { datumPlus, lokalesDatum } from '../../services/zeit.ts';
 import { aendereEinstellungen, ladeEinstellungen } from './einstellungen.ts';
 
 const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-onboarding-'));
@@ -27,142 +28,131 @@ afterEach(() => {
   offen.length = 0;
 });
 
-function roh(schluessel: string): unknown {
-  const zeile = eine<{ wert: string }>('SELECT wert FROM einstellungen WHERE schluessel = ?', schluessel);
-  return zeile ? (JSON.parse(zeile.wert) as unknown) : undefined;
-}
-
-function projekte(): { name: string; vorlage: string }[] {
-  return alle<{ name: string; vorlage: string }>(
-    `SELECT p.name AS name, v.name AS vorlage
-     FROM projekte p
-     JOIN vorlagen v ON v.id = p.standard_vorlage_id
-     ORDER BY p.id`,
-  );
-}
-
-function bosse(): { titel: string; deadline: string | null; boss: number }[] {
-  return alle<{ titel: string; deadline: string | null; boss: number }>(
-    'SELECT titel, deadline, boss FROM vorhaben ORDER BY id',
-  );
-}
-
 const anlage: {
   charakterName: string;
-  geburtsjahr: number;
   zielstrebigkeit: Zielstrebigkeit;
   fokus: FokusId[];
   profilAngelegt: boolean;
 } = {
   charakterName: 'Leo',
-  geburtsjahr: 1991,
-  zielstrebigkeit: 'traeumer',
+  zielstrebigkeit: 'macher',
   fokus: ['sport'],
   profilAngelegt: true,
 };
 
 describe('onboarding speichern', () => {
-  it('nimmt das Schema für null und false an und lehnt eine Zahl ab', () => {
-    expect(einstellungenAenderungSchema.safeParse({ startVorbild: null, startBoss: false }).success).toBe(true);
-    expect(einstellungenAenderungSchema.safeParse({ startVorbild: 'kipchoge', startBoss: true }).success).toBe(true);
-    expect(einstellungenAenderungSchema.safeParse({ startVorbild: 1 }).success).toBe(false);
+  it('ignoriert alte Start-Felder und erlaubt einen leeren Fokus', () => {
+    const ohneJahr = einstellungenAenderungSchema.safeParse({ ...anlage, geburtsjahr: null, fokus: [] });
+    expect(ohneJahr.success).toBe(true);
+    const alt = einstellungenAenderungSchema.parse({ startVorbild: 1, startBoss: true, fokus: [] });
+    expect(alt).not.toHaveProperty('startVorbild');
+    expect(alt).not.toHaveProperty('startBoss');
+    expect(alt.fokus).toEqual([]);
+    expect(
+      einstellungenAenderungSchema.safeParse({ startZiel: { art: 'projekt', name: 'Wohnung' } }).success,
+    ).toBe(true);
+    expect(einstellungenAenderungSchema.safeParse({ startZiel: { art: 'projekt', name: ' ' } }).success).toBe(false);
+    expect(einstellungenAenderungSchema.safeParse({ startZiel: { art: 'projekt', name: 'x'.repeat(81) } }).success).toBe(
+      false,
+    );
   });
 
-  it('legt bei Annahme ein Projekt und einen Boss an und lässt Angriffe aus', () => {
-    const datei = welt();
-    mitWelt(datei, () => {
-      const neu = aendereEinstellungen({ ...anlage, startVorbild: 'kipchoge', startBoss: true });
-      expect(neu.funktionen.vorbilder).toBe(true);
-      expect(neu.funktionen.bossAngriffe).toBe(false);
-      expect(roh('start_vorbild')).toBe('kipchoge');
-      expect(projekte()).toEqual([{ name: 'Anfang', vorlage: 'Training' }]);
-      const frist = datumPlus(lokalesDatum(new Date()), 7);
-      expect(bosse()).toEqual([{ titel: 'Lauf beginnen', deadline: frist, boss: 1 }]);
-      expect(roh('start_boss_id')).toBe(eine<{ id: number }>('SELECT id FROM vorhaben')?.id);
-    });
-  });
-
-  it('legt beim zweiten PATCH nichts Zweites an und ersetzt das Vorbild nicht', () => {
-    const datei = welt();
-    mitWelt(datei, () => {
-      aendereEinstellungen({ ...anlage, startVorbild: 'kipchoge', startBoss: true });
-      aendereEinstellungen({ startVorbild: 'ronaldo', startBoss: true });
-      expect(projekte()).toHaveLength(1);
-      expect(bosse()).toHaveLength(1);
-      expect(roh('start_vorbild')).toBe('kipchoge');
-    });
-  });
-
-  it('merkt Überspringen ohne Projekt und ohne Vorbild', () => {
-    const datei = welt();
-    mitWelt(datei, () => {
-      const neu = aendereEinstellungen({ ...anlage, startVorbild: null, startBoss: false });
-      expect(neu.funktionen.vorbilder).toBe(false);
-      expect(roh('start_vorbild')).toBeUndefined();
-      expect(roh('start_boss_id')).toBe(0);
-      expect(projekte()).toEqual([]);
-      expect(bosse()).toEqual([]);
-    });
-  });
-
-  it('rollt ein unbekanntes oder den Durchschnitt zurück', () => {
-    const datei = welt();
-    mitWelt(datei, () => {
-      expect(() => aendereEinstellungen({ ...anlage, startVorbild: 'gibt-es-nicht', startBoss: true })).toThrow(
-        /Das Vorbild ist unbekannt/,
-      );
-      expect(() => aendereEinstellungen({ ...anlage, startVorbild: 'durchschnitt', startBoss: true })).toThrow(
-        /Das Vorbild ist unbekannt/,
-      );
-      expect(() => aendereEinstellungen({ ...anlage, startVorbild: '', startBoss: true })).toThrow(/Das Vorbild ist unbekannt/);
-      expect(ladeEinstellungen().profilAngelegt).toBe(false);
-      expect(projekte()).toEqual([]);
-    });
-  });
-
-  it('ignoriert den Boss, wenn die Stufe keine Projekte hat', () => {
+  it('legt ohne Jahr und ohne Fokus nichts an und lässt Können an', () => {
     const datei = welt();
     mitWelt(datei, () => {
       const neu = aendereEinstellungen({
+        charakterName: 'Leo',
+        zielstrebigkeit: 'macher',
+        fokus: [],
+        profilAngelegt: true,
+        geburtsjahr: null,
+      });
+      expect(neu.geburtsjahr).toBeNull();
+      expect(neu.fokus).toEqual([]);
+      expect(neu.funktionen.koennen).toBe(true);
+      expect(neu.funktionen.status).toBe(true);
+      expect(neu.funktionen.vorbilder).toBe(false);
+      expect(neu.funktionen.bossAngriffe).toBe(false);
+      expect(alle('SELECT id FROM vorlagen')).toEqual([]);
+      expect(alle('SELECT id FROM projekte')).toEqual([]);
+      expect(alle('SELECT id FROM vorhaben')).toEqual([]);
+    });
+  });
+
+  it('legt je Art genau ein Objekt an und beim zweiten PATCH nichts Zweites', () => {
+    const datei = welt();
+    mitWelt(datei, () => {
+      const vision = aendereEinstellungen({
+        ...anlage,
+        zielstrebigkeit: 'traeumer',
+        startZiel: { art: 'vision', name: 'Marathon' },
+      });
+      expect(vision.funktionen.vorbilder).toBe(false);
+      expect(alle<{ titel: string; farbe: string; level: number }>('SELECT titel, farbe, level FROM visionen')).toEqual([
+        { titel: 'Marathon', farbe: FARBEN[6], level: VISION.standardLevel },
+      ]);
+      aendereEinstellungen({ startZiel: { art: 'vision', name: 'Noch eine' } });
+      expect(alle('SELECT id FROM visionen')).toHaveLength(1);
+      expect(alle('SELECT id FROM projekte')).toEqual([]);
+      expect(alle('SELECT id FROM vorhaben')).toEqual([]);
+    });
+    mitWelt(welt(), () => {
+      aendereEinstellungen({ ...anlage, startZiel: { art: 'projekt', name: 'Wohnung' } });
+      expect(alle<{ name: string }>('SELECT name FROM projekte')).toEqual([{ name: 'Wohnung' }]);
+      expect(eine<{ name: string }>('SELECT name FROM vorlagen WHERE archiviert = 0 ORDER BY sortierung, id LIMIT 1')?.name).toBe(
+        'Training',
+      );
+      expect(alle('SELECT id FROM vorhaben')).toEqual([]);
+      aendereEinstellungen({ startZiel: { art: 'projekt', name: 'Zweites' } });
+      expect(alle('SELECT id FROM projekte')).toHaveLength(1);
+    });
+    mitWelt(welt(), () => {
+      const uebung = aendereEinstellungen({
         ...anlage,
         zielstrebigkeit: 'uebung',
-        startVorbild: 'kipchoge',
-        startBoss: true,
+        startZiel: { art: 'faehigkeit', name: 'Gitarre' },
       });
-      expect(neu.funktionen.vorbilder).toBe(true);
-      expect(neu.funktionen.bossAngriffe).toBe(false);
-      expect(roh('start_vorbild')).toBe('kipchoge');
-      expect(roh('start_boss_id')).toBeUndefined();
-      expect(projekte()).toEqual([]);
-      expect(bosse()).toEqual([]);
+      expect(uebung.funktionen.faehigkeiten).toBe(true);
+      expect(uebung.ebenen.projekte).toBe(false);
+      expect(alle<{ name: string; farbe: string; icon: string }>('SELECT name, farbe, icon FROM faehigkeiten')).toEqual([
+        { name: 'Gitarre', farbe: FARBEN[1], icon: 'code' },
+      ]);
     });
   });
 
-  it('nimmt den ersten Fokus für Boss und Tätigkeit', () => {
+  it('rollt eine falsche Art zurück und legt kein Projekt ohne Tätigkeit an', () => {
     const datei = welt();
     mitWelt(datei, () => {
-      aendereEinstellungen({
-        ...anlage,
-        fokus: ['lernen', 'sport'],
-        startVorbild: 'su',
-        startBoss: true,
-      });
-      expect(projekte()).toEqual([{ name: 'Anfang', vorlage: 'Lernen' }]);
-      expect(bosse()[0]?.titel).toBe('Lernen anfangen');
+      expect(() =>
+        aendereEinstellungen({
+          ...anlage,
+          zielstrebigkeit: 'einfach',
+          startZiel: { art: 'vision', name: 'Daneben' },
+        }),
+      ).toThrow(/Das erste Ziel passt nicht zur Auswahl/);
+      expect(ladeEinstellungen().profilAngelegt).toBe(false);
+      expect(alle('SELECT id FROM visionen')).toEqual([]);
+      expect(() =>
+        aendereEinstellungen({
+          charakterName: 'Leo',
+          zielstrebigkeit: 'macher',
+          fokus: [],
+          profilAngelegt: true,
+          startZiel: { art: 'projekt', name: 'Ohne Tätigkeit' },
+        }),
+      ).toThrow(/Für ein Projekt braucht es eine Tätigkeit/);
+      expect(ladeEinstellungen().profilAngelegt).toBe(false);
+      expect(alle('SELECT id FROM projekte')).toEqual([]);
     });
   });
 
-  it('speichert Projekt und Boss in der Profilsprache', () => {
+  it('benennt die Start-Tätigkeiten in der Profilsprache', () => {
     const datei = welt();
     mitWelt(datei, () => {
-      aendereEinstellungen({
-        ...anlage,
-        sprache: 'fr',
-        startVorbild: 'kipchoge',
-        startBoss: true,
-      });
-      expect(projekte()).toEqual([{ name: zeige('Anfang', 'fr'), vorlage: zeige('Training', 'fr') }]);
-      expect(bosse()[0]?.titel).toBe(zeige('Lauf beginnen', 'fr'));
+      aendereEinstellungen({ ...anlage, sprache: 'fr', startZiel: { art: 'projekt', name: 'Appartement' } });
+      const namen = alle<{ name: string }>('SELECT name FROM vorlagen ORDER BY sortierung, id').map((zeile) => zeile.name);
+      expect(namen).toContain(zeige('Training', 'fr'));
+      expect(namen).not.toContain('Training');
     });
   });
 });

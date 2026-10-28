@@ -291,7 +291,7 @@ test('Wischen lässt den Dialog offen und den nächsten Wisch zu', async ({ page
   expect(fehler).toEqual([]);
 });
 
-test('Einführung führt durch Sprache, Folien und Profil', async ({ page }) => {
+test('Einführung fragt die Sprache und dann den Namen', async ({ page }) => {
   const name = `l81${test.info().project.name}${Date.now().toString(36).slice(-5)}`;
   const geheim = randomBytes(12).toString('base64url');
   let kontoId: number | null = null;
@@ -308,13 +308,9 @@ test('Einführung führt durch Sprache, Folien und Profil', async ({ page }) => 
     await page.getByRole('button', { name: 'Anmelden' }).click();
     await page.getByRole('radio', { name: 'English', exact: true }).click();
     await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await expect(page.getByText('Entries show up as levels.')).toBeVisible();
-    await page.getByRole('button', { name: 'Next' }).click();
-    await page.getByRole('button', { name: 'Next' }).click();
-    await page.getByRole('button', { name: 'Next' }).click();
-    await page.getByRole('button', { name: 'To the questions' }).click();
-    await expect(page.getByRole('heading', { name: 'Profile name' })).toBeVisible();
-    await expect(page.getByText('Name on the character.')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'What should Stride call you?' })).toBeVisible();
+    await expect(page.getByText('Log what you do. It turns into levels and a streak.')).toBeVisible();
+    await expect(page.getByText('Entries show up as levels.')).toHaveCount(0);
   } finally {
     await page
       .evaluate(async () => {

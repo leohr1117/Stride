@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die Einführung legt auf Wunsch ein erstes Ziel an.', 'Onboarding can create a first goal.'],
+  ['Die Einführung fragt Sprache, Namen, Fokus und Ziel. Folien, Geburtsjahr und die Start-Angebote entfallen.', 'Onboarding asks for language, name, focus, and goal. Slides, year of birth, and the starter offers are gone.'],
+  ['Fertig öffnet die Übersicht. Fehlt das Geburtsjahr, zeigt ein Vorbild den Hinweis zum Eintragen.', 'Done opens the overview. If the year of birth is missing, a role model shows the hint to enter it.'],
   ['Todoist und Kalender zeigen keine XP-Vorschau mehr.', 'Todoist and Calendar no longer show an XP preview.'],
   ['Visionen und Organisationen zeigen einen Farbpunkt vor dem Namen. Die Linie links und der Balken oben entfallen.', 'Visions and organizations show a color dot before the name. The line on the left and the bar on top are gone.'],
   ['Zurück schließt den obersten Dialog. Die Seite darunter bleibt.', 'Back closes the top dialog. The page underneath stays.'],

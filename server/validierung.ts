@@ -7,7 +7,7 @@ import { DATUM_HINWEIS } from '../shared/spiel/datum.ts';
 import { EBENEN } from '../shared/spiel/ebenen.ts';
 import { FUNKTIONEN } from '../shared/spiel/funktionen.ts';
 import { istLeiste, LEISTEN_SEITEN } from '../shared/spiel/leiste.ts';
-import { FOKUS_IDS, FOKUS_PFLICHT, GEBURTSJAHR_MIN, PROFILNAME_MAX, ZIELSTREBIGKEITEN } from '../shared/spiel/profil.ts';
+import { FOKUS_IDS, GEBURTSJAHR_MIN, PROFILNAME_MAX, ZIELSTREBIGKEITEN } from '../shared/spiel/profil.ts';
 import { istHexFarbe } from '../shared/spiel/farben.ts';
 import { PALETTE_NAME_MAX } from '../shared/features/darstellung/eigenePaletten.ts';
 import { STILE } from '../shared/features/darstellung/stile.ts';
@@ -356,12 +356,15 @@ export const einstellungenAenderungSchema = z.object({
   zielstrebigkeit: z.enum(ZIELSTREBIGKEITEN).optional(),
   fokus: z
     .array(z.enum(FOKUS_IDS))
-    .min(1, FOKUS_PFLICHT)
     .refine((ids) => new Set(ids).size === ids.length, 'Jeden Fokus nur einmal.')
     .optional(),
   profilAngelegt: z.boolean().optional(),
-  startVorbild: z.string().nullable().optional(),
-  startBoss: z.boolean().optional(),
+  startZiel: z
+    .object({
+      art: z.enum(['vision', 'projekt', 'faehigkeit']),
+      name: pflichtText('Der Name', GRENZEN.nameMax),
+    })
+    .optional(),
   stil: z.enum(STILE).optional(),
   primaer: z.string().refine(istHexFarbe, 'Die Primärfarbe braucht das Format #rrggbb.').optional(),
   akzent: z.string().refine(istHexFarbe, 'Die Akzentfarbe braucht das Format #rrggbb.').optional(),

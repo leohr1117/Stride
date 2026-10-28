@@ -17,6 +17,7 @@ import {
 } from '../../../../shared/features/vorbilder/index.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useKopf } from '../../components/Kopf.tsx';
+import { Zeile } from '../../components/Zeile.tsx';
 import { KlassenBild } from '../../components/KlassenBild.tsx';
 import type { LebenswegPunkt } from '../../components/LebenswegDiagramm.tsx';
 import { LebenswegDiagramm, ProfilRadar } from '../../components/mitDiagramm.tsx';
@@ -202,6 +203,9 @@ export function VorbildProfilSeite() {
 
       <Karte className="space-y-3">
         <Ueberschrift titel={tx('Lebensweg')} />
+        {einstellungen && einstellungen.geburtsjahr === null ? (
+          <Zeile className="-mx-4 border-t border-rand" titel={tx('Geburtsjahr')} wert={tx('Jahr eintragen')} nach="/mehr/profil/jahr" />
+        ) : null}
         <LebenswegDiagramm daten={daten} name={tx(vorbild.name)} />
         <Legende eintraege={legende} />
         <ul className="divide-y divide-rand border-t border-rand text-sm">

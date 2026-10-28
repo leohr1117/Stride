@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState, type FormEvent } from 'react';
 import { FOKUS_PFLICHT, type FokusId } from '../../../../shared/spiel/profil.ts';
 import { api } from '../../api/index.ts';
-import { FokusWahl } from '../../components/ProfilErstellung.tsx';
+import { FokusVorschau, FokusWahl } from '../../components/ProfilErstellung.tsx';
 import { Fehlermeldung, Formular, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
 import { FormularSeite, PROFIL_ZURUECK, useEinstellungen } from './rahmen.tsx';
@@ -46,7 +46,8 @@ export function FokusSeite() {
       kinder={
         <Formular onAbsenden={senden}>
           <FokusWahl wert={fokus} onAendern={setFokus} />
-          {fokus.length === 0 && <p className="text-xs text-leise">{FOKUS_PFLICHT}</p>}
+          <FokusVorschau fokus={fokus} />
+          {fokus.length === 0 && <p className="text-xs text-leise">{tx(FOKUS_PFLICHT)}</p>}
           <Knopf type="submit" variante="primaer" className="w-full" disabled={!geaendert || speichern.isPending}>
             {tx("Speichern")}
           </Knopf>

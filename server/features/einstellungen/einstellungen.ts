@@ -46,7 +46,7 @@ import { anfrageSprache } from '../../anfrageSprache.ts';
 import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
 import { istWeltLeer, wendeFokusAn } from '../../services/profilStart.ts';
-import { wendeStartAn } from '../../services/startAnlage.ts';
+import { wendeStartZielAn, type StartZielArt } from '../../services/startAnlage.ts';
 import { istGewichtEinheit, STANDARD_GEWICHT_EINHEIT, type GewichtEinheit } from '../../../shared/spiel/training.ts';
 import { kartenWahl, type UebersichtKartenWahl } from '../../../shared/spiel/uebersichtKarten.ts';
 import { schreibeHinweisAngebotTesten, setzeHinweisNichtVorWennFehlt } from './hinweisSchluessel.ts';
@@ -502,8 +502,7 @@ export function aendereEinstellungen(
     paletteNeu?: PaletteEingabe;
     paletteAendern?: PaletteEingabe & { id: string };
     paletteLoeschen?: string;
-    startVorbild?: string | null;
-    startBoss?: boolean;
+    startZiel?: { art: StartZielArt; name: string };
     bewertungTesten?: boolean;
     angebotTesten?: boolean;
   },
@@ -538,7 +537,9 @@ export function aendereEinstellungen(
     let sprache = aenderung.sprache ?? bisher.sprache ?? anfrageSprache();
     if (aenderung.fokus !== undefined) {
       fokus = normalisiereFokus(aenderung.fokus);
-      funktionen = { ...funktionen, ...wendeFokusAn(fokus, new Date(), sprache, ersteAnlage) };
+      if (fokus.length > 0) {
+        funktionen = { ...funktionen, ...wendeFokusAn(fokus, new Date(), sprache, ersteAnlage) };
+      }
       speichere('fokus', fokus);
     }
     const stufeFunktionen = stufe && stufeWechselt ? funktionenFuerStufe(stufe) : {};
@@ -625,14 +626,10 @@ export function aendereEinstellungen(
     if (aenderung.angebotTesten !== undefined && process.env.ASCEND_TEST === '1') {
       schreibeHinweisAngebotTesten(aenderung.angebotTesten);
     }
-    wendeStartAn({
-      startVorbild: aenderung.startVorbild,
-      startBoss: aenderung.startBoss,
-      funktionen,
-      projekteAn: ebenen.projekte,
-      vorhabenAn: ebenen.vorhaben,
-      fokus,
-      sprache,
+    wendeStartZielAn({
+      startZiel: aenderung.startZiel,
+      stufe: aenderung.zielstrebigkeit ?? bisher.zielstrebigkeit,
+      ersteAnlage,
     });
     if (ersteAnlage) {
       setzeHinweisNichtVorWennFehlt(new Date());

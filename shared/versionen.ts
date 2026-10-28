@@ -17,6 +17,23 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.24.0',
+    seiten: 'Einführung, Vorbilder',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: ['Die Einführung legt auf Wunsch ein erstes Ziel an.'],
+      },
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Die Einführung fragt Sprache, Namen, Fokus und Ziel. Folien, Geburtsjahr und die Start-Angebote entfallen.',
+          'Fertig öffnet die Übersicht. Fehlt das Geburtsjahr, zeigt ein Vorbild den Hinweis zum Eintragen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.23.0',
     seiten: 'Verbindungen',
     abschnitte: [

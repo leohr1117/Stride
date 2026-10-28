@@ -4,15 +4,27 @@ export const PROFILNAME_MAX = 40;
 export const PROFILNAME_PLATZHALTER = 'Abenteurer';
 export const GEBURTSJAHR_MIN = 1900;
 
-/** Fragen nach der Sprachwahl und den Folien, in dieser Reihenfolge. */
-export const PROFIL_SCHRITTE = ['profilname', 'geburtsjahr', 'ziel', 'fokus'] as const;
+/** Fragen nach der Sprache. Fokus steht vor dem Ziel, das Geburtsjahr fehlt. */
+export const PROFIL_SCHRITTE = ['profilname', 'fokus', 'ziel'] as const;
 export type ProfilSchritt = (typeof PROFIL_SCHRITTE)[number];
 
 /** Gesamte Einführung. Die Oberfläche hält sich an diese Reihenfolge. */
-export const ONBOARDING_SCHRITTE = ['sprache', 'folien', ...PROFIL_SCHRITTE] as const;
+export const ONBOARDING_SCHRITTE = ['sprache', 'profilname', 'fokus', 'ziel', 'erstesZiel'] as const;
 
 export const ZIELSTREBIGKEITEN = ['traeumer', 'macher', 'bodenstaendig', 'uebung', 'einfach'] as const;
 export type Zielstrebigkeit = (typeof ZIELSTREBIGKEITEN)[number];
+
+/** Die vier Angebote. `bodenstaendig` bleibt lesbar, wird aber nicht mehr angeboten. */
+export const ZIEL_AUSWAHL = ['traeumer', 'macher', 'uebung', 'einfach'] as const;
+export type ZielAuswahl = (typeof ZIEL_AUSWAHL)[number];
+
+/** Gespeichertes `bodenstaendig` erscheint als Option 2, weil es dieselben Ebenen setzt. */
+export function zielAuswahlWert(wert: Zielstrebigkeit | null): ZielAuswahl {
+  if (wert === 'traeumer' || wert === 'uebung' || wert === 'einfach') {
+    return wert;
+  }
+  return 'macher';
+}
 
 const ZIELSTREBIGKEIT_ALIAS: Record<string, Zielstrebigkeit> = {
   kleineErfolge: 'bodenstaendig',
@@ -24,24 +36,24 @@ export const FOKUS_PFLICHT = 'Wähle mindestens einen Fokus.';
 
 export const ZIELSTREBIGKEIT_INFO: Record<Zielstrebigkeit, { titel: string; text: string }> = {
   traeumer: {
-    titel: 'Ein Lebensziel',
-    text: 'Großes Ziel, mittlere Ziele und kleine Ziele.',
+    titel: 'Ein großes Ziel',
+    text: 'Visionen, Projekte, Vorhaben',
   },
   macher: {
     titel: 'Projekte umsetzen',
-    text: 'Mittlere Ziele und kleine Ziele.',
+    text: 'Projekte, Vorhaben',
   },
   bodenstaendig: {
-    titel: 'Konkrete Ziele',
-    text: 'Kleine Ziele in einem mittleren Ziel.',
+    titel: 'Projekte umsetzen',
+    text: 'Projekte, Vorhaben',
   },
   uebung: {
-    titel: 'Besser werden',
-    text: 'Fähigkeiten, ohne Ziele.',
+    titel: 'In etwas besser werden',
+    text: 'Fähigkeiten',
   },
   einfach: {
-    titel: 'Nur Einträge',
-    text: 'Festhalten, ohne Ziele.',
+    titel: 'Einfach festhalten',
+    text: 'Nur Einträge',
   },
 };
 

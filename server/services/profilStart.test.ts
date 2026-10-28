@@ -10,6 +10,7 @@ import { mitAnfrageSprache } from '../anfrageSprache.ts';
 import { alle, ausfuehren, mitWelt, schliesseWelt } from '../db.ts';
 import { ladeAttribute } from '../features/attribute/attribute.ts';
 import { aendereEinstellungen, ladeEinstellungen } from '../features/einstellungen/einstellungen.ts';
+import { wendeFokusAn } from './profilStart.ts';
 
 const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-profil-'));
 const offen: string[] = [];
@@ -112,15 +113,19 @@ describe('profil beim start', () => {
     });
   });
 
-  it('ändert bei einem Namenswechsel keine Attribute und lehnt einen leeren Fokus ab', () => {
+  it('ändert bei einem Namenswechsel keine Attribute und speichert einen leeren Fokus', () => {
     const datei = welt();
     mitWelt(datei, () => {
       aendereEinstellungen({ charakterName: 'NurName' });
       expect(ladeAttribute(false)).toHaveLength(10);
       expect(vorlagenNamen()).toEqual([]);
-      expect(() => aendereEinstellungen({ fokus: [] })).toThrow(/Fokus/);
-      expect(ladeEinstellungen().fokus).toEqual([]);
+      const neu = aendereEinstellungen({ fokus: [] });
+      expect(neu.fokus).toEqual([]);
+      expect(neu.funktionen.koennen).toBe(true);
+      expect(neu.funktionen.status).toBe(true);
+      expect(vorlagenNamen()).toEqual([]);
       expect(ladeAttribute(false)).toHaveLength(10);
+      expect(() => wendeFokusAn([])).toThrow(/Fokus/);
     });
   });
 

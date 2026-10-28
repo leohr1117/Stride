@@ -17,11 +17,12 @@ import {
   startTaetigkeiten,
   ZIEL_FRAGE,
   ZIELSTREBIGKEIT_INFO,
+  zielAuswahlWert,
 } from './profil.ts';
 
 describe('profilfragen', () => {
   it('führt die Einführung in der festen Reihenfolge', () => {
-    expect(ONBOARDING_SCHRITTE).toEqual(['sprache', 'folien', 'profilname', 'geburtsjahr', 'ziel', 'fokus']);
+    expect(ONBOARDING_SCHRITTE).toEqual(['sprache', 'profilname', 'fokus', 'ziel', 'erstesZiel']);
   });
 
   it('zeigt den Ablauf nur bei leerer Welt ohne angelegtes Profil', () => {
@@ -58,19 +59,19 @@ describe('profilfragen', () => {
     expect(leseZielstrebigkeit('nein')).toBeNull();
     expect(ZIEL_FRAGE).toBe('Was willst du erreichen?');
     expect(ZIELSTREBIGKEIT_INFO.traeumer).toEqual({
-      titel: 'Ein Lebensziel',
-      text: 'Großes Ziel, mittlere Ziele und kleine Ziele.',
+      titel: 'Ein großes Ziel',
+      text: 'Visionen, Projekte, Vorhaben',
     });
-    expect(ZIELSTREBIGKEIT_INFO.macher).toEqual({ titel: 'Projekte umsetzen', text: 'Mittlere Ziele und kleine Ziele.' });
-    expect(ZIELSTREBIGKEIT_INFO.bodenstaendig).toEqual({
-      titel: 'Konkrete Ziele',
-      text: 'Kleine Ziele in einem mittleren Ziel.',
-    });
+    expect(ZIELSTREBIGKEIT_INFO.macher).toEqual({ titel: 'Projekte umsetzen', text: 'Projekte, Vorhaben' });
+    expect(ZIELSTREBIGKEIT_INFO.bodenstaendig).toEqual(ZIELSTREBIGKEIT_INFO.macher);
+    expect(zielAuswahlWert('bodenstaendig')).toBe('macher');
+    expect(zielAuswahlWert(null)).toBe('macher');
+    expect(zielAuswahlWert('traeumer')).toBe('traeumer');
     expect(ZIELSTREBIGKEIT_INFO.uebung).toEqual({
-      titel: 'Besser werden',
-      text: 'Fähigkeiten, ohne Ziele.',
+      titel: 'In etwas besser werden',
+      text: 'Fähigkeiten',
     });
-    expect(ZIELSTREBIGKEIT_INFO.einfach).toEqual({ titel: 'Nur Einträge', text: 'Festhalten, ohne Ziele.' });
+    expect(ZIELSTREBIGKEIT_INFO.einfach).toEqual({ titel: 'Einfach festhalten', text: 'Nur Einträge' });
     expect(normalisiereFokus(['sport', 'sport', 'quatsch', 'geld'])).toEqual(['sport', 'geld']);
     expect(normalisiereFokus({ sport: true })).toEqual([]);
   });
