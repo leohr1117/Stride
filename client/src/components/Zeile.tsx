@@ -16,7 +16,7 @@ function nameVon(titel: ReactNode, name?: string): string {
 export function ZeilenGruppe({ titel, children }: { titel?: string; children: ReactNode }) {
   return (
     <section>
-      {titel ? <h2 className="mb-2 text-sm font-medium text-balance break-words text-leise">{tx(titel)}</h2> : null}
+      {titel ? <h2 className="abschnittskopf mb-2 text-sm font-medium text-balance break-words text-leise">{tx(titel)}</h2> : null}
       <Karte dicht>
         <div className="divide-y divide-rand">{children}</div>
       </Karte>
@@ -58,7 +58,7 @@ export function Zeile({
   const bezeichnung = nameVon(titel, name);
   const zeigePfeil = pfeil ?? Boolean(nach || href || onKlick);
   return (
-    <div id={id} className={`relative flex min-h-12 items-center gap-3 px-4 ${className}`}>
+    <div id={id} className={`zeile relative flex min-h-12 items-center gap-3 px-4 ${className}`}>
       {nach ? <Link to={nach} aria-label={bezeichnung} className="absolute inset-0 z-0" /> : null}
       {href ? (
         <a href={href} download={download || undefined} aria-label={bezeichnung} className="absolute inset-0 z-0" />
@@ -113,7 +113,7 @@ export function ZeileSchalter({
 }) {
   const bezeichnung = nameVon(titel, name);
   return (
-    <div id={id} className={`relative flex min-h-12 items-center gap-3 px-4 ${className}`}>
+    <div id={id} className={`zeile relative flex min-h-12 items-center gap-3 px-4 ${className}`}>
       <button
         type="button"
         role="switch"

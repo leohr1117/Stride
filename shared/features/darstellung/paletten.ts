@@ -29,7 +29,7 @@ export interface Erscheinung extends Farbtrio {
   flaechen: Flaechen;
 }
 
-const SCHLICHT_HELL: Vorlage = {
+const STANDARD_HELL: Vorlage = {
   name: 'Hell',
   primaer: '#141414',
   akzent: '#707070',
@@ -37,18 +37,18 @@ const SCHLICHT_HELL: Vorlage = {
   text: '#f2f2f2',
   flaechen: {
     flaeche: '#ffffff',
-    flaeche2: '#e8e8e8',
-    rand: '#d4d4d4',
+    flaeche2: '#ebebeb',
+    rand: '#e0e0e0',
     haupt: '#141414',
-    leise: '#6e6e6e',
+    leise: '#666666',
     gefahr: '#e5484d',
     diagramm: '#707070',
     schema: 'light',
   },
 };
 
-/** Logo-Grau #707070 liegt auf #141414 unter dem Mindestkontrast. Für Text gilt #8a8a8a, der Rand bleibt ruhig. */
-const SCHLICHT_DUNKEL: Vorlage = {
+/** Logo-Grau #707070 ist nur Deko. Text ist #949494, weil #8a8a8a auf #262626 unter 4,5 liegt. */
+const STANDARD_DUNKEL: Vorlage = {
   name: 'Dunkel',
   primaer: '#f2f2f2',
   akzent: '#8a8a8a',
@@ -57,16 +57,16 @@ const SCHLICHT_DUNKEL: Vorlage = {
   flaechen: {
     flaeche: '#1c1c1c',
     flaeche2: '#262626',
-    rand: '#333333',
+    rand: '#2e2e2e',
     haupt: '#f2f2f2',
-    leise: '#8a8a8a',
+    leise: '#949494',
     gefahr: '#f2555a',
     diagramm: '#8a8a8a',
     schema: 'dark',
   },
 };
 
-const SCHLICHT_NEBEL: Vorlage = {
+const STANDARD_NEBEL: Vorlage = {
   name: 'Nebel',
   primaer: '#f2f2f2',
   akzent: '#8a8a8a',
@@ -122,16 +122,16 @@ const MINIMAL_DUNKEL: Vorlage = {
 
 const SYSTEM_HELL: Partial<Record<Stil, Vorlage>> = {
   minimal: MINIMAL_HELL,
-  schlicht: SCHLICHT_HELL,
+  standard: STANDARD_HELL,
 };
 
 const SYSTEM_DUNKEL: Partial<Record<Stil, Vorlage>> = {
   minimal: MINIMAL_DUNKEL,
-  schlicht: SCHLICHT_DUNKEL,
+  standard: STANDARD_DUNKEL,
 };
 
 const VORLAGEN: Record<Stil, readonly Vorlage[]> = {
-  schlicht: [SCHLICHT_HELL, SCHLICHT_DUNKEL, SCHLICHT_NEBEL],
+  standard: [STANDARD_HELL, STANDARD_DUNKEL, STANDARD_NEBEL],
   minimal: [
     MINIMAL_HELL,
     MINIMAL_DUNKEL,

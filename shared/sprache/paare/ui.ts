@@ -273,7 +273,7 @@ export const PAARE = [
   ['Selbst schätzen', 'Estimate it yourself'],
   ['Sicherung importieren?', 'Import a backup?'],
   ['Speichern ergänzt fehlende Attribute, archiviert andere und legt fehlende Starter-Tätigkeiten an.', 'Saving adds missing attributes, archives others, and creates any missing starter activities.'],
-  ['Standard', 'Default'],
+  ['Standard', 'Standard'],
   ['Standard des Projekts', 'Project default'],
   ['Standard-Tätigkeit', 'Default activity'],
   ['Erste Werte und Tätigkeiten.', 'First values and activities.'],

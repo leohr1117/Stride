@@ -365,7 +365,7 @@ export const einstellungenAenderungSchema = z.object({
       name: pflichtText('Der Name', GRENZEN.nameMax),
     })
     .optional(),
-  stil: z.enum(STILE).optional(),
+  stil: z.preprocess((wert) => (wert === 'schlicht' ? 'standard' : wert), z.enum(STILE).optional()),
   primaer: z.string().refine(istHexFarbe, 'Die Primärfarbe braucht das Format #rrggbb.').optional(),
   akzent: z.string().refine(istHexFarbe, 'Die Akzentfarbe braucht das Format #rrggbb.').optional(),
   hintergrund: z.string().refine(istHexFarbe, 'Die Hintergrundfarbe braucht das Format #rrggbb.').optional(),

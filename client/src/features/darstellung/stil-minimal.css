@@ -1,0 +1,31 @@
+/* Heutige runde Form. Standard setzt dagegen 8 px und deckende Flächen. */
+
+:root[data-stil='minimal'] {
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+}
+
+:root[data-stil='minimal'] .karte {
+  border-radius: 1rem;
+}
+
+:root[data-stil='minimal'] :is(.knopf, .chip, input, textarea, select) {
+  border-radius: 0.75rem;
+}
+
+:root[data-stil='minimal'] .rounded-full,
+:root[data-stil='minimal'] .chip {
+  border-radius: 9999px;
+}
+
+:root[data-stil='minimal'] .dialog-fenster {
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+@media (min-width: 768px) {
+  :root[data-stil='minimal'] .dialog-fenster {
+    border-radius: 1.5rem;
+  }
+}

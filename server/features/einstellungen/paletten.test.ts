@@ -37,12 +37,12 @@ function setzeRoh(schluessel: string, wert: unknown): void {
 const trio = { primaer: '#d0d0d0', akzent: '#9a9a9a', hintergrund: '#141414' };
 
 describe('eigene Paletten', () => {
-  it('nutzt Schlicht, wenn noch keine Ansicht gespeichert ist', () => {
+  it('nutzt Standard, wenn noch keine Ansicht gespeichert ist', () => {
     const datei = welt();
     mitWelt(datei, () => {
       const daten = ladeEinstellungen();
-      const vorlage = standardVorlage('schlicht', false);
-      expect(daten.stil).toBe('schlicht');
+      const vorlage = standardVorlage('standard', false);
+      expect(daten.stil).toBe('standard');
       expect(daten.primaer).toBe(vorlage.primaer);
       expect(daten.akzent).toBe(vorlage.akzent);
       expect(daten.hintergrund).toBe(vorlage.hintergrund);
@@ -83,10 +83,10 @@ describe('eigene Paletten', () => {
     mitWelt(datei, () => {
       const angelegt = aendereEinstellungen({ paletteNeu: { name: 'Morgenrot', ...trio } });
       aendereEinstellungen({ stil: 'jade', primaer: '#112233', akzent: '#445566', hintergrund: '#778899' });
-      const zurueck = aendereEinstellungen({ stil: 'schlicht', farbenZuruecksetzen: true });
+      const zurueck = aendereEinstellungen({ stil: 'standard', farbenZuruecksetzen: true });
       expect(zurueck.paletten).toEqual(angelegt.paletten);
-      expect(zurueck.stil).toBe('schlicht');
-      expect(zurueck.ansichtFarben.schlicht).toBeUndefined();
+      expect(zurueck.stil).toBe('standard');
+      expect(zurueck.ansichtFarben.standard).toBeUndefined();
       expect(zurueck.ansichtFarben.jade).toEqual({ primaer: '#112233', akzent: '#445566', hintergrund: '#778899' });
 
       setzeRoh('paletten', [
@@ -97,6 +97,19 @@ describe('eigene Paletten', () => {
       expect(ladeEinstellungen().paletten).toEqual([
         { id: 'a', name: 'Gut', primaer: '#112233', akzent: '#445566', hintergrund: '#778899' },
       ]);
+    });
+  });
+
+  it('liest gespeichertes schlicht als Standard, auch die Farben', () => {
+    const datei = welt();
+    mitWelt(datei, () => {
+      setzeRoh('stil', 'schlicht');
+      setzeRoh('ansichtFarben', { schlicht: { primaer: '#112233', akzent: '#445566', hintergrund: '#778899' } });
+      const daten = ladeEinstellungen();
+      expect(daten.stil).toBe('standard');
+      expect(daten.ansichtFarben.standard).toEqual({ primaer: '#112233', akzent: '#445566', hintergrund: '#778899' });
+      expect(daten.ansichtFarben).not.toHaveProperty('schlicht');
+      expect(einstellungenAenderungSchema.parse({ stil: 'schlicht' }).stil).toBe('standard');
     });
   });
 

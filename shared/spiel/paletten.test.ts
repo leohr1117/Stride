@@ -17,20 +17,29 @@ describe('paletten', () => {
     }
   });
 
-  it('nimmt für Schlicht und Minimal das System und für die anderen Ansichten ihre dunkle Vorlage', () => {
-    expect(STANDARD_STIL).toBe('schlicht');
-    const hell = standardVorlage('schlicht', false);
-    const dunkel = standardVorlage('schlicht', true);
+  it('nimmt für Standard und Minimal das System und für die anderen Ansichten ihre dunkle Vorlage', () => {
+    expect(STANDARD_STIL).toBe('standard');
+    const hell = standardVorlage('standard', false);
+    const dunkel = standardVorlage('standard', true);
     expect(hell.name).toBe('Hell');
     expect(hell.primaer).toBe('#141414');
     expect(hell.akzent).toBe('#707070');
     expect(hell.hintergrund).toBe('#f2f2f2');
+    expect(hell.flaechen.flaeche2).toBe('#ebebeb');
+    expect(hell.flaechen.rand).toBe('#e0e0e0');
+    expect(hell.flaechen.leise).toBe('#666666');
     expect(dunkel.name).toBe('Dunkel');
     expect(dunkel.primaer).toBe('#f2f2f2');
     expect(dunkel.hintergrund).toBe('#141414');
-    expect(dunkel.akzent).not.toBe('#707070');
+    expect(dunkel.akzent).toBe('#8a8a8a');
+    expect(dunkel.flaechen.leise).toBe('#949494');
+    expect(dunkel.flaechen.rand).toBe('#2e2e2e');
     expect(dunkel.flaechen.rand).not.toBe('#707070');
     expect(kontrast('#707070', dunkel.hintergrund)).toBeLessThan(MINDEST_KONTRAST);
+    expect(kontrast('#707070', hell.hintergrund)).toBeLessThan(MINDEST_KONTRAST);
+    expect(kontrast('#8a8a8a', dunkel.flaechen.flaeche2)).toBeLessThan(MINDEST_KONTRAST);
+    expect(kontrast(hell.flaechen.leise, hell.hintergrund)).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
+    expect(kontrast(dunkel.flaechen.leise, dunkel.flaechen.flaeche2)).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
     expect(kontrast(dunkel.akzent, dunkel.flaechen.flaeche)).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
     expect(standardVorlage('minimal', false).name).toBe('Hell');
     expect(standardVorlage('minimal', true).name).toBe('Dunkel');

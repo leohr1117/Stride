@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { istHexFarbe, normaleHex } from '../../../../shared/spiel/farben.ts';
 import { erscheinungAus, standardVorlage, type Farbtrio } from '../../../../shared/features/darstellung/paletten.ts';
-import { istStil, STANDARD_STIL, type Stil } from '../../../../shared/features/darstellung/stile.ts';
+import { gelesenerStil, STANDARD_STIL, type Stil } from '../../../../shared/features/darstellung/stile.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { leseText, merkeText } from '../../speicher.ts';
 
@@ -17,7 +17,9 @@ export interface Farbwahl extends Farbtrio {
   glimmen?: boolean;
 }
 
-const LADER: Partial<Record<Stil, () => Promise<unknown>>> = {
+const LADER: Record<Stil, () => Promise<unknown>> = {
+  standard: () => import('./stil-standard.css'),
+  minimal: () => import('./stil-minimal.css'),
   jade: () => import('./stil-jade.css'),
   holo: () => import('./stil-holo.css'),
   antik: () => import('./stil-antik.css'),
@@ -27,8 +29,7 @@ let angewendet: Stil | null = null;
 let letzteAnfrage = 0;
 
 export function gespeicherterStil(): Stil {
-  const wert = leseText(SPEICHER_SCHLUESSEL);
-  return istStil(wert) ? wert : STANDARD_STIL;
+  return gelesenerStil(leseText(SPEICHER_SCHLUESSEL)) ?? STANDARD_STIL;
 }
 
 export function gespeichertesGlimmen(): boolean {
@@ -98,23 +99,17 @@ export async function wendeStilAn(stil: Stil): Promise<boolean> {
   }
   const anfrage = ++letzteAnfrage;
   let ziel = stil;
-  const lade = stil === STANDARD_STIL ? undefined : LADER[stil];
-  if (lade) {
-    try {
-      await lade();
-    } catch (fehler) {
-      console.error(`Der Stil "${stil}" konnte nicht geladen werden.`, fehler);
-      ziel = STANDARD_STIL;
-    }
+  try {
+    await LADER[ziel]();
+  } catch (fehler) {
+    console.error(`Der Stil "${stil}" konnte nicht geladen werden.`, fehler);
+    ziel = STANDARD_STIL;
+    await LADER[STANDARD_STIL]();
   }
   if (anfrage !== letzteAnfrage) {
     return false;
   }
-  if (ziel === STANDARD_STIL) {
-    delete document.documentElement.dataset.stil;
-  } else {
-    document.documentElement.dataset.stil = ziel;
-  }
+  document.documentElement.dataset.stil = ziel;
   angewendet = ziel;
   merkeText(SPEICHER_SCHLUESSEL, ziel);
   setzeThemeFarbe();

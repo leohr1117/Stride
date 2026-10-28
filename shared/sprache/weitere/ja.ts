@@ -85,6 +85,8 @@ export const TEXTE: Record<string, string> = {
   "Unter Darstellung speicherst du eigene Farbpaletten. Auswählen übernimmt die Farben. Anlegen, Bearbeiten und Löschen liegt auf einer eigenen Seite.": "「表示」で自分の配色を保存します。選ぶとその色になります。作成、編集、削除は別のページです。",
   "Schlicht ist die neue Standardansicht, in Schwarz, Grau und Weiß.": "「簡素」が新しい標準の表示です。黒、グレー、白です。",
   "Schlicht": "簡素",
+  "Die Ansicht Standard hat eine eigene Form. Minimal behält die runde Form.": "表示「標準」は独自の形を持ちます。Minimal は丸い形のままです。",
+  "Hell und Dunkel folgen der Logo-Palette. Gespeichertes Schlicht wird beim Öffnen zu Standard.": "ライトとダークはロゴの配色に従います。保存された「簡素」は開くと「標準」になります。",
   "Nebel": "霧",
   "Eigene Paletten": "自分のパレット",
   "Auswählen übernimmt die Farben. Anlegen und Löschen liegt unter Paletten.": "選ぶとその色になります。作成と削除は「パレット」にあります。",

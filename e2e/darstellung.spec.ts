@@ -13,7 +13,7 @@ interface Darstellung {
 }
 
 const ANSICHT_NAME: Record<Stil, string> = {
-  schlicht: 'Schlicht',
+  standard: 'Standard',
   minimal: 'Minimal',
   jade: 'Jade',
   holo: 'Hologramm',
@@ -147,7 +147,7 @@ async function missAbstaende(seite: Page, name: string): Promise<Abstand[]> {
         const rects = [...bereich.getClientRects()].filter((rect) => rect.width > 1 && rect.height > 1 && rect.right <= kasten.left + 2);
         const passend = rects
           .map((rect) => ({ rect, dy: Math.abs(rect.top + rect.height / 2 - iconMitte) }))
-          .sort((a, b) => a.dy - b.dy)[0];
+          .sort((a, b) => a.dy - b.dy || b.rect.right - a.rect.right)[0];
         if (passend) {
           luecke = kasten.left - passend.rect.right;
           deltaY = iconMitte - (passend.rect.top + passend.rect.height / 2);
@@ -220,12 +220,12 @@ test('Darstellung: alle Ansichten, Farben getrennt, Glühen unter Sound', async 
   for (const name of ['Ansichten', 'Farben', 'Standardfarben', 'Eigene Farben']) {
     await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
   }
-  for (const name of ['Schlicht', 'Minimal', 'Jade', 'Hologramm', 'Antik']) {
+  for (const name of ['Standard', 'Minimal', 'Jade', 'Hologramm', 'Antik']) {
     await expect(page.locator('button.rounded-xl').filter({ hasText: name })).toBeVisible();
   }
   await expect(page.getByRole('region').first()).toBeVisible();
   const regionen = await page.getByRole('region').evaluateAll((liste) => liste.map((element) => element.getAttribute('aria-label')));
-  expect(regionen.every((name) => ['Schlicht', 'Minimal', 'Jade', 'Hologramm', 'Antik'].includes(name ?? ''))).toBe(true);
+  expect(regionen.every((name) => ['Standard', 'Minimal', 'Jade', 'Hologramm', 'Antik'].includes(name ?? ''))).toBe(true);
 
   const kartenText = await page
     .locator('section')
@@ -360,7 +360,7 @@ test('Eigene Farben bleiben beim Ansichtswechsel erhalten', async ({ page }, tes
     await expect(akzent).toHaveValue('#ff00aa');
     await ohneSeitlichenUeberlauf(page);
   } finally {
-    for (const stil of ['schlicht', 'minimal', 'jade', 'holo', 'antik'] as const) {
+    for (const stil of ['standard', 'minimal', 'jade', 'holo', 'antik'] as const) {
       await loescheEigeneFarben(page, stil);
     }
   }
@@ -380,6 +380,7 @@ test('Info-Icon hat überall Abstand zum Namen', async ({ page }) => {
   for (const ort of orte) {
     await page.goto(ort.pfad);
     await page.getByRole('heading').first().waitFor();
+    await expect(page.getByText('Lädt …')).toHaveCount(0);
     await oeffneGeschlossene(page);
     const abstaende = await missAbstaende(page, ort.name);
     pruefeAbstaende(abstaende, ort.mindestens);
@@ -403,6 +404,7 @@ test('Info-Icon hat überall Abstand zum Namen', async ({ page }) => {
   expect(projektId).not.toBeNull();
   await page.goto(`/projekte/${projektId}`);
   await page.getByRole('heading').first().waitFor();
+  await expect(page.getByText('Lädt …')).toHaveCount(0);
   await oeffneGeschlossene(page);
   const projekt = await missAbstaende(page, 'projekt');
   pruefeAbstaende(projekt, 1);

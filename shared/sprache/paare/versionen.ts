@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die Ansicht Standard hat eine eigene Form. Minimal behält die runde Form.', 'The Standard look has its own shape. Minimal keeps the round shape.'],
+  ['Hell und Dunkel folgen der Logo-Palette. Gespeichertes Schlicht wird beim Öffnen zu Standard.', 'Light and Dark follow the logo palette. A saved Plain look becomes Standard when opened.'],
   ['Die Einführung legt auf Wunsch ein erstes Ziel an.', 'Onboarding can create a first goal.'],
   ['Die Einführung fragt Sprache, Namen, Fokus und Ziel. Folien, Geburtsjahr und die Start-Angebote entfallen.', 'Onboarding asks for language, name, focus, and goal. Slides, year of birth, and the starter offers are gone.'],
   ['Fertig öffnet die Übersicht. Fehlt das Geburtsjahr, zeigt ein Vorbild den Hinweis zum Eintragen.', 'Done opens the overview. If the year of birth is missing, a role model shows the hint to enter it.'],

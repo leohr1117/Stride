@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.25.0',
+    seiten: 'Darstellung',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Die Ansicht Standard hat eine eigene Form. Minimal behält die runde Form.',
+          'Hell und Dunkel folgen der Logo-Palette. Gespeichertes Schlicht wird beim Öffnen zu Standard.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.24.0',
     seiten: 'Einführung, Vorbilder',
     abschnitte: [

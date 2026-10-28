@@ -33,7 +33,7 @@ import {
   type PaletteEingabe,
 } from '../../../shared/features/darstellung/eigenePaletten.ts';
 import { standardVorlage, type Farbtrio } from '../../../shared/features/darstellung/paletten.ts';
-import { istStil, STANDARD_STIL, STILE, type Stil } from '../../../shared/features/darstellung/stile.ts';
+import { gelesenerStil, STANDARD_STIL, STILE, type Stil } from '../../../shared/features/darstellung/stile.ts';
 import {
   leseZielstrebigkeit,
   normalisiereFokus,
@@ -134,8 +134,7 @@ function leseAngelegt(roh: string | undefined): boolean {
 }
 
 function leseStil(roh: string | undefined): Stil {
-  const wert = parse(roh);
-  return istStil(wert) ? wert : STANDARD.stil;
+  return gelesenerStil(parse(roh)) ?? STANDARD.stil;
 }
 
 function leseFarbe(roh: string | undefined): string | undefined {
@@ -176,6 +175,12 @@ function leseAnsichtFarben(
         const trio = alsTrio(eintrag[name]);
         if (trio) {
           ergebnis[name] = trio;
+        }
+      }
+      if (!ergebnis.standard) {
+        const alt = alsTrio(eintrag.schlicht);
+        if (alt) {
+          ergebnis.standard = alt;
         }
       }
     }

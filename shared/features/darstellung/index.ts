@@ -1,4 +1,4 @@
-export { STILE, STANDARD_STIL, STIL_INFO, istStil, type Stil } from './stile.ts';
+export { STILE, STANDARD_STIL, STIL_INFO, gelesenerStil, istStil, type Stil } from './stile.ts';
 export {
   vorlagen,
   palettenNachDesign,

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router';
 import { standardVorlage } from '../../../../shared/features/darstellung/paletten.ts';
+import { STANDARD_STIL } from '../../../../shared/features/darstellung/stile.ts';
 import { SPRACH_NAME, SPRACHEN } from '../../../../shared/sprache/kern.ts';
 import { LeistenEditor } from '../../components/LeistenEditor.tsx';
 import { Fehlermeldung, InfoHinweis, Ladeanzeige } from '../../ui/index.ts';
@@ -98,18 +99,20 @@ function DarstellungListe() {
             <ZeilenGruppe>
               <Zeile titel={tx("Leiste")} nach="/mehr/darstellung/leiste" />
               <ZeileSchalter titel={tx("Sound")} an={data.sound} onAendern={(sound) => speichern.mutate({ sound })} deaktiviert={speichern.isPending} />
-              <ZeileSchalter
-                titel={tx("Glühen")}
-                an={data.glimmen}
-                onAendern={(glimmen) => {
-                  const farben = data.eigeneFarben
-                    ? { primaer: data.primaer, akzent: data.akzent, hintergrund: data.hintergrund }
-                    : standardVorlage(data.stil, systemDunkel());
-                  wendeErscheinung({ ...farben, glimmen });
-                  speichern.mutate({ glimmen });
-                }}
-                deaktiviert={speichern.isPending}
-              />
+              {data.stil !== STANDARD_STIL && (
+                <ZeileSchalter
+                  titel={tx("Glühen")}
+                  an={data.glimmen}
+                  onAendern={(glimmen) => {
+                    const farben = data.eigeneFarben
+                      ? { primaer: data.primaer, akzent: data.akzent, hintergrund: data.hintergrund }
+                      : standardVorlage(data.stil, systemDunkel());
+                    wendeErscheinung({ ...farben, glimmen });
+                    speichern.mutate({ glimmen });
+                  }}
+                  deaktiviert={speichern.isPending}
+                />
+              )}
             </ZeilenGruppe>
           </div>
           <Fehlermeldung fehler={speichern.error} />

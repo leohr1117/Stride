@@ -4,7 +4,7 @@ import { erscheinungAus, standardVorlage } from '../shared/features/darstellung/
 import { ohneSeitlichenUeberlauf } from './helfer.ts';
 
 const ANSICHT_NAME: Record<string, string> = {
-  schlicht: 'Schlicht',
+  standard: 'Standard',
   minimal: 'Minimal',
   jade: 'Jade',
   holo: 'Hologramm',
@@ -74,7 +74,7 @@ async function setzeFarbfeld(dialog: Locator, label: string, wert: string): Prom
   }, wert);
 }
 
-test('Eigene Paletten wählen die Ansicht, Schlicht ist der Standard', async ({ page }, testInfo) => {
+test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', async ({ page }, testInfo) => {
   test.setTimeout(120_000);
   const bild = (name: string) => page.screenshot({ path: `tmp-bau/n5/${testInfo.project.name}-${name}.png`, fullPage: true });
   page.on('dialog', (dialog) => {
@@ -105,7 +105,7 @@ test('Eigene Paletten wählen die Ansicht, Schlicht ist der Standard', async ({ 
     await expect(page.getByRole('heading', { name: 'Eigene Paletten', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Bearbeiten', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Löschen', exact: true })).toHaveCount(0);
-    await expect(page.locator('button.rounded-xl').filter({ hasText: 'Schlicht' })).toBeVisible();
+    await expect(page.locator('button.rounded-xl').filter({ hasText: 'Standard' })).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
 
     await page.getByRole('link', { name: 'Paletten', exact: true }).click();
@@ -237,18 +237,18 @@ test('Eigene Paletten wählen die Ansicht, Schlicht ist der Standard', async ({ 
     const schlichtGespeichert = page.waitForResponse(
       (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
     );
-    await page.locator('button.rounded-xl').filter({ hasText: 'Schlicht' }).click();
+    await page.locator('button.rounded-xl').filter({ hasText: 'Standard' }).click();
     await schlichtGespeichert;
-    await expect.poll(() => page.evaluate(() => document.documentElement.dataset.stil ?? '')).toBe('');
+    await expect.poll(() => page.evaluate(() => document.documentElement.dataset.stil ?? '')).toBe('standard');
     const dunkel = await page.evaluate(() => window.matchMedia('(prefers-color-scheme: dark)').matches);
-    const soll = standardVorlage('schlicht', dunkel);
+    const soll = standardVorlage('standard', dunkel);
     await expect.poll(() => variable(page, '--akzent')).toBe(soll.primaer);
     await expect.poll(() => variable(page, '--xp')).toBe(soll.akzent);
     await expect.poll(() => variable(page, '--grund')).toBe(soll.hintergrund);
     await page.goto('/');
     await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
-    await bild('schlicht');
+    await bild('standard');
 
     await page.goto('/mehr/darstellung/paletten');
     await page.getByRole('button', { name: 'Abendrot', exact: true }).click();

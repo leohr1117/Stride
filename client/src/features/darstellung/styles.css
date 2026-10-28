@@ -9,10 +9,11 @@
   --glimm: 1;
   --grund: #f2f2f2;
   --flaeche: #ffffff;
-  --flaeche-2: #e8e8e8;
-  --rand: #d4d4d4;
+  --flaeche-2: #ebebeb;
+  --rand: #e0e0e0;
   --haupt: #141414;
-  --leise: #6e6e6e;
+  --leise: #666666;
+  --feldrand: #767676;
   --akzent: #141414;
   --akzent-text: #f2f2f2;
   --xp: #707070;
@@ -24,7 +25,7 @@
   --prio-4: var(--leise);
 }
 
-:root[data-glimmen='aus'] {
+:root:is([data-glimmen='aus'], [data-stil='standard']) {
   --glimm: 0;
 }
 
@@ -33,9 +34,10 @@
     --grund: #141414;
     --flaeche: #1c1c1c;
     --flaeche-2: #262626;
-    --rand: #333333;
+    --rand: #2e2e2e;
     --haupt: #f2f2f2;
-    --leise: #8a8a8a;
+    --leise: #949494;
+    --feldrand: #767676;
     --akzent: #f2f2f2;
     --akzent-text: #141414;
     --xp: #8a8a8a;
@@ -259,11 +261,11 @@ html[data-eingabe='zeiger'] :focus {
   text-shadow: 0 1px 1px rgb(0 0 0 / 35%);
 }
 
-:root[data-glimmen='aus'] .baum-frei {
+:root:is([data-glimmen='aus'], [data-stil='standard']) .baum-frei {
   box-shadow: inset 0 1px 0 color-mix(in srgb, white 45%, transparent);
 }
 
-:root[data-glimmen='aus'] .baum-puls {
+:root:is([data-glimmen='aus'], [data-stil='standard']) .baum-puls {
   animation: none;
   filter: none;
 }
@@ -279,25 +281,25 @@ html[data-eingabe='zeiger'] :focus {
   box-shadow: 0 0 12px color-mix(in srgb, var(--akzent) calc(var(--glimm) * 70%), transparent);
 }
 
-:root[data-glimmen='aus'] .pfad-an {
+:root:is([data-glimmen='aus'], [data-stil='standard']) .pfad-an {
   box-shadow: none;
 }
 
-:root[data-glimmen='aus'] .skill-leuchten {
+:root:is([data-glimmen='aus'], [data-stil='standard']) .skill-leuchten {
   animation: none;
 }
 
-:root[data-glimmen='aus'] .glimm-fleck {
+:root:is([data-glimmen='aus'], [data-stil='standard']) .glimm-fleck {
   opacity: 0;
 }
 
-:root[data-glimmen='aus'] .knopf-rund {
+:root:is([data-glimmen='aus'], [data-stil='standard']) .knopf-rund {
   --tw-shadow: 0 0 #0000;
   --tw-shadow-colored: 0 0 #0000;
 }
 
 /* Schein nur als runder Hauch an der Spitze. Kein box-shadow: der wäre eckig. */
-[data-glimmen='aus'] .levelring-spitze-schein {
+:is([data-glimmen='aus'], [data-stil='standard']) .levelring-spitze-schein {
   display: none;
 }
 
@@ -463,7 +465,7 @@ html[data-tastatur='an'] .sicht-mitte {
   scroll-margin-bottom: 0.75rem;
 }
 
-/* Ungewähltes Annehmen bleibt Kontur, damit die Wahl auch in Schlicht sichtbar ist. */
+/* Ungewähltes Annehmen bleibt Kontur, damit die Wahl auch in Standard sichtbar ist. */
 .knopf[data-rolle='annehmen']:not([data-angebot='an']) {
   background: transparent;
   color: var(--akzent);
