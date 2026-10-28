@@ -46,6 +46,7 @@ import { anfrageSprache } from '../../anfrageSprache.ts';
 import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
 import { istWeltLeer, wendeFokusAn } from '../../services/profilStart.ts';
+import { wendeStartAn } from '../../services/startAnlage.ts';
 import { istGewichtEinheit, STANDARD_GEWICHT_EINHEIT, type GewichtEinheit } from '../../../shared/spiel/training.ts';
 import { kartenWahl, type UebersichtKartenWahl } from '../../../shared/spiel/uebersichtKarten.ts';
 
@@ -454,6 +455,8 @@ export function aendereEinstellungen(
     paletteNeu?: PaletteEingabe;
     paletteAendern?: PaletteEingabe & { id: string };
     paletteLoeschen?: string;
+    startVorbild?: string | null;
+    startBoss?: boolean;
   },
 ): Einstellungen {
   const bisher = ladeEinstellungen();
@@ -473,15 +476,19 @@ export function aendereEinstellungen(
     const ersteAnlage = aenderung.profilAngelegt === true && !bisher.profilAngelegt;
     const stufe = aenderung.zielstrebigkeit;
     const stufeWechselt = Boolean(stufe && (stufe !== bisher.zielstrebigkeit || ersteAnlage));
+    let ebenen = bisher.ebenen;
     if (stufe && stufeWechselt) {
-      speichere('ebenen', ebenenFuerStufe(stufe));
+      ebenen = ebenenFuerStufe(stufe);
+      speichere('ebenen', ebenen);
     } else if (aenderung.ebenen !== undefined) {
-      speichere('ebenen', wendeEbenenAn(bisher.ebenen, aenderung.ebenen));
+      ebenen = wendeEbenenAn(bisher.ebenen, aenderung.ebenen);
+      speichere('ebenen', ebenen);
     }
     let funktionen = { ...bisher.funktionen, ...aenderung.funktionen };
+    let fokus = bisher.fokus;
+    let sprache = aenderung.sprache ?? bisher.sprache ?? anfrageSprache();
     if (aenderung.fokus !== undefined) {
-      const fokus = normalisiereFokus(aenderung.fokus);
-      const sprache = aenderung.sprache ?? bisher.sprache ?? anfrageSprache();
+      fokus = normalisiereFokus(aenderung.fokus);
       funktionen = { ...funktionen, ...wendeFokusAn(fokus, new Date(), sprache, ersteAnlage) };
       speichere('fokus', fokus);
     }
@@ -563,6 +570,15 @@ export function aendereEinstellungen(
       );
     }
     wendePaletten(aenderung);
+    wendeStartAn({
+      startVorbild: aenderung.startVorbild,
+      startBoss: aenderung.startBoss,
+      funktionen,
+      projekteAn: ebenen.projekte,
+      vorhabenAn: ebenen.vorhaben,
+      fokus,
+      sprache,
+    });
   });
   return ladeEinstellungen();
 }

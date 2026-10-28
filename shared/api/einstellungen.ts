@@ -49,4 +49,8 @@ export type EinstellungenAenderung = Partial<Omit<Einstellungen, 'paletten'>> & 
   paletteNeu?: PaletteEingabe;
   paletteAendern?: PaletteEingabe & { id: string };
   paletteLoeschen?: string;
+  /** Schlüssel des angenommenen Start-Vorbilds. Null lässt Vorbilder aus. */
+  startVorbild?: string | null;
+  /** True legt den ersten Boss an. False merkt das Überspringen, wenn Projekte an sind. */
+  startBoss?: boolean;
 };

@@ -130,6 +130,27 @@ html:is(:lang(fr), :lang(ru))[data-stil='antik'] :is(h1, h2, .dialog-fenster h2)
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--akzent) 16%, transparent);
 }
 
+:root[data-stil='antik'] .knopf[data-angebot='an'] {
+  background: var(--akzent);
+  color: var(--akzent-text);
+  box-shadow: none;
+}
+
+:root[data-stil='antik'] .knopf[data-angebot='an']:hover {
+  background: var(--akzent);
+  filter: none;
+}
+
+:root[data-stil='antik'] .knopf[data-angebot='aus'] {
+  background: color-mix(in srgb, var(--akzent) 72%, var(--flaeche));
+  color: var(--akzent-text);
+  box-shadow: none;
+}
+
+:root[data-stil='antik'] .karte.entschieden {
+  border-color: var(--akzent);
+}
+
 :root[data-stil='antik'] .balken-fuellung {
   box-shadow: 0 0 8px var(--antik-glanz);
 }

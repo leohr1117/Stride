@@ -1,10 +1,12 @@
+import { Info } from 'lucide-react';
 import { attributName, tx } from '../text.ts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 import type { Einstellungen } from '../../../shared/api/index.ts';
 import { attributVorlage } from '../../../shared/features/attribute/attributKatalog.ts';
 import type { AttributKennung } from '../../../shared/spiel/begriffe.ts';
+import { START_BOSS_NAME, START_PROJEKT, startBossSichtbar, vorbildVorschlag } from '../../../shared/spiel/onboarding.ts';
 import {
   alterInJahren,
   FOKUS_LISTE,
@@ -25,7 +27,7 @@ import {
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { zahl } from '../format.ts';
 import { useSprache } from '../sprache.tsx';
-import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf } from '../ui/index.ts';
+import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Karte, Knopf } from '../ui/index.ts';
 
 const SCHRITT_TEXT: Record<ProfilSchritt, { titel: string; text: string }> = {
   profilname: { titel: 'Profilname', text: 'Name auf dem Charakter.' },
@@ -34,6 +36,9 @@ const SCHRITT_TEXT: Record<ProfilSchritt, { titel: string; text: string }> = {
   fokus: { titel: 'Fokus', text: 'Erste Werte und Tätigkeiten.' },
 };
 const SCHRITTE = PROFIL_SCHRITTE.map((id) => ({ id, ...SCHRITT_TEXT[id] }));
+const BALKEN = PROFIL_SCHRITTE.length + 1;
+
+type Wahl = 'an' | 'aus' | null;
 
 function aufzaehlung(namen: string[]): string {
   if (namen.length <= 1) {
@@ -113,6 +118,108 @@ export function FokusVorschau({ fokus }: { fokus: readonly FokusId[] }) {
   );
 }
 
+function AngebotKarte({
+  label,
+  name,
+  meta,
+  info,
+  wahl,
+  onWahl,
+  gesperrt,
+}: {
+  label: string;
+  name: string;
+  meta: string;
+  info: string;
+  wahl: Wahl;
+  onWahl: (wahl: 'an' | 'aus') => void;
+  gesperrt: boolean;
+}) {
+  const [offen, setOffen] = useState(false);
+  const rahmen = useRef<HTMLSpanElement>(null);
+  const kasten = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (!offen) {
+      return;
+    }
+    const zu = (ereignis: PointerEvent) => {
+      const ziel = ereignis.target as Node;
+      if (!rahmen.current?.contains(ziel) && !kasten.current?.contains(ziel)) {
+        setOffen(false);
+      }
+    };
+    const taste = (ereignis: KeyboardEvent) => {
+      if (ereignis.key === 'Escape') {
+        ereignis.stopPropagation();
+        setOffen(false);
+      }
+    };
+    document.addEventListener('pointerdown', zu);
+    document.addEventListener('keydown', taste);
+    return () => {
+      document.removeEventListener('pointerdown', zu);
+      document.removeEventListener('keydown', taste);
+    };
+  }, [offen]);
+
+  return (
+    <Karte label={label} className={wahl === null ? '' : 'entschieden'}>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="ueberschrift text-xs font-semibold tracking-wide uppercase">{label}</h2>
+        <span ref={rahmen} className="flex shrink-0 items-center leading-none">
+          <button
+            type="button"
+            aria-label={tx("Info")}
+            aria-expanded={offen}
+            onClick={(ereignis) => {
+              setOffen((wert) => !wert);
+              if (ereignis.detail !== 0) {
+                ereignis.currentTarget.blur();
+              }
+            }}
+            className="inline-flex size-4 items-center justify-center rounded-full text-leise hover:text-haupt"
+          >
+            <Info className="size-4" strokeWidth={1.75} />
+          </button>
+        </span>
+      </div>
+      <p className="mt-3 text-base font-semibold break-words">{name}</p>
+      <p className="mt-0.5 text-xs text-leise break-words">{meta}</p>
+      {offen ? (
+        <p ref={kasten} className="mt-3 w-full rounded-xl border border-rand bg-flaeche p-3 text-xs break-words">
+          {info}
+        </p>
+      ) : null}
+      <div className="mt-4 flex gap-2">
+        <Knopf
+          type="button"
+          variante="primaer"
+          data-rolle="annehmen"
+          data-angebot={wahl === 'an' ? 'an' : undefined}
+          aria-pressed={wahl === 'an'}
+          className="min-w-0 flex-1 whitespace-nowrap"
+          disabled={gesperrt}
+          onClick={() => onWahl('an')}
+        >
+          {tx("Annehmen")}
+        </Knopf>
+        <Knopf
+          type="button"
+          variante="sekundaer"
+          data-angebot={wahl === 'aus' ? 'aus' : undefined}
+          aria-pressed={wahl === 'aus'}
+          className="min-w-0 flex-1 whitespace-nowrap"
+          disabled={gesperrt}
+          onClick={() => onWahl('aus')}
+        >
+          {tx("Überspringen")}
+        </Knopf>
+      </div>
+    </Karte>
+  );
+}
+
 export function ProfilErstellung({ start }: { start: Einstellungen }) {
   const queryClient = useQueryClient();
   const navigiere = useNavigate();
@@ -122,22 +229,30 @@ export function ProfilErstellung({ start }: { start: Einstellungen }) {
   const [name, setName] = useState(start.charakterName === PROFILNAME_PLATZHALTER ? '' : start.charakterName);
   const [ziel, setZiel] = useState<Zielstrebigkeit | null>(start.zielstrebigkeit);
   const [fokus, setFokus] = useState<FokusId[]>(start.fokus);
+  const [vorbildWahl, setVorbildWahl] = useState<Wahl>(null);
+  const [bossWahl, setBossWahl] = useState<Wahl>(null);
   const jahr = jahrText.trim() === '' ? null : Number(jahrText);
   const jahrGueltig = jahr !== null && geburtsjahrGueltig(jahr);
   const nameGueltig = name.trim().length > 0 && name.trim().length <= PROFILNAME_MAX;
-  const id = PROFIL_SCHRITTE[schritt] ?? 'profilname';
-  const gueltig = {
-    profilname: nameGueltig,
-    geburtsjahr: jahrGueltig,
-    ziel: ziel !== null,
-    fokus: fokus.length > 0,
-  }[id];
-  const letzter = schritt === SCHRITTE.length - 1;
+  const startAktiv = schritt === PROFIL_SCHRITTE.length;
+  const id = startAktiv ? null : (PROFIL_SCHRITTE[schritt] ?? null);
+  const ersterFokus = fokus[0] ?? null;
+  const vorschlag = ersterFokus ? vorbildVorschlag(ersterFokus) : null;
+  const bossSichtbar = ziel !== null && startBossSichtbar(ziel);
+  const startBereit = vorschlag !== null && vorbildWahl !== null && (!bossSichtbar || bossWahl !== null);
+  const gueltig = startAktiv
+    ? startBereit
+    : {
+        profilname: nameGueltig,
+        geburtsjahr: jahrGueltig,
+        ziel: ziel !== null,
+        fokus: fokus.length > 0,
+      }[id ?? 'profilname'];
   const frage = SCHRITTE[schritt] ?? SCHRITTE[0];
 
   const speichern = useMutation({
     mutationFn: () => {
-      if (jahr === null || ziel === null) {
+      if (jahr === null || ziel === null || vorschlag === null) {
         throw new Error(tx("Die Angaben sind unvollständig."));
       }
       return api.aendereEinstellungen({
@@ -147,6 +262,8 @@ export function ProfilErstellung({ start }: { start: Einstellungen }) {
         fokus,
         sprache,
         profilAngelegt: true,
+        startVorbild: vorbildWahl === 'an' ? vorschlag.schluessel : null,
+        startBoss: bossSichtbar && bossWahl === 'an',
       });
     },
     onSuccess: (neu) => {
@@ -161,11 +278,19 @@ export function ProfilErstellung({ start }: { start: Einstellungen }) {
     if (!gueltig || speichern.isPending) {
       return;
     }
-    if (letzter) {
+    if (startAktiv) {
       speichern.mutate();
       return;
     }
     setSchritt(schritt + 1);
+  };
+
+  const zurueck = () => {
+    if (startAktiv) {
+      setVorbildWahl(null);
+      setBossWahl(null);
+    }
+    setSchritt(schritt - 1);
   };
 
   return (
@@ -179,18 +304,22 @@ export function ProfilErstellung({ start }: { start: Einstellungen }) {
           className="flex gap-1.5"
           role="progressbar"
           aria-valuemin={1}
-          aria-valuemax={SCHRITTE.length}
+          aria-valuemax={BALKEN}
           aria-valuenow={schritt + 1}
           aria-label={tx("Fortschritt")}
         >
-          {SCHRITTE.map((eintrag, index) => (
-            <span key={eintrag.id} className={`h-1 flex-1 rounded-full ${index <= schritt ? 'bg-akzent' : 'bg-flaeche-2'}`} />
+          {Array.from({ length: BALKEN }, (_, index) => (
+            <span key={index} className={`h-1 flex-1 rounded-full ${index <= schritt ? 'bg-akzent' : 'bg-flaeche-2'}`} />
           ))}
         </div>
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight break-words">{tx(frage.titel)}</h1>
-          <p className="text-sm text-leise break-words">{tx(frage.text)}</p>
-          <p className="text-xs text-leise">{tx("Später in den Einstellungen änderbar.")}</p>
+          <h1 className="text-2xl font-bold tracking-tight break-words">{startAktiv ? tx("Zum Start") : tx(frage.titel)}</h1>
+          <p className="text-sm text-leise break-words">
+            {startAktiv
+              ? tx(bossSichtbar ? 'Zwei Angebote. Beides kannst du auslassen.' : 'Ein Angebot. Du kannst es auslassen.')
+              : tx(frage.text)}
+          </p>
+          {startAktiv ? null : <p className="text-xs text-leise">{tx("Später in den Einstellungen änderbar.")}</p>}
         </div>
 
         {id === 'profilname' && (
@@ -229,18 +358,42 @@ export function ProfilErstellung({ start }: { start: Einstellungen }) {
             <FokusVorschau fokus={fokus} />
           </div>
         )}
+        {startAktiv && vorschlag ? (
+          <div className="space-y-3">
+            <AngebotKarte
+              label={tx("Vorbild")}
+              name={vorschlag.name}
+              meta={tx(vorschlag.bekanntFuer)}
+              info={tx("Vorschlag aus dem Fokus.")}
+              wahl={vorbildWahl}
+              onWahl={setVorbildWahl}
+              gesperrt={speichern.isPending}
+            />
+            {bossSichtbar && ersterFokus ? (
+              <AngebotKarte
+                label={tx("Erster Boss")}
+                name={tx(START_BOSS_NAME[ersterFokus])}
+                meta={tx('Projekt {name} · 7 Tage', { name: tx(START_PROJEKT) })}
+                info={tx("Sieben Tage. Angreifen kann er erst, wenn Bosse angeschaltet werden.")}
+                wahl={bossWahl}
+                onWahl={setBossWahl}
+                gesperrt={speichern.isPending}
+              />
+            ) : null}
+          </div>
+        ) : null}
 
         <Fehlermeldung fehler={speichern.error} />
         <div className="flex items-center justify-between gap-2">
           {schritt > 0 ? (
-            <Knopf type="button" variante="leise" onClick={() => setSchritt(schritt - 1)} disabled={speichern.isPending}>
+            <Knopf type="button" variante="leise" onClick={zurueck} disabled={speichern.isPending}>
               {tx("Zurück")}
             </Knopf>
           ) : (
             <span />
           )}
           <Knopf type="submit" variante="primaer" disabled={!gueltig || speichern.isPending}>
-            {letzter ? tx("Zum Handbuch") : tx("Weiter")}
+            {startAktiv ? tx("Zum Handbuch") : tx("Weiter")}
           </Knopf>
         </div>
       </Formular>

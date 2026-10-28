@@ -354,6 +354,8 @@ export const einstellungenAenderungSchema = z.object({
     .refine((ids) => new Set(ids).size === ids.length, 'Jeden Fokus nur einmal.')
     .optional(),
   profilAngelegt: z.boolean().optional(),
+  startVorbild: z.string().nullable().optional(),
+  startBoss: z.boolean().optional(),
   stil: z.enum(STILE).optional(),
   primaer: z.string().refine(istHexFarbe, 'Die Primärfarbe braucht das Format #rrggbb.').optional(),
   akzent: z.string().refine(istHexFarbe, 'Die Akzentfarbe braucht das Format #rrggbb.').optional(),

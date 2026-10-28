@@ -16,6 +16,7 @@ import { MEHR_BEREICHE } from '../spiel/mehrBereiche.ts';
 import { UEBERSICHT_KARTEN } from '../spiel/uebersichtKarten.ts';
 import { ARCHETYP, KLASSE } from '../spiel/klassen.ts';
 import { VISION_BEISPIELE } from '../spiel/orientierung.ts';
+import { START_BOSS_NAME, START_PROJEKT } from '../spiel/onboarding.ts';
 import { FOKUS_IDS, FOKUS_LISTE, FOKUS_PFLICHT, START_TAETIGKEITEN, startTaetigkeiten, ZIEL_FRAGE, ZIELSTREBIGKEIT_INFO, ZIELSTREBIGKEITEN } from '../spiel/profil.ts';
 import { VERFALL_STUFE_LABEL, VERFALL_STUFEN } from '../spiel/belastung.ts';
 import { STIL_INFO, STILE } from '../features/darstellung/stile.ts';
@@ -104,6 +105,7 @@ function katalogTexte(): string[] {
     texte.push(fokus.label, fokus.text);
   }
   texte.push(...startTaetigkeiten(FOKUS_IDS).map((taetigkeit) => taetigkeit.name));
+  texte.push(START_PROJEKT, ...Object.values(START_BOSS_NAME));
   texte.push('Gilt für die ganze App und für die Start-Tätigkeiten.');
   for (const marke of Object.values(ZIEL_MARKE)) {
     texte.push(marke.name, marke.mehrzahl, marke.kuerzel, marke.leer);

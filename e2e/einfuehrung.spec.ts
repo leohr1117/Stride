@@ -133,6 +133,12 @@ async function einfuehrung(seite: Page, sprache: Sprache): Promise<void> {
   await merkbild(seite, 'fokus');
   await seite.getByRole('button', { name: zeige('Sport', sprache) }).click();
   await merkbild(seite, 'fokus-sport');
+  await seite.getByRole('button', { name: zeige('Weiter', sprache), exact: true }).click();
+  await expect(seite.getByRole('heading', { name: zeige('Zum Start', sprache), exact: true })).toBeVisible();
+  const vorbild = seite.getByRole('region', { name: zeige('Vorbild', sprache) });
+  const boss = seite.getByRole('region', { name: zeige('Erster Boss', sprache) });
+  await vorbild.getByRole('button', { name: zeige('Überspringen', sprache), exact: true }).click();
+  await boss.getByRole('button', { name: zeige('Überspringen', sprache), exact: true }).click();
   await seite.getByRole('button', { name: zeige('Zum Handbuch', sprache), exact: true }).click();
   await expect(seite.getByRole('heading', { name: zeige('Handbuch', sprache), exact: true })).toBeVisible();
 

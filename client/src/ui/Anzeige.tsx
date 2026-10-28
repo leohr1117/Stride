@@ -52,8 +52,22 @@ export function archivBeschriftung(offen: boolean, anzahl?: number): string {
   return anzahl === undefined ? tx("Archiv anzeigen") : tx("Archiv anzeigen ({anzahl})", { anzahl });
 }
 
-export function Karte({ children, className = '', dicht = false }: { children: ReactNode; className?: string; dicht?: boolean }) {
-  return <section className={`karte rounded-2xl border border-rand bg-flaeche ${dicht ? '' : 'p-4'} ${className}`}>{children}</section>;
+export function Karte({
+  children,
+  className = '',
+  dicht = false,
+  label,
+}: {
+  children: ReactNode;
+  className?: string;
+  dicht?: boolean;
+  label?: string;
+}) {
+  return (
+    <section aria-label={label} className={`karte rounded-2xl border border-rand bg-flaeche ${dicht ? '' : 'p-4'} ${className}`}>
+      {children}
+    </section>
+  );
 }
 
 export function Ueberschrift({ titel, aktion }: { titel: string; aktion?: ReactNode }) {

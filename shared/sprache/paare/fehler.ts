@@ -191,4 +191,5 @@ export const PAARE = [
   ['Der Plan ist archiviert.', 'The plan is archived.'],
   ['Nur eine offene Einheit kann verworfen werden.', 'Only an open session can be discarded.'],
   ['Der Schutz kann heute nicht eingesetzt werden.', 'Protection cannot be used today.'],
+  ['Das Vorbild ist unbekannt.', 'That role model is unknown.'],
 ] as const;
