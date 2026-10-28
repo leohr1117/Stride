@@ -146,7 +146,7 @@ function satz(db: DatabaseSync, einheitId: number, uebungId: number, extra: Reco
 
 describe('Migration 24', () => {
   it('hängt die Trainingstabellen als 24. Migration an', () => {
-    expect(MIGRATIONEN).toHaveLength(26);
+    expect(MIGRATIONEN.length).toBeGreaterThanOrEqual(26);
     const sql = MIGRATIONEN[23];
     for (const tabelle of TABELLEN) {
       expect(sql).toContain(`CREATE TABLE ${tabelle}`);
@@ -175,7 +175,7 @@ describe('Migration 24', () => {
     expect(() => zuordnung(db, vor25.planId, vor25.uebungId, { ziel_saetze: null })).toThrow(/constraint/i);
 
     migriere(db);
-    expect(version(db)).toBe(26);
+    expect(version(db)).toBe(MIGRATIONEN.length);
     expect(spalten(db, 'uebungen')).toEqual(UEBUNGEN_SPALTEN);
     expect(spalten(db, 'trainingsplaene')).toEqual(PLAENE_SPALTEN);
     expect(spalten(db, 'trainingsplan_uebungen')).toEqual(PLAN_UEBUNGEN_SPALTEN);
