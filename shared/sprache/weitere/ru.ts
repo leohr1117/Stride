@@ -1,5 +1,10 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Abmelden?": "Выйти?",
+  "Die Sitzung auf diesem Gerät endet.": "Сеанс на этом устройстве завершается.",
+  "Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.": "Подпись стоит над полем. Ошибка стоит прямо у поля.",
+  "Speichern bleibt sichtbar, wenn die Tastatur offen ist.": "Сохранить остаётся видимым, когда клавиатура открыта.",
+  "Eine Meldung kann Rückgängig anbieten. Ohne Rückgängig fragt ein Warndialog.": "Сообщение может предложить Отменить. Без отмены сначала спрашивает предупреждение.",
   "Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.": "Строки стоят в одном списке. У названия, значения и стрелки фиксированный размер.",
   "Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.": "Заголовки разделов написаны обычно, без прописных букв.",
   "Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.": "Свечение снова есть в каждом виде, в том числе в Стандарт, и следует переключателю.",

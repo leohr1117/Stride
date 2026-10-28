@@ -20,12 +20,16 @@
   border-radius: 9999px;
 }
 
-:root[data-stil='minimal'] .dialog-fenster {
+:root[data-stil='minimal'] .dialog-fenster:not(.dialog-warnung) {
   border-radius: 1.5rem 1.5rem 0 0;
 }
 
+:root[data-stil='minimal'] .dialog-fenster.dialog-warnung {
+  border-radius: 12px;
+}
+
 @media (min-width: 768px) {
-  :root[data-stil='minimal'] .dialog-fenster {
+  :root[data-stil='minimal'] .dialog-fenster:not(.dialog-warnung) {
     border-radius: 1.5rem;
   }
 }

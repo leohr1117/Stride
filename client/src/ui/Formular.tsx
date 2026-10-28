@@ -1,25 +1,30 @@
 import { Check, Eye, EyeOff } from 'lucide-react';
 import {
   Children,
+  cloneElement,
   isValidElement,
   useId,
+  useLayoutEffect,
+  useRef,
   useState,
   type ButtonHTMLAttributes,
   type FormEvent,
   type InputHTMLAttributes,
+  type ReactElement,
   type ReactNode,
 } from 'react';
 import { FARBEN } from '../../../shared/spiel/begriffe.ts';
 import { tx } from '../text.ts';
 import { Fehlermeldung } from './Anzeige.tsx';
 
-type KnopfVariante = 'primaer' | 'sekundaer' | 'leise' | 'gefahr';
+type KnopfVariante = 'primaer' | 'sekundaer' | 'leise' | 'gefahr' | 'warnung';
 
 const KNOPF_STIL: Record<KnopfVariante, string> = {
   primaer: 'min-h-12 rounded-lg bg-aktion px-4 text-aktion-text hover:brightness-110',
   sekundaer: 'min-h-12 rounded-lg border border-rand bg-flaeche-2 px-4 text-haupt hover:brightness-95 dark:hover:brightness-125',
-  leise: 'rounded-lg px-4 text-leise hover:bg-flaeche-2 hover:text-haupt',
+  leise: 'min-h-12 rounded-lg px-4 text-leise hover:bg-flaeche-2 hover:text-haupt',
   gefahr: 'min-h-12 rounded-lg px-4 text-gefahr hover:bg-gefahr/10',
+  warnung: 'min-h-12 rounded-lg bg-gefahr px-4 text-gefahr-text hover:brightness-110',
 };
 
 function istFehler(knoten: ReactNode): boolean {
@@ -91,29 +96,146 @@ export function Knopf({
   );
 }
 
-function istEingabe(kind: ReactNode): boolean {
-  return isValidElement(kind) && (kind.type === 'input' || kind.type === 'textarea' || kind.type === 'select');
+const OHNE_TEXT = new Set(['range', 'checkbox', 'radio', 'file', 'color', 'hidden', 'button', 'submit']);
+
+type EingabeProps = {
+  id?: string;
+  type?: string;
+  children?: ReactNode;
+  'aria-invalid'?: boolean;
+  'aria-describedby'?: string;
+};
+
+function istTextEingabe(kind: ReactNode): kind is ReactElement<EingabeProps> {
+  if (!isValidElement(kind)) {
+    return false;
+  }
+  if (kind.type === 'textarea' || kind.type === 'select') {
+    return true;
+  }
+  if (kind.type !== 'input') {
+    return false;
+  }
+  const typ = (kind.props as EingabeProps).type ?? 'text';
+  return !OHNE_TEXT.has(typ);
 }
 
-export function Feld({ label, hinweis, children }: { label: ReactNode; hinweis?: string; children: ReactNode }) {
+function beschriftung(bisher: string | undefined, neu: string | undefined): string | undefined {
+  const text = [neu, bisher].filter(Boolean).join(' ');
+  return text || undefined;
+}
+
+function reichere(kind: ReactNode, angaben: { id: string; invalid: boolean; beschrieben?: string }, nurErste: { offen: boolean }): ReactNode {
+  if (!isValidElement(kind) || !nurErste.offen) {
+    return kind;
+  }
+  if (istTextEingabe(kind)) {
+    nurErste.offen = false;
+    return cloneElement(kind, {
+      id: kind.props.id ?? angaben.id,
+      'aria-invalid': angaben.invalid ? true : undefined,
+      'aria-describedby': beschriftung(kind.props['aria-describedby'], angaben.beschrieben),
+    });
+  }
+  const kinder = (kind.props as EingabeProps).children;
+  if (kinder === undefined) {
+    return kind;
+  }
+  return cloneElement(kind as ReactElement<EingabeProps>, {}, Children.map(kinder, (enk) => reichere(enk, angaben, nurErste)));
+}
+
+function hatTextEingabe(knoten: ReactNode): boolean {
+  return Children.toArray(knoten).some((kind) => {
+    if (istTextEingabe(kind)) {
+      return true;
+    }
+    if (!isValidElement(kind)) {
+      return false;
+    }
+    return hatTextEingabe((kind.props as EingabeProps).children);
+  });
+}
+
+function ersteId(knoten: ReactNode): string | undefined {
+  for (const kind of Children.toArray(knoten)) {
+    if (istTextEingabe(kind) && kind.props.id) {
+      return kind.props.id;
+    }
+    if (isValidElement(kind)) {
+      const tief = ersteId((kind.props as EingabeProps).children);
+      if (tief) {
+        return tief;
+      }
+    }
+  }
+  return undefined;
+}
+
+export function Feld({
+  label,
+  hinweis,
+  fehler,
+  children,
+}: {
+  label: ReactNode;
+  hinweis?: string;
+  fehler?: string | null;
+  children: ReactNode;
+}) {
+  const basis = useId();
+  const wurzel = useRef<HTMLDivElement>(null);
+  const feldId = ersteId(children) ?? `${basis}-feld`;
+  const fehlerId = fehler ? `${basis}-fehler` : undefined;
+  const hinweisId = hinweis ? `${basis}-hinweis` : undefined;
+  const beschrieben = [fehlerId, hinweisId].filter(Boolean).join(' ') || undefined;
   const labelText = typeof label === 'string' ? tx(label) : label;
-  // Eine Hülle aus label würde die erste Schaltfläche mit dem ganzen Feldtext benennen.
-  const Huelle = Children.toArray(children).some(istEingabe) ? 'label' : 'div';
+  const fehlerText = fehler ? tx(fehler) : '';
+  const kinder = reichere(children, { id: feldId, invalid: Boolean(fehler), beschrieben }, { offen: true });
+  const eine = hatTextEingabe(children);
+
+  useLayoutEffect(() => {
+    if (!fehler || !wurzel.current) {
+      return;
+    }
+    const form = wurzel.current.closest('form') ?? document.body;
+    const erste = form.querySelector('[data-feld-fehler]');
+    if (erste !== wurzel.current) {
+      return;
+    }
+    const eingabe = wurzel.current.querySelector('input, textarea, select');
+    if (eingabe instanceof HTMLElement && document.activeElement !== eingabe) {
+      eingabe.focus();
+    }
+  }, [fehler]);
+
   return (
-    <Huelle className="block space-y-1.5">
-      <span className="block text-sm font-medium text-balance break-words">{labelText}</span>
-      {children}
-      {hinweis && <span className="block text-xs text-balance break-words text-leise">{tx(hinweis)}</span>}
-    </Huelle>
+    <div ref={wurzel} className="feld block space-y-2" data-feld-fehler={fehler ? '' : undefined}>
+      {eine ? (
+        <label htmlFor={feldId} className="feld-label block text-sm leading-5 font-semibold text-balance break-words">
+          {labelText}
+        </label>
+      ) : (
+        <span className="feld-label block text-sm leading-5 font-semibold text-balance break-words">{labelText}</span>
+      )}
+      {kinder}
+      {fehler ? (
+        <p id={fehlerId} className="feld-fehler text-[13px] leading-[18px] break-words text-gefahr" role="alert">
+          <span aria-hidden="true">⚠ </span>
+          {fehlerText}
+        </p>
+      ) : null}
+      {hinweis ? <p id={hinweisId} className="feld-hilfe truncate text-[13px] leading-[18px] text-leise">{tx(hinweis)}</p> : null}
+    </div>
   );
 }
 
 export const EINGABE_STIL =
-  'w-full rounded-xl border border-rand bg-flaeche-2 px-3 py-2.5 text-sm outline-none transition placeholder:text-leise focus:border-akzent';
+  'feld-eingabe w-full rounded-lg border border-[color:var(--feldrand)] bg-flaeche px-4 text-base leading-6 outline-none transition placeholder:text-leise';
 
 export function PasswortFeld({
   label,
   hinweis,
+  fehler,
   bezeichnung,
   className,
   id,
@@ -121,17 +243,19 @@ export function PasswortFeld({
   autoCorrect,
   spellCheck,
   ...rest
-}: Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & { label: string; hinweis?: string; bezeichnung?: string }) {
+}: Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
+  label: string;
+  hinweis?: string;
+  fehler?: string | null;
+  bezeichnung?: string;
+}) {
   const generiert = useId();
   const feldId = id ?? generiert;
   const sichtbarLabel = tx(label);
   const name = bezeichnung ?? sichtbarLabel;
   const [sichtbar, setSichtbar] = useState(false);
   return (
-    <div className="block space-y-1.5">
-      <label htmlFor={feldId} className="block text-sm font-medium">
-        {sichtbarLabel}
-      </label>
+    <Feld label={sichtbarLabel} hinweis={hinweis} fehler={fehler}>
       <span className="relative block">
         <input
           {...rest}
@@ -140,21 +264,20 @@ export function PasswortFeld({
           autoCapitalize={autoCapitalize ?? 'none'}
           autoCorrect={autoCorrect ?? 'off'}
           spellCheck={spellCheck ?? false}
-          className={`${EINGABE_STIL} pr-11 ${className ?? ''}`}
+          className={`${EINGABE_STIL} pr-12 ${className ?? ''}`}
         />
         <button
           type="button"
-          aria-label={tx(sichtbar ? tx("{name} ausblenden") : tx("{name} einblenden"), { name })}
+          aria-label={tx(sichtbar ? '{name} ausblenden' : '{name} einblenden', { name })}
           aria-pressed={sichtbar}
           onMouseDown={(ereignis) => ereignis.preventDefault()}
           onClick={() => setSichtbar((wert) => !wert)}
-          className="absolute top-1/2 right-1.5 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-leise hover:text-haupt"
+          className="absolute top-0 right-0 flex h-12 w-12 items-center justify-center text-leise hover:text-haupt"
         >
-          {sichtbar ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
+          {sichtbar ? <EyeOff className="size-5" aria-hidden="true" /> : <Eye className="size-5" aria-hidden="true" />}
         </button>
       </span>
-      {hinweis && <span className="block text-xs text-leise">{tx(hinweis)}</span>}
-    </div>
+    </Feld>
   );
 }
 
@@ -215,7 +338,7 @@ export function Segmentauswahl<T extends string | number>({
           key={String(option.wert)}
           type="button"
           onClick={() => onAendern(option.wert)}
-          className={`flex-1 rounded-lg py-2 text-sm font-medium transition ${dicht ? 'px-1.5 whitespace-nowrap' : 'px-3'} ${
+          className={`flex min-h-12 flex-1 items-center justify-center rounded-lg py-2 text-sm font-medium transition ${dicht ? 'px-1.5 whitespace-nowrap' : 'px-3'} ${
             option.wert === wert ? 'bg-flaeche text-haupt shadow-sm' : 'text-leise hover:text-haupt'
           }`}
         >

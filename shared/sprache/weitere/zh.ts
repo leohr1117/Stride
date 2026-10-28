@@ -1,5 +1,10 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Abmelden?": "退出登录？",
+  "Die Sitzung auf diesem Gerät endet.": "此设备上的会话将结束。",
+  "Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.": "标签在字段上方。错误直接显示在字段上。",
+  "Speichern bleibt sichtbar, wenn die Tastatur offen ist.": "键盘打开时，保存仍然可见。",
+  "Eine Meldung kann Rückgängig anbieten. Ohne Rückgängig fragt ein Warndialog.": "一条消息可以提供撤销。不能撤销时，会先弹出警告对话框。",
   "Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.": "各行排在一个列表里。标题、数值和箭头有固定大小。",
   "Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.": "分区标题用正常写法，不用全大写。",
   "Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.": "发光在每种外观里都回来了，包括标准，并跟随开关。",

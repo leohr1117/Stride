@@ -1,5 +1,10 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Abmelden?": "ログアウトしますか？",
+  "Die Sitzung auf diesem Gerät endet.": "このデバイスのセッションが終了します。",
+  "Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.": "ラベルは欄の上にあります。エラーは欄のすぐ下にあります。",
+  "Speichern bleibt sichtbar, wenn die Tastatur offen ist.": "キーボードが開いていても保存は見えたままです。",
+  "Eine Meldung kann Rückgängig anbieten. Ohne Rückgängig fragt ein Warndialog.": "メッセージは元に戻すを出せます。元に戻せないときは、警告が先に尋ねます。",
   "Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.": "行は一つのリストに並びます。題名、値、矢印は決まった大きさです。",
   "Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.": "見出しは通常の書き方で、大文字にはしません。",
   "Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.": "発光は標準を含むすべての外観に戻り、スイッチに従います。",

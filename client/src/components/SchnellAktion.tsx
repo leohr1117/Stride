@@ -24,7 +24,6 @@ import {
   menueTeile,
   primaerPunkt,
   punkteFuer,
-  UNDO_MS,
   wendeAlle,
   ZEIGE_PX,
   type CacheModus,
@@ -33,6 +32,7 @@ import {
   type SchnellZiel,
 } from '../schnell.ts';
 import { useBestaetigung } from './Bestaetigung.tsx';
+import { Toast } from './Toast.tsx';
 import { Knopf } from '../ui/index.ts';
 
 const STREIFEN_PX = AUSLOESEN_PX + 24;
@@ -45,6 +45,7 @@ function streifenClip(x: number): string {
 }
 
 interface Meldung {
+  id: number;
   art: 'status' | 'fehler';
   text: string;
   undo?: () => void;
@@ -109,29 +110,18 @@ export function SchnellProvider({ children }: { children: ReactNode }) {
   const bestaetigen = useBestaetigung();
   const client = useQueryClient();
   const [meldung, setMeldung] = useState<Meldung | null>(null);
-  const timer = useRef<number | null>(null);
+  const meldungId = useRef(0);
   const lauf = useRef(0);
   const kette = useRef<Promise<unknown>>(Promise.resolve());
 
-  const zeige = useCallback((neu: Meldung | null) => {
-    if (timer.current !== null) {
-      window.clearTimeout(timer.current);
-      timer.current = null;
+  const zeige = useCallback((neu: Omit<Meldung, 'id'> | null) => {
+    if (!neu) {
+      setMeldung(null);
+      return;
     }
-    setMeldung(neu);
-    if (neu) {
-      timer.current = window.setTimeout(() => setMeldung(null), UNDO_MS);
-    }
+    meldungId.current += 1;
+    setMeldung({ ...neu, id: meldungId.current });
   }, []);
-
-  useEffect(
-    () => () => {
-      if (timer.current !== null) {
-        window.clearTimeout(timer.current);
-      }
-    },
-    [],
-  );
 
   const reiht = useCallback(<T,>(arbeit: () => Promise<T>): Promise<T> => {
     const naechste = kette.current.then(arbeit, arbeit);
@@ -215,24 +205,16 @@ export function SchnellProvider({ children }: { children: ReactNode }) {
   return (
     <SchnellKontext.Provider value={{ ausfuehren }}>
       {children}
-      {meldung
-        ? createPortal(
-            <div className="pointer-events-none fixed inset-x-0 bottom-[max(5.5rem,env(safe-area-inset-bottom))] z-[80] flex justify-center px-4 md:bottom-6">
-              <div
-                role={meldung.art === 'fehler' ? 'alert' : 'status'}
-                className="pointer-events-auto flex max-w-md items-center gap-3 rounded-2xl border border-rand bg-flaeche px-4 py-3 shadow-lg"
-              >
-                <span className="min-w-0 flex-1 text-sm break-words">{tx(meldung.text)}</span>
-                {meldung.undo ? (
-                  <button type="button" className="shrink-0 text-sm font-medium text-akzent" onClick={meldung.undo}>
-                    {tx("Rückgängig")}
-                  </button>
-                ) : null}
-              </div>
-            </div>,
-            document.body,
-          )
-        : null}
+      {meldung ? (
+        <Toast
+          key={meldung.id}
+          text={meldung.text}
+          rolle={meldung.art === 'fehler' ? 'alert' : 'status'}
+          aktion={meldung.undo}
+          aktionLabel={meldung.undo ? 'Rückgängig' : undefined}
+          onEnde={() => setMeldung((aktuell) => (aktuell?.id === meldung.id ? null : aktuell))}
+        />
+      ) : null}
     </SchnellKontext.Provider>
   );
 }

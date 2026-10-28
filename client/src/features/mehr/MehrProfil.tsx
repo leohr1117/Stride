@@ -8,6 +8,7 @@ import { FOKUS_LISTE, ZIEL_FRAGE, ZIELSTREBIGKEIT_INFO, type FokusId } from '../
 import { erfolgSichtbar, type Sichtbarkeit } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL, meldeAnmeldungAbgelaufen } from '../../api/index.ts';
 import { Fehlermeldung, Karte, Ladeanzeige } from '../../ui/index.ts';
+import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
@@ -73,7 +74,17 @@ function ProfilListe() {
   const { data: konten } = useQuery({ queryKey: SCHLUESSEL.konten, queryFn: api.konten, enabled: inhaber });
   const { data: erfolge } = useQuery({ queryKey: SCHLUESSEL.erfolge, queryFn: api.erfolge });
   const [abmeldeFehler, setAbmeldeFehler] = useState<unknown>(null);
+  const bestaetigen = useBestaetigung();
   const abmelden = async () => {
+    const ja = await bestaetigen({
+      titel: 'Abmelden?',
+      text: 'Die Sitzung auf diesem Gerät endet.',
+      knopf: 'Abmelden',
+      gefahr: true,
+    });
+    if (!ja) {
+      return;
+    }
     try {
       await api.abmelden();
       meldeAnmeldungAbgelaufen();

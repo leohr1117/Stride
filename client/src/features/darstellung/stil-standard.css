@@ -111,12 +111,16 @@ html[data-stil='standard'] body {
   border-radius: 9999px;
 }
 
-:root[data-stil='standard'] .dialog-fenster {
+:root[data-stil='standard'] .dialog-fenster:not(.dialog-warnung) {
   border-radius: 12px 12px 0 0;
 }
 
+:root[data-stil='standard'] .dialog-fenster.dialog-warnung {
+  border-radius: 12px;
+}
+
 @media (min-width: 768px) {
-  :root[data-stil='standard'] .dialog-fenster {
+  :root[data-stil='standard'] .dialog-fenster:not(.dialog-warnung) {
     border-radius: 12px;
   }
 }

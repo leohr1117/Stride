@@ -1,5 +1,10 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Abmelden?": "¿Cerrar sesión?",
+  "Die Sitzung auf diesem Gerät endet.": "La sesión en este dispositivo termina.",
+  "Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.": "La etiqueta está sobre el campo. Un error está directamente en el campo.",
+  "Speichern bleibt sichtbar, wenn die Tastatur offen ist.": "Guardar sigue visible cuando el teclado está abierto.",
+  "Eine Meldung kann Rückgängig anbieten. Ohne Rückgängig fragt ein Warndialog.": "Un mensaje puede ofrecer Deshacer. Sin deshacer, un diálogo de aviso pregunta antes.",
   "Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.": "Las filas están en una lista. Título, valor y flecha tienen tamaños fijos.",
   "Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.": "Los títulos de sección se escriben normal, sin mayúsculas.",
   "Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.": "El brillo vuelve en cada aspecto, también en Estándar, y sigue el interruptor.",

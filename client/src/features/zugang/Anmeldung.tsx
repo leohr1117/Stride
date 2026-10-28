@@ -11,6 +11,7 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
   const [passwort, setPasswort] = useState('');
   const [wiederholung, setWiederholung] = useState('');
   const [fehler, setFehler] = useState<unknown>(null);
+  const [abweichung, setAbweichung] = useState<string | null>(null);
   const [laeuft, setLaeuft] = useState(false);
   const neu = modus === 'einrichten';
   const mitName = modus !== 'passwort';
@@ -18,9 +19,11 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
   const senden = async (ereignis: FormEvent) => {
     ereignis.preventDefault();
     if (neu && passwort !== wiederholung) {
-      setFehler(new Error(tx("Die Passwörter stimmen nicht überein.")));
+      setAbweichung('Die Passwörter stimmen nicht überein.');
+      setFehler(null);
       return;
     }
+    setAbweichung(null);
     setLaeuft(true);
     setFehler(null);
     try {
@@ -67,11 +70,15 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
         {neu && (
           <PasswortFeld
             label={tx("Passwort wiederholen")}
+            fehler={abweichung}
             name="password-repeat"
             autoComplete="new-password"
             required
             value={wiederholung}
-            onChange={(ereignis) => setWiederholung(ereignis.target.value)}
+            onChange={(ereignis) => {
+              setWiederholung(ereignis.target.value);
+              setAbweichung(null);
+            }}
           />
         )}
         <Fehlermeldung fehler={fehler} />

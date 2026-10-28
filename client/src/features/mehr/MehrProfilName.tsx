@@ -86,7 +86,10 @@ export function JahrSeite() {
       zurueck={PROFIL_ZURUECK}
       kinder={
         <Formular onAbsenden={senden}>
-          <Feld label={tx("Geburtsjahr")}>
+          <Feld
+            label={tx("Geburtsjahr")}
+            fehler={jahrOk ? null : 'Das Geburtsjahr liegt außerhalb des erlaubten Bereichs.'}
+          >
             <input
               className={EINGABE_STIL}
               type="number"
@@ -97,7 +100,6 @@ export function JahrSeite() {
               onChange={(ereignis) => setJahrText(ereignis.target.value)}
             />
           </Feld>
-          {!jahrOk && <p className="text-xs text-gefahr">{tx("Das Geburtsjahr liegt außerhalb des erlaubten Bereichs.")}</p>}
           <Knopf type="submit" variante="primaer" className="w-full" disabled={!geaendert || speichern.isPending}>
             {tx("Speichern")}
           </Knopf>
@@ -130,6 +132,7 @@ export function ZielSeite() {
         titel: tx("Ebenen ausblenden?"),
         text: hinweis,
         knopf: tx("Ausblenden"),
+        gefahr: true,
       }))
     ) {
       return;

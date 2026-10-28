@@ -183,17 +183,29 @@ body {
   filter: grayscale(0.45) brightness(0.75);
 }
 
-.regler {
+.regler,
+.groesse-regler {
+  min-height: 48px;
+  height: 48px;
   touch-action: none;
 }
 
 .groesse-regler {
   width: 100%;
-  height: 2.75rem;
   margin: 0;
   accent-color: var(--akzent);
-  touch-action: none;
   cursor: pointer;
+}
+
+input.feld-eingabe,
+select.feld-eingabe {
+  min-height: 48px;
+  font-size: 16px;
+}
+
+textarea.feld-eingabe {
+  min-height: 6rem;
+  font-size: 16px;
 }
 
 :focus:not(:focus-visible) {
@@ -241,11 +253,15 @@ html[data-eingabe='zeiger'] :focus {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .seite-einblenden {
-    animation: none;
+  :root {
+    --glimm: 0;
   }
 
+  .seite-einblenden,
+  .dialog-fenster,
+  .knopf,
   .bossring-bogen {
+    animation: none;
     transition: none;
   }
 }
@@ -433,6 +449,12 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
   overflow: hidden;
 }
 
+.dialog-fenster.dialog-warnung {
+  width: min(100%, 24rem);
+  max-width: 24rem;
+  border-radius: 12px;
+}
+
 .dialog-koerper:not(:has(> .formular)) {
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -458,21 +480,33 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
   overscroll-behavior: contain;
 }
 
+html {
+  scroll-padding-bottom: calc(var(--leisten-hoehe, 0px) + 5rem);
+}
+
+@media (max-width: 767px) {
+  html {
+    scroll-padding-top: var(--mobilkopf-hoehe, 0px);
+  }
+}
+
 .formular > .formular-fuss {
+  position: sticky;
+  bottom: var(--leisten-hoehe, 0px);
+  z-index: 35;
   padding-top: 1rem;
+  background: var(--grund);
 }
 
 .dialog-fenster .formular-fuss {
   position: relative;
+  bottom: auto;
   z-index: 1;
   background: var(--flaeche);
 }
 
-html[data-tastatur='an'] .formular-fuss {
-  position: sticky;
+html[data-tastatur='an'] .formular > .formular-fuss {
   bottom: var(--tastatur);
-  z-index: 35;
-  background: var(--grund);
 }
 
 html[data-tastatur='an'] .dialog-fenster .formular-fuss {
@@ -487,7 +521,12 @@ html[data-tastatur='an'] main {
 }
 
 html[data-tastatur='an'] {
-  scroll-padding-bottom: var(--tastatur);
+  scroll-padding-bottom: calc(var(--tastatur) + 5rem);
+}
+
+.toast-lage {
+  bottom: calc(var(--leisten-hoehe, 0px) + 1rem);
+  z-index: 95;
 }
 
 .sicht-mitte {

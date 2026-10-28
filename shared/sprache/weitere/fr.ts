@@ -1,5 +1,10 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Abmelden?": "Se déconnecter ?",
+  "Die Sitzung auf diesem Gerät endet.": "La session sur cet appareil se termine.",
+  "Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.": "L’étiquette est au-dessus du champ. Une erreur est directement sur le champ.",
+  "Speichern bleibt sichtbar, wenn die Tastatur offen ist.": "Enregistrer reste visible quand le clavier est ouvert.",
+  "Eine Meldung kann Rückgängig anbieten. Ohne Rückgängig fragt ein Warndialog.": "Un message peut proposer Annuler. Sans annulation, un avertissement demande d’abord.",
   "Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.": "Les lignes sont dans une liste. Titre, valeur et flèche ont des tailles fixes.",
   "Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.": "Les titres de section s’écrivent normalement, sans majuscules.",
   "Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.": "La lueur revient dans chaque apparence, y compris Standard, et suit l’interrupteur.",

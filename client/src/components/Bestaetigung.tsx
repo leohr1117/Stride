@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { tx } from '../text.ts';
 import { Dialog } from './Dialog.tsx';
-import { EINGABE_STIL, Formular, Knopf } from '../ui/index.ts';
+import { EINGABE_STIL, Feld, Formular, Knopf } from '../ui/index.ts';
 
 export interface BestaetigungsAnfrage {
   titel: string;
@@ -118,6 +118,7 @@ export function BestaetigungProvider({ children }: { children: ReactNode }) {
   };
   const erwartet = anfrage?.eingabe?.wert;
   const eingabeOk = erwartet === undefined || eingabe.trim() === erwartet;
+  const warnung = Boolean(anfrage && (anfrage.gefahr || anfrage.eingabe));
   const senden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
     if (eingabeOk) {
@@ -129,12 +130,11 @@ export function BestaetigungProvider({ children }: { children: ReactNode }) {
     <BestaetigungKontext.Provider value={bestaetigen}>
       <EingabeKontext.Provider value={eingeben}>
       {children}
-      <Dialog offen={offen} titel={anfrage ? tx(anfrage.titel) : ''} onSchliessen={abbrechen}>
+      <Dialog offen={offen} titel={anfrage ? tx(anfrage.titel) : ''} art={warnung ? 'warnung' : 'blatt'} onSchliessen={abbrechen}>
         <Formular onAbsenden={senden} abstand="space-y-5">
           <p className="text-sm leading-relaxed text-leise">{anfrage ? tx(anfrage.text) : ''}</p>
           {anfrage?.eingabe && (
-            <label className="block space-y-1.5">
-              <span className="text-sm font-medium">{tx(anfrage.eingabe.hinweis)}</span>
+            <Feld label={anfrage.eingabe.hinweis}>
               <input
                 className={EINGABE_STIL}
                 value={eingabe}
@@ -145,7 +145,7 @@ export function BestaetigungProvider({ children }: { children: ReactNode }) {
                 spellCheck={false}
                 onChange={(ereignis) => setEingabe(ereignis.target.value)}
               />
-            </label>
+            </Feld>
           )}
           <div className="flex gap-2">
             <Knopf className="flex-1" onClick={abbrechen}>
@@ -154,7 +154,7 @@ export function BestaetigungProvider({ children }: { children: ReactNode }) {
             <Knopf
               className="flex-1"
               type="submit"
-              variante={anfrage?.gefahr ? 'gefahr' : 'primaer'}
+              variante={warnung ? 'warnung' : 'primaer'}
               disabled={!eingabeOk}
               autoFocus={anfrage?.eingabe === undefined}
             >
@@ -165,16 +165,17 @@ export function BestaetigungProvider({ children }: { children: ReactNode }) {
       </Dialog>
       <Dialog offen={freiOffen} titel={freiAnfrage ? tx(freiAnfrage.titel) : ''} onSchliessen={freiAbbrechen}>
         <Formular onAbsenden={freiSenden} abstand="space-y-5">
-          <input
-            className={EINGABE_STIL}
-            aria-label={freiAnfrage ? tx(freiAnfrage.label) : tx('Eingabe')}
-            value={freiText}
-            maxLength={freiAnfrage?.maxLaenge}
-            autoFocus
-            autoComplete="off"
-            onFocus={(ereignis) => ereignis.currentTarget.select()}
-            onChange={(ereignis) => setFreiText(ereignis.target.value)}
-          />
+          <Feld label={freiAnfrage ? freiAnfrage.label : 'Eingabe'}>
+            <input
+              className={EINGABE_STIL}
+              value={freiText}
+              maxLength={freiAnfrage?.maxLaenge}
+              autoFocus
+              autoComplete="off"
+              onFocus={(ereignis) => ereignis.currentTarget.select()}
+              onChange={(ereignis) => setFreiText(ereignis.target.value)}
+            />
+          </Feld>
           <div className="flex gap-2">
             <Knopf className="flex-1" onClick={freiAbbrechen}>
               {tx('Abbrechen')}

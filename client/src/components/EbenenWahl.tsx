@@ -46,6 +46,7 @@ export function EbenenWahl() {
         titel: tx("Ebenen ausblenden?"),
         text: hinweis,
         knopf: tx("Ausblenden"),
+        gefahr: true,
       }))
     ) {
       return;

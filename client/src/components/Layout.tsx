@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
-import { createContext, lazy, Suspense, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { createContext, lazy, Suspense, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useEbenen, useFunktionen } from '../funktionen.ts';
@@ -287,6 +287,33 @@ function Seitenleiste() {
 }
 
 function MobilNavigation() {
+  const leiste = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const element = leiste.current;
+    if (!element) {
+      return;
+    }
+    const messe = () => {
+      if (getComputedStyle(element).display === 'none') {
+        document.documentElement.style.removeProperty('--leisten-hoehe');
+        return;
+      }
+      const kasten = element.getBoundingClientRect();
+      const fab = element.querySelector('.knopf-rund')?.getBoundingClientRect();
+      const oben = Math.min(kasten.top, fab?.top ?? kasten.top);
+      const hoehe = Math.max(0, Math.ceil(window.innerHeight - oben));
+      document.documentElement.style.setProperty('--leisten-hoehe', `${hoehe}px`);
+    };
+    messe();
+    const beobachter = new ResizeObserver(messe);
+    beobachter.observe(element);
+    window.addEventListener('resize', messe);
+    return () => {
+      beobachter.disconnect();
+      window.removeEventListener('resize', messe);
+      document.documentElement.style.removeProperty('--leisten-hoehe');
+    };
+  }, []);
   const oeffnen = useEintragOeffnen();
   const funktionen = useFunktionen();
   const ebenen = useEbenen();
@@ -311,7 +338,7 @@ function MobilNavigation() {
   );
 
   return (
-    <nav className="mobilleiste fixed inset-x-0 bottom-0 z-40 flex items-end border-t border-rand bg-flaeche/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+    <nav ref={leiste} className="mobilleiste fixed inset-x-0 bottom-0 z-40 flex items-end border-t border-rand bg-flaeche/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
       {eintraege.slice(0, mitte).map(link)}
       <div className="flex flex-1 justify-center">
         <button

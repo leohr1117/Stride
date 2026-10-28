@@ -119,7 +119,12 @@ export function Fehlermeldung({ fehler }: { fehler: unknown }) {
     return null;
   }
   const text = fehler instanceof Error ? meldungstext(fehler.message) : tx('Etwas ist schiefgelaufen.');
-  return <p className="rounded-xl bg-gefahr/10 px-3 py-2 text-sm break-words text-gefahr">{text}</p>;
+  return (
+    <p className="feld-fehler text-[13px] leading-[18px] break-words text-gefahr" role="alert">
+      <span aria-hidden="true">⚠ </span>
+      {text}
+    </p>
+  );
 }
 
 export function Ladeanzeige() {

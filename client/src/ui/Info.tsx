@@ -113,7 +113,7 @@ export function InfoHinweis({
             ereignis.currentTarget.blur();
           }
         }}
-        className={knopfKlasse ?? 'inline-flex size-4 items-center justify-center rounded-full text-leise hover:text-haupt'}
+        className={knopfKlasse ?? 'inline-flex size-11 items-center justify-center rounded-full text-leise hover:text-haupt'}
       >
         {icon ?? <Info className="size-4" strokeWidth={1.75} />}
       </button>

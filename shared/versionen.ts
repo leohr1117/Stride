@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.29.0',
+    seiten: 'Profil, Tätigkeiten, Darstellung',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.',
+          'Speichern bleibt sichtbar, wenn die Tastatur offen ist.',
+          'Eine Meldung kann Rückgängig anbieten. Ohne Rückgängig fragt ein Warndialog.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.28.0',
     seiten: 'Mehr, Übersicht, Ziele, Darstellung, Chronik',
     abschnitte: [

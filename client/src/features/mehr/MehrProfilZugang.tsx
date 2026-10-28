@@ -63,6 +63,7 @@ export function PasswortSeite() {
   const [neu, setNeu] = useState('');
   const [wiederholung, setWiederholung] = useState('');
   const [fehler, setFehler] = useState<unknown>(null);
+  const [abweichung, setAbweichung] = useState<string | null>(null);
   const [gespeichert, setGespeichert] = useState(false);
   const aendern = useMutation({
     mutationFn: () => api.aenderePasswort(bisher, neu),
@@ -82,9 +83,11 @@ export function PasswortSeite() {
     ereignis.preventDefault();
     if (neu !== wiederholung) {
       setGespeichert(false);
-      setFehler(new Error(tx("Die Passwörter stimmen nicht überein.")));
+      setAbweichung('Die Passwörter stimmen nicht überein.');
+      setFehler(null);
       return;
     }
+    setAbweichung(null);
     aendern.mutate();
   };
   return (
@@ -110,9 +113,13 @@ export function PasswortSeite() {
           />
           <PasswortFeld
             label={tx("Neues Passwort wiederholen")}
+            fehler={abweichung}
             autoComplete="new-password"
             value={wiederholung}
-            onChange={(ereignis) => setWiederholung(ereignis.target.value)}
+            onChange={(ereignis) => {
+              setWiederholung(ereignis.target.value);
+              setAbweichung(null);
+            }}
           />
           <Knopf type="submit" variante="primaer" className="w-full" disabled={bisher === '' || neu === '' || aendern.isPending}>
             {tx("Passwort ändern")}

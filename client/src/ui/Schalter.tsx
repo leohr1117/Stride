@@ -21,7 +21,7 @@ export function Chip({
       type="button"
       aria-pressed={aktiv}
       onClick={onClick}
-      className={`chip rounded-full border px-3 py-1.5 text-sm transition ${
+      className={`chip min-h-9 rounded-full border px-3 py-1.5 text-sm transition ${
         umbruch ? 'inline-block max-w-full text-left whitespace-normal' : 'flex shrink-0 items-center gap-1.5'
       } ${
         aktiv ? 'chip-aktiv border-transparent text-haupt' : 'border-rand text-leise hover:text-haupt'

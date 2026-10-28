@@ -1,5 +1,7 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Abmelden?', 'Sign out?'],
+  ['Die Sitzung auf diesem Gerät endet.', 'The session on this device ends.'],
   ['Wie heißt du in Stride?', 'What should Stride call you?'],
   ['Halte fest, was du tust. Daraus werden Level und Streak.', 'Log what you do. It turns into levels and a streak.'],
   ['Worin willst du wachsen?', 'Where do you want to grow?'],

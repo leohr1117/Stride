@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.', 'The label sits above the field. An error sits directly on the field.'],
+  ['Speichern bleibt sichtbar, wenn die Tastatur offen ist.', 'Save stays visible when the keyboard is open.'],
+  ['Eine Meldung kann Rückgängig anbieten. Ohne Rückgängig fragt ein Warndialog.', 'A message can offer Undo. Without undo, a warning dialog asks first.'],
   ['Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.', 'Rows sit in one list. Title, value, and arrow have fixed sizes.'],
   ['Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.', 'Section titles use normal writing, without capital letters.'],
   ['Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.', 'Glow is back in every look, including Standard, and follows the switch.'],

@@ -73,12 +73,16 @@ function DialogSchicht({
   titel,
   info,
   vorTitel,
+  art,
+  menu,
   onSchliessen,
   children,
 }: {
   titel: string;
   info?: string;
   vorTitel?: ReactNode;
+  art: 'blatt' | 'warnung';
+  menu?: ReactNode;
   onSchliessen: () => void;
   children: ReactNode;
 }) {
@@ -109,33 +113,61 @@ function DialogSchicht({
           }
         }}
       />
-      <div className="dialog-schicht pointer-events-none absolute inset-x-0 flex items-end justify-center md:items-center md:p-6">
+      <div
+        className={`dialog-schicht pointer-events-none absolute inset-x-0 flex justify-center ${
+          art === 'warnung' ? 'items-center p-4' : 'items-end md:items-center md:p-6'
+        }`}
+      >
         <div
           role={anwesend ? 'dialog' : undefined}
           aria-modal={anwesend ? true : undefined}
           aria-hidden={anwesend ? undefined : true}
           inert={anwesend ? undefined : true}
           aria-label={anwesend ? titel : undefined}
-          className={`dialog-fenster pointer-events-auto relative flex w-full min-h-0 flex-col rounded-t-3xl border border-rand bg-flaeche transition duration-150 md:max-w-lg md:rounded-3xl ${
-            anwesend ? 'translate-y-0 opacity-100' : 'translate-y-7 opacity-0'
-          }`}
+          data-art={art}
+          onClick={(ereignis) => {
+            if (art !== 'blatt') {
+              return;
+            }
+            const ziel = ereignis.target;
+            if (!(ziel instanceof Element)) {
+              return;
+            }
+            const link = ziel.closest('a');
+            if (!link || link.target === '_blank' || link.hasAttribute('download')) {
+              return;
+            }
+            const href = link.getAttribute('href');
+            if (!href || href.startsWith('#')) {
+              return;
+            }
+            onSchliessen();
+          }}
+          className={`dialog-fenster pointer-events-auto relative flex min-h-0 flex-col border border-rand bg-flaeche transition duration-150 ${
+            art === 'warnung' ? 'dialog-warnung w-full max-w-sm rounded-xl' : 'w-full rounded-t-3xl md:max-w-lg md:rounded-3xl'
+          } ${anwesend ? 'translate-y-0 opacity-100' : 'translate-y-7 opacity-0'}`}
         >
-          <header className="flex shrink-0 items-center justify-between gap-3 px-5 pt-5 pb-3">
-            <div className="flex min-w-0 items-center">
+          <header className={`flex shrink-0 items-center justify-between gap-2 ${art === 'warnung' ? 'px-5 pt-5 pb-1' : 'ps-5 pe-1'}`}>
+            <div className="flex min-w-0 items-center py-3">
               <h2 className="min-w-0 text-lg font-semibold text-balance break-words">
                 {vorTitel}
                 <span>{titel}</span>
               </h2>
               {info ? <InfoHinweis text={info} /> : null}
             </div>
-            <button
-              type="button"
-              onClick={onSchliessen}
-              aria-label={tx('Schließen')}
-              className="shrink-0 rounded-full p-1.5 text-leise transition hover:bg-flaeche-2 hover:text-haupt"
-            >
-              <X className="size-5" />
-            </button>
+            <div className="flex shrink-0 items-center">
+              {menu}
+              {art === 'blatt' ? (
+                <button
+                  type="button"
+                  onClick={onSchliessen}
+                  aria-label={tx('Schließen')}
+                  className="flex size-12 items-center justify-center rounded-full text-leise transition hover:bg-flaeche-2 hover:text-haupt"
+                >
+                  <X className="size-5" />
+                </button>
+              ) : null}
+            </div>
           </header>
           <div className="dialog-koerper min-h-0 px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">{children}</div>
         </div>
@@ -149,6 +181,8 @@ export function Dialog({
   titel,
   info,
   vorTitel,
+  art = 'blatt',
+  menu,
   onSchliessen,
   children,
 }: {
@@ -156,6 +190,8 @@ export function Dialog({
   titel: string;
   info?: string;
   vorTitel?: ReactNode;
+  art?: 'blatt' | 'warnung';
+  menu?: ReactNode;
   onSchliessen: () => void;
   children: ReactNode;
 }) {
@@ -210,7 +246,7 @@ export function Dialog({
   return createPortal(
     <AnimatePresence>
       {offen && (
-        <DialogSchicht key="dialog" titel={titel} info={info} vorTitel={vorTitel} onSchliessen={onSchliessen}>
+        <DialogSchicht key="dialog" titel={titel} info={info} vorTitel={vorTitel} art={art} menu={menu} onSchliessen={onSchliessen}>
           {children}
         </DialogSchicht>
       )}

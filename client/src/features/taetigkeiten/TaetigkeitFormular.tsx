@@ -127,7 +127,8 @@ export function TaetigkeitFormular({
       ))}
 
       {zuViele && (
-        <p className="text-sm text-gefahr break-words">
+        <p className="feld-fehler text-[13px] leading-[18px] break-words text-gefahr" role="alert">
+          <span aria-hidden="true">⚠ </span>
           {tx('Höchstens {max} Attribute pro Tätigkeit.', { max: GRENZEN.vorlageAttributeMax })}
         </p>
       )}
