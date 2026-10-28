@@ -1,5 +1,6 @@
 import { standardEbenen, type Ebenen } from './ebenen.ts';
 import type { Funktion, Funktionen } from './funktionen.ts';
+import { SEITEN, type Seite } from './navigation.ts';
 import { pfadAktiv, type Sichtbarkeit } from './sichtbarkeit.ts';
 
 export const LEISTE_MAX = 4;
@@ -10,18 +11,24 @@ export interface LeistenSeite {
   funktion?: Funktion;
 }
 
-export const LEISTEN_SEITEN: readonly LeistenSeite[] = [
-  { pfad: '/', label: 'Übersicht' },
-  { pfad: '/laufend', label: 'Laufend' },
-  { pfad: '/basis', label: 'Basis', funktion: 'basis' },
-  { pfad: '/ziele', label: 'Ziele' },
-  { pfad: '/chronik', label: 'Chronik', funktion: 'chronik' },
-  { pfad: '/rueckblick', label: 'Rückblick', funktion: 'rueckblick' },
-  { pfad: '/statistiken', label: 'Statistiken', funktion: 'statistiken' },
-  { pfad: '/vorbilder', label: 'Vorbilder', funktion: 'vorbilder' },
-  { pfad: '/handbuch', label: 'Handbuch', funktion: 'handbuch' },
-  { pfad: '/mehr', label: 'Mehr' },
-];
+/** Profil und Tätigkeiten stehen in der Tabelle, sind aber erst ab U13 wählbar. */
+const NOCH_NICHT_IN_DER_LEISTE = new Set(['/charakter', '/mehr/inhalte']);
+
+function funktionAus(schalter: Seite['schalter']): Funktion | undefined {
+  if (schalter === null || schalter === 'ziele' || schalter === 'laufend') {
+    return undefined;
+  }
+  return schalter;
+}
+
+export const LEISTEN_SEITEN: readonly LeistenSeite[] = SEITEN.filter((seite) => !NOCH_NICHT_IN_DER_LEISTE.has(seite.pfad)).map(
+  (seite) => {
+    const funktion = funktionAus(seite.schalter);
+    return funktion
+      ? { pfad: seite.pfad, label: seite.name, funktion }
+      : { pfad: seite.pfad, label: seite.name };
+  },
+);
 
 export const LEISTE_STANDARD = ['/', '/laufend', '/ziele', '/mehr'];
 
@@ -76,7 +83,7 @@ export function tauschMitSichtbar(
   return neu;
 }
 
-/** Bekannte Seiten behalten, auch über vier hinaus. Charakter und anderes Unbekanntes fallen weg. null, wenn der Wert keine Liste ist. */
+/** Bekannte Leisten-Seiten behalten, auch über vier hinaus. Profil, Tätigkeiten und anderes Unbekanntes fallen weg. null, wenn der Wert keine Liste ist. */
 export function bereinigteLeiste(wert: unknown): string[] | null {
   if (!Array.isArray(wert)) {
     return null;

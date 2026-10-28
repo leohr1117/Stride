@@ -6,14 +6,17 @@ import {
   Compass,
   House,
   Layers,
+  ListChecks,
   Route,
   Settings,
   Star,
+  User,
   type LucideIcon,
 } from 'lucide-react';
 import { standardEbenen, type Ebenen } from '../../shared/spiel/ebenen.ts';
 import type { Funktion, Funktionen } from '../../shared/spiel/funktionen.ts';
 import { LEISTEN_SEITEN } from '../../shared/spiel/leiste.ts';
+import { SEITEN, type Seite, type SeitenSchalter, type SeitenSymbol } from '../../shared/spiel/navigation.ts';
 import { pfadAktiv } from '../../shared/spiel/sichtbarkeit.ts';
 
 export interface NavEintrag {
@@ -28,54 +31,66 @@ export interface NavGruppe {
   eintraege: NavEintrag[];
 }
 
-const UEBERSICHT: NavEintrag = { pfad: '/', label: 'Übersicht', icon: House };
-const LAUFEND: NavEintrag = { pfad: '/laufend', label: 'Laufend', icon: Activity };
-const ZIELE: NavEintrag = { pfad: '/ziele', label: 'Ziele', icon: Compass };
-
-export const NAVIGATION: NavGruppe[] = [
-  {
-    titel: null,
-    eintraege: [
-      UEBERSICHT,
-      LAUFEND,
-      { pfad: '/basis', label: 'Basis', icon: Layers, funktion: 'basis' },
-      ZIELE,
-    ],
-  },
-  {
-    titel: 'Reise',
-    eintraege: [
-      { pfad: '/chronik', label: 'Chronik', icon: Route, funktion: 'chronik' },
-      { pfad: '/rueckblick', label: 'Rückblick', icon: CalendarCheck, funktion: 'rueckblick' },
-      { pfad: '/statistiken', label: 'Statistiken', icon: ChartColumn, funktion: 'statistiken' },
-      { pfad: '/vorbilder', label: 'Vorbilder', icon: Star, funktion: 'vorbilder' },
-    ],
-  },
-];
-
-export const EINSTELLUNGEN: NavEintrag = { pfad: '/mehr', label: 'Mehr', icon: Settings };
-export const HANDBUCH: NavEintrag = { pfad: '/handbuch', label: 'Handbuch', icon: BookMarked, funktion: 'handbuch' };
-
-const LEISTEN_ICONS: Record<string, LucideIcon> = {
-  '/': House,
-  '/laufend': Activity,
-  '/basis': Layers,
-  '/ziele': Compass,
-  '/chronik': Route,
-  '/rueckblick': CalendarCheck,
-  '/statistiken': ChartColumn,
-  '/vorbilder': Star,
-  '/handbuch': BookMarked,
-  '/mehr': Settings,
+const SYMBOL: Record<SeitenSymbol, LucideIcon> = {
+  haus: House,
+  kompass: Compass,
+  laufend: Activity,
+  schichten: Layers,
+  liste: ListChecks,
+  weg: Route,
+  kalender: CalendarCheck,
+  diagramm: ChartColumn,
+  stern: Star,
+  person: User,
+  buch: BookMarked,
+  zahnrad: Settings,
 };
 
+function istFunktion(schalter: SeitenSchalter | null): schalter is Funktion {
+  return schalter !== null && schalter !== 'ziele' && schalter !== 'laufend';
+}
+
+function alsEintrag(seite: Seite): NavEintrag {
+  const funktion = istFunktion(seite.schalter) ? seite.schalter : undefined;
+  return {
+    pfad: seite.pfad,
+    label: seite.name,
+    icon: SYMBOL[seite.symbol],
+    ...(funktion ? { funktion } : {}),
+  };
+}
+
+function mussSeite(pfad: string): Seite {
+  const fund = SEITEN.find((seite) => seite.pfad === pfad);
+  if (!fund) {
+    throw new Error(`Seite fehlt in der Tabelle: ${pfad}`);
+  }
+  return fund;
+}
+
+/**
+ * Bis U15 bleibt die bisherige Gruppierung. Die vier Blöcke zeigt erst die neue Seitenleiste.
+ * Namen und Symbole kommen aus der Seitentabelle.
+ */
+const GRUPPEN_BIS_U15: { titel: string | null; pfade: readonly string[] }[] = [
+  { titel: null, pfade: ['/', '/laufend', '/basis', '/ziele'] },
+  { titel: 'Reise', pfade: ['/chronik', '/rueckblick', '/statistiken', '/vorbilder'] },
+];
+
+export const NAVIGATION: NavGruppe[] = GRUPPEN_BIS_U15.map((gruppe) => ({
+  titel: gruppe.titel,
+  eintraege: gruppe.pfade.map((pfad) => alsEintrag(mussSeite(pfad))),
+}));
+
+export const EINSTELLUNGEN: NavEintrag = alsEintrag(mussSeite('/mehr'));
+export const HANDBUCH: NavEintrag = alsEintrag(mussSeite('/handbuch'));
+
 export function navAusLeiste(pfad: string): NavEintrag | undefined {
-  const seite = LEISTEN_SEITEN.find((eintrag) => eintrag.pfad === pfad);
-  const icon = LEISTEN_ICONS[pfad];
-  if (!seite || !icon) {
+  if (!LEISTEN_SEITEN.some((seite) => seite.pfad === pfad)) {
     return undefined;
   }
-  return { pfad: seite.pfad, label: seite.label, icon, funktion: seite.funktion };
+  const fund = SEITEN.find((seite) => seite.pfad === pfad);
+  return fund ? alsEintrag(fund) : undefined;
 }
 
 export function sichtbareGruppen(funktionen: Funktionen, ebenen: Ebenen = standardEbenen()): NavGruppe[] {
@@ -93,11 +108,10 @@ export function sichtbareGruppen(funktionen: Funktionen, ebenen: Ebenen = standa
 export function seitenleistenPfade(funktionen: Funktionen, ebenen: Ebenen = standardEbenen()): string[] {
   const sichtbarkeit = { funktionen, ebenen };
   const pfade = sichtbareGruppen(funktionen, ebenen).flatMap((gruppe) => gruppe.eintraege.map((eintrag) => eintrag.pfad));
-  pfade.push('/mehr/inhalte');
+  pfade.push(mussSeite('/mehr/inhalte').pfad);
   if (pfadAktiv(HANDBUCH.pfad, sichtbarkeit)) {
     pfade.push(HANDBUCH.pfad);
   }
-  pfade.push(EINSTELLUNGEN.pfad, '/charakter');
+  pfade.push(EINSTELLUNGEN.pfad, mussSeite('/charakter').pfad);
   return pfade;
 }
-

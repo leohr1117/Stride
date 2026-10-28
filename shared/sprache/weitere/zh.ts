@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Leiste, Seitenleiste und Mehr lesen ihre Seiten aus einer gemeinsamen Liste. Was du siehst, bleibt gleich.": "底栏、侧边栏和「更多」从同一份列表读取页面。你看到的内容保持不变。",
   "Neue Profile haben die Chronik von Anfang an eingeschaltet.": "新档案从一开始就开启历史记录。",
   "Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.": "等级环重新有了颜色渐变和尖端的亮点，右上角的也一样。",
   "Abmelden?": "退出登录？",

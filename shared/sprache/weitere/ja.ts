@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Leiste, Seitenleiste und Mehr lesen ihre Seiten aus einer gemeinsamen Liste. Was du siehst, bleibt gleich.": "バー、サイドバー、「その他」は共通の一覧からページを読みます。表示はこれまでと同じです。",
   "Neue Profile haben die Chronik von Anfang an eingeschaltet.": "新しいプロフィールでは最初から履歴がオンです。",
   "Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.": "レベルリングに色のグラデーションと先端の光る点が戻りました。右上のリングも同じです。",
   "Abmelden?": "ログアウトしますか？",
