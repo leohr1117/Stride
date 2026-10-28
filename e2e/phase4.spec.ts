@@ -557,3 +557,55 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
     await profilZurueck(page);
   }
 });
+
+test('Nachschlagen erklärt Benachrichtigungen', async ({ page }) => {
+  await anmelden(page);
+  const stil = await page.evaluate(async () => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stil: 'antik' }),
+    });
+    return antwort.ok;
+  });
+  expect(stil).toBe(true);
+  await page.goto('/handbuch');
+  await expect(page.locator('html')).toHaveAttribute('data-stil', 'antik');
+  await expect(page.getByRole('heading', { name: 'Handbuch', exact: true })).toBeVisible();
+  const nachschlagen = page.getByRole('button', { name: 'Nachschlagen' });
+  if ((await nachschlagen.getAttribute('aria-expanded')) !== 'true') {
+    await nachschlagen.click();
+  }
+  const karte = page.getByRole('region', { name: 'Benachrichtigungen' });
+  await expect(karte).toBeVisible();
+  await expect(karte.getByRole('heading', { name: 'Streak in Gefahr', exact: true })).toBeVisible();
+  await expect(karte.getByRole('heading', { name: 'Rückkehr', exact: true })).toBeVisible();
+  await expect(karte.getByRole('heading', { name: 'Boss-Datum', exact: true })).toBeVisible();
+  await expect(karte.getByRole('heading', { name: 'Ruhezeit', exact: true })).toBeVisible();
+  await expect(karte).toContainText('Höchstens eine am Tag.');
+  await expect(karte).toContainText('Eine Benachrichtigung gibt keine XP.');
+  await expect(karte).toContainText('Der Sieg bleibt in der App.');
+  await expect(karte.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await expect(karte.getByText('Fällige Aufgabe')).toHaveCount(0);
+  await expect(karte.getByText('Trainingstag')).toHaveCount(0);
+  const abgeschnitten = await karte.evaluate((el) => el.scrollWidth > el.clientWidth + 1);
+  expect(abgeschnitten).toBe(false);
+  await ohneSeitlichenUeberlauf(page);
+  await karte.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
+  fs.mkdirSync('tmp-bau/49', { recursive: true });
+  const projekt = test.info().project.name;
+  await karte.screenshot({ path: `tmp-bau/49/${projekt}-karte.png` });
+  await page.screenshot({ path: `tmp-bau/49/${projekt}-seite.png` });
+
+  await page.goto('/mehr');
+  await page.getByRole('button', { name: /^Version / }).click();
+  const verlauf = page.getByRole('region', { name: 'Version 3.17.0' });
+  await expect(verlauf).toBeVisible();
+  await expect(verlauf.getByText('Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag.')).toBeVisible();
+  await expect(verlauf.getByText('Sie gelten für einen angeschlagenen Streak, für die Rückkehr und für das Boss-Datum am Vortag.')).toBeVisible();
+  await expect(verlauf.getByText('In der Ruhezeit bleibt es still. Danach kommt höchstens eine, wenn sie noch stimmt.')).toBeVisible();
+  await expect(verlauf.getByText('Nach einem Erfolg kann die Übersicht einmal fragen, ob du Benachrichtigungen einschalten willst.')).toBeVisible();
+  await verlauf.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
+  await ohneSeitlichenUeberlauf(page);
+  await page.screenshot({ path: `tmp-bau/49/${projekt}-version.png` });
+});

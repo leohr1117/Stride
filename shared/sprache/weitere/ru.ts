@@ -1715,4 +1715,9 @@ export const TEXTE: Record<string, string> = {
   "{n} Geräte": "{n} устройств",
   "Benachrichtigungen auf diesem Gerät einschalten?": "Включить уведомления на этом устройстве?",
   "Nicht jetzt": "Не сейчас",
+  "Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag. Eine Benachrichtigung gibt keine XP.": "В «Ещё» вы включаете уведомления для этого устройства. Не больше одного в день. Уведомление не даёт XP.",
+  "Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag.": "В «Ещё» вы включаете уведомления для этого устройства. Не больше одного в день.",
+  "Sie gelten für einen angeschlagenen Streak, für die Rückkehr und für das Boss-Datum am Vortag.": "Они относятся к надломленной серии, к возвращению и к дате босса накануне.",
+  "In der Ruhezeit bleibt es still. Danach kommt höchstens eine, wenn sie noch stimmt.": "В тихие часы тихо. Потом приходит не больше одного, если оно ещё верно.",
+  "Nach einem Erfolg kann die Übersicht einmal fragen, ob du Benachrichtigungen einschalten willst.": "После успеха обзор может один раз спросить, хотите ли вы включить уведомления.",
 };

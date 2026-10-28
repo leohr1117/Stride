@@ -17,6 +17,21 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.17.0',
+    seiten: 'Mehr, Übersicht, Handbuch',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag.',
+          'Sie gelten für einen angeschlagenen Streak, für die Rückkehr und für das Boss-Datum am Vortag.',
+          'In der Ruhezeit bleibt es still. Danach kommt höchstens eine, wenn sie noch stimmt.',
+          'Nach einem Erfolg kann die Übersicht einmal fragen, ob du Benachrichtigungen einschalten willst.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.16.0',
     seiten: 'Übersicht, Chronik, Einführung, Handbuch',
     abschnitte: [

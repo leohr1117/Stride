@@ -1,5 +1,9 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag.', 'Under More, you turn on notifications for this device. At most one a day.'],
+  ['Sie gelten für einen angeschlagenen Streak, für die Rückkehr und für das Boss-Datum am Vortag.', 'They cover a cracked streak, Return, and the boss date on the day before.'],
+  ['In der Ruhezeit bleibt es still. Danach kommt höchstens eine, wenn sie noch stimmt.', 'Quiet hours stay silent. After that, at most one arrives, if it still applies.'],
+  ['Nach einem Erfolg kann die Übersicht einmal fragen, ob du Benachrichtigungen einschalten willst.', 'After a success, the overview can ask once whether you want to turn on notifications.'],
   ['Der Schutz hält den Streak, wenn ein Tag Pause nicht reicht. Du verdienst ihn alle sieben Tage und setzt ihn unter Heute ein.', 'Protection holds the streak when one day off is not enough. You earn it every seven days and use it under Today.'],
   ['Bricht der Streak, bleiben sieben Tage für die Rückkehr. Ein Eintrag in der Frist schließt sie.', 'When the streak breaks, Return stays open for seven days. An entry within the deadline closes it.'],
   ['Zum Start bietet die Einführung ein Vorbild. Sind Projekte an, kommt ein erster Boss dazu.', 'At the start, onboarding offers a role model. If projects are on, a first boss is added.'],

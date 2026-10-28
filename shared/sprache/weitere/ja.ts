@@ -1715,4 +1715,9 @@ export const TEXTE: Record<string, string> = {
   "{n} Geräte": "{n} 台",
   "Benachrichtigungen auf diesem Gerät einschalten?": "このデバイスで通知をオンにしますか？",
   "Nicht jetzt": "今はしない",
+  "Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag. Eine Benachrichtigung gibt keine XP.": "「その他」で、このデバイスの通知をオンにします。1日に最大1件です。通知はXPを与えません。",
+  "Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag.": "「その他」で、このデバイスの通知をオンにします。1日に最大1件です。",
+  "Sie gelten für einen angeschlagenen Streak, für die Rückkehr und für das Boss-Datum am Vortag.": "途切れた連続、復帰、前日のボスの日付が対象です。",
+  "In der Ruhezeit bleibt es still. Danach kommt höchstens eine, wenn sie noch stimmt.": "静かな時間は何も出ません。その後は、まだ当てはまるものが最大1件です。",
+  "Nach einem Erfolg kann die Übersicht einmal fragen, ob du Benachrichtigungen einschalten willst.": "成功のあと、概要は通知をオンにするか一度だけ尋ねることがあります。",
 };

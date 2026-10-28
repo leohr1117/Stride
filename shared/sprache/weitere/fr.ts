@@ -1715,4 +1715,9 @@ export const TEXTE: Record<string, string> = {
   "{n} Geräte": "{n} appareils",
   "Benachrichtigungen auf diesem Gerät einschalten?": "Activer les notifications sur cet appareil ?",
   "Nicht jetzt": "Pas maintenant",
+  "Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag. Eine Benachrichtigung gibt keine XP.": "Sous Plus, tu actives les notifications pour cet appareil. Au plus une par jour. Une notification ne donne pas d'XP.",
+  "Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag.": "Sous Plus, tu actives les notifications pour cet appareil. Au plus une par jour.",
+  "Sie gelten für einen angeschlagenen Streak, für die Rückkehr und für das Boss-Datum am Vortag.": "Elles valent pour une série fragilisée, pour le retour et pour la date du boss la veille.",
+  "In der Ruhezeit bleibt es still. Danach kommt höchstens eine, wenn sie noch stimmt.": "Pendant les heures calmes, rien ne part. Ensuite, au plus une arrive, si elle est encore juste.",
+  "Nach einem Erfolg kann die Übersicht einmal fragen, ob du Benachrichtigungen einschalten willst.": "Après une réussite, l'aperçu peut demander une fois si tu veux activer les notifications.",
 };

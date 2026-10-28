@@ -31,6 +31,7 @@ import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { FUNKTION_BILD } from '../../funktionsBild.tsx';
 import { Karte, Knopf, Ladeanzeige } from '../../ui/index.ts';
 import { faktorText, zahl, zeitspanne } from '../../format.ts';
+import { HinweisKarte } from './HinweisKarte.tsx';
 import { SchutzKarte } from './SchutzKarte.tsx';
 import { TAETIGKEITEN_GESEHEN, leseMerker } from '../../speicher.ts';
 
@@ -357,6 +358,7 @@ function Nachschlagen({ mitVorbildern, mitVisionen }: { mitVorbildern: boolean; 
   return (
     <div className="space-y-4">
       <SchutzKarte />
+      <HinweisKarte />
       <div className="grid gap-4 md:grid-cols-2">
         <Tabelle
           titel={tx("Ein Eintrag")}

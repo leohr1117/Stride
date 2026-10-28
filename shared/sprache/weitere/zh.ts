@@ -1715,4 +1715,9 @@ export const TEXTE: Record<string, string> = {
   "{n} Geräte": "{n} 台设备",
   "Benachrichtigungen auf diesem Gerät einschalten?": "在这台设备上打开通知？",
   "Nicht jetzt": "暂时不要",
+  "Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag. Eine Benachrichtigung gibt keine XP.": "在「更多」里为这台设备开启通知。每天最多一条。通知不给予 XP。",
+  "Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag.": "在「更多」里为这台设备开启通知。每天最多一条。",
+  "Sie gelten für einen angeschlagenen Streak, für die Rückkehr und für das Boss-Datum am Vortag.": "它们用于受损的连续记录、回归，以及前一天的 Boss 日期。",
+  "In der Ruhezeit bleibt es still. Danach kommt höchstens eine, wenn sie noch stimmt.": "免打扰时间里保持安静。之后最多来一条，前提是它仍然适用。",
+  "Nach einem Erfolg kann die Übersicht einmal fragen, ob du Benachrichtigungen einschalten willst.": "一次成功之后，总览可以询问一次你是否要开启通知。",
 };

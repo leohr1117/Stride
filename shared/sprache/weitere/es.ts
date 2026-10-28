@@ -1715,4 +1715,9 @@ export const TEXTE: Record<string, string> = {
   "{n} Geräte": "{n} dispositivos",
   "Benachrichtigungen auf diesem Gerät einschalten?": "¿Activar los avisos en este dispositivo?",
   "Nicht jetzt": "Ahora no",
+  "Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag. Eine Benachrichtigung gibt keine XP.": "En Más activas los avisos para este dispositivo. Como máximo uno al día. Un aviso no da XP.",
+  "Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag.": "En Más activas los avisos para este dispositivo. Como máximo uno al día.",
+  "Sie gelten für einen angeschlagenen Streak, für die Rückkehr und für das Boss-Datum am Vortag.": "Valen para una racha tocada, para el regreso y para la fecha del jefe el día anterior.",
+  "In der Ruhezeit bleibt es still. Danach kommt höchstens eine, wenn sie noch stimmt.": "En el horario de silencio no sale nada. Después llega como máximo uno, si sigue siendo válido.",
+  "Nach einem Erfolg kann die Übersicht einmal fragen, ob du Benachrichtigungen einschalten willst.": "Tras un éxito, el resumen puede preguntar una vez si quieres activar los avisos.",
 };

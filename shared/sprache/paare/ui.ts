@@ -552,4 +552,5 @@ export const PAARE = [
   ['{n} Geräte', '{n} devices'],
   ['Benachrichtigungen auf diesem Gerät einschalten?', 'Turn on notifications on this device?'],
   ['Nicht jetzt', 'Not now'],
+  ['Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag. Eine Benachrichtigung gibt keine XP.', 'Under More, you turn on notifications for this device. At most one a day. A notification grants no XP.'],
 ] as const;
