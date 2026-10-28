@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.21.0',
+    seiten: 'Übersicht, Ziele, Mehr',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Zurück schließt den obersten Dialog. Die Seite darunter bleibt.'],
+      },
+    ],
+  },
+  {
     version: '3.20.0',
     seiten: 'Übersicht, Ziele, Mehr',
     abschnitte: [

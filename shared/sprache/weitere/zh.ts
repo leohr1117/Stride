@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "返回会先关闭最上层的对话框。下面的页面保持不变。",
   "Zurück zu {ziel}": "返回{ziel}",
   "Profil, Level {level}": "资料，等级 {level}",
   "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "页眉显示页面标题。子页面的返回箭头在左侧。",

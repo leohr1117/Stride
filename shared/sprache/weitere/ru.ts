@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "Назад закрывает верхний диалог. Страница под ним остаётся.",
   "Zurück zu {ziel}": "Назад к {ziel}",
   "Profil, Level {level}": "Профиль, уровень {level}",
   "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "В шапке стоит название страницы. На вложенных страницах стрелка назад слева.",

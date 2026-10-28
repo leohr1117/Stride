@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "戻るは一番上のダイアログを閉じます。その下のページはそのままです。",
   "Zurück zu {ziel}": "{ziel}に戻る",
   "Profil, Level {level}": "プロフィール、レベル {level}",
   "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "ヘッダーにページ名を表示します。下のページでは戻る矢印が左にあります。",

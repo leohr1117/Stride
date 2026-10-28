@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "Retour ferme le dialogue du dessus. La page en dessous reste.",
   "Zurück zu {ziel}": "Retour à {ziel}",
   "Profil, Level {level}": "Profil, niveau {level}",
   "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "L'en-tête affiche le titre de la page. Sur les sous-pages, la flèche retour est à gauche.",

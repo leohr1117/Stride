@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "Atrás cierra el diálogo de encima. La página de debajo permanece.",
   "Zurück zu {ziel}": "Volver a {ziel}",
   "Profil, Level {level}": "Perfil, nivel {level}",
   "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "La cabecera muestra el título de la página. En las subpáginas la flecha de volver está a la izquierda.",

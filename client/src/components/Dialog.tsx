@@ -1,15 +1,72 @@
 import { tx } from '../text.ts';
 import { AnimatePresence, usePresence } from 'framer-motion';
 import { X } from 'lucide-react';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { InfoHinweis } from '../ui/Info.tsx';
 
 const offeneDialoge: symbol[] = [];
 const AUSBLENDEN_MS = 180;
 
+interface VerlaufDialog {
+  id: string;
+  href: string;
+  schliessen: () => void;
+  vomVerlauf: boolean;
+}
+
+const verlauf: VerlaufDialog[] = [];
+let laufnummer = 0;
+let eigenesPop = false;
+
 function istOberster(kennung: symbol): boolean {
   return offeneDialoge[offeneDialoge.length - 1] === kennung;
+}
+
+function dialogId(zustand: unknown): string | null {
+  if (typeof zustand !== 'object' || zustand === null) {
+    return null;
+  }
+  const id = (zustand as { dialog?: unknown }).dialog;
+  return typeof id === 'string' ? id : null;
+}
+
+function schreibeDialog(id: string, ersetzen: boolean): void {
+  const basis = (history.state ?? {}) as Record<string, unknown>;
+  const zustand = { ...basis, dialog: id };
+  if (ersetzen) {
+    history.replaceState(zustand, '');
+  } else {
+    history.pushState(zustand, '');
+  }
+}
+
+function beiPop(ereignis: PopStateEvent): void {
+  if (eigenesPop) {
+    eigenesPop = false;
+    ereignis.stopImmediatePropagation();
+    const id = dialogId(history.state);
+    if (id !== null && !verlauf.some((eintrag) => eintrag.id === id)) {
+      eigenesPop = true;
+      history.back();
+    }
+    return;
+  }
+  const oben = verlauf[verlauf.length - 1];
+  if (oben && dialogId(history.state) !== oben.id && location.href === oben.href) {
+    ereignis.stopImmediatePropagation();
+    oben.vomVerlauf = true;
+    oben.schliessen();
+    return;
+  }
+  if (!oben && dialogId(history.state) !== null) {
+    ereignis.stopImmediatePropagation();
+    history.back();
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('popstate', beiPop, true);
 }
 
 function DialogSchicht({
@@ -102,11 +159,21 @@ export function Dialog({
   const schliessen = useRef(onSchliessen);
   schliessen.current = onSchliessen;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!offen) {
       return;
     }
     const kennung = Symbol('dialog');
+    const id = `d${(laufnummer += 1)}`;
+    const eintrag: VerlaufDialog = {
+      id,
+      href: location.href,
+      schliessen: () => schliessen.current(),
+      vomVerlauf: false,
+    };
+    const vorher = dialogId(history.state);
+    schreibeDialog(id, vorher !== null && !verlauf.some((bekannt) => bekannt.id === vorher));
+    verlauf.push(eintrag);
     offeneDialoge.push(kennung);
     const beiTaste = (ereignis: KeyboardEvent) => {
       if (ereignis.key === 'Escape' && istOberster(kennung)) {
@@ -117,9 +184,23 @@ export function Dialog({
     document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', beiTaste);
     return () => {
+      const index = verlauf.indexOf(eintrag);
+      if (index >= 0) {
+        verlauf.splice(index, 1);
+      }
       offeneDialoge.splice(offeneDialoge.indexOf(kennung), 1);
       document.body.style.overflow = vorherigerUeberlauf;
       window.removeEventListener('keydown', beiTaste);
+      if (eintrag.vomVerlauf) {
+        return;
+      }
+      queueMicrotask(() => {
+        if (dialogId(history.state) !== id) {
+          return;
+        }
+        eigenesPop = true;
+        history.back();
+      });
     };
   }, [offen]);
 
