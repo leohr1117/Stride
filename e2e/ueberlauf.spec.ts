@@ -40,6 +40,7 @@ const FEST = [
   '/mehr/darstellung/leiste',
   '/mehr/uebersicht',
   '/mehr/funktionen',
+  '/mehr/benachrichtigungen',
   '/mehr/daten',
 ];
 

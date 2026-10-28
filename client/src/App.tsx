@@ -39,6 +39,7 @@ const MehrDarstellungSeite = seite(ladeMehrBereiche, (modul) => modul.MehrDarste
 const MehrUebersichtSeite = seite(ladeMehrBereiche, (modul) => modul.MehrUebersichtSeite);
 const MehrFunktionenSeite = seite(ladeMehrBereiche, (modul) => modul.MehrFunktionenSeite);
 const MehrDatenSeite = seite(ladeMehrBereiche, (modul) => modul.MehrDatenSeite);
+const MehrBenachrichtigungenSeite = seite(ladeMehrBereiche, (modul) => modul.MehrBenachrichtigungenSeite);
 const BasisSeite = seite(ladeBasis, (modul) => modul.BasisSeite);
 const ChronikSeite = seite(ladeChronik, (modul) => modul.ChronikSeite);
 const FaehigkeitSeite = seite(ladeFaehigkeit, (modul) => modul.FaehigkeitSeite);
@@ -85,6 +86,7 @@ const router = createBrowserRouter([
       { path: 'mehr/darstellung/:teil', element: <MehrDarstellungSeite /> },
       { path: 'mehr/uebersicht', element: <MehrUebersichtSeite /> },
       { path: 'mehr/funktionen', element: <MehrFunktionenSeite /> },
+      { path: 'mehr/benachrichtigungen', element: <MehrBenachrichtigungenSeite /> },
       { path: 'mehr/daten', element: <MehrDatenSeite /> },
       { path: 'mehr/konto', element: <Weiter nach="/mehr/profil" /> },
       { path: 'mehr/accounts', element: <Navigate to="/mehr/profil/accounts" replace /> },

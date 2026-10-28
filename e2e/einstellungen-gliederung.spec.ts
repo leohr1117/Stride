@@ -7,10 +7,11 @@ const KACHELN = [
   '/mehr/darstellung',
   '/mehr/uebersicht',
   '/mehr/funktionen',
+  '/mehr/benachrichtigungen',
   '/mehr/daten',
 ];
 
-test('Einstellungen zeigen die Übersicht und lassen Benachrichtigungen frei', async ({ page }, testInfo) => {
+test('Einstellungen zeigen die Übersicht und Benachrichtigungen zwischen App und Daten', async ({ page }, testInfo) => {
   const bild = (name: string) => page.screenshot({ path: `tmp-bau/n2/${testInfo.project.name}-${name}.png`, fullPage: true });
   await anmelden(page);
   await page.goto('/mehr');
@@ -20,7 +21,9 @@ test('Einstellungen zeigen die Übersicht und lassen Benachrichtigungen frei', a
     knoten.map((knoten) => (knoten instanceof HTMLAnchorElement ? knoten.getAttribute('href') : null)),
   );
   expect(ziele).toEqual(KACHELN);
-  await expect(page.locator('a[href="/mehr/benachrichtigungen"]')).toHaveCount(0);
+  await expect(page.locator('main a[href="/mehr/benachrichtigungen"]')).toHaveCount(1);
+  await expect(page.locator('nav.mobilleiste a[href="/mehr/benachrichtigungen"]')).toHaveCount(0);
+  await expect(page.locator('aside.seitenleiste a[href="/mehr/benachrichtigungen"]')).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
   await bild('mehr');
 

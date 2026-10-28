@@ -31,6 +31,7 @@ const FEST = new Map<string, string>([
   ['/mehr/darstellung/ansicht', 'Ansicht'],
   ['/mehr/uebersicht', 'Übersicht'],
   ['/mehr/funktionen', 'App & Verbindungen'],
+  ['/mehr/benachrichtigungen', 'Benachrichtigungen'],
   ['/mehr/daten', 'Daten'],
 ]);
 
@@ -150,7 +151,7 @@ export function elternZiel(pfad: string, weg?: TrainingRueckweg | null): Zurueck
   if (pfad.startsWith('/mehr/darstellung/')) {
     return { pfad: '/mehr/darstellung', label: 'Darstellung' };
   }
-  if (pfad === '/mehr/uebersicht' || pfad === '/mehr/funktionen' || pfad === '/mehr/daten') {
+  if (pfad === '/mehr/uebersicht' || pfad === '/mehr/funktionen' || pfad === '/mehr/benachrichtigungen' || pfad === '/mehr/daten') {
     return { pfad: '/mehr', label: 'Mehr' };
   }
   return null;

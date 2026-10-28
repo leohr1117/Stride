@@ -4,3 +4,4 @@ export { MehrDarstellungSeite } from './MehrDarstellung.tsx';
 export { MehrUebersichtSeite } from './MehrUebersicht.tsx';
 export { MehrFunktionenSeite } from './MehrFunktionen.tsx';
 export { MehrDatenSeite } from './MehrDaten.tsx';
+export { MehrBenachrichtigungenSeite } from './MehrBenachrichtigungen.tsx';

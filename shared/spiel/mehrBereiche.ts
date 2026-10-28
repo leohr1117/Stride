@@ -14,7 +14,7 @@ export interface MehrBereich {
   id: MehrBereichId;
   pfad: string;
   label: string;
-  /** Sichtbare Kachel. Benachrichtigungen bleibt aus, bis die Seite da ist. */
+  /** Sichtbare Kachel auf Mehr. */
   sichtbar: boolean;
 }
 
@@ -25,7 +25,7 @@ export const MEHR_BEREICHE: readonly MehrBereich[] = [
   { id: 'darstellung', pfad: '/mehr/darstellung', label: 'Darstellung', sichtbar: true },
   { id: 'uebersicht', pfad: '/mehr/uebersicht', label: 'Übersicht', sichtbar: true },
   { id: 'app', pfad: '/mehr/funktionen', label: 'App & Verbindungen', sichtbar: true },
-  { id: 'benachrichtigungen', pfad: '/mehr/benachrichtigungen', label: 'Benachrichtigungen', sichtbar: false },
+  { id: 'benachrichtigungen', pfad: '/mehr/benachrichtigungen', label: 'Benachrichtigungen', sichtbar: true },
   { id: 'daten', pfad: '/mehr/daten', label: 'Daten', sichtbar: true },
 ];
 

@@ -11,6 +11,7 @@ import { AKTUELLE_VERSION, VERSIONEN } from '../../../../shared/versionen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { HANDBUCH, sichtbareGruppen } from '../../navigation.ts';
+import { kachelText } from './hinweisGeraet.ts';
 import { verbindungsStand } from './verbindungsStand.ts';
 
 const BEREICH_ICON: Record<MehrBereichId, LucideIcon> = {
@@ -77,6 +78,7 @@ export function MehrSeite() {
   const { data: einstellungen } = useQuery({ queryKey: SCHLUESSEL.einstellungen, queryFn: api.einstellungen });
   const { data: zugang } = useQuery({ queryKey: SCHLUESSEL.zugang, queryFn: api.zugang });
   const { data: verbindungen } = useQuery({ queryKey: SCHLUESSEL.verbindungen, queryFn: api.verbindungen });
+  const { data: hinweise } = useQuery({ queryKey: SCHLUESSEL.hinweise, queryFn: api.hinweise });
   const stand = verbindungen ? verbindungsStand(verbindungen) : null;
   const profil = [einstellungen?.charakterName, zugang?.benutzername].filter((teil) => teil).join(' · ');
   const verbindungsText = stand ? tx(stand.text) : undefined;
@@ -104,7 +106,9 @@ export function MehrSeite() {
                     ? tx("Karten")
                     : bereich.id === 'app'
                       ? verbindungsText
-                      : undefined
+                      : bereich.id === 'benachrichtigungen' && hinweise
+                        ? kachelText(hinweise.geraete)
+                        : undefined
             }
             gefahr={bereich.id === 'app' && stand?.fehler === true}
           />

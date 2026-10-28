@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { MEHR_BEREICHE, MEHR_BEREICH_IDS, sichtbareMehrBereiche } from './mehrBereiche.ts';
 
 describe('MEHR_BEREICHE', () => {
-  it('ordnet die Einstellungen und hält Benachrichtigungen zwischen App und Daten frei', () => {
+  it('ordnet die Einstellungen und zeigt Benachrichtigungen zwischen App und Daten', () => {
     expect(MEHR_BEREICHE.map((bereich) => bereich.id)).toEqual([...MEHR_BEREICH_IDS]);
     const ids = MEHR_BEREICHE.map((bereich) => bereich.id);
     expect(ids.indexOf('benachrichtigungen')).toBe(ids.indexOf('app') + 1);
@@ -11,7 +11,7 @@ describe('MEHR_BEREICHE', () => {
       id: 'benachrichtigungen',
       pfad: '/mehr/benachrichtigungen',
       label: 'Benachrichtigungen',
-      sichtbar: false,
+      sichtbar: true,
     });
     expect(MEHR_BEREICHE.find((bereich) => bereich.id === 'uebersicht')?.pfad).toBe('/mehr/uebersicht');
     expect(sichtbareMehrBereiche().map((bereich) => bereich.id)).toEqual([
@@ -20,6 +20,7 @@ describe('MEHR_BEREICHE', () => {
       'darstellung',
       'uebersicht',
       'app',
+      'benachrichtigungen',
       'daten',
     ]);
   });

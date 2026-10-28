@@ -22,6 +22,7 @@ describe('schiebeHerkunft', () => {
     expect(schiebeHerkunft(stapel, '/mehr/profil/unbekannt')).toBe(stapel);
     expect(schiebeHerkunft(stapel, '/mehr/profil/stufen')).toBe(stapel);
     expect(schiebeHerkunft(stapel, '/mehr/profil/benutzer')).toBe(stapel);
+    expect(schiebeHerkunft(stapel, '/mehr/benachrichtigungen')).toEqual([...stapel, '/mehr/benachrichtigungen']);
     expect(schiebeHerkunft(stapel, '/mehr/profil/benutzernamen')).toEqual([...stapel, '/mehr/profil/benutzernamen']);
     expect(schiebeHerkunft(stapel, '/mehr/profil/benutzernamen/4')).toEqual([...stapel, '/mehr/profil/benutzernamen/4']);
     expect(schiebeHerkunft(stapel, '/training/plaene/neu')).toEqual([...stapel, '/training/plaene/neu']);
@@ -56,6 +57,7 @@ describe('elternZiel', () => {
     expect(elternZiel('/mehr/profil/benutzernamen/4')).toEqual({ pfad: '/mehr/profil/benutzernamen', label: 'Benutzernamen' });
     expect(elternZiel('/mehr/inhalte/verbindungen')).toEqual({ pfad: '/mehr/funktionen', label: 'App & Verbindungen' });
     expect(elternZiel('/mehr/uebersicht')).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/mehr/benachrichtigungen')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/projekte/4')).toEqual({ pfad: '/ziele', label: 'Ziele' });
     expect(elternZiel('/faehigkeiten/2')).toEqual({ pfad: '/charakter', label: 'Charakter' });
     expect(elternZiel('/vorbilder/ronaldo')).toEqual({ pfad: '/vorbilder', label: 'Vorbilder' });
@@ -106,6 +108,7 @@ describe('herkunftsZiel', () => {
 
   it('benennt bekannte Seiten', () => {
     expect(herkunftsLabel('/mehr/uebersicht')).toBe('Übersicht');
+    expect(herkunftsLabel('/mehr/benachrichtigungen')).toBe('Benachrichtigungen');
     expect(herkunftsLabel('/mehr/profil/fokus')).toBe('Fokus');
     expect(herkunftsLabel('/mehr/profil/benutzernamen')).toBe('Benutzernamen');
     expect(herkunftsLabel('/mehr/profil/benutzernamen/4')).toBe('Benutzername');
