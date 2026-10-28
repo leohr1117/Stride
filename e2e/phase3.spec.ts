@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { lokalesDatum, plusTage } from '../shared/spiel/datum.ts';
+import { RUECKKEHR, SCHUTZ } from '../shared/spiel/schutz.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 const FOLIEN = 4;
@@ -387,4 +388,52 @@ test('testvoll ohne den Testschlüssel zeigt die Karte nicht', async ({ page }) 
   await anmelden(page);
   await tragEin(page);
   await expect(page.getByRole('region', { name: 'Wie hilfreich ist Stride gerade?' })).toHaveCount(0);
+});
+
+test('Nachschlagen erklärt Schutz und Rückkehr', async ({ page }) => {
+  await anmelden(page);
+  const stil = await page.evaluate(async () => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stil: 'antik' }),
+    });
+    return antwort.ok;
+  });
+  expect(stil).toBe(true);
+  await page.goto('/handbuch');
+  await expect(page.locator('html')).toHaveAttribute('data-stil', 'antik');
+  await expect(page.getByRole('heading', { name: 'Handbuch', exact: true })).toBeVisible();
+  const nachschlagen = page.getByRole('button', { name: 'Nachschlagen' });
+  if ((await nachschlagen.getAttribute('aria-expanded')) !== 'true') {
+    await nachschlagen.click();
+  }
+  const karte = page.getByRole('region', { name: 'Schutz und Rückkehr' });
+  await expect(karte).toBeVisible();
+  await expect(karte.getByRole('heading', { name: 'Schutz', exact: true })).toBeVisible();
+  await expect(karte.getByRole('heading', { name: 'Rückkehr', exact: true })).toBeVisible();
+  await expect(karte).toContainText(`Alle ${SCHUTZ.schwelleTage} Tage`);
+  await expect(karte).toContainText(`für ${RUECKKEHR.fristTage} Tage`);
+  await expect(karte).toContainText(`${RUECKKEHR.abstandTage} Tage`);
+  await expect(karte).toContainText('Der Schutz gibt keine XP.');
+  await expect(karte).toContainText('Sie lassen sich nicht öffnen.');
+  await expect(karte.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  const abgeschnitten = await karte.evaluate((el) => el.scrollWidth > el.clientWidth + 1);
+  expect(abgeschnitten).toBe(false);
+  await ohneSeitlichenUeberlauf(page);
+  await karte.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
+  fs.mkdirSync('tmp-bau/38', { recursive: true });
+  const projekt = test.info().project.name;
+  await karte.screenshot({ path: `tmp-bau/38/${projekt}-karte.png` });
+  await page.screenshot({ path: `tmp-bau/38/${projekt}-seite.png` });
+
+  await page.goto('/mehr');
+  await page.getByRole('button', { name: /^Version / }).click();
+  const verlauf = page.getByRole('region', { name: 'Version 3.16.0' });
+  await expect(verlauf).toBeVisible();
+  await expect(verlauf.getByText('Der Schutz hält den Streak, wenn ein Tag Pause nicht reicht. Du verdienst ihn alle sieben Tage und setzt ihn unter Heute ein.')).toBeVisible();
+  await expect(verlauf.getByText('Bricht der Streak, bleiben sieben Tage für die Rückkehr. Ein Eintrag in der Frist schließt sie.')).toBeVisible();
+  await verlauf.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
+  await ohneSeitlichenUeberlauf(page);
+  await page.screenshot({ path: `tmp-bau/38/${projekt}-version.png` });
 });

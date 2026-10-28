@@ -17,6 +17,21 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.16.0',
+    seiten: 'Übersicht, Chronik, Einführung, Handbuch',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Der Schutz hält den Streak, wenn ein Tag Pause nicht reicht. Du verdienst ihn alle sieben Tage und setzt ihn unter Heute ein.',
+          'Bricht der Streak, bleiben sieben Tage für die Rückkehr. Ein Eintrag in der Frist schließt sie.',
+          'Zum Start bietet die Einführung ein Vorbild. Sind Projekte an, kommt ein erster Boss dazu.',
+          'Nach einem Erfolg kann die Übersicht fragen, wie hilfreich Stride gerade ist.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.15.0',
     seiten: 'Einführung',
     abschnitte: [

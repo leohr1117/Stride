@@ -1,5 +1,9 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Der Schutz hält den Streak, wenn ein Tag Pause nicht reicht. Du verdienst ihn alle sieben Tage und setzt ihn unter Heute ein.', 'Protection holds the streak when one day off is not enough. You earn it every seven days and use it under Today.'],
+  ['Bricht der Streak, bleiben sieben Tage für die Rückkehr. Ein Eintrag in der Frist schließt sie.', 'When the streak breaks, Return stays open for seven days. An entry within the deadline closes it.'],
+  ['Zum Start bietet die Einführung ein Vorbild. Sind Projekte an, kommt ein erster Boss dazu.', 'At the start, onboarding offers a role model. If projects are on, a first boss is added.'],
+  ['Nach einem Erfolg kann die Übersicht fragen, wie hilfreich Stride gerade ist.', 'After a success, the overview can ask how helpful Stride is right now.'],
   ['Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.', 'Onboarding explains entries, goals, and the streak in plain sentences. The questions say what the choice turns on.'],
   ['Unter Darstellung speicherst du eigene Farbpaletten. Auswählen übernimmt die Farben. Anlegen, Bearbeiten und Löschen liegt auf einer eigenen Seite.', 'Under Appearance, you save your own color palettes. Choosing applies the colors. Creating, editing, and deleting is on a separate page.'],
   ['Schlicht ist die neue Standardansicht, in Schwarz, Grau und Weiß.', 'Plain is the new standard look, in black, gray, and white.'],

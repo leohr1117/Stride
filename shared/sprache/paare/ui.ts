@@ -1,5 +1,10 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Schutz', 'Protection'],
+  ['Schutz und Rückkehr', 'Protection and return'],
+  ['Ein Tag Pause ist frei. Danach ist der Streak angeschlagen. Alle {tage} Tage Streak liegt ein Schutz bereit. Unter Heute setzt du ihn ein. Er hält die bisherigen Tage. Am selben Tag brauchst du einen Eintrag. Der Schutz gibt keine XP.', 'One day off is free. After that the streak is cracked. Every {tage} days of streak, one protection is ready. You use it under Today. It keeps the days so far. You need an entry the same day. Protection grants no XP.'],
+  ['Setzt du ihn nicht ein, öffnet die Rückkehr für {frist} Tage. Ein Eintrag in der Frist schließt sie. Disziplin und Geist bekommen XP, wenn sie an sind. Nach der Frist ist die Rückkehr vorbei, ohne XP. Die nächste kommt erst {abstand} Tage nach dem Ende der letzten.', 'If you do not use it, Return opens for {frist} days. An entry within the deadline closes it. Discipline and Mind gain XP when they are on. After the deadline, Return is over, with no XP. The next one comes only {abstand} days after the last one ended.'],
+  ['In der Chronik stehen Schutz und Rückkehr als eigene Zeilen. Sie lassen sich nicht öffnen.', 'History shows Protection and Return as their own rows. They cannot be opened.'],
   ['Zum Start', 'To start'],
   ['Zwei Angebote. Beides kannst du auslassen.', 'Two offers. You can skip both.'],
   ['Ein Angebot. Du kannst es auslassen.', 'One offer. You can skip it.'],

@@ -31,6 +31,7 @@ import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { FUNKTION_BILD } from '../../funktionsBild.tsx';
 import { Karte, Knopf, Ladeanzeige } from '../../ui/index.ts';
 import { faktorText, zahl, zeitspanne } from '../../format.ts';
+import { SchutzKarte } from './SchutzKarte.tsx';
 import { TAETIGKEITEN_GESEHEN, leseMerker } from '../../speicher.ts';
 
 const ZIEL_STATION: Record<Exclude<StartZielArt, 'faehigkeit'>, { titel: string; icon: LucideIcon }> = {
@@ -355,6 +356,7 @@ function Nachschlagen({ mitVorbildern, mitVisionen }: { mitVorbildern: boolean; 
   const xpAmTag = durchschnittXpProTag();
   return (
     <div className="space-y-4">
+      <SchutzKarte />
       <div className="grid gap-4 md:grid-cols-2">
         <Tabelle
           titel={tx("Ein Eintrag")}
