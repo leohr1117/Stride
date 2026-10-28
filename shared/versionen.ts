@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.23.0',
+    seiten: 'Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Todoist und Kalender zeigen keine XP-Vorschau mehr.'],
+      },
+    ],
+  },
+  {
     version: '3.22.0',
     seiten: 'Ziele',
     abschnitte: [

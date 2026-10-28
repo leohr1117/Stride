@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Todoist und Kalender zeigen keine XP-Vorschau mehr.": "Todoist とカレンダーは XP のプレビューを出さなくなりました。",
   "Visionen und Organisationen zeigen einen Farbpunkt vor dem Namen. Die Linie links und der Balken oben entfallen.": "ビジョンと組織の名前の前に色の点があります。左の線と上の帯はなくなりました。",
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "戻るは一番上のダイアログを閉じます。その下のページはそのままです。",
   "Zurück zu {ziel}": "{ziel}に戻る",
@@ -132,10 +133,7 @@ export const TEXTE: Record<string, string> = {
   "Sie beginnt mit https:// oder webcal://.": "https:// または webcal:// で始まります。",
   "Outlook": "Outlook",
   "Prüfen": "確認",
-  "{xp} XP für die letzten Termine": "最近の予定 {xp} XP",
-  "Nur eine Vorschau der letzten 7 Tage. Übernommen wird ein Termin erst, wenn er nach dem Verbinden endet.": "過去 7 日のプレビューだけです。予定が取り込まれるのは、接続したあとに終わったときだけです。",
-  "Keine vergangenen Termine.": "過去の予定はありません。",
-  "Zählt nicht": "数えません",
+  "Gültig · {name}": "有効 · {name}",
   "Komma trennt mehrere Wörter. Ohne Wort zählt jeder Termin. Ohne passendes Wort zählt der Termin nicht.": "語はコンマで区切ります。語がなければすべての予定を数えます。合う語がなければ予定は数えません。",
   "Die XP richtet sich nach der Dauer des Termins.": "XP は予定の長さに従います。",
   "Google- und Apple-Kalender lassen sich mit einer kurzen Anleitung verbinden. Vor dem Speichern erscheinen die letzten Termine und die XP.": "Google と Apple のカレンダーは短い手順で接続できます。保存する前に、最近の予定と XP が表示されます。",
@@ -1537,8 +1535,6 @@ export const TEXTE: Record<string, string> = {
   "Nicht zählen": "数えない",
   "Zählen als Standard-Tätigkeit": "標準の活動として数える",
   "Erledigte Aufgaben ohne Zuordnung zählen als diese Tätigkeit oder gar nicht.": "対応のない完了タスクは、この活動として数えるか、まったく数えません。",
-  "{xp} XP für die letzten Erledigungen": "最近の完了は {xp} XP",
-  "Nur eine Vorschau der letzten 7 Tage, ohne Streak und Ausrüstung. Übernommen werden Aufgaben erst, wenn du sie nach dem Verbinden erledigst.": "直近7日のプレビューです。連続記録と装備は含みません。接続したあとに完了したタスクだけが記録されます。",
   "Eine Aufgabe mit Deadline wird zum Gegner. Mit Meilenstein wird sie zum Boss. Nach der Deadline geht Disziplin verloren.": "期限のあるタスクは相手になります。節目をつけるとボスになります。期限を過ぎると規律が減ります。",
   "Todoist lässt sich Schritt für Schritt verbinden. Aufgaben ohne Zuordnung zählen als gewählte Tätigkeit oder gar nicht.": "Todoist は手順に沿って接続できます。対応のないタスクは、選んだ活動として数えるか、まったく数えません。",
   "Eine erledigte Todoist-Aufgabe mit Deadline zählt als Gegner, mit Meilenstein als Boss. Nur Aufgaben nach dem Verbinden zählen.": "期限のある完了した Todoist タスクは相手になり、節目があるとボスになります。接続したあとのタスクだけを数えます。",

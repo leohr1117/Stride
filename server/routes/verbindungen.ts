@@ -7,7 +7,6 @@ import {
   pruefeKalender,
 } from '../features/verbindungen/kalender.ts';
 import { gleicheAllesAb } from '../features/verbindungen/abgleich.ts';
-import { todoistVorschau } from '../features/verbindungen/todoistAbgleich.ts';
 import {
   ladeTodoistStatus,
   setzeTodoistOhne,
@@ -64,8 +63,6 @@ export async function verbindungsRouten(app: FastifyInstance): Promise<void> {
     const { art, vorlageId } = todoistOhneSchema.parse(anfrage.body);
     return setzeTodoistOhne(art, vorlageId);
   });
-
-  app.get('/verbindungen/todoist/vorschau', async () => todoistVorschau());
 
   app.post('/verbindungen/kalender/pruefen', async (anfrage) => {
     const { adresse } = kalenderPruefSchema.parse(anfrage.body);

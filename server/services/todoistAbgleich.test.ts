@@ -9,7 +9,7 @@ import { aendereEinstellungen, ladeEinstellungen } from '../features/einstellung
 import { erstelleFaehigkeit } from '../features/faehigkeiten/faehigkeiten.ts';
 import { erstelleProjekt, erstelleVision } from './struktur.ts';
 import { gleicheGeplantAb } from '../features/verbindungen/abgleich.ts';
-import { gleicheTodoistAb, todoistVorschau } from '../features/verbindungen/todoistAbgleich.ts';
+import { gleicheTodoistAb } from '../features/verbindungen/todoistAbgleich.ts';
 import { ordneTodoistLabel, ordneTodoistProjektZu } from '../features/verbindungen/todoistZuordnung.ts';
 import { setzeTodoistOhne, verbindeTodoist } from '../features/verbindungen/todoist.ts';
 import { erstelleVorhaben } from '../features/ziele/vorhaben.ts';
@@ -500,24 +500,4 @@ describe('Todoist-Abgleich', () => {
     });
   });
 
-  it('rechnet die Vorschau der letzten 7 Tage und schreibt keinen Eintrag', async () => {
-    const jetzt = new Date();
-    await mitApi({
-      projekte: [{ id: 'p1', name: 'Post' }],
-      ereignisse: [
-        ereignis('e-nah', 'Nah', { datum: new Date(jetzt.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString() }),
-        ereignis('e-alt', 'Alt', { datum: new Date(jetzt.getTime() - 10 * 24 * 60 * 60 * 1000).toISOString() }),
-      ],
-    });
-    await mitWeltAsync(welt(), async () => {
-      const allgemein = taetigkeit('Allgemein');
-      const ziel = projekt('Ziel', allgemein);
-      const eigene = taetigkeit('Lesen', ziel.id);
-      await verbindeTodoist(TOKEN, jetzt);
-      setzeTodoistOhne('standard', eigene);
-      const vorschau = await todoistVorschau(jetzt);
-      expect(vorschau).toEqual({ anzahl: 1, xp: eintragXp(null) });
-      expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM eintraege')?.wert).toBe(0);
-    });
-  });
 });

@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Todoist und Kalender zeigen keine XP-Vorschau mehr.": "Todoist 和日历不再显示 XP 预览。",
   "Visionen und Organisationen zeigen einen Farbpunkt vor dem Namen. Die Linie links und der Balken oben entfallen.": "愿景和组织的名称前有一个色点。左侧的线和顶部的条已去掉。",
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "返回会先关闭最上层的对话框。下面的页面保持不变。",
   "Zurück zu {ziel}": "返回{ziel}",
@@ -132,10 +133,7 @@ export const TEXTE: Record<string, string> = {
   "Sie beginnt mit https:// oder webcal://.": "它以 https:// 或 webcal:// 开头。",
   "Outlook": "Outlook",
   "Prüfen": "检查",
-  "{xp} XP für die letzten Termine": "最近的日程 {xp} XP",
-  "Nur eine Vorschau der letzten 7 Tage. Übernommen wird ein Termin erst, wenn er nach dem Verbinden endet.": "只是最近 7 天的预览。日程要在连接之后结束，才会被记入。",
-  "Keine vergangenen Termine.": "没有已过去的日程。",
-  "Zählt nicht": "不计入",
+  "Gültig · {name}": "有效 · {name}",
   "Komma trennt mehrere Wörter. Ohne Wort zählt jeder Termin. Ohne passendes Wort zählt der Termin nicht.": "多个词用逗号分开。没有词时，每个日程都计入。没有匹配的词时，该日程不计入。",
   "Die XP richtet sich nach der Dauer des Termins.": "XP 按日程时长计算。",
   "Google- und Apple-Kalender lassen sich mit einer kurzen Anleitung verbinden. Vor dem Speichern erscheinen die letzten Termine und die XP.": "Google 和 Apple 日历可以用简短说明来连接。保存前会看到最近的日程和 XP。",
@@ -1537,8 +1535,6 @@ export const TEXTE: Record<string, string> = {
   "Nicht zählen": "不计入",
   "Zählen als Standard-Tätigkeit": "计入为默认活动",
   "Erledigte Aufgaben ohne Zuordnung zählen als diese Tätigkeit oder gar nicht.": "没有对应的已完成任务计入为这项活动，或者不计入。",
-  "{xp} XP für die letzten Erledigungen": "最近完成的任务值 {xp} XP",
-  "Nur eine Vorschau der letzten 7 Tage, ohne Streak und Ausrüstung. Übernommen werden Aufgaben erst, wenn du sie nach dem Verbinden erledigst.": "只是最近 7 天的预览，不含连续记录和装备。只有连接之后完成的任务才会被记入。",
   "Eine Aufgabe mit Deadline wird zum Gegner. Mit Meilenstein wird sie zum Boss. Nach der Deadline geht Disziplin verloren.": "有截止日期的任务会成为对手。加上里程碑则成为首领。过了截止日期会失去纪律。",
   "Todoist lässt sich Schritt für Schritt verbinden. Aufgaben ohne Zuordnung zählen als gewählte Tätigkeit oder gar nicht.": "Todoist 可以按步骤连接。没有对应的任务计入为所选活动，或者不计入。",
   "Eine erledigte Todoist-Aufgabe mit Deadline zählt als Gegner, mit Meilenstein als Boss. Nur Aufgaben nach dem Verbinden zählen.": "带截止日期的已完成 Todoist 任务计为对手，加上里程碑则计为首领。只计入连接之后的任务。",

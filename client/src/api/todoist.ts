@@ -1,4 +1,4 @@
-import type { TodoistLabelDaten, TodoistOhne, TodoistStatus, TodoistVorschau, TodoistZuordnungDaten } from '../../../shared/api/todoist.ts';
+import type { TodoistLabelDaten, TodoistOhne, TodoistStatus, TodoistZuordnungDaten } from '../../../shared/api/todoist.ts';
 import { anfrage } from './kern.ts';
 
 export const todoistApi = {
@@ -12,5 +12,4 @@ export const todoistApi = {
     anfrage<TodoistStatus>('/verbindungen/todoist/label-reihenfolge', 'PUT', { ids }),
   setzeTodoistOhne: (art: TodoistOhne, vorlageId: number | null) =>
     anfrage<TodoistStatus>('/verbindungen/todoist/ohne', 'PATCH', { art, vorlageId }),
-  todoistVorschau: () => anfrage<TodoistVorschau>('/verbindungen/todoist/vorschau'),
 };

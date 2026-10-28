@@ -1,6 +1,5 @@
 import { createServer, type Server } from 'node:http';
 import { expect, test, type Page } from '@playwright/test';
-import { eintragXp } from '../shared/spiel/xp.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 const GOOGLE = 'https://calendar.google.com/calendar/r/settings';
@@ -53,7 +52,6 @@ async function oeffneDialog(seite: Page): Promise<void> {
 }
 
 test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert werden', async ({ page }, info) => {
-  const xp = eintragXp(1);
   const name = `E2E ${info.project.name}`;
   const server = await icsServer(kalenderText(new Date(), name));
   try {
@@ -63,7 +61,7 @@ test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert w
     await expect(dialog.getByRole('button', { name: 'Google', exact: true })).toBeVisible();
     await expect(dialog.getByRole('button', { name: 'Apple', exact: true })).toBeVisible();
     await expect(dialog.getByRole('button', { name: 'Andere', exact: true })).toBeVisible();
-    await page.screenshot({ path: `tmp-bau/v2-anbieter-${info.project.name}.png` });
+    await page.screenshot({ path: `tmp-bau/u5/kalender-anbieter-${info.project.name}.png` });
 
     await dialog.getByRole('button', { name: 'Google', exact: true }).click();
     await expect(dialog.getByText('Öffne Google Kalender am Computer.')).toBeVisible();
@@ -74,7 +72,7 @@ test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert w
     const hinweis = page.getByRole('tooltip');
     await expect(hinweis).toBeVisible();
     await expect(hinweis).toContainText('alle paar Stunden');
-    await page.screenshot({ path: `tmp-bau/v2-google-info-${info.project.name}.png` });
+    await page.screenshot({ path: `tmp-bau/u5/kalender-google-info-${info.project.name}.png` });
     await page.keyboard.press('Escape');
     await expect(hinweis).toHaveCount(0);
     await expect(dialog).toBeVisible();
@@ -90,7 +88,7 @@ test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert w
     await dialog.getByRole('button', { name: 'iCloud', exact: true }).click();
     await expect(dialog.getByText('Öffne den Kalender auf iCloud.com.')).toBeVisible();
     await expect(dialog.getByRole('link', { name: 'iCloud Kalender öffnen' })).toHaveAttribute('href', ICLOUD);
-    await page.screenshot({ path: `tmp-bau/v2-apple-${info.project.name}.png` });
+    await page.screenshot({ path: `tmp-bau/u5/kalender-apple-${info.project.name}.png` });
 
     await dialog.getByRole('button', { name: 'Andere', exact: true }).click();
     await expect(dialog.getByText('Sie beginnt mit https:// oder webcal://.')).toBeVisible();
@@ -98,26 +96,19 @@ test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert w
     await dialog.getByRole('button', { name: 'Google', exact: true }).click();
     await dialog.getByRole('textbox', { name: 'iCal-Adresse' }).fill(server.url);
     await dialog.getByRole('button', { name: 'Prüfen', exact: true }).click();
+    await expect(dialog.getByText(`Gültig · ${name}`)).toBeVisible();
     await expect(dialog.getByRole('textbox', { name: 'Name' })).toHaveValue(name);
-    const summe = (wert: number) => dialog.getByText(`${wert} XP für die letzten Termine`, { exact: true });
-    await expect(summe(xp)).toBeVisible();
-    await expect(dialog.getByText('Besprechung')).toBeVisible();
+    await expect(dialog.getByText(/XP für die letzten Termine/)).toHaveCount(0);
+    await expect(dialog.getByText('Besprechung')).toHaveCount(0);
     await expect(dialog.getByRole('button', { name: 'Überspringen' })).toHaveCount(0);
     await expect(dialog.getByText('Projekt', { exact: true })).toBeVisible();
     await expect(dialog.getByRole('combobox', { name: 'Projekt' })).toBeVisible();
     await expect(dialog.getByText('Tätigkeit', { exact: true })).toBeVisible();
     await expect(dialog.getByRole('combobox', { name: 'Tätigkeit' })).toBeVisible();
-    await page.screenshot({ path: `tmp-bau/v4-kalender-${info.project.name}.png` });
+    await page.screenshot({ path: `tmp-bau/u5/kalender-pruefung-${info.project.name}.png` });
     await dialog.locator('span').filter({ hasText: /^Titel enthält$/ }).getByRole('button', { name: 'Info' }).click();
     await expect(page.getByRole('tooltip')).toContainText('Ohne passendes Wort');
     await page.keyboard.press('Escape');
-    await dialog.getByRole('textbox', { name: 'Titel enthält' }).fill('nichts');
-    await expect(summe(0)).toBeVisible();
-    await expect(dialog.getByText('Zählt nicht')).toBeVisible();
-    await dialog.getByRole('textbox', { name: 'Titel enthält' }).fill('');
-    await expect(summe(xp)).toBeVisible();
-    await dialog.getByText(`${xp} XP für die letzten Termine`).scrollIntoViewIfNeeded();
-    await page.screenshot({ path: `tmp-bau/v2-pruefung-${info.project.name}.png` });
     await ohneSeitlichenUeberlauf(page);
 
     await dialog.getByRole('button', { name: 'Speichern' }).click();
@@ -125,7 +116,7 @@ test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert w
     await expect(page.getByText(name, { exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Jetzt abgleichen' }).click();
     await expect(page.getByText('Keine neuen Einträge.')).toBeVisible();
-    await page.screenshot({ path: `tmp-bau/v2-liste-${info.project.name}.png` });
+    await page.screenshot({ path: `tmp-bau/u5/kalender-liste-${info.project.name}.png` });
 
     await page.getByRole('button', { name: `${name} bearbeiten` }).click();
     const bearbeiten = page.getByRole('dialog');

@@ -1,7 +1,6 @@
 import type { AbgleichErgebnis, Kalender, KalenderAenderung, KalenderDaten, KalenderPruefung } from '../../../shared/api/index.ts';
 import { GRENZEN } from '../../../shared/spiel/begriffe.ts';
 import { titelPasstZumFilter } from '../../../shared/spiel/kalender.ts';
-import { eintragXp } from '../../../shared/spiel/xp.ts';
 import { aktualisiere, alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { kalenderName, liesEreignisse, termineDieEnden, type Termin } from '../../integrationen/ical.ts';
@@ -10,10 +9,7 @@ import { fasseFehler, fehlertext, legeEintragAn, pruefeZiel } from './gemeinsam.
 const ZEITLIMIT_MS = 15_000;
 const KALENDER_MAX_BYTES = 5 * 1024 * 1024;
 const MS_PRO_STUNDE = 60 * 60 * 1000;
-const MS_PRO_TAG = 24 * MS_PRO_STUNDE;
 const STUNDEN_RUNDUNG = 100;
-const VORSCHAU_TAGE = 7;
-const VORSCHAU_MAX = 8;
 const KALENDER_KENNUNG = 'BEGIN:VCALENDAR';
 const ERLAUBTE_PROTOKOLLE = ['http:', 'https:'];
 
@@ -207,26 +203,10 @@ async function gleicheEinenKalenderAb(kalender: KalenderZeile, jetzt: Date): Pro
   }
 }
 
-export async function pruefeKalender(adresseEingabe: string, jetzt = new Date()): Promise<KalenderPruefung> {
+export async function pruefeKalender(adresseEingabe: string): Promise<KalenderPruefung> {
   const adresse = normalisiereAdresse(adresseEingabe);
   const text = await ladeKalenderText(adresse);
-  const name = kalenderName(text).slice(0, GRENZEN.nameMax);
-  const von = new Date(jetzt.getTime() - VORSCHAU_TAGE * MS_PRO_TAG);
-  const termine = termineDieEnden(text, von, jetzt)
-    .filter((termin) => !termin.ganztags && termin.titel.trim() !== '' && stundenVon(termin) !== null)
-    .sort((a, b) => b.ende.getTime() - a.ende.getTime())
-    .slice(0, VORSCHAU_MAX)
-    .map((termin) => {
-      const stunden = stundenVon(termin) ?? 0;
-      return {
-        titel: termin.titel,
-        beginn: termin.beginn.toISOString(),
-        ende: termin.ende.toISOString(),
-        stunden,
-        xp: eintragXp(stunden),
-      };
-    });
-  return { name, termine };
+  return { name: kalenderName(text).slice(0, GRENZEN.nameMax) };
 }
 
 export async function gleicheKalenderAb(jetzt = new Date()): Promise<AbgleichErgebnis> {

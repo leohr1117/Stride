@@ -2,7 +2,6 @@ import { createServer, type Server } from 'node:http';
 import { mkdirSync, mkdtempSync } from 'node:fs';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { eintragXp } from '../../../shared/spiel/xp.ts';
 import { alle, eine, mitWeltAsync, schliesseWelt } from '../../db.ts';
 import { erstelleProjekt, erstelleVision } from '../../services/struktur.ts';
 import { erstelleVorlage } from '../taetigkeiten/vorlagen.ts';
@@ -152,14 +151,11 @@ function notizen(): string[] {
 }
 
 describe('Kalenderprüfung und Abgleich', () => {
-  it('zeigt die letzten Termine und speichert dabei nichts', async () => {
+  it('prüft die Adresse und speichert dabei nichts', async () => {
     const adresse = await icsServer(kalenderText());
     await mitWeltAsync(welt(), async () => {
-      const pruefung = await pruefeKalender(adresse, SPAETER);
-      expect(pruefung.name).toBe('Arbeit');
-      expect(pruefung.termine.map((termin) => termin.titel)).toEqual(['Danach', 'Fokus Meeting', 'Ueberlappt', 'Frueher']);
-      expect(pruefung.termine.find((termin) => termin.titel === 'Danach')?.xp).toBe(eintragXp(1));
-      expect(pruefung.termine.find((termin) => termin.titel === 'Ueberlappt')?.xp).toBe(eintragXp(2));
+      const pruefung = await pruefeKalender(adresse);
+      expect(pruefung).toEqual({ name: 'Arbeit' });
       expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM kalender')?.wert).toBe(0);
       expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM eintraege')?.wert).toBe(0);
     });

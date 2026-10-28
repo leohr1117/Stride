@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Todoist und Kalender zeigen keine XP-Vorschau mehr.": "Todoist y el calendario ya no muestran una vista previa de XP.",
   "Visionen und Organisationen zeigen einen Farbpunkt vor dem Namen. Die Linie links und der Balken oben entfallen.": "Las visiones y las organizaciones muestran un punto de color delante del nombre. La línea de la izquierda y la barra de arriba desaparecen.",
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "Atrás cierra el diálogo de encima. La página de debajo permanece.",
   "Zurück zu {ziel}": "Volver a {ziel}",
@@ -132,10 +133,7 @@ export const TEXTE: Record<string, string> = {
   "Sie beginnt mit https:// oder webcal://.": "Empieza por https:// o webcal://.",
   "Outlook": "Outlook",
   "Prüfen": "Comprobar",
-  "{xp} XP für die letzten Termine": "{xp} XP por los eventos recientes",
-  "Nur eine Vorschau der letzten 7 Tage. Übernommen wird ein Termin erst, wenn er nach dem Verbinden endet.": "Solo una vista previa de los últimos 7 días. Un evento se añade solo cuando termina, y solo después de conectar.",
-  "Keine vergangenen Termine.": "No hay eventos pasados.",
-  "Zählt nicht": "No cuenta",
+  "Gültig · {name}": "Válido · {name}",
   "Komma trennt mehrere Wörter. Ohne Wort zählt jeder Termin. Ohne passendes Wort zählt der Termin nicht.": "Una coma separa las palabras. Sin palabra, cuenta cada evento. Sin una palabra que coincida, el evento no cuenta.",
   "Die XP richtet sich nach der Dauer des Termins.": "La XP sigue la duración del evento.",
   "Google- und Apple-Kalender lassen sich mit einer kurzen Anleitung verbinden. Vor dem Speichern erscheinen die letzten Termine und die XP.": "Los calendarios de Google y Apple se conectan con una guía breve. Antes de guardar aparecen los eventos recientes y la XP.",
@@ -1537,8 +1535,6 @@ export const TEXTE: Record<string, string> = {
   "Nicht zählen": "No contar",
   "Zählen als Standard-Tätigkeit": "Contar como actividad predeterminada",
   "Erledigte Aufgaben ohne Zuordnung zählen als diese Tätigkeit oder gar nicht.": "Las tareas completadas sin asignación cuentan como esta actividad o no cuentan.",
-  "{xp} XP für die letzten Erledigungen": "{xp} XP por las últimas tareas completadas",
-  "Nur eine Vorschau der letzten 7 Tage, ohne Streak und Ausrüstung. Übernommen werden Aufgaben erst, wenn du sie nach dem Verbinden erledigst.": "Solo una vista previa de los últimos 7 días, sin racha ni equipo. Las tareas cuentan solo cuando las completas después de conectar.",
   "Eine Aufgabe mit Deadline wird zum Gegner. Mit Meilenstein wird sie zum Boss. Nach der Deadline geht Disziplin verloren.": "Una tarea con fecha límite se vuelve un oponente. Con un hito se vuelve un jefe. Después de la fecha límite se pierde Disciplina.",
   "Todoist lässt sich Schritt für Schritt verbinden. Aufgaben ohne Zuordnung zählen als gewählte Tätigkeit oder gar nicht.": "Todoist se conecta paso a paso. Las tareas sin asignación cuentan como la actividad elegida o no cuentan.",
   "Eine erledigte Todoist-Aufgabe mit Deadline zählt als Gegner, mit Meilenstein als Boss. Nur Aufgaben nach dem Verbinden zählen.": "Una tarea de Todoist completada con fecha límite cuenta como oponente y, con un hito, como jefe. Solo cuentan las tareas posteriores a la conexión.",

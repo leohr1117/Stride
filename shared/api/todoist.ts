@@ -62,11 +62,6 @@ export interface TodoistLabelDaten {
 
 export type TodoistOhne = 'keine' | 'standard';
 
-export interface TodoistVorschau {
-  xp: number;
-  anzahl: number;
-}
-
 export interface TodoistStatus {
   verbunden: boolean;
   nutzer: string | null;

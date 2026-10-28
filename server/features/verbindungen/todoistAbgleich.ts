@@ -1,8 +1,8 @@
-import type { AbgleichErgebnis, TodoistVorschau } from '../../../shared/api/index.ts';
+import type { AbgleichErgebnis } from '../../../shared/api/index.ts';
 import { istAn } from '../../../shared/spiel/sichtbarkeit.ts';
 import { datumInZone } from '../../../shared/spiel/datum.ts';
 import { tageZwischen } from '../../../shared/spiel/kette.ts';
-import { BOSS, eintragXp, GEGNER, meilensteinBonus } from '../../../shared/spiel/xp.ts';
+import { BOSS, GEGNER } from '../../../shared/spiel/xp.ts';
 import { alle, ausfuehren } from '../../db.ts';
 import { ladeErledigungen, ladeLabels, ladeProjekte, type TodoistErledigung } from '../../integrationen/todoist.ts';
 import { bucheAttributXp } from '../../services/fortschritt.ts';
@@ -24,9 +24,6 @@ import {
   type LabelZeile,
   type TodoistZeile,
 } from './todoist.ts';
-
-const VORSCHAU_TAGE = 7;
-const MS_PRO_TAG = 24 * 60 * 60 * 1000;
 
 function passendeLabels(namen: string[], labels: LabelZeile[]): LabelZeile[] {
   const nachName = new Map<string, LabelZeile>();
@@ -190,20 +187,6 @@ function zieheNachDeadlineAb(plan: TodoistPlan, erledigtAm: Date, eintragId: num
   );
 }
 
-function vorschauXp(plan: TodoistPlan): number {
-  const xp = eintragXp(plan.stunden);
-  if (plan.boss) {
-    return xp + meilensteinBonus(xp, false, true);
-  }
-  if (plan.gegner) {
-    return xp + Math.round(meilensteinBonus(xp, false) / GEGNER.belohnungTeiler);
-  }
-  if (plan.meilenstein) {
-    return xp + meilensteinBonus(xp, false);
-  }
-  return xp;
-}
-
 function uebernimmErledigungen(erledigungen: TodoistErledigung[], jetzt: Date): AbgleichErgebnis {
   const projekte = new Map(ladeProjektZeilen().map((zeile) => [zeile.todoistId, zeile]));
   const labels = ladeLabelZeilen();
@@ -254,27 +237,6 @@ function uebernimmErledigungen(erledigungen: TodoistErledigung[], jetzt: Date): 
     }
   }
   return { neu, fehler: [...fehler] };
-}
-
-export async function todoistVorschau(jetzt = new Date()): Promise<TodoistVorschau> {
-  const token = leseWert(SCHLUESSEL.token);
-  if (token === null) {
-    return { xp: 0, anzahl: 0 };
-  }
-  const erledigungen = await ladeErledigungen(token, new Date(jetzt.getTime() - VORSCHAU_TAGE * MS_PRO_TAG));
-  const projekte = new Map(ladeProjektZeilen().map((zeile) => [zeile.todoistId, zeile]));
-  const labels = ladeLabelZeilen();
-  let xp = 0;
-  let anzahl = 0;
-  for (const erledigung of erledigungen) {
-    const entscheidung = planeErledigung(erledigung, projekte, labels);
-    if (entscheidung === null || 'fehler' in entscheidung) {
-      continue;
-    }
-    xp += vorschauXp(entscheidung);
-    anzahl += 1;
-  }
-  return { xp, anzahl };
 }
 
 export async function gleicheTodoistAb(jetzt = new Date()): Promise<AbgleichErgebnis> {

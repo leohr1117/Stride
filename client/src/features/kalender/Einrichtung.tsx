@@ -1,8 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
-import type { Kalender, KalenderPruefung, KalenderTerminVorschau, Organisation, Projekt, Vision, Vorlage } from '../../../../shared/api/index.ts';
+import type { Kalender, KalenderPruefung, Organisation, Projekt, Vision, Vorlage } from '../../../../shared/api/index.ts';
 import { GRENZEN } from '../../../../shared/spiel/begriffe.ts';
-import { titelPasstZumFilter } from '../../../../shared/spiel/kalender.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { taetigkeitPasst, taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
@@ -11,7 +10,6 @@ import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { gliedereProjekte, wahlBaum } from '../../projektHierarchie.ts';
 import { SchnellNebenaktion } from '../../components/SchnellAktion.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
-import { kurzesDatum, uhrzeit, zahl } from '../../format.ts';
 import { tx } from '../../text.ts';
 import { EINGABE_STIL, Fehlermeldung, Feld, Formular, InfoHinweis, Knopf } from '../../ui/index.ts';
 import { ANBIETER, KalenderAnleitung, type KalenderAnbieter } from './anleitung.tsx';
@@ -78,48 +76,6 @@ function TaetigkeitAuswahl({
         </option>
       ))}
     </select>
-  );
-}
-
-function zaehlt(termin: KalenderTerminVorschau, filter: string): boolean {
-  return titelPasstZumFilter(termin.titel, filter);
-}
-
-function xpSumme(termine: KalenderTerminVorschau[], filter: string): number {
-  return termine.reduce((summe, termin) => (zaehlt(termin, filter) ? summe + termin.xp : summe), 0);
-}
-
-function Vorschau({ pruefung, filter }: { pruefung: KalenderPruefung; filter: string }) {
-  const summe = xpSumme(pruefung.termine, filter);
-  return (
-    <div className="space-y-2">
-      <p className="flex items-center text-sm font-medium">
-        {tx('{xp} XP für die letzten Termine', { xp: zahl(summe) })}
-        <InfoHinweis text="Nur eine Vorschau der letzten 7 Tage. Übernommen wird ein Termin erst, wenn er nach dem Verbinden endet." />
-      </p>
-      {pruefung.termine.length === 0 ? (
-        <p className="text-sm text-leise">{tx('Keine vergangenen Termine.')}</p>
-      ) : (
-        <ul className="divide-y divide-rand rounded-xl border border-rand">
-          {pruefung.termine.map((termin) => {
-            const passend = zaehlt(termin, filter);
-            return (
-              <li key={`${termin.beginn}|${termin.ende}|${termin.titel}`} className="flex items-baseline justify-between gap-3 px-3 py-2">
-                <div className="min-w-0">
-                  <p className={`truncate text-sm ${passend ? '' : 'text-leise'}`}>{termin.titel}</p>
-                  <p className="text-xs text-leise">
-                    {kurzesDatum(termin.beginn)}, {uhrzeit(termin.beginn)}
-                  </p>
-                </div>
-                <span className={`shrink-0 text-xs ${passend ? '' : 'text-leise'}`}>
-                  {passend ? tx('{xp} XP', { xp: zahl(termin.xp) }) : tx('Zählt nicht')}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
   );
 }
 
@@ -271,6 +227,7 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
                   }}
                 />
               </Feld>
+              {vorschau ? <p className="text-sm">{tx('Gültig · {name}', { name: vorschau.name })}</p> : null}
               <Knopf type="button" variante="primaer" className="w-full" disabled={adresse.trim() === '' || pruefen.isPending} onClick={() => pruefen.mutate()}>
                 {pruefen.isPending ? tx('Prüfe …') : tx('Prüfen')}
               </Knopf>
@@ -279,7 +236,6 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
           ) : null}
           {vorschau ? (
             <>
-              <Vorschau pruefung={vorschau} filter={filter} />
               <Feld label={tx('Name')}>
                 <input className={EINGABE_STIL} value={name} maxLength={GRENZEN.nameMax} onChange={(ereignis) => setName(ereignis.target.value)} />
               </Feld>

@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Todoist und Kalender zeigen keine XP-Vorschau mehr.": "Todoist et le calendrier n'affichent plus d'aperçu d'XP.",
   "Visionen und Organisationen zeigen einen Farbpunkt vor dem Namen. Die Linie links und der Balken oben entfallen.": "Les visions et les organisations affichent un point de couleur devant le nom. La ligne à gauche et la barre en haut disparaissent.",
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "Retour ferme le dialogue du dessus. La page en dessous reste.",
   "Zurück zu {ziel}": "Retour à {ziel}",
@@ -132,10 +133,7 @@ export const TEXTE: Record<string, string> = {
   "Sie beginnt mit https:// oder webcal://.": "Elle commence par https:// ou webcal://.",
   "Outlook": "Outlook",
   "Prüfen": "Vérifier",
-  "{xp} XP für die letzten Termine": "{xp} XP pour les événements récents",
-  "Nur eine Vorschau der letzten 7 Tage. Übernommen wird ein Termin erst, wenn er nach dem Verbinden endet.": "Aperçu des 7 derniers jours seulement. Un événement n'est ajouté qu'une fois terminé, après la connexion.",
-  "Keine vergangenen Termine.": "Aucun événement passé.",
-  "Zählt nicht": "Ne compte pas",
+  "Gültig · {name}": "Valide · {name}",
   "Komma trennt mehrere Wörter. Ohne Wort zählt jeder Termin. Ohne passendes Wort zählt der Termin nicht.": "Une virgule sépare les mots. Sans mot, chaque événement compte. Sans mot correspondant, l'événement ne compte pas.",
   "Die XP richtet sich nach der Dauer des Termins.": "L'XP suit la durée de l'événement.",
   "Google- und Apple-Kalender lassen sich mit einer kurzen Anleitung verbinden. Vor dem Speichern erscheinen die letzten Termine und die XP.": "Les calendriers Google et Apple se connectent avec un court guide. Avant l'enregistrement, les événements récents et l'XP apparaissent.",
@@ -1537,8 +1535,6 @@ export const TEXTE: Record<string, string> = {
   "Nicht zählen": "Ne pas compter",
   "Zählen als Standard-Tätigkeit": "Compter comme l'activité par défaut",
   "Erledigte Aufgaben ohne Zuordnung zählen als diese Tätigkeit oder gar nicht.": "Les tâches terminées sans association comptent comme cette activité, ou pas du tout.",
-  "{xp} XP für die letzten Erledigungen": "{xp} XP pour les dernières tâches terminées",
-  "Nur eine Vorschau der letzten 7 Tage, ohne Streak und Ausrüstung. Übernommen werden Aufgaben erst, wenn du sie nach dem Verbinden erledigst.": "Aperçu des 7 derniers jours seulement, sans série ni équipement. Les tâches comptent seulement si tu les termines après la connexion.",
   "Eine Aufgabe mit Deadline wird zum Gegner. Mit Meilenstein wird sie zum Boss. Nach der Deadline geht Disziplin verloren.": "Une tâche avec une échéance devient un adversaire. Avec un jalon, elle devient un boss. Après l'échéance, tu perds de la Discipline.",
   "Todoist lässt sich Schritt für Schritt verbinden. Aufgaben ohne Zuordnung zählen als gewählte Tätigkeit oder gar nicht.": "Todoist se connecte étape par étape. Les tâches sans association comptent comme l'activité choisie, ou pas du tout.",
   "Eine erledigte Todoist-Aufgabe mit Deadline zählt als Gegner, mit Meilenstein als Boss. Nur Aufgaben nach dem Verbinden zählen.": "Une tâche Todoist terminée avec une échéance compte comme un adversaire, et avec un jalon comme un boss. Seules les tâches après la connexion comptent.",

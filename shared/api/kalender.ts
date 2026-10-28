@@ -20,15 +20,6 @@ export interface KalenderDaten {
 
 export type KalenderAenderung = Partial<Omit<KalenderDaten, 'adresse'>>;
 
-export interface KalenderTerminVorschau {
-  titel: string;
-  beginn: string;
-  ende: string;
-  stunden: number;
-  xp: number;
-}
-
 export interface KalenderPruefung {
   name: string;
-  termine: KalenderTerminVorschau[];
 }

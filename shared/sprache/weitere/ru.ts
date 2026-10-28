@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Todoist und Kalender zeigen keine XP-Vorschau mehr.": "Todoist и календарь больше не показывают предпросмотр XP.",
   "Visionen und Organisationen zeigen einen Farbpunkt vor dem Namen. Die Linie links und der Balken oben entfallen.": "У видений и организаций перед названием стоит цветная точка. Линия слева и полоса сверху убраны.",
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "Назад закрывает верхний диалог. Страница под ним остаётся.",
   "Zurück zu {ziel}": "Назад к {ziel}",
@@ -132,10 +133,7 @@ export const TEXTE: Record<string, string> = {
   "Sie beginnt mit https:// oder webcal://.": "Он начинается с https:// или webcal://.",
   "Outlook": "Outlook",
   "Prüfen": "Проверить",
-  "{xp} XP für die letzten Termine": "{xp} XP за недавние события",
-  "Nur eine Vorschau der letzten 7 Tage. Übernommen wird ein Termin erst, wenn er nach dem Verbinden endet.": "Только предпросмотр за последние 7 дней. Событие попадает в список лишь после того, как оно закончится, и только после подключения.",
-  "Keine vergangenen Termine.": "Нет прошедших событий.",
-  "Zählt nicht": "Не считается",
+  "Gültig · {name}": "Верно · {name}",
   "Komma trennt mehrere Wörter. Ohne Wort zählt jeder Termin. Ohne passendes Wort zählt der Termin nicht.": "Запятая разделяет слова. Без слова считается каждое событие. Без подходящего слова событие не считается.",
   "Die XP richtet sich nach der Dauer des Termins.": "XP зависит от длительности события.",
   "Google- und Apple-Kalender lassen sich mit einer kurzen Anleitung verbinden. Vor dem Speichern erscheinen die letzten Termine und die XP.": "Календари Google и Apple подключаются по короткой инструкции. Перед сохранением видны недавние события и XP.",
@@ -1537,8 +1535,6 @@ export const TEXTE: Record<string, string> = {
   "Nicht zählen": "Не считать",
   "Zählen als Standard-Tätigkeit": "Считать стандартным занятием",
   "Erledigte Aufgaben ohne Zuordnung zählen als diese Tätigkeit oder gar nicht.": "Выполненные задачи без назначения считаются этим занятием или не считаются.",
-  "{xp} XP für die letzten Erledigungen": "{xp} XP за последние выполнения",
-  "Nur eine Vorschau der letzten 7 Tage, ohne Streak und Ausrüstung. Übernommen werden Aufgaben erst, wenn du sie nach dem Verbinden erledigst.": "Только предварительный просмотр за последние 7 дней, без серии и снаряжения. Задачи считаются, только если ты выполнишь их после подключения.",
   "Eine Aufgabe mit Deadline wird zum Gegner. Mit Meilenstein wird sie zum Boss. Nach der Deadline geht Disziplin verloren.": "Задача со сроком становится противником. С вехой она становится боссом. После срока теряется Дисциплина.",
   "Todoist lässt sich Schritt für Schritt verbinden. Aufgaben ohne Zuordnung zählen als gewählte Tätigkeit oder gar nicht.": "Todoist подключается шаг за шагом. Задачи без назначения считаются выбранным занятием или не считаются.",
   "Eine erledigte Todoist-Aufgabe mit Deadline zählt als Gegner, mit Meilenstein als Boss. Nur Aufgaben nach dem Verbinden zählen.": "Выполненная задача Todoist со сроком считается противником, а с вехой — боссом. Считаются только задачи после подключения.",

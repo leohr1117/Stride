@@ -1,9 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ExternalLink } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { TodoistStatus, Vorlage } from '../../../../shared/api/index.ts';
 import { api } from '../../api/index.ts';
-import { zahl } from '../../format.ts';
 import { tx } from '../../text.ts';
 import { EINGABE_STIL, Fehlermeldung, InfoHinweis } from '../../ui/index.ts';
 import { merkeStatus, useTodoistBlick } from './gemeinsam.ts';
@@ -12,18 +11,6 @@ const TODOIST_TOKEN_SEITE = 'https://app.todoist.com/app/settings/integrations/d
 const KEINE_AUSWAHL = '';
 
 const HINWEIS_OHNE = 'Erledigte Aufgaben ohne Zuordnung zählen als diese Tätigkeit oder gar nicht.';
-const HINWEIS_VORSCHAU =
-  'Nur eine Vorschau der letzten 7 Tage, ohne Streak und Ausrüstung. Übernommen werden Aufgaben erst, wenn du sie nach dem Verbinden erledigst.';
-
-function stempelVon(status: TodoistStatus): string {
-  const projekte = status.projekte.map((projekt) =>
-    [projekt.todoistId, projekt.zielArt, projekt.zielId, projekt.vorlageId, projekt.meilenstein].join(':'),
-  );
-  const labels = status.labels.map((label) =>
-    [label.todoistId, label.aktiv, label.zielArt, label.zielId, label.vorlageId, label.meilenstein].join(':'),
-  );
-  return [status.ohneZuordnung, status.standardVorlageId, ...projekte, ...labels].join('|');
-}
 
 export function TodoistTokenSchritte() {
   return (
@@ -125,31 +112,6 @@ function OhneZuordnung({ status }: { status: TodoistStatus }) {
   );
 }
 
-function XpVorschau({ status }: { status: TodoistStatus }) {
-  const vorschau = useQuery({
-    queryKey: ['todoist-vorschau', stempelVon(status)],
-    queryFn: api.todoistVorschau,
-  });
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center">
-        <p className="text-sm">
-          {vorschau.data
-            ? tx('{xp} XP für die letzten Erledigungen', { xp: zahl(vorschau.data.xp) })
-            : tx('{xp} XP für die letzten Erledigungen', { xp: '…' })}
-        </p>
-        <InfoHinweis text={HINWEIS_VORSCHAU} />
-      </div>
-      <Fehlermeldung fehler={vorschau.error} />
-    </div>
-  );
-}
-
 export function TodoistEinrichtung({ status }: { status: TodoistStatus }) {
-  return (
-    <div className="space-y-4">
-      <OhneZuordnung status={status} />
-      <XpVorschau status={status} />
-    </div>
-  );
+  return <OhneZuordnung status={status} />;
 }
