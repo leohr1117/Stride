@@ -50,6 +50,8 @@ export interface EintragDaten {
 export interface EintragErgebnis {
   eintrag: Eintrag;
   belohnung: Belohnung;
+  /** Nur nach einem echten Erfolg, und nur solange die Frage fällig ist. Sonst fehlt das Feld. */
+  bewertungFaellig?: true;
 }
 
 export interface SkillEreignis {

@@ -57,6 +57,7 @@ import {
 } from '../../services/fortschritt.ts';
 import { KONTEXT_JOINS, KONTEXT_SPALTEN, PROJEKT_AKTIV, zuKontext, type KontextZeile } from '../ziele/kontext.ts';
 import { momentumFuerTag } from '../../services/serie.ts';
+import { mitBewertung } from '../bewertung/bewertung.ts';
 import { verdieneSchutz } from '../kette/kette.ts';
 import { erfuelleRueckkehr, haengeRueckkehrUm, pflegeRueckkehr } from '../kette/rueckkehr.ts';
 import { ladeVorhaben, legeVorhabenAn } from '../ziele/vorhaben.ts';
@@ -766,7 +767,7 @@ export function erstelleEintrag(
       : null;
 
   const nachher = ladeLevelStand(projekt?.id ?? null, faehigkeit?.id ?? null);
-  return {
+  return mitBewertung({
     eintrag: ladeEintrag(ergebnis.eintragId),
     belohnung: erstelleBelohnung({
       buchungen: ergebnis.buchungen,
@@ -787,7 +788,7 @@ export function erstelleEintrag(
       vorher,
       nachher,
     }),
-  };
+  }, jetzt);
 }
 
 export function loescheEintrag(id: number, jetzt = new Date()): void {

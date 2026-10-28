@@ -43,6 +43,7 @@ const { erstelleVorlage, ladeVorlagen } = await import('./features/taetigkeiten/
 const struktur = await import('./services/struktur.ts');
 const vorhabenDienst = await import('./features/ziele/vorhaben.ts');
 const { erstelleEintrag } = await import('./features/eintraege/eintraege.ts');
+const { schreibeBewertungNie } = await import('./features/bewertung/bewertung.ts');
 const faehigkeiten = await import('./features/faehigkeiten/faehigkeiten.ts');
 const basis = await import('./features/basis/basis.ts');
 const { rechneBossangriffeAb } = await import('./features/bosse/bossangriffe.ts');
@@ -436,6 +437,8 @@ function versuche(aktion: () => void): void {
     }
   }
 }
+
+schreibeBewertungNie();
 
 for (let tage = SIMULIERTE_TAGE; tage >= 0; tage--) {
   for (const aktion of EREIGNISSE.get(tage) ?? []) {

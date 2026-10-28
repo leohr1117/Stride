@@ -2,6 +2,7 @@ export * from './attribute.ts';
 export * from './aufgaben.ts';
 export * from './training.ts';
 export * from './basis.ts';
+export * from './bewertung.ts';
 export * from './belohnung.ts';
 export * from './daten.ts';
 export * from './eintraege.ts';

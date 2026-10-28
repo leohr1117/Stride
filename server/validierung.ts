@@ -49,6 +49,12 @@ export const idParameter = z.object({ id });
 /** POST /api/kette/schutz nimmt keinen Inhalt. */
 export const schutzSchema = z.object({}).strict();
 
+/** Genau eines von Zahl oder „Nicht fragen“. Beides zusammen ist ungültig. */
+export const bewertungSchema = z.union([
+  z.object({ wert: z.number().int().min(1).max(5) }).strict(),
+  z.object({ nie: z.literal(true) }).strict(),
+]);
+
 export const attributAktivierungSchema = z.object({
   kennung: z.enum(ATTRIBUT_KENNUNGEN),
   modus: z.enum(AKTIVIERUNGS_MODI).default('behalten'),
@@ -397,6 +403,7 @@ export const einstellungenAenderungSchema = z.object({
     .optional(),
   gewichtEinheit: z.enum(GEWICHT_EINHEITEN).optional(),
   uebersichtKarten: z.preprocess(bekannteKarten, z.partialRecord(z.enum(UEBERSICHT_KARTEN_IDS), z.boolean())).optional(),
+  bewertungTesten: z.boolean().optional(),
 });
 
 function istZeitzone(wert: string): boolean {

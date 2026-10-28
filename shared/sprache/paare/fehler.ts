@@ -192,4 +192,5 @@ export const PAARE = [
   ['Nur eine offene Einheit kann verworfen werden.', 'Only an open session can be discarded.'],
   ['Der Schutz kann heute nicht eingesetzt werden.', 'Protection cannot be used today.'],
   ['Das Vorbild ist unbekannt.', 'That role model is unknown.'],
+  ['Die Bewertung ist schon gespeichert.', 'The rating is already saved.'],
 ] as const;

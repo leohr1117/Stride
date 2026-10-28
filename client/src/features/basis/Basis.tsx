@@ -7,6 +7,7 @@ import { DAUER_OPTIONEN, GRENZEN, type IconName } from '../../../../shared/spiel
 import { fehlendeZuordnung } from '../../../../shared/spiel/ebenen.ts';
 import { taetigkeitPasst, taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
+import { merkeBewertungFaellig } from '../uebersicht/bewertungStand.ts';
 import { dauerText } from '../../format.ts';
 import { useEbenen } from '../../funktionen.ts';
 import { leseMerker, merke } from '../../speicher.ts';
@@ -28,6 +29,7 @@ function useBasisAktionen() {
   const erledigen = useMutation({
     mutationFn: (id: number) => api.erledigeBasisAufgabe(id),
     onSuccess: (ergebnis) => {
+      merkeBewertungFaellig(queryClient, ergebnis);
       void queryClient.invalidateQueries();
       feiern(ergebnis.belohnung);
     },

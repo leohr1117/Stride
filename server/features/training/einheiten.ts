@@ -10,6 +10,7 @@ import {
 } from '../../../shared/spiel/training.ts';
 import { ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
+import { mitBewertung } from '../bewertung/bewertung.ts';
 import { erstelleEintrag, loescheEintrag } from '../eintraege/eintraege.ts';
 import { ersterBestwert } from './bestwerte.ts';
 import { ladeEinheit, ladeRohEinheit, stundenDer, type RohEinheit } from './lesen.ts';
@@ -114,7 +115,7 @@ export function schliesseEinheitAb(id: number, jetzt = new Date()): EintragErgeb
   if (roh.status === 'fertig' && roh.eintragId !== null) {
     return gespeichertesErgebnis(roh.eintragId);
   }
-  return inTransaktion(() => schliesseOffene(id, roh, jetzt));
+  return mitBewertung(inTransaktion(() => schliesseOffene(id, roh, jetzt)), jetzt);
 }
 
 function schliesseOffene(id: number, roh: RohEinheit, jetzt: Date): EintragErgebnis {

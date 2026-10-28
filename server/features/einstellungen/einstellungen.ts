@@ -88,6 +88,10 @@ const UEBERSICHT_KARTEN_SCHLUESSEL = 'uebersichtKarten';
 const SCHUTZ_VORRAT = 'schutz_vorrat';
 const SCHUTZ_SCHWELLE = 'schutz_schwelle_verbraucht';
 const RUECKKEHR_AB = 'rueckkehr_ab';
+const BEWERTUNG_WERT = 'bewertung_wert';
+const BEWERTUNG_AM = 'bewertung_am';
+const BEWERTUNG_NIE = 'bewertung_nie';
+const BEWERTUNG_TESTEN = 'bewertung_testen';
 const TAGES_SCHLUESSEL = /^\d{4}-\d{2}-\d{2}$/;
 
 function istGleicherTyp<T>(wert: unknown, vorlage: T): wert is T {
@@ -400,6 +404,48 @@ export function schreibeRueckkehrAb(tag: string): void {
   speichere(RUECKKEHR_AB, tag);
 }
 
+function leseRoh(schluessel: string): unknown {
+  return parse(eine<{ wert: string }>('SELECT wert FROM einstellungen WHERE schluessel = ?', schluessel)?.wert);
+}
+
+/** Steht nicht in der Einstellungen-Antwort. */
+export function leseBewertungNie(): boolean {
+  return leseRoh(BEWERTUNG_NIE) === true;
+}
+
+/** 1 bis 5, sonst null. Steht nicht in der Einstellungen-Antwort. */
+export function leseBewertungWert(): number | null {
+  const wert = leseRoh(BEWERTUNG_WERT);
+  return typeof wert === 'number' && Number.isInteger(wert) && wert >= 1 && wert <= 5 ? wert : null;
+}
+
+export function leseBewertungAm(): string | null {
+  const wert = leseRoh(BEWERTUNG_AM);
+  return typeof wert === 'string' && TAGES_SCHLUESSEL.test(wert) ? wert : null;
+}
+
+/** Nur unter ASCEND_TEST wirksam. Steht nicht in der Einstellungen-Antwort. */
+export function leseBewertungTesten(): boolean {
+  return leseRoh(BEWERTUNG_TESTEN) === true;
+}
+
+export function schreibeBewertungNie(): void {
+  speichere(BEWERTUNG_NIE, true);
+}
+
+export function schreibeBewertungWert(wert: number, am: string): void {
+  speichere(BEWERTUNG_WERT, wert);
+  speichere(BEWERTUNG_AM, am);
+}
+
+export function schreibeBewertungTesten(an: boolean): void {
+  if (an) {
+    speichere(BEWERTUNG_TESTEN, true);
+    return;
+  }
+  loescheSchluessel(BEWERTUNG_TESTEN);
+}
+
 function neuePaletteId(liste: readonly { id: string }[]): string {
   for (let versuch = 0; versuch < 4; versuch += 1) {
     const id = randomUUID();
@@ -457,6 +503,7 @@ export function aendereEinstellungen(
     paletteLoeschen?: string;
     startVorbild?: string | null;
     startBoss?: boolean;
+    bewertungTesten?: boolean;
   },
 ): Einstellungen {
   const bisher = ladeEinstellungen();
@@ -570,6 +617,9 @@ export function aendereEinstellungen(
       );
     }
     wendePaletten(aenderung);
+    if (aenderung.bewertungTesten !== undefined && process.env.ASCEND_TEST === '1') {
+      schreibeBewertungTesten(aenderung.bewertungTesten);
+    }
     wendeStartAn({
       startVorbild: aenderung.startVorbild,
       startBoss: aenderung.startBoss,

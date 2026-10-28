@@ -8,6 +8,7 @@ import { mitWelt, schliesseDatenbank } from './db.ts';
 import { AppFehler } from './fehler.ts';
 import { attributRouten } from './features/attribute/routen.ts';
 import { basisRouten } from './features/basis/routen.ts';
+import { bewertungRouten } from './features/bewertung/routen.ts';
 import { ketteRouten } from './features/kette/routen.ts';
 import { pflegeRueckkehr } from './features/kette/rueckkehr.ts';
 import { datenRouten } from './features/daten/daten.ts';
@@ -85,6 +86,7 @@ await app.register(
     });
     await api.register(uebersichtRouten);
     await api.register(ketteRouten);
+    await api.register(bewertungRouten);
     await api.register(attributRouten);
     await api.register(zielRouten);
     await api.register(eintragRouten);

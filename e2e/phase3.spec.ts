@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { lokalesDatum, plusTage } from '../shared/spiel/datum.ts';
-import { ohneSeitlichenUeberlauf } from './helfer.ts';
+import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 const FOLIEN = 4;
 
@@ -243,4 +243,148 @@ test('ein unbekannter Vorbild-Fehler lässt den Schritt stehen', async ({ page }
   await expect(boss.getByRole('button', { name: 'Annehmen', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await ohneSeitlichenUeberlauf(page);
   await bild(page, 'onboarding-fehler');
+});
+
+function bildBewertung(seite: Page, name: string): Promise<void> {
+  fs.mkdirSync('tmp-bau/37', { recursive: true });
+  return seite.screenshot({ path: `tmp-bau/37/${test.info().project.name}-${name}.png` });
+}
+
+async function uebungOhneBoss(seite: Page): Promise<void> {
+  await vorbereiten(seite);
+  await zumStart(seite, 'Besser werden');
+  await seite.getByRole('region', { name: 'Vorbild' }).getByRole('button', { name: 'Überspringen', exact: true }).click();
+  await seite.getByRole('button', { name: 'Zum Handbuch', exact: true }).click();
+  await expect(seite.getByRole('heading', { name: 'Handbuch', exact: true })).toBeVisible();
+}
+
+async function bewertungTesten(seite: Page, an: boolean): Promise<void> {
+  const ok = await seite.evaluate(async (testen) => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bewertungTesten: testen }),
+    });
+    return antwort.ok;
+  }, an);
+  expect(ok).toBe(true);
+}
+
+async function eintraegeLegen(seite: Page, anzahl: number): Promise<void> {
+  const status = await seite.evaluate(async (menge) => {
+    const vorlagen = (await fetch('/api/vorlagen').then((antwort) => antwort.json())) as {
+      id: number;
+      archiviert: boolean;
+      projektId: number | null;
+    }[];
+    const vorlageId = vorlagen.find((vorlage) => !vorlage.archiviert && vorlage.projektId === null)?.id;
+    if (!vorlageId) {
+      return 0;
+    }
+    for (let index = 0; index < menge; index += 1) {
+      const antwort = await fetch('/api/eintraege', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projektId: null,
+          vorlageId,
+          vorhaben: null,
+          abschluss: null,
+          erkenntnis: '',
+          stunden: 1,
+          notiz: '',
+          meilenstein: false,
+          faehigkeitId: null,
+          datum: null,
+        }),
+      });
+      if (!antwort.ok) {
+        return antwort.status;
+      }
+    }
+    return 201;
+  }, anzahl);
+  expect(status).toBe(201);
+}
+
+async function tragEin(seite: Page): Promise<void> {
+  await seite.getByRole('button', { name: 'Eintrag loggen' }).click();
+  const dialog = seite.getByRole('dialog', { name: 'Was hast du getan?' });
+  const knopf = dialog.getByRole('button', { name: /Eintragen/ });
+  await expect(knopf).toBeEnabled();
+  await knopf.click();
+  await expect(dialog).toHaveCount(0);
+  const schleier = seite.locator('div.fixed.inset-0').filter({ hasText: 'Level aufgestiegen' });
+  try {
+    await schleier.waitFor({ state: 'visible', timeout: 1500 });
+    await schleier.click({ position: { x: 8, y: 8 } });
+    await expect(schleier).toHaveCount(0);
+  } catch {
+    // Kein Level-Aufstieg bei diesem Eintrag.
+  }
+  const schliessen = seite.getByRole('button', { name: 'Schließen' });
+  const da = await schliessen.waitFor({ state: 'visible', timeout: 2000 }).then(() => true).catch(() => false);
+  if (!da) {
+    return;
+  }
+  await schliessen.click();
+  await expect(schliessen).toBeHidden();
+}
+
+test('zehnter Eintrag mit bewertung_testen zeigt die Karte, Nicht fragen schließt sie', async ({ page }) => {
+  test.setTimeout(90_000);
+  await uebungOhneBoss(page);
+  await bewertungTesten(page, true);
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
+  await eintraegeLegen(page, 9);
+  await tragEin(page);
+  const karte = page.getByRole('region', { name: 'Wie hilfreich ist Stride gerade?' });
+  await expect(karte).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Willkommen bei Stride' })).toHaveCount(0);
+  await expect(karte.getByRole('button', { name: '1', exact: true })).toBeVisible();
+  await expect(karte.getByRole('button', { name: 'Nicht fragen', exact: true })).toBeVisible();
+  await ohneSeitlichenUeberlauf(page);
+  await bildBewertung(page, 'bewertung');
+
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
+  await expect(karte).toHaveCount(0);
+  await tragEin(page);
+  await expect(karte).toBeVisible();
+
+  await page.route('**/api/bewertung', async (route) => {
+    if (route.request().method() === 'POST') {
+      await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ fehler: 'weg' }) });
+      return;
+    }
+    await route.continue();
+  });
+  await karte.getByRole('button', { name: '3', exact: true }).click();
+  await expect(karte).toBeVisible();
+  await expect(karte.getByText('Etwas ist schiefgelaufen.')).toBeVisible();
+  await expect(karte.getByRole('button', { name: '3', exact: true })).not.toHaveAttribute('aria-pressed', 'true');
+  await ohneSeitlichenUeberlauf(page);
+  await bildBewertung(page, 'bewertung-fehler');
+  await page.unroute('**/api/bewertung');
+
+  await karte.getByRole('button', { name: 'Nicht fragen', exact: true }).click();
+  await expect(karte).toHaveCount(0);
+  await tragEin(page);
+  await expect(karte).toHaveCount(0);
+});
+
+test('ohne bewertung_testen bleibt die Karte aus', async ({ page }) => {
+  await uebungOhneBoss(page);
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
+  await eintraegeLegen(page, 9);
+  await tragEin(page);
+  await expect(page.getByRole('region', { name: 'Wie hilfreich ist Stride gerade?' })).toHaveCount(0);
+});
+
+test('testvoll ohne den Testschlüssel zeigt die Karte nicht', async ({ page }) => {
+  await anmelden(page);
+  await tragEin(page);
+  await expect(page.getByRole('region', { name: 'Wie hilfreich ist Stride gerade?' })).toHaveCount(0);
 });

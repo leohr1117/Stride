@@ -28,6 +28,8 @@ export const PAARE = [
   ['Rückkehr offen', 'Return open'],
   ['Rückkehr geschafft', 'Return completed'],
   ['Rückkehr vorbei', 'Return over'],
+  ['Wie hilfreich ist Stride gerade?', 'How helpful is Stride right now?'],
+  ['Nicht fragen', "Don't ask"],
   ['Schlicht', 'Plain'],
   ['Nebel', 'Mist'],
   ['Eigene Paletten', 'Your palettes'],
