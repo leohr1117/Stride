@@ -2,6 +2,15 @@ export const TAGE_PRO_WOCHE = 7;
 export const MS_PRO_TAG = 24 * 60 * 60 * 1000;
 export const DATUM_HINWEIS = 'Das Datum muss im Format JJJJ-MM-TT angegeben werden.';
 
+export function tagPlus(tag: string, tage: number): string {
+  const [jahr, monat, tagImMonat] = tag.split('-').map(Number);
+  const zeitpunkt = new Date(Date.UTC(jahr, monat - 1, tagImMonat) + tage * MS_PRO_TAG);
+  const jahrNeu = zeitpunkt.getUTCFullYear();
+  const monatNeu = String(zeitpunkt.getUTCMonth() + 1).padStart(2, '0');
+  const tagNeu = String(zeitpunkt.getUTCDate()).padStart(2, '0');
+  return `${jahrNeu}-${monatNeu}-${tagNeu}`;
+}
+
 export function lokalesDatum(zeitpunkt: Date): string {
   const jahr = zeitpunkt.getFullYear();
   const monat = String(zeitpunkt.getMonth() + 1).padStart(2, '0');
