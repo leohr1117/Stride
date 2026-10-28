@@ -80,6 +80,8 @@ export function wendeErscheinung(wahl: Farbwahl): void {
   wurzel.style.setProperty('--feldrand', wache.feldrand);
   wurzel.style.setProperty('--akzent', wache.aktion);
   wurzel.style.setProperty('--akzent-text', wache.aktionText);
+  wurzel.style.setProperty('--aktion', wache.aktion);
+  wurzel.style.setProperty('--aktion-text', wache.aktionText);
   // --xp bleibt die Farbe der Ansicht, nicht der gewählte Akzent.
   wurzel.style.removeProperty('--xp');
   wurzel.style.setProperty('--fortschritt', wache.fortschritt);

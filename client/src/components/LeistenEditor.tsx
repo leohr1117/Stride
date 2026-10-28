@@ -14,7 +14,7 @@ import type { Ebenen } from '../../../shared/spiel/ebenen.ts';
 import type { Funktionen } from '../../../shared/spiel/funktionen.ts';
 import { pfadAktiv, type Sichtbarkeit } from '../../../shared/spiel/sichtbarkeit.ts';
 import { EINSTELLUNGEN, HANDBUCH, navAusLeiste, sichtbareGruppen, type NavEintrag } from '../navigation.ts';
-import { Knopf } from '../ui/index.ts';
+import { Knopf, Leer } from '../ui/index.ts';
 
 function gleicheListe(links: readonly string[], rechts: readonly string[]): boolean {
   return links.length === rechts.length && links.every((pfad, index) => pfad === rechts[index]);
@@ -93,9 +93,7 @@ export function LeistenEditor({
       <section className="space-y-2">
         <h2 className="text-[11px] font-semibold tracking-wider text-leise uppercase">{tx("In der Leiste")}</h2>
         {plaetze.length === 0 && (
-          <p className="rounded-2xl border border-dashed border-rand px-4 py-6 text-center text-sm text-leise">
-            {tx("Noch keine Seite. Wähle unten eine aus.")}
-          </p>
+          <Leer text={tx("Noch keine Seite. Wähle unten eine aus.")} />
         )}
         <div className="space-y-2">
           {plaetze.map((platz, reihe) => (

@@ -1,13 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { Pencil, Plus } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import type { Vorlage } from '../../../../shared/api/index.ts';
 import { istTypAktiv } from '../../../../shared/spiel/funktionen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { KurzListe } from '../../components/Ausklappbar.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
+import { AnlegeZeile, Liste } from '../../components/Zeile.tsx';
 import { ReihenfolgeKnopf } from '../taetigkeiten/Reihenfolge.tsx';
-import { Fehlermeldung, Karte, Knopf, Ladeanzeige } from '../../ui/index.ts';
+import { Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
 
@@ -26,14 +27,8 @@ export function VorlagenVerwaltung({ onBearbeiten }: { onBearbeiten: (vorlage: V
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-col gap-2 md:flex-row">
-        <Knopf className="w-full md:w-auto" onClick={() => onBearbeiten(null)}>
-          <Plus className="size-4" />
-          {tx("Tätigkeit anlegen")}
-        </Knopf>
-        <ReihenfolgeKnopf vorlagen={vorlagen ?? []} />
-      </div>
-      <Karte dicht>
+      <ReihenfolgeKnopf vorlagen={vorlagen ?? []} />
+      <Liste>
         {isPending && (
           <div className="px-4">
             <Ladeanzeige />
@@ -44,11 +39,12 @@ export function VorlagenVerwaltung({ onBearbeiten }: { onBearbeiten: (vorlage: V
             <Fehlermeldung fehler={error} />
           </div>
         ) : null}
-        {vorlagen?.length === 0 && <p className="px-4 py-6 text-center text-sm text-leise">{tx("Noch keine Tätigkeit.")}</p>}
+        {vorlagen?.length === 0 && <Leer text={tx("Noch keine Tätigkeit.")} />}
+        {vorlagen && vorlagen.length > 0 && (
         <KurzListe
           eintraege={vorlagen ?? []}
           anzahl={TAETIGKEITEN_SICHTBAR}
-          className={vorlagen && vorlagen.length > 0 ? 'divide-y divide-rand' : ''}
+          className="divide-y divide-rand"
           darstellen={(vorlage) => {
             const gewichte = wirksameGewichte(vorlage);
             return (
@@ -99,7 +95,9 @@ export function VorlagenVerwaltung({ onBearbeiten }: { onBearbeiten: (vorlage: V
             );
           }}
         />
-      </Karte>
+        )}
+        {vorlagen && <AnlegeZeile text="Tätigkeit anlegen" onKlick={() => onBearbeiten(null)} />}
+      </Liste>
     </div>
   );
 }

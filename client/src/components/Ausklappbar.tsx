@@ -1,11 +1,11 @@
-import { ChevronDown } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useId, useState, type ReactNode } from 'react';
 import { merke } from '../speicher.ts';
 import { tx } from '../text.ts';
 import { InfoHinweis } from '../ui/index.ts';
 
 const SPEICHER_PRAEFIX = 'ascend.eingeklappt.';
-const STANDARD_TITEL = 'ueberschrift text-sm font-semibold tracking-wide text-leise uppercase';
+const STANDARD_TITEL = 'ueberschrift abschnittskopf text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case';
 
 export function EinklappKopf({
   titel,
@@ -34,7 +34,7 @@ export function EinklappKopf({
   const spalten = aktion ? 'grid-cols-[minmax(0,1fr)_auto_2rem]' : 'grid-cols-[minmax(0,1fr)_2rem]';
   const pfeilSpalte = aktion ? 'col-start-3' : 'col-start-2';
   return (
-    <div className={`relative grid min-h-8 items-center gap-x-2 ${spalten} ${className}`}>
+    <div className={`relative grid min-h-12 items-center gap-x-2 ${spalten} ${className}`}>
       <button type="button" onClick={onToggle} aria-expanded={offen} aria-labelledby={titelId} className="absolute inset-0 z-0" />
       <span className="pointer-events-none col-start-1 row-start-1 flex min-w-0 items-center">
         <Tag id={titelId} className={`min-w-0 text-balance break-words ${titelStil}`}>{tx(titel)}</Tag>
@@ -50,8 +50,8 @@ export function EinklappKopf({
           {aktion}
         </div>
       ) : null}
-      <span aria-hidden="true" className={`pointer-events-none ${pfeilSpalte} row-start-1 flex size-8 items-center justify-center justify-self-end`}>
-        <ChevronDown className={`size-4 text-leise transition ${offen ? '' : '-rotate-90'}`} />
+      <span aria-hidden="true" className={`pointer-events-none ${pfeilSpalte} row-start-1 flex size-12 items-center justify-center justify-self-end`}>
+        <ChevronRight className={`size-5 text-leise transition ${offen ? 'rotate-90' : ''}`} />
       </span>
     </div>
   );
@@ -96,7 +96,7 @@ export function Abschnitt({
   };
 
   return (
-    <section id={kennung} className="space-y-3">
+    <section id={kennung} className="space-y-2">
       <EinklappKopf
         titel={titel}
         offen={!eingeklappt}

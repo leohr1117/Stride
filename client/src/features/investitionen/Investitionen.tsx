@@ -15,7 +15,7 @@ import { Dialog } from '../../components/Dialog.tsx';
 import { SchnellNebenaktion, SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
 import { Zeile, ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
-import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf, Regler, Segmentauswahl } from '../../ui/index.ts';
+import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf, Leer, Regler, Segmentauswahl } from '../../ui/index.ts';
 
 const LISTE_SICHTBAR = 4;
 
@@ -350,7 +350,7 @@ export function InvestitionenBereich() {
       }
     >
       {projekte.length === 0 && eigene.length === 0 ? (
-        <p className="text-sm text-leise">{tx("Noch keine Investitionen.")}</p>
+        <Leer text={tx("Noch keine Investitionen.")} />
       ) : (
         <Karte dicht>
           <KurzListe

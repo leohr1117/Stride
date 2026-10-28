@@ -8,7 +8,7 @@ import { lokalesDatum, tagesUeberschrift } from '../../format.ts';
 import { Dialog } from '../../components/Dialog.tsx';
 import { EintragDetail, EintragKarte } from '../../components/EintragKarte.tsx';
 import { SkillDetail, SkillKarte } from '../../components/SkillKarte.tsx';
-import { Fehlermeldung, Karte, Knopf, Ladeanzeige } from '../../ui/index.ts';
+import { Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 
 interface Tag {
   schluessel: string;
@@ -132,7 +132,7 @@ export function EintragListe({ filter, leerText }: { filter: EintragFilter; leer
       <Fehlermeldung fehler={abfrage.error} />
 
       {tage.length === 0 ? (
-        <Karte className="py-10 text-center text-sm text-leise">{leerText}</Karte>
+        <Leer text={leerText} />
       ) : (
         tage.map((tag) => (
           <section key={tag.schluessel}>

@@ -4,7 +4,7 @@ import type { Farbtrio } from '../../../../shared/features/darstellung/paletten.
 import { Dialog } from '../../components/Dialog.tsx';
 import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { tx } from '../../text.ts';
-import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf, Ladeanzeige } from '../../ui/index.ts';
+import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { Bereich, DARSTELLUNG_ZURUECK, useEinstellungen } from './rahmen.tsx';
 
 const RUECK_MS = 6000;
@@ -180,7 +180,7 @@ export function PalettenSeite() {
           ) : null}
           {rueck && speichern.error ? <Fehlermeldung fehler={speichern.error} /> : null}
           {data.paletten.length === 0 ? (
-            <p className="text-sm text-leise">{tx("Noch keine Palette.")}</p>
+            <Leer text={tx("Noch keine Palette.")} />
           ) : (
             <ZeilenGruppe>
               {data.paletten.map((palette) => (

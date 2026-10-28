@@ -16,6 +16,9 @@
   --feldrand: #767676;
   --akzent: #141414;
   --akzent-text: #f2f2f2;
+  --aktion: #141414;
+  --aktion-text: #f2f2f2;
+  --trenner: var(--rand);
   --xp: #707070;
   --fortschritt: #1d4ed8;
   --streak: #b93c0b;
@@ -34,7 +37,7 @@
   --prio-4: var(--leise);
 }
 
-:root:is([data-glimmen='aus'], [data-stil='standard']) {
+:root[data-glimmen='aus'] {
   --glimm: 0;
 }
 
@@ -49,6 +52,8 @@
     --feldrand: #767676;
     --akzent: #f2f2f2;
     --akzent-text: #141414;
+    --aktion: #f2f2f2;
+    --aktion-text: #141414;
     --xp: #8a8a8a;
     --fortschritt: #60a5fa;
     --streak: #fb923c;
@@ -84,6 +89,8 @@
   --color-leise: var(--leise);
   --color-akzent: var(--akzent);
   --color-akzent-text: var(--akzent-text);
+  --color-aktion: var(--aktion);
+  --color-aktion-text: var(--aktion-text);
   --color-xp: var(--xp);
   --color-fortschritt: var(--fortschritt);
   --color-streak: var(--streak);
@@ -284,11 +291,11 @@ html[data-eingabe='zeiger'] :focus {
   text-shadow: 0 1px 1px rgb(0 0 0 / 35%);
 }
 
-:root:is([data-glimmen='aus'], [data-stil='standard']) .baum-frei {
+:root[data-glimmen='aus'] .baum-frei {
   box-shadow: inset 0 1px 0 color-mix(in srgb, white 45%, transparent);
 }
 
-:root:is([data-glimmen='aus'], [data-stil='standard']) .baum-puls {
+:root[data-glimmen='aus'] .baum-puls {
   animation: none;
   filter: none;
 }
@@ -304,21 +311,40 @@ html[data-eingabe='zeiger'] :focus {
   box-shadow: 0 0 12px color-mix(in srgb, var(--akzent) calc(var(--glimm) * 70%), transparent);
 }
 
-:root:is([data-glimmen='aus'], [data-stil='standard']) .pfad-an {
+:root[data-glimmen='aus'] .pfad-an {
   box-shadow: none;
 }
 
-:root:is([data-glimmen='aus'], [data-stil='standard']) .skill-leuchten {
+:root[data-glimmen='aus'] .skill-leuchten {
   animation: none;
 }
 
-:root:is([data-glimmen='aus'], [data-stil='standard']) .glimm-fleck {
+:root[data-glimmen='aus'] .glimm-fleck {
   opacity: 0;
 }
 
-:root:is([data-glimmen='aus'], [data-stil='standard']) .knopf-rund {
+:root[data-glimmen='aus'] .knopf-rund {
   --tw-shadow: 0 0 #0000;
   --tw-shadow-colored: 0 0 #0000;
+}
+
+[data-glimmen='aus'] .levelring-spitze-schein {
+  display: none;
+}
+
+.liste > * + * {
+  position: relative;
+}
+
+.liste > * + *::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  inset-inline-start: var(--liste-einzug, 16px);
+  inset-inline-end: 0;
+  border-top: 1px solid var(--trenner, var(--rand));
+  pointer-events: none;
 }
 
 .aufgaben-kreis,

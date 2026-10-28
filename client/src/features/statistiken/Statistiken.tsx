@@ -8,7 +8,7 @@ import { useSichtbarkeit } from '../../funktionen.ts';
 import { BalkenListe, type SaeulenWert } from '../../components/DiagrammBasis.tsx';
 import { LinienDiagramm, SaeulenDiagramm } from '../../components/mitDiagramm.tsx';
 import { Icon } from '../../components/Icons.tsx';
-import { Fehlermeldung, Karte, Ladeanzeige, Segmentauswahl, Ueberschrift } from '../../ui/index.ts';
+import { Fehlermeldung, Karte, Ladeanzeige, Leer, Segmentauswahl, Ueberschrift } from '../../ui/index.ts';
 import { ausTagesSchluessel, kalenderwoche, kurzesDatum, monatKurz, stunden, zahl } from '../../format.ts';
 
 const ZEITRAUM_LABEL: Record<Zeitraum, string> = {
@@ -81,7 +81,7 @@ export function StatistikenSeite() {
             <Karte>
               <Ueberschrift titel={tx("Tätigkeiten")} />
               {statistiken.vorlagen.length === 0 ? (
-                <p className="text-sm text-leise">{tx("Noch keine Einträge.")}</p>
+                <Leer text={tx("Noch keine Einträge.")} />
               ) : (
                 <BalkenListe
                   werte={statistiken.vorlagen.map((vorlage) => ({
@@ -102,7 +102,7 @@ export function StatistikenSeite() {
               <Karte>
                 <Ueberschrift titel={tx("Projekte")} />
                 {statistiken.projekte.length === 0 ? (
-                  <p className="text-sm text-leise">{tx("Noch keine Einträge.")}</p>
+                  <Leer text={tx("Noch keine Einträge.")} />
                 ) : (
                   <BalkenListe
                     werte={statistiken.projekte.map((projekt) => ({

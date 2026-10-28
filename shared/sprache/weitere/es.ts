@@ -1,5 +1,8 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.": "Las filas están en una lista. Título, valor y flecha tienen tamaños fijos.",
+  "Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.": "Los títulos de sección se escriben normal, sin mayúsculas.",
+  "Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.": "El brillo vuelve en cada aspecto, también en Estándar, y sigue el interruptor.",
   "Wie heißt du in Stride?": "¿Cómo te llamas en Stride?",
   "Halte fest, was du tust. Daraus werden Level und Streak.": "Anota lo que haces. De ahí salen el nivel y la racha.",
   "Worin willst du wachsen?": "¿En qué quieres crecer?",

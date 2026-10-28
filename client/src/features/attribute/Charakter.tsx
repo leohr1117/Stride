@@ -16,7 +16,7 @@ import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { InvestitionenBereich } from '../investitionen/Investitionen.tsx';
 import { KlassenUndTitel } from '../../components/KlassenTitel.tsx';
-import { archivBeschriftung, Fehlermeldung, Fortschrittsbalken, Karte, Knopf, Ladeanzeige, LevelRing } from '../../ui/index.ts';
+import { archivBeschriftung, Fehlermeldung, Fortschrittsbalken, Karte, Knopf, Ladeanzeige, Leer, LevelRing } from '../../ui/index.ts';
 import { kurzesDatum, zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 
@@ -297,7 +297,7 @@ function Faehigkeiten() {
       }
     >
       <Fehlermeldung fehler={error} />
-      {aktive.length === 0 && <Karte className="py-8 text-center text-sm text-leise">{tx("Noch keine Fähigkeiten.")}</Karte>}
+      {aktive.length === 0 && <Leer text={tx("Noch keine Fähigkeiten.")} />}
       <KurzListe
         eintraege={aktive}
         anzahl={KARTEN_SICHTBAR}

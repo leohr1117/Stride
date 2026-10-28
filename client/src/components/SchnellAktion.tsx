@@ -21,6 +21,7 @@ import {
   AUSLOESEN_PX,
   bestaetigungFuer,
   OFFEN_ANTEIL,
+  menueTeile,
   primaerPunkt,
   punkteFuer,
   UNDO_MS,
@@ -309,6 +310,7 @@ function Menue({
     }
   };
 
+  const teile = menueTeile(punkte);
   return createPortal(
     <div
       ref={ref}
@@ -318,17 +320,31 @@ function Menue({
       onKeyDown={beiTaste}
       className="fixed z-[80] min-w-44 rounded-xl border border-rand bg-flaeche py-1 shadow-lg"
     >
-      {punkte.map((punkt) => (
+      {teile.oben.map((punkt) => (
         <button
           key={punkt.art}
           type="button"
           role="menuitem"
-          className={`block w-full px-3 py-2.5 text-left text-sm hover:bg-flaeche-2 ${punkt.art === 'loeschen' ? 'text-gefahr' : ''}`}
+          className="block w-full px-3 py-2.5 text-left text-sm hover:bg-flaeche-2"
           onClick={() => onWahl(punkt)}
         >
           {tx(punkt.label)}
         </button>
       ))}
+      {teile.loeschen && (
+        <button
+          type="button"
+          role="menuitem"
+          className={`block w-full px-3 py-2.5 text-left text-sm text-gefahr hover:bg-flaeche-2 ${teile.oben.length > 0 ? 'border-t border-[var(--trenner)]' : ''}`}
+          onClick={() => {
+            if (teile.loeschen) {
+              onWahl(teile.loeschen);
+            }
+          }}
+        >
+          {tx(teile.loeschen.label)}
+        </button>
+      )}
     </div>,
     document.body,
   );

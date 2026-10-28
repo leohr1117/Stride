@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router';
 import { standardVorlage } from '../../../../shared/features/darstellung/paletten.ts';
-import { STANDARD_STIL } from '../../../../shared/features/darstellung/stile.ts';
 import { SPRACH_NAME, SPRACHEN } from '../../../../shared/sprache/kern.ts';
 import { LeistenEditor } from '../../components/LeistenEditor.tsx';
-import { Fehlermeldung, InfoHinweis, Ladeanzeige } from '../../ui/index.ts';
+import { Fehlermeldung, InfoHinweis, Ladeanzeige, Optionsliste } from '../../ui/index.ts';
 import { Zeile, ZeilenGruppe, ZeileSchalter } from '../../components/Zeile.tsx';
 import { wendeErscheinung } from '../darstellung/stil.ts';
 import { useSprache } from '../../sprache.tsx';
@@ -68,51 +67,42 @@ function DarstellungListe() {
       kinder={
         <>
           <div className="space-y-8">
-            <ZeilenGruppe>
-              <div className="px-4 py-3">
-                <div className="flex min-w-0 items-center">
-                  <span className="min-w-0 text-sm font-medium break-words">{tx('Sprache')}</span>
-                  <InfoHinweis text={tx('Gilt für die Oberfläche. Namen und Einträge bleiben, wie du sie geschrieben hast.')} />
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1 rounded-xl bg-flaeche-2 p-1" role="group" aria-label={tx('Sprache')}>
-                  {SPRACHEN.map((code) => (
-                    <button
-                      key={code}
-                      type="button"
-                      lang={code}
-                      aria-pressed={sprache === code}
-                      onClick={() => {
-                        waehle(code);
-                        speichern.mutate({ sprache: code }, { onError: () => uebernehme(data.sprache, true) });
-                      }}
-                      className={`sprach-wahl rounded-lg px-2.5 py-1 text-sm font-medium ${
-                        sprache === code ? 'bg-flaeche text-haupt shadow-sm' : 'text-leise'
-                      }`}
-                    >
-                      {SPRACH_NAME[code]}
-                    </button>
-                  ))}
-                </div>
+            <section>
+              <div className="mb-2 flex items-center">
+                <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
+                  {tx('Sprache')}
+                </h2>
+                <InfoHinweis text={tx('Gilt für die Oberfläche. Namen und Einträge bleiben, wie du sie geschrieben hast.')} />
               </div>
-            </ZeilenGruppe>
+              <Optionsliste
+                name={tx('Sprache')}
+                wert={sprache}
+                onAendern={(code) => {
+                  waehle(code);
+                  speichern.mutate({ sprache: code }, { onError: () => uebernehme(data.sprache, true) });
+                }}
+                optionen={SPRACHEN.map((code) => ({
+                  wert: code,
+                  label: <span lang={code}>{SPRACH_NAME[code]}</span>,
+                }))}
+              />
+            </section>
             <AnsichtSteuerung />
             <ZeilenGruppe>
               <Zeile titel={tx("Leiste")} nach="/mehr/darstellung/leiste" />
               <ZeileSchalter titel={tx("Sound")} an={data.sound} onAendern={(sound) => speichern.mutate({ sound })} deaktiviert={speichern.isPending} />
-              {data.stil !== STANDARD_STIL && (
-                <ZeileSchalter
-                  titel={tx("Glühen")}
-                  an={data.glimmen}
-                  onAendern={(glimmen) => {
-                    const farben = data.eigeneFarben
-                      ? { primaer: data.primaer, akzent: data.akzent, hintergrund: data.hintergrund }
-                      : standardVorlage(data.stil, systemDunkel());
-                    wendeErscheinung({ ...farben, glimmen });
-                    speichern.mutate({ glimmen });
-                  }}
-                  deaktiviert={speichern.isPending}
-                />
-              )}
+              <ZeileSchalter
+                titel={tx("Glühen")}
+                an={data.glimmen}
+                onAendern={(glimmen) => {
+                  const farben = data.eigeneFarben
+                    ? { primaer: data.primaer, akzent: data.akzent, hintergrund: data.hintergrund }
+                    : standardVorlage(data.stil, systemDunkel());
+                  wendeErscheinung({ ...farben, glimmen });
+                  speichern.mutate({ glimmen });
+                }}
+                deaktiviert={speichern.isPending}
+              />
             </ZeilenGruppe>
           </div>
           <Fehlermeldung fehler={speichern.error} />

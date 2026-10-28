@@ -5,7 +5,7 @@ import type { BasisAufgabe } from '../../../../shared/api/index.ts';
 import { BasisFormular, BasisListe, useBasisAufgaben } from './Basis.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
-import { archivBeschriftung, Fehlermeldung, Karte, Knopf, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
+import { archivBeschriftung, Fehlermeldung, Karte, Knopf, Ladeanzeige, Leer, Ueberschrift } from '../../ui/index.ts';
 import { useEbenen } from '../../funktionen.ts';
 
 type Bearbeitung = { aufgabe: BasisAufgabe | null } | null;
@@ -55,7 +55,7 @@ export function BasisSeite() {
         </Knopf>
       </header>
 
-      {aktive.length === 0 && <Karte className="py-10 text-center text-sm text-leise">{tx("Noch keine Basis-Aufgaben.")}</Karte>}
+      {aktive.length === 0 && <Leer text={tx("Noch keine Basis-Aufgaben.")} />}
 
       {!ebenen.projekte && aktive.length > 0 && (
         <Karte>

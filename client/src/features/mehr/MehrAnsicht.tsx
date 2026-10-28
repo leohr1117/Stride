@@ -4,7 +4,7 @@ import { palettenNachDesign, standardVorlage, type Farbtrio } from '../../../../
 import { STIL_INFO, STILE, type Stil } from '../../../../shared/features/darstellung/stile.ts';
 import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { farbAnfang, farbLoslassen, farbUebernehmen, farbZiehen, type FarbZustand } from '../darstellung/ansichtFarbe.ts';
-import { Fehlermeldung, InfoHinweis, Knopf, Ladeanzeige } from '../../ui/index.ts';
+import { Fehlermeldung, InfoHinweis, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { wendeErscheinung, wendeStilAn } from '../darstellung/stil.ts';
 import { tx } from '../../text.ts';
 import { useEinstellungen } from './rahmen.tsx';
@@ -191,7 +191,7 @@ function AnsichtWahl({
             info={tx("Auswählen übernimmt die Farben. Anlegen und Löschen liegt unter Paletten.")}
           />
           {paletten.length === 0 ? (
-            <p className="text-sm text-leise">{tx("Noch keine Palette.")}</p>
+            <Leer text={tx("Noch keine Palette.")} />
           ) : (
             <div className="flex flex-wrap gap-2" role="group" aria-label={tx("Eigene Paletten")}>
               {paletten.map((palette) => {

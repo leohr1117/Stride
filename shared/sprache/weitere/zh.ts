@@ -1,5 +1,8 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.": "各行排在一个列表里。标题、数值和箭头有固定大小。",
+  "Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.": "分区标题用正常写法，不用全大写。",
+  "Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.": "发光在每种外观里都回来了，包括标准，并跟随开关。",
   "Wie heißt du in Stride?": "在 Stride 里怎么称呼你？",
   "Halte fest, was du tust. Daraus werden Level und Streak.": "记下你做的事。它们会变成等级和连续记录。",
   "Worin willst du wachsen?": "你想在哪方面成长？",

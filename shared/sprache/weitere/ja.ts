@@ -1,5 +1,8 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.": "行は一つのリストに並びます。題名、値、矢印は決まった大きさです。",
+  "Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.": "見出しは通常の書き方で、大文字にはしません。",
+  "Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.": "発光は標準を含むすべての外観に戻り、スイッチに従います。",
   "Wie heißt du in Stride?": "Stride では何と呼びますか？",
   "Halte fest, was du tust. Daraus werden Level und Streak.": "したことを残します。それがレベルと連続になります。",
   "Worin willst du wachsen?": "どこで伸びたい？",

@@ -24,6 +24,7 @@ import {
   Fortschrittsbalken,
   Karte,
   Knopf,
+  Leer,
   Ladeanzeige,
   Ueberschrift,
 } from '../../ui/index.ts';
@@ -132,7 +133,7 @@ export function FaehigkeitSeite() {
           }
         />
         {gesamt === 0 ? (
-          <Karte className="py-8 text-center text-sm text-leise">{tx("Noch nichts.")}</Karte>
+          <Leer text={tx("Noch nichts.")} />
         ) : (
           <div
             className="baum-karte karte w-full min-w-0 overflow-x-auto overscroll-x-contain rounded-2xl border border-rand bg-flaeche"

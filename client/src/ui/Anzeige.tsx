@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { type ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { prozentPunkte } from '../format.ts';
 import { attributName, tx } from '../text.ts';
 import { ZuNiedrigHinweis } from './Info.tsx';
@@ -84,9 +84,18 @@ export function Karte({
 
 export function Ueberschrift({ titel, aktion }: { titel: string; aktion?: ReactNode }) {
   return (
-    <div className="mb-3 flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-      <h2 className="ueberschrift min-w-0 text-sm font-semibold tracking-wide text-leise uppercase">{titel}</h2>
+    <div className="mb-2 flex items-center justify-between gap-3">
+      <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">{titel}</h2>
       {aktion ? <div className="shrink-0">{aktion}</div> : null}
+    </div>
+  );
+}
+
+export function Leer({ text, aktion }: { text: string; aktion?: ReactNode }) {
+  return (
+    <div className="leer px-4 py-6 text-center">
+      <p className="text-base text-leise">{text}</p>
+      {aktion ? <div className="mt-4 flex justify-center">{aktion}</div> : null}
     </div>
   );
 }
@@ -155,17 +164,29 @@ const RING_MITTE = 50;
 const RING_RADIUS = 42;
 const RING_STRICH = 8;
 
+function ringId(roh: string): string {
+  return `ringschein${roh.replace(/:/g, '')}`;
+}
+
+function ringSpitze(anteil: number): { cx: number; cy: number } {
+  const winkel = -Math.PI / 2 + anteil * Math.PI * 2;
+  return {
+    cx: RING_MITTE + Math.cos(winkel) * RING_RADIUS,
+    cy: RING_MITTE + Math.sin(winkel) * RING_RADIUS,
+  };
+}
+
 export function LevelRing({ level, anteil, groesse = 96 }: { level: number; anteil: number; groesse?: number }) {
+  const schein = ringId(useId());
   const begrenzt = Math.min(1, Math.max(0, anteil));
   const voll = begrenzt >= 0.999;
-  // Die Maske deckt genau den Strich (Mitte 42, Breite 8 in der 100er-Box).
-  // Kein stroke-dasharray: ein kurzer Strich darin ist am Bogenanfang immer wieder aufgetaucht.
+  const spitze = ringSpitze(begrenzt);
   const maske = 'radial-gradient(farthest-side, transparent 75.2%, #000 76.4%, #000 91.6%, transparent 92.8%)';
   const bogen = `conic-gradient(from 0deg, var(--fortschritt) 0deg, var(--fortschritt) ${begrenzt * 360}deg, transparent ${begrenzt * 360}deg)`;
 
   return (
     <div className="levelring relative shrink-0" data-levelring="" style={{ width: groesse, height: groesse }}>
-      <svg viewBox="0 0 100 100" className="absolute inset-0" aria-hidden="true">
+      <svg viewBox="0 0 100 100" className="absolute inset-0 overflow-visible" aria-hidden="true">
         <circle cx={RING_MITTE} cy={RING_MITTE} r={RING_RADIUS} fill="none" stroke="var(--flaeche-2)" strokeWidth={RING_STRICH} />
         {voll && (
           <circle
@@ -184,6 +205,25 @@ export function LevelRing({ level, anteil, groesse = 96 }: { level: number; ante
           data-levelbogen=""
           style={{ background: bogen, maskImage: maske, WebkitMaskImage: maske }}
         />
+      )}
+      {begrenzt > 0 && (
+        <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 overflow-visible" aria-hidden="true">
+          <defs>
+            <filter id={schein} x="-70%" y="-70%" width="240%" height="240%" colorInterpolationFilters="sRGB">
+              <feGaussianBlur stdDeviation="1.6" />
+            </filter>
+          </defs>
+          <circle
+            className="levelring-spitze-schein"
+            cx={spitze.cx}
+            cy={spitze.cy}
+            r="6.4"
+            fill="var(--fortschritt)"
+            fillOpacity={0.45 + begrenzt * 0.5}
+            filter={`url(#${schein})`}
+          />
+          <circle cx={spitze.cx} cy={spitze.cy} r="4.05" fill="var(--fortschritt)" />
+        </svg>
       )}
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-[10px] font-medium tracking-wider text-leise uppercase">{tx("Level")}</span>

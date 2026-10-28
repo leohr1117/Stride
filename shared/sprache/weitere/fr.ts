@@ -1,5 +1,8 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.": "Les lignes sont dans une liste. Titre, valeur et flèche ont des tailles fixes.",
+  "Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.": "Les titres de section s’écrivent normalement, sans majuscules.",
+  "Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.": "La lueur revient dans chaque apparence, y compris Standard, et suit l’interrupteur.",
   "Wie heißt du in Stride?": "Comment t’appelles-tu dans Stride ?",
   "Halte fest, was du tust. Daraus werden Level und Streak.": "Note ce que tu fais. Cela devient des niveaux et une série.",
   "Worin willst du wachsen?": "Dans quoi veux-tu progresser ?",

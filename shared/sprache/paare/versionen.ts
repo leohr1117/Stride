@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.', 'Rows sit in one list. Title, value, and arrow have fixed sizes.'],
+  ['Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.', 'Section titles use normal writing, without capital letters.'],
+  ['Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.', 'Glow is back in every look, including Standard, and follows the switch.'],
   ['Eigene Farben bleiben lesbar. Text, Streak, Ring und Schalter halten den Kontrast.', 'Custom colors stay readable. Text, streak, ring, and switches keep their contrast.'],
   ['Levelring, Streak und Schalter behalten ihre Farbe. Eine Palette ändert sie nicht.', 'The level ring, streak, and switches keep their color. A palette does not change them.'],
   ['Fortschritt und Schalter sind blau, der Streak ist orange.', 'Progress and switches are blue, the streak is orange.'],

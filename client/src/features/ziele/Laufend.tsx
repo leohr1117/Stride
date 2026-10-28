@@ -10,7 +10,7 @@ import { useSichtbarkeit } from '../../funktionen.ts';
 import { Abschnitt, KurzListe } from '../../components/Ausklappbar.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { BossRing } from '../bosse/BossRing.tsx';
-import { Fehlermeldung, Karte, Knopf, Ladeanzeige } from '../../ui/index.ts';
+import { Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { bossZeile, VorhabenKennzahlen } from '../../components/VorhabenInfo.tsx';
 
 const BOSSE_SICHTBAR = 4;
@@ -35,7 +35,7 @@ export function LaufendSeite() {
 
   return (
     <div className="space-y-6">
-      {leer && <Karte className="py-10 text-center text-sm text-leise">{tx("Nichts am Laufen.")}</Karte>}
+      {leer && <Leer text={tx("Nichts am Laufen.")} />}
 
       {bosse.length > 0 && (
         <Abschnitt titel={tx("Bosse")} kennung="laufend-bosse">

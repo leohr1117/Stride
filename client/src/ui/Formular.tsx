@@ -16,10 +16,10 @@ import { Fehlermeldung } from './Anzeige.tsx';
 type KnopfVariante = 'primaer' | 'sekundaer' | 'leise' | 'gefahr';
 
 const KNOPF_STIL: Record<KnopfVariante, string> = {
-  primaer: 'bg-akzent text-akzent-text hover:brightness-110',
-  sekundaer: 'bg-flaeche-2 text-haupt hover:brightness-95 dark:hover:brightness-125',
-  leise: 'text-leise hover:text-haupt hover:bg-flaeche-2',
-  gefahr: 'text-gefahr hover:bg-gefahr/10',
+  primaer: 'min-h-12 rounded-lg bg-aktion px-4 text-aktion-text hover:brightness-110',
+  sekundaer: 'min-h-12 rounded-lg border border-rand bg-flaeche-2 px-4 text-haupt hover:brightness-95 dark:hover:brightness-125',
+  leise: 'rounded-lg px-4 text-leise hover:bg-flaeche-2 hover:text-haupt',
+  gefahr: 'min-h-12 rounded-lg px-4 text-gefahr hover:bg-gefahr/10',
 };
 
 function istFehler(knoten: ReactNode): boolean {
@@ -85,7 +85,7 @@ export function Knopf({
   return (
     <button
       type="button"
-      className={`knopf knopf-${variante} inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${KNOPF_STIL[variante]} ${className}`}
+      className={`knopf knopf-${variante} inline-flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${KNOPF_STIL[variante]} ${className}`}
       {...props}
     />
   );
@@ -158,17 +158,56 @@ export function PasswortFeld({
   );
 }
 
+export function Optionsliste<T extends string | number>({
+  optionen,
+  wert,
+  onAendern,
+  name,
+}: {
+  optionen: { wert: T; label: ReactNode }[];
+  wert: T;
+  onAendern: (wert: T) => void;
+  name?: string;
+}) {
+  return (
+    <div className="liste -mx-4 bg-flaeche md:mx-0 md:max-w-[720px] md:overflow-hidden md:rounded-lg md:border md:border-rand" role="radiogroup" aria-label={name}>
+      {optionen.map((option) => {
+        const label = typeof option.label === 'string' ? tx(option.label) : option.label;
+        const gewaehlt = option.wert === wert;
+        return (
+          <button
+            key={String(option.wert)}
+            type="button"
+            role="radio"
+            aria-checked={gewaehlt}
+            onClick={() => onAendern(option.wert)}
+            className="zeile flex min-h-12 w-full items-center gap-3 px-4 py-3 text-left"
+          >
+            <span className="min-w-0 flex-1 text-base leading-6">{label}</span>
+            {gewaehlt ? <Check className="size-5 shrink-0 text-haupt" aria-hidden="true" /> : <span className="size-5 shrink-0" aria-hidden="true" />}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export function Segmentauswahl<T extends string | number>({
   optionen,
   wert,
   onAendern,
   dicht = false,
+  name,
 }: {
   optionen: { wert: T; label: ReactNode }[];
   wert: T;
   onAendern: (wert: T) => void;
   dicht?: boolean;
+  name?: string;
 }) {
+  if (optionen.length > 4) {
+    return <Optionsliste optionen={optionen} wert={wert} onAendern={onAendern} name={name} />;
+  }
   return (
     <div className="flex gap-1 rounded-xl bg-flaeche-2 p-1">
       {optionen.map((option) => (

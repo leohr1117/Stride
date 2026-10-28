@@ -85,6 +85,13 @@ export function primaerPunkt(punkte: SchnellPunkt[]): SchnellPunkt | null {
   return punkte.find((punkt) => punkt.art === 'loeschen') ?? punkte.find((punkt) => punkt.art === 'archivieren') ?? punkte[0] ?? null;
 }
 
+export function menueTeile(punkte: SchnellPunkt[]): { oben: SchnellPunkt[]; loeschen: SchnellPunkt | null } {
+  return {
+    oben: punkte.filter((punkt) => punkt.art !== 'loeschen'),
+    loeschen: punkte.find((punkt) => punkt.art === 'loeschen') ?? null,
+  };
+}
+
 export function bestaetigungFuer(ziel: SchnellZiel): Bestaetigungstext {
   if (ziel.art === 'eintrag') {
     return { titel: 'Eintrag löschen?', text: ziel.hinweis ?? 'Die XP werden wieder abgezogen.', knopf: 'Löschen' };

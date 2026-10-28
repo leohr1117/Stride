@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   bestaetigungFuer,
   fuegeAktivesAttribut,
+  menueTeile,
   primaerPunkt,
   punkteFuer,
   wendeQuery,
@@ -51,6 +52,20 @@ describe('punkteFuer', () => {
     expect(punkteFuer({ art: 'konto' })).toEqual([{ art: 'loeschen', label: 'Löschen' }]);
     expect(punkteFuer({ art: 'knoten', loeschbar: false })).toEqual([]);
     expect(punkteFuer({ art: 'vorhaben', loeschbar: true })).toEqual([{ art: 'loeschen', label: 'Löschen' }]);
+  });
+});
+
+describe('menueTeile', () => {
+  it('setzt Löschen unter die übrigen Punkte', () => {
+    const teile = menueTeile(punkteFuer({ art: 'basis', archiviert: true, loeschbar: true }));
+    expect(teile.oben.map((punkt) => punkt.art)).toEqual(['wiederherstellen']);
+    expect(teile.loeschen?.art).toBe('loeschen');
+  });
+
+  it('lässt einzelnes Löschen ohne Eintrag darüber', () => {
+    const teile = menueTeile(punkteFuer({ art: 'eintrag' }));
+    expect(teile.oben).toEqual([]);
+    expect(teile.loeschen?.label).toBe('Löschen');
   });
 });
 

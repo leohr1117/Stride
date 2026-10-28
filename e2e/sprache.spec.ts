@@ -104,8 +104,8 @@ test('Englisch bleibt bei 390 und 1440 lesbar', async ({ page }) => {
     }
 
     await expect(page.getByText('Language', { exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Deutsch', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'English', exact: true })).toBeVisible();
+    await expect(page.getByRole('radio', { name: 'Deutsch', exact: true })).toBeVisible();
+    await expect(page.getByRole('radio', { name: 'English', exact: true })).toBeVisible();
   } finally {
     if (vorher === 'de') {
       await setzeSprache(page, 'de');
@@ -134,7 +134,7 @@ test('jede Sprache bleibt auf 390 px vollständig sichtbar', async ({ page }, in
         await ohneSeitlichenUeberhang(page);
       }
       for (const name of SPRACHEN) {
-        const knopf = page.getByRole('button', { name: SPRACH_NAME[name], exact: true });
+        const knopf = page.getByRole('radio', { name: SPRACH_NAME[name], exact: true });
         await expect(knopf).toBeVisible();
         const kasten = await knopf.boundingBox();
         expect(kasten).not.toBeNull();

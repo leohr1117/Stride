@@ -1,6 +1,6 @@
 export { Chip, Schalter, SchalterBahn } from './Schalter.tsx';
 export { InfoHinweis, ZuNiedrigHinweis } from './Info.tsx';
-export { EINGABE_STIL, Farbauswahl, Feld, Formular, Knopf, PasswortFeld, Segmentauswahl } from './Formular.tsx';
+export { EINGABE_STIL, Farbauswahl, Feld, Formular, Knopf, Optionsliste, PasswortFeld, Segmentauswahl } from './Formular.tsx';
 export { Regler } from './Regler.tsx';
 export {
   AllgemeinerXpAbzug,
@@ -10,6 +10,7 @@ export {
   Fortschrittsbalken,
   Karte,
   Ladeanzeige,
+  Leer,
   LevelRing,
   Ueberschrift,
   XpAbzug,

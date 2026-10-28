@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.28.0',
+    seiten: 'Mehr, Übersicht, Ziele, Darstellung, Chronik',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.',
+          'Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.',
+          'Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.27.0',
     seiten: 'Darstellung',
     abschnitte: [

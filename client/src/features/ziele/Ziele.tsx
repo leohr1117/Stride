@@ -13,7 +13,7 @@ import { KettenAnzeige } from '../../components/KettenAnzeige.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
-import { archivBeschriftung, Farbpunkt, Fehlermeldung, Karte, Knopf, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
+import { archivBeschriftung, Farbpunkt, Fehlermeldung, Karte, Knopf, Ladeanzeige, Leer, Ueberschrift } from '../../ui/index.ts';
 import { ZielDialog, type ZielBearbeitung } from './ZielDialoge.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { kurzesDatum, zahl } from '../../format.ts';
@@ -81,9 +81,7 @@ export function ZieleSeite() {
       </header>
 
       {!ebenen.visionen && !ebenen.projekte && !ebenen.vorhaben && !ebenen.organisationen && (
-        <Karte className="py-10 text-center text-sm text-leise">
-          {tx("Alle Ziel-Stufen sind aus.")}
-        </Karte>
+        <Leer text={tx("Alle Ziel-Stufen sind aus.")} />
       )}
 
       {ebenen.visionen &&
@@ -91,7 +89,7 @@ export function ZieleSeite() {
         freieOrganisationen.length === 0 &&
         ohneEltern.length === 0 &&
         !(ebenen.vorhaben && !ebenen.projekte && ziele.vorhaben.length > 0) && (
-          <Karte className="py-10 text-center text-sm text-leise">{tx(ZIEL_MARKE.visionen.leer)}</Karte>
+          <Leer text={tx(ZIEL_MARKE.visionen.leer)} />
         )}
 
       {ebenen.visionen &&
@@ -121,7 +119,7 @@ export function ZieleSeite() {
       )}
 
       {ebenen.organisationen && !ebenen.visionen && !ebenen.projekte && freieOrganisationen.length === 0 && (
-        <Karte className="py-10 text-center text-sm text-leise">{tx(ZIEL_MARKE.organisationen.leer)}</Karte>
+        <Leer text={tx(ZIEL_MARKE.organisationen.leer)} />
       )}
 
       {ebenen.organisationen && !ebenen.visionen && freieOrganisationen.length > 0 && (
@@ -167,7 +165,7 @@ export function ZieleSeite() {
       {ebenen.projekte && !ebenen.visionen && (
         <section>
           {flacheProjekte.length === 0 && freieOrganisationen.length === 0 && (
-            <Karte className="py-10 text-center text-sm text-leise">{tx(ZIEL_MARKE.projekte.leer)}</Karte>
+            <Leer text={tx(ZIEL_MARKE.projekte.leer)} />
           )}
           <ProjektListe projekte={flacheProjekte} />
         </section>
@@ -579,7 +577,7 @@ function VorhabenBereich({ vorhaben, leer }: { vorhaben: VorhabenMitProjekt[]; l
     <section className="space-y-3">
       <Ueberschrift titel={tx(zielTitel('vorhaben'))} />
       {offene.length === 0 && fertig.length === 0 && leer && (
-        <Karte className="py-10 text-center text-sm text-leise">{tx(ZIEL_MARKE.vorhaben.leer)}</Karte>
+        <Leer text={tx(ZIEL_MARKE.vorhaben.leer)} />
       )}
       <ul className="space-y-2">
         {offene.map((eintrag) => (

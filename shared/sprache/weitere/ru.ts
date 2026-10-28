@@ -1,5 +1,8 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zeilen stehen in einer Liste. Titel, Wert und Pfeil haben feste Größen.": "Строки стоят в одном списке. У названия, значения и стрелки фиксированный размер.",
+  "Abschnittstitel sind normal geschrieben, ohne Großbuchstaben.": "Заголовки разделов написаны обычно, без прописных букв.",
+  "Glühen ist in jeder Ansicht wieder da, auch in Standard, und folgt dem Schalter.": "Свечение снова есть в каждом виде, в том числе в Стандарт, и следует переключателю.",
   "Wie heißt du in Stride?": "Как тебя зовут в Stride?",
   "Halte fest, was du tust. Daraus werden Level und Streak.": "Записывай, что делаешь. Из этого получаются уровень и серия.",
   "Worin willst du wachsen?": "В чём ты хочешь расти?",

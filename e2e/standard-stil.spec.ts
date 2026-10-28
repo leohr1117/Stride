@@ -78,7 +78,7 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
       await zurueckgesetzt;
     }
     await expect(page.locator('html')).toHaveAttribute('data-stil', 'standard');
-    await expect(page.getByRole('switch', { name: 'Glühen', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('switch', { name: 'Glühen', exact: true })).toBeVisible();
 
     const dunkel = await page.evaluate(() => window.matchMedia('(prefers-color-scheme: dark)').matches);
     const logo = standardVorlage('standard', dunkel);
@@ -107,7 +107,7 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
     expect(werte.schrift).toContain('Segoe UI');
     expect(werte.groesse).toBe('16px');
     expect(await page.locator('.mobilkopf h1').evaluate((element) => getComputedStyle(element).textTransform)).toBe('none');
-    expect(await eckenRadius(page, '.karte')).toBe('8px');
+    expect(await eckenRadius(page, '.liste')).toBe(projekt === 'handy' ? '0px' : '8px');
     expect(await eckenRadius(page, '[data-zurueck]')).toBe('8px');
     expect(await page.locator('.knopf').first().evaluate((element) => getComputedStyle(element).minHeight)).toBe('48px');
     const info = page.getByRole('button', { name: 'Info' }).first();
@@ -177,7 +177,10 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
     await page.goto('/mehr/darstellung');
     await waehleAnsicht(page, 'Minimal', 'minimal');
     await expect(page.getByRole('switch', { name: 'Glühen', exact: true })).toBeVisible();
+    await page.goto('/');
     expect(await eckenRadius(page, '.karte')).toBe('16px');
+    await page.goto('/mehr/darstellung');
+    await expect(page.getByRole('heading', { name: 'Darstellung', exact: true })).toBeVisible();
     const zurueckMinimal = await eckenRadius(page, '[data-zurueck]');
     expect(Number.parseFloat(zurueckMinimal)).toBeGreaterThan(8);
     await ohneSeitlichenUeberlauf(page);
