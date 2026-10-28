@@ -5,6 +5,27 @@ test.beforeEach(async ({ page }) => {
   await anmelden(page);
 });
 
+async function ersteZeile(text: Locator): Promise<{ x: number; y: number; height: number } | null> {
+  return text.evaluate((element) => {
+    const bereich = document.createRange();
+    bereich.selectNodeContents(element);
+    const rect = [...bereich.getClientRects()].find((eintrag) => eintrag.width > 1 && eintrag.height > 1);
+    return rect ? { x: rect.x, y: rect.y, height: rect.height } : null;
+  });
+}
+
+async function punktBuendig(punkt: Locator, text: Locator): Promise<void> {
+  const kasten = await punkt.boundingBox();
+  const zeile = await ersteZeile(text);
+  expect(kasten).not.toBeNull();
+  expect(zeile).not.toBeNull();
+  if (!kasten || !zeile) {
+    return;
+  }
+  const abstand = Math.abs(kasten.y + kasten.height / 2 - (zeile.y + zeile.height / 2));
+  expect(abstand).toBeLessThanOrEqual(3);
+}
+
 async function punktIst10(punkt: Locator): Promise<void> {
   await expect(punkt).toBeVisible();
   const kasten = await punkt.boundingBox();
@@ -43,9 +64,14 @@ test('Farbpunkt statt Linie und Balken', async ({ page }, testInfo) => {
   const punktKasten = await visionPunkt.boundingBox();
   const textKasten = await visionKopf.locator('span.break-words').boundingBox();
   expect(punktKasten && textKasten && punktKasten.x < textKasten.x).toBe(true);
+  await punktBuendig(visionPunkt, visionKopf.locator('span.break-words'));
 
   const org = fit.locator('[data-ast="organisation"]').filter({ has: page.getByRole('heading', { name: 'Lauftreff', level: 3 }) });
-  await punktIst10(org.locator('[data-farbpunkt]'));
+  const orgPunkt = org.locator('[data-farbpunkt]');
+  await punktIst10(orgPunkt);
+  await punktBuendig(orgPunkt, org.locator('h3 span:not([data-farbpunkt])'));
+  const orgKasten = await orgPunkt.boundingBox();
+  expect(punktKasten && orgKasten && Math.abs(punktKasten.x - orgKasten.x)).toBeLessThanOrEqual(1);
   await keineFarbLinie(org);
   await ohneSeitlichenUeberlauf(page);
   await bild('ziele', true);
@@ -58,9 +84,11 @@ test('Farbpunkt statt Linie und Balken', async ({ page }, testInfo) => {
   const dialogPunkt = dialog.locator('header [data-farbpunkt]');
   await punktIst10(dialogPunkt);
   const dialogTitel = dialog.getByRole('heading', { name: 'Fit und belastbar', level: 2 });
+  const dialogText = dialogTitel.locator('span:not([data-farbpunkt])');
   const dialogPunktKasten = await dialogPunkt.boundingBox();
-  const dialogTitelKasten = await dialogTitel.boundingBox();
-  expect(dialogPunktKasten && dialogTitelKasten && dialogPunktKasten.x < dialogTitelKasten.x).toBe(true);
+  const dialogTextKasten = await dialogText.boundingBox();
+  expect(dialogPunktKasten && dialogTextKasten && dialogPunktKasten.x < dialogTextKasten.x).toBe(true);
+  await punktBuendig(dialogPunkt, dialogText);
   await punktIst10(dialog.getByText('Lauftreff', { exact: true }).locator('xpath=..').locator('[data-farbpunkt]'));
   await ohneSeitlichenUeberlauf(page);
   await bild('dialog');

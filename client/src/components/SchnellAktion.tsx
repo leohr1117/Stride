@@ -509,7 +509,7 @@ export function SchnellZeile({
       {menue}
     </div>
   );
-  const farbe = primaer?.art === 'loeschen' ? 'bg-gefahr text-white' : 'bg-akzent text-akzent-text';
+  const farbe = primaer?.art === 'loeschen' ? 'bg-gefahr text-gefahr-text' : 'bg-akzent text-akzent-text';
 
   return (
     <div

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useId, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { prozentPunkte } from '../format.ts';
 import { attributName, tx } from '../text.ts';
 import { ZuNiedrigHinweis } from './Info.tsx';
@@ -45,10 +45,15 @@ export function AttributBezeichnung({
   );
 }
 
-/** Farbe von Vision und Organisation: 10 px vor dem Namen, nicht als Linie oder Balken. */
-export function Farbpunkt({ farbe }: { farbe: string }) {
+/** Farbe von Vision und Organisation: 10 px vor dem Namen, bündig zur ersten Zeile. */
+export function Farbpunkt({ farbe, className = '' }: { farbe: string; className?: string }) {
   return (
-    <span data-farbpunkt="" aria-hidden className="inline-block size-[10px] shrink-0 rounded-full" style={{ backgroundColor: farbe }} />
+    <span
+      data-farbpunkt=""
+      aria-hidden
+      className={`inline-block size-[10px] shrink-0 rounded-full align-middle ${className}`}
+      style={{ backgroundColor: farbe }}
+    />
   );
 }
 
@@ -115,7 +120,7 @@ export function Ladeanzeige() {
 export function Fortschrittsbalken({
   anteil,
   verlustBis,
-  farbe = 'var(--akzent)',
+  farbe = 'var(--fortschritt)',
   hoehe = 'h-2',
 }: {
   anteil: number;
@@ -150,35 +155,17 @@ const RING_MITTE = 50;
 const RING_RADIUS = 42;
 const RING_STRICH = 8;
 
-function ringId(roh: string, name: string): string {
-  return `${name}${roh.replace(/:/g, '')}`;
-}
-
-function ringSpitze(anteil: number): { cx: number; cy: number } {
-  const winkel = -Math.PI / 2 + anteil * Math.PI * 2;
-  return {
-    cx: RING_MITTE + Math.cos(winkel) * RING_RADIUS,
-    cy: RING_MITTE + Math.sin(winkel) * RING_RADIUS,
-  };
-}
-
 export function LevelRing({ level, anteil, groesse = 96 }: { level: number; anteil: number; groesse?: number }) {
-  const schein = ringId(useId(), 'ringschein');
   const begrenzt = Math.min(1, Math.max(0, anteil));
   const voll = begrenzt >= 0.999;
-  const spitze = ringSpitze(begrenzt);
-  const endMix = Math.round(18 + begrenzt * 82);
-  const startKraft = Math.round(58 + begrenzt * 18);
-  // 0° im conic-gradient ist 12 Uhr, im Uhrzeigersinn. Das trifft die Spitze.
-  const verlauf = `conic-gradient(from 0deg, color-mix(in srgb, var(--haupt) ${startKraft}%, transparent) 0deg, color-mix(in srgb, var(--akzent) ${endMix}%, var(--haupt)) ${begrenzt * 360}deg, transparent ${begrenzt * 360}deg)`;
   // Die Maske deckt genau den Strich (Mitte 42, Breite 8 in der 100er-Box).
   // Kein stroke-dasharray: ein kurzer Strich darin ist am Bogenanfang immer wieder aufgetaucht.
-  const maske =
-    'radial-gradient(farthest-side, transparent 75.2%, #000 76.4%, #000 91.6%, transparent 92.8%)';
+  const maske = 'radial-gradient(farthest-side, transparent 75.2%, #000 76.4%, #000 91.6%, transparent 92.8%)';
+  const bogen = `conic-gradient(from 0deg, var(--fortschritt) 0deg, var(--fortschritt) ${begrenzt * 360}deg, transparent ${begrenzt * 360}deg)`;
 
   return (
-    <div className="levelring relative shrink-0" style={{ width: groesse, height: groesse }}>
-      <svg viewBox="0 0 100 100" className="absolute inset-0 overflow-visible" aria-hidden="true">
+    <div className="levelring relative shrink-0" data-levelring="" style={{ width: groesse, height: groesse }}>
+      <svg viewBox="0 0 100 100" className="absolute inset-0" aria-hidden="true">
         <circle cx={RING_MITTE} cy={RING_MITTE} r={RING_RADIUS} fill="none" stroke="var(--flaeche-2)" strokeWidth={RING_STRICH} />
         {voll && (
           <circle
@@ -186,7 +173,7 @@ export function LevelRing({ level, anteil, groesse = 96 }: { level: number; ante
             cy={RING_MITTE}
             r={RING_RADIUS}
             fill="none"
-            stroke={`color-mix(in srgb, var(--akzent) ${endMix}%, var(--haupt))`}
+            stroke="var(--fortschritt)"
             strokeWidth={RING_STRICH}
           />
         )}
@@ -194,28 +181,9 @@ export function LevelRing({ level, anteil, groesse = 96 }: { level: number; ante
       {begrenzt > 0 && !voll && (
         <div
           className="pointer-events-none absolute inset-0"
-          style={{ background: verlauf, maskImage: maske, WebkitMaskImage: maske }}
+          data-levelbogen=""
+          style={{ background: bogen, maskImage: maske, WebkitMaskImage: maske }}
         />
-      )}
-      {begrenzt > 0 && (
-        <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 overflow-visible" aria-hidden="true">
-          <defs>
-            <filter id={schein} x="-70%" y="-70%" width="240%" height="240%" colorInterpolationFilters="sRGB">
-              <feGaussianBlur stdDeviation="1.6" />
-            </filter>
-          </defs>
-          <circle
-            className="levelring-spitze-schein"
-            cx={spitze.cx}
-            cy={spitze.cy}
-            r="6.4"
-            fill={`color-mix(in srgb, var(--akzent) ${endMix}%, var(--haupt))`}
-            fillOpacity={0.45 + begrenzt * 0.5}
-            filter={`url(#${schein})`}
-          />
-          <circle cx={spitze.cx} cy={spitze.cy} r="4.05" fill={`color-mix(in srgb, var(--akzent) ${endMix}%, var(--haupt))`} />
-          <circle cx={spitze.cx} cy={spitze.cy} r="1.25" fill="white" fillOpacity={0.55 + begrenzt * 0.4} />
-        </svg>
       )}
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-[10px] font-medium tracking-wider text-leise uppercase">{tx("Level")}</span>

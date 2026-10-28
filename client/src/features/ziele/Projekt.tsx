@@ -596,7 +596,7 @@ function BossFormular({ vorhaben, onFertig }: { vorhaben: Vorhaben; onFertig: ()
 }
 
 const STATUS_ICON = {
-  geschafft: <CircleCheck className="size-4 text-xp" />,
+  geschafft: <CircleCheck className="size-4 text-erfolg" />,
   gescheitert: <CircleX className="size-4 text-leise" />,
   losgelassen: <Wind className="size-4 text-leise" />,
 } as const;

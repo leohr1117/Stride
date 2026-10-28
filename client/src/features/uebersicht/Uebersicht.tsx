@@ -79,7 +79,7 @@ export function UebersichtSeite() {
             <p className="zahl text-sm text-leise">{levelZeile}</p>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center">
-            <Wochenwert label={tx("XP diese Woche")} wert={`+${zahl(uebersicht.wocheXp)}`} hervorheben />
+            <Wochenwert label={tx("XP diese Woche")} wert={`+${zahl(uebersicht.wocheXp)}`} hervorheben="fortschritt" />
             <Wochenwert
               label={tx("Streak")}
               info={
@@ -91,7 +91,7 @@ export function UebersichtSeite() {
               }
               wert={
                 <span
-                  className={`flex items-center justify-center gap-1 ${uebersicht.serie.angeknackst ? 'text-leise' : uebersicht.serie.laenge > 0 ? 'text-xp' : ''}`}
+                  className={`flex items-center justify-center gap-1 ${uebersicht.serie.angeknackst ? 'text-leise' : uebersicht.serie.laenge > 0 ? 'text-streak' : ''}`}
                   title={uebersicht.serie.angeknackst ? tx("Gestern ausgesetzt") : undefined}
                 >
                   <Flame className="size-4" />
@@ -162,18 +162,18 @@ export function UebersichtSeite() {
 function Wochenwert({
   label,
   wert,
-  hervorheben = false,
+  hervorheben,
   info,
 }: {
   label: string;
   wert: ReactNode;
-  hervorheben?: boolean;
+  hervorheben?: 'fortschritt';
   info?: ReactNode;
 }) {
   return (
     <div className="relative rounded-xl bg-flaeche-2 px-2 py-2" data-wochenwert={label} data-info-kasten>
       {info ? <span className="absolute end-1 top-1 z-10 flex">{info}</span> : null}
-      <p className={`zahl text-lg font-bold ${hervorheben ? 'text-xp' : ''}`}>{wert}</p>
+      <p className={`zahl text-lg font-bold ${hervorheben === 'fortschritt' ? 'text-fortschritt' : ''}`}>{wert}</p>
       <p className="text-[11px] leading-tight text-leise">{label}</p>
     </div>
   );

@@ -282,11 +282,9 @@ function VisionKarte({
               onClick={onOeffnen}
               className={`flex min-w-0 flex-1 items-center gap-2 px-4 text-left ${hatKinder ? 'pt-3 pb-2' : 'py-4'}`}
             >
-              <h2 className="flex min-w-0 flex-1 items-start gap-2 text-lg leading-snug font-semibold">
-                <span className="mt-[7px] shrink-0">
-                  <Farbpunkt farbe={vision.farbe} />
-                </span>
-                <span className="min-w-0 break-words">{vision.titel}</span>
+              <h2 className="min-w-0 flex-1 text-lg leading-snug font-semibold">
+                <Farbpunkt farbe={vision.farbe} className="me-2" />
+                <span className="break-words">{vision.titel}</span>
               </h2>
               <ChevronRight className="size-4 shrink-0 text-leise" />
             </button>
@@ -303,10 +301,10 @@ function VisionKarte({
           )}
           {gruppen.map((gruppe) => (
             <div key={gruppe.organisation.id} data-ast="organisation" className="space-y-2">
-              <h3 className="flex min-w-0 items-center gap-2 text-sm font-medium">
-                <Farbpunkt farbe={gruppe.organisation.farbe} />
-                <Landmark className="size-4 shrink-0 text-leise" />
-                <span className="truncate">{gruppe.organisation.name}</span>
+              <h3 className="min-w-0 text-sm leading-snug font-medium">
+                <Farbpunkt farbe={gruppe.organisation.farbe} className="me-2" />
+                <Landmark className="me-2 inline-block size-4 align-middle text-leise" />
+                <span className="align-middle">{gruppe.organisation.name}</span>
               </h3>
               {gruppe.projekte.length > 0 && (
                 <div className="ps-3">
@@ -342,7 +340,7 @@ function VisionDetail({
 }) {
   const abschluss = useVisionAbschluss(vision);
   return (
-    <Dialog offen titel={vision.titel} vorTitel={<Farbpunkt farbe={vision.farbe} />} onSchliessen={onSchliessen}>
+    <Dialog offen titel={vision.titel} vorTitel={<Farbpunkt farbe={vision.farbe} className="me-2" />} onSchliessen={onSchliessen}>
       <div className="space-y-4">
         {vision.beschreibung ? <p className="text-sm">{vision.beschreibung}</p> : null}
         {vision.woopPlan ? (

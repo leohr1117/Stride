@@ -142,7 +142,7 @@ export function ZuNiedrigHinweis() {
       abstand={false}
       knopfKlasse="inline-flex size-8 items-center justify-center rounded-full"
       icon={
-        <span aria-hidden="true" className="flex size-4 items-center justify-center rounded-full bg-gefahr text-[11px] leading-none font-bold text-white">
+        <span aria-hidden="true" className="flex size-4 items-center justify-center rounded-full bg-gefahr text-[11px] leading-none font-bold text-gefahr-text">
           !
         </span>
       }

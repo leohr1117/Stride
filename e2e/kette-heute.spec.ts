@@ -247,7 +247,7 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
     await expect(page.locator('[data-kette="rueckkehr"]')).toBeVisible();
     await expect(page.locator('[data-kette="schutz"]')).toContainText('Hält die');
     await expect(page.locator('[data-kette="streak"]')).toHaveCount(0);
-    await expect(page.locator('[data-wochenwert="Streak"] .text-xp')).toHaveCount(0);
+    await expect(page.locator('[data-wochenwert="Streak"] .text-streak')).toHaveCount(0);
     await dialogBleibtZeile(page, 'rueckkehr');
     const heuteInfo = page.locator('[data-heute]').getByRole('button', { name: 'Info' });
     await heuteInfo.click();
@@ -262,7 +262,7 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
     await expect(page.locator('[data-kette="rueckkehr"]')).toHaveCount(0);
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(page.getByText('Rückkehr +')).toHaveCount(0);
-    await expect(page.locator('[data-wochenwert="Streak"] .text-xp')).toBeVisible();
+    await expect(page.locator('[data-wochenwert="Streak"] .text-streak')).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
     await beideBreiten(page, 'danach');
     await page.setViewportSize(ausgang);

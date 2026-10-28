@@ -157,7 +157,7 @@ export function EintragDetail({ eintrag, onEntfernt }: { eintrag: Eintrag; onEnt
         )}
         {eintrag.vorhaben && boss === null && (
           <p className="flex items-center gap-1.5 text-sm">
-            {eintrag.abschluss === 'geschafft' && <CircleCheck className="size-4 shrink-0 text-xp" />}
+            {eintrag.abschluss === 'geschafft' && <CircleCheck className="size-4 shrink-0 text-erfolg" />}
             {eintrag.abschluss === 'gescheitert' && <CircleX className="size-4 shrink-0 text-leise" />}
             <span className="min-w-0">
               {eintrag.abschluss === 'geschafft' && `${tx('Geschafft:')} `}

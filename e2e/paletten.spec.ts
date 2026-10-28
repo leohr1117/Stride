@@ -197,12 +197,14 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     const uebernommen = page.waitForResponse(
       (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
     );
+    const xpVorher = await variable(page, '--xp');
     await chip.click();
     await uebernommen;
     await expect(chip).toHaveAttribute('aria-pressed', 'true');
     const bildFarben = erscheinungAus(TRIO);
     await expect.poll(() => variable(page, '--akzent')).toBe(bildFarben.primaer);
-    await expect.poll(() => variable(page, '--xp')).toBe(bildFarben.akzent);
+    await expect.poll(() => variable(page, '--xp')).toBe(xpVorher);
+    expect(xpVorher).not.toBe(bildFarben.akzent);
     await expect.poll(() => variable(page, '--grund')).toBe(bildFarben.hintergrund);
     const gewaehlt = await lese(page);
     expect(gewaehlt.stil).toBe(anfang.stil);

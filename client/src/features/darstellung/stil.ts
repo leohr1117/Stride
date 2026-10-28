@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { bedeutungsfarben } from '../../../../shared/features/darstellung/bedeutung.ts';
 import { istHexFarbe, normaleHex } from '../../../../shared/spiel/farben.ts';
 import { erscheinungAus, standardVorlage, type Farbtrio } from '../../../../shared/features/darstellung/paletten.ts';
 import { gelesenerStil, STANDARD_STIL, type Stil } from '../../../../shared/features/darstellung/stile.ts';
@@ -75,8 +76,19 @@ export function wendeErscheinung(wahl: Farbwahl): void {
   wurzel.style.setProperty('--leise', flaechen.leise);
   wurzel.style.setProperty('--akzent', bild.primaer);
   wurzel.style.setProperty('--akzent-text', bild.text);
-  wurzel.style.setProperty('--xp', bild.akzent);
-  wurzel.style.setProperty('--gefahr', flaechen.gefahr);
+  // --xp bleibt die Farbe der Ansicht, nicht der gewählte Akzent.
+  wurzel.style.removeProperty('--xp');
+  const bedeutung = bedeutungsfarben(flaechen.schema);
+  wurzel.style.setProperty('--fortschritt', bedeutung.fortschritt);
+  wurzel.style.setProperty('--streak', bedeutung.streak);
+  wurzel.style.setProperty('--gefahr', bedeutung.gefahr);
+  wurzel.style.setProperty('--gefahr-text', bedeutung.gefahrText);
+  wurzel.style.setProperty('--erfolg', bedeutung.erfolg);
+  wurzel.style.setProperty('--fokus', bedeutung.fokus);
+  wurzel.style.setProperty('--schalter-an', bedeutung.schalterAn);
+  wurzel.style.setProperty('--schalter-knopf-an', bedeutung.schalterKnopfAn);
+  wurzel.style.setProperty('--schalter-aus', bedeutung.schalterAus);
+  wurzel.style.setProperty('--schalter-knopf-aus', bedeutung.schalterKnopfAus);
   wurzel.style.setProperty('--diagramm-vorbild', flaechen.diagramm);
   wurzel.style.colorScheme = flaechen.schema;
   wurzel.dataset.schema = flaechen.schema;

@@ -121,13 +121,6 @@ export function useKopf(angabe: KopfAngabe | null): void {
   }, [info, roh, setze, titel]);
 }
 
-function ringFarbe(anteil: number): string {
-  const begrenzt = Math.min(1, Math.max(0, anteil));
-  const mischung = Math.round(18 + begrenzt * 82);
-  // Bis U8 dieselbe Mischfarbe wie der große Levelring, noch nicht --fortschritt.
-  return `color-mix(in srgb, var(--akzent) ${mischung}%, var(--haupt))`;
-}
-
 function DuennRing({ anteil, kinder }: { anteil: number; kinder: ReactNode }) {
   const begrenzt = Math.min(1, Math.max(0, anteil));
   const radius = 17;
@@ -136,18 +129,17 @@ function DuennRing({ anteil, kinder }: { anteil: number; kinder: ReactNode }) {
     <span className="relative flex size-9 items-center justify-center">
       <svg viewBox="0 0 36 36" className="absolute inset-0 size-9" aria-hidden="true">
         <circle cx="18" cy="18" r={radius} fill="none" stroke="var(--flaeche-2)" strokeWidth="2" />
-        {begrenzt > 0 && (
-          <circle
-            cx="18"
-            cy="18"
-            r={radius}
-            fill="none"
-            stroke={ringFarbe(begrenzt)}
-            strokeWidth="2"
-            strokeDasharray={`${umfang * begrenzt} ${umfang}`}
-            transform="rotate(-90 18 18)"
-          />
-        )}
+        <circle
+          data-kopfring=""
+          cx="18"
+          cy="18"
+          r={radius}
+          fill="none"
+          stroke="var(--fortschritt)"
+          strokeWidth="2"
+          strokeDasharray={`${umfang * begrenzt} ${umfang}`}
+          transform="rotate(-90 18 18)"
+        />
       </svg>
       {kinder}
     </span>

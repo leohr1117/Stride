@@ -17,7 +17,16 @@
   --akzent: #141414;
   --akzent-text: #f2f2f2;
   --xp: #707070;
-  --gefahr: #e5484d;
+  --fortschritt: #1d4ed8;
+  --streak: #b93c0b;
+  --gefahr: #c62828;
+  --gefahr-text: #ffffff;
+  --erfolg: #166534;
+  --fokus: #1d4ed8;
+  --schalter-an: #1d4ed8;
+  --schalter-knopf-an: #ffffff;
+  --schalter-aus: #ebebeb;
+  --schalter-knopf-aus: #767676;
   --diagramm-vorbild: #707070;
   --prio-1: #d1453b;
   --prio-2: #eb8909;
@@ -41,7 +50,16 @@
     --akzent: #f2f2f2;
     --akzent-text: #141414;
     --xp: #8a8a8a;
-    --gefahr: #f2555a;
+    --fortschritt: #60a5fa;
+    --streak: #fb923c;
+    --gefahr: #f87171;
+    --gefahr-text: #141414;
+    --erfolg: #4ade80;
+    --fokus: #60a5fa;
+    --schalter-an: #60a5fa;
+    --schalter-knopf-an: #141414;
+    --schalter-aus: #262626;
+    --schalter-knopf-aus: #949494;
     --diagramm-vorbild: #8a8a8a;
     --prio-1: #ff6b63;
     --prio-2: #ff9a14;
@@ -67,7 +85,12 @@
   --color-akzent: var(--akzent);
   --color-akzent-text: var(--akzent-text);
   --color-xp: var(--xp);
+  --color-fortschritt: var(--fortschritt);
+  --color-streak: var(--streak);
   --color-gefahr: var(--gefahr);
+  --color-gefahr-text: var(--gefahr-text);
+  --color-erfolg: var(--erfolg);
+  --color-fokus: var(--fokus);
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -171,7 +194,7 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--akzent);
+  outline: 2px solid var(--fokus);
   outline-offset: 2px;
 }
 
@@ -296,11 +319,6 @@ html[data-eingabe='zeiger'] :focus {
 :root:is([data-glimmen='aus'], [data-stil='standard']) .knopf-rund {
   --tw-shadow: 0 0 #0000;
   --tw-shadow-colored: 0 0 #0000;
-}
-
-/* Schein nur als runder Hauch an der Spitze. Kein box-shadow: der wäre eckig. */
-:is([data-glimmen='aus'], [data-stil='standard']) .levelring-spitze-schein {
-  display: none;
 }
 
 .aufgaben-kreis,

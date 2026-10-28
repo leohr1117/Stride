@@ -1,5 +1,9 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Levelring, Streak und Schalter behalten ihre Farbe. Eine Palette ändert sie nicht.', 'The level ring, streak, and switches keep their color. A palette does not change them.'],
+  ['Fortschritt und Schalter sind blau, der Streak ist orange.', 'Progress and switches are blue, the streak is orange.'],
+  ['Der Ring am Profilbild hebt sich vom Bild ab.', 'The ring around the profile picture stands out from the picture.'],
+  ['Die Farbpunkte vor den Namen von Visionen sitzen bündig.', 'The color dots before vision names sit flush.'],
   ['Die Ansicht Standard hat eine eigene Form. Minimal behält die runde Form.', 'The Standard look has its own shape. Minimal keeps the round shape.'],
   ['Hell und Dunkel folgen der Logo-Palette. Gespeichertes Schlicht wird beim Öffnen zu Standard.', 'Light and Dark follow the logo palette. A saved Plain look becomes Standard when opened.'],
   ['Die Einführung legt auf Wunsch ein erstes Ziel an.', 'Onboarding can create a first goal.'],

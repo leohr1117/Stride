@@ -35,8 +35,21 @@ export function Chip({
 
 export function SchalterBahn({ an }: { an: boolean }) {
   return (
-    <span aria-hidden="true" className={`schalter-bahn relative h-6 w-11 shrink-0 rounded-full transition ${an ? 'bg-akzent' : 'bg-flaeche-2'}`}>
-      <span className={`schalter-knopf absolute top-0.5 size-5 rounded-full bg-white shadow transition-all ${an ? 'left-5.5' : 'left-0.5'}`} />
+    <span
+      aria-hidden="true"
+      className="schalter-bahn relative h-6 w-11 shrink-0 rounded-full border-2 transition-colors"
+      style={{
+        backgroundColor: an ? 'var(--schalter-an)' : 'var(--schalter-aus)',
+        borderColor: an ? 'var(--schalter-an)' : 'var(--feldrand)',
+      }}
+    >
+      <span
+        className="schalter-knopf absolute top-0 size-5 rounded-full transition-all"
+        style={{
+          backgroundColor: an ? 'var(--schalter-knopf-an)' : 'var(--schalter-knopf-aus)',
+          left: an ? 'calc(100% - 1.25rem)' : '0px',
+        }}
+      />
     </span>
   );
 }

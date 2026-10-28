@@ -255,7 +255,7 @@ function ErfolgKarte({ kategorie }: { kategorie: ErfolgKategorie }) {
         </span>
       </div>
       <div className="mt-2">
-        <Fortschrittsbalken anteil={naechste ? kategorie.wert / naechste.schwelle : 1} farbe="var(--xp)" hoehe="h-1.5" />
+        <Fortschrittsbalken anteil={naechste ? kategorie.wert / naechste.schwelle : 1} farbe="var(--fortschritt)" hoehe="h-1.5" />
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {kategorie.stufen.map((stufe) => (

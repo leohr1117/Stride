@@ -17,6 +17,24 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.26.0',
+    seiten: 'Übersicht, Ziele',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Levelring, Streak und Schalter behalten ihre Farbe. Eine Palette ändert sie nicht.',
+          'Fortschritt und Schalter sind blau, der Streak ist orange.',
+          'Der Ring am Profilbild hebt sich vom Bild ab.',
+        ],
+      },
+      {
+        titel: 'Behoben',
+        punkte: ['Die Farbpunkte vor den Namen von Visionen sitzen bündig.'],
+      },
+    ],
+  },
+  {
     version: '3.25.0',
     seiten: 'Darstellung',
     abschnitte: [
