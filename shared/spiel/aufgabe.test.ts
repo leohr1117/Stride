@@ -22,7 +22,7 @@ import {
   type AufgabeFelder,
   type HeuteSicht,
 } from './aufgabe.ts';
-import { ausTagesSchluessel, DATUM_HINWEIS, datumInZone, lokalesDatum, plusTage } from './datum.ts';
+import { ausTagesSchluessel, DATUM_HINWEIS, datumInZone, lokalesDatum, plusTage, uhrInZone } from './datum.ts';
 
 const HEUTE = '2026-10-23';
 
@@ -63,6 +63,26 @@ describe('datumInZone', () => {
     const frueh = new Date('2026-10-24T02:30:00.000Z');
     expect(datumInZone(frueh, 'UTC')).toBe('2026-10-24');
     expect(datumInZone(frueh, 'America/Los_Angeles')).toBe('2026-10-23');
+  });
+});
+
+describe('uhrInZone', () => {
+  const sommer = new Date('2026-07-15T21:30:00.000Z');
+  const winter = new Date('2026-01-15T21:30:00.000Z');
+
+  it('fällt ohne Zone oder bei einer ungültigen Zone auf die Ortszeit zurück', () => {
+    const lokal = new Date(2026, 6, 15, 9, 5, 0);
+    expect(uhrInZone(lokal, null)).toEqual({ stunde: 9, minute: 5 });
+    expect(uhrInZone(lokal, '   ')).toEqual({ stunde: 9, minute: 5 });
+    expect(uhrInZone(lokal, 'Kein/Zone')).toEqual({ stunde: lokal.getHours(), minute: lokal.getMinutes() });
+  });
+
+  it('liest Stunde und Minute der Zone, auch über Mitternacht', () => {
+    expect(uhrInZone(new Date('2026-07-15T00:00:00.000Z'), 'UTC')).toEqual({ stunde: 0, minute: 0 });
+    expect(uhrInZone(new Date('2026-07-15T08:00:00.000Z'), 'UTC')).toEqual({ stunde: 8, minute: 0 });
+    expect(uhrInZone(sommer, 'Europe/Berlin')).toEqual({ stunde: 23, minute: 30 });
+    expect(uhrInZone(sommer, 'America/Los_Angeles')).toEqual({ stunde: 14, minute: 30 });
+    expect(uhrInZone(winter, 'Europe/Berlin')).toEqual({ stunde: 22, minute: 30 });
   });
 });
 

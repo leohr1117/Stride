@@ -61,3 +61,34 @@ export function datumInZone(zeitpunkt: Date, zone: string | null): string {
     return lokalesDatum(zeitpunkt);
   }
 }
+
+/** Stunde und Minute in der Zone. null oder eine ungültige Zone fällt auf die Ortszeit zurück. */
+export function uhrInZone(zeitpunkt: Date, zone: string | null): { stunde: number; minute: number } {
+  const lokal = { stunde: zeitpunkt.getHours(), minute: zeitpunkt.getMinutes() };
+  if (zone === null || zone.trim() === '') {
+    return lokal;
+  }
+  try {
+    const teile = new Intl.DateTimeFormat('en-US', {
+      timeZone: zone,
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    }).formatToParts(zeitpunkt);
+    const zahl = (art: Intl.DateTimeFormatPartTypes) => Number(teile.find((teil) => teil.type === art)?.value);
+    let stunde = zahl('hour');
+    const minute = zahl('minute');
+    if (!Number.isInteger(stunde) || !Number.isInteger(minute) || minute < 0 || minute > 59) {
+      return lokal;
+    }
+    if (stunde === 24) {
+      stunde = 0;
+    }
+    if (stunde < 0 || stunde > 23) {
+      return lokal;
+    }
+    return { stunde, minute };
+  } catch {
+    return lokal;
+  }
+}
