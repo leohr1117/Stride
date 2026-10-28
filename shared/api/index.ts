@@ -9,6 +9,7 @@ export * from './eintraege.ts';
 export * from './einstellungen.ts';
 export * from './erfolge.ts';
 export * from './faehigkeiten.ts';
+export * from './hinweise.ts';
 export * from './investitionen.ts';
 export * from './kalender.ts';
 export * from './kette.ts';

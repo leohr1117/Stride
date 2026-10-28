@@ -391,6 +391,7 @@ export const TEXTE: Record<string, string> = {
   "Die Erkenntnis": "La conclusión",
   "Die Notiz": "La nota",
   "Die Adresse": "La dirección",
+  "Der Schlüssel": "La clave",
   "Der Filter": "El filtro",
   "Der Profilname": "El nombre del perfil",
   "Der Titel des Vorhabens": "El título de la tarea",
@@ -1691,4 +1692,6 @@ export const TEXTE: Record<string, string> = {
   "{laenge} Tage sind angeschlagen. Ein Eintrag heute hält sie.": "{laenge} días están tocados. Una entrada hoy los mantiene.",
   "Die Rückkehr ist offen bis {datum}.": "El regreso está abierto hasta el {datum}.",
   "Morgen ist das Datum: {name}.": "Mañana es la fecha: {name}.",
+  "Zuerst einschalten.": "Primero actívalas.",
+  "Die Adresse muss mit https:// beginnen.": "La dirección debe empezar por https://.",
 };

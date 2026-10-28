@@ -1,8 +1,9 @@
 import { ABGLEICH_MINUTEN, type AbgleichErgebnis } from '../../../shared/api/index.ts';
 import { aktiverPfad, mitWeltAsync } from '../../db.ts';
+import { pruefeHinweise } from '../../integrationen/webPush.ts';
 import { istTodoistFaellig, stundeInZone } from '../../services/todoistRegeln.ts';
 import { gleicheKalenderAb } from './kalender.ts';
-import { leseWert } from './gemeinsam.ts';
+import { leseWert, setzeWert } from './gemeinsam.ts';
 import { gleicheTodoistAb } from './todoistAbgleich.ts';
 import { SCHLUESSEL } from './todoist.ts';
 
@@ -22,7 +23,11 @@ function nutzerZone(): string {
   if (gespeichert && stundeInZone(new Date(), gespeichert) !== null) {
     return gespeichert;
   }
-  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  if (!gespeichert) {
+    setzeWert('zeitzone', zone);
+  }
+  return zone;
 }
 
 function starteAbgleich(voll: boolean, jetzt = new Date()): Promise<AbgleichErgebnis> {
@@ -62,7 +67,10 @@ export function starteRegelmaessigenAbgleich(welten: () => string[], beiFehler: 
   const abgleichen = () => {
     void (async () => {
       for (const pfad of welten()) {
-        await mitWeltAsync(pfad, () => gleicheGeplantAb());
+        await mitWeltAsync(pfad, async () => {
+          await gleicheGeplantAb();
+          await pruefeHinweise();
+        });
       }
     })().catch(beiFehler);
   };

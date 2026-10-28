@@ -193,4 +193,6 @@ export const PAARE = [
   ['Der Schutz kann heute nicht eingesetzt werden.', 'Protection cannot be used today.'],
   ['Das Vorbild ist unbekannt.', 'That role model is unknown.'],
   ['Die Bewertung ist schon gespeichert.', 'The rating is already saved.'],
+  ['Zuerst einschalten.', 'Turn them on first.'],
+  ['Die Adresse muss mit https:// beginnen.', 'The address must start with https://.'],
 ] as const;

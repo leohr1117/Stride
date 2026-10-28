@@ -243,6 +243,7 @@ export const PAARE = [
   ['Die Erkenntnis', 'The insight'],
   ['Die Notiz', 'The note'],
   ['Die Adresse', 'The address'],
+  ['Der Schlüssel', 'The key'],
   ['Der Filter', 'The filter'],
   ['Der Profilname', 'The profile name'],
   ['Der Titel des Vorhabens', 'The task title'],

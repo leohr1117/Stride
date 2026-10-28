@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { AKTIVIERUNGS_MODI, INVESTITIONS_ARTEN, SICHERUNG_APP, ZEITRAEUME } from '../shared/api/index.ts';
 import { ABSCHLUESSE, ATTRIBUT_KENNUNGEN, FARBE, GRENZEN, ICONS } from '../shared/spiel/begriffe.ts';
 import { VERFALL_STUFEN } from '../shared/spiel/belastung.ts';
-import { PRIORITAET_FORMAT, WIEDERHOLUNGEN, WOCHENTAG_FORMAT } from '../shared/spiel/aufgabe.ts';
+import { PRIORITAET_FORMAT, UHRZEIT_FORMAT, UHRZEIT_MUSTER, WIEDERHOLUNGEN, WOCHENTAG_FORMAT } from '../shared/spiel/aufgabe.ts';
 import { DATUM_HINWEIS } from '../shared/spiel/datum.ts';
 import { EBENEN } from '../shared/spiel/ebenen.ts';
 import { FUNKTIONEN } from '../shared/spiel/funktionen.ts';
@@ -507,6 +507,51 @@ export const kalenderSchema = z.object({
 });
 
 export const kalenderAenderungSchema = kalenderSchema.omit({ adresse: true }).partial();
+
+const HINWEIS_SCHLUESSEL_MAX = 200;
+const HTTPS_ADRESSE = 'Die Adresse muss mit https:// beginnen.';
+
+function istHttpsAdresse(wert: string): boolean {
+  try {
+    return new URL(wert).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function httpsAdresse() {
+  return pflichtText('Die Adresse', ADRESSE_MAX).refine(istHttpsAdresse, HTTPS_ADRESSE);
+}
+
+function hinweisSchluessel() {
+  return pflichtText('Der Schlüssel', HINWEIS_SCHLUESSEL_MAX);
+}
+
+export const hinweisAboSchema = z
+  .object({
+    endpoint: httpsAdresse(),
+    p256dh: hinweisSchluessel(),
+    auth: hinweisSchluessel(),
+  })
+  .strict();
+
+export const hinweisAboEndeSchema = z
+  .object({
+    endpoint: httpsAdresse(),
+  })
+  .strict();
+
+export const hinweisAenderungSchema = z
+  .object({
+    ruheVon: z.string().regex(UHRZEIT_MUSTER, UHRZEIT_FORMAT).optional(),
+    ruheBis: z.string().regex(UHRZEIT_MUSTER, UHRZEIT_FORMAT).optional(),
+    streak: z.boolean().optional(),
+    rueckkehr: z.boolean().optional(),
+    boss: z.boolean().optional(),
+  })
+  .strict();
+
+export const hinweisAngebotSchema = z.object({ nie: z.literal(true) }).strict();
 
 export const PASSWORT_MIN = 10;
 export const PASSWORT_MAX = 200;

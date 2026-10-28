@@ -391,6 +391,7 @@ export const TEXTE: Record<string, string> = {
   "Die Erkenntnis": "気づき",
   "Die Notiz": "メモ",
   "Die Adresse": "住所",
+  "Der Schlüssel": "鍵",
   "Der Filter": "絞り込み",
   "Der Profilname": "プロフィール名",
   "Der Titel des Vorhabens": "タスクの題名",
@@ -1691,4 +1692,6 @@ export const TEXTE: Record<string, string> = {
   "{laenge} Tage sind angeschlagen. Ein Eintrag heute hält sie.": "{laenge}日が傷ついています。今日の記録で保てます。",
   "Die Rückkehr ist offen bis {datum}.": "復帰は{datum}まで開いています。",
   "Morgen ist das Datum: {name}.": "明日が期日です：{name}。",
+  "Zuerst einschalten.": "先にオンにしてください。",
+  "Die Adresse muss mit https:// beginnen.": "アドレスは https:// で始めてください。",
 };

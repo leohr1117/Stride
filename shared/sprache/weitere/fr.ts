@@ -391,6 +391,7 @@ export const TEXTE: Record<string, string> = {
   "Die Erkenntnis": "La conclusion",
   "Die Notiz": "La note",
   "Die Adresse": "L'adresse",
+  "Der Schlüssel": "La clé",
   "Der Filter": "Le filtre",
   "Der Profilname": "Le nom du profil",
   "Der Titel des Vorhabens": "Le titre de la tâche",
@@ -1691,4 +1692,6 @@ export const TEXTE: Record<string, string> = {
   "{laenge} Tage sind angeschlagen. Ein Eintrag heute hält sie.": "{laenge} jours sont fragilisés. Une entrée aujourd'hui les garde.",
   "Die Rückkehr ist offen bis {datum}.": "Le retour est ouvert jusqu'au {datum}.",
   "Morgen ist das Datum: {name}.": "Demain est la date : {name}.",
+  "Zuerst einschalten.": "Active-les d'abord.",
+  "Die Adresse muss mit https:// beginnen.": "L'adresse doit commencer par https://.",
 };

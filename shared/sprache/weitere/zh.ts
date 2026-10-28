@@ -391,6 +391,7 @@ export const TEXTE: Record<string, string> = {
   "Die Erkenntnis": "领悟",
   "Die Notiz": "笔记",
   "Die Adresse": "地址",
+  "Der Schlüssel": "密钥",
   "Der Filter": "筛选",
   "Der Profilname": "资料名",
   "Der Titel des Vorhabens": "事项标题",
@@ -1691,4 +1692,6 @@ export const TEXTE: Record<string, string> = {
   "{laenge} Tage sind angeschlagen. Ein Eintrag heute hält sie.": "{laenge} 天已受损。今天记一笔就能保住。",
   "Die Rückkehr ist offen bis {datum}.": "回归开放至 {datum}。",
   "Morgen ist das Datum: {name}.": "明天是日期：{name}。",
+  "Zuerst einschalten.": "请先开启。",
+  "Die Adresse muss mit https:// beginnen.": "地址必须以 https:// 开头。",
 };
