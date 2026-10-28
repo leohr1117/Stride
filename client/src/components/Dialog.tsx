@@ -72,11 +72,13 @@ if (typeof window !== 'undefined') {
 function DialogSchicht({
   titel,
   info,
+  vorTitel,
   onSchliessen,
   children,
 }: {
   titel: string;
   info?: string;
+  vorTitel?: ReactNode;
   onSchliessen: () => void;
   children: ReactNode;
 }) {
@@ -119,7 +121,19 @@ function DialogSchicht({
           }`}
         >
           <header className="flex shrink-0 items-center justify-between gap-3 px-5 pt-5 pb-3">
-            {info ? (
+            {vorTitel ? (
+              <div className="flex min-w-0 items-center gap-2">
+                {vorTitel}
+                {info ? (
+                  <div className="flex min-w-0 items-center">
+                    <h2 className="min-w-0 text-lg font-semibold text-balance break-words">{titel}</h2>
+                    <InfoHinweis text={info} />
+                  </div>
+                ) : (
+                  <h2 className="min-w-0 text-lg font-semibold text-balance break-words">{titel}</h2>
+                )}
+              </div>
+            ) : info ? (
               <div className="flex min-w-0 items-center">
                 <h2 className="min-w-0 text-lg font-semibold text-balance break-words">{titel}</h2>
                 <InfoHinweis text={info} />
@@ -147,12 +161,14 @@ export function Dialog({
   offen,
   titel,
   info,
+  vorTitel,
   onSchliessen,
   children,
 }: {
   offen: boolean;
   titel: string;
   info?: string;
+  vorTitel?: ReactNode;
   onSchliessen: () => void;
   children: ReactNode;
 }) {
@@ -207,7 +223,7 @@ export function Dialog({
   return createPortal(
     <AnimatePresence>
       {offen && (
-        <DialogSchicht key="dialog" titel={titel} info={info} onSchliessen={onSchliessen}>
+        <DialogSchicht key="dialog" titel={titel} info={info} vorTitel={vorTitel} onSchliessen={onSchliessen}>
           {children}
         </DialogSchicht>
       )}

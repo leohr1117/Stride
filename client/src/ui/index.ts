@@ -5,6 +5,7 @@ export { Regler } from './Regler.tsx';
 export {
   AllgemeinerXpAbzug,
   AttributBezeichnung,
+  Farbpunkt,
   Fehlermeldung,
   Fortschrittsbalken,
   Karte,

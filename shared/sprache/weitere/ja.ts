@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Visionen und Organisationen zeigen einen Farbpunkt vor dem Namen. Die Linie links und der Balken oben entfallen.": "ビジョンと組織の名前の前に色の点があります。左の線と上の帯はなくなりました。",
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "戻るは一番上のダイアログを閉じます。その下のページはそのままです。",
   "Zurück zu {ziel}": "{ziel}に戻る",
   "Profil, Level {level}": "プロフィール、レベル {level}",

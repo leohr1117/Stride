@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Visionen und Organisationen zeigen einen Farbpunkt vor dem Namen. Die Linie links und der Balken oben entfallen.', 'Visions and organizations show a color dot before the name. The line on the left and the bar on top are gone.'],
   ['Zurück schließt den obersten Dialog. Die Seite darunter bleibt.', 'Back closes the top dialog. The page underneath stays.'],
   ['Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.', 'The header shows the page title. On subpages the back arrow sits on the left.'],
   ['Das Profilbild mit Levelring liegt rechts im Kopf. Die Knöpfe Profil und Mehr dort entfallen.', 'The profile picture with the level ring sits on the right. The Profile and More buttons there are gone.'],

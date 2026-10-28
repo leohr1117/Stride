@@ -13,7 +13,7 @@ import { KettenAnzeige } from '../../components/KettenAnzeige.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
-import { archivBeschriftung, Fehlermeldung, Karte, Knopf, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
+import { archivBeschriftung, Farbpunkt, Fehlermeldung, Karte, Knopf, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
 import { ZielDialog, type ZielBearbeitung } from './ZielDialoge.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { kurzesDatum, zahl } from '../../format.ts';
@@ -272,7 +272,6 @@ function VisionKarte({
   const hatKinder = direkte.length > 0 || gruppen.length > 0;
   return (
     <Karte className="overflow-hidden p-0">
-      <div className="h-1" style={{ backgroundColor: vision.farbe }} />
       <SchnellZeile
         ziel={{ art: 'vision', id: vision.id, name: vision.titel, archiviert: vision.archiviert, loeschbar: vision.loeschbar }}
       >
@@ -281,10 +280,15 @@ function VisionKarte({
             <button
               type="button"
               onClick={onOeffnen}
-              className={`flex min-w-0 flex-1 items-start gap-2 px-4 text-left ${hatKinder ? 'pt-3 pb-2' : 'py-4'}`}
+              className={`flex min-w-0 flex-1 items-center gap-2 px-4 text-left ${hatKinder ? 'pt-3 pb-2' : 'py-4'}`}
             >
-              <h2 className="min-w-0 flex-1 text-lg leading-snug font-semibold">{vision.titel}</h2>
-              <ChevronRight className="mt-1 size-4 shrink-0 text-leise" />
+              <h2 className="flex min-w-0 flex-1 items-start gap-2 text-lg leading-snug font-semibold">
+                <span className="mt-[7px] shrink-0">
+                  <Farbpunkt farbe={vision.farbe} />
+                </span>
+                <span className="min-w-0 break-words">{vision.titel}</span>
+              </h2>
+              <ChevronRight className="size-4 shrink-0 text-leise" />
             </button>
             {menue}
           </div>
@@ -293,18 +297,19 @@ function VisionKarte({
       {hatKinder && (
         <div className="space-y-3 px-4 pb-4">
           {direkte.length > 0 && (
-            <div data-ast="vision" className="border-s-2 ps-3" style={{ borderColor: vision.farbe }}>
+            <div data-ast="vision" className="ps-3">
               <ProjektListe projekte={direkte} />
             </div>
           )}
           {gruppen.map((gruppe) => (
             <div key={gruppe.organisation.id} data-ast="organisation" className="space-y-2">
               <h3 className="flex min-w-0 items-center gap-2 text-sm font-medium">
-                <Landmark className="size-4 shrink-0" style={{ color: gruppe.organisation.farbe }} />
+                <Farbpunkt farbe={gruppe.organisation.farbe} />
+                <Landmark className="size-4 shrink-0 text-leise" />
                 <span className="truncate">{gruppe.organisation.name}</span>
               </h3>
               {gruppe.projekte.length > 0 && (
-                <div className="border-s-2 ps-3" style={{ borderColor: gruppe.organisation.farbe }}>
+                <div className="ps-3">
                   <ProjektListe projekte={gruppe.projekte} />
                 </div>
               )}
@@ -337,9 +342,8 @@ function VisionDetail({
 }) {
   const abschluss = useVisionAbschluss(vision);
   return (
-    <Dialog offen titel={vision.titel} onSchliessen={onSchliessen}>
+    <Dialog offen titel={vision.titel} vorTitel={<Farbpunkt farbe={vision.farbe} />} onSchliessen={onSchliessen}>
       <div className="space-y-4">
-        <div className="h-1 w-16 rounded-full" style={{ backgroundColor: vision.farbe }} />
         {vision.beschreibung ? <p className="text-sm">{vision.beschreibung}</p> : null}
         {vision.woopPlan ? (
           <p className="text-sm leading-snug">
@@ -366,7 +370,8 @@ function VisionDetail({
           <div key={organisation.id} className="space-y-2 border-t border-rand pt-3">
             <div className="flex items-center justify-between gap-2">
               <span className="flex min-w-0 items-center gap-2 text-sm font-medium">
-                <Landmark className="size-4 shrink-0" style={{ color: organisation.farbe }} />
+                <Farbpunkt farbe={organisation.farbe} />
+                <Landmark className="size-4 shrink-0 text-leise" />
                 <span className="truncate">{organisation.name}</span>
               </span>
               <Knopf
@@ -487,7 +492,8 @@ function OrganisationBlock({
         {(menue) => (
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2">
-              <Landmark className="size-4 shrink-0" style={{ color: organisation.farbe }} />
+              <Farbpunkt farbe={organisation.farbe} />
+              <Landmark className="size-4 shrink-0 text-leise" />
               <span className="truncate font-medium">{organisation.name}</span>
               {organisation.archiviert && <span className="text-xs text-leise">{tx('archiviert')}</span>}
             </div>
@@ -504,7 +510,7 @@ function OrganisationBlock({
         )}
       </SchnellZeile>
       {projekte.length > 0 && (
-        <div className="border-s-2 ps-3" style={{ borderColor: organisation.farbe }}>
+        <div className="ps-3">
           <ProjektListe projekte={projekte} />
         </div>
       )}
@@ -652,8 +658,11 @@ function ArchivierteVision({ vision }: { vision: Vision }) {
       ziel={{ art: 'vision', id: vision.id, name: vision.titel, archiviert: true, loeschbar: vision.loeschbar }}
     >
       {(menue) => (
-        <div className="flex items-center justify-between py-1 pr-1 pl-4">
-          <span className="text-sm">{vision.titel}</span>
+        <div className="flex items-center justify-between gap-2 py-1 pr-1 pl-4">
+          <span className="flex min-w-0 items-center gap-2 text-sm">
+            <Farbpunkt farbe={vision.farbe} />
+            <span className="truncate">{vision.titel}</span>
+          </span>
           {menue}
         </div>
       )}

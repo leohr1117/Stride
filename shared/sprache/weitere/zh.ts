@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Visionen und Organisationen zeigen einen Farbpunkt vor dem Namen. Die Linie links und der Balken oben entfallen.": "愿景和组织的名称前有一个色点。左侧的线和顶部的条已去掉。",
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "返回会先关闭最上层的对话框。下面的页面保持不变。",
   "Zurück zu {ziel}": "返回{ziel}",
   "Profil, Level {level}": "资料，等级 {level}",

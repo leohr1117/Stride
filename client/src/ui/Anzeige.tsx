@@ -45,6 +45,13 @@ export function AttributBezeichnung({
   );
 }
 
+/** Farbe von Vision und Organisation: 10 px vor dem Namen, nicht als Linie oder Balken. */
+export function Farbpunkt({ farbe }: { farbe: string }) {
+  return (
+    <span data-farbpunkt="" aria-hidden className="inline-block size-[10px] shrink-0 rounded-full" style={{ backgroundColor: farbe }} />
+  );
+}
+
 export function archivBeschriftung(offen: boolean, anzahl?: number): string {
   if (offen) {
     return tx("Archiv ausblenden");

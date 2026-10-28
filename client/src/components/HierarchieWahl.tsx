@@ -2,7 +2,7 @@ import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { gewaehlterName, type WahlKnoten } from '../projektHierarchie.ts';
 import { Dialog } from './Dialog.tsx';
-import { EINGABE_STIL } from '../ui/index.ts';
+import { EINGABE_STIL, Farbpunkt } from '../ui/index.ts';
 
 export function HierarchieWahl({
   label,
@@ -65,9 +65,7 @@ function Ast({
   const punkt = knoten.ast === 'vision' || knoten.ast === 'organisation';
   const name = (
     <>
-      {punkt && knoten.farbe ? (
-        <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: knoten.farbe }} />
-      ) : null}
+      {punkt && knoten.farbe ? <Farbpunkt farbe={knoten.farbe} /> : null}
       <span className="min-w-0 flex-1 truncate">{knoten.name}</span>
     </>
   );
@@ -87,7 +85,7 @@ function Ast({
         <h3 className="flex min-h-8 items-center gap-2 px-2 pt-2 text-sm font-medium">{name}</h3>
       )}
       {knoten.kinder.length > 0 ? (
-        <div className="ms-3 border-s-2 ps-2" style={{ borderColor: knoten.farbe ?? 'var(--rand)' }}>
+        <div className="ms-3">
           {knoten.kinder.map((kind) => (
             <Ast key={kind.schluessel} knoten={kind} wert={wert} onWahl={onWahl} />
           ))}

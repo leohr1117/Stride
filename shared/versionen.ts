@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.22.0',
+    seiten: 'Ziele',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Visionen und Organisationen zeigen einen Farbpunkt vor dem Namen. Die Linie links und der Balken oben entfallen.'],
+      },
+    ],
+  },
+  {
     version: '3.21.0',
     seiten: 'Übersicht, Ziele, Mehr',
     abschnitte: [

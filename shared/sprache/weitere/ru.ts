@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Visionen und Organisationen zeigen einen Farbpunkt vor dem Namen. Die Linie links und der Balken oben entfallen.": "У видений и организаций перед названием стоит цветная точка. Линия слева и полоса сверху убраны.",
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "Назад закрывает верхний диалог. Страница под ним остаётся.",
   "Zurück zu {ziel}": "Назад к {ziel}",
   "Profil, Level {level}": "Профиль, уровень {level}",

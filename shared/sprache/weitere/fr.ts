@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Visionen und Organisationen zeigen einen Farbpunkt vor dem Namen. Die Linie links und der Balken oben entfallen.": "Les visions et les organisations affichent un point de couleur devant le nom. La ligne à gauche et la barre en haut disparaissent.",
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "Retour ferme le dialogue du dessus. La page en dessous reste.",
   "Zurück zu {ziel}": "Retour à {ziel}",
   "Profil, Level {level}": "Profil, niveau {level}",
