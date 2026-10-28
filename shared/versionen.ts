@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.27.0',
+    seiten: 'Darstellung',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: ['Eigene Farben bleiben lesbar. Text, Streak, Ring und Schalter halten den Kontrast.'],
+      },
+    ],
+  },
+  {
     version: '3.26.0',
     seiten: 'Übersicht, Ziele',
     abschnitte: [

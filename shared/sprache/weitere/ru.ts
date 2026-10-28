@@ -87,6 +87,7 @@ export const TEXTE: Record<string, string> = {
   "Schlicht": "Простая",
   "Die Ansicht Standard hat eine eigene Form. Minimal behält die runde Form.": "Вид «Стандарт» имеет собственную форму. Minimal сохраняет скруглённую форму.",
   "Hell und Dunkel folgen der Logo-Palette. Gespeichertes Schlicht wird beim Öffnen zu Standard.": "«Светлая» и «Тёмная» следуют палитре логотипа. Сохранённый вид «Простая» при открытии становится «Стандарт».",
+  "Eigene Farben bleiben lesbar. Text, Streak, Ring und Schalter halten den Kontrast.": "Свои цвета остаются читаемыми. Текст, серия, кольцо и переключатели сохраняют контраст.",
   "Levelring, Streak und Schalter behalten ihre Farbe. Eine Palette ändert sie nicht.": "Кольцо уровня, серия и переключатели сохраняют свой цвет. Палитра их не меняет.",
   "Fortschritt und Schalter sind blau, der Streak ist orange.": "Прогресс и переключатели синие, серия оранжевая.",
   "Der Ring am Profilbild hebt sich vom Bild ab.": "Кольцо у фото профиля отличается от самого изображения.",

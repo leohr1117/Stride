@@ -87,6 +87,7 @@ export const TEXTE: Record<string, string> = {
   "Schlicht": "Sobrio",
   "Die Ansicht Standard hat eine eigene Form. Minimal behält die runde Form.": "La apariencia Estándar tiene su propia forma. Minimal conserva la forma redonda.",
   "Hell und Dunkel folgen der Logo-Palette. Gespeichertes Schlicht wird beim Öffnen zu Standard.": "Claro y Oscuro siguen la paleta del logotipo. Una apariencia Sobrio guardada pasa a Estándar al abrirla.",
+  "Eigene Farben bleiben lesbar. Text, Streak, Ring und Schalter halten den Kontrast.": "Los colores propios siguen siendo legibles. El texto, la racha, el anillo y los interruptores mantienen el contraste.",
   "Levelring, Streak und Schalter behalten ihre Farbe. Eine Palette ändert sie nicht.": "El anillo de nivel, la racha y los interruptores conservan su color. Una paleta no los cambia.",
   "Fortschritt und Schalter sind blau, der Streak ist orange.": "El progreso y los interruptores son azules, la racha es naranja.",
   "Der Ring am Profilbild hebt sich vom Bild ab.": "El anillo de la foto de perfil se distingue de la imagen.",

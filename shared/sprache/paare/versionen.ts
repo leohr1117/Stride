@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Eigene Farben bleiben lesbar. Text, Streak, Ring und Schalter halten den Kontrast.', 'Custom colors stay readable. Text, streak, ring, and switches keep their contrast.'],
   ['Levelring, Streak und Schalter behalten ihre Farbe. Eine Palette ändert sie nicht.', 'The level ring, streak, and switches keep their color. A palette does not change them.'],
   ['Fortschritt und Schalter sind blau, der Streak ist orange.', 'Progress and switches are blue, the streak is orange.'],
   ['Der Ring am Profilbild hebt sich vom Bild ab.', 'The ring around the profile picture stands out from the picture.'],

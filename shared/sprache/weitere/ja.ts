@@ -87,6 +87,7 @@ export const TEXTE: Record<string, string> = {
   "Schlicht": "簡素",
   "Die Ansicht Standard hat eine eigene Form. Minimal behält die runde Form.": "表示「標準」は独自の形を持ちます。Minimal は丸い形のままです。",
   "Hell und Dunkel folgen der Logo-Palette. Gespeichertes Schlicht wird beim Öffnen zu Standard.": "ライトとダークはロゴの配色に従います。保存された「簡素」は開くと「標準」になります。",
+  "Eigene Farben bleiben lesbar. Text, Streak, Ring und Schalter halten den Kontrast.": "自分の色は読みやすさを保ちます。テキスト、連続記録、リング、スイッチはコントラストを保ちます。",
   "Levelring, Streak und Schalter behalten ihre Farbe. Eine Palette ändert sie nicht.": "レベルリング、連続記録、スイッチは色を保ちます。パレットでは変わりません。",
   "Fortschritt und Schalter sind blau, der Streak ist orange.": "進捗とスイッチは青、連続記録はオレンジです。",
   "Der Ring am Profilbild hebt sich vom Bild ab.": "プロフィール画像のリングは画像と区別できます。",

@@ -87,6 +87,7 @@ export const TEXTE: Record<string, string> = {
   "Schlicht": "简约",
   "Die Ansicht Standard hat eine eigene Form. Minimal behält die runde Form.": "“标准”外观有自己的形状。Minimal 保留圆角形状。",
   "Hell und Dunkel folgen der Logo-Palette. Gespeichertes Schlicht wird beim Öffnen zu Standard.": "浅色和深色采用标志配色。已保存的“简约”在打开时变为“标准”。",
+  "Eigene Farben bleiben lesbar. Text, Streak, Ring und Schalter halten den Kontrast.": "自定义颜色保持可读。文本、连续记录、圆环和开关保持对比度。",
   "Levelring, Streak und Schalter behalten ihre Farbe. Eine Palette ändert sie nicht.": "等级环、连续记录和开关保持各自的颜色。调色板不会改变它们。",
   "Fortschritt und Schalter sind blau, der Streak ist orange.": "进度和开关为蓝色，连续记录为橙色。",
   "Der Ring am Profilbild hebt sich vom Bild ab.": "头像上的环与头像本身区分开来。",

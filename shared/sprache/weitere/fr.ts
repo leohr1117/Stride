@@ -87,6 +87,7 @@ export const TEXTE: Record<string, string> = {
   "Schlicht": "Sobre",
   "Die Ansicht Standard hat eine eigene Form. Minimal behält die runde Form.": "L’apparence Standard a sa propre forme. Minimal garde la forme arrondie.",
   "Hell und Dunkel folgen der Logo-Palette. Gespeichertes Schlicht wird beim Öffnen zu Standard.": "Clair et Sombre suivent la palette du logo. Une apparence Sobre enregistrée devient Standard à l’ouverture.",
+  "Eigene Farben bleiben lesbar. Text, Streak, Ring und Schalter halten den Kontrast.": "Les couleurs personnelles restent lisibles. Le texte, la série, l’anneau et les interrupteurs gardent le contraste.",
   "Levelring, Streak und Schalter behalten ihre Farbe. Eine Palette ändert sie nicht.": "L’anneau de niveau, la série et les interrupteurs gardent leur couleur. Une palette ne les change pas.",
   "Fortschritt und Schalter sind blau, der Streak ist orange.": "La progression et les interrupteurs sont bleus, la série est orange.",
   "Der Ring am Profilbild hebt sich vom Bild ab.": "L’anneau autour de la photo de profil se distingue de l’image.",
