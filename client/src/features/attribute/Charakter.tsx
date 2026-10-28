@@ -61,7 +61,7 @@ export function CharakterSeite() {
       <Karte className="flex items-center gap-5">
         <LevelRing level={charakter.level.level} anteil={charakter.level.fortschritt} groesse={104} />
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-2xl font-bold tracking-tight">{charakter.name}</h1>
+          <p className="truncate text-2xl font-bold tracking-tight">{charakter.name}</p>
           <Identitaet klasse={charakter.klasse} titel={charakter.titel} />
           <p className="zahl text-sm text-leise break-words">
             {tx('{xp} XP · noch {rest} bis Level {level}', {

@@ -14,6 +14,7 @@ import { FaehigkeitFormular } from '../../components/FaehigkeitFormular.tsx';
 import { SchnellNebenaktion, SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { SkillBaum, skillSchein } from './SkillBaum.tsx';
+import { useKopf } from '../../components/Kopf.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import {
   EINGABE_STIL,
@@ -44,6 +45,7 @@ export function FaehigkeitSeite() {
   const [knotenBearbeitung, setKnotenBearbeitung] = useState<KnotenBearbeitung>(null);
   const [ausgewaehlt, setAusgewaehlt] = useState<number | null>(null);
   const eintragOeffnen = useEintragOeffnen();
+  useKopf(faehigkeit ? { titel: faehigkeit.name, roh: true } : null);
 
   if (!Number.isInteger(faehigkeitId)) {
     return <Fehlermeldung fehler={new Error(tx("Ungültige Adresse."))} />;
@@ -82,7 +84,7 @@ export function FaehigkeitSeite() {
               {(menue) => (
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <h1 className="truncate text-2xl font-bold tracking-tight">{faehigkeit.name}</h1>
+                    <span className="block truncate text-2xl font-bold tracking-tight">{faehigkeit.name}</span>
                     <p className="zahl text-sm text-leise break-words">
                       {tx('Level {level} · {anzahl} Einträge', {
                         level: faehigkeit.level.level,

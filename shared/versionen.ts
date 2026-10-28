@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.20.0',
+    seiten: 'Übersicht, Ziele, Mehr',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.',
+          'Das Profilbild mit Levelring liegt rechts im Kopf. Die Knöpfe Profil und Mehr dort entfallen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.19.1',
     seiten: 'Tätigkeiten',
     abschnitte: [

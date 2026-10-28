@@ -169,9 +169,16 @@ html:is(:lang(fr), :lang(ru))[data-stil='antik'] :is(h1, h2, .dialog-fenster h2)
   box-shadow: inset 2px 0 0 var(--akzent);
 }
 
-:root[data-stil='antik'] :is(.mobilkopf, .mobilleiste) {
+:root[data-stil='antik'] .mobilleiste {
   border-color: color-mix(in srgb, var(--akzent) 14%, transparent);
   background-color: color-mix(in srgb, var(--grund) 94%, transparent);
+}
+
+@media (max-width: 767px) {
+  :root[data-stil='antik'] .mobilkopf {
+    border-color: color-mix(in srgb, var(--akzent) 14%, transparent);
+    background-color: color-mix(in srgb, var(--grund) 94%, transparent);
+  }
 }
 
 :root[data-stil='antik'] .chip {

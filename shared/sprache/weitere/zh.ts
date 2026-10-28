@@ -1,5 +1,9 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück zu {ziel}": "返回{ziel}",
+  "Profil, Level {level}": "资料，等级 {level}",
+  "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "页眉显示页面标题。子页面的返回箭头在左侧。",
+  "Das Profilbild mit Levelring liegt rechts im Kopf. Die Knöpfe Profil und Mehr dort entfallen.": "页眉右侧是带等级环的头像。那里的“资料”和“更多”按钮已去掉。",
   "Zum Start": "开始之前",
   "Zwei Angebote. Beides kannst du auslassen.": "两个提议。都可以跳过。",
   "Ein Angebot. Du kannst es auslassen.": "一个提议。可以跳过。",

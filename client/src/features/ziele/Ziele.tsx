@@ -57,10 +57,7 @@ export function ZieleSeite() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight break-words md:text-3xl">{tx("Ziele")}</h1>
-        </div>
+      <header className="flex flex-wrap items-end justify-end gap-4">
         <div className="flex flex-wrap gap-2">
           {ebenen.organisationen && (
             <Knopf onClick={() => setBearbeitung({ art: 'organisation', organisation: null })}>

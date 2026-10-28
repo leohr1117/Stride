@@ -48,8 +48,7 @@ export function BasisSeite() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{tx("Basis")}</h1>
+      <header className="flex flex-wrap items-end justify-end gap-4">
         <Knopf variante="primaer" onClick={() => setBearbeitung({ aufgabe: null })}>
           <Plus className="size-4" />
           {tx("Aufgabe")}

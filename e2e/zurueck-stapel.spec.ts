@@ -36,7 +36,7 @@ test('Vorbilder ohne Leistenplatz führt nach Mehr, mit Leistenplatz hat keinen 
   } else {
     await expect(page.locator('a[data-zurueck]')).toHaveCount(1);
     await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr');
-    await expect(page.locator('a[data-zurueck]')).toHaveText('Mehr');
+    await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Mehr');
     await bild('vorbilder');
     await page.locator('a[data-zurueck]').click();
     await expect(page).toHaveURL(/\/mehr$/);
@@ -153,7 +153,7 @@ test('Tätigkeiten ist am PC ein Leistenplatz und führt sonst nach Mehr', async
   } else {
     await expect(page.locator('a[data-zurueck]')).toHaveCount(1);
     await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr');
-    await expect(page.locator('a[data-zurueck]')).toHaveText('Mehr');
+    await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Mehr');
     await expect(page.locator('nav.mobilleiste a[href="/mehr"]')).toHaveAttribute('aria-current', 'page');
   }
   await page.screenshot({ path: `tmp-bau/u1b/${testInfo.project.name}-taetigkeiten.png`, fullPage: true });
@@ -179,7 +179,7 @@ test('Direktaufruf eines Projekts führt nach Ziele', async ({ page }) => {
   await page.goto('/projekte/5');
   await expect(page.locator('a[data-zurueck]')).toHaveCount(1);
   await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/ziele');
-  await expect(page.locator('a[data-zurueck]')).toHaveText('Ziele');
+  await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Ziele');
   await page.locator('a[data-zurueck]').click();
   await expect(page).toHaveURL(/\/ziele$/);
   await ohneSeitlichenUeberlauf(page);

@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronRight, Plus, Settings } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { createContext, lazy, Suspense, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
-import { Link, Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
+import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useEbenen, useFunktionen } from '../funktionen.ts';
 import { LEISTE_STANDARD, leistenMitte, sichtbareLeiste } from '../../../shared/spiel/leiste.ts';
@@ -12,17 +12,16 @@ import { useStilAbgleich } from '../features/darstellung/stil.ts';
 import type { EintragVorgabe } from '../features/eintraege/EintragDialog.tsx';
 
 const EintragDialog = lazy(() => import('../features/eintraege/EintragDialog.tsx').then((modul) => ({ default: modul.EintragDialog })));
+import { Kopf, KopfRahmen } from './Kopf.tsx';
 import { KlassenBild } from './KlassenBild.tsx';
 import { einfuehrungZurueck, profilFragenOffen } from '../../../shared/spiel/profil.ts';
-import { klickeHauptseite, useAktiverPlatz, useVerlauf, useZurueck } from '../herkunft.tsx';
+import { klickeHauptseite, useAktiverPlatz, useVerlauf } from '../herkunft.tsx';
 import { setzeNavLage } from '../herkunftLauf.ts';
 import { leseSitzung, merkeSitzung, vergiss } from '../speicher.ts';
 import { Einfuehrung, SprachStart } from './Einfuehrung.tsx';
 import { ProfilErstellung } from './ProfilErstellung.tsx';
 import { klassenText, tx } from '../text.ts';
 import { Fehlermeldung, Fortschrittsbalken, Ladeanzeige } from '../ui/index.ts';
-import { ZurueckZumMehr } from './ZurueckZumMehr.tsx';
-
 const EintragOeffnenKontext = createContext<((vorgabe?: EintragVorgabe) => void) | null>(null);
 
 export function useEintragOeffnen(): (vorgabe?: EintragVorgabe) => void {
@@ -209,28 +208,31 @@ function AppGeruest() {
   }
 
   return (
-      <div className="min-h-dvh md:flex">
-        <AbgleichBeimOeffnen />
-        <Seitenleiste />
+      <KopfRahmen>
+        <div className="min-h-dvh md:flex">
+          <AbgleichBeimOeffnen />
+          <Seitenleiste />
 
-        <div className="min-w-0 flex-1">
-          <MobilKopf />
-          <main className="mx-auto w-full max-w-4xl px-4 pt-4 pb-28 md:px-8 md:pt-10 md:pb-12">
-            <ZurueckLeiste />
-            <Suspense fallback={<Ladeanzeige />}>
-              <div key={pathname} className="seite-einblenden">
-                {pfadAktiv(pathname, { funktionen: daten.funktionen, ebenen: daten.ebenen }) ? (
-                  <Outlet />
-                ) : (
-                  <Navigate to="/" replace />
-                )}
+          <div className="min-w-0 flex-1">
+            <main className="mx-auto w-full max-w-4xl pb-28 md:pb-12">
+              <Kopf />
+              <div className="px-4 pt-4 md:px-8 md:pt-6">
+                <Suspense fallback={<Ladeanzeige />}>
+                  <div key={pathname} className="seite-einblenden">
+                    {pfadAktiv(pathname, { funktionen: daten.funktionen, ebenen: daten.ebenen }) ? (
+                      <Outlet />
+                    ) : (
+                      <Navigate to="/" replace />
+                    )}
+                  </div>
+                </Suspense>
               </div>
-            </Suspense>
-          </main>
-        </div>
+            </main>
+          </div>
 
-        <MobilNavigation />
-      </div>
+          <MobilNavigation />
+        </div>
+      </KopfRahmen>
   );
 }
 
@@ -330,75 +332,6 @@ function Seitenleiste() {
         )}
       </div>
     </aside>
-  );
-}
-
-function ZurueckLeiste() {
-  const ziel = useZurueck(null);
-  if (!ziel) {
-    return null;
-  }
-  return <ZurueckZumMehr pfad={ziel.pfad} label={ziel.label} />;
-}
-
-function MobilKopf() {
-  const charakter = useCharakterKurz();
-  const kopf = useRef<HTMLElement>(null);
-  const name = charakter?.name ?? '';
-  const mehrAktiv = useAktiverPlatz() === '/mehr';
-
-  useEffect(() => {
-    const knoten = kopf.current;
-    if (!knoten) {
-      return;
-    }
-    const setzen = () => {
-      const hoehe = getComputedStyle(knoten).display === 'none' ? 0 : knoten.getBoundingClientRect().height;
-      document.documentElement.style.setProperty('--mobilkopf-hoehe', `${hoehe}px`);
-    };
-    setzen();
-    const beobachter = new ResizeObserver(setzen);
-    beobachter.observe(knoten);
-    return () => {
-      beobachter.disconnect();
-      document.documentElement.style.removeProperty('--mobilkopf-hoehe');
-    };
-  }, []);
-
-  return (
-    <header
-      ref={kopf}
-      className="mobilkopf sticky top-0 z-30 flex items-center gap-2 border-b border-rand bg-grund/90 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 backdrop-blur md:hidden"
-    >
-      <NavLink
-        to="/charakter"
-        aria-label={
-          name
-            ? tx('{name}, Level {level}, Profil öffnen', { name, level: charakter?.level.level ?? '' })
-            : tx('Profil öffnen')
-        }
-        className="flex min-w-0 flex-1 items-center gap-2 rounded-full bg-flaeche py-1 pr-2.5 pl-1 active:scale-[0.99]"
-      >
-        <KlassenBild klasse={charakter?.klasse ?? 'Neuling'} groesse="size-8" />
-        <span className="min-w-0 flex-1 truncate font-semibold">{name}</span>
-        <ChevronRight className="size-4 shrink-0 text-leise" />
-      </NavLink>
-      <Link
-        to="/mehr"
-        data-platz="/mehr"
-        aria-current={mehrAktiv ? 'page' : undefined}
-        className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-semibold ${mehrAktiv ? 'bg-akzent text-akzent-text' : 'bg-flaeche text-haupt'}`}
-      >
-        <Settings className="size-3.5" />
-        {tx("Mehr")}
-      </Link>
-      {charakter && (
-        <div className="shrink-0">
-          <span className="zahl block whitespace-nowrap text-right text-xs text-leise">{tx('Level {level}', { level: charakter.level.level })}</span>
-          <Fortschrittsbalken anteil={charakter.level.fortschritt} hoehe="h-1" />
-        </div>
-      )}
-    </header>
   );
 }
 

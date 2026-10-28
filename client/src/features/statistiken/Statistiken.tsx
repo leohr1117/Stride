@@ -50,7 +50,6 @@ export function StatistikenSeite() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{tx("Statistiken")}</h1>
       <div className="max-w-sm">
         <Segmentauswahl<Zeitraum>
           optionen={(Object.keys(ZEITRAUM_LABEL) as Zeitraum[]).map((wert) => ({ wert, label: ZEITRAUM_LABEL[wert] }))}

@@ -120,6 +120,7 @@ test('Benachrichtigungen liegen zwischen App und Daten', async ({ page }, testIn
     await anmelden(page);
     await page.goto('/mehr');
     await expect(page.locator('main h1')).toHaveText('Mehr');
+    await expect(page.locator('main a[href="/mehr/funktionen"]')).toBeVisible();
     const ziele = await page.locator('main .grid > a').evaluateAll((knoten) =>
       knoten.map((knoten) => (knoten instanceof HTMLAnchorElement ? knoten.getAttribute('href') : null)),
     );
@@ -143,9 +144,12 @@ test('Benachrichtigungen liegen zwischen App und Daten', async ({ page }, testIn
       expect(kopf).not.toBeNull();
       expect(knopf).not.toBeNull();
       if (kopf && knopf) {
-        expect(knopf.y).toBeGreaterThanOrEqual(kopf.y + kopf.height - 1);
+        expect(knopf.y).toBeGreaterThanOrEqual(kopf.y - 1);
+        expect(knopf.y + knopf.height).toBeLessThanOrEqual(kopf.y + kopf.height + 1);
+        expect(knopf.height).toBeGreaterThanOrEqual(48);
+        expect(knopf.width).toBeGreaterThanOrEqual(48);
       }
-      await expect(page.locator('header.mobilkopf a[href="/mehr"]')).toHaveAttribute('aria-current', 'page');
+      await expect(page.locator('nav.mobilleiste a[href="/mehr"]')).toHaveAttribute('aria-current', 'page');
     } else {
       await expect(page.locator('aside.seitenleiste a[href="/mehr"]')).toHaveAttribute('aria-current', 'page');
     }
@@ -504,7 +508,7 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
     await expect(karte.getByRole('button', { name: 'Info', exact: true })).toHaveCount(0);
     await expect(karte.getByRole('link', { name: 'Ansehen', exact: true })).toBeVisible();
     await expect(karte.getByRole('button', { name: 'Nicht jetzt', exact: true })).toBeVisible();
-    const ident = page.locator('section').filter({ has: page.getByRole('heading', { level: 1, name: 'Start' }) }).first();
+    const ident = page.locator('section.karte').filter({ has: page.getByText('Start', { exact: true }) }).first();
     const oben = await ident.boundingBox();
     const kasten = await karte.boundingBox();
     expect(oben).not.toBeNull();

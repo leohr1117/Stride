@@ -116,17 +116,17 @@ test('Zurück folgt der Elternseite und ein Tab setzt den Verlauf zurück', asyn
 
   await page.getByRole('link', { name: /^Darstellung/ }).click();
   await expect(page).toHaveURL(/\/mehr\/darstellung$/);
-  await expect(page.locator('[data-zurueck]')).toHaveText('Mehr');
+  await expect(page.locator('[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Mehr');
   await page.goto('/mehr/darstellung/ansicht');
   await expect(page).toHaveURL(/\/mehr\/darstellung$/);
   await expect(page.getByRole('link', { name: 'Ansicht', exact: true })).toHaveCount(0);
-  await expect(page.locator('[data-zurueck]')).toHaveText('Mehr');
+  await expect(page.locator('[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Mehr');
 
   await page.goto('/mehr');
   await page.getByRole('link', { name: /^Darstellung/ }).click();
   await page.getByRole('link', { name: 'Leiste', exact: true }).click();
   await expect(page).toHaveURL(/\/mehr\/darstellung\/leiste$/);
-  await expect(page.locator('[data-zurueck]')).toHaveText('Darstellung');
+  await expect(page.locator('[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Darstellung');
 
   const frisch = await page.context().newPage();
   await frisch.goto('/');
@@ -150,7 +150,7 @@ test('Zurück folgt der Elternseite und ein Tab setzt den Verlauf zurück', asyn
   await page.getByRole('link', { name: 'Leiste', exact: true }).click();
   await page.locator('[data-zurueck]').click();
   await expect(page).toHaveURL(/\/mehr\/darstellung$/);
-  await expect(page.locator('[data-zurueck]')).toHaveText('Mehr');
+  await expect(page.locator('[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Mehr');
   await page.locator('[data-zurueck]').click();
   await expect(page).toHaveURL(/\/mehr$/);
   await expect(page.locator('[data-zurueck]')).toHaveCount(0);

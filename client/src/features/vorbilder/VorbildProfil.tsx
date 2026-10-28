@@ -16,6 +16,7 @@ import {
   type Vorbild,
 } from '../../../../shared/features/vorbilder/index.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
+import { useKopf } from '../../components/Kopf.tsx';
 import { KlassenBild } from '../../components/KlassenBild.tsx';
 import type { LebenswegPunkt } from '../../components/LebenswegDiagramm.tsx';
 import { LebenswegDiagramm, ProfilRadar } from '../../components/mitDiagramm.tsx';
@@ -107,6 +108,7 @@ export function VorbildProfilSeite() {
     () => eigenesProfil(attribute ?? [], { koennen: funktionen.koennen, status: funktionen.status }),
     [attribute, funktionen.koennen, funktionen.status],
   );
+  useKopf(vorbild ? { titel: tx(vorbild.name), roh: true } : null);
   if (!vorbild) {
     return <Fehlermeldung fehler={new Error(tx('Dieses Vorbild gibt es nicht.'))} />;
   }
@@ -141,9 +143,9 @@ export function VorbildProfilSeite() {
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div className="min-w-0 sm:flex-1">
             <div className="flex min-w-0 flex-wrap items-center">
-              <h1 className="profil-name min-w-0 max-w-full break-words text-[1.05rem] leading-tight font-bold sm:text-2xl">
+              <span className="profil-name min-w-0 max-w-full break-words text-[1.05rem] leading-tight font-bold sm:text-2xl">
                 {tx(vorbild.name)}
-              </h1>
+              </span>
               <WerteHinweis />
             </div>
             <p className="break-words text-sm text-leise">

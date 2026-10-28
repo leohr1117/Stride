@@ -48,7 +48,7 @@ test('Vorbilder zeigen Prozent, aktive Level und das Spektrum', async ({ page },
 
   await page.goto('/vorbilder/davinci');
   await expect(page.getByRole('heading', { name: 'Leonardo da Vinci', exact: true })).toBeVisible();
-  const kopf = page.locator('h1').locator('xpath=ancestor::section[1]');
+  const kopf = page.locator('.profil-name').locator('xpath=ancestor::section[1]');
   await expect(kopf).toContainText('7.917');
   const aehnlichkeit = page.locator('[data-aehnlichkeit]');
   await expect(aehnlichkeit).toBeVisible();

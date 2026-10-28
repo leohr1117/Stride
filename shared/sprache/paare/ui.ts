@@ -1,5 +1,7 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Zurück zu {ziel}', 'Back to {ziel}'],
+  ['Profil, Level {level}', 'Profile, level {level}'],
   ['Konto', 'Account'],
   ['Verlauf', 'History'],
   ['Statistik', 'Statistics'],

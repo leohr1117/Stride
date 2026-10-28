@@ -4,8 +4,7 @@ import { useLocation, useNavigate } from 'react-router';
 import type { Einstellungen, EinstellungenAenderung } from '../../../../shared/api/index.ts';
 import { standardVorlage } from '../../../../shared/features/darstellung/paletten.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
-import { InfoHinweis } from '../../ui/index.ts';
-import { tx } from '../../text.ts';
+import { useKopf } from '../../components/Kopf.tsx';
 
 const DARSTELLUNGS_FELDER = new Set<keyof Einstellungen>([
   'stil',
@@ -143,15 +142,8 @@ export function Bereich({
   kinder: ReactNode;
   zurueck?: { pfad: string; label: string };
 }) {
-  return (
-    <div className="space-y-6">
-      <div className="flex min-w-0 items-center">
-        <h1 className="min-w-0 text-2xl font-bold tracking-tight text-balance break-words md:text-3xl">{tx(titel)}</h1>
-        {info ? <InfoHinweis text={info} /> : null}
-      </div>
-      {kinder}
-    </div>
-  );
+  useKopf({ titel, info });
+  return <div className="space-y-6">{kinder}</div>;
 }
 
 export function FormularSeite({

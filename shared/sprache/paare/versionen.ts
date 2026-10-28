@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.', 'The header shows the page title. On subpages the back arrow sits on the left.'],
+  ['Das Profilbild mit Levelring liegt rechts im Kopf. Die Knöpfe Profil und Mehr dort entfallen.', 'The profile picture with the level ring sits on the right. The Profile and More buttons there are gone.'],
   ['Am Computer zeigt Tätigkeiten keinen Zurück-Pfeil.', 'On a computer, Activities shows no back arrow.'],
   ['Zurück von Können, Haben und Investitionen führt zum Profil.', 'Back from Ability, Assets, and Investments goes to Profile.'],
   ['Zurück führt wieder dorthin, wo du herkamst.', 'Back takes you again to where you came from.'],

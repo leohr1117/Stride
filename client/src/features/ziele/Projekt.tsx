@@ -17,6 +17,7 @@ import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { KettenAnzeige } from '../../components/KettenAnzeige.tsx';
 import { ProjektInvestition } from '../investitionen/Investitionen.tsx';
+import { useKopf } from '../../components/Kopf.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { BossRing } from '../bosse/BossRing.tsx';
 import {
@@ -64,6 +65,7 @@ export function ProjektSeite() {
   const bosseAn = istAn('bossAngriffe', sichtbarkeit);
   const [bearbeitung, setBearbeitung] = useState<ZielBearbeitung>(null);
   const [bossVorhaben, setBossVorhaben] = useState<Vorhaben | null>(null);
+  useKopf(data?.projekt.name ? { titel: data.projekt.name, roh: true } : null);
 
   if (!Number.isInteger(projektId)) {
     return <Fehlermeldung fehler={new Error(tx("Ungültige Projekt-Adresse."))} />;
@@ -95,7 +97,9 @@ export function ProjektSeite() {
                   <div className="min-w-0">
                     <ZielMarke ebene="projekte" />
                     <div className="flex min-w-0 flex-nowrap items-center gap-1.5">
-                      <h1 className="min-w-0 truncate text-2xl font-bold tracking-tight">{projekt.name}</h1>
+                      <span data-projektname="" className="min-w-0 truncate text-2xl font-bold tracking-tight">
+                        {projekt.name}
+                      </span>
                       {projekt.geschafftAm ? <AbschlussMarke /> : null}
                     </div>
                     <p className="flex min-w-0 items-center gap-1.5 text-sm text-leise">

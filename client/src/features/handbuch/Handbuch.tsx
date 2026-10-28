@@ -164,10 +164,6 @@ export function HandbuchSeite() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight break-words md:text-3xl">{tx("Handbuch")}</h1>
-      </header>
-
       {vorschlagAus.size > 0 && (
         <ZeilenGruppe titel={tx("Empfohlen")}>
           {vorschlaege

@@ -110,7 +110,7 @@ async function schriftBereit(seite: Page): Promise<void> {
 
 async function pruefeKopf(seite: Page, name: string): Promise<void> {
   const karte = seite.locator('section.karte').first();
-  const titel = seite.getByRole('heading', { name, exact: true });
+  const titel = karte.locator('.profil-name');
   const level = karte.locator('p.text-3xl:not([data-aehnlichkeit])');
   await expect(titel).toBeVisible();
   await expect(level).toBeVisible();
@@ -128,7 +128,7 @@ async function pruefeKopf(seite: Page, name: string): Promise<void> {
     const bereich = document.querySelector('section.karte');
     return {
       karte: kasten(bereich),
-      titel: kasten(bereich?.querySelector('h1') ?? null),
+      titel: kasten(bereich?.querySelector('.profil-name') ?? null),
       level: kasten(bereich?.querySelector('p.text-3xl:not([data-aehnlichkeit])') ?? null),
       icon: kasten(bereich?.querySelector('button') ?? null),
       untertitel: kasten(bereich?.querySelector('p.text-sm') ?? null),
@@ -312,7 +312,7 @@ test('Darstellung: Farben anderer Designs, sofort und auf jeder Seite', async ({
   await schriftBereit(page);
   const proben = await page.evaluate(() => {
     const karte = document.querySelector('section.karte');
-    const titel = karte?.querySelector('h1');
+    const titel = karte?.querySelector('.profil-name');
     const flaeche = karte ? getComputedStyle(karte).backgroundColor : '';
     const schrift = titel ? getComputedStyle(titel).color : '';
     return { flaeche, schrift };

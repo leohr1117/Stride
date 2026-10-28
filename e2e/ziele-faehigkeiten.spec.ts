@@ -124,7 +124,7 @@ test('Abgeschlossen bleibt in der Kopfzeile', async ({ page }, testInfo) => {
   try {
     await stelleProjekt(page, ziel.id, { geschafft: true });
     await page.goto(`/projekte/${ziel.id}`);
-    const titel = page.getByRole('heading', { name: ziel.name, exact: true });
+    const titel = page.locator('[data-projektname]');
     const marke = page.getByRole('img', { name: 'abgeschlossen', exact: true });
     await expect(titel).toBeVisible();
     await expect(marke).toBeVisible();

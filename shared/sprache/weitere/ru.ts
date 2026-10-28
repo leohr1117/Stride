@@ -1,5 +1,9 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück zu {ziel}": "Назад к {ziel}",
+  "Profil, Level {level}": "Профиль, уровень {level}",
+  "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "В шапке стоит название страницы. На вложенных страницах стрелка назад слева.",
+  "Das Profilbild mit Levelring liegt rechts im Kopf. Die Knöpfe Profil und Mehr dort entfallen.": "Справа фото профиля с кольцом уровня. Кнопки «Профиль» и «Ещё» там убраны.",
   "Zum Start": "К старту",
   "Zwei Angebote. Beides kannst du auslassen.": "Два предложения. Оба можно пропустить.",
   "Ein Angebot. Du kannst es auslassen.": "Одно предложение. Его можно пропустить.",

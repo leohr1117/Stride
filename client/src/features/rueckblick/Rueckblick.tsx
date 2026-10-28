@@ -62,8 +62,6 @@ export function RueckblickSeite() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{tx("Rückblick")}</h1>
-
       {isPending && <Ladeanzeige />}
       <Fehlermeldung fehler={error} />
 

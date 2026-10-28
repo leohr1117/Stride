@@ -368,7 +368,7 @@ test('Zurück geht zur Elternseite, Hauptseiten haben keins', async ({ page }) =
     await expect(projekt).toBeVisible();
     await projekt.click();
     await expect(page).toHaveURL(/\/projekte\/\d+$/);
-    await expect(page.locator('a[data-zurueck]')).toHaveText('Ziele');
+    await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Ziele');
     await page.goBack();
     await expect(page).toHaveURL(/\/ziele$/);
     await expect(page.locator('a[data-zurueck]')).toHaveCount(pc || leiste.includes('/ziele') ? 0 : 1);
@@ -376,14 +376,14 @@ test('Zurück geht zur Elternseite, Hauptseiten haben keins', async ({ page }) =
     await page.goto('/mehr');
     await page.locator('a[href="/mehr/profil"]').click();
     await expect(page).toHaveURL(/\/mehr\/profil$/);
-    await expect(page.locator('a[data-zurueck]')).toHaveText('Mehr');
+    await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Mehr');
     await page.goBack();
     await expect(page).toHaveURL(/\/mehr$/);
 
     await page.goto('/vorbilder');
     await page.locator('a[href^="/vorbilder/"]').first().click();
     await expect(page).toHaveURL(/\/vorbilder\/.+/);
-    await expect(page.locator('a[data-zurueck]')).toHaveText('Vorbilder');
+    await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Vorbilder');
     await page.goBack();
     await expect(page).toHaveURL(/\/vorbilder$/);
   } finally {
@@ -444,7 +444,7 @@ test('Seiten, Sprachen, Darstellung, Vorbilder und Todoist', async ({ page }) =>
     const skill = page.locator('a[href^="/faehigkeiten/"]').first();
     if (await skill.count()) {
       await skill.click();
-      await expect(page.locator('a[data-zurueck]')).toHaveText('Profil');
+      await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Profil');
       await expect(page.locator('svg, canvas').first()).toBeVisible();
     }
 

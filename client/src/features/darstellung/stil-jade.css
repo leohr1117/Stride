@@ -90,9 +90,16 @@
   box-shadow: inset 2px 0 0 var(--akzent);
 }
 
-:root[data-stil='jade'] :is(.mobilkopf, .mobilleiste) {
+:root[data-stil='jade'] .mobilleiste {
   border-color: var(--jade-kante);
   background-color: color-mix(in srgb, var(--grund) 94%, transparent);
+}
+
+@media (max-width: 767px) {
+  :root[data-stil='jade'] .mobilkopf {
+    border-color: var(--jade-kante);
+    background-color: color-mix(in srgb, var(--grund) 94%, transparent);
+  }
 }
 
 :root[data-stil='jade'] .chip-aktiv {

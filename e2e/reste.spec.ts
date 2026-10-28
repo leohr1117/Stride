@@ -36,7 +36,8 @@ test('Handbuch und Einführung nennen die Bereiche nicht mehr', async ({ page },
   await expect(page.getByRole('button', { name: 'Sport' })).toContainText('Training, Körper, Schlaf und Ernährung');
   await expect(page.getByText('Eigene Aufgaben')).toHaveCount(0);
   await expect(page.getByText('Trainingsplan')).toHaveCount(0);
-  await page.getByRole('link', { name: 'Profil', exact: true }).click();
+  await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Konto');
+  await page.locator('a[data-zurueck]').click();
   await expect(page).toHaveURL(/\/mehr\/profil$/);
   await expect(page.getByRole('heading', { name: 'Profil', level: 1 })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);

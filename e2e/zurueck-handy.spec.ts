@@ -30,9 +30,9 @@ async function lage(seite: Page) {
       anzahl: document.querySelectorAll('a[data-zurueck]').length,
       href: knopf?.getAttribute('href') ?? null,
       knopf: knopfKasten
-        ? { top: knopfKasten.top, bottom: knopfKasten.bottom, height: knopfKasten.height }
+        ? { top: knopfKasten.top, bottom: knopfKasten.bottom, height: knopfKasten.height, width: knopfKasten.width }
         : null,
-      kopf: kopfKasten && kopfSichtbar ? { bottom: kopfKasten.bottom, height: kopfKasten.height } : null,
+      kopf: kopfKasten && kopfSichtbar ? { top: kopfKasten.top, bottom: kopfKasten.bottom, height: kopfKasten.height } : null,
       opacity: stil?.opacity ?? null,
       visibility: stil?.visibility ?? null,
       scrollY: window.scrollY,
@@ -40,20 +40,22 @@ async function lage(seite: Page) {
   });
 }
 
-async function freiUnterDemKopf(seite: Page): Promise<void> {
+async function pfeilImKopf(seite: Page): Promise<void> {
   await expect.poll(async () => {
     const stand = await lage(seite);
-    if (stand.anzahl !== 1 || !stand.knopf || stand.opacity !== '1' || stand.visibility !== 'visible') {
+    if (stand.anzahl !== 1 || !stand.knopf || !stand.kopf || stand.opacity !== '1' || stand.visibility !== 'visible') {
       return false;
     }
-    if (!stand.kopf) {
-      return stand.knopf.top >= 0 && stand.knopf.height > 8;
-    }
-    return stand.knopf.top >= stand.kopf.bottom - 1 && stand.knopf.height > 8;
+    return (
+      stand.knopf.top >= stand.kopf.top - 1 &&
+      stand.knopf.bottom <= stand.kopf.bottom + 1 &&
+      stand.knopf.height >= 48 &&
+      stand.knopf.width >= 48
+    );
   }).toBe(true);
 }
 
-test('Zurück-Knopf auf Unterseiten liegt frei unter dem Kopf', async ({ page }, testInfo) => {
+test('Zurück-Pfeil sitzt im Kopf', async ({ page }, testInfo) => {
   const handy = testInfo.project.name === 'handy';
   const bild = (name: string) => page.screenshot({ path: `tmp-bau/a1/${testInfo.project.name}-${name}.png` });
 
@@ -66,14 +68,14 @@ test('Zurück-Knopf auf Unterseiten liegt frei unter dem Kopf', async ({ page },
   await page.locator('a[href="/mehr/darstellung"]').click();
   await expect(page).toHaveURL(/\/mehr\/darstellung$/);
   await expect(page.locator('main h1')).toBeVisible();
-  await freiUnterDemKopf(page);
+  await pfeilImKopf(page);
   await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr');
   await expect(page.locator('a[data-zurueck]')).toBeInViewport();
   await bild('darstellung');
 
   if (handy) {
     await page.evaluate(() => window.scrollTo(0, 280));
-    await freiUnterDemKopf(page);
+    await pfeilImKopf(page);
     await expect(page.locator('a[data-zurueck]')).toBeInViewport();
     await bild('darstellung-scroll');
   }
@@ -86,14 +88,14 @@ test('Zurück-Knopf auf Unterseiten liegt frei unter dem Kopf', async ({ page },
   await page.locator('a[href="/mehr/darstellung/leiste"]').click();
   await expect(page).toHaveURL(/\/mehr\/darstellung\/leiste$/);
   await expect(page.locator('main h1')).toBeVisible();
-  await freiUnterDemKopf(page);
+  await pfeilImKopf(page);
   await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr/darstellung');
   await bild('leiste');
 
   await page.goto('/mehr/funktionen');
   await expect(page).toHaveURL(/\/mehr\/funktionen$/);
   await expect(page.locator('main h1')).toBeVisible();
-  await freiUnterDemKopf(page);
+  await pfeilImKopf(page);
   await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr');
   await bild('funktionen');
 
@@ -101,7 +103,7 @@ test('Zurück-Knopf auf Unterseiten liegt frei unter dem Kopf', async ({ page },
   await expect(page).toHaveURL(/\/charakter$/);
   await expect(page.locator('main h1')).toBeVisible();
   if (handy) {
-    await freiUnterDemKopf(page);
+    await pfeilImKopf(page);
     await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/');
   } else {
     await expect(page.locator('a[data-zurueck]')).toHaveCount(0);

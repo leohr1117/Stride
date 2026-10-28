@@ -35,8 +35,6 @@ export function LaufendSeite() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{tx("Laufend")}</h1>
-
       {leer && <Karte className="py-10 text-center text-sm text-leise">{tx("Nichts am Laufen.")}</Karte>}
 
       {bosse.length > 0 && (

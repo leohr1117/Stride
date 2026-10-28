@@ -1,5 +1,9 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück zu {ziel}": "{ziel}に戻る",
+  "Profil, Level {level}": "プロフィール、レベル {level}",
+  "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "ヘッダーにページ名を表示します。下のページでは戻る矢印が左にあります。",
+  "Das Profilbild mit Levelring liegt rechts im Kopf. Die Knöpfe Profil und Mehr dort entfallen.": "ヘッダーの右にレベルリング付きのプロフィール画像があります。「プロフィール」と「その他」のボタンはそこからなくなります。",
   "Zum Start": "開始前に",
   "Zwei Angebote. Beides kannst du auslassen.": "提案は二つ。どちらも省けます。",
   "Ein Angebot. Du kannst es auslassen.": "提案は一つ。省けます。",

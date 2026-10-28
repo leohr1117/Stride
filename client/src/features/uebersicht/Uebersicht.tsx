@@ -67,14 +67,14 @@ export function UebersichtSeite() {
         <div className="flex items-center gap-5">
           <LevelRing level={uebersicht.level.level} anteil={uebersicht.level.fortschritt} />
           <div className="min-w-0 flex-1 sm:hidden">
-            <h1 className="truncate text-2xl font-bold tracking-tight">{uebersicht.name}</h1>
+            <p className="truncate text-2xl font-bold tracking-tight">{uebersicht.name}</p>
             <p className="text-sm font-medium break-words text-akzent">{identitaet}</p>
             <p className="zahl text-sm text-leise break-words">{levelZeile}</p>
           </div>
         </div>
         <div className="min-w-0 flex-1 space-y-3">
           <div className="hidden min-w-0 sm:block">
-            <h1 className="truncate text-2xl font-bold tracking-tight">{uebersicht.name}</h1>
+            <p className="truncate text-2xl font-bold tracking-tight">{uebersicht.name}</p>
             <p className="text-sm font-medium break-words text-akzent">{identitaet}</p>
             <p className="zahl text-sm text-leise">{levelZeile}</p>
           </div>

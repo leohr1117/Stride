@@ -87,7 +87,6 @@ export function VorbilderSeite() {
     <div className="space-y-4">
       <header className="flex flex-wrap items-end justify-between gap-2">
         <div className="flex min-w-0 items-center">
-          <h1 className="min-w-0 text-2xl font-bold tracking-tight break-words md:text-3xl">{tx("Vorbilder")}</h1>
           <WerteHinweis />
         </div>
         {uebersicht && (

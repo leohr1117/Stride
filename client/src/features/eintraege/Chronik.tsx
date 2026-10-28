@@ -48,8 +48,6 @@ export function ChronikSeite() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{tx("Chronik")}</h1>
-
       <div className="space-y-3">
         {(visionenAn || organisationenAn) && (
           <select

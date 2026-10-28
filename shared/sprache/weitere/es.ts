@@ -1,5 +1,9 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück zu {ziel}": "Volver a {ziel}",
+  "Profil, Level {level}": "Perfil, nivel {level}",
+  "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "La cabecera muestra el título de la página. En las subpáginas la flecha de volver está a la izquierda.",
+  "Das Profilbild mit Levelring liegt rechts im Kopf. Die Knöpfe Profil und Mehr dort entfallen.": "La foto de perfil con el anillo de nivel está a la derecha. Los botones Perfil y Más de allí desaparecen.",
   "Zum Start": "Para empezar",
   "Zwei Angebote. Beides kannst du auslassen.": "Dos propuestas. Puedes omitir las dos.",
   "Ein Angebot. Du kannst es auslassen.": "Una propuesta. Puedes omitirla.",
