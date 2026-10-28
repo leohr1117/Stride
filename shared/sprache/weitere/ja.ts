@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Rückkehr": "復帰",
   "Der Schutz kann heute nicht eingesetzt werden.": "今日は保護を使えません。",
   "Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.": "導入は記録、目標、連続日数を短い文で説明します。質問は、選択が何を有効にするかを示します。",
   "Einführung": "導入",

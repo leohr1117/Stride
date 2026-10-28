@@ -13,6 +13,7 @@ export const BONUS_QUELLEN = [
   'bestaendigkeit',
   'weitermachen',
   'anlauf',
+  'rueckkehr',
   'meilenstein',
   'comeback',
   'knoten',

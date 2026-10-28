@@ -409,6 +409,7 @@ export const PAARE = [
   ['Tageskette', 'Daily chain'],
   ['Weitergemacht', 'Kept going'],
   ['Anlauf', 'Attempt'],
+  ['Rückkehr', 'Return'],
   ['Comeback', 'Comeback'],
   ['Fertigkeit', 'Technique'],
   ['Mitgenommen:', 'Takeaway:'],

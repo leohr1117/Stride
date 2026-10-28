@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Rückkehr": "Возвращение",
   "Der Schutz kann heute nicht eingesetzt werden.": "Защиту сегодня нельзя использовать.",
   "Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.": "Введение объясняет записи, цели и серию ясными фразами. Вопросы говорят, что включает выбор.",
   "Einführung": "Введение",

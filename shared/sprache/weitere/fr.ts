@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Rückkehr": "Retour",
   "Der Schutz kann heute nicht eingesetzt werden.": "La protection ne peut pas être utilisée aujourd'hui.",
   "Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.": "L'introduction explique les entrées, les objectifs et la série en phrases claires. Les questions disent ce que le choix active.",
   "Einführung": "Introduction",

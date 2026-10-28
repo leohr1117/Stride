@@ -56,6 +56,7 @@ import {
 import { KONTEXT_JOINS, KONTEXT_SPALTEN, PROJEKT_AKTIV, zuKontext, type KontextZeile } from '../ziele/kontext.ts';
 import { momentumFuerTag } from '../../services/serie.ts';
 import { verdieneSchutz } from '../kette/kette.ts';
+import { erfuelleRueckkehr, haengeRueckkehrUm, pflegeRueckkehr } from '../kette/rueckkehr.ts';
 import { ladeVorhaben, legeVorhabenAn } from '../ziele/vorhaben.ts';
 import { ladeAktiveGewichte, pruefeVorlageZumProjekt } from '../taetigkeiten/vorlagen.ts';
 import { lokalesDatum, tagesbeginn, zeitpunktFuerEintrag } from '../../services/zeit.ts';
@@ -504,6 +505,7 @@ export function erstelleEintrag(
   const vorher = ladeLevelStand(projekt?.id ?? null, faehigkeit?.id ?? null);
 
   const ergebnis = inTransaktion(() => {
+    pflegeRueckkehr(jetzt);
     const vorhabenId =
       daten.vorhaben?.art === 'neu'
         ? legeVorhabenAn(projekt?.id ?? null, daten.vorhaben.titel, zeitpunkt)
@@ -699,6 +701,11 @@ export function erstelleEintrag(
     }
 
     verdieneSchutz(tag, eintragId);
+    const rueckkehr = erfuelleRueckkehr(eintragId, tag, iso);
+    if (rueckkehr.xp > 0) {
+      buchungen.push(...rueckkehr.buchungen);
+      boni.push({ quelle: 'rueckkehr', label: 'Rückkehr', xp: rueckkehr.xp });
+    }
 
     return { eintragId, buchungen, boni, projektXp, faehigkeitXp, bossSieg };
   });
@@ -733,7 +740,7 @@ export function erstelleEintrag(
   };
 }
 
-export function loescheEintrag(id: number): void {
+export function loescheEintrag(id: number, jetzt = new Date()): void {
   const eintrag = eine<{
     vorhabenId: number | null;
     abschluss: Abschluss | null;
@@ -763,6 +770,10 @@ export function loescheEintrag(id: number): void {
   );
 
   inTransaktion(() => {
+    const gebunden = eine<{ id: number; geoeffnetAm: string; fristAm: string }>(
+      `SELECT id, geoeffnet_am AS geoeffnetAm, frist_am AS fristAm FROM rueckkehr WHERE eintrag_id = ?`,
+      id,
+    );
     sperreSkillsDesEintrags(id);
     if (eintrag.abschluss !== null && eintrag.vorhabenId !== null) {
       ausfuehren(
@@ -784,6 +795,9 @@ export function loescheEintrag(id: number): void {
       ausfuehren('UPDATE aufgaben SET faellig_am = ? WHERE id = ?', ruecknahme.vorkommen, ruecknahme.aufgabeId);
     }
     ausfuehren('DELETE FROM eintraege WHERE id = ?', id);
+    if (gebunden) {
+      haengeRueckkehrUm(gebunden.id, gebunden.geoeffnetAm, gebunden.fristAm, lokalesDatum(jetzt));
+    }
   });
 }
 

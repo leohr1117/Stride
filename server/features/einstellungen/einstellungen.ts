@@ -86,6 +86,8 @@ const ANSICHT_FARBEN = 'ansichtFarben';
 const UEBERSICHT_KARTEN_SCHLUESSEL = 'uebersichtKarten';
 const SCHUTZ_VORRAT = 'schutz_vorrat';
 const SCHUTZ_SCHWELLE = 'schutz_schwelle_verbraucht';
+const RUECKKEHR_AB = 'rueckkehr_ab';
+const TAGES_SCHLUESSEL = /^\d{4}-\d{2}-\d{2}$/;
 
 function istGleicherTyp<T>(wert: unknown, vorlage: T): wert is T {
   return typeof wert === typeof vorlage;
@@ -374,6 +376,27 @@ export function schreibeSchutzVorrat(vorrat: 0 | 1): void {
 
 export function schreibeSchutzSchwelle(schwelle: number): void {
   speichere(SCHUTZ_SCHWELLE, Math.max(0, Math.floor(schwelle)));
+}
+
+/** Null heißt, der Schlüssel fehlt. Steht nicht in der Einstellungen-Antwort. Einmal geschrieben. */
+export function leseRueckkehrAb(): string | null {
+  const roh = eine<{ wert: string }>('SELECT wert FROM einstellungen WHERE schluessel = ?', RUECKKEHR_AB)?.wert;
+  if (roh === undefined) {
+    return null;
+  }
+  try {
+    const wert: unknown = JSON.parse(roh);
+    return typeof wert === 'string' && TAGES_SCHLUESSEL.test(wert) ? wert : null;
+  } catch {
+    return null;
+  }
+}
+
+export function schreibeRueckkehrAb(tag: string): void {
+  if (!TAGES_SCHLUESSEL.test(tag) || leseRueckkehrAb() !== null) {
+    return;
+  }
+  speichere(RUECKKEHR_AB, tag);
 }
 
 function neuePaletteId(liste: readonly { id: string }[]): string {

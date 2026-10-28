@@ -14,6 +14,7 @@ const BONUS: Record<BonusQuelle, string> = {
   bestaendigkeit: 'Tageskette',
   weitermachen: 'Weitergemacht',
   anlauf: 'Anlauf',
+  rueckkehr: 'Rückkehr',
   meilenstein: 'Meilenstein',
   comeback: 'Comeback',
   knoten: 'Fertigkeit',

@@ -9,6 +9,7 @@ import { AppFehler } from './fehler.ts';
 import { attributRouten } from './features/attribute/routen.ts';
 import { basisRouten } from './features/basis/routen.ts';
 import { ketteRouten } from './features/kette/routen.ts';
+import { pflegeRueckkehr } from './features/kette/rueckkehr.ts';
 import { datenRouten } from './features/daten/daten.ts';
 import { eintragRouten } from './features/eintraege/routen.ts';
 import { faehigkeitRouten } from './features/faehigkeiten/routen.ts';
@@ -62,6 +63,7 @@ await app.register(
         if (angemeldet) {
           rechneBossangriffeAb();
           rechneZeitverfallAb();
+          pflegeRueckkehr();
         }
         fertig();
       };

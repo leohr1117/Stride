@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Rückkehr": "Regreso",
   "Der Schutz kann heute nicht eingesetzt werden.": "La protección no se puede usar hoy.",
   "Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.": "La introducción explica los registros, los objetivos y la racha en frases claras. Las preguntas dicen qué activa la elección.",
   "Einführung": "Introducción",
