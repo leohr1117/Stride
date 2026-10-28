@@ -1,8 +1,24 @@
 import { describe, expect, it } from 'vitest';
-import { elternZiel, HERKUNFT_MAX, herkunftsLabel, herkunftsZiel, istHauptseite, schiebeHerkunft, seiteZeigtEigenenZurueck, trainingZurueck, zurueckPasst } from './herkunft.ts';
+import {
+  elternZiel,
+  HERKUNFT_MAX,
+  herkunftsLabel,
+  herkunftsZiel,
+  istHauptseite,
+  istLeistenplatz,
+  ketteUnter,
+  schiebeHerkunft,
+} from './herkunft.ts';
+import {
+  anfangDesPlatzes,
+  leererStapel,
+  oeffneImStapel,
+  stapelNachLaden,
+  wechslePlatz,
+} from './herkunftStapel.ts';
 import { LEISTE_STANDARD } from './leiste.ts';
 
-const MEHR = { pfad: '/mehr', label: 'Mehr' };
+const LEISTE = ['/', '/ziele', '/mehr'] as const;
 
 describe('schiebeHerkunft', () => {
   it('merkt den Weg und nimmt ihn beim Zurückgehen wieder weg', () => {
@@ -14,18 +30,13 @@ describe('schiebeHerkunft', () => {
     expect(schiebeHerkunft(basis, '/basis')).toBe(basis);
   });
 
-  it('lässt Umleitungen und unbekannte Pfade aus', () => {
+  it('lässt Umleitungen, Training und unbekannte Pfade aus', () => {
     const stapel = schiebeHerkunft([], '/handbuch');
     expect(schiebeHerkunft(stapel, '/demnaechst')).toBe(stapel);
     expect(schiebeHerkunft(stapel, '/mehr/konto')).toBe(stapel);
-    expect(schiebeHerkunft(stapel, '/mehr/inhalte/taetigkeiten')).toBe(stapel);
-    expect(schiebeHerkunft(stapel, '/mehr/profil/unbekannt')).toBe(stapel);
-    expect(schiebeHerkunft(stapel, '/mehr/profil/stufen')).toBe(stapel);
-    expect(schiebeHerkunft(stapel, '/mehr/profil/benutzer')).toBe(stapel);
+    expect(schiebeHerkunft(stapel, '/training/plaene/neu')).toBe(stapel);
+    expect(schiebeHerkunft(stapel, '/training/einheiten/8')).toBe(stapel);
     expect(schiebeHerkunft(stapel, '/mehr/benachrichtigungen')).toEqual([...stapel, '/mehr/benachrichtigungen']);
-    expect(schiebeHerkunft(stapel, '/mehr/profil/benutzernamen')).toEqual([...stapel, '/mehr/profil/benutzernamen']);
-    expect(schiebeHerkunft(stapel, '/mehr/profil/benutzernamen/4')).toEqual([...stapel, '/mehr/profil/benutzernamen/4']);
-    expect(schiebeHerkunft(stapel, '/training/plaene/neu')).toEqual([...stapel, '/training/plaene/neu']);
   });
 
   it('behält nur die letzten Einträge', () => {
@@ -40,104 +51,116 @@ describe('schiebeHerkunft', () => {
 });
 
 describe('elternZiel', () => {
-  it('führt Unterseiten zur Elternseite und lässt Haupt-Tabs ohne Pfeil', () => {
+  it('nimmt die neuen Eltern und lässt einen Leistenplatz ohne Eltern', () => {
     expect(istHauptseite('/')).toBe(true);
-    expect(istHauptseite('/mehr')).toBe(true);
-    expect(istHauptseite('/vorbilder')).toBe(true);
-    expect(istHauptseite('/mehr/darstellung')).toBe(false);
     expect(elternZiel('/')).toBeNull();
-    expect(elternZiel('/mehr')).toBeNull();
-    expect(elternZiel('/ziele')).toBeNull();
-    expect(elternZiel('/charakter')).toEqual({ pfad: '/', label: 'Übersicht' });
-    expect(elternZiel('/mehr/darstellung')).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/mehr', { leiste: LEISTE })).toBeNull();
+    expect(elternZiel('/mehr', { leiste: ['/'] })).toEqual({ pfad: '/', label: 'Heute' });
+    expect(elternZiel('/ziele', { leiste: LEISTE })).toBeNull();
+    expect(elternZiel('/ziele', { leiste: ['/', '/mehr'] })).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/charakter', { leiste: ['/'] })).toEqual({ pfad: '/', label: 'Heute' });
+    expect(elternZiel('/charakter', { leiste: ['/', '/charakter'] })).toBeNull();
+    expect(elternZiel('/laufend', { leiste: ['/'] })).toEqual({ pfad: '/ziele', label: 'Ziele' });
+    expect(elternZiel('/vorbilder', { leiste: ['/'] })).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/chronik', { leiste: LEISTE_STANDARD })).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/rueckblick', { leiste: ['/'], verlaufAn: true })).toEqual({ pfad: '/chronik', label: 'Verlauf' });
+    expect(elternZiel('/statistiken', { leiste: ['/'], verlaufAn: false })).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/mehr/darstellung/leiste')).toEqual({ pfad: '/mehr/darstellung', label: 'Darstellung' });
     expect(elternZiel('/mehr/darstellung/ansicht')).toBeNull();
-    expect(elternZiel('/mehr/profil/fokus')).toEqual({ pfad: '/mehr/profil', label: 'Profil' });
-    expect(elternZiel('/mehr/profil/benutzernamen')).toEqual({ pfad: '/mehr/profil', label: 'Profil' });
-    expect(elternZiel('/mehr/profil/benutzernamen/4')).toEqual({ pfad: '/mehr/profil/benutzernamen', label: 'Benutzernamen' });
-    expect(elternZiel('/mehr/inhalte/verbindungen')).toEqual({ pfad: '/mehr/funktionen', label: 'App & Verbindungen' });
+    expect(elternZiel('/mehr/profil/fokus')).toEqual({ pfad: '/mehr/profil', label: 'Konto' });
+    expect(elternZiel('/mehr/inhalte/verbindungen')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/mehr/uebersicht')).toEqual({ pfad: '/mehr', label: 'Mehr' });
-    expect(elternZiel('/mehr/benachrichtigungen')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/projekte/4')).toEqual({ pfad: '/ziele', label: 'Ziele' });
-    expect(elternZiel('/faehigkeiten/2')).toEqual({ pfad: '/charakter', label: 'Charakter' });
+    expect(elternZiel('/faehigkeiten')).toEqual({ pfad: '/charakter', label: 'Profil' });
+    expect(elternZiel('/faehigkeiten', { leiste: ['/', '/faehigkeiten'] })).toBeNull();
+    expect(elternZiel('/koennen')).toEqual({ pfad: '/charakter', label: 'Profil' });
+    expect(elternZiel('/haben')).toEqual({ pfad: '/charakter', label: 'Profil' });
+    expect(elternZiel('/investitionen')).toEqual({ pfad: '/charakter', label: 'Profil' });
+    expect(elternZiel('/koennen', { leiste: ['/', '/koennen'] })).toBeNull();
+    expect(elternZiel('/haben', { leiste: ['/', '/haben'] })).toBeNull();
+    expect(elternZiel('/investitionen', { leiste: ['/', '/investitionen'] })).toBeNull();
+    expect(elternZiel('/faehigkeiten/2')).toEqual({ pfad: '/faehigkeiten', label: 'Fähigkeiten' });
+    expect(elternZiel('/mehr/inhalte')).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/mehr/inhalte', { leiste: ['/', '/mehr/inhalte'] })).toBeNull();
     expect(elternZiel('/vorbilder/ronaldo')).toEqual({ pfad: '/vorbilder', label: 'Vorbilder' });
-    expect(istHauptseite('/training')).toBe(false);
     expect(elternZiel('/training')).toBeNull();
-    expect(elternZiel('/training/plaene/neu')).toEqual({ pfad: '/training', label: 'Training' });
-    expect(elternZiel('/training/plaene/4')).toEqual({ pfad: '/training', label: 'Training' });
-    expect(elternZiel('/training/einheiten/8')).toEqual({ pfad: '/training', label: 'Training' });
-    expect(elternZiel('/training/einheiten/8', { von: '/' })).toEqual({ pfad: '/', label: 'Übersicht' });
-    expect(elternZiel('/training/einheiten/8', { von: '/ziele' })).toEqual({ pfad: '/training', label: 'Training' });
-    expect(elternZiel('/training/uebungen/3')).toEqual({ pfad: '/training', label: 'Training' });
-    expect(elternZiel('/training/uebungen/3', { einheit: '/training/einheiten/8', planName: 'Unterkörper' })).toEqual({
-      pfad: '/training/einheiten/8',
-      label: 'Unterkörper',
-    });
-    expect(elternZiel('/training/uebungen/3', { einheit: '/training/einheiten/8', planName: '  ' })).toEqual({
-      pfad: '/training',
-      label: 'Training',
-    });
-    expect(trainingZurueck('/training/uebungen/3/', { einheit: '/training/einheiten/8/', planName: 'Unterkörper' })).toEqual({
-      pfad: '/training/einheiten/8',
-      label: 'Unterkörper',
-    });
+  });
+});
+
+describe('herkunftsLabel', () => {
+  it('nennt die neuen Namen nur als Ziel des Pfeils', () => {
+    expect(herkunftsLabel('/')).toBe('Heute');
+    expect(herkunftsLabel('/charakter')).toBe('Profil');
+    expect(herkunftsLabel('/mehr/profil')).toBe('Konto');
+    expect(herkunftsLabel('/chronik')).toBe('Verlauf');
+    expect(herkunftsLabel('/statistiken')).toBe('Statistik');
+    expect(herkunftsLabel('/mehr/uebersicht')).toBe('Karten auf Heute');
+    expect(herkunftsLabel('/mehr/funktionen')).toBe('Bereiche');
+    expect(herkunftsLabel('/faehigkeiten')).toBe('Fähigkeiten');
+    expect(herkunftsLabel('/koennen')).toBe('Können');
+    expect(herkunftsLabel('/haben')).toBe('Haben');
+    expect(herkunftsLabel('/investitionen')).toBe('Investitionen');
   });
 });
 
 describe('herkunftsZiel', () => {
-  it('nimmt die Elternseite, nicht die zuletzt besuchte Seite', () => {
-    expect(herkunftsZiel(['/chronik'], '/chronik', LEISTE_STANDARD, MEHR)).toBeNull();
-    expect(herkunftsZiel(['/handbuch', '/chronik'], '/chronik', LEISTE_STANDARD, MEHR)).toBeNull();
-    expect(herkunftsZiel(['/handbuch', '/mehr/inhalte'], '/mehr/inhalte', LEISTE_STANDARD, MEHR)).toEqual(MEHR);
-    expect(herkunftsZiel(['/ziele', '/projekte/4'], '/projekte/4', LEISTE_STANDARD, { pfad: '/ziele', label: 'Ziele' })).toEqual({
-      pfad: '/ziele',
-      label: 'Ziele',
-    });
-    expect(herkunftsZiel(['/mehr/darstellung/leiste', '/'], '/mehr/darstellung/leiste', LEISTE_STANDARD, MEHR)).toEqual({
-      pfad: '/mehr/darstellung',
-      label: 'Darstellung',
-    });
-  });
-
-  it('zeigt auf Haupt-Tabs keinen Pfeil', () => {
-    expect(herkunftsZiel(['/', '/ziele'], '/ziele', LEISTE_STANDARD, null)).toBeNull();
-    expect(herkunftsZiel(['/handbuch', '/ziele'], '/ziele', ['/', '/handbuch', '/ziele', '/mehr'], null)).toBeNull();
-    expect(herkunftsZiel(['/handbuch', '/ziele'], '/ziele', LEISTE_STANDARD, null)).toBeNull();
-    expect(herkunftsZiel(['/mehr/darstellung', '/'], '/', LEISTE_STANDARD, MEHR)).toBeNull();
-  });
-
-  it('benennt bekannte Seiten', () => {
-    expect(herkunftsLabel('/mehr/uebersicht')).toBe('Übersicht');
-    expect(herkunftsLabel('/mehr/benachrichtigungen')).toBe('Benachrichtigungen');
-    expect(herkunftsLabel('/mehr/profil/fokus')).toBe('Fokus');
-    expect(herkunftsLabel('/mehr/profil/benutzernamen')).toBe('Benutzernamen');
-    expect(herkunftsLabel('/mehr/profil/benutzernamen/4')).toBe('Benutzername');
-    expect(herkunftsLabel('/mehr/profil/ziel')).toBe('Was willst du erreichen?');
-    expect(herkunftsLabel('/faehigkeiten/2')).toBe('Fähigkeit');
-    expect(herkunftsLabel('/vorbilder/ada')).toBe('Vorbild');
-    expect(herkunftsLabel('/verbindungen')).toBeNull();
-    expect(herkunftsLabel('/training')).toBeNull();
-    expect(herkunftsLabel('/training/plaene/neu')).toBe('Plan');
-    expect(herkunftsLabel('/training/einheiten/8')).toBe('Einheit');
-    expect(herkunftsLabel('/training/uebungen/3')).toBe('Übung');
-    expect(seiteZeigtEigenenZurueck('/mehr/inhalte')).toBe(true);
-    expect(seiteZeigtEigenenZurueck('/ziele')).toBe(false);
-    expect(seiteZeigtEigenenZurueck('/mehr')).toBe(false);
-    expect(seiteZeigtEigenenZurueck('/training')).toBe(false);
-    expect(seiteZeigtEigenenZurueck('/training/plaene/4')).toBe(true);
-    expect(seiteZeigtEigenenZurueck('/training/einheiten/8')).toBe(true);
-    expect(seiteZeigtEigenenZurueck('/training/uebungen/3')).toBe(true);
-    expect(zurueckPasst('/training/einheiten/8', '/training')).toBe(true);
-    expect(zurueckPasst('/training/einheiten/8', '/')).toBe(true);
-    expect(zurueckPasst('/training/einheiten/8', '/mehr')).toBe(false);
-    expect(zurueckPasst('/training/uebungen/3', '/training/einheiten/8')).toBe(true);
-    expect(zurueckPasst('/training/uebungen/3', '/mehr')).toBe(false);
-    expect(zurueckPasst('/training/plaene/neu', '/')).toBe(false);
-    expect(zurueckPasst('/training/plaene/neu', '/training')).toBe(true);
-    expect(herkunftsZiel(['/'], '/training/einheiten/8', LEISTE_STANDARD, null, { von: '/' })).toEqual({
+  it('nimmt die Herkunft aus dem Stapel, nicht die Elternseite', () => {
+    const nav = oeffneImStapel(leererStapel('/', '/'), '/projekte/4');
+    expect(herkunftsZiel(nav.orte['/'] ?? [], '/projekte/4', [...LEISTE], { pfad: '/ziele', label: 'Ziele' })).toEqual({
       pfad: '/',
-      label: 'Übersicht',
+      label: 'Heute',
     });
-    expect(herkunftsZiel(['/training'], '/training', LEISTE_STANDARD, null)).toBeNull();
+  });
+
+  it('fällt ohne Herkunft auf die Elternseite und lässt Leistenplätze ohne Pfeil', () => {
+    expect(herkunftsZiel([], '/projekte/4', [...LEISTE], null)).toEqual({ pfad: '/ziele', label: 'Ziele' });
+    expect(herkunftsZiel([], '/vorbilder', ['/'], null)).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(herkunftsZiel(['/vorbilder'], '/vorbilder', ['/'], null, { leiste: ['/'], seitenleiste: ['/vorbilder'] })).toBeNull();
+    expect(istLeistenplatz('/ziele', LEISTE, [])).toBe(true);
+    expect(herkunftsZiel(['/'], '/ziele', [...LEISTE], null)).toBeNull();
+    expect(herkunftsZiel(['/mehr', '/mehr/uebersicht', '/mehr/funktionen'], '/mehr/funktionen', [...LEISTE], null)).toEqual({
+      pfad: '/mehr/uebersicht',
+      label: 'Karten auf Heute',
+    });
+    expect(herkunftsZiel([], '/mehr/inhalte', [...LEISTE], null)).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(herkunftsZiel(['/mehr/inhalte'], '/mehr/inhalte', [...LEISTE], null, { leiste: [...LEISTE], seitenleiste: ['/mehr/inhalte'] })).toBeNull();
+    expect(herkunftsZiel([], '/koennen', [...LEISTE], null)).toEqual({ pfad: '/charakter', label: 'Profil' });
+    expect(herkunftsZiel([], '/haben', [...LEISTE], null)).toEqual({ pfad: '/charakter', label: 'Profil' });
+    expect(herkunftsZiel([], '/investitionen', [...LEISTE], null)).toEqual({ pfad: '/charakter', label: 'Profil' });
+  });
+});
+
+describe('stapel', () => {
+  it('behält andere Plätze und setzt den Anfang auf die Platzseite', () => {
+    let stand = oeffneImStapel(leererStapel('/ziele', '/ziele'), '/projekte/5');
+    const heute = wechslePlatz(stand, '/');
+    stand = oeffneImStapel(heute.nav, '/projekte/9');
+    const zurueck = wechslePlatz(stand, '/ziele');
+    expect(zurueck.adresse).toBe('/projekte/5');
+    expect(zurueck.nav.aktiv).toBe('/ziele');
+    const anfang = anfangDesPlatzes(zurueck.nav);
+    expect(anfang.adresse).toBe('/ziele');
+    expect(anfang.nav.orte['/']).toEqual(['/', '/projekte/9']);
+  });
+
+  it('setzt beim Direktaufruf nur den passenden Platz zurück', () => {
+    const alt = oeffneImStapel(leererStapel('/', '/'), '/projekte/3');
+    const neu = stapelNachLaden(alt, '/vorbilder/ronaldo', '/mehr');
+    expect(neu.aktiv).toBe('/mehr');
+    expect(neu.orte['/mehr']).toEqual(['/vorbilder/ronaldo']);
+    expect(neu.orte['/']).toEqual(['/', '/projekte/3']);
+    expect(stapelNachLaden(neu, '/vorbilder/ronaldo', '/')).toBe(neu);
+  });
+});
+
+describe('ketteUnter', () => {
+  it('legt Heute unter jeden anderen Platz', () => {
+    expect(ketteUnter('/', { leiste: [...LEISTE] })).toEqual(['/']);
+    expect(ketteUnter('/ziele', { leiste: [...LEISTE] })).toEqual(['/', '/ziele']);
+    expect(ketteUnter('/projekte/5', { leiste: [...LEISTE] })).toEqual(['/', '/ziele', '/projekte/5']);
+    expect(ketteUnter('/vorbilder', { leiste: ['/', '/mehr'] })).toEqual(['/', '/mehr', '/vorbilder']);
+    expect(ketteUnter('/koennen', { leiste: [...LEISTE] })).toEqual(['/', '/charakter', '/koennen']);
+    expect(ketteUnter('/mehr/inhalte', { leiste: [...LEISTE] })).toEqual(['/', '/mehr', '/mehr/inhalte']);
+    expect(ketteUnter('/mehr/inhalte', { leiste: [...LEISTE], seitenleiste: ['/mehr/inhalte'] })).toEqual(['/', '/mehr/inhalte']);
   });
 });

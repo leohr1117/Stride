@@ -15,8 +15,6 @@ import { SchnellNebenaktion, SchnellZeile } from '../../components/SchnellAktion
 import { Icon } from '../../components/Icons.tsx';
 import { SkillBaum, skillSchein } from './SkillBaum.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
-import { ZurueckZumMehr } from '../../components/ZurueckZumMehr.tsx';
-import { useZurueck } from '../../herkunft.tsx';
 import {
   EINGABE_STIL,
   Feld,
@@ -46,7 +44,6 @@ export function FaehigkeitSeite() {
   const [knotenBearbeitung, setKnotenBearbeitung] = useState<KnotenBearbeitung>(null);
   const [ausgewaehlt, setAusgewaehlt] = useState<number | null>(null);
   const eintragOeffnen = useEintragOeffnen();
-  const zurueck = useZurueck({ pfad: '/charakter', label: tx("Charakter") });
 
   if (!Number.isInteger(faehigkeitId)) {
     return <Fehlermeldung fehler={new Error(tx("Ungültige Adresse."))} />;
@@ -65,8 +62,6 @@ export function FaehigkeitSeite() {
 
   return (
     <div className="space-y-6" style={farbStil}>
-      {zurueck ? <ZurueckZumMehr pfad={zurueck.pfad} label={zurueck.label} /> : null}
-
       <Karte className="relative space-y-5 overflow-hidden">
         <div
           className="glimm-fleck pointer-events-none absolute -top-24 -right-24 size-64 rounded-full opacity-25 blur-3xl"

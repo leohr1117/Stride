@@ -100,7 +100,11 @@ test('Zurück-Knopf auf Unterseiten liegt frei unter dem Kopf', async ({ page },
   await page.goto('/charakter');
   await expect(page).toHaveURL(/\/charakter$/);
   await expect(page.locator('main h1')).toBeVisible();
-  await freiUnterDemKopf(page);
-  await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/');
+  if (handy) {
+    await freiUnterDemKopf(page);
+    await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/');
+  } else {
+    await expect(page.locator('a[data-zurueck]')).toHaveCount(0);
+  }
   await bild('charakter');
 });

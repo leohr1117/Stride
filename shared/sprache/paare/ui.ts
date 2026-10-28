@@ -1,5 +1,10 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Konto', 'Account'],
+  ['Verlauf', 'History'],
+  ['Statistik', 'Statistics'],
+  ['Karten auf Heute', 'Cards on Today'],
+  ['Bereiche', 'Areas'],
   ['Schutz', 'Protection'],
   ['Schutz und Rückkehr', 'Protection and return'],
   ['Ein Tag Pause ist frei. Danach ist der Streak angeschlagen. Alle {tage} Tage Streak liegt ein Schutz bereit. Unter Heute setzt du ihn ein. Er hält die bisherigen Tage. Am selben Tag brauchst du einen Eintrag. Der Schutz gibt keine XP.', 'One day off is free. After that the streak is cracked. Every {tage} days of streak, one protection is ready. You use it under Today. It keeps the days so far. You need an entry the same day. Protection grants no XP.'],

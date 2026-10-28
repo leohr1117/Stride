@@ -70,6 +70,6 @@ test('Einstellungen zeigen die Übersicht und Benachrichtigungen zwischen App un
   await bild('bosse');
 
   await page.locator('a[data-zurueck]').click();
-  await expect(page).toHaveURL(/\/mehr$/);
-  await expect(page.locator('a[href="/mehr/uebersicht"]')).toBeVisible();
+  await expect(page).toHaveURL(/\/mehr\/uebersicht$/);
+  await expect(page.locator('main h1')).toHaveText('Übersicht');
 });

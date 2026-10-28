@@ -351,10 +351,16 @@ test('Zurück geht zur Elternseite, Hauptseiten haben keins', async ({ page }) =
     },
   });
   try {
+    const leiste = await page.evaluate(async () => {
+      const daten = (await fetch('/api/einstellungen').then((antwort) => antwort.json())) as { mobilLeiste: string[] };
+      return daten.mobilLeiste;
+    });
+    const pc = (page.viewportSize()?.width ?? 0) >= 768;
     for (const pfad of ['/', '/laufend', '/basis', '/ziele', '/chronik', '/rueckblick', '/statistiken', '/vorbilder', '/handbuch', '/mehr']) {
       await page.goto(pfad);
       await expect(page).toHaveURL(new RegExp(`${pfad === '/' ? '/$' : `${pfad}$`}`));
-      await expect(page.locator('a[data-zurueck]')).toHaveCount(0);
+      const platz = pfad === '/' || pc || leiste.includes(pfad);
+      await expect(page.locator('a[data-zurueck]')).toHaveCount(platz ? 0 : 1);
     }
 
     await page.goto('/ziele');
@@ -365,7 +371,7 @@ test('Zurück geht zur Elternseite, Hauptseiten haben keins', async ({ page }) =
     await expect(page.locator('a[data-zurueck]')).toHaveText('Ziele');
     await page.goBack();
     await expect(page).toHaveURL(/\/ziele$/);
-    await expect(page.locator('a[data-zurueck]')).toHaveCount(0);
+    await expect(page.locator('a[data-zurueck]')).toHaveCount(pc || leiste.includes('/ziele') ? 0 : 1);
 
     await page.goto('/mehr');
     await page.locator('a[href="/mehr/profil"]').click();
@@ -438,7 +444,7 @@ test('Seiten, Sprachen, Darstellung, Vorbilder und Todoist', async ({ page }) =>
     const skill = page.locator('a[href^="/faehigkeiten/"]').first();
     if (await skill.count()) {
       await skill.click();
-      await expect(page.locator('a[data-zurueck]')).toHaveText('Charakter');
+      await expect(page.locator('a[data-zurueck]')).toHaveText('Profil');
       await expect(page.locator('svg, canvas').first()).toBeVisible();
     }
 

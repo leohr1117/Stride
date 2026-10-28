@@ -1,5 +1,11 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Am Computer zeigt Tätigkeiten keinen Zurück-Pfeil.', 'On a computer, Activities shows no back arrow.'],
+  ['Zurück von Können, Haben und Investitionen führt zum Profil.', 'Back from Ability, Assets, and Investments goes to Profile.'],
+  ['Zurück führt wieder dorthin, wo du herkamst.', 'Back takes you again to where you came from.'],
+  ['Seiten außerhalb der Leiste zeigen den Zurück-Pfeil.', 'Pages outside the bar show the back arrow.'],
+  ['Jeder Leistenplatz merkt sich die letzte Seite. Ein Tipp auf den aktiven Platz kehrt an den Anfang zurück.', 'Each bar place remembers its last page. A tap on the active place returns to the start.'],
+  ['Der Zurück-Knopf im Browser geht denselben Weg wie der Pfeil.', 'The back button in the browser follows the same path as the arrow.'],
   ['Unter einer Vision stehen ihre Projekte und Organisationen klar untereinander.', 'Under a vision, its projects and organizations stand clearly one below the other.'],
   ['Unter Mehr steht, dass du Bereiche unter App & Verbindungen ein- und ausschaltest.', 'Under More it says that you turn areas on and off under App & connections.'],
   ['Eine Tätigkeit nur für ein Projekt ist als solche gekennzeichnet.', 'An activity only for one project is marked as such.'],

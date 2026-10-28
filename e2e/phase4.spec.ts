@@ -530,7 +530,7 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
     await expect(page.getByRole('heading', { name: 'Benachrichtigungen', exact: true })).toBeVisible();
     expect(await erlaubnisZaehler(page)).toBe(0);
     await page.locator('a[data-zurueck]').click();
-    await expect(page).toHaveURL(/\/mehr$/);
+    await expect(page).toHaveURL(/\/$/);
     await page.goto('/');
     await expect(karte).toBeVisible();
 

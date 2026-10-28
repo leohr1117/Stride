@@ -11,9 +11,7 @@ import {
   leistenMitte,
   sichtbareLeiste,
   tauschMitSichtbar,
-  zeigtZurueckZumMehr,
   bereinigteLeiste,
-  zurueckFuerSeite,
 } from './leiste.ts';
 
 describe('istLeiste', () => {
@@ -118,38 +116,6 @@ describe('tauschMitSichtbar', () => {
     expect(tauschMitSichtbar(['/', '/ziele', '/mehr'], 2, -1, aktiv)).toEqual(['/mehr', '/ziele', '/']);
     expect(tauschMitSichtbar(['/', '/ziele', '/mehr'], 0, 1, aktiv)).toEqual(['/mehr', '/ziele', '/']);
     expect(tauschMitSichtbar(['/', '/ziele', '/mehr'], 2, 1, aktiv)).toEqual(['/', '/ziele', '/mehr']);
-  });
-});
-
-describe('zeigtZurueckZumMehr', () => {
-  it('zeigt den Knopf nur, wenn die Seite gerade nicht in der Leiste liegt', () => {
-    expect(zeigtZurueckZumMehr('/chronik', LEISTE_STANDARD)).toBe(true);
-    expect(zeigtZurueckZumMehr('/laufend', [])).toBe(true);
-    expect(zeigtZurueckZumMehr('/', LEISTE_STANDARD)).toBe(false);
-    expect(zeigtZurueckZumMehr('/mehr', ['/', '/laufend', '/ziele', '/charakter'])).toBe(false);
-    expect(zeigtZurueckZumMehr('/mehr', [])).toBe(false);
-    expect(zeigtZurueckZumMehr('/projekte/1', LEISTE_STANDARD)).toBe(false);
-    expect(zeigtZurueckZumMehr('/mehr/konto', LEISTE_STANDARD)).toBe(false);
-    expect(zeigtZurueckZumMehr('/verbindungen', LEISTE_STANDARD)).toBe(false);
-  });
-
-  it('folgt der sichtbaren Leiste, nicht der gespeicherten Auswahl', () => {
-    const funktionen = standardFunktionen();
-    funktionen.basis = false;
-    const leiste = sichtbareLeiste(['/', '/basis', '/ziele', '/mehr'], funktionen);
-    expect(zeigtZurueckZumMehr('/basis', leiste)).toBe(true);
-    expect(zeigtZurueckZumMehr('/ziele', leiste)).toBe(false);
-  });
-});
-
-describe('zurueckFuerSeite', () => {
-  it('führt vom Charakter zur Übersicht und lässt Haupt-Tabs ohne Pfeil', () => {
-    expect(zurueckFuerSeite('/charakter', LEISTE_STANDARD)).toEqual({ pfad: '/', label: 'Übersicht' });
-    expect(zurueckFuerSeite('/charakter', ['/'])).toEqual({ pfad: '/', label: 'Übersicht' });
-    expect(zurueckFuerSeite('/chronik', LEISTE_STANDARD)).toBeNull();
-    expect(zurueckFuerSeite('/basis', [])).toBeNull();
-    expect(zurueckFuerSeite('/', LEISTE_STANDARD)).toBeNull();
-    expect(zurueckFuerSeite('/mehr', LEISTE_STANDARD)).toBeNull();
   });
 });
 

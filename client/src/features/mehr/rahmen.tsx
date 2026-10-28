@@ -4,9 +4,7 @@ import { useLocation, useNavigate } from 'react-router';
 import type { Einstellungen, EinstellungenAenderung } from '../../../../shared/api/index.ts';
 import { standardVorlage } from '../../../../shared/features/darstellung/paletten.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
-import { ZurueckZumMehr } from '../../components/ZurueckZumMehr.tsx';
 import { InfoHinweis } from '../../ui/index.ts';
-import { useZurueck } from '../../herkunft.tsx';
 import { tx } from '../../text.ts';
 
 const DARSTELLUNGS_FELDER = new Set<keyof Einstellungen>([
@@ -139,17 +137,14 @@ export function Bereich({
   titel,
   info,
   kinder,
-  zurueck,
 }: {
   titel: string;
   info?: string;
   kinder: ReactNode;
   zurueck?: { pfad: string; label: string };
 }) {
-  const ziel = useZurueck(zurueck ?? { pfad: '/mehr', label: tx("Mehr") });
   return (
     <div className="space-y-6">
-      {ziel ? <ZurueckZumMehr pfad={ziel.pfad} label={ziel.label} /> : null}
       <div className="flex min-w-0 items-center">
         <h1 className="min-w-0 text-2xl font-bold tracking-tight text-balance break-words md:text-3xl">{tx(titel)}</h1>
         {info ? <InfoHinweis text={info} /> : null}

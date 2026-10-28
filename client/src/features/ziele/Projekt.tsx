@@ -17,8 +17,6 @@ import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { KettenAnzeige } from '../../components/KettenAnzeige.tsx';
 import { ProjektInvestition } from '../investitionen/Investitionen.tsx';
-import { ZurueckZumMehr } from '../../components/ZurueckZumMehr.tsx';
-import { useZurueck } from '../../herkunft.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { BossRing } from '../bosse/BossRing.tsx';
 import {
@@ -66,7 +64,6 @@ export function ProjektSeite() {
   const bosseAn = istAn('bossAngriffe', sichtbarkeit);
   const [bearbeitung, setBearbeitung] = useState<ZielBearbeitung>(null);
   const [bossVorhaben, setBossVorhaben] = useState<Vorhaben | null>(null);
-  const zurueck = useZurueck({ pfad: '/ziele', label: tx("Ziele") });
 
   if (!Number.isInteger(projektId)) {
     return <Fehlermeldung fehler={new Error(tx("Ungültige Projekt-Adresse."))} />;
@@ -86,8 +83,6 @@ export function ProjektSeite() {
 
   return (
     <div className="space-y-6">
-      {zurueck ? <ZurueckZumMehr pfad={zurueck.pfad} label={zurueck.label} /> : null}
-
       <Karte className="space-y-4">
         <div className="flex items-start gap-5">
           <LevelRing level={projekt.level.level} anteil={projekt.level.fortschritt} groesse={88} />

@@ -20,8 +20,6 @@ import { KlassenBild } from '../../components/KlassenBild.tsx';
 import type { LebenswegPunkt } from '../../components/LebenswegDiagramm.tsx';
 import { LebenswegDiagramm, ProfilRadar } from '../../components/mitDiagramm.tsx';
 import { Fehlermeldung, Karte, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
-import { ZurueckZumMehr } from '../../components/ZurueckZumMehr.tsx';
-import { useZurueck } from '../../herkunft.tsx';
 import { prozentText, zahl } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { attributName, klassenText, tx } from '../../text.ts';
@@ -109,8 +107,6 @@ export function VorbildProfilSeite() {
     () => eigenesProfil(attribute ?? [], { koennen: funktionen.koennen, status: funktionen.status }),
     [attribute, funktionen.koennen, funktionen.status],
   );
-  const zurueck = useZurueck({ pfad: '/vorbilder', label: tx('Vorbilder') });
-
   if (!vorbild) {
     return <Fehlermeldung fehler={new Error(tx('Dieses Vorbild gibt es nicht.'))} />;
   }
@@ -141,8 +137,6 @@ export function VorbildProfilSeite() {
 
   return (
     <div className="space-y-6">
-      {zurueck ? <ZurueckZumMehr pfad={zurueck.pfad} label={zurueck.label} /> : null}
-
       <Karte className="space-y-3">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div className="min-w-0 sm:flex-1">

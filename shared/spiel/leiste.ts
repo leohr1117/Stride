@@ -76,23 +76,6 @@ export function tauschMitSichtbar(
   return neu;
 }
 
-/** Zurück zu Mehr, nur auf einer Leisten-Seite, die gerade nicht in der sichtbaren Leiste liegt. */
-export function zeigtZurueckZumMehr(pfad: string, leiste: readonly string[]): boolean {
-  if (pfad === '/mehr' || !PFADE.has(pfad)) {
-    return false;
-  }
-  return !leiste.includes(pfad);
-}
-
-/** Charakter hängt an der Übersicht. Haupt-Tabs haben keinen Zurück-Knopf. */
-export function zurueckFuerSeite(pfad: string, leiste: readonly string[]): { pfad: string; label: string } | null {
-  void leiste;
-  if (pfad === '/charakter') {
-    return { pfad: '/', label: 'Übersicht' };
-  }
-  return null;
-}
-
 /** Bekannte Seiten behalten, auch über vier hinaus. Charakter und anderes Unbekanntes fallen weg. null, wenn der Wert keine Liste ist. */
 export function bereinigteLeiste(wert: unknown): string[] | null {
   if (!Array.isArray(wert)) {

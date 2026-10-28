@@ -128,13 +128,21 @@ test('Zurück folgt der Elternseite und ein Tab setzt den Verlauf zurück', asyn
   await expect(page).toHaveURL(/\/mehr\/darstellung\/leiste$/);
   await expect(page.locator('[data-zurueck]')).toHaveText('Darstellung');
 
-  await tab(page, 'Übersicht').click();
-  await expect(page).toHaveURL(/\/$/);
-  await expect(page.locator('[data-zurueck]')).toHaveCount(0);
-  await page.goBack().catch(() => undefined);
-  await expect(page).toHaveURL(/\/$/);
-  await expect(page.locator('[data-zurueck]')).toHaveCount(0);
+  const frisch = await page.context().newPage();
+  await frisch.goto('/');
+  await frisch.getByRole('button', { name: 'Eintrag loggen' }).waitFor();
+  await tab(frisch, 'Mehr').click();
+  await frisch.getByRole('link', { name: /^Darstellung/ }).click();
+  await frisch.getByRole('link', { name: 'Leiste', exact: true }).click();
+  await expect(frisch).toHaveURL(/\/mehr\/darstellung\/leiste$/);
+  await tab(frisch, 'Übersicht').click();
+  await expect(frisch).toHaveURL(/\/$/);
+  await expect(frisch.locator('[data-zurueck]')).toHaveCount(0);
+  await frisch.goBack().catch(() => undefined);
+  await expect(frisch).not.toHaveURL(/darstellung/);
+  await frisch.close();
 
+  await page.evaluate(() => sessionStorage.clear());
   await page.goto('/');
   await tab(page, 'Mehr').click();
   await expect(page.locator('[data-zurueck]')).toHaveCount(0);

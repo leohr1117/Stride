@@ -2,7 +2,8 @@ import { katalogName, tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Archive, ChevronRight, Landmark, Pencil, Plus } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
+import { merkeStand } from '../../herkunftLauf.ts';
 import type { Organisation, Projekt, Vision, VorhabenMitProjekt } from '../../../../shared/api/index.ts';
 import { ZIEL_MARKE, zielTitel } from '../../../../shared/spiel/ebenen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
@@ -23,7 +24,8 @@ export function ZieleSeite() {
   const ebenen = useEbenen();
   const { data: ziele, error, isPending } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
   const [bearbeitung, setBearbeitung] = useState<ZielBearbeitung>(null);
-  const [archivAnzeigen, setArchivAnzeigen] = useState(false);
+  const ort = useLocation();
+  const [archivAnzeigen, setArchivAnzeigen] = useState(() => Boolean((ort.state as { archiv?: boolean } | null)?.archiv));
   const [detailId, setDetailId] = useState<number | null>(null);
 
   if (isPending) {
@@ -182,7 +184,14 @@ export function ZieleSeite() {
       )}
 
       <div className="flex justify-center">
-        <Knopf variante="leise" onClick={() => setArchivAnzeigen(!archivAnzeigen)}>
+        <Knopf
+          variante="leise"
+          onClick={() => {
+            const neu = !archivAnzeigen;
+            setArchivAnzeigen(neu);
+            merkeStand({ archiv: neu, strideScroll: window.scrollY });
+          }}
+        >
           <Archive className="size-4" />
           {archivBeschriftung(archivAnzeigen)}
         </Knopf>

@@ -86,3 +86,18 @@ export function sichtbareGruppen(funktionen: Funktionen, ebenen: Ebenen = standa
   })).filter((gruppe) => gruppe.eintraege.length > 0);
 }
 
+/**
+ * Pfade, die am PC als Leistenplatz gelten.
+ * Tätigkeiten zählt mit, obwohl der sichtbare Eintrag erst mit der neuen Seitenleiste kommt.
+ */
+export function seitenleistenPfade(funktionen: Funktionen, ebenen: Ebenen = standardEbenen()): string[] {
+  const sichtbarkeit = { funktionen, ebenen };
+  const pfade = sichtbareGruppen(funktionen, ebenen).flatMap((gruppe) => gruppe.eintraege.map((eintrag) => eintrag.pfad));
+  pfade.push('/mehr/inhalte');
+  if (pfadAktiv(HANDBUCH.pfad, sichtbarkeit)) {
+    pfade.push(HANDBUCH.pfad);
+  }
+  pfade.push(EINSTELLUNGEN.pfad, '/charakter');
+  return pfade;
+}
+

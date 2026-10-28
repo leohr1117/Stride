@@ -96,7 +96,7 @@ export function Abschnitt({
   };
 
   return (
-    <section className="space-y-3">
+    <section id={kennung} className="space-y-3">
       <EinklappKopf
         titel={titel}
         offen={!eingeklappt}

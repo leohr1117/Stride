@@ -17,6 +17,37 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.19.1',
+    seiten: 'Tätigkeiten',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Am Computer zeigt Tätigkeiten keinen Zurück-Pfeil.',
+          'Zurück von Können, Haben und Investitionen führt zum Profil.',
+        ],
+      },
+    ],
+  },
+  {
+    version: '3.19.0',
+    seiten: 'Übersicht, Ziele, Mehr',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Seiten außerhalb der Leiste zeigen den Zurück-Pfeil.',
+          'Jeder Leistenplatz merkt sich die letzte Seite. Ein Tipp auf den aktiven Platz kehrt an den Anfang zurück.',
+          'Der Zurück-Knopf im Browser geht denselben Weg wie der Pfeil.',
+        ],
+      },
+      {
+        titel: 'Behoben',
+        punkte: ['Zurück führt wieder dorthin, wo du herkamst.'],
+      },
+    ],
+  },
+  {
     version: '3.18.0',
     seiten: 'Ziele, Mehr, Handbuch, Projekt',
     abschnitte: [

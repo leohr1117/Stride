@@ -92,7 +92,12 @@ test('Tätigkeiten lassen sich anordnen, die oberste steht zuerst', async ({ pag
     await eintrag.getByRole('button', { name: 'Schließen' }).click();
     await expect(eintrag).toBeHidden();
 
-    await page.locator('a[data-zurueck]').click();
+    if ((page.viewportSize()?.width ?? 0) >= 768) {
+      await expect(page.locator('a[data-zurueck]')).toHaveCount(0);
+      await page.locator('aside.seitenleiste a[href="/mehr"]').click();
+    } else {
+      await page.locator('a[data-zurueck]').click();
+    }
     await expect(page).toHaveURL(/\/mehr$/);
   } finally {
     if (ursprung) {

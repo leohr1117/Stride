@@ -1,13 +1,12 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronRight, Plus, Settings } from 'lucide-react';
 import { createContext, lazy, Suspense, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
-import { Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
+import { Link, Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useEbenen, useFunktionen } from '../funktionen.ts';
-import { seiteZeigtEigenenZurueck } from '../../../shared/spiel/herkunft.ts';
-import { LEISTE_STANDARD, leistenMitte, sichtbareLeiste, zurueckFuerSeite } from '../../../shared/spiel/leiste.ts';
+import { LEISTE_STANDARD, leistenMitte, sichtbareLeiste } from '../../../shared/spiel/leiste.ts';
 import { istAn, pfadAktiv } from '../../../shared/spiel/sichtbarkeit.ts';
-import { EINSTELLUNGEN, HANDBUCH, navAusLeiste, sichtbareGruppen, type NavEintrag } from '../navigation.ts';
+import { EINSTELLUNGEN, HANDBUCH, navAusLeiste, seitenleistenPfade, sichtbareGruppen, type NavEintrag } from '../navigation.ts';
 import { AbgleichBeimOeffnen } from '../abgleichBeimOeffnen.tsx';
 import { useStilAbgleich } from '../features/darstellung/stil.ts';
 import type { EintragVorgabe } from '../features/eintraege/EintragDialog.tsx';
@@ -15,7 +14,8 @@ import type { EintragVorgabe } from '../features/eintraege/EintragDialog.tsx';
 const EintragDialog = lazy(() => import('../features/eintraege/EintragDialog.tsx').then((modul) => ({ default: modul.EintragDialog })));
 import { KlassenBild } from './KlassenBild.tsx';
 import { einfuehrungZurueck, profilFragenOffen } from '../../../shared/spiel/profil.ts';
-import { klickeHauptseite, useVerlauf, useZurueck } from '../herkunft.tsx';
+import { klickeHauptseite, useAktiverPlatz, useVerlauf, useZurueck } from '../herkunft.tsx';
+import { setzeNavLage } from '../herkunftLauf.ts';
 import { leseSitzung, merkeSitzung, vergiss } from '../speicher.ts';
 import { Einfuehrung, SprachStart } from './Einfuehrung.tsx';
 import { ProfilErstellung } from './ProfilErstellung.tsx';
@@ -33,8 +33,20 @@ export function useEintragOeffnen(): (vorgabe?: EintragVorgabe) => void {
   return oeffnen;
 }
 
-function navKlasse({ isActive }: { isActive: boolean }): string {
-  return isActive ? 'text-haupt' : 'text-leise hover:text-haupt';
+function platzKlasse(aktiv: boolean): string {
+  return aktiv ? 'text-haupt' : 'text-leise hover:text-haupt';
+}
+
+function useIstPc(): boolean {
+  const [pc, setPc] = useState(() => window.matchMedia('(min-width: 768px)').matches);
+  useEffect(() => {
+    const medien = window.matchMedia('(min-width: 768px)');
+    const setze = () => setPc(medien.matches);
+    setze();
+    medien.addEventListener('change', setze);
+    return () => medien.removeEventListener('change', setze);
+  }, []);
+  return pc;
 }
 
 function vorgabeAusPfad(pathname: string): EintragVorgabe {
@@ -86,7 +98,7 @@ const SPRACHE_WEG = 'ascend.sprache.weg';
 
 function AppGeruest() {
   useStilAbgleich();
-  useVerlauf();
+  const pc = useIstPc();
   const { pathname } = useLocation();
   const einstellungen = useQuery({ queryKey: SCHLUESSEL.einstellungen, queryFn: api.einstellungen });
   const client = useQueryClient();
@@ -116,6 +128,14 @@ function AppGeruest() {
 
   const daten = einstellungen.data;
   const offen = daten ? profilFragenOffen(daten) : null;
+  if (daten) {
+    setzeNavLage({
+      leiste: sichtbareLeiste(daten.mobilLeiste ?? LEISTE_STANDARD, daten.funktionen, daten.ebenen),
+      seitenleiste: pc ? seitenleistenPfade(daten.funktionen, daten.ebenen) : [],
+      verlaufAn: istAn('chronik', { funktionen: daten.funktionen, ebenen: daten.ebenen }),
+    });
+  }
+  useVerlauf(Boolean(daten) && offen === false);
   const neu = offen !== null && einfuehrungZurueck(runde.offen, offen);
   const weg = neu ? false : runde.weg;
   const spracheWeg = neu ? false : runde.spracheWeg;
@@ -196,7 +216,7 @@ function AppGeruest() {
         <div className="min-w-0 flex-1">
           <MobilKopf />
           <main className="mx-auto w-full max-w-4xl px-4 pt-4 pb-28 md:px-8 md:pt-10 md:pb-12">
-            <ZurueckLeiste pathname={pathname} />
+            <ZurueckLeiste />
             <Suspense fallback={<Ladeanzeige />}>
               <div key={pathname} className="seite-einblenden">
                 {pfadAktiv(pathname, { funktionen: daten.funktionen, ebenen: daten.ebenen }) ? (
@@ -230,19 +250,19 @@ function useCharakterKurz() {
 
 function NavPunkt({ eintrag }: { eintrag: NavEintrag }) {
   const NavIcon = eintrag.icon;
+  const aktiv = useAktiverPlatz() === eintrag.pfad;
   return (
-    <NavLink
+    <Link
       to={eintrag.pfad}
-      end={eintrag.pfad === '/'}
-      className={({ isActive }) =>
-        `flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition ${
-          isActive ? 'bg-flaeche-2 text-haupt' : 'text-leise hover:text-haupt'
-        }`
-      }
+      data-platz={eintrag.pfad}
+      aria-current={aktiv ? 'page' : undefined}
+      className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition ${
+        aktiv ? 'bg-flaeche-2 text-haupt' : 'text-leise hover:text-haupt'
+      }`}
     >
       <NavIcon className="size-4 shrink-0" />
       <span className="min-w-0 break-words">{tx(eintrag.label)}</span>
-    </NavLink>
+    </Link>
   );
 }
 
@@ -251,6 +271,7 @@ function Seitenleiste() {
   const charakter = useCharakterKurz();
   const funktionen = useFunktionen();
   const ebenen = useEbenen();
+  const charakterAktiv = useAktiverPlatz() === '/charakter';
 
   return (
     <aside className="seitenleiste sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-rand bg-flaeche px-4 py-6 md:flex">
@@ -286,7 +307,12 @@ function Seitenleiste() {
           <NavPunkt eintrag={EINSTELLUNGEN} />
         </div>
         {charakter && (
-          <NavLink to="/charakter" className="block rounded-xl bg-flaeche-2 p-3">
+          <Link
+            to="/charakter"
+            data-platz="/charakter"
+            aria-current={charakterAktiv ? 'page' : undefined}
+            className="block rounded-xl bg-flaeche-2 p-3"
+          >
             <div className="flex items-center gap-2">
               <KlassenBild klasse={charakter.klasse} groesse="size-9" />
               <div className="min-w-0 flex-1">
@@ -300,35 +326,26 @@ function Seitenleiste() {
             <div className="mt-2">
               <Fortschrittsbalken anteil={charakter.level.fortschritt} hoehe="h-1.5" />
             </div>
-          </NavLink>
+          </Link>
         )}
       </div>
     </aside>
   );
 }
 
-function ZurueckLeiste({ pathname }: { pathname: string }) {
-  const funktionen = useFunktionen();
-  const ebenen = useEbenen();
-  const { data } = useQuery({ queryKey: SCHLUESSEL.einstellungen, queryFn: api.einstellungen });
-  const leiste = sichtbareLeiste(data?.mobilLeiste ?? LEISTE_STANDARD, funktionen, ebenen);
-  const ziel = useZurueck(zurueckFuerSeite(pathname, leiste));
-  if (seiteZeigtEigenenZurueck(pathname) || !ziel) {
+function ZurueckLeiste() {
+  const ziel = useZurueck(null);
+  if (!ziel) {
     return null;
   }
-  return (
-    <div className="mb-6">
-      <ZurueckZumMehr pfad={ziel.pfad} label={ziel.label} />
-    </div>
-  );
+  return <ZurueckZumMehr pfad={ziel.pfad} label={ziel.label} />;
 }
 
 function MobilKopf() {
   const charakter = useCharakterKurz();
-  const { pathname } = useLocation();
   const kopf = useRef<HTMLElement>(null);
   const name = charakter?.name ?? '';
-  const mehrAktiv = pathname === '/mehr' || pathname.startsWith('/mehr/');
+  const mehrAktiv = useAktiverPlatz() === '/mehr';
 
   useEffect(() => {
     const knoten = kopf.current;
@@ -366,14 +383,15 @@ function MobilKopf() {
         <span className="min-w-0 flex-1 truncate font-semibold">{name}</span>
         <ChevronRight className="size-4 shrink-0 text-leise" />
       </NavLink>
-      <NavLink
+      <Link
         to="/mehr"
+        data-platz="/mehr"
         aria-current={mehrAktiv ? 'page' : undefined}
         className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-semibold ${mehrAktiv ? 'bg-akzent text-akzent-text' : 'bg-flaeche text-haupt'}`}
       >
         <Settings className="size-3.5" />
         {tx("Mehr")}
-      </NavLink>
+      </Link>
       {charakter && (
         <div className="shrink-0">
           <span className="zahl block whitespace-nowrap text-right text-xs text-leise">{tx('Level {level}', { level: charakter.level.level })}</span>
@@ -388,6 +406,7 @@ function MobilNavigation() {
   const oeffnen = useEintragOeffnen();
   const funktionen = useFunktionen();
   const ebenen = useEbenen();
+  const aktivPlatz = useAktiverPlatz();
   const { data } = useQuery({ queryKey: SCHLUESSEL.einstellungen, queryFn: api.einstellungen });
   const eintraege = sichtbareLeiste(data?.mobilLeiste ?? LEISTE_STANDARD, funktionen, ebenen).flatMap((pfad) => {
     const eintrag = navAusLeiste(pfad);
@@ -395,17 +414,16 @@ function MobilNavigation() {
   });
   const mitte = leistenMitte(eintraege.length);
   const link = ({ pfad, label, icon: NavIcon }: NavEintrag) => (
-    <NavLink
+    <Link
       key={pfad}
       to={pfad}
-      end={pfad === '/'}
-      className={({ isActive }) =>
-        `flex min-w-0 flex-1 flex-col items-center gap-1 px-0.5 py-2 text-center text-[11px] font-medium leading-tight ${navKlasse({ isActive })}`
-      }
+      data-platz={pfad}
+      aria-current={aktivPlatz === pfad ? 'page' : undefined}
+      className={`flex min-w-0 flex-1 flex-col items-center gap-1 px-0.5 py-2 text-center text-[11px] font-medium leading-tight ${platzKlasse(aktivPlatz === pfad)}`}
     >
       <NavIcon className="size-5" />
       <span className="max-w-full break-words">{tx(label)}</span>
-    </NavLink>
+    </Link>
   );
 
   return (
