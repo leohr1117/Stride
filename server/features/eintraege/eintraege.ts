@@ -8,10 +8,12 @@ import type {
   EintragDaten,
   EintragErgebnis,
   EintragFilter,
+  ProtokollArt,
+  ProtokollZeile,
   SkillEreignis,
   XpAnteilMitName,
 } from '../../../shared/api/index.ts';
-import { BONUS_QUELLEN } from '../../../shared/api/index.ts';
+import { BONUS_QUELLEN, PROTOKOLL_ARTEN } from '../../../shared/api/index.ts';
 import type { Abschluss, AttributTyp } from '../../../shared/spiel/begriffe.ts';
 import { belastungXp, istBelastend } from '../../../shared/spiel/belastung.ts';
 import { kettenLaenge } from '../../../shared/spiel/kette.ts';
@@ -252,10 +254,37 @@ function leseCursor(cursor: string): ChronikPosition {
   const typTrenner = cursor.lastIndexOf(CURSOR_TRENNER, idTrenner - 1);
   const id = Number(cursor.slice(idTrenner + 1));
   const typ = cursor.slice(typTrenner + 1, idTrenner);
-  if (typTrenner <= 0 || !Number.isInteger(id) || (typ !== 'eintrag' && typ !== 'skill')) {
+  if (typTrenner <= 0 || !Number.isInteger(id) || (typ !== 'eintrag' && typ !== 'skill' && typ !== 'protokoll')) {
     throw ungueltig('Ungültiger Cursor.');
   }
   return { zeit: cursor.slice(0, typTrenner), typ, id };
+}
+
+function istProtokollArt(art: string): art is ProtokollArt {
+  return (PROTOKOLL_ARTEN as readonly string[]).includes(art);
+}
+
+function ladeProtokollZeilen(ids: number[]): Map<number, ProtokollZeile> {
+  if (ids.length === 0) {
+    return new Map();
+  }
+  const zeilen = alle<{ id: number; art: string; tag: string }>(
+    `SELECT id, art, tag FROM protokoll WHERE id IN (${platzhalter(ids.length)}) AND tag IS NOT NULL`,
+    ...ids,
+  );
+  const ergebnis = new Map<number, ProtokollZeile>();
+  for (const zeile of zeilen) {
+    if (!istProtokollArt(zeile.art)) {
+      continue;
+    }
+    ergebnis.set(zeile.id, {
+      id: zeile.id,
+      art: zeile.art,
+      tag: zeile.tag,
+      erstelltAm: `${zeile.tag}T12:00:00.000Z`,
+    });
+  }
+  return ergebnis;
 }
 
 function schreibeCursor(position: ChronikPosition): string {
@@ -314,6 +343,7 @@ export function ladeChronik(filter: EintragFilter, cursor: string | undefined, l
     filter.organisationId === undefined &&
     filter.projektId === undefined &&
     filter.vorlageId === undefined;
+  const mitProtokoll = mitSkills && filter.faehigkeitId === undefined;
   const eintragWhere = eintragBedingungen.length > 0 ? `WHERE ${eintragBedingungen.join(' AND ')}` : '';
   const quellen = [
     `SELECT 'eintrag' AS typ, e.id AS id, e.erstellt_am AS zeit
@@ -324,6 +354,14 @@ export function ladeChronik(filter: EintragFilter, cursor: string | undefined, l
     quellen.push(`SELECT 'skill' AS typ, k.id AS id, k.freigeschaltet_am AS zeit
                   FROM skill_knoten k WHERE ${skillBedingungen.join(' AND ')}`);
     parameter.push(...skillParameter);
+  }
+  if (mitProtokoll) {
+    quellen.push(
+      `SELECT 'protokoll' AS typ, id AS id, (tag || 'T12:00:00.000Z') AS zeit
+       FROM protokoll
+       WHERE tag IS NOT NULL AND art IN (${platzhalter(PROTOKOLL_ARTEN.length)})`,
+    );
+    parameter.push(...PROTOKOLL_ARTEN);
   }
 
   let cursorBedingung = '';
@@ -351,15 +389,27 @@ export function ladeChronik(filter: EintragFilter, cursor: string | undefined, l
     ).map((eintrag) => [eintrag.id, eintrag]),
   );
   const skills = ladeSkillEreignisse(seite.filter((position) => position.typ === 'skill').map((position) => position.id));
+  const protokolle = ladeProtokollZeilen(seite.filter((position) => position.typ === 'protokoll').map((position) => position.id));
 
   const ergebnis: ChronikEintrag[] = [];
   for (const position of seite) {
-    const eintrag = position.typ === 'eintrag' ? eintraege.get(position.id) : undefined;
-    const skill = position.typ === 'skill' ? skills.get(position.id) : undefined;
-    if (eintrag) {
-      ergebnis.push({ typ: 'eintrag', eintrag });
-    } else if (skill) {
-      ergebnis.push({ typ: 'skill', skill });
+    if (position.typ === 'eintrag') {
+      const eintrag = eintraege.get(position.id);
+      if (eintrag) {
+        ergebnis.push({ typ: 'eintrag', eintrag });
+      }
+      continue;
+    }
+    if (position.typ === 'skill') {
+      const skill = skills.get(position.id);
+      if (skill) {
+        ergebnis.push({ typ: 'skill', skill });
+      }
+      continue;
+    }
+    const protokoll = protokolle.get(position.id);
+    if (protokoll) {
+      ergebnis.push({ typ: 'protokoll', protokoll });
     }
   }
 

@@ -1,5 +1,17 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ein Tag Pause ist frei. Danach ist die Kette angeschlagen. Der Schutz ist die eine Zeile unter Heute.": "可以休息一天。之后连续记录会受损。保护是「今天」下面的那一行。",
+  "Ein Eintrag in sieben Tagen, ohne Abzug.": "七天内记一笔，不扣分。",
+  "Bis {datum}": "到 {datum}",
+  "Schutz einsetzen": "使用保护",
+  "Hält die {n} Tage": "保住 {n} 天",
+  "Einsetzen": "使用",
+  "{n} Tage · Pause aufgebraucht": "{n} 天 · 休息已用完",
+  "Schutz verdient": "获得保护",
+  "Schutz eingesetzt": "已使用保护",
+  "Rückkehr offen": "回归进行中",
+  "Rückkehr geschafft": "回归完成",
+  "Rückkehr vorbei": "回归已结束",
   "Rückkehr": "回归",
   "Der Schutz kann heute nicht eingesetzt werden.": "今天不能使用保护。",
   "Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.": "引导用清楚的句子说明记录、目标和连续天数。问题写明选择会打开什么。",

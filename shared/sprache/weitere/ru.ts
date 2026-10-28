@@ -1,5 +1,17 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ein Tag Pause ist frei. Danach ist die Kette angeschlagen. Der Schutz ist die eine Zeile unter Heute.": "Один день паузы свободен. Дальше серия надломлена. Защита — одна строка под «Сегодня».",
+  "Ein Eintrag in sieben Tagen, ohne Abzug.": "Одна запись за семь дней, без штрафа.",
+  "Bis {datum}": "До {datum}",
+  "Schutz einsetzen": "Использовать защиту",
+  "Hält die {n} Tage": "Сохраняет {n} дн.",
+  "Einsetzen": "Применить",
+  "{n} Tage · Pause aufgebraucht": "{n} дн. · пауза исчерпана",
+  "Schutz verdient": "Защита заработана",
+  "Schutz eingesetzt": "Защита применена",
+  "Rückkehr offen": "Возвращение открыто",
+  "Rückkehr geschafft": "Возвращение выполнено",
+  "Rückkehr vorbei": "Возвращение прошло",
   "Rückkehr": "Возвращение",
   "Der Schutz kann heute nicht eingesetzt werden.": "Защиту сегодня нельзя использовать.",
   "Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.": "Введение объясняет записи, цели и серию ясными фразами. Вопросы говорят, что включает выбор.",

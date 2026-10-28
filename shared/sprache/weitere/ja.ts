@@ -1,5 +1,17 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ein Tag Pause ist frei. Danach ist die Kette angeschlagen. Der Schutz ist die eine Zeile unter Heute.": "休みは1日まで無料です。その次は連続が傷つきます。保護は「今日」の下の1行です。",
+  "Ein Eintrag in sieben Tagen, ohne Abzug.": "7日以内に1件、減点なし。",
+  "Bis {datum}": "{datum}まで",
+  "Schutz einsetzen": "保護を使う",
+  "Hält die {n} Tage": "{n}日を守る",
+  "Einsetzen": "使う",
+  "{n} Tage · Pause aufgebraucht": "{n}日 · 休みを使い切り",
+  "Schutz verdient": "保護を獲得",
+  "Schutz eingesetzt": "保護を使用",
+  "Rückkehr offen": "復帰が開いている",
+  "Rückkehr geschafft": "復帰を達成",
+  "Rückkehr vorbei": "復帰は終了",
   "Rückkehr": "復帰",
   "Der Schutz kann heute nicht eingesetzt werden.": "今日は保護を使えません。",
   "Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.": "導入は記録、目標、連続日数を短い文で説明します。質問は、選択が何を有効にするかを示します。",

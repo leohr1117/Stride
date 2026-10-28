@@ -63,7 +63,29 @@ export interface SkillEreignis {
   erstelltAm: string;
 }
 
-export type ChronikEintrag = { typ: 'eintrag'; eintrag: Eintrag } | { typ: 'skill'; skill: SkillEreignis };
+/** Arten, die die Chronik zeigt. `push_*` bleibt unsichtbar, bis Phase 4 sie anzeigt. */
+export const PROTOKOLL_ARTEN = [
+  'schutz_verdient',
+  'schutz_eingesetzt',
+  'rueckkehr_offen',
+  'rueckkehr_geschafft',
+  'rueckkehr_zu',
+] as const;
+
+export type ProtokollArt = (typeof PROTOKOLL_ARTEN)[number];
+
+export interface ProtokollZeile {
+  id: number;
+  art: ProtokollArt;
+  /** Kalendertag der Zeile, JJJJ-MM-TT. */
+  tag: string;
+  erstelltAm: string;
+}
+
+export type ChronikEintrag =
+  | { typ: 'eintrag'; eintrag: Eintrag }
+  | { typ: 'skill'; skill: SkillEreignis }
+  | { typ: 'protokoll'; protokoll: ProtokollZeile };
 
 export interface ChronikSeite {
   eintraege: ChronikEintrag[];

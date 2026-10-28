@@ -10,6 +10,7 @@ export function InfoHinweis({
   kompakt = false,
   knopfKlasse,
   abstand = true,
+  amKasten = false,
 }: {
   text: string;
   label?: string;
@@ -18,6 +19,8 @@ export function InfoHinweis({
   knopfKlasse?: string;
   /** Abstand zum vorausgehenden Namen. Das Ausrufezeichen sitzt bewusst direkt am Namen. */
   abstand?: boolean;
+  /** Unter dem Kasten zentrieren, statt direkt unter dem Icon. Die Zahlen im Kasten bleiben frei. */
+  amKasten?: boolean;
 }) {
   const labelText = tx(label);
   const hinweis = tx(text);
@@ -62,14 +65,16 @@ export function InfoHinweis({
         return;
       }
       const rand = 8;
-      let left = knopf.left;
+      const feld = amKasten ? rahmen.current?.closest('[data-info-kasten]')?.getBoundingClientRect() : null;
+      const anker = feld ?? knopf;
+      let left = feld ? anker.left + (anker.width - kasten.width) / 2 : anker.left;
       if (left + kasten.width > window.innerWidth - rand) {
         left = window.innerWidth - rand - kasten.width;
       }
       left = Math.max(rand, left);
-      let top = knopf.bottom + 4;
+      let top = anker.bottom + 4;
       if (top + kasten.height > window.innerHeight - rand) {
-        const darueber = knopf.top - kasten.height - 4;
+        const darueber = anker.top - kasten.height - 4;
         top = darueber >= rand ? darueber : rand;
       }
       setOrt({ top, left });
@@ -81,7 +86,7 @@ export function InfoHinweis({
       window.removeEventListener('resize', legeAus);
       window.removeEventListener('scroll', legeAus, true);
     };
-  }, [offen, hinweis]);
+  }, [offen, hinweis, amKasten]);
 
   const stil: CSSProperties = {
     position: 'fixed',

@@ -21,12 +21,14 @@ import {
   AttributBezeichnung,
   Fehlermeldung,
   Fortschrittsbalken,
+  InfoHinweis,
   Karte,
   Knopf,
   Ladeanzeige,
   LevelRing,
   Ueberschrift,
 } from '../../ui/index.ts';
+import { HeuteKarte } from './Heute.tsx';
 
 import { ausTagesSchluessel, faktorText, kurzesDatum, monatKurz, zahl } from '../../format.ts';
 import { useSichtbarkeit, useUebersichtKarten } from '../../funktionen.ts';
@@ -78,6 +80,13 @@ export function UebersichtSeite() {
             <Wochenwert label={tx("XP diese Woche")} wert={`+${zahl(uebersicht.wocheXp)}`} hervorheben />
             <Wochenwert
               label={tx("Streak")}
+              info={
+                <InfoHinweis
+                  text="Ein Tag Pause ist frei. Danach ist die Kette angeschlagen. Der Schutz ist die eine Zeile unter Heute."
+                  abstand={false}
+                  amKasten
+                />
+              }
               wert={
                 <span
                   className={`flex items-center justify-center gap-1 ${uebersicht.serie.angeknackst ? 'text-leise' : uebersicht.serie.laenge > 0 ? 'text-xp' : ''}`}
@@ -108,6 +117,8 @@ export function UebersichtSeite() {
           </Link>
         </Karte>
       )}
+
+      <HeuteKarte />
 
       {karteGewaehlt('bosse', karten) && istAn('bossAngriffe', sichtbarkeit) && uebersicht.angriffe.length > 0 && (
         <Angriffe bosse={uebersicht.angriffe} projekteAn={istAn('projekte', sichtbarkeit)} />
@@ -143,9 +154,20 @@ export function UebersichtSeite() {
   );
 }
 
-function Wochenwert({ label, wert, hervorheben = false }: { label: string; wert: ReactNode; hervorheben?: boolean }) {
+function Wochenwert({
+  label,
+  wert,
+  hervorheben = false,
+  info,
+}: {
+  label: string;
+  wert: ReactNode;
+  hervorheben?: boolean;
+  info?: ReactNode;
+}) {
   return (
-    <div className="rounded-xl bg-flaeche-2 px-2 py-2">
+    <div className="relative rounded-xl bg-flaeche-2 px-2 py-2" data-wochenwert={label} data-info-kasten>
+      {info ? <span className="absolute end-1 top-1 z-10 flex">{info}</span> : null}
       <p className={`zahl text-lg font-bold ${hervorheben ? 'text-xp' : ''}`}>{wert}</p>
       <p className="text-[11px] leading-tight text-leise">{label}</p>
     </div>

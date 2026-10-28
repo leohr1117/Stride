@@ -1,5 +1,17 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ein Tag Pause ist frei. Danach ist die Kette angeschlagen. Der Schutz ist die eine Zeile unter Heute.": "Un jour de pause est libre. Ensuite la série est fragilisée. La protection est la seule ligne sous Aujourd'hui.",
+  "Ein Eintrag in sieben Tagen, ohne Abzug.": "Une entrée en sept jours, sans pénalité.",
+  "Bis {datum}": "Jusqu'au {datum}",
+  "Schutz einsetzen": "Utiliser la protection",
+  "Hält die {n} Tage": "Garde les {n} jours",
+  "Einsetzen": "Utiliser",
+  "{n} Tage · Pause aufgebraucht": "{n} jours · pause épuisée",
+  "Schutz verdient": "Protection gagnée",
+  "Schutz eingesetzt": "Protection utilisée",
+  "Rückkehr offen": "Retour ouvert",
+  "Rückkehr geschafft": "Retour réussi",
+  "Rückkehr vorbei": "Retour passé",
   "Rückkehr": "Retour",
   "Der Schutz kann heute nicht eingesetzt werden.": "La protection ne peut pas être utilisée aujourd'hui.",
   "Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.": "L'introduction explique les entrées, les objectifs et la série en phrases claires. Les questions disent ce que le choix active.",

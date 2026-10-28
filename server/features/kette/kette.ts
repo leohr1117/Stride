@@ -33,11 +33,15 @@ export function ladeKetteHeute(jetzt = new Date()): KetteHeute {
   const tage = ladeAktiveTage();
   const bruecken = ladeBrueckentage();
   const serie = kettenStand(tage, heute, bruecken);
+  const vorrat = leseSchutzVorrat();
+  const schutz = schutzHeuteMoeglich(tage, heute, bruecken, vorrat);
+  const letzter = letzterBis(tage, heute);
   const offen = eine<{ fristAm: string }>(
     `SELECT frist_am AS fristAm FROM rueckkehr WHERE status = 'offen' ORDER BY id DESC LIMIT 1`,
   );
   return {
-    schutz: schutzHeuteMoeglich(tage, heute, bruecken, leseSchutzVorrat()),
+    schutz,
+    schutzLaenge: schutz && letzter !== null ? kettenLaenge(tage, letzter, bruecken) : null,
     rueckkehr: offen ? { fristAm: offen.fristAm } : null,
     angeschlagen: serie.angeknackst && serie.laenge >= 2 ? { laenge: serie.laenge } : null,
   };

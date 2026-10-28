@@ -1,5 +1,17 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Ein Tag Pause ist frei. Danach ist die Kette angeschlagen. Der Schutz ist die eine Zeile unter Heute.', 'One day off is free. After that the chain is cracked. Protection is the one row under Today.'],
+  ['Ein Eintrag in sieben Tagen, ohne Abzug.', 'One entry in seven days, with no penalty.'],
+  ['Bis {datum}', 'Until {datum}'],
+  ['Schutz einsetzen', 'Use protection'],
+  ['Hält die {n} Tage', 'Keeps the {n} days'],
+  ['Einsetzen', 'Use'],
+  ['{n} Tage · Pause aufgebraucht', '{n} days · pause used up'],
+  ['Schutz verdient', 'Protection earned'],
+  ['Schutz eingesetzt', 'Protection used'],
+  ['Rückkehr offen', 'Return open'],
+  ['Rückkehr geschafft', 'Return completed'],
+  ['Rückkehr vorbei', 'Return over'],
   ['Schlicht', 'Plain'],
   ['Nebel', 'Mist'],
   ['Eigene Paletten', 'Your palettes'],

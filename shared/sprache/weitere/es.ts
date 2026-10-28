@@ -1,5 +1,17 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ein Tag Pause ist frei. Danach ist die Kette angeschlagen. Der Schutz ist die eine Zeile unter Heute.": "Un día de pausa es libre. Después la racha queda tocada. La protección es la única fila bajo Hoy.",
+  "Ein Eintrag in sieben Tagen, ohne Abzug.": "Una entrada en siete días, sin penalización.",
+  "Bis {datum}": "Hasta el {datum}",
+  "Schutz einsetzen": "Usar la protección",
+  "Hält die {n} Tage": "Mantiene los {n} días",
+  "Einsetzen": "Usar",
+  "{n} Tage · Pause aufgebraucht": "{n} días · pausa agotada",
+  "Schutz verdient": "Protección ganada",
+  "Schutz eingesetzt": "Protección usada",
+  "Rückkehr offen": "Regreso abierto",
+  "Rückkehr geschafft": "Regreso logrado",
+  "Rückkehr vorbei": "Regreso pasado",
   "Rückkehr": "Regreso",
   "Der Schutz kann heute nicht eingesetzt werden.": "La protección no se puede usar hoy.",
   "Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.": "La introducción explica los registros, los objetivos y la racha en frases claras. Las preguntas dicen qué activa la elección.",

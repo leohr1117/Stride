@@ -7,6 +7,7 @@ import { erfolgeApi, erfolgeSchluessel } from './erfolge.ts';
 import { faehigkeitenApi, faehigkeitenSchluessel } from './faehigkeiten.ts';
 import { investitionenApi, investitionenSchluessel } from './investitionen.ts';
 import { kalenderApi } from './kalender.ts';
+import { ketteApi, ketteSchluessel } from './kette.ts';
 import { ApiFehler, beobachteAnmeldung, meldeAnmeldungAbgelaufen } from './kern.ts';
 import { rueckblickApi, rueckblickSchluessel } from './rueckblick.ts';
 import { statistikenApi, statistikenSchluessel } from './statistiken.ts';
@@ -37,6 +38,7 @@ export const api = {
   ...verbindungenApi,
   ...todoistApi,
   ...kalenderApi,
+  ...ketteApi,
 };
 
 export const SCHLUESSEL = {
@@ -54,4 +56,5 @@ export const SCHLUESSEL = {
   ...einstellungenSchluessel,
   ...verbindungenSchluessel,
   ...zugangSchluessel,
+  ...ketteSchluessel,
 } as const;

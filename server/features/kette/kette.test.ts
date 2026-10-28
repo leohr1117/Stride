@@ -138,11 +138,13 @@ describe('Kette heute', () => {
       schreibeSchutzVorrat(1);
       expect(ladeKetteHeute(mittag(DIENSTAG))).toEqual({
         schutz: false,
+        schutzLaenge: null,
         rueckkehr: null,
         angeschlagen: null,
       });
       expect(ladeKetteHeute(mittag(MITTWOCH))).toEqual({
         schutz: false,
+        schutzLaenge: null,
         rueckkehr: null,
         angeschlagen: { laenge: 5 },
       });
@@ -167,6 +169,7 @@ describe('Kette heute', () => {
       schreibeSchutzVorrat(1);
       expect(ladeKetteHeute(mittag(DONNERSTAG))).toEqual({
         schutz: true,
+        schutzLaenge: 5,
         rueckkehr: null,
         angeschlagen: null,
       });
@@ -212,7 +215,12 @@ describe('Schutz einsetzen', () => {
       expect(setzeSchutzEin(mittag(DONNERSTAG))).toEqual(erste);
       expect(bruecken()).toEqual([MITTWOCH]);
       expect(protokolle('schutz_eingesetzt')).toEqual([MITTWOCH]);
-      expect(ladeKetteHeute(mittag(FREITAG))).toEqual({ schutz: false, rueckkehr: null, angeschlagen: null });
+      expect(ladeKetteHeute(mittag(FREITAG))).toEqual({
+        schutz: false,
+        schutzLaenge: null,
+        rueckkehr: null,
+        angeschlagen: null,
+      });
       expect(momentumFuerTag(FREITAG)).toBe(1.05);
     });
   });
@@ -280,7 +288,7 @@ describe('Schutz einsetzen', () => {
         expect(leer.json()).toEqual({ serie: { laenge: 5, angeknackst: false }, schutz: false });
         const stand = await app.inject({ method: 'GET', url: '/api/kette/heute' });
         expect(stand.statusCode).toBe(200);
-        expect(stand.json()).toEqual({ schutz: false, rueckkehr: null, angeschlagen: null });
+        expect(stand.json()).toEqual({ schutz: false, schutzLaenge: null, rueckkehr: null, angeschlagen: null });
         const voll = await app.inject({ method: 'POST', url: '/api/kette/schutz', payload: { extra: true } });
         expect(voll.statusCode).toBe(400);
         expect(bruecken()).toEqual([tagPlus(heute, -1)]);
