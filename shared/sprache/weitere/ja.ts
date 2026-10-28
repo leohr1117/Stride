@@ -1,5 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Neue Profile haben die Chronik von Anfang an eingeschaltet.": "新しいプロフィールでは最初から履歴がオンです。",
+  "Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.": "レベルリングに色のグラデーションと先端の光る点が戻りました。右上のリングも同じです。",
   "Abmelden?": "ログアウトしますか？",
   "Die Sitzung auf diesem Gerät endet.": "このデバイスのセッションが終了します。",
   "Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.": "ラベルは欄の上にあります。エラーは欄のすぐ下にあります。",

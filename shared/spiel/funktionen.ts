@@ -78,7 +78,7 @@ export const FUNKTION_BLOECKE: readonly FunktionsBlock[] = [
   },
 ];
 
-const STANDARD_AN = new Set<Funktion>(['koennen', 'status', 'handbuch']);
+const STANDARD_AN = new Set<Funktion>(['koennen', 'status', 'chronik', 'handbuch']);
 
 export function standardFunktionen(): Funktionen {
   const funktionen = {} as Funktionen;

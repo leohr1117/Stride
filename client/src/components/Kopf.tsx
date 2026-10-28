@@ -125,10 +125,21 @@ function DuennRing({ anteil, kinder }: { anteil: number; kinder: ReactNode }) {
   const begrenzt = Math.min(1, Math.max(0, anteil));
   const radius = 17;
   const umfang = 2 * Math.PI * radius;
+  const startKraft = Math.round(58 + begrenzt * 18);
+  // Derselbe Verlauf wie am großen Levelring: blass am Anfang, kräftig an der Spitze.
+  const verlauf = `conic-gradient(from 0deg, rgb(0 0 0 / ${startKraft}%) 0deg, #000 ${begrenzt * 360}deg, transparent ${begrenzt * 360}deg)`;
   return (
     <span className="relative flex size-9 items-center justify-center">
       <svg viewBox="0 0 36 36" className="absolute inset-0 size-9" aria-hidden="true">
         <circle cx="18" cy="18" r={radius} fill="none" stroke="var(--flaeche-2)" strokeWidth="2" />
+      </svg>
+      <svg
+        viewBox="0 0 36 36"
+        className="absolute inset-0 size-9"
+        aria-hidden="true"
+        data-kopfverlauf=""
+        style={{ maskImage: verlauf, WebkitMaskImage: verlauf }}
+      >
         <circle
           data-kopfring=""
           cx="18"

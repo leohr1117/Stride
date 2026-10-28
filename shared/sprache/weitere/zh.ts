@@ -1,5 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Neue Profile haben die Chronik von Anfang an eingeschaltet.": "新档案从一开始就开启历史记录。",
+  "Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.": "等级环重新有了颜色渐变和尖端的亮点，右上角的也一样。",
   "Abmelden?": "退出登录？",
   "Die Sitzung auf diesem Gerät endet.": "此设备上的会话将结束。",
   "Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.": "标签在字段上方。错误直接显示在字段上。",

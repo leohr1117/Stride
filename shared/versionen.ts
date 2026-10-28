@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.29.1',
+    seiten: 'Übersicht, Chronik',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Neue Profile haben die Chronik von Anfang an eingeschaltet.',
+          'Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.29.0',
     seiten: 'Profil, Tätigkeiten, Darstellung',
     abschnitte: [

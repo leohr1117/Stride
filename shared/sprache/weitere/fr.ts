@@ -1,5 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Neue Profile haben die Chronik von Anfang an eingeschaltet.": "Les nouveaux profils ont l'historique activé dès le départ.",
+  "Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.": "L'anneau de niveau retrouve son dégradé de couleur et le point lumineux à la pointe, aussi en haut à droite.",
   "Abmelden?": "Se déconnecter ?",
   "Die Sitzung auf diesem Gerät endet.": "La session sur cet appareil se termine.",
   "Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.": "L’étiquette est au-dessus du champ. Une erreur est directement sur le champ.",

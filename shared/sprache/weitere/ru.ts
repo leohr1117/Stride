@@ -1,5 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Neue Profile haben die Chronik von Anfang an eingeschaltet.": "В новых профилях история включена с самого начала.",
+  "Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.": "У кольца уровня снова есть цветовой градиент и светлая точка на конце, также справа вверху.",
   "Abmelden?": "Выйти?",
   "Die Sitzung auf diesem Gerät endet.": "Сеанс на этом устройстве завершается.",
   "Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.": "Подпись стоит над полем. Ошибка стоит прямо у поля.",

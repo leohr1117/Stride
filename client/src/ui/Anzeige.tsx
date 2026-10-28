@@ -186,8 +186,13 @@ export function LevelRing({ level, anteil, groesse = 96 }: { level: number; ante
   const begrenzt = Math.min(1, Math.max(0, anteil));
   const voll = begrenzt >= 0.999;
   const spitze = ringSpitze(begrenzt);
+  const endMix = Math.round(18 + begrenzt * 82);
+  const startKraft = Math.round(58 + begrenzt * 18);
+  const spitzenFarbe = `color-mix(in srgb, var(--fortschritt) ${endMix}%, var(--haupt))`;
+  // 0° im conic-gradient ist 12 Uhr, im Uhrzeigersinn. Blass am Anfang, kräftig an der Spitze.
+  const verlauf = `conic-gradient(from 0deg, color-mix(in srgb, var(--haupt) ${startKraft}%, transparent) 0deg, ${spitzenFarbe} ${begrenzt * 360}deg, transparent ${begrenzt * 360}deg)`;
+  // Die Maske deckt genau den Strich (Mitte 42, Breite 8 in der 100er-Box).
   const maske = 'radial-gradient(farthest-side, transparent 75.2%, #000 76.4%, #000 91.6%, transparent 92.8%)';
-  const bogen = `conic-gradient(from 0deg, var(--fortschritt) 0deg, var(--fortschritt) ${begrenzt * 360}deg, transparent ${begrenzt * 360}deg)`;
 
   return (
     <div className="levelring relative shrink-0" data-levelring="" style={{ width: groesse, height: groesse }}>
@@ -199,7 +204,7 @@ export function LevelRing({ level, anteil, groesse = 96 }: { level: number; ante
             cy={RING_MITTE}
             r={RING_RADIUS}
             fill="none"
-            stroke="var(--fortschritt)"
+            stroke={spitzenFarbe}
             strokeWidth={RING_STRICH}
           />
         )}
@@ -208,7 +213,7 @@ export function LevelRing({ level, anteil, groesse = 96 }: { level: number; ante
         <div
           className="pointer-events-none absolute inset-0"
           data-levelbogen=""
-          style={{ background: bogen, maskImage: maske, WebkitMaskImage: maske }}
+          style={{ background: verlauf, maskImage: maske, WebkitMaskImage: maske }}
         />
       )}
       {begrenzt > 0 && (
@@ -223,11 +228,12 @@ export function LevelRing({ level, anteil, groesse = 96 }: { level: number; ante
             cx={spitze.cx}
             cy={spitze.cy}
             r="6.4"
-            fill="var(--fortschritt)"
+            fill={spitzenFarbe}
             fillOpacity={0.45 + begrenzt * 0.5}
             filter={`url(#${schein})`}
           />
-          <circle cx={spitze.cx} cy={spitze.cy} r="4.05" fill="var(--fortschritt)" />
+          <circle cx={spitze.cx} cy={spitze.cy} r="4.05" fill={spitzenFarbe} />
+          <circle data-ringlicht="" cx={spitze.cx} cy={spitze.cy} r="1.25" fill="white" fillOpacity={0.55 + begrenzt * 0.4} />
         </svg>
       )}
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">

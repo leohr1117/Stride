@@ -36,8 +36,9 @@ describe('standardFunktionen', () => {
     expect(funktionen.handbuch).toBe(true);
     expect(funktionen.koennen).toBe(true);
     expect(funktionen.status).toBe(true);
+    expect(funktionen.chronik).toBe(true);
     for (const funktion of FUNKTIONEN) {
-      if (funktion === 'handbuch' || funktion === 'koennen' || funktion === 'status') {
+      if (funktion === 'handbuch' || funktion === 'koennen' || funktion === 'status' || funktion === 'chronik') {
         continue;
       }
       expect(funktionen[funktion]).toBe(false);

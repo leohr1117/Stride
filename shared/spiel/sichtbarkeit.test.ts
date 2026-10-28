@@ -61,7 +61,7 @@ describe('pfadAktiv', () => {
     const aus = sicht();
     expect(pfadAktiv('/basis', aus)).toBe(false);
     expect(pfadAktiv('/training-alt', aus)).toBe(true);
-    expect(pfadAktiv('/chronik', aus)).toBe(false);
+    expect(pfadAktiv('/chronik', aus)).toBe(true);
     expect(pfadAktiv('/vorbilder', aus)).toBe(false);
     expect(pfadAktiv('/vorbilder/ada', aus)).toBe(false);
     expect(pfadAktiv('/faehigkeiten/4', aus)).toBe(false);

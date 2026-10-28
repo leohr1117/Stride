@@ -76,6 +76,7 @@ describe('sichtbareLeiste', () => {
   it('zeigt im Standard das Handbuch und blendet die übrigen Bereiche aus', () => {
     expect(sichtbareLeiste(['/', '/basis', '/chronik', '/handbuch', '/vorbilder', '/mehr'], standardFunktionen())).toEqual([
       '/',
+      '/chronik',
       '/handbuch',
       '/mehr',
     ]);

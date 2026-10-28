@@ -1,5 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Neue Profile haben die Chronik von Anfang an eingeschaltet.": "Los perfiles nuevos tienen el historial activado desde el inicio.",
+  "Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.": "El anillo de nivel vuelve a tener su degradado de color y el punto de luz en la punta, también arriba a la derecha.",
   "Abmelden?": "¿Cerrar sesión?",
   "Die Sitzung auf diesem Gerät endet.": "La sesión en este dispositivo termina.",
   "Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.": "La etiqueta está sobre el campo. Un error está directamente en el campo.",

@@ -135,12 +135,13 @@ test('Feste Bedeutungsfarben in Palette Dunkel', async ({ page }, testInfo) => {
       );
     }
     const ringHtml = await page.locator('.levelring').first().innerHTML();
-    expect(ringHtml.toLowerCase()).not.toContain('fill="white"');
+    // Lichtpunkt und Farbverlauf (Leonardo 28.10.).
+    expect(ringHtml.toLowerCase()).toContain('fill="white"');
+    expect(ringHtml).toContain('conic-gradient');
     expect(ringHtml).toContain('feGaussianBlur');
     expect(ringHtml).toContain('levelring-spitze-schein');
     expect(ringHtml).toContain('--fortschritt');
     expect(ringHtml).not.toContain('--akzent');
-    expect(ringHtml).not.toContain('--haupt');
     const kopf = await page.evaluate(() => {
       const ring = document.querySelector('[data-kopfring]');
       const bildKnoten = document.querySelector('[data-kopf] .klassenbild');

@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Neue Profile haben die Chronik von Anfang an eingeschaltet.', 'New profiles have the history switched on from the start.'],
+  ['Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.', 'The level ring has its colour gradient and the bright light dot at the tip again, also at the top right.'],
   ['Das Label steht über dem Feld. Ein Fehler steht direkt am Feld.', 'The label sits above the field. An error sits directly on the field.'],
   ['Speichern bleibt sichtbar, wenn die Tastatur offen ist.', 'Save stays visible when the keyboard is open.'],
   ['Eine Meldung kann Rückgängig anbieten. Ohne Rückgängig fragt ein Warndialog.', 'A message can offer Undo. Without undo, a warning dialog asks first.'],
