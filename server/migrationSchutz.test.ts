@@ -65,7 +65,7 @@ function vorlage(db: DatabaseSync): number {
 
 describe('Migration 27', () => {
   it('hängt die Schutz-Tabellen als 27. Migration an', () => {
-    expect(MIGRATIONEN).toHaveLength(27);
+    expect(MIGRATIONEN.length).toBeGreaterThanOrEqual(27);
     const sql = MIGRATIONEN[26];
     expect(sql).toContain('CREATE TABLE streak_bruecken');
     expect(sql).toContain('CREATE TABLE rueckkehr');
@@ -84,7 +84,7 @@ describe('Migration 27', () => {
     expect(version(db)).toBe(26);
     const eintraege = spalten(db, 'eintraege');
     expect(spalten(db, 'einstellungen')).toEqual(['schluessel', 'wert']);
-    for (const tabelle of ['streak_bruecken', 'rueckkehr', 'protokoll']) {
+    for (const tabelle of ['streak_bruecken', 'rueckkehr', 'protokoll', 'push_abos']) {
       expect(tabelleDa(db, tabelle)).toBe(false);
     }
     const vorlageId = vorlage(db);
@@ -94,6 +94,7 @@ describe('Migration 27', () => {
 
     migriere(db, 27);
     expect(version(db)).toBe(27);
+    expect(tabelleDa(db, 'push_abos')).toBe(false);
     expect(spalten(db, 'streak_bruecken')).toEqual(BRUECKEN_SPALTEN);
     expect(spalten(db, 'rueckkehr')).toEqual(RUECKKEHR_SPALTEN);
     expect(spalten(db, 'protokoll')).toEqual(PROTOKOLL_SPALTEN);
@@ -119,7 +120,7 @@ describe('Migration 27', () => {
   it('nimmt gültige Zeilen und weist die Regeln ab', () => {
     const db = datenbank();
     migriere(db);
-    expect(version(db)).toBe(27);
+    expect(version(db)).toBe(MIGRATIONEN.length);
     const vorlageId = vorlage(db);
     const eintragId = einfuegen(db, 'eintraege', { vorlage_id: vorlageId, erstellt_am: '2026-10-28T12:00:00.000Z' });
 

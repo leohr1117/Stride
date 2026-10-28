@@ -49,6 +49,7 @@ import { istWeltLeer, wendeFokusAn } from '../../services/profilStart.ts';
 import { wendeStartAn } from '../../services/startAnlage.ts';
 import { istGewichtEinheit, STANDARD_GEWICHT_EINHEIT, type GewichtEinheit } from '../../../shared/spiel/training.ts';
 import { kartenWahl, type UebersichtKartenWahl } from '../../../shared/spiel/uebersichtKarten.ts';
+import { setzeHinweisNichtVorWennFehlt } from './hinweisSchluessel.ts';
 
 interface Grundeinstellungen {
   charakterName: string;
@@ -531,7 +532,7 @@ export function aendereEinstellungen(
       ebenen = wendeEbenenAn(bisher.ebenen, aenderung.ebenen);
       speichere('ebenen', ebenen);
     }
-    let funktionen = { ...bisher.funktionen, ...aenderung.funktionen };
+    let funktionen = funktionenAusSpeicher({ ...bisher.funktionen, ...aenderung.funktionen });
     let fokus = bisher.fokus;
     let sprache = aenderung.sprache ?? bisher.sprache ?? anfrageSprache();
     if (aenderung.fokus !== undefined) {
@@ -545,7 +546,7 @@ export function aendereEinstellungen(
       throw ungueltig('Können oder Haben muss aktiv bleiben.');
     }
     if (aenderung.funktionen !== undefined || aenderung.fokus !== undefined || Object.keys(stufeFunktionen).length > 0) {
-      speichere(FUNKTIONEN_SCHLUESSEL, funktionen);
+      speichere(FUNKTIONEN_SCHLUESSEL, funktionenAusSpeicher(funktionen));
     }
     if (aenderung.profilAngelegt !== undefined) {
       speichere('profilAngelegt', aenderung.profilAngelegt);
@@ -629,6 +630,9 @@ export function aendereEinstellungen(
       fokus,
       sprache,
     });
+    if (ersteAnlage) {
+      setzeHinweisNichtVorWennFehlt(new Date());
+    }
   });
   return ladeEinstellungen();
 }

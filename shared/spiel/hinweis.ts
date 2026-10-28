@@ -1,6 +1,19 @@
 /** Reihenfolge der Benachrichtigung. Fällig und Training gibt es nicht mehr. */
 export const HINWEIS_REIHENFOLGE = ['streak', 'rueckkehr', 'boss'] as const;
 
+export const HINWEIS_SCHLUESSEL = {
+  ruheVon: 'hinweis_ruhe_von',
+  ruheBis: 'hinweis_ruhe_bis',
+  streak: 'hinweis_streak',
+  rueckkehr: 'hinweis_rueckkehr',
+  boss: 'hinweis_boss',
+  angebot: 'hinweis_angebot',
+  nichtVor: 'hinweis_nicht_vor',
+  angebotTesten: 'hinweis_angebot_testen',
+} as const;
+
+export type HinweisSchluessel = (typeof HINWEIS_SCHLUESSEL)[keyof typeof HINWEIS_SCHLUESSEL];
+
 export type HinweisArt = (typeof HINWEIS_REIHENFOLGE)[number];
 
 export interface HinweisAnlass {

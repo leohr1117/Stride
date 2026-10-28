@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import { FUNKTIONEN } from './funktionen.ts';
 import {
   HINWEIS_REIHENFOLGE,
+  HINWEIS_SCHLUESSEL,
   waehleHinweis,
   type HinweisAnlass,
   type HinweisArt,
@@ -31,6 +33,26 @@ function fremd(art: string, name: string, bezugId: number): HinweisAnlass {
 describe('Hinweiswahl', () => {
   it('kennt nur Streak, Rückkehr und Boss, in dieser Reihenfolge', () => {
     expect([...HINWEIS_REIHENFOLGE]).toEqual(['streak', 'rueckkehr', 'boss']);
+  });
+
+  it('führt die Schlüssel ohne Fällig und Training und außerhalb der Funktionen', () => {
+    expect(Object.values(HINWEIS_SCHLUESSEL)).toEqual([
+      'hinweis_ruhe_von',
+      'hinweis_ruhe_bis',
+      'hinweis_streak',
+      'hinweis_rueckkehr',
+      'hinweis_boss',
+      'hinweis_angebot',
+      'hinweis_nicht_vor',
+      'hinweis_angebot_testen',
+    ]);
+    const funktionen = FUNKTIONEN as readonly string[];
+    for (const name of Object.values(HINWEIS_SCHLUESSEL)) {
+      expect(name.startsWith('hinweis_')).toBe(true);
+      expect(funktionen).not.toContain(name);
+    }
+    expect(Object.values(HINWEIS_SCHLUESSEL)).not.toContain('hinweis_faellig');
+    expect(Object.values(HINWEIS_SCHLUESSEL)).not.toContain('hinweis_training');
   });
 
   it('nimmt Streak vor Rückkehr und Boss, auch wenn Boss vorne steht', () => {
