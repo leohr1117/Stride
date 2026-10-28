@@ -10,6 +10,7 @@ export * from './erfolge.ts';
 export * from './faehigkeiten.ts';
 export * from './investitionen.ts';
 export * from './kalender.ts';
+export * from './kette.ts';
 export * from './rueckblick.ts';
 export * from './statistiken.ts';
 export * from './taetigkeiten.ts';

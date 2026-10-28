@@ -46,6 +46,9 @@ const stunden = z
 
 export const idParameter = z.object({ id });
 
+/** POST /api/kette/schutz nimmt keinen Inhalt. */
+export const schutzSchema = z.object({}).strict();
+
 export const attributAktivierungSchema = z.object({
   kennung: z.enum(ATTRIBUT_KENNUNGEN),
   modus: z.enum(AKTIVIERUNGS_MODI).default('behalten'),

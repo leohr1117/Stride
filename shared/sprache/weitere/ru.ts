@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Schutz kann heute nicht eingesetzt werden.": "Защиту сегодня нельзя использовать.",
   "Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.": "Введение объясняет записи, цели и серию ясными фразами. Вопросы говорят, что включает выбор.",
   "Einführung": "Введение",
   "Unter Darstellung speicherst du eigene Farbpaletten. Auswählen übernimmt die Farben. Anlegen, Bearbeiten und Löschen liegt auf einer eigenen Seite.": "В «Оформлении» сохраняются свои цветовые палитры. Выбор применяет цвета. Создание, изменение и удаление — на отдельной странице.",

@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Schutz kann heute nicht eingesetzt werden.": "La protección no se puede usar hoy.",
   "Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.": "La introducción explica los registros, los objetivos y la racha en frases claras. Las preguntas dicen qué activa la elección.",
   "Einführung": "Introducción",
   "Unter Darstellung speicherst du eigene Farbpaletten. Auswählen übernimmt die Farben. Anlegen, Bearbeiten und Löschen liegt auf einer eigenen Seite.": "En Apariencia guardas tus propias paletas de color. Al elegir se aplican los colores. Crear, editar y eliminar está en una página aparte.",

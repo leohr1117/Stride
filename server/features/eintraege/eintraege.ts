@@ -55,6 +55,7 @@ import {
 } from '../../services/fortschritt.ts';
 import { KONTEXT_JOINS, KONTEXT_SPALTEN, PROJEKT_AKTIV, zuKontext, type KontextZeile } from '../ziele/kontext.ts';
 import { momentumFuerTag } from '../../services/serie.ts';
+import { verdieneSchutz } from '../kette/kette.ts';
 import { ladeVorhaben, legeVorhabenAn } from '../ziele/vorhaben.ts';
 import { ladeAktiveGewichte, pruefeVorlageZumProjekt } from '../taetigkeiten/vorlagen.ts';
 import { lokalesDatum, tagesbeginn, zeitpunktFuerEintrag } from '../../services/zeit.ts';
@@ -696,6 +697,8 @@ export function erstelleEintrag(
       bucheErfahrung('meilenstein', gegner);
       boni.push({ quelle: 'meilenstein', label: 'Gegner besiegt', xp: gegner });
     }
+
+    verdieneSchutz(tag, eintragId);
 
     return { eintragId, buchungen, boni, projektXp, faehigkeitXp, bossSieg };
   });

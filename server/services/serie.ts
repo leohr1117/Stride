@@ -8,10 +8,15 @@ export function ladeAktiveTage(): string[] {
   );
 }
 
+/** Nicht cachen: der Lesecache verfällt nur beim Schreiben von eintraege, Brücken ändern sich allein. */
+export function ladeBrueckentage(): string[] {
+  return alle<{ tag: string }>('SELECT tag FROM streak_bruecken ORDER BY tag').map((zeile) => zeile.tag);
+}
+
 export function ladeSerie(heute: string): KettenStand {
-  return kettenStand(ladeAktiveTage(), heute);
+  return kettenStand(ladeAktiveTage(), heute, ladeBrueckentage());
 }
 
 export function momentumFuerTag(tag: string): number {
-  return momentumFuerSerie(kettenLaenge([...ladeAktiveTage(), tag], tag));
+  return momentumFuerSerie(kettenLaenge([...ladeAktiveTage(), tag], tag, ladeBrueckentage()));
 }

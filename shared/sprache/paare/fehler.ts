@@ -190,4 +190,5 @@ export const PAARE = [
   ['Diese Einheit kann nicht mehr geändert werden.', 'This session can no longer be changed.'],
   ['Der Plan ist archiviert.', 'The plan is archived.'],
   ['Nur eine offene Einheit kann verworfen werden.', 'Only an open session can be discarded.'],
+  ['Der Schutz kann heute nicht eingesetzt werden.', 'Protection cannot be used today.'],
 ] as const;

@@ -84,6 +84,8 @@ const STANDARD: Grundeinstellungen = {
 const FUNKTIONEN_SCHLUESSEL = 'funktionen';
 const ANSICHT_FARBEN = 'ansichtFarben';
 const UEBERSICHT_KARTEN_SCHLUESSEL = 'uebersichtKarten';
+const SCHUTZ_VORRAT = 'schutz_vorrat';
+const SCHUTZ_SCHWELLE = 'schutz_schwelle_verbraucht';
 
 function istGleicherTyp<T>(wert: unknown, vorlage: T): wert is T {
   return typeof wert === typeof vorlage;
@@ -341,6 +343,37 @@ function speichere(schluessel: string, wert: unknown): void {
     schluessel,
     JSON.stringify(wert),
   );
+}
+
+function leseGanzeZahl(schluessel: string): number | null {
+  const roh = eine<{ wert: string }>('SELECT wert FROM einstellungen WHERE schluessel = ?', schluessel)?.wert;
+  if (roh === undefined) {
+    return null;
+  }
+  try {
+    const wert: unknown = JSON.parse(roh);
+    return typeof wert === 'number' && Number.isInteger(wert) && wert >= 0 ? wert : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Fehlender Schlüssel ist 0. Steht nicht in der Einstellungen-Antwort. */
+export function leseSchutzVorrat(): number {
+  return leseGanzeZahl(SCHUTZ_VORRAT) ?? 0;
+}
+
+/** Null heißt, der Schlüssel fehlt. 0 ist eine gespeicherte Schwelle. */
+export function leseSchutzSchwelle(): number | null {
+  return leseGanzeZahl(SCHUTZ_SCHWELLE);
+}
+
+export function schreibeSchutzVorrat(vorrat: 0 | 1): void {
+  speichere(SCHUTZ_VORRAT, vorrat);
+}
+
+export function schreibeSchutzSchwelle(schwelle: number): void {
+  speichere(SCHUTZ_SCHWELLE, Math.max(0, Math.floor(schwelle)));
 }
 
 function neuePaletteId(liste: readonly { id: string }[]): string {

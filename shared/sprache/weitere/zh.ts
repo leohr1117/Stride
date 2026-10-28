@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Schutz kann heute nicht eingesetzt werden.": "今天不能使用保护。",
   "Die Einführung erklärt Einträge, Ziele und den Streak in klaren Sätzen. Die Fragen nennen, was die Wahl einschaltet.": "引导用清楚的句子说明记录、目标和连续天数。问题写明选择会打开什么。",
   "Einführung": "引导",
   "Unter Darstellung speicherst du eigene Farbpaletten. Auswählen übernimmt die Farben. Anlegen, Bearbeiten und Löschen liegt auf einer eigenen Seite.": "在“外观”中可以保存自己的配色。选择后采用这些颜色。新建、编辑和删除在单独的页面。",
