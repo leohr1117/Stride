@@ -62,7 +62,8 @@ function serviceWorker(): Plugin {
   return {
     name: 'ascend-service-worker',
     apply: 'build',
-    generateBundle(_optionen, bundle) {
+    // Vite löscht reine CSS-JS-Platzhalter erst am Ende von generateBundle. Die Liste muss danach entstehen, sonst schlägt cache.addAll fehl und push kommt nie an.
+    writeBundle(optionen, bundle) {
       const pruefsumme = createHash('sha256');
       const dateien: string[] = [];
       for (const [name, datei] of Object.entries(bundle)) {
@@ -81,7 +82,8 @@ function serviceWorker(): Plugin {
       const quelle = vorlage
         .replace('__VERSION__', pruefsumme.digest('hex').slice(0, VERSIONS_LAENGE))
         .replace(`['__DATEIEN__']`, JSON.stringify(dateien.sort()));
-      this.emitFile({ type: 'asset', fileName: SERVICE_WORKER_DATEI, source: quelle });
+      const ausgabe = optionen.dir ?? path.join(CLIENT_ORDNER, 'dist');
+      fs.writeFileSync(path.join(ausgabe, SERVICE_WORKER_DATEI), quelle);
     },
   };
 }
