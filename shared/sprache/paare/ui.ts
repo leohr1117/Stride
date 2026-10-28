@@ -529,4 +529,7 @@ export const PAARE = [
   ['Haben steht direkt darunter.', 'Assets is directly below.'],
   ['XP je Tag.', 'XP per day.'],
   ['Jede Karte folgt dem Bereich, der sie einschaltet. Identität und Aktivität bleiben.', 'Each card follows the section that turns it on. Identity and Activity stay.'],
+  ['{laenge} Tage sind angeschlagen. Ein Eintrag heute hält sie.', '{laenge} days are cracked. An entry today keeps them.'],
+  ['Die Rückkehr ist offen bis {datum}.', 'Return is open until {datum}.'],
+  ['Morgen ist das Datum: {name}.', 'Tomorrow is the date: {name}.'],
 ] as const;

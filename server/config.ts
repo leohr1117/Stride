@@ -47,3 +47,41 @@ export const KONFIG = {
   clientPfad: path.join(PROJEKT_WURZEL, 'client', 'dist'),
   todoistApi: process.env.TODOIST_API ?? 'https://api.todoist.com/api/v1/',
 } as const;
+
+export interface VapidZumSenden {
+  oeffentlich: string;
+  privat: string;
+  betreff: string;
+}
+
+function vapidRoh(env: NodeJS.ProcessEnv, name: string): string | null {
+  const wert = env[name];
+  if (typeof wert !== 'string') {
+    return null;
+  }
+  const sauber = wert.trim();
+  return sauber.length > 0 ? sauber : null;
+}
+
+function betreffGueltig(wert: string): boolean {
+  return /^mailto:\S+$/i.test(wert) || /^https:\/\/\S+$/i.test(wert);
+}
+
+/**
+ * Liest VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY und VAPID_SUBJECT.
+ * Der private Schlüssel liegt nicht an KONFIG, damit ein Log der Konfiguration ihn nicht mitnimmt.
+ * Fehlt ein Wert oder ist der Betreff kein mailto: und kein https:, ist das Ergebnis null.
+ */
+export function leseVapid(env: NodeJS.ProcessEnv = process.env): VapidZumSenden | null {
+  const oeffentlich = vapidRoh(env, 'VAPID_PUBLIC_KEY');
+  const privat = vapidRoh(env, 'VAPID_PRIVATE_KEY');
+  const betreff = vapidRoh(env, 'VAPID_SUBJECT');
+  if (oeffentlich === null || privat === null || betreff === null || !betreffGueltig(betreff)) {
+    return null;
+  }
+  return { oeffentlich, privat, betreff };
+}
+
+export function oeffentlicherVapidSchluessel(env: NodeJS.ProcessEnv = process.env): string | null {
+  return leseVapid(env)?.oeffentlich ?? null;
+}

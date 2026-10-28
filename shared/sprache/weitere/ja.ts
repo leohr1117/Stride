@@ -1688,4 +1688,7 @@ export const TEXTE: Record<string, string> = {
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "節目と相手の情報アイコンが再び開く。",
   "Tätigkeit anlegen ist ein Knopf und öffnet das Formular direkt.": "「活動を作る」はボタンで、フォームがすぐに開く。",
   "Seiten, Dialoge und Diagramme bleiben auf dem Handy und am PC im Bild.": "ページ、ダイアログ、グラフはスマホでもパソコンでも画面内に収まる。",
+  "{laenge} Tage sind angeschlagen. Ein Eintrag heute hält sie.": "{laenge}日が傷ついています。今日の記録で保てます。",
+  "Die Rückkehr ist offen bis {datum}.": "復帰は{datum}まで開いています。",
+  "Morgen ist das Datum: {name}.": "明日が期日です：{name}。",
 };

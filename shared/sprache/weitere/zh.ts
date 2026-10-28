@@ -1688,4 +1688,7 @@ export const TEXTE: Record<string, string> = {
   "Der Schalter Nur heute ist weg. Das Datum legt den Tag fest.": "「仅今天」开关已去掉。日期决定这一天。",
   "Tätigkeit anlegen ist ein Knopf und öffnet das Formular direkt.": "「新建活动」是按钮，直接打开表单。",
   "Seiten, Dialoge und Diagramme bleiben auf dem Handy und am PC im Bild.": "页面、对话框和图表在手机和电脑上都留在画面里。",
+  "{laenge} Tage sind angeschlagen. Ein Eintrag heute hält sie.": "{laenge} 天已受损。今天记一笔就能保住。",
+  "Die Rückkehr ist offen bis {datum}.": "回归开放至 {datum}。",
+  "Morgen ist das Datum: {name}.": "明天是日期：{name}。",
 };

@@ -1688,4 +1688,7 @@ export const TEXTE: Record<string, string> = {
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "Значки информации у «Веха» и «Противник» снова открываются.",
   "Tätigkeit anlegen ist ein Knopf und öffnet das Formular direkt.": "«Создать занятие» — кнопка, форма открывается сразу.",
   "Seiten, Dialoge und Diagramme bleiben auf dem Handy und am PC im Bild.": "Страницы, диалоги и диаграммы остаются на экране на телефоне и на компьютере.",
+  "{laenge} Tage sind angeschlagen. Ein Eintrag heute hält sie.": "{laenge} дн. надломлены. Запись сегодня их сохраняет.",
+  "Die Rückkehr ist offen bis {datum}.": "Возвращение открыто до {datum}.",
+  "Morgen ist das Datum: {name}.": "Завтра дата: {name}.",
 };

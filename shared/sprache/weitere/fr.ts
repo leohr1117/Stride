@@ -1688,4 +1688,7 @@ export const TEXTE: Record<string, string> = {
   "Die Info-Icons bei Meilenstein und Gegner öffnen wieder.": "Les icônes d'info sur Jalon et Adversaire s'ouvrent de nouveau.",
   "Tätigkeit anlegen ist ein Knopf und öffnet das Formular direkt.": "Créer une activité est un bouton et ouvre le formulaire directement.",
   "Seiten, Dialoge und Diagramme bleiben auf dem Handy und am PC im Bild.": "Les pages, les dialogues et les graphiques restent à l'écran sur le téléphone et l'ordinateur.",
+  "{laenge} Tage sind angeschlagen. Ein Eintrag heute hält sie.": "{laenge} jours sont fragilisés. Une entrée aujourd'hui les garde.",
+  "Die Rückkehr ist offen bis {datum}.": "Le retour est ouvert jusqu'au {datum}.",
+  "Morgen ist das Datum: {name}.": "Demain est la date : {name}.",
 };
