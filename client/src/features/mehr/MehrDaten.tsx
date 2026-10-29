@@ -41,8 +41,8 @@ function Gefahrenbereich() {
     if (
       await bestaetigen({
         titel: tx("Profil zurücksetzen?"),
-        text: tx("Deine eigene Welt wird vollständig geleert. Einträge, Ziele, Visionen, Projekte, Vorhaben und Vorlagen sind danach weg, und dein Profil gilt als nicht erstellt. Dein Login bleibt. Andere Accounts bleiben unberührt. Das lässt sich nicht rückgängig machen."),
-        knopf: tx("Endgültig zurücksetzen"),
+        text: tx("Einträge, Ziele und Vorlagen dieses Accounts werden gelöscht, dein Login bleibt."),
+        knopf: tx("Zurücksetzen"),
         gefahr: true,
         eingabe: { hinweis: tx("Tippe ZURÜCKSETZEN, um fortzufahren."), wert: tx('ZURÜCKSETZEN') },
       })
@@ -93,7 +93,7 @@ function DatenKarte() {
     if (
       await bestaetigen({
         titel: tx("Sicherung importieren?"),
-        text: tx("Alle aktuellen Daten werden durch die Sicherung ersetzt. Der jetzige Stand wird vorher automatisch gesichert."),
+        text: tx("Der jetzige Stand wird ersetzt."),
         knopf: tx("Importieren"),
         gefahr: true,
       })

@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.', 'Dialogs sit in the center or as a sheet. A red button deletes only what cannot be undone.'],
+  ['Löschen, Loslassen und Zurücknehmen gelten sofort. Eine Meldung bietet Rückgängig.', 'Delete, release, and take-back apply at once. A message offers Undo.'],
+  ['Der Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle.', 'The section in the history is a list with a color dot, a check, and All.'],
   ['Die Leiste unten zeigt Übersicht, Ziele, Chronik und Mehr. Mehr bleibt fest. Profil und Tätigkeiten kannst du in die Leiste legen.', 'The bar at the bottom shows Overview, Goals, History, and More. More stays fixed. You can put Profile and Activities on the bar.'],
   ['Leiste, Seitenleiste und Mehr lesen ihre Seiten aus einer gemeinsamen Liste. Was du siehst, bleibt gleich.', 'The bar, the sidebar, and More read their pages from one shared list. What you see stays the same.'],
   ['Neue Profile haben die Chronik von Anfang an eingeschaltet.', 'New profiles have the history switched on from the start.'],

@@ -38,8 +38,8 @@ for (const sprache of ZIEL_SPRACHEN) {
 }
 
 const EBENEN_LISTEN = new Set([
-  '{liste} werden ausgeblendet. Einschalten bringt sie zurück.',
-  '{liste} wird ausgeblendet. Einschalten bringt sie zurück.',
+  '{liste} werden ausgeblendet und lassen sich wieder einschalten.',
+  '{liste} wird ausgeblendet und lässt sich wieder einschalten.',
 ]);
 
 const KATALOG_FELDER = new Set(['Erschöpfung: {name}', 'Erschöpfung: {quelle} → {ziel}']);

@@ -1,15 +1,46 @@
+import { EllipsisVertical } from 'lucide-react';
 import { useEffect, useState, type FormEvent } from 'react';
 import type { EigenePalette, PaletteEingabe } from '../../../../shared/features/darstellung/eigenePaletten.ts';
 import type { Farbtrio } from '../../../../shared/features/darstellung/paletten.ts';
 import { Dialog } from '../../components/Dialog.tsx';
+import { useSchnellAktion } from '../../components/SchnellAktion.tsx';
 import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { tx } from '../../text.ts';
 import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { Bereich, DARSTELLUNG_ZURUECK, useEinstellungen } from './rahmen.tsx';
 
-const RUECK_MS = 6000;
-
 type Modus = { art: 'neu' } | { art: 'lesen' | 'bearbeiten'; id: string };
+
+function PalettenMenue({ onLoeschen }: { onLoeschen: () => void }) {
+  const [offen, setOffen] = useState(false);
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        aria-label={tx('Aktionen')}
+        aria-expanded={offen}
+        className="flex size-12 items-center justify-center rounded-full text-leise hover:bg-flaeche-2 hover:text-haupt"
+        onClick={() => setOffen((bisher) => !bisher)}
+      >
+        <EllipsisVertical className="size-5" />
+      </button>
+      {offen ? (
+        <div className="absolute end-0 top-12 z-10 min-w-40 rounded-lg border border-rand bg-flaeche py-1 shadow-lg">
+          <button
+            type="button"
+            className="flex min-h-12 w-full items-center px-4 text-left text-sm text-gefahr"
+            onClick={() => {
+              setOffen(false);
+              onLoeschen();
+            }}
+          >
+            {tx('Löschen')}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 function Farbpunkte({ farben }: { farben: Farbtrio }) {
   return (
@@ -97,7 +128,7 @@ function PalettenFormular({
 export function PalettenSeite() {
   const { data, error, isPending, speichern } = useEinstellungen();
   const [modus, setModus] = useState<Modus | null>(null);
-  const [rueck, setRueck] = useState<{ palette: EigenePalette; bis: number } | null>(null);
+  const schnell = useSchnellAktion();
 
   useEffect(() => {
     if (!modus || modus.art === 'neu' || !data) {
@@ -107,14 +138,6 @@ export function PalettenSeite() {
       setModus(null);
     }
   }, [data, modus]);
-
-  useEffect(() => {
-    if (!rueck) {
-      return;
-    }
-    const timer = window.setTimeout(() => setRueck(null), Math.max(0, rueck.bis - Date.now()));
-    return () => window.clearTimeout(timer);
-  }, [rueck]);
 
   if (isPending) {
     return <Bereich titel={tx("Paletten")} zurueck={DARSTELLUNG_ZURUECK} kinder={<Ladeanzeige />} />;
@@ -135,18 +158,14 @@ export function PalettenSeite() {
     setModus(null);
     speichern.mutate(
       { paletteLoeschen: palette.id },
-      { onSuccess: () => setRueck({ palette, bis: Date.now() + RUECK_MS }) },
-    );
-  };
-
-  const wiederherstellen = () => {
-    if (!rueck) {
-      return;
-    }
-    const palette = rueck.palette;
-    speichern.mutate(
-      { paletteNeu: { name: palette.name, primaer: palette.primaer, akzent: palette.akzent, hintergrund: palette.hintergrund } },
-      { onSuccess: () => setRueck(null) },
+      {
+        onSuccess: () =>
+          schnell.melde(tx('„{name}" gelöscht', { name: palette.name }), () => {
+            speichern.mutate({
+              paletteNeu: { name: palette.name, primaer: palette.primaer, akzent: palette.akzent, hintergrund: palette.hintergrund },
+            });
+          }),
+      },
     );
   };
 
@@ -166,19 +185,7 @@ export function PalettenSeite() {
           >
             {tx("Neue Palette")}
           </Knopf>
-          {rueck ? (
-            <div
-              role="status"
-              aria-live="polite"
-              className="flex items-center justify-between gap-3 rounded-2xl border border-rand bg-flaeche px-4 py-3"
-            >
-              <span className="text-sm">{tx("Gelöscht.")}</span>
-              <Knopf variante="leise" onClick={wiederherstellen} disabled={speichern.isPending}>
-                {tx("Rückgängig")}
-              </Knopf>
-            </div>
-          ) : null}
-          {rueck && speichern.error ? <Fehlermeldung fehler={speichern.error} /> : null}
+          {!modus && speichern.error ? <Fehlermeldung fehler={speichern.error} /> : null}
           {data.paletten.length === 0 ? (
             <Leer text={tx("Noch keine Palette.")} />
           ) : (
@@ -205,12 +212,17 @@ export function PalettenSeite() {
             />
           ) : null}
           {modus?.art === 'lesen' && offen ? (
-            <Dialog offen titel={offen.name} onSchliessen={() => setModus(null)}>
+            <Dialog
+              offen
+              titel={offen.name}
+              onSchliessen={() => setModus(null)}
+              menu={<PalettenMenue onLoeschen={() => loeschen(offen)} />}
+            >
               <Farbpunkte farben={offen} />
               <p className="zahl mt-3 text-xs text-leise uppercase">
                 {offen.primaer} · {offen.akzent} · {offen.hintergrund}
               </p>
-              <div className="mt-5 flex flex-wrap gap-2">
+              <div className="mt-5">
                 <Knopf
                   onClick={() => {
                     speichern.reset();
@@ -218,9 +230,6 @@ export function PalettenSeite() {
                   }}
                 >
                   {tx("Bearbeiten")}
-                </Knopf>
-                <Knopf variante="gefahr" onClick={() => loeschen(offen)} disabled={speichern.isPending}>
-                  {tx("Löschen")}
                 </Knopf>
               </div>
             </Dialog>

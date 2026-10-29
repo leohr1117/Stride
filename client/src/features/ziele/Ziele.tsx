@@ -8,8 +8,8 @@ import type { Organisation, Projekt, Vision, VorhabenMitProjekt } from '../../..
 import { ZIEL_MARKE, zielTitel } from '../../../../shared/spiel/ebenen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useFeiern } from '../../components/Belohnung.tsx';
-import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { KettenAnzeige } from '../../components/KettenAnzeige.tsx';
+import { useSchnellAktion } from '../../components/SchnellAktion.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
@@ -394,7 +394,7 @@ function VisionDetail({
 }
 
 function useVisionAbschluss(vision: Vision): { knopf: ReactNode; fehler: ReactNode } {
-  const bestaetigen = useBestaetigung();
+  const schnell = useSchnellAktion();
   const queryClient = useQueryClient();
   const feiern = useFeiern();
   const erreichen = useMutation({
@@ -406,40 +406,21 @@ function useVisionAbschluss(vision: Vision): { knopf: ReactNode; fehler: ReactNo
   });
   const zuruecknehmen = useMutation({
     mutationFn: () => api.nimmVisionZurueck(vision.id),
-    onSuccess: () => void queryClient.invalidateQueries(),
+    onSuccess: () => {
+      void queryClient.invalidateQueries();
+      schnell.melde(tx('Zurückgenommen'), () => {
+        erreichen.mutate();
+      });
+    },
   });
-
-  const beimErreichen = async () => {
-    if (
-      await bestaetigen({
-        titel: `"${vision.titel}" erreicht?`,
-        text: `Das gibt ${zahl(vision.beute)} XP.`,
-        knopf: tx("Erreicht"),
-      })
-    ) {
-      erreichen.mutate();
-    }
-  };
-  const beimZuruecknehmen = async () => {
-    if (
-      await bestaetigen({
-        titel: tx("Erreichen zurücknehmen?"),
-        text: tx("Die Beute wird wieder abgezogen."),
-        knopf: tx("Zurücknehmen"),
-        gefahr: true,
-      })
-    ) {
-      zuruecknehmen.mutate();
-    }
-  };
 
   const knopf =
     vision.level !== null && vision.erreichtAm ? (
-      <Knopf variante="leise" className="shrink-0 px-2 py-1 text-xs" onClick={beimZuruecknehmen} disabled={zuruecknehmen.isPending}>
+      <Knopf variante="leise" className="shrink-0 px-2 py-1 text-xs" onClick={() => zuruecknehmen.mutate()} disabled={zuruecknehmen.isPending}>
         {tx("Zurücknehmen")}
       </Knopf>
     ) : vision.level !== null ? (
-      <Knopf variante="primaer" className="shrink-0 px-3 py-1.5" onClick={beimErreichen} disabled={erreichen.isPending || vision.archiviert}>
+      <Knopf variante="primaer" className="shrink-0 px-3 py-1.5" onClick={() => erreichen.mutate()} disabled={erreichen.isPending || vision.archiviert}>
         {tx("Erreicht")}
       </Knopf>
     ) : null;

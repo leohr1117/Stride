@@ -212,9 +212,20 @@ export const eintragSchema = z.object({
 
 const wahrheitswert = z.enum(['true', 'false']).transform((wert) => wert === 'true');
 
+const idListe = z.preprocess((wert) => {
+  if (wert === undefined || wert === '') {
+    return undefined;
+  }
+  const roh = Array.isArray(wert) ? wert.flatMap((eintrag) => String(eintrag).split(',')) : String(wert).split(',');
+  const teile = roh.map((eintrag) => eintrag.trim()).filter(Boolean);
+  return teile.length > 0 ? teile : undefined;
+}, z.array(id).optional());
+
 export const eintragAbfrageSchema = z.object({
   visionId: id.optional(),
   organisationId: id.optional(),
+  visionIds: idListe,
+  organisationIds: idListe,
   projektId: id.optional(),
   vorlageId: id.optional(),
   faehigkeitId: id.optional(),

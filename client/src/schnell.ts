@@ -92,10 +92,14 @@ export function menueTeile(punkte: SchnellPunkt[]): { oben: SchnellPunkt[]; loes
   };
 }
 
-export function bestaetigungFuer(ziel: SchnellZiel): Bestaetigungstext {
-  if (ziel.art === 'eintrag') {
-    return { titel: 'Eintrag löschen?', text: ziel.hinweis ?? 'Die XP werden wieder abgezogen.', knopf: 'Löschen' };
-  }
+const MIT_WARNUNG = new Set<SchnellArt>(['knoten', 'konto', 'kalender', 'todoist']);
+
+/** Einzeln löschen geht sofort, die Meldung bietet Rückgängig. Teilbäume und Zugänge bleiben eine Warnung. */
+export function sofortRueckgaengig(art: SchnellArt): boolean {
+  return !MIT_WARNUNG.has(art);
+}
+
+export function bestaetigungFuer(ziel: SchnellZiel): Bestaetigungstext | null {
   if (ziel.art === 'kalender') {
     return { titel: `${ziel.name} entfernen?`, text: 'Bereits übernommene Einträge bleiben.', knopf: 'Entfernen' };
   }
@@ -112,7 +116,7 @@ export function bestaetigungFuer(ziel: SchnellZiel): Bestaetigungstext {
       knopf: 'Löschen',
     };
   }
-  return { titel: `${ziel.name} löschen?`, text: 'Das lässt sich nicht rückgängig machen.', knopf: 'Löschen' };
+  return null;
 }
 
 interface Satz {

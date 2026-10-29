@@ -1,7 +1,7 @@
 import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CircleCheck, CircleX, Pencil, Plus, RotateCcw, Swords, Wind, Wrench } from 'lucide-react';
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { useParams } from 'react-router';
 import type { BasisAufgabe, Projekt, Vorlage, Vorhaben } from '../../../../shared/api/index.ts';
 import { GRENZEN, NEUTRAL_FARBE, VORHABEN_STATUS_LABEL } from '../../../../shared/spiel/begriffe.ts';
@@ -11,9 +11,10 @@ import { api, SCHLUESSEL } from '../../api/index.ts';
 import { BasisFormular, BasisListe, useBasisAufgaben } from '../basis/Basis.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { Abschnitt, EinklappKopf } from '../../components/Ausklappbar.tsx';
-import { useBestaetigung, useEingabe } from '../../components/Bestaetigung.tsx';
+import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
-import { SchnellZeile } from '../../components/SchnellAktion.tsx';
+import { SchnellZeile, useSchnellAktion } from '../../components/SchnellAktion.tsx';
+import { wendeAlle } from '../../schnell.ts';
 import { Icon } from '../../components/Icons.tsx';
 import { KettenAnzeige } from '../../components/KettenAnzeige.tsx';
 import { ProjektInvestition } from '../investitionen/Investitionen.tsx';
@@ -234,9 +235,10 @@ function useProjektAbschluss(projekt: Projekt): { knopf: ReactNode; fehler: Reac
     if (
       await bestaetigen({
         titel: tx("Projekt wieder öffnen?"),
-        text: projekt.investition ? tx("Die Investition wird inaktiv.") : tx("Das Projekt ist wieder offen."),
+        text: projekt.investition
+          ? tx("Der Bonus bleibt, und die Investition wird inaktiv.")
+          : tx("Der Bonus bleibt und kommt nicht noch einmal."),
         knopf: tx("Öffnen"),
-        gefahr: true,
       })
     ) {
       oeffnen.mutate();
@@ -461,33 +463,43 @@ function OffenesVorhaben({
   onBoss: () => void;
   bosseAn: boolean;
 }) {
-  const bestaetigen = useBestaetigung();
-  const eingeben = useEingabe();
+  const schnell = useSchnellAktion();
   const queryClient = useQueryClient();
   const aktualisieren = () => void queryClient.invalidateQueries();
-  const loslassen = useMutation({ mutationFn: () => api.lasseVorhabenLos(vorhaben.id), onSuccess: aktualisieren });
   const umbenennen = useMutation({
     mutationFn: (titel: string) => api.aendereVorhaben(vorhaben.id, { titel }),
     onSuccess: aktualisieren,
   });
   const boss = bosseAn ? vorhaben.boss : null;
+  const [titelOffen, setTitelOffen] = useState(false);
+  const [titelText, setTitelText] = useState(vorhaben.titel);
+  const titelAbbruch = useRef(false);
 
-  const beimUmbenennen = async () => {
-    const titel = await eingeben({
-      titel: tx("Titel ändern"),
-      wert: vorhaben.titel,
-      maxLaenge: GRENZEN.nameMax,
-      label: tx("Titel"),
-    });
-    if (titel && titel !== vorhaben.titel) {
-      umbenennen.mutate(titel);
+  const speichereTitel = () => {
+    if (titelAbbruch.current) {
+      titelAbbruch.current = false;
+      return;
+    }
+    const wert = titelText.trim();
+    setTitelOffen(false);
+    if (wert && wert !== vorhaben.titel) {
+      umbenennen.mutate(wert);
     }
   };
 
-  const beimLoslassen = async () => {
-    if (await bestaetigen({ titel: tx("Vorhaben loslassen?"), text: tx("Die bisherigen XP bleiben."), knopf: tx("Loslassen") })) {
-      loslassen.mutate();
-    }
+  const beimLoslassen = () => {
+    void queryClient.cancelQueries();
+    const snapshot = queryClient.getQueriesData({ predicate: () => true });
+    wendeAlle(queryClient, 'vorhaben', vorhaben.id, 'entfernen');
+    schnell.schiebe(
+      tx('Losgelassen'),
+      () => api.lasseVorhabenLos(vorhaben.id),
+      () => {
+        for (const [key, wert] of snapshot) {
+          queryClient.setQueryData(key, wert);
+        }
+      },
+    );
   };
 
   return (
@@ -501,11 +513,41 @@ function OffenesVorhaben({
         <div className="flex min-w-0 basis-full items-center gap-3 sm:basis-auto sm:flex-1">
           {boss && <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />}
           <div className="min-w-0 flex-1">
-            <button type="button" onClick={beimUmbenennen} className="group flex min-w-0 items-center gap-1.5 text-left">
-              {boss && <Swords className="size-4 shrink-0 text-gefahr" />}
-              <span className="truncate text-sm font-medium">{vorhaben.titel}</span>
-              <Pencil className="size-3 shrink-0 text-leise opacity-0 transition group-hover:opacity-100" />
-            </button>
+            {titelOffen ? (
+              <input
+                className={`${EINGABE_STIL} min-w-0 flex-1`}
+                value={titelText}
+                maxLength={GRENZEN.nameMax}
+                aria-label={tx('Titel')}
+                autoFocus
+                onChange={(ereignis) => setTitelText(ereignis.target.value)}
+                onKeyDown={(ereignis) => {
+                  if (ereignis.key === 'Enter') {
+                    ereignis.preventDefault();
+                    speichereTitel();
+                  } else if (ereignis.key === 'Escape') {
+                    ereignis.preventDefault();
+                    titelAbbruch.current = true;
+                    setTitelText(vorhaben.titel);
+                    setTitelOffen(false);
+                  }
+                }}
+                onBlur={speichereTitel}
+              />
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setTitelText(vorhaben.titel);
+                  setTitelOffen(true);
+                }}
+                className="group flex min-w-0 items-center gap-1.5 text-left"
+              >
+                {boss && <Swords className="size-4 shrink-0 text-gefahr" />}
+                <span className="truncate text-sm font-medium">{vorhaben.titel}</span>
+                <Pencil className="size-3 shrink-0 text-leise opacity-0 transition group-hover:opacity-100" />
+              </button>
+            )}
             {boss && <p className="text-xs text-leise">{bossZeile(boss)}</p>}
             <VorhabenKennzahlen vorhaben={vorhaben} ohneXp={boss !== null} />
           </div>
@@ -530,7 +572,7 @@ function OffenesVorhaben({
           </Knopf>
         </div>
       </div>
-      <Fehlermeldung fehler={loslassen.error ?? umbenennen.error} />
+      <Fehlermeldung fehler={umbenennen.error} />
     </div>
       )}
     </SchnellZeile>

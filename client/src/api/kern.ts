@@ -62,10 +62,14 @@ export async function anfrage<T>(pfad: string, methode: Methode = 'GET', daten?:
   return inhalt as T;
 }
 
-export function abfrageText(werte: Record<string, string | number | boolean | undefined>): string {
+export function abfrageText(werte: Record<string, string | number | boolean | readonly (string | number)[] | undefined>): string {
   const parameter = new URLSearchParams();
   for (const [schluessel, wert] of Object.entries(werte)) {
-    if (wert !== undefined) {
+    if (Array.isArray(wert)) {
+      if (wert.length > 0) {
+        parameter.set(schluessel, wert.join(','));
+      }
+    } else if (wert !== undefined) {
       parameter.set(schluessel, String(wert));
     }
   }

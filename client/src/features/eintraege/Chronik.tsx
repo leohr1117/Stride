@@ -1,80 +1,75 @@
 import { tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
 import { Trophy } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { EintragFilter } from '../../../../shared/api/index.ts';
-import { zielTitel } from '../../../../shared/spiel/ebenen.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { EintragListe } from './EintragListe.tsx';
+import { AuswahlBlatt, type AuswahlOption } from '../../components/AuswahlBlatt.tsx';
 import { Icon } from '../../components/Icons.tsx';
-import { Chip, EINGABE_STIL, Schalter } from '../../ui/index.ts';
+import { Chip, Schalter } from '../../ui/index.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 
-type Bereich = { art: 'alle' } | { art: 'vision'; id: number } | { art: 'organisation'; id: number };
-
-function bereichAusWert(wert: string): Bereich {
-  const [art, id] = wert.split(':');
-  if ((art === 'vision' || art === 'organisation') && id) {
-    return { art, id: Number(id) };
-  }
-  return { art: 'alle' };
+function idsMit(werte: string[], art: 'vision' | 'organisation'): number[] {
+  const prefix = `${art}:`;
+  return werte.filter((wert) => wert.startsWith(prefix)).map((wert) => Number(wert.slice(prefix.length)));
 }
 
 export function ChronikSeite() {
   const sichtbarkeit = useSichtbarkeit();
   const visionenAn = istAn('visionen', sichtbarkeit);
   const organisationenAn = istAn('organisationen', sichtbarkeit);
-  const [bereich, setBereich] = useState<Bereich>({ art: 'alle' });
+  const [bereiche, setBereiche] = useState<string[]>([]);
   const [vorlageId, setVorlageId] = useState<number | undefined>();
   const [nurMeilensteine, setNurMeilensteine] = useState(true);
 
   const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
   const { data: vorlagen = [] } = useQuery({ queryKey: SCHLUESSEL.vorlagen, queryFn: api.vorlagen });
 
-  const wirksam =
-    (bereich.art === 'vision' && !visionenAn) || (bereich.art === 'organisation' && !organisationenAn)
-      ? { art: 'alle' as const }
-      : bereich;
+  const optionen = useMemo(() => {
+    const liste: AuswahlOption[] = [];
+    if (visionenAn && ziele) {
+      for (const vision of ziele.visionen) {
+        liste.push({ wert: `vision:${vision.id}`, name: vision.titel, farbe: vision.farbe });
+      }
+    }
+    if (organisationenAn && ziele) {
+      for (const organisation of ziele.organisationen) {
+        liste.push({ wert: `organisation:${organisation.id}`, name: organisation.name, farbe: organisation.farbe });
+      }
+    }
+    return liste;
+  }, [organisationenAn, visionenAn, ziele]);
+
+  const sichtbar = bereiche.filter((wert) => (wert.startsWith('vision:') ? visionenAn : organisationenAn));
+  const visionIds = idsMit(sichtbar, 'vision');
+  const organisationIds = idsMit(sichtbar, 'organisation');
   const filter: EintragFilter = {
-    visionId: wirksam.art === 'vision' ? wirksam.id : undefined,
-    organisationId: wirksam.art === 'organisation' ? wirksam.id : undefined,
+    visionIds: visionIds.length > 0 ? visionIds : undefined,
+    organisationIds: organisationIds.length > 0 ? organisationIds : undefined,
     vorlageId,
     nurMeilensteine: nurMeilensteine || undefined,
   };
-  const filterAktiv = wirksam.art !== 'alle' || vorlageId !== undefined || nurMeilensteine;
+  const filterAktiv = sichtbar.length > 0 || vorlageId !== undefined || nurMeilensteine;
   const chipVorlagen = taetigkeitenFuerProjekt(vorlagen, null);
 
   return (
     <div className="space-y-6">
       <div className="space-y-3">
         {(visionenAn || organisationenAn) && (
-          <select
-            className={EINGABE_STIL}
-            value={wirksam.art === 'alle' ? '' : `${wirksam.art}:${wirksam.id}`}
-            onChange={(ereignis) => setBereich(bereichAusWert(ereignis.target.value))}
-          >
-            <option value="">{tx("Alle Bereiche")}</option>
-            {visionenAn && ziele && ziele.visionen.length > 0 && (
-              <optgroup label={tx(zielTitel('visionen'))}>
-                {ziele.visionen.map((vision) => (
-                  <option key={vision.id} value={`vision:${vision.id}`}>
-                    {vision.titel}
-                  </option>
-                ))}
-              </optgroup>
-            )}
-            {organisationenAn && ziele && ziele.organisationen.length > 0 && (
-              <optgroup label={tx(zielTitel('organisationen'))}>
-                {ziele.organisationen.map((organisation) => (
-                  <option key={organisation.id} value={`organisation:${organisation.id}`}>
-                    {organisation.name}
-                  </option>
-                ))}
-              </optgroup>
-            )}
-          </select>
+          <AuswahlBlatt
+            label={tx('Bereich')}
+            modus="filter"
+            wert={sichtbar}
+            optionen={optionen}
+            alleText={tx('Alle Bereiche')}
+            zahlText={(anzahl) => tx('{anzahl} Bereiche', { anzahl })}
+            leerText={tx('Noch keine Bereiche.')}
+            leerAktion={{ label: tx('Bereich anlegen'), href: '/ziele' }}
+            onAendern={setBereiche}
+          />
         )}
         <Schalter
           an={nurMeilensteine}

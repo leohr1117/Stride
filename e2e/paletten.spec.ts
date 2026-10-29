@@ -65,7 +65,7 @@ async function variable(seite: Page, name: string): Promise<string> {
 }
 
 async function setzeFarbfeld(dialog: Locator, label: string, wert: string): Promise<void> {
-  await dialog.locator('label', { hasText: label }).locator('input[type="color"]').evaluate((element, farbe) => {
+  await dialog.locator('.feld', { hasText: label }).locator('input[type="color"]').evaluate((element, farbe) => {
     const feld = element as HTMLInputElement;
     const setze = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
     setze?.call(feld, farbe);
@@ -168,6 +168,9 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     await expect(doppelt.getByText('Der Name ist schon vergeben.')).toBeVisible();
     await expect(doppelt).toBeVisible();
     await doppelt.getByRole('button', { name: 'Schließen', exact: true }).click();
+    const verwerfen = page.getByRole('alertdialog', { name: 'Änderungen verwerfen?' });
+    await expect(verwerfen).toBeVisible();
+    await verwerfen.getByRole('button', { name: 'Verwerfen', exact: true }).click();
     await expect(doppelt).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Morgenrot', exact: true }).click();
@@ -175,7 +178,10 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     await expect(detail).toBeVisible();
     await expect(detail.locator('input[type="color"]')).toHaveCount(0);
     await expect(detail.getByRole('button', { name: 'Bearbeiten', exact: true })).toBeVisible();
+    await detail.getByRole('button', { name: 'Aktionen', exact: true }).click();
     await expect(detail.getByRole('button', { name: 'Löschen', exact: true })).toBeVisible();
+    await detail.getByRole('button', { name: 'Aktionen', exact: true }).click();
+    await expect(detail.getByRole('button', { name: 'Löschen', exact: true })).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);
     await bild('detail');
     await detail.getByRole('button', { name: 'Bearbeiten', exact: true }).click();
@@ -258,10 +264,11 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     const geloescht = page.waitForResponse(
       (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
     );
+    await loeschDialog.getByRole('button', { name: 'Aktionen', exact: true }).click();
     await loeschDialog.getByRole('button', { name: 'Löschen', exact: true }).click();
     await geloescht;
     await expect(page.getByRole('dialog')).toHaveCount(0);
-    await expect(page.getByRole('status')).toContainText('Gelöscht.');
+    await expect(page.getByRole('status')).toContainText('Abendrot');
     expect((await lese(page)).paletten.some((palette) => palette.name === 'Abendrot')).toBe(false);
     const rueck = page.waitForResponse(
       (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),

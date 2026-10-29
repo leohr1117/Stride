@@ -99,6 +99,8 @@ export interface ChronikSeite {
 export interface EintragFilter {
   visionId?: number;
   organisationId?: number;
+  visionIds?: number[];
+  organisationIds?: number[];
   projektId?: number;
   vorlageId?: number;
   faehigkeitId?: number;

@@ -165,8 +165,8 @@ test('Projekt abschließen aktiviert die Investition und lässt sich öffnen', a
 
     await page.goto(`/projekte/${ziel.id}`);
     await page.getByRole('button', { name: 'Öffnen', exact: true }).click();
-    const oeffnen = page.getByRole('dialog', { name: 'Projekt wieder öffnen?' });
-    await expect(oeffnen.getByText('Die Investition wird inaktiv.')).toBeVisible();
+    const oeffnen = page.getByRole('alertdialog', { name: 'Projekt wieder öffnen?' });
+    await expect(oeffnen.getByText('Der Bonus bleibt, und die Investition wird inaktiv.')).toBeVisible();
     await oeffnen.getByRole('button', { name: 'Öffnen', exact: true }).click();
     await expect(oeffnen).toBeHidden();
     await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toHaveCount(0);
@@ -178,14 +178,14 @@ test('Projekt abschließen aktiviert die Investition und lässt sich öffnen', a
     }).toBeNull();
 
     await page.getByRole('button', { name: 'Abschließen', exact: true }).click();
-    const frage = page.getByRole('dialog', { name: `"${ziel.name}" abschließen?` });
+    const frage = page.getByRole('alertdialog', { name: `"${ziel.name}" abschließen?` });
     await expect(frage.getByText('Die Investition wird aktiv.')).toBeVisible();
     await frage.getByRole('button', { name: 'Abbrechen' }).click();
     await expect(frage).toBeHidden();
     await expect.poll(async () => (await projekte(page)).find((projekt) => projekt.id === ziel.id)?.geschafftAm ?? null).toBeNull();
 
     await page.getByRole('button', { name: 'Abschließen', exact: true }).click();
-    const nochmal = page.getByRole('dialog', { name: `"${ziel.name}" abschließen?` });
+    const nochmal = page.getByRole('alertdialog', { name: `"${ziel.name}" abschließen?` });
     await nochmal.getByRole('button', { name: 'Abschließen', exact: true }).click();
     await expect(nochmal).toBeHidden();
     await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toBeVisible();

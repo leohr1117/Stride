@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.31.0',
+    seiten: 'Chronik, Mehr',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.',
+          'Löschen, Loslassen und Zurücknehmen gelten sofort. Eine Meldung bietet Rückgängig.',
+          'Der Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.30.0',
     seiten: 'Übersicht, Darstellung',
     abschnitte: [

@@ -281,7 +281,7 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     const abschliessen = page.getByRole('button', { name: 'Abschließen', exact: true });
     if (await abschliessen.isVisible()) {
       await abschliessen.click();
-      const frage = page.getByRole('dialog', { name: `"${ziel.name}" abschließen?` });
+      const frage = page.getByRole('alertdialog', { name: `"${ziel.name}" abschließen?` });
       await expect(frage.getByText('Die Investition wird aktiv.')).toBeVisible();
       await frage.getByRole('button', { name: 'Abschließen', exact: true }).click();
       await expect(frage).toBeHidden();

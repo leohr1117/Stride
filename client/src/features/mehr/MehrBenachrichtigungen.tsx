@@ -279,14 +279,9 @@ function Inhalt({ stand }: { stand: HinweisStand }) {
                 />
               </Feld>
               <Fehlermeldung fehler={formFehler || ruhe.error} />
-              <div className="flex gap-2">
-                <Knopf type="button" className="flex-1" onClick={() => setRuheOffen(false)}>
-                  {tx('Abbrechen')}
-                </Knopf>
-                <Knopf type="submit" variante="primaer" className="flex-1" disabled={ruhe.isPending}>
-                  {tx('Speichern')}
-                </Knopf>
-              </div>
+              <Knopf type="submit" variante="primaer" className="w-full" disabled={ruhe.isPending}>
+                {tx('Speichern')}
+              </Knopf>
             </Formular>
           </Dialog>
         </>

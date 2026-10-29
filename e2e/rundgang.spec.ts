@@ -233,7 +233,8 @@ test('Eintrag anlegen und löschen', async ({ page }) => {
     await expect(zeile).toBeVisible();
     await zeile.getByRole('button', { name: `Aktionen für ${notiz}`, exact: true }).click();
     await page.getByRole('menuitem', { name: 'Löschen' }).click();
-    await page.getByRole('dialog', { name: 'Eintrag löschen?' }).getByRole('button', { name: 'Löschen' }).click();
+    await expect(page.getByRole('alertdialog')).toHaveCount(0);
+    await expect(page.getByRole('status')).toContainText('Eintrag gelöscht');
     await expect(zeile).toHaveCount(0);
   } finally {
     await setzen(page, { funktionen: { chronik: vorher.funktionen.chronik } }).catch(() => undefined);
@@ -246,14 +247,16 @@ test('Eintrag anlegen und löschen', async ({ page }) => {
   expect(fehler).toEqual([]);
 });
 
-test('Wischen lässt den Dialog offen und den nächsten Wisch zu', async ({ page }) => {
+test('Wischen löscht sofort und der nächste Toast ersetzt den ersten', async ({ page }) => {
   const projekt = test.info().project.name;
   const ersteName = `Lauf81a-${projekt}`;
   const zweiteName = `Lauf81b-${projekt}`;
   const fehler = beobachte(page);
   await anmelden(page);
   const vorher = await stand(page);
-  await setzen(page, { ebenen: { visionen: true, projekte: true } });
+  await setzen(page, { ebenen: { visionen: true, projekte: true }, sprache: 'de' });
+  await page.reload();
+  await page.getByRole('button', { name: 'Eintrag loggen' }).waitFor();
   const angelegt: number[] = [];
   try {
     for (const titel of [ersteName, zweiteName]) {
@@ -269,24 +272,32 @@ test('Wischen lässt den Dialog offen und den nächsten Wisch zu', async ({ page
       angelegt.push(vision.id);
     }
     await page.goto('/ziele');
-    await wischen(page, page.locator(`[data-schnell="${ersteName}"]`), -180);
-    const ersterDialog = page.getByRole('dialog', { name: `${ersteName} löschen?` });
-    await expect(ersterDialog).toBeVisible();
+    const ersteZeile = page.locator(`[data-schnell="${ersteName}"]`);
+    const zweiteZeile = page.locator(`[data-schnell="${zweiteName}"]`);
+    await wischen(page, ersteZeile, -180);
+    await expect(ersteZeile).toHaveCount(0);
+    const status = page.getByRole('status');
+    await expect(status).toContainText(ersteName);
+    await expect(page.getByRole('alertdialog')).toHaveCount(0);
     await page.waitForTimeout(400);
-    await expect(ersterDialog).toBeVisible();
-    await ersterDialog.getByRole('button', { name: 'Löschen' }).click();
-    angelegt.shift();
-    await wischen(page, page.locator(`[data-schnell="${zweiteName}"]`), -180);
-    const zweiterDialog = page.getByRole('dialog', { name: `${zweiteName} löschen?` });
-    await expect(zweiterDialog).toBeVisible();
-    await page.waitForTimeout(400);
-    await expect(zweiterDialog).toBeVisible();
-    await zweiterDialog.getByRole('button', { name: 'Abbrechen' }).click();
+    await expect(status).toBeVisible();
+    await wischen(page, zweiteZeile, -180);
+    await expect(zweiteZeile).toHaveCount(0);
+    await expect(status).toContainText(zweiteName);
+    await expect(status).not.toContainText(ersteName);
+    await page.getByRole('button', { name: 'Rückgängig' }).click();
+    await expect(zweiteZeile).toBeVisible();
+    await expect(ersteZeile).toHaveCount(0);
   } finally {
+    const ziele = await api<{ visionen: { id: number }[] }>(page, '/api/ziele', 'GET').catch(() => null);
+    const da = new Set((ziele?.visionen ?? []).map((vision) => vision.id));
     for (const id of angelegt) {
+      if (ziele && !da.has(id)) {
+        continue;
+      }
       await api(page, `/api/visionen/${id}`, 'DELETE').catch(() => undefined);
     }
-    await setzen(page, { ebenen: vorher.ebenen }).catch(() => undefined);
+    await setzen(page, { ebenen: vorher.ebenen, sprache: vorher.sprache ?? 'de' }).catch(() => undefined);
   }
   expect(fehler).toEqual([]);
 });

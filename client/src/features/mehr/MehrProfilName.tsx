@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { ebenenFuerStufe, hinweisAusblenden } from '../../../../shared/spiel/ebenen.ts';
+import { bestaetigeAusblenden } from '../../ebenenFrage.ts';
 import { GEBURTSJAHR_MIN, PROFILNAME_MAX, ZIEL_FRAGE, geburtsjahrGueltig, type Zielstrebigkeit } from '../../../../shared/spiel/profil.ts';
 import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { ZielWahl } from '../../components/ProfilErstellung.tsx';
@@ -126,15 +127,7 @@ export function ZielSeite() {
       return;
     }
     const hinweis = hinweisAusblenden(data.ebenen, ebenenFuerStufe(ziel), data.ebenenZahlen);
-    if (
-      hinweis &&
-      !(await bestaetigen({
-        titel: tx("Ebenen ausblenden?"),
-        text: hinweis,
-        knopf: tx("Ausblenden"),
-        gefahr: true,
-      }))
-    ) {
+    if (!(await bestaetigeAusblenden(bestaetigen, hinweis))) {
       return;
     }
     speichern.mutate({ zielstrebigkeit: ziel });

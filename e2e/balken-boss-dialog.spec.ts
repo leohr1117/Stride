@@ -326,18 +326,20 @@ async function pruefeTitel(seite: Page, info: TestInfo): Promise<void> {
   const knopf = seite.getByRole('button', { name: ziel.titel, exact: true });
   await expect(knopf).toBeVisible();
   await knopf.click();
-  const dialog = seite.getByRole('dialog', { name: 'Titel ändern' });
-  const feld = dialog.getByRole('textbox', { name: 'Titel' });
+  const feld = seite.getByRole('textbox', { name: 'Titel' });
   await expect(feld).toHaveValue(ziel.titel);
+  await expect(seite.getByRole('dialog', { name: 'Titel ändern' })).toHaveCount(0);
   await expect.poll(async () =>
-    dialog.evaluate((element) => element.getBoundingClientRect().bottom <= window.innerHeight + 1),
+    feld.evaluate((element) => {
+      const kasten = element.getBoundingClientRect();
+      return kasten.top >= 0 && kasten.bottom <= window.innerHeight + 1;
+    }),
   ).toBe(true);
   await ohneSeitlichenUeberlauf(seite);
   await seite.screenshot({ path: `e2e/bilder/${info.project.name}-titel-dialog.png` });
   await feld.fill('');
-  await expect(dialog.getByRole('button', { name: 'Speichern' })).toBeDisabled();
-  await dialog.getByRole('button', { name: 'Abbrechen' }).click();
-  await expect(dialog).toBeHidden();
+  await seite.keyboard.press('Escape');
+  await expect(feld).toHaveCount(0);
   await expect(seite.getByRole('button', { name: ziel.titel, exact: true })).toBeVisible();
 }
 

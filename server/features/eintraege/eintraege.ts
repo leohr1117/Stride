@@ -313,13 +313,19 @@ export function ladeChronik(filter: EintragFilter, cursor: string | undefined, l
   const skillBedingungen = ['k.freigeschaltet_am IS NOT NULL', 'k.eintrag_id IS NULL'];
   const skillParameter: Parameter[] = [];
 
-  if (filter.visionId !== undefined) {
-    eintragBedingungen.push('(p.vision_id = ? OR o.vision_id = ?)');
-    eintragParameter.push(filter.visionId, filter.visionId);
-  }
-  if (filter.organisationId !== undefined) {
-    eintragBedingungen.push('p.organisation_id = ?');
-    eintragParameter.push(filter.organisationId);
+  const visionIds = filter.visionIds ?? (filter.visionId !== undefined ? [filter.visionId] : []);
+  const organisationIds = filter.organisationIds ?? (filter.organisationId !== undefined ? [filter.organisationId] : []);
+  if (visionIds.length > 0 || organisationIds.length > 0) {
+    const teile: string[] = [];
+    if (visionIds.length > 0) {
+      teile.push(`(p.vision_id IN (${platzhalter(visionIds.length)}) OR o.vision_id IN (${platzhalter(visionIds.length)}))`);
+      eintragParameter.push(...visionIds, ...visionIds);
+    }
+    if (organisationIds.length > 0) {
+      teile.push(`p.organisation_id IN (${platzhalter(organisationIds.length)})`);
+      eintragParameter.push(...organisationIds);
+    }
+    eintragBedingungen.push(`(${teile.join(' OR ')})`);
   }
   if (filter.projektId !== undefined) {
     eintragBedingungen.push('p.id = ?');
@@ -340,8 +346,8 @@ export function ladeChronik(filter: EintragFilter, cursor: string | undefined, l
   }
 
   const mitSkills =
-    filter.visionId === undefined &&
-    filter.organisationId === undefined &&
+    visionIds.length === 0 &&
+    organisationIds.length === 0 &&
     filter.projektId === undefined &&
     filter.vorlageId === undefined;
   const mitProtokoll = mitSkills && filter.faehigkeitId === undefined;

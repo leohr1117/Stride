@@ -101,7 +101,7 @@ test('Abschlusstätigkeit, einmaliger Bonus und Übersicht', async ({ page }, te
   await page.goto(`/projekte/${angelegt.id}`);
   await page.getByRole('button', { name: 'Projekt bearbeiten', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Projekt bearbeiten' });
-  const feld = dialog.locator('label').filter({ hasText: 'Abschlusstätigkeit' });
+  const feld = dialog.locator('.feld').filter({ hasText: 'Abschlusstätigkeit' });
   await expect(feld.locator('select')).toHaveValue(String(abschluss.id));
   await expect(feld.locator('option', { hasText: 'Keine' })).toHaveCount(1);
   await expect(feld.locator('option', { hasText: liefern })).toHaveCount(1);
@@ -112,7 +112,7 @@ test('Abschlusstätigkeit, einmaliger Bonus und Übersicht', async ({ page }, te
   await expect(dialog).toBeHidden();
 
   await page.getByRole('button', { name: 'Abschließen', exact: true }).click();
-  const frage = page.getByRole('dialog', { name: `"${name}" abschließen?` });
+  const frage = page.getByRole('alertdialog', { name: `"${name}" abschließen?` });
   await frage.getByRole('button', { name: 'Abschließen', exact: true }).click();
   const feier = page.locator('.belohnung');
   await expect(feier.getByText('Geschafft', { exact: true })).toBeVisible();
@@ -140,11 +140,11 @@ test('Abschlusstätigkeit, einmaliger Bonus und Übersicht', async ({ page }, te
   expect(nachAbschluss.geschafftAm).not.toBeNull();
 
   await page.getByRole('button', { name: 'Öffnen', exact: true }).click();
-  const oeffnen = page.getByRole('dialog', { name: 'Projekt wieder öffnen?' });
+  const oeffnen = page.getByRole('alertdialog', { name: 'Projekt wieder öffnen?' });
   await oeffnen.getByRole('button', { name: 'Öffnen', exact: true }).click();
   await expect(region).toHaveCount(0);
   await page.getByRole('button', { name: 'Abschließen', exact: true }).click();
-  const nochmal = page.getByRole('dialog', { name: `"${name}" abschließen?` });
+  const nochmal = page.getByRole('alertdialog', { name: `"${name}" abschließen?` });
   await nochmal.getByRole('button', { name: 'Abschließen', exact: true }).click();
   await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toBeVisible();
   await page.waitForTimeout(1200);

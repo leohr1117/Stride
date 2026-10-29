@@ -132,8 +132,9 @@ test('wischen archiviert und löscht', async ({ page }, testInfo) => {
   await wischen(page, leereZeile, -100, 0);
   await expect(leereZeile.getByRole('button', { name: 'Löschen' })).toBeVisible();
   await leereZeile.getByRole('button', { name: 'Löschen' }).click();
-  await page.getByRole('dialog', { name: `${leer} löschen?` }).getByRole('button', { name: 'Löschen' }).click();
   await expect(leereZeile).toHaveCount(0);
+  await expect(page.getByRole('status')).toContainText(leer);
+  await expect(page.getByRole('alertdialog')).toHaveCount(0);
   await expect(page.getByRole('dialog')).toHaveCount(0);
 
   await wischen(page, genutzteZeile, -100, 0);
@@ -150,8 +151,9 @@ test('wischen archiviert und löscht', async ({ page }, testInfo) => {
   await expect(tatZeile).toBeVisible();
   await tatZeile.getByRole('button', { name: `Aktionen für ${taetigkeit}`, exact: true }).click();
   await page.getByRole('menuitem', { name: 'Löschen' }).click();
-  await page.getByRole('dialog', { name: `${taetigkeit} löschen?` }).getByRole('button', { name: 'Löschen' }).click();
   await expect(tatZeile).toHaveCount(0);
+  await expect(page.getByRole('status')).toContainText(taetigkeit);
+  await expect(page.getByRole('alertdialog')).toHaveCount(0);
 });
 
 test('menü und tastatur archivieren und brechen ab', async ({ page }, testInfo) => {
@@ -198,6 +200,8 @@ test('menü und tastatur archivieren und brechen ab', async ({ page }, testInfo)
   await expect(eintrag).toBeVisible();
   await eintrag.getByRole('button', { name: `Aktionen für ${notiz}`, exact: true }).click();
   await page.getByRole('menuitem', { name: 'Löschen' }).click();
-  await page.getByRole('dialog', { name: 'Eintrag löschen?' }).getByRole('button', { name: 'Abbrechen' }).click();
+  await expect(page.getByRole('alertdialog')).toHaveCount(0);
+  await expect(page.getByRole('status')).toContainText('Eintrag gelöscht');
+  await page.getByRole('button', { name: 'Rückgängig' }).click();
   await expect(eintrag).toBeVisible();
 });

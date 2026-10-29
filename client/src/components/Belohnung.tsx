@@ -3,12 +3,14 @@ import { useQuery } from '@tanstack/react-query';
 import { animate, AnimatePresence, motion, useMotionValue, type PanInfo } from 'framer-motion';
 import { Award, ChevronUp, CircleCheck, Swords, Trophy, X } from 'lucide-react';
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode, type Ref } from 'react';
+import { createPortal } from 'react-dom';
 import type { Belohnung, LevelAufstieg } from '../../../shared/api/index.ts';
 import { istAn, type Sichtbarkeit } from '../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { mitVorzeichen, multiplikatorText, zahl } from '../format.ts';
 import { spieleLevelSound, spieleXpSound } from '../sound.ts';
 import { Knopf } from '../ui/index.ts';
+import { useDialogVerlauf, useFokusKreis } from './Dialog.tsx';
 
 function istProjektAbschluss(belohnung: Belohnung): boolean {
   return belohnung.boni.some((bonus) => bonus.quelle === 'abschluss');
@@ -197,7 +199,7 @@ function XpMeldung({
           type="button"
           onClick={onEntfernen}
           aria-label={tx("Schließen")}
-          className="absolute top-2 right-2 rounded-lg p-1 text-leise transition hover:bg-flaeche-2 hover:text-haupt"
+          className="absolute top-1 right-1 flex size-12 items-center justify-center rounded-full text-leise transition hover:bg-flaeche-2 hover:text-haupt"
         >
           <X className="size-4" />
         </button>
@@ -330,19 +332,29 @@ function LevelAufstiegAnzeige({
   const haupt = aufstiege?.find((aufstieg) => aufstieg.art === 'charakter') ?? aufstiege?.[0];
   const weitere = aufstiege?.filter((aufstieg) => aufstieg !== haupt) ?? [];
   const hauptFarbe = haupt?.farbe ?? 'var(--akzent)';
+  const fensterRef = useRef<HTMLDivElement>(null);
+  const aktiv = Boolean(aufstiege && haupt);
+  const titel = haupt ? aufstiegTitel(haupt) : '';
+  useDialogVerlauf(aktiv, onSchliessen);
+  useFokusKreis(aktiv, fensterRef);
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {aufstiege && haupt && (
         <motion.div
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-6 backdrop-blur-sm"
+          className="dialog-scrim fixed inset-0 z-[70] flex items-center justify-center p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onSchliessen}
         >
           <motion.div
-            className="w-full max-w-sm rounded-3xl border border-rand bg-flaeche p-8 text-center shadow-2xl"
+            ref={fensterRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={titel}
+            tabIndex={-1}
+            className="w-full max-w-sm rounded-[12px] border border-rand bg-flaeche p-8 text-center shadow-2xl"
             initial={{ scale: 0.7, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
@@ -390,12 +402,13 @@ function LevelAufstiegAnzeige({
                 ))}
               </ul>
             )}
-            <Knopf variante="primaer" className="mt-6 w-full" onClick={onSchliessen}>
+            <Knopf variante="primaer" className="mt-6 w-full" autoFocus onClick={onSchliessen}>
               {tx("Weiter")}
             </Knopf>
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

@@ -51,8 +51,15 @@ interface Meldung {
   undo?: () => void;
 }
 
+interface Aufgeschoben {
+  senden: () => Promise<unknown>;
+  erledigt: boolean;
+}
+
 interface SchnellApi {
   ausfuehren: (ziel: SchnellZiel, punkt: SchnellPunktArt) => Promise<boolean>;
+  melde: (text: string, undo?: () => void) => void;
+  schiebe: (text: string, senden: () => Promise<unknown>, zurueck: () => void) => void;
 }
 
 const SchnellKontext = createContext<SchnellApi | null>(null);
@@ -113,8 +120,10 @@ export function SchnellProvider({ children }: { children: ReactNode }) {
   const meldungId = useRef(0);
   const lauf = useRef(0);
   const kette = useRef<Promise<unknown>>(Promise.resolve());
+  const tiefe = useRef(0);
+  const wartend = useRef<Aufgeschoben | null>(null);
 
-  const zeige = useCallback((neu: Omit<Meldung, 'id'> | null) => {
+  const zeigeRoh = useCallback((neu: Omit<Meldung, 'id'> | null) => {
     if (!neu) {
       setMeldung(null);
       return;
@@ -124,31 +133,113 @@ export function SchnellProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const reiht = useCallback(<T,>(arbeit: () => Promise<T>): Promise<T> => {
-    const naechste = kette.current.then(arbeit, arbeit);
-    kette.current = naechste.then(
+    const lauf = kette.current.then(
+      async () => {
+        tiefe.current += 1;
+        try {
+          return await arbeit();
+        } finally {
+          tiefe.current -= 1;
+        }
+      },
+      async () => {
+        tiefe.current += 1;
+        try {
+          return await arbeit();
+        } finally {
+          tiefe.current -= 1;
+        }
+      },
+    );
+    kette.current = lauf.then(
       () => undefined,
       () => undefined,
     );
-    return naechste;
+    return lauf;
   }, []);
+
+  const festschreiben = useCallback((): Promise<unknown> => {
+    const aktuell = wartend.current;
+    if (!aktuell || aktuell.erledigt) {
+      return Promise.resolve();
+    }
+    aktuell.erledigt = true;
+    wartend.current = null;
+    // Innerhalb der Kette direkt senden. Ein weiteres reiht wartet sonst auf sich selbst.
+    if (tiefe.current > 0) {
+      return aktuell.senden();
+    }
+    return reiht(() => aktuell.senden());
+  }, [reiht]);
+
+  const fehlertext = (fehler: unknown) => (fehler instanceof ApiFehler ? fehler.message : tx('Das hat nicht geklappt.'));
+
+  const schiebe = useCallback(
+    (text: string, sendenAktion: () => Promise<unknown>, zurueck: () => void) => {
+      const mein = ++lauf.current;
+      void festschreiben();
+      const eintrag: Aufgeschoben = {
+        erledigt: false,
+        senden: async () => {
+          try {
+            await sendenAktion();
+            if (lauf.current === mein) {
+              await client.invalidateQueries();
+            }
+          } catch (fehler) {
+            if (lauf.current !== mein) {
+              return;
+            }
+            zurueck();
+            zeigeRoh({ art: 'fehler', text: fehlertext(fehler) });
+          }
+        },
+      };
+      wartend.current = eintrag;
+      zeigeRoh({
+        art: 'status',
+        text,
+        undo: () => {
+          if (eintrag.erledigt) {
+            return;
+          }
+          eintrag.erledigt = true;
+          if (wartend.current === eintrag) {
+            wartend.current = null;
+          }
+          zurueck();
+          zeigeRoh(null);
+        },
+      });
+    },
+    [client, festschreiben, zeigeRoh],
+  );
+
+  const melde = useCallback(
+    (text: string, undo?: () => void) => {
+      lauf.current += 1;
+      void festschreiben();
+      zeigeRoh({ art: 'status', text, undo });
+    },
+    [festschreiben, zeigeRoh],
+  );
 
   const commit = useCallback(
     (ziel: SchnellZiel, punkt: SchnellPunktArt, warten: boolean): Promise<boolean> => {
       const mein = ++lauf.current;
       const modus = modusVon(punkt);
       const arbeit = async (): Promise<boolean> => {
+        await festschreiben();
         await client.cancelQueries();
         const snapshot = client.getQueriesData({ predicate: () => true });
         wendeAlle(client, ziel.art, ziel.id, modus);
-        if (punkt === 'loeschen') {
-          zeige(null);
-        } else {
+        if (punkt !== 'loeschen') {
           const text =
             punkt === 'archivieren'
               ? tx('{name} archiviert', { name: ziel.name })
               : tx('{name} wiederhergestellt', { name: ziel.name });
           const zurueck = punkt === 'archivieren' ? 'wiederherstellen' : 'archivieren';
-          zeige({
+          zeigeRoh({
             art: 'status',
             text,
             undo: () => {
@@ -170,17 +261,67 @@ export function SchnellProvider({ children }: { children: ReactNode }) {
           for (const [key, wert] of snapshot) {
             client.setQueryData(key as QueryKey, wert);
           }
-          zeige({
-            art: 'fehler',
-            text: fehler instanceof ApiFehler ? fehler.message : tx("Das hat nicht geklappt."),
-          });
+          zeigeRoh({ art: 'fehler', text: fehlertext(fehler) });
           return false;
         }
       };
       const versprechen = reiht(arbeit);
       return warten ? versprechen : Promise.resolve(true);
     },
-    [client, reiht, zeige],
+    [client, festschreiben, reiht, zeigeRoh],
+  );
+
+  const loeschenSpaeter = useCallback(
+    (ziel: SchnellZiel): Promise<boolean> => {
+      const mein = ++lauf.current;
+      const text = ziel.art === 'eintrag' ? tx('Eintrag gelöscht') : tx('„{name}" gelöscht', { name: ziel.name });
+      const versprechen = reiht(async () => {
+        await festschreiben();
+        await client.cancelQueries();
+        const snapshot = client.getQueriesData({ predicate: () => true });
+        wendeAlle(client, ziel.art, ziel.id, 'entfernen');
+        const eintrag: Aufgeschoben = {
+          erledigt: false,
+          senden: async () => {
+            try {
+              await sende(ziel, 'loeschen');
+              if (lauf.current === mein) {
+                await client.invalidateQueries();
+              }
+            } catch (fehler) {
+              if (lauf.current !== mein) {
+                return;
+              }
+              for (const [key, wert] of snapshot) {
+                client.setQueryData(key as QueryKey, wert);
+              }
+              zeigeRoh({ art: 'fehler', text: fehlertext(fehler) });
+            }
+          },
+        };
+        wartend.current = eintrag;
+        zeigeRoh({
+          art: 'status',
+          text,
+          undo: () => {
+            if (eintrag.erledigt) {
+              return;
+            }
+            eintrag.erledigt = true;
+            if (wartend.current === eintrag) {
+              wartend.current = null;
+            }
+            for (const [key, wert] of snapshot) {
+              client.setQueryData(key as QueryKey, wert);
+            }
+            zeigeRoh(null);
+          },
+        });
+        return true;
+      });
+      return versprechen;
+    },
+    [client, festschreiben, reiht, zeigeRoh],
   );
 
   const ausfuehren = useCallback(
@@ -191,19 +332,22 @@ export function SchnellProvider({ children }: { children: ReactNode }) {
       }
       if (punkt === 'loeschen') {
         const frage = bestaetigungFuer(ziel);
-        const ja = await bestaetigen({ ...frage, gefahr: true });
-        if (!ja) {
-          return false;
+        if (frage) {
+          const ja = await bestaetigen({ ...frage, gefahr: true });
+          if (!ja) {
+            return false;
+          }
+          return commit(ziel, punkt, true);
         }
-        return commit(ziel, punkt, true);
+        return loeschenSpaeter(ziel);
       }
       return commit(ziel, punkt, false);
     },
-    [bestaetigen, commit],
+    [bestaetigen, commit, loeschenSpaeter],
   );
 
   return (
-    <SchnellKontext.Provider value={{ ausfuehren }}>
+    <SchnellKontext.Provider value={{ ausfuehren, melde, schiebe }}>
       {children}
       {meldung ? (
         <Toast
@@ -212,7 +356,10 @@ export function SchnellProvider({ children }: { children: ReactNode }) {
           rolle={meldung.art === 'fehler' ? 'alert' : 'status'}
           aktion={meldung.undo}
           aktionLabel={meldung.undo ? 'Rückgängig' : undefined}
-          onEnde={() => setMeldung((aktuell) => (aktuell?.id === meldung.id ? null : aktuell))}
+          onEnde={() => {
+            void festschreiben();
+            setMeldung((aktuell) => (aktuell?.id === meldung.id ? null : aktuell));
+          }}
         />
       ) : null}
     </SchnellKontext.Provider>

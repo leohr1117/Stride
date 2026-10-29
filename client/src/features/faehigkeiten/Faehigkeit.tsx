@@ -8,10 +8,9 @@ import type { Faehigkeit, SkillKnoten } from '../../../../shared/api/index.ts';
 import { DREYFUS_STUFEN, GRENZEN } from '../../../../shared/spiel/begriffe.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useFeiern } from '../../components/Belohnung.tsx';
-import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { FaehigkeitFormular } from '../../components/FaehigkeitFormular.tsx';
-import { SchnellNebenaktion, SchnellZeile } from '../../components/SchnellAktion.tsx';
+import { SchnellNebenaktion, SchnellZeile, useSchnellAktion } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { SkillBaum, skillSchein } from './SkillBaum.tsx';
 import { useKopf } from '../../components/Kopf.tsx';
@@ -270,7 +269,7 @@ function SkillAktionen({
   onBearbeiten: () => void;
   onKind: () => void;
 }) {
-  const bestaetigen = useBestaetigung();
+  const schnell = useSchnellAktion();
   const queryClient = useQueryClient();
   const feiern = useFeiern();
   const aktualisieren = () => void queryClient.invalidateQueries();
@@ -287,6 +286,9 @@ function SkillAktionen({
     onSuccess: () => {
       aktualisieren();
       onSchliessen();
+      schnell.melde(tx('Gesperrt'), () => {
+        freischalten.mutate();
+      });
     },
   });
   const frei = knoten.freigeschaltetAm !== null;
@@ -327,22 +329,7 @@ function SkillAktionen({
             {tx("Bearbeiten")}
           </Knopf>
           {frei ? (
-            <Knopf
-              variante="leise"
-              onClick={async () => {
-                if (
-                  await bestaetigen({
-                    titel: tx('"{name}" wieder sperren?', { name: knoten.titel }),
-                    text: tx('Die {xp} XP werden abgezogen.', { xp: knoten.xp }),
-                    knopf: tx("Sperren"),
-                    gefahr: true,
-                  })
-                ) {
-                  zuruecknehmen.mutate();
-                }
-              }}
-              disabled={laeuft}
-            >
+            <Knopf variante="leise" onClick={() => zuruecknehmen.mutate()} disabled={laeuft}>
               <Undo2 className="size-4" />
               {tx("Zurücknehmen")}
             </Knopf>

@@ -187,7 +187,7 @@ test('Formular, Warndialog und Toast halten die Maße', async ({ page }, testInf
     await page.getByRole('button', { name: 'Abmelden', exact: true }).click();
     const warnung = page.locator('.dialog-warnung');
     await expect(warnung).toBeVisible();
-    await expect(page.getByRole('dialog', { name: 'Abmelden?' })).toBeVisible();
+    await expect(page.getByRole('alertdialog', { name: 'Abmelden?' })).toBeVisible();
     const lage = await warnung.evaluate((element) => {
       const kasten = element.getBoundingClientRect();
       const stil = getComputedStyle(element);

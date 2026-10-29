@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   bestaetigungFuer,
+  sofortRueckgaengig,
   fuegeAktivesAttribut,
   menueTeile,
   primaerPunkt,
@@ -82,24 +83,19 @@ describe('primaerPunkt', () => {
 });
 
 describe('bestaetigungFuer', () => {
-  it('formuliert endgültige Aktionen ohne Rückgängig', () => {
-    expect(bestaetigungFuer({ art: 'eintrag', id: 1, name: 'Notiz', hinweis: 'Die 12 XP werden wieder abgezogen.' })).toEqual({
-      titel: 'Eintrag löschen?',
-      text: 'Die 12 XP werden wieder abgezogen.',
-      knopf: 'Löschen',
-    });
-    expect(bestaetigungFuer({ art: 'kalender', id: 2, name: 'Arbeit' }).knopf).toBe('Entfernen');
+  it('warnt nur, wo Rückgängig den Stand nicht wiederherstellt', () => {
+    expect(sofortRueckgaengig('eintrag')).toBe(true);
+    expect(sofortRueckgaengig('vision')).toBe(true);
+    expect(bestaetigungFuer({ art: 'eintrag', id: 1, name: 'Notiz' })).toBeNull();
+    expect(bestaetigungFuer({ art: 'vision', id: 5, name: 'Meer' })).toBeNull();
+    expect(sofortRueckgaengig('kalender')).toBe(false);
+    expect(bestaetigungFuer({ art: 'kalender', id: 2, name: 'Arbeit' })?.knopf).toBe('Entfernen');
     expect(bestaetigungFuer({ art: 'todoist', id: 0, name: 'Todoist' })).toMatchObject({
       titel: 'Todoist trennen?',
       knopf: 'Trennen',
     });
-    expect(bestaetigungFuer({ art: 'konto', id: 3, name: 'mia' }).text).toBe('Die Welt dieses Accounts wird mitgelöscht.');
-    expect(bestaetigungFuer({ art: 'knoten', id: 4, name: 'Wurzel' }).text).toBe('Alle Skills darunter werden ebenfalls gelöscht.');
-    expect(bestaetigungFuer({ art: 'vision', id: 5, name: 'Meer' })).toEqual({
-      titel: 'Meer löschen?',
-      text: 'Das lässt sich nicht rückgängig machen.',
-      knopf: 'Löschen',
-    });
+    expect(bestaetigungFuer({ art: 'konto', id: 3, name: 'mia' })?.text).toBe('Die Welt dieses Accounts wird mitgelöscht.');
+    expect(bestaetigungFuer({ art: 'knoten', id: 4, name: 'Wurzel' })?.text).toBe('Alle Skills darunter werden ebenfalls gelöscht.');
   });
 });
 

@@ -156,7 +156,7 @@ test('Abgleich zeigt den Stand, behält Einträge und importiert nicht doppelt',
 
     await kalenderKarte(page).getByRole('button', { name: `Aktionen für ${name}`, exact: true }).click();
     await page.getByRole('menuitem', { name: 'Entfernen' }).click();
-    await page.getByRole('dialog', { name: `${name} entfernen?` }).getByRole('button', { name: 'Entfernen' }).click();
+    await page.getByRole('alertdialog', { name: `${name} entfernen?` }).getByRole('button', { name: 'Entfernen' }).click();
     await expect(kalenderKarte(page).getByText(name, { exact: true })).toHaveCount(0);
     kalenderId = null;
 

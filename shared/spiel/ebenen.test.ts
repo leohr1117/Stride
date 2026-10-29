@@ -96,9 +96,9 @@ describe('ebenen', () => {
     const nachher = ebenenFuerStufe('bodenstaendig');
     expect(
       hinweisAusblenden(vorher, nachher, { visionen: 2, organisationen: 0, projekte: 12, vorhaben: 4 }),
-    ).toBe('2 Visionen werden ausgeblendet. Einschalten bringt sie zurück.');
+    ).toBe('2 Visionen werden ausgeblendet und lassen sich wieder einschalten.');
     expect(hinweisAusblenden(vorher, nachher, { visionen: 0, organisationen: 1, projekte: 0, vorhaben: 3 })).toBe(
-      '1 Organisation wird ausgeblendet. Einschalten bringt sie zurück.',
+      '1 Organisation wird ausgeblendet und lässt sich wieder einschalten.',
     );
     expect(hinweisAusblenden(vorher, ebenenFuerStufe('traeumer'), { visionen: 1, organisationen: 0, projekte: 1, vorhaben: 1 })).toBe(
       null,

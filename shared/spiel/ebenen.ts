@@ -144,7 +144,7 @@ export function hinweisAusblenden(vorher: Ebenen, nachher: Ebenen, zahlen: Ebene
           .map((teil) => teil.text)
           .join(', ')} und ${teile[teile.length - 1].text}`;
   const verb = teile.length === 1 && teile[0].einzeln ? 'wird' : 'werden';
-  return `${liste} ${verb} ausgeblendet. Einschalten bringt sie zurück.`;
+  return `${liste} ${verb} ausgeblendet und ${verb === 'wird' ? 'lässt sich' : 'lassen sich'} wieder einschalten.`;
 }
 
 export function fehlendeZuordnung(angaben: {

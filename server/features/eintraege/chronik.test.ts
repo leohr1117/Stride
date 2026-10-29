@@ -80,6 +80,7 @@ describe('Chronik Protokoll', () => {
       expect(arten(taetigkeit.eintraege)).toEqual(['eintrag', 'eintrag']);
 
       expect(arten(ladeChronik({ visionId: 1 }, undefined, 20).eintraege)).toEqual([]);
+      expect(arten(ladeChronik({ visionIds: [1] }, undefined, 20).eintraege)).toEqual([]);
       expect(arten(ladeChronik({ faehigkeitId: 1 }, undefined, 20).eintraege)).toEqual([]);
 
       const erste = ladeChronik({}, undefined, 1);

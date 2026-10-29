@@ -14,6 +14,7 @@ import {
 } from '../../../shared/spiel/ebenen.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useBestaetigung } from './Bestaetigung.tsx';
+import { bestaetigeAusblenden } from '../ebenenFrage.ts';
 import { ZeileSchalter, ZeilenGruppe } from './Zeile.tsx';
 
 const EBENEN_ICON = {
@@ -40,15 +41,7 @@ export function EbenenWahl() {
   const umschalten = async (ebene: Ebene, an: boolean) => {
     const nachher = setzeEbene(einstellungen.ebenen, ebene, an);
     const hinweis = hinweisAusblenden(einstellungen.ebenen, nachher, einstellungen.ebenenZahlen);
-    if (
-      hinweis &&
-      !(await bestaetigen({
-        titel: tx("Ebenen ausblenden?"),
-        text: hinweis,
-        knopf: tx("Ausblenden"),
-        gefahr: true,
-      }))
-    ) {
+    if (!(await bestaetigeAusblenden(bestaetigen, hinweis))) {
       return;
     }
     speichern.mutate(nachher);

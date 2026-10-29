@@ -444,18 +444,93 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
   height: var(--sicht-hoehe);
 }
 
+.dialog-scrim {
+  background: rgb(0 0 0 / 0.4);
+}
+
 .dialog-fenster {
-  max-height: 92%;
+  max-height: min(90dvh, 100%);
   overflow: hidden;
 }
 
+.dialog-blatt {
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+}
+
+.dialog-griff {
+  width: 32px;
+  height: 4px;
+  margin: 8px auto 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--leise, currentColor) 70%, transparent);
+}
+
 .dialog-fenster.dialog-warnung {
-  width: min(100%, 24rem);
-  max-width: 24rem;
+  width: min(400px, calc(100vw - 2rem));
+  max-width: 400px;
   border-radius: 12px;
 }
 
-.dialog-koerper:not(:has(> .formular)) {
+.dialog-aktionen {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dialog-aktionen > :is(button, a) {
+  flex: 1 1 0;
+  min-height: 48px;
+}
+
+@media (min-width: 768px) {
+  .dialog-blatt {
+    width: 480px;
+    max-width: calc(100vw - 3rem);
+    border-radius: 12px;
+  }
+
+  .dialog-blatt:has(.formular) {
+    width: 560px;
+  }
+
+  .dialog-aktionen {
+    justify-content: flex-end;
+  }
+
+  .dialog-aktionen > :is(button, a) {
+    flex: 0 1 auto;
+    min-width: 8rem;
+  }
+}
+
+.dialog-fenster .dialog-koerper,
+.dialog-fenster .formular-felder {
+  scroll-padding-bottom: 4.5rem;
+}
+
+.dialog-koerper:not(:has(> .formular, > .dialog-auswahl)) {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.dialog-koerper:has(> .dialog-auswahl) {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dialog-auswahl {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.dialog-auswahl-liste {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -526,7 +601,7 @@ html[data-tastatur='an'] {
 
 .toast-lage {
   bottom: calc(var(--leisten-hoehe, 0px) + 1rem);
-  z-index: 95;
+  z-index: 80;
 }
 
 .sicht-mitte {
