@@ -70,22 +70,6 @@ function mussSeite(pfad: string): Seite {
 
 const BLOECKE = [1, 2, 3, 4] as const;
 
-/**
- * Chips unter Mehr bis U16. Dieselbe Reihe wie vor der neuen Seitenleiste,
- * damit Mehr in diesem Schritt gleich bleibt.
- */
-const SCHNELL_BIS_U16 = [
-  '/',
-  '/laufend',
-  '/basis',
-  '/ziele',
-  '/chronik',
-  '/rueckblick',
-  '/statistiken',
-  '/vorbilder',
-  '/handbuch',
-] as const;
-
 export const EINSTELLUNGEN: NavEintrag = alsEintrag(mussSeite('/mehr'));
 export const HANDBUCH: NavEintrag = alsEintrag(mussSeite('/handbuch'));
 
@@ -116,8 +100,3 @@ export function seitenleistenPfade(funktionen: Funktionen, ebenen: Ebenen = stan
   return pfade;
 }
 
-/** Alte Chip-Reihe auf Mehr. U16 ersetzt sie durch das Seitenverzeichnis. */
-export function schnellzugriffEintraege(funktionen: Funktionen, ebenen: Ebenen = standardEbenen()): NavEintrag[] {
-  const sichtbarkeit = { funktionen, ebenen };
-  return SCHNELL_BIS_U16.flatMap((pfad) => (pfadAktiv(pfad, sichtbarkeit) ? [alsEintrag(mussSeite(pfad))] : []));
-}

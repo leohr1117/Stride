@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.34.0',
+    seiten: 'Mehr',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.',
+          'Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.',
+          'Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.33.0',
     seiten: 'Übersicht',
     abschnitte: [

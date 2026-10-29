@@ -1,26 +1,26 @@
 import { expect, test } from '@playwright/test';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
-const KACHELN = [
+const EINSTELLUNGEN = [
   '/mehr/profil',
-  '/mehr/inhalte',
-  '/mehr/darstellung',
-  '/mehr/uebersicht',
+  '/mehr/inhalte/verbindungen',
   '/mehr/funktionen',
+  '/mehr/uebersicht',
+  '/mehr/darstellung',
   '/mehr/benachrichtigungen',
   '/mehr/daten',
 ];
 
-test('Einstellungen zeigen die Übersicht und Benachrichtigungen zwischen App und Daten', async ({ page }, testInfo) => {
+test('Einstellungen zeigen Karten auf Heute und Benachrichtigungen vor Daten', async ({ page }, testInfo) => {
   const bild = (name: string) => page.screenshot({ path: `tmp-bau/n2/${testInfo.project.name}-${name}.png`, fullPage: true });
   await anmelden(page);
   await page.goto('/mehr');
   await expect(page.locator('main h1')).toHaveText('Mehr');
-  await expect(page.locator('main .grid > a')).toHaveCount(KACHELN.length);
-  const ziele = await page.locator('main .grid > a').evaluateAll((knoten) =>
+  await expect(page.locator('[data-abschnitt="einstellungen"] a[href="/mehr/profil"]')).toBeVisible();
+  const ziele = await page.locator('[data-abschnitt="einstellungen"] a').evaluateAll((knoten) =>
     knoten.map((knoten) => (knoten instanceof HTMLAnchorElement ? knoten.getAttribute('href') : null)),
   );
-  expect(ziele).toEqual(KACHELN);
+  expect(ziele).toEqual(EINSTELLUNGEN);
   await expect(page.locator('main a[href="/mehr/benachrichtigungen"]')).toHaveCount(1);
   await expect(page.locator('nav.mobilleiste a[href="/mehr/benachrichtigungen"]')).toHaveCount(0);
   await expect(page.locator('aside.seitenleiste a[href="/mehr/benachrichtigungen"]')).toHaveCount(0);

@@ -46,8 +46,12 @@ test('PC-Seitenleiste in vier Blöcken, Handy bleibt bei der Leiste', async ({ p
 
     await leiste.getByRole('link', { name: 'Mehr' }).click();
     await expect(page.locator('main h1')).toHaveText('Mehr');
-    const chips = page.locator('section').filter({ hasText: 'Schnellzugriff' }).locator('.chip-reihe a');
-    await expect(chips).toHaveText(['Basis', 'Ziele', 'Rückblick', 'Statistiken', 'Vorbilder', 'Handbuch']);
+    await expect(page.getByText('Schnellzugriff', { exact: true })).toHaveCount(0);
+    const seiten = page.locator('[data-seitenliste]');
+    await expect(seiten.getByRole('link', { name: 'Übersicht', exact: true })).toBeVisible();
+    await expect(seiten.getByRole('link', { name: 'Laufend', exact: true })).toBeVisible();
+    await expect(seiten.getByRole('link', { name: 'Chronik', exact: true })).toBeVisible();
+    await expect(page.locator('[data-abschnitt="einstellungen"] a[href="/mehr/inhalte"]')).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);
     await bild('mehr');
     return;

@@ -1,5 +1,10 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.": "Ещё показывает все включённые страницы в четырёх списках, включая те, что на панели.",
+  "Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.": "Занятия стоят среди страниц. Настройки показывают справа текущее значение.",
+  "Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.": "Связи стоят прямо в Ещё. Ярлыки убраны.",
+  "{n} an": "{n} вкл.",
+  "{n} von {gesamt}": "{n} из {gesamt}",
   "Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.": "На компьютере боковая панель показывает страницы в четырёх группах, без заголовка.",
   "Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.": "Профиль — пункт с маленькой картинкой. Карточка под ним исчезает.",
   "Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.": "Занятия стоят среди страниц. Выключенные страницы отсутствуют.",

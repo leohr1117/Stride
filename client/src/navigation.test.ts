@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { standardEbenen } from '../../shared/spiel/ebenen.ts';
 import { standardFunktionen, type Funktionen } from '../../shared/spiel/funktionen.ts';
 import { SEITEN } from '../../shared/spiel/navigation.ts';
-import { schnellzugriffEintraege, seitenleistenPfade, sichtbareGruppen } from './navigation.ts';
+import { seitenleistenPfade, sichtbareGruppen } from './navigation.ts';
 
 function alleAn(): Funktionen {
   const funktionen = standardFunktionen();
@@ -74,19 +74,4 @@ describe('Seitenleiste aus der Tabelle', () => {
   });
 });
 
-describe('Schnellzugriff bis U16', () => {
-  it('behält die alte Chip-Reihe und übernimmt Tätigkeiten und Profil nicht', () => {
-    expect(schnellzugriffEintraege(alleAn(), standardEbenen()).map((eintrag) => eintrag.pfad)).toEqual([
-      '/',
-      '/laufend',
-      '/basis',
-      '/ziele',
-      '/chronik',
-      '/rueckblick',
-      '/statistiken',
-      '/vorbilder',
-      '/handbuch',
-    ]);
-  });
-});
 

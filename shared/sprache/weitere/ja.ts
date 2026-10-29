@@ -1,5 +1,10 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.": "その他は、オンになっているページを4つのリストで表示します。バーにあるページも含みます。",
+  "Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.": "活動はページの中にあります。設定は右側に今の値を表示します。",
+  "Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.": "つながりはその他の直下にあります。ショートカットはなくなります。",
+  "{n} an": "{n} オン",
+  "{n} von {gesamt}": "{n}/{gesamt}",
   "Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.": "PCでは、サイドバーがページを四つのグループで表示し、見出しはありません。",
   "Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.": "プロフィールは小さな画像付きの項目です。下のカードはなくなります。",
   "Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.": "活動はページの並びにあります。オフのページは出ません。",

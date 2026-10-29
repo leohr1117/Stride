@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.', 'More shows every switched-on page in four lists, including the ones on the bar.'],
+  ['Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.', 'Activities sits with the pages. Settings show the current value on the right.'],
+  ['Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.', 'Connections sits directly under More. Shortcuts are gone.'],
   ['Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.', 'On a computer, the sidebar shows the pages in four groups, without a heading.'],
   ['Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.', 'Profile is an entry with a small picture. The card below it is gone.'],
   ['Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.', 'Activities sits with the pages. Switched-off pages are missing.'],

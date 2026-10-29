@@ -39,7 +39,7 @@ export function einschaltKlick(geraet: HinweisGeraet, schluessel: string | null)
   return 'fragen';
 }
 
-/** Unterzeile der Kachel. Kein Gerät ist aus, eines ist an, mehrere zählen. */
+/** Wert der Zeile Benachrichtigungen. Kein Gerät ist aus, eines ist an, mehrere zählen. */
 export function kachelText(geraete: number): string {
   if (geraete <= 0) {
     return tx('Aus');

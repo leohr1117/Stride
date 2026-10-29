@@ -1,5 +1,10 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.": "Más muestra todas las páginas activadas en cuatro listas, también las de la barra.",
+  "Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.": "Actividades está con las páginas. Los ajustes muestran a la derecha el valor actual.",
+  "Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.": "Conexiones está directamente en Más. Los accesos desaparecen.",
+  "{n} an": "{n} encendidos",
+  "{n} von {gesamt}": "{n} de {gesamt}",
   "Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.": "En el ordenador, la barra lateral muestra las páginas en cuatro grupos, sin título.",
   "Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.": "Perfil es una entrada con una imagen pequeña. La tarjeta de debajo desaparece.",
   "Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.": "Actividades está con las páginas. Las páginas apagadas no aparecen.",

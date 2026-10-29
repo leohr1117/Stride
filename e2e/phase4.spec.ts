@@ -98,7 +98,7 @@ function imBild(kasten: { x: number; y: number; width: number; height: number } 
   expect(kasten.y + kasten.height).toBeLessThanOrEqual(fenster.height + 1);
 }
 
-test('Benachrichtigungen liegen zwischen App und Daten', async ({ page }, testInfo) => {
+test('Benachrichtigungen stehen unter Mehr vor Daten', async ({ page }, testInfo) => {
   test.setTimeout(120_000);
   const bild = (name: string) => page.screenshot({ path: `tmp-bau/phase4/${testInfo.project.name}-${name}.png` });
   const hinweis = { patch: 0, post: 0 };
@@ -121,13 +121,15 @@ test('Benachrichtigungen liegen zwischen App und Daten', async ({ page }, testIn
     await page.goto('/mehr');
     await expect(page.locator('main h1')).toHaveText('Mehr');
     await expect(page.locator('main a[href="/mehr/funktionen"]')).toBeVisible();
-    const ziele = await page.locator('main .grid > a').evaluateAll((knoten) =>
+    const ziele = await page.locator('[data-abschnitt="einstellungen"] a').evaluateAll((knoten) =>
       knoten.map((knoten) => (knoten instanceof HTMLAnchorElement ? knoten.getAttribute('href') : null)),
     );
-    const app = ziele.indexOf('/mehr/funktionen');
-    expect(ziele[app + 1]).toBe('/mehr/benachrichtigungen');
-    expect(ziele[app + 2]).toBe('/mehr/daten');
-    await expect(page.locator('main a[href="/mehr/benachrichtigungen"] span.text-xs')).toHaveText('Aus');
+    expect(ziele.at(-2)).toBe('/mehr/benachrichtigungen');
+    expect(ziele.at(-1)).toBe('/mehr/daten');
+    const hinweisZeile = page.locator('[data-abschnitt="einstellungen"] [data-zeile]').filter({
+      has: page.locator('a[href="/mehr/benachrichtigungen"]'),
+    });
+    await expect(hinweisZeile.locator('span.truncate')).toHaveText('Aus');
     await expect(page.locator('nav.mobilleiste a[href="/mehr/benachrichtigungen"]')).toHaveCount(0);
     await expect(page.locator('aside.seitenleiste a[href="/mehr/benachrichtigungen"]')).toHaveCount(0);
     await bild('mehr-aus');
@@ -192,11 +194,11 @@ test('Benachrichtigungen liegen zwischen App und Daten', async ({ page }, testIn
     setzeAbo(ENDPUNKTE[0]);
     setzeAbo(ENDPUNKTE[1]);
     await page.reload();
-    await expect(page.locator('main a[href="/mehr/benachrichtigungen"] span.text-xs')).toHaveText('2 Geräte');
+    await expect(hinweisZeile.locator('span.truncate')).toHaveText('2 Geräte');
     await bild('mehr-zwei');
     loescheAbo(ENDPUNKTE[1]);
     await page.reload();
-    await expect(page.locator('main a[href="/mehr/benachrichtigungen"] span.text-xs')).toHaveText('An');
+    await expect(hinweisZeile.locator('span.truncate')).toHaveText('An');
     await bild('mehr-an');
 
     await page.goto('/mehr/benachrichtigungen');
@@ -238,7 +240,10 @@ test('Benachrichtigungen liegen zwischen App und Daten', async ({ page }, testIn
     await page.getByRole('button', { name: 'Bearbeiten', exact: true }).click();
     await expect(dialog).toBeVisible();
     await setzeUhr(page, 'von', '20:00');
-    await dialog.getByRole('button', { name: 'Abbrechen', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Schließen', exact: true }).click();
+    const frage = page.getByRole('alertdialog', { name: 'Änderungen verwerfen?' });
+    await expect(frage).toBeVisible();
+    await frage.getByRole('button', { name: 'Verwerfen', exact: true }).click();
     await expect(dialog).toHaveCount(0);
     await expect(ruhe.locator('span.zahl')).toHaveText(RUHIG);
     await page.getByRole('button', { name: 'Bearbeiten', exact: true }).click();

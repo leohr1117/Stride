@@ -62,21 +62,30 @@ test('Hierarchie, Funktionen und Projekt-Tätigkeit sind erkennbar', async ({ pa
   const formular = page.getByRole('dialog', { name: 'Neue Aufgabe' });
   await formular.getByRole('combobox', { name: 'Projekt' }).click();
   const wahl = page.getByRole('dialog', { name: 'Projekt' });
-  const fitWahl = wahl.locator('[data-ast="vision"]').filter({ has: page.getByRole('heading', { name: 'Fit und belastbar' }) });
-  const orgWahl = fitWahl.locator('[data-ast="organisation"]').filter({ has: page.getByRole('heading', { name: 'Lauftreff' }) });
-  await expect(orgWahl.getByRole('option', { name: 'Gruppenläufe', exact: true })).toBeVisible();
-  await expect(orgWahl.getByRole('option', { name: 'Krafttraining', exact: true })).toHaveCount(0);
-  await expect(fitWahl.getByRole('option', { name: 'Krafttraining', exact: true })).toBeVisible();
+  await expect(wahl.getByRole('option', { name: 'Gruppenläufe', exact: true })).toBeVisible();
+  const namen = await wahl.locator('[role="listbox"] > *').evaluateAll((knoten) =>
+    knoten.map((knoten) => (knoten.textContent ?? '').trim()),
+  );
+  const fitIndex = namen.indexOf('Fit und belastbar');
+  const kraftIndex = namen.indexOf('Krafttraining');
+  const laufIndex = namen.indexOf('Lauftreff');
+  const gruppenIndex = namen.indexOf('Gruppenläufe');
+  expect(fitIndex).toBeGreaterThanOrEqual(0);
+  expect(kraftIndex).toBeGreaterThan(fitIndex);
+  expect(laufIndex).toBeGreaterThan(kraftIndex);
+  expect(gruppenIndex).toBe(laufIndex + 1);
   await bild('auswahl');
   await wahl.getByRole('option', { name: 'Krafttraining', exact: true }).click();
   await expect(formular.getByRole('combobox', { name: 'Projekt' })).toHaveText('Krafttraining');
   await page.keyboard.press('Escape');
 
   await page.goto('/mehr');
-  await expect(page.getByRole('link', { name: /App & Verbindungen/ })).toContainText('Funktionen ein- und ausschalten');
+  const bereiche = page.locator('[data-abschnitt="einstellungen"]').getByRole('link', { name: 'Bereiche', exact: true });
+  await expect(bereiche).toBeVisible();
+  await expect(page.locator('[data-abschnitt="einstellungen"] a[href="/mehr/funktionen"]').locator('xpath=..')).toContainText(/\d+ an/);
   await ohneSeitlichenUeberlauf(page);
   await bild('mehr');
-  await page.getByRole('link', { name: /App & Verbindungen/ }).click();
+  await bereiche.click();
   await expect(page).toHaveURL(/\/mehr\/funktionen$/);
   const funktionen = page.getByRole('heading', { name: 'Funktionen', exact: true }).locator('..');
   await funktionen.getByRole('button', { name: 'Info' }).click();

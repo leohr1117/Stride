@@ -1,5 +1,10 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.": "Plus affiche toutes les pages activées en quatre listes, y compris celles de la barre.",
+  "Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.": "Activités est avec les pages. Les réglages affichent la valeur actuelle à droite.",
+  "Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.": "Connexions est directement sous Plus. Les raccourcis disparaissent.",
+  "{n} an": "{n} activés",
+  "{n} von {gesamt}": "{n} sur {gesamt}",
   "Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.": "Sur ordinateur, la barre latérale montre les pages en quatre groupes, sans titre.",
   "Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.": "Profil est une entrée avec une petite image. La carte en dessous disparaît.",
   "Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.": "Activités se trouve avec les pages. Les pages désactivées sont absentes.",

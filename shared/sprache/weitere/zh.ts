@@ -1,5 +1,10 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.": "更多把所有已开启的页面分成四个列表，包括栏里的页面。",
+  "Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.": "活动在页面里。设置在右侧显示当前的值。",
+  "Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.": "关联直接在更多下面。快捷没有了。",
+  "{n} an": "{n} 项开",
+  "{n} von {gesamt}": "{n}/{gesamt}",
   "Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.": "在电脑上，侧边栏把页面分成四组显示，没有标题。",
   "Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.": "资料是带小图片的一项。下面的卡片取消。",
   "Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.": "活动与其他页面放在一起。关闭的页面不显示。",

@@ -48,6 +48,8 @@ export const PAARE = [
   ['Verlauf', 'History'],
   ['Statistik', 'Statistics'],
   ['Karten auf Heute', 'Cards on Today'],
+  ['{n} an', '{n} on'],
+  ['{n} von {gesamt}', '{n} of {gesamt}'],
   ['Bereiche', 'Areas'],
   ['Schutz', 'Protection'],
   ['Schutz und Rückkehr', 'Protection and return'],

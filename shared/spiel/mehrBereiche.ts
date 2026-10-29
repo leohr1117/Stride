@@ -1,9 +1,9 @@
 export const MEHR_BEREICH_IDS = [
-  'profil',
-  'taetigkeiten',
+  'konto',
+  'verbindungen',
+  'bereiche',
+  'karten',
   'darstellung',
-  'uebersicht',
-  'app',
   'benachrichtigungen',
   'daten',
 ] as const;
@@ -14,17 +14,17 @@ export interface MehrBereich {
   id: MehrBereichId;
   pfad: string;
   label: string;
-  /** Sichtbare Kachel auf Mehr. */
+  /** Sichtbare Zeile unter Einstellungen. */
   sichtbar: boolean;
 }
 
-/** Reihenfolge auf Mehr. Benachrichtigungen liegt fest zwischen App und Daten. */
+/** Reihenfolge der Einstellungen unter Mehr. Tätigkeiten steht im Seitenverzeichnis. */
 export const MEHR_BEREICHE: readonly MehrBereich[] = [
-  { id: 'profil', pfad: '/mehr/profil', label: 'Profil', sichtbar: true },
-  { id: 'taetigkeiten', pfad: '/mehr/inhalte', label: 'Tätigkeiten', sichtbar: true },
+  { id: 'konto', pfad: '/mehr/profil', label: 'Konto', sichtbar: true },
+  { id: 'verbindungen', pfad: '/mehr/inhalte/verbindungen', label: 'Verbindungen', sichtbar: true },
+  { id: 'bereiche', pfad: '/mehr/funktionen', label: 'Bereiche', sichtbar: true },
+  { id: 'karten', pfad: '/mehr/uebersicht', label: 'Karten auf Heute', sichtbar: true },
   { id: 'darstellung', pfad: '/mehr/darstellung', label: 'Darstellung', sichtbar: true },
-  { id: 'uebersicht', pfad: '/mehr/uebersicht', label: 'Übersicht', sichtbar: true },
-  { id: 'app', pfad: '/mehr/funktionen', label: 'App & Verbindungen', sichtbar: true },
   { id: 'benachrichtigungen', pfad: '/mehr/benachrichtigungen', label: 'Benachrichtigungen', sichtbar: true },
   { id: 'daten', pfad: '/mehr/daten', label: 'Daten', sichtbar: true },
 ];

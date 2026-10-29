@@ -103,7 +103,7 @@ export function useEinstellungen() {
 
 export const PROFIL_ZURUECK = { pfad: '/mehr/profil', label: 'Profil' };
 export const INHALTE_ZURUECK = { pfad: '/mehr/inhalte', label: 'Tätigkeiten' };
-export const FUNKTIONEN_ZURUECK = { pfad: '/mehr/funktionen', label: 'App & Verbindungen' };
+export const FUNKTIONEN_ZURUECK = { pfad: '/mehr/funktionen', label: 'Bereiche' };
 export const DARSTELLUNG_ZURUECK = { pfad: '/mehr/darstellung', label: 'Darstellung' };
 export const PROFIL_HASH: Record<string, string> = { '#accounts': '/mehr/profil/accounts' };
 export const INHALTE_HASH: Record<string, string> = {
