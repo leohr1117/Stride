@@ -229,9 +229,7 @@ test('XP-Verlust ist für Können und Haben getrennt', async ({ page }) => {
     if ((await status.getAttribute('aria-checked')) === 'true') {
       await tippe(status);
       await expect(haben).toBeDisabled();
-      await tippe(page.locator('#funktion-verfallHaben').getByRole('button', { name: 'Info' }));
-      await expect(page.getByRole('tooltip')).toContainText('Erst Haben einschalten.');
-      await page.keyboard.press('Escape');
+      await expect(page.locator('#funktion-verfallHaben')).toContainText('Erst Haben einschalten.');
       await tippe(status);
       await expect(haben).toBeEnabled();
       if ((await haben.getAttribute('aria-checked')) !== 'false') {

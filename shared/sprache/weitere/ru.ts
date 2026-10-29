@@ -1,5 +1,11 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Seiten im Profil": "Страницы в профиле",
+  "Auf Ziele": "В целях",
+  "Regeln": "Правила",
+  "{name} an": "{name} включён",
+  "Bereiche stehen in Gruppen nach dem Fundort. Nach dem Einschalten führt Öffnen dorthin.": "Разделы сгруппированы по месту. После включения «Открыть» ведёт туда.",
+  "Karten auf Heute blendet Zeilen ausgeschalteter Bereiche aus.": "Карточки на Сегодня скрывают строки выключенных разделов.",
   "Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.": "Умения, Активы, Навыки и Вложения стали отдельными страницами.",
   "Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.": "Профиль показывает их строкой с числом. У каждой страницы свой архив.",
   "Unter Werte auf der Übersicht führen Können und Haben auf die Seite.": "В блоке Значения на обзоре Умения и Активы ведут на страницу.",

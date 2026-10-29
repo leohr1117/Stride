@@ -1,7 +1,7 @@
 import { EBENEN } from '../../../../shared/spiel/ebenen.ts';
 import { FUNKTIONEN } from '../../../../shared/spiel/funktionen.ts';
 import { istAn, type Sichtbarkeit } from '../../../../shared/spiel/sichtbarkeit.ts';
-import { karteGewaehlt, UEBERSICHT_KARTEN, type UebersichtKartenWahl } from '../../../../shared/spiel/uebersichtKarten.ts';
+import { karteGewaehlt, karteSichtbar, UEBERSICHT_KARTEN, type UebersichtKartenWahl } from '../../../../shared/spiel/uebersichtKarten.ts';
 import { tx } from '../../text.ts';
 
 /**
@@ -14,9 +14,15 @@ export function bereicheAn(sichtbarkeit: Sichtbarkeit): number {
   return funktionen + ebenen;
 }
 
-export function kartenStand(wahl: Partial<UebersichtKartenWahl> | undefined): { an: number; gesamt: number } {
-  const gesamt = UEBERSICHT_KARTEN.length;
-  const an = UEBERSICHT_KARTEN.filter((karte) => karteGewaehlt(karte.id, wahl)).length;
+export function kartenStand(
+  wahl: Partial<UebersichtKartenWahl> | undefined,
+  sichtbarkeit?: Sichtbarkeit,
+): { an: number; gesamt: number } {
+  const karten = sichtbarkeit
+    ? UEBERSICHT_KARTEN.filter((karte) => karteSichtbar(karte.id, sichtbarkeit))
+    : UEBERSICHT_KARTEN;
+  const gesamt = karten.length;
+  const an = karten.filter((karte) => karteGewaehlt(karte.id, wahl)).length;
   return { an, gesamt };
 }
 

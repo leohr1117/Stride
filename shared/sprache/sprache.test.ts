@@ -101,9 +101,6 @@ function katalogTexte(): string[] {
     texte.push(block.seite);
     for (const eintrag of block.eintraege) {
       texte.push(eintrag.label);
-      if (eintrag.ort) {
-        texte.push(eintrag.ort);
-      }
     }
   }
   texte.push(ZIEL_FRAGE, FOKUS_PFLICHT);

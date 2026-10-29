@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { standardEbenen } from './ebenen.ts';
-import { standardFunktionen, type Funktionen } from './funktionen.ts';
+import { BEREICH_SCHALTER, istFunktion, standardFunktionen, type Funktionen } from './funktionen.ts';
 import { LEISTEN_SEITEN } from './leiste.ts';
-import { BLOCK_NAME, SEITEN, seiteZuPfad, type Block } from './navigation.ts';
+import { BLOCK_NAME, SEITEN, seiteZuPfad, toastZielFuer, type Block } from './navigation.ts';
 import { hatSchluessel } from '../sprache/index.ts';
 import { pfadAktiv } from './sichtbarkeit.ts';
+import { karteSichtbar, UEBERSICHT_KARTEN } from './uebersichtKarten.ts';
 
 const VERZEICHNIS = [
   ['/', 'Übersicht', 'haus', 1],
@@ -90,5 +91,89 @@ describe('Seitentabelle', () => {
     expect(seiteZuPfad('/vorbilder/ada')?.schalter).toBe('vorbilder');
     expect(seiteZuPfad('/faehigkeiten/2')?.pfad).toBe('/faehigkeiten');
     expect(seiteZuPfad('/faehigkeiten/2')?.schalter).toBe('faehigkeiten');
+  });
+});
+
+const TOAST_ZIEL: Record<string, string> = {
+  basis: '/basis',
+  chronik: '/chronik',
+  rueckblick: '/rueckblick',
+  statistiken: '/statistiken',
+  vorbilder: '/vorbilder',
+  handbuch: '/handbuch',
+  koennen: '/koennen',
+  status: '/haben',
+  faehigkeiten: '/faehigkeiten',
+  ausruestung: '/investitionen',
+  visionen: '/ziele',
+  organisationen: '/ziele',
+  projekte: '/ziele',
+  vorhaben: '/ziele',
+  bossAngriffe: '/laufend',
+  verfallKoennen: '/koennen',
+  verfallHaben: '/haben',
+};
+
+describe('17 Schalter', () => {
+  it('liest das Toast-Ziel aus der Seitentabelle bzw. 11.2 b', () => {
+    expect(BEREICH_SCHALTER).toHaveLength(17);
+    for (const eintrag of BEREICH_SCHALTER) {
+      const seite = SEITEN.find((kandidat) => kandidat.schalter === eintrag.schalter);
+      if (seite) {
+        expect(eintrag.label).toBe(seite.name);
+        expect(toastZielFuer(eintrag.schalter)).toBe(seite.toastZiel);
+      }
+      expect(toastZielFuer(eintrag.schalter)).toBe(TOAST_ZIEL[eintrag.schalter]);
+      expect(hatSchluessel(eintrag.label)).toBe(true);
+      expect(hatSchluessel(eintrag.gruppe)).toBe(true);
+    }
+  });
+
+  it('blendet ausgeschaltete Seiten überall außer in Bereiche aus', () => {
+    const funktionen: Funktionen = { ...standardFunktionen() };
+    for (const schluessel of Object.keys(funktionen) as (keyof Funktionen)[]) {
+      funktionen[schluessel] = true;
+    }
+    const an = { funktionen, ebenen: standardEbenen() };
+    for (const eintrag of BEREICH_SCHALTER) {
+      if (!istFunktion(eintrag.schalter)) {
+        continue;
+      }
+      const seite = SEITEN.find((kandidat) => kandidat.schalter === eintrag.schalter);
+      if (!seite) {
+        continue;
+      }
+      const aus = { funktionen: { ...funktionen, [eintrag.schalter]: false }, ebenen: standardEbenen() };
+      expect(pfadAktiv(seite.pfad, aus)).toBe(false);
+      expect(pfadAktiv(seite.pfad, an)).toBe(true);
+      expect(SEITEN.some((kandidat) => kandidat.profilzeile && kandidat.schalter === eintrag.schalter)).toBe(
+        seite.profilzeile,
+      );
+    }
+  });
+
+  it('blendet in S34 die Zeile ausgeschalteter Bereiche aus', () => {
+    const funktionen: Funktionen = { ...standardFunktionen() };
+    for (const schluessel of Object.keys(funktionen) as (keyof Funktionen)[]) {
+      funktionen[schluessel] = true;
+    }
+    const an = { funktionen, ebenen: standardEbenen() };
+    expect(UEBERSICHT_KARTEN.filter((karte) => karteSichtbar(karte.id, an)).map((karte) => karte.id)).toEqual([
+      ...UEBERSICHT_KARTEN.map((karte) => karte.id),
+    ]);
+    expect(karteSichtbar('bosse', { funktionen: { ...funktionen, bossAngriffe: false }, ebenen: standardEbenen() })).toBe(
+      false,
+    );
+    expect(karteSichtbar('basis', { funktionen: { ...funktionen, basis: false }, ebenen: standardEbenen() })).toBe(false);
+    expect(
+      karteSichtbar('comeback', { funktionen, ebenen: { ...standardEbenen(), vorhaben: false } }),
+    ).toBe(false);
+    expect(karteSichtbar('identitaet', { funktionen: { ...funktionen, basis: false }, ebenen: standardEbenen() })).toBe(
+      true,
+    );
+    expect(karteSichtbar('aktivitaet', an)).toBe(true);
+    expect(
+      karteSichtbar('werte', { funktionen: { ...funktionen, koennen: false, status: true }, ebenen: standardEbenen() }),
+    ).toBe(true);
   });
 });

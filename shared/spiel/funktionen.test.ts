@@ -1,14 +1,74 @@
 import { describe, expect, it } from 'vitest';
-import { FUNKTION_BLOECKE, FUNKTIONEN, funktionenAusSpeicher, funktionenFuerStufe, standardFunktionen, verfallFunktion } from './funktionen.ts';
+import { EBENEN } from './ebenen.ts';
+import {
+  BEREICH_GRUPPEN,
+  BEREICH_SCHALTER,
+  FUNKTION_BLOECKE,
+  FUNKTIONEN,
+  funktionenAusSpeicher,
+  funktionenFuerStufe,
+  istFunktion,
+  standardFunktionen,
+  verfallFunktion,
+} from './funktionen.ts';
+
+describe('BEREICH_SCHALTER', () => {
+  it('hat die 17 Schalter in den Fundort-Gruppen ohne Ortstext', () => {
+    expect(BEREICH_SCHALTER).toHaveLength(17);
+    expect(BEREICH_SCHALTER.map((eintrag) => eintrag.schalter)).toEqual([
+      'basis',
+      'chronik',
+      'rueckblick',
+      'statistiken',
+      'vorbilder',
+      'handbuch',
+      'koennen',
+      'status',
+      'faehigkeiten',
+      'ausruestung',
+      'visionen',
+      'organisationen',
+      'projekte',
+      'vorhaben',
+      'bossAngriffe',
+      'verfallKoennen',
+      'verfallHaben',
+    ]);
+    expect(new Set(BEREICH_SCHALTER.map((eintrag) => eintrag.schalter)).size).toBe(17);
+    expect(BEREICH_GRUPPEN).toEqual(['Seiten', 'Seiten im Profil', 'Auf Ziele', 'Regeln']);
+    expect(BEREICH_SCHALTER.map((eintrag) => eintrag.gruppe)).toEqual([
+      'Seiten',
+      'Seiten',
+      'Seiten',
+      'Seiten',
+      'Seiten',
+      'Seiten',
+      'Seiten im Profil',
+      'Seiten im Profil',
+      'Seiten im Profil',
+      'Seiten im Profil',
+      'Auf Ziele',
+      'Auf Ziele',
+      'Auf Ziele',
+      'Auf Ziele',
+      'Auf Ziele',
+      'Regeln',
+      'Regeln',
+    ]);
+    const funktionen = BEREICH_SCHALTER.filter((eintrag) => istFunktion(eintrag.schalter)).map((eintrag) => eintrag.schalter);
+    expect(funktionen.slice().sort()).toEqual([...FUNKTIONEN].sort());
+    const ebenen = BEREICH_SCHALTER.filter((eintrag) => !istFunktion(eintrag.schalter)).map((eintrag) => eintrag.schalter);
+    expect(ebenen).toEqual([...EBENEN]);
+  });
+});
 
 describe('FUNKTION_BLOECKE', () => {
-  it('teilt in Seiten und Abschnitte und gibt nur Abschnitten einen Ort', () => {
+  it('folgt den Fundort-Gruppen und hat keinen Ortstext', () => {
     const gesehen = FUNKTION_BLOECKE.flatMap((block) => block.eintraege.map((eintrag) => eintrag.funktion));
     expect(gesehen.slice().sort()).toEqual([...FUNKTIONEN].sort());
     expect(new Set(gesehen).size).toBe(gesehen.length);
-    expect(FUNKTION_BLOECKE.map((block) => block.seite)).toEqual(['Seiten', 'Abschnitte']);
-    const seiten = FUNKTION_BLOECKE.find((block) => block.seite === 'Seiten');
-    expect(seiten?.eintraege.map((eintrag) => eintrag.funktion)).toEqual([
+    expect(FUNKTION_BLOECKE.map((block) => block.seite)).toEqual(['Seiten', 'Seiten im Profil', 'Auf Ziele', 'Regeln']);
+    expect(FUNKTION_BLOECKE.find((block) => block.seite === 'Seiten')?.eintraege.map((eintrag) => eintrag.funktion)).toEqual([
       'basis',
       'chronik',
       'rueckblick',
@@ -16,16 +76,20 @@ describe('FUNKTION_BLOECKE', () => {
       'vorbilder',
       'handbuch',
     ]);
-    expect(seiten?.eintraege.every((eintrag) => eintrag.ort === undefined)).toBe(true);
-    expect(FUNKTION_BLOECKE.find((block) => block.seite === 'Abschnitte')?.eintraege.map((eintrag) => [eintrag.funktion, eintrag.ort])).toEqual([
-      ['koennen', 'Auf dem Charakter.'],
-      ['status', 'Auf dem Charakter.'],
-      ['faehigkeiten', 'Auf dem Charakter.'],
-      ['ausruestung', 'Eigene auf dem Charakter. Projekt-Investitionen auf der Projektseite.'],
-      ['bossAngriffe', 'Unter Laufend. Anlegen am Vorhaben auf der Projektseite.'],
-      ['verfallKoennen', 'Beim Bearbeiten eines Können-Attributs auf dem Charakter.'],
-      ['verfallHaben', 'Beim Bearbeiten eines Haben-Attributs auf dem Charakter.'],
+    expect(FUNKTION_BLOECKE.find((block) => block.seite === 'Seiten im Profil')?.eintraege.map((eintrag) => eintrag.funktion)).toEqual([
+      'koennen',
+      'status',
+      'faehigkeiten',
+      'ausruestung',
     ]);
+    expect(FUNKTION_BLOECKE.find((block) => block.seite === 'Auf Ziele')?.eintraege.map((eintrag) => eintrag.funktion)).toEqual([
+      'bossAngriffe',
+    ]);
+    expect(FUNKTION_BLOECKE.find((block) => block.seite === 'Regeln')?.eintraege.map((eintrag) => eintrag.funktion)).toEqual([
+      'verfallKoennen',
+      'verfallHaben',
+    ]);
+    expect(FUNKTION_BLOECKE.every((block) => block.eintraege.every((eintrag) => !('ort' in eintrag)))).toBe(true);
   });
 });
 

@@ -1,5 +1,11 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Seiten im Profil": "プロフィールのページ",
+  "Auf Ziele": "目標上",
+  "Regeln": "ルール",
+  "{name} an": "{name} オン",
+  "Bereiche stehen in Gruppen nach dem Fundort. Nach dem Einschalten führt Öffnen dorthin.": "機能は場所ごとにグループ化されています。オンにすると、開くでそこに進めます。",
+  "Karten auf Heute blendet Zeilen ausgeschalteter Bereiche aus.": "今日のカードは、オフの機能の行を非表示にします。",
   "Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.": "能力、資産、スキル、投資はそれぞれのページです。",
   "Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.": "プロフィールは件数つきの行で示します。各ページに自分のアーカイブがあります。",
   "Unter Werte auf der Übersicht führen Können und Haben auf die Seite.": "概要の値では、能力と資産がページへ進みます。",

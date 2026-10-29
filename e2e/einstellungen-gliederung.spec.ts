@@ -35,10 +35,7 @@ test('Einstellungen zeigen Karten auf Heute und Benachrichtigungen vor Daten', a
   await expect(inhalt.getByRole('link', { name: 'Identität', exact: true })).toHaveCount(0);
   await expect(inhalt.getByRole('switch', { name: 'Identität', exact: true })).toBeChecked();
   await expect(inhalt.getByText('Immer', { exact: true }).first()).toBeVisible();
-  await expect(inhalt.getByRole('link', { name: 'Bereich für Bosse', exact: true })).toHaveAttribute('href', '/mehr/funktionen#funktion-bossAngriffe');
-  await expect(inhalt.getByRole('link', { name: 'Bereich für Zurück aufstehen', exact: true })).toHaveAttribute('href', '/mehr/funktionen#ziel-stufen');
-  await expect(inhalt.getByRole('link', { name: 'Bereich für Basis', exact: true })).toHaveAttribute('href', '/mehr/funktionen#funktion-basis');
-  await expect(inhalt.getByRole('link', { name: 'Bereich für Werte', exact: true })).toHaveAttribute('href', '/mehr/funktionen#funktion-koennen');
+  await expect(inhalt.getByRole('link', { name: /^Bereich für / })).toHaveCount(0);
   await expect(inhalt.getByRole('switch', { name: 'Aktivität', exact: true })).toBeChecked();
   await expect(inhalt.getByRole('link', { name: 'Aktivität', exact: true })).toHaveCount(0);
 
@@ -62,14 +59,5 @@ test('Einstellungen zeigen Karten auf Heute und Benachrichtigungen vor Daten', a
 
   await page.keyboard.press('Escape');
   await expect(hinweis).toHaveCount(0);
-  await inhalt.getByRole('link', { name: 'Bereich für Bosse', exact: true }).click();
-  await expect(page).toHaveURL(/\/mehr\/funktionen#funktion-bossAngriffe$/);
-  await expect(page.locator('#funktion-bossAngriffe')).toBeInViewport();
-  await expect(page.locator('#funktion-bossAngriffe').getByRole('switch', { name: 'Bosse' })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
-  await bild('bosse');
-
-  await page.locator('a[data-zurueck]').click();
-  await expect(page).toHaveURL(/\/mehr\/uebersicht$/);
-  await expect(page.locator('main h1')).toHaveText('Übersicht');
 });

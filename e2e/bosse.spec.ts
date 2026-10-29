@@ -229,11 +229,8 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
     await bosse.scrollIntoViewIfNeeded();
     await ohneSeitlichenUeberlauf(page);
     await bild('schalter');
-    await bosse.getByRole('button', { name: 'Info' }).click();
-    await expect(page.getByText('Erst Disziplin einschalten.')).toBeVisible();
-    await page.keyboard.press('Escape');
-    await investitionen.getByRole('button', { name: 'Info' }).click();
-    await expect(page.getByText('Erst Ressourcen einschalten.')).toBeVisible();
+    await expect(bosse).toContainText('Erst Disziplin einschalten.');
+    await expect(investitionen).toContainText('Erst Ressourcen einschalten.');
   } finally {
     await setzeArchiv(page, 'disziplin', false);
     await setzeArchiv(page, 'ressourcen', false);

@@ -54,6 +54,7 @@ export const PAARE = [
   ['Karten auf Heute', 'Cards on Today'],
   ['{n} an', '{n} on'],
   ['{n} von {gesamt}', '{n} of {gesamt}'],
+  ['{name} an', '{name} on'],
   ['Bereiche', 'Areas'],
   ['Schutz', 'Protection'],
   ['Schutz und Rückkehr', 'Protection and return'],

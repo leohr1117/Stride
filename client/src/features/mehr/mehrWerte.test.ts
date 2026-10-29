@@ -43,6 +43,10 @@ describe('Werte unter Mehr', () => {
   it('zählt gewählte Karten von sechs', () => {
     expect(kartenStand(undefined)).toEqual({ an: 6, gesamt: 6 });
     expect(kartenStand({ identitaet: false, bosse: true })).toEqual({ an: 5, gesamt: 6 });
+    expect(kartenStand(undefined, sicht({ funktionen: { bossAngriffe: false, basis: false } }))).toEqual({
+      an: 4,
+      gesamt: 4,
+    });
   });
 
   it('nennt verbundene Arten oder Aus', () => {

@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.35.1',
+    seiten: 'Bereiche, Karten auf Heute',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Bereiche stehen in Gruppen nach dem Fundort. Nach dem Einschalten führt Öffnen dorthin.',
+          'Karten auf Heute blendet Zeilen ausgeschalteter Bereiche aus.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.35.0',
     seiten: 'Profil, Übersicht',
     abschnitte: [

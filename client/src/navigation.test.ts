@@ -74,6 +74,26 @@ describe('Seitenleiste aus der Tabelle', () => {
     expect(gruppen.every((gruppe) => gruppe.titel === null && gruppe.eintraege.length > 0)).toBe(true);
     expect(seitenleistenPfade(funktionen, ebenen)).toEqual([...pfade, '/mehr']);
   });
+
+  it('nimmt eingeschaltete Seiten mit gleichem Namen auf und lässt ausgeschaltete weg', () => {
+    const funktionen = alleAn();
+    const ebenen = standardEbenen();
+    const pfade = sichtbareGruppen(funktionen, ebenen).flatMap((gruppe) => gruppe.eintraege.map((eintrag) => eintrag.pfad));
+    for (const seite of SEITEN) {
+      if (seite.block === null) {
+        continue;
+      }
+      if (seite.schalter === null || seite.schalter === 'ziele' || seite.schalter === 'laufend') {
+        expect(pfade).toContain(seite.pfad);
+        continue;
+      }
+      expect(pfade).toContain(seite.pfad);
+      const ohne = sichtbareGruppen({ ...funktionen, [seite.schalter]: false }, ebenen).flatMap((gruppe) =>
+        gruppe.eintraege.map((eintrag) => eintrag.pfad),
+      );
+      expect(ohne).not.toContain(seite.pfad);
+    }
+  });
 });
 
 

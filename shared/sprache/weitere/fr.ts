@@ -1,5 +1,11 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Seiten im Profil": "Pages dans le profil",
+  "Auf Ziele": "Sur Objectifs",
+  "Regeln": "Règles",
+  "{name} an": "{name} activé",
+  "Bereiche stehen in Gruppen nach dem Fundort. Nach dem Einschalten führt Öffnen dorthin.": "Les zones sont groupées selon l'endroit. Après activation, Ouvrir y mène.",
+  "Karten auf Heute blendet Zeilen ausgeschalteter Bereiche aus.": "Cartes sur Aujourd'hui masque les lignes des zones désactivées.",
   "Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.": "Aptitude, Biens, Compétences et Investissements sont des pages à part.",
   "Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.": "Le profil les montre en ligne avec le nombre. Chaque page a ses archives.",
   "Unter Werte auf der Übersicht führen Können und Haben auf die Seite.": "Sous Valeurs dans l'aperçu, Aptitude et Biens mènent à la page.",

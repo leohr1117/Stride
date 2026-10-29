@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Bereiche stehen in Gruppen nach dem Fundort. Nach dem Einschalten führt Öffnen dorthin.', 'Areas sit in groups by where they live. After switching on, Open leads there.'],
+  ['Karten auf Heute blendet Zeilen ausgeschalteter Bereiche aus.', 'Cards on Today hides rows of switched-off areas.'],
   ['Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.', 'Ability, Assets, Skills, and Investments are their own pages.'],
   ['Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.', 'The profile shows each as a row with the count. Each page has its own archive.'],
   ['Unter Werte auf der Übersicht führen Können und Haben auf die Seite.', 'Under Values on the overview, Ability and Assets lead to the page.'],

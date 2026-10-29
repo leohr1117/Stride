@@ -1,5 +1,11 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Seiten im Profil": "资料中的页面",
+  "Auf Ziele": "在目标",
+  "Regeln": "规则",
+  "{name} an": "已开启{name}",
+  "Bereiche stehen in Gruppen nach dem Fundort. Nach dem Einschalten führt Öffnen dorthin.": "功能按所在位置分组。开启后，打开会带到那里。",
+  "Karten auf Heute blendet Zeilen ausgeschalteter Bereiche aus.": "今日卡片会隐藏已关闭功能的行。",
   "Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.": "能力、资产、技能和投入各自成为页面。",
   "Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.": "资料用一行显示数量。每个页面有自己的归档。",
   "Unter Werte auf der Übersicht führen Können und Haben auf die Seite.": "总览的数值里，能力和资产通向该页面。",

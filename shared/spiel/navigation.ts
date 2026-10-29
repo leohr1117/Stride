@@ -1,4 +1,5 @@
-import type { Funktion } from './funktionen.ts';
+import { EBENEN, type Ebene } from './ebenen.ts';
+import { istFunktion, type Funktion } from './funktionen.ts';
 
 export type Block = 1 | 2 | 3 | 4;
 
@@ -95,6 +96,27 @@ export const SEITEN: readonly Seite[] = [
   { pfad: '/handbuch', name: 'Handbuch', symbol: 'buch', block: 4, schalter: 'handbuch', profilzeile: false, toastZiel: '/handbuch' },
   { pfad: '/mehr', name: 'Mehr', symbol: 'zahnrad', block: null, schalter: null, profilzeile: false, toastZiel: '/mehr' },
 ];
+
+const TOAST_SONDER: Record<string, string> = {
+  bossAngriffe: '/laufend',
+  verfallKoennen: '/koennen',
+  verfallHaben: '/haben',
+};
+
+/** Ziel des Toasts „Öffnen“ nach 11.2 b. Seiten lesen aus der Tabelle. */
+export function toastZielFuer(schalter: Funktion | Ebene): string {
+  const seite = SEITEN.find((eintrag) => eintrag.schalter === schalter);
+  if (seite) {
+    return seite.toastZiel;
+  }
+  if ((EBENEN as readonly string[]).includes(schalter)) {
+    return '/ziele';
+  }
+  if (istFunktion(schalter) && TOAST_SONDER[schalter]) {
+    return TOAST_SONDER[schalter];
+  }
+  return '/';
+}
 
 const NACH_PFAD = new Map(SEITEN.map((seite) => [seite.pfad, seite]));
 

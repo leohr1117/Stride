@@ -1,5 +1,11 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Seiten im Profil": "Páginas en el perfil",
+  "Auf Ziele": "En Objetivos",
+  "Regeln": "Reglas",
+  "{name} an": "{name} activado",
+  "Bereiche stehen in Gruppen nach dem Fundort. Nach dem Einschalten führt Öffnen dorthin.": "Las áreas están agrupadas por su lugar. Tras activarlas, Abrir lleva allí.",
+  "Karten auf Heute blendet Zeilen ausgeschalteter Bereiche aus.": "Tarjetas en Hoy oculta las filas de las áreas desactivadas.",
   "Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.": "Capacidad, Bienes, Habilidades e Inversiones son páginas propias.",
   "Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.": "El perfil las muestra en una fila con la cantidad. Cada página tiene su propio archivo.",
   "Unter Werte auf der Übersicht führen Können und Haben auf die Seite.": "En Valores del resumen, Capacidad y Bienes llevan a la página.",

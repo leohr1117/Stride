@@ -44,7 +44,6 @@ const ZIEL_STATION: Record<Exclude<StartZielArt, 'faehigkeit'>, { titel: string;
 const STREAK_BEISPIELE = [7, 30, 100, 365];
 
 const FUNKTION_LABEL = new Map(FUNKTION_BLOECKE.flatMap((block) => block.eintraege.map((eintrag) => [eintrag.funktion, eintrag.label])));
-const FUNKTION_ORT = new Map(FUNKTION_BLOECKE.flatMap((block) => block.eintraege.map((eintrag) => [eintrag.funktion, eintrag.ort])));
 
 function texteZusammen(...teile: Array<string | null | undefined>): string | undefined {
   const texte = teile.filter((teil): teil is string => Boolean(teil)).map((teil) => tx(teil));
@@ -159,7 +158,6 @@ export function HandbuchSeite() {
     texteZusammen(
       funktionsSperre(funktion, einstellungen.funktionen, einstellungen.ebenen, einstellungen.attribute),
       grund,
-      FUNKTION_ORT.get(funktion),
     );
 
   return (
@@ -216,7 +214,7 @@ export function HandbuchSeite() {
                   <FunktionsZeile
                     key={eintrag.funktion}
                     funktion={eintrag.funktion}
-                    info={texteZusammen(vorschlagInfo.get(eintrag.funktion), eintrag.ort)}
+                    info={texteZusammen(vorschlagInfo.get(eintrag.funktion))}
                     an={istAn(eintrag.funktion, einstellungen)}
                   />
                 ))}

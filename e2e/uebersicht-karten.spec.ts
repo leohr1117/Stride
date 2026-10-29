@@ -58,16 +58,9 @@ test('Nutzer wählt die Karten der Übersicht', async ({ page }, testInfo) => {
     await karteInfo.click();
     await expect(hinweis).toHaveText('Name, Level, Woche, Streak und Momentum.');
     await page.keyboard.press('Escape');
+    await expect(inhalt.getByRole('link', { name: /^Bereich für / })).toHaveCount(0);
 
     const vorher = await karten(page);
-    await inhalt.getByRole('link', { name: 'Bereich für Bosse', exact: true }).click();
-    await expect(page).toHaveURL(/\/mehr\/funktionen#funktion-bossAngriffe$/);
-    await expect(page.locator('#funktion-bossAngriffe').getByRole('switch', { name: 'Bosse' })).toBeVisible();
-    const nachLink = await karten(page);
-    expect(nachLink.boss).toBe(vorher.boss);
-    expect(nachLink.aktivitaet).toBe(true);
-
-    await page.goto('/mehr/uebersicht');
     geaendert = true;
     await aktivitaet.click();
     await expect(aktivitaet).not.toBeChecked();

@@ -40,7 +40,7 @@ export function MehrSeite() {
   }
   if (einstellungen) {
     werte.set('bereiche', tx('{n} an', { n: bereicheAn(einstellungen) }));
-    const karten = kartenStand(einstellungen.uebersichtKarten);
+    const karten = kartenStand(einstellungen.uebersichtKarten, einstellungen);
     werte.set('karten', tx('{n} von {gesamt}', { n: karten.an, gesamt: karten.gesamt }));
     werte.set('darstellung', tx(STIL_INFO[einstellungen.stil].label));
   }
