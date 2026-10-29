@@ -1,5 +1,10 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "+ Tätigkeit": "+ Activité",
+  "Wähl eine Tätigkeit.": "Choisis une activité.",
+  "Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.": "Pour noter, les activités sont sur une ligne. La puce + Activité en crée une nouvelle.",
+  "Wofür? ist eine Überschrift ohne Kasten und ohne Tipp.": "Pour quoi ? est un titre, sans cadre et sans conseil.",
+  "Eintragen bleibt unten im Dialog stehen.": "Noter reste en bas du dialogue.",
   "Seiten im Profil": "Pages dans le profil",
   "Auf Ziele": "Sur Objectifs",
   "Regeln": "Règles",

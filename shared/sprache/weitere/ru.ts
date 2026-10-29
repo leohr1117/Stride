@@ -1,5 +1,10 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "+ Tätigkeit": "+ Занятие",
+  "Wähl eine Tätigkeit.": "Выбери занятие.",
+  "Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.": "При записи занятия стоят в одной строке. Чип + Занятие создаёт новое.",
+  "Wofür? ist eine Überschrift ohne Kasten und ohne Tipp.": "Зачем? — это заголовок, без рамки и без подсказки.",
+  "Eintragen bleibt unten im Dialog stehen.": "Записать остаётся внизу диалога.",
   "Seiten im Profil": "Страницы в профиле",
   "Auf Ziele": "В целях",
   "Regeln": "Правила",

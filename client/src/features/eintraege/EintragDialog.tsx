@@ -4,7 +4,7 @@ import { Plus, Swords, Trophy } from 'lucide-react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import type { EintragDaten, VorhabenMitProjekt, VorhabenWahl } from '../../../../shared/api/index.ts';
 import { DAUER_OPTIONEN, GRENZEN } from '../../../../shared/spiel/begriffe.ts';
-import { eintragTipp, standardEbenen, ZIEL_MARKE } from '../../../../shared/spiel/ebenen.ts';
+import { standardEbenen } from '../../../../shared/spiel/ebenen.ts';
 import { taetigkeitPasst, taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { basisXp, MEILENSTEIN_INFO } from '../../../../shared/spiel/xp.ts';
@@ -159,6 +159,8 @@ export function EintragDialog({
   const [formular, setFormular] = useState<Formular>(leeresFormular);
   const [neuesVorhaben, setNeuesVorhaben] = useState('');
   const [neueTaetigkeit, setNeueTaetigkeit] = useState(false);
+  const [taetigkeitFehler, setTaetigkeitFehler] = useState<string | null>(null);
+  const chipReihe = useRef<HTMLDivElement>(null);
   const initialisiert = useRef(false);
 
   const offeneZiele = [...(laufendes?.bosse ?? []), ...(laufendes?.vorhaben ?? [])];
@@ -167,6 +169,7 @@ export function EintragDialog({
     if (!offen) {
       initialisiert.current = false;
       setNeueTaetigkeit(false);
+      setTaetigkeitFehler(null);
       return;
     }
     if (initialisiert.current || einstellungenLaden || projekteLaden || vorlagenLaden) {
@@ -250,7 +253,6 @@ export function EintragDialog({
   const faehigkeit = aktiveFaehigkeiten.find((eintrag) => eintrag.id === formular.faehigkeitId);
   const mitVorhaben = formular.vorhabenId !== null;
   const istMeilenstein = mitVorhaben ? formular.ergebnis === 'geschafft' : formular.meilenstein;
-  const kannSpeichern = vorlage !== undefined && !eintragen.isPending;
   const heute = lokalesDatum(new Date());
   const nachtragen = formular.datum !== '' && formular.datum !== heute;
 
@@ -260,12 +262,6 @@ export function EintragDialog({
   const zeigtVorhaben = ebenen.vorhaben;
   const zeigtFaehigkeit = funktionen.faehigkeiten && aktiveFaehigkeiten.length > 0;
   const zeigtWofuer = zeigtVorhaben || zeigtFaehigkeit;
-  const zuordnungsTipp = eintragTipp({
-    vorhabenSichtbar: zeigtVorhaben,
-    faehigkeitSichtbar: zeigtFaehigkeit,
-    vorhabenGewaehlt: mitVorhaben || ausstehenderTitel !== '',
-    faehigkeitGewaehlt: formular.faehigkeitId !== null,
-  });
 
   const vorhabenUebernehmen = () => {
     if (!ebenen.vorhaben || geerbteProjektId === null || !ausstehenderTitel || vorhabenAnlegen.isPending) {
@@ -277,8 +273,14 @@ export function EintragDialog({
   const absenden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
     if (!vorlage) {
+      setTaetigkeitFehler('Wähl eine Tätigkeit.');
+      const knopf = chipReihe.current?.querySelector('button');
+      if (knopf instanceof HTMLButtonElement) {
+        knopf.focus();
+      }
       return;
     }
+    setTaetigkeitFehler(null);
     let vorhaben: VorhabenWahl = null;
     if (ebenen.vorhaben && formular.vorhabenId !== null) {
       vorhaben = { art: 'bestehend', id: formular.vorhabenId };
@@ -304,31 +306,38 @@ export function EintragDialog({
   return (
     <>
     <Dialog offen={offen} titel={tx("Was hast du getan?")} onSchliessen={onSchliessen}>
-      <FormularKasten onAbsenden={absenden} abstand="space-y-5">
-        <Feld label={tx("Tätigkeit")}>
-          <div className="chip-reihe -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
+      <FormularKasten onAbsenden={absenden} abstand="space-y-6" className="min-w-0">
+        <Feld label={tx("Tätigkeit")} fehler={taetigkeitFehler}>
+          <div ref={chipReihe} className="chip-reihe eintrag-chips flex min-w-0 max-w-full gap-2 overflow-x-auto pe-6 pb-1">
             {aktiveVorlagen.map((eintrag) => (
-              <Chip key={eintrag.id} aktiv={eintrag.id === formular.vorlageId} onClick={() => aendern({ vorlageId: eintrag.id })}>
+              <Chip
+                key={eintrag.id}
+                hoch
+                aktiv={eintrag.id === formular.vorlageId}
+                onClick={() => {
+                  setTaetigkeitFehler(null);
+                  aendern({ vorlageId: eintrag.id });
+                }}
+              >
                 <Icon name={eintrag.icon} className="size-4" />
                 {eintrag.name}
               </Chip>
             ))}
+            <Chip hoch aktiv={false} onClick={() => setNeueTaetigkeit(true)}>
+              <Plus className="size-4" />
+              {tx("+ Tätigkeit")}
+            </Chip>
           </div>
-          <Knopf className="mt-2" onClick={() => setNeueTaetigkeit(true)}>
-            <Plus className="size-4" />
-            {tx("Tätigkeit anlegen")}
-          </Knopf>
         </Feld>
 
         {zeigtWofuer && (
-          <div className="space-y-3 rounded-2xl border border-rand bg-flaeche-2/50 p-3">
-            <p className="text-sm font-medium">{tx("Wofür?")}</p>
-            {zuordnungsTipp ? <p className="text-xs text-leise">{zuordnungsTipp}</p> : null}
+          <section data-eintrag="wofuer" className="min-w-0 space-y-4">
+            <p className="text-[13px] leading-[18px] font-semibold text-leise">{tx("Wofür?")}</p>
             {zeigtVorhaben && (
               <div className="space-y-2">
-                <p className="text-xs font-medium text-leise">{tx(ZIEL_MARKE.vorhaben.name)}</p>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-2">
                   <Chip
+                    hoch
                     aktiv={formular.vorhabenId === null && ausstehenderTitel === ''}
                     onClick={() => {
                       setNeuesVorhaben('');
@@ -345,6 +354,7 @@ export function EintragDialog({
                   {vorhabenChips.map((eintrag) => (
                     <Chip
                       key={eintrag.id}
+                      hoch
                       aktiv={formular.vorhabenId === eintrag.id}
                       onClick={() => {
                         setNeuesVorhaben('');
@@ -359,57 +369,62 @@ export function EintragDialog({
                     >
                       {bosseAn && eintrag.boss && <Swords className="size-3.5 text-gefahr" />}
                       {eintrag.titel}
-                      {eintrag.anlauf > 1 && <span className="text-xs text-leise">{eintrag.anlauf}. Anlauf</span>}
+                      {eintrag.anlauf > 1 && (
+                        <span className="text-xs text-leise">{tx('{anlauf}. Anlauf', { anlauf: eintrag.anlauf })}</span>
+                      )}
                     </Chip>
                   ))}
                 </div>
                 {geerbteProjektId !== null && (
-                <div className="flex gap-2">
-                  <input
-                    className={EINGABE_STIL}
-                    placeholder={tx("Neues Vorhaben")}
-                    maxLength={GRENZEN.nameMax}
-                    value={neuesVorhaben}
-                    onChange={(ereignis) => {
-                      setNeuesVorhaben(ereignis.target.value);
-                      if (ereignis.target.value.trim() !== '') {
-                        aendern({
-                          vorhabenId: null,
-                          projektId: geerbteProjektId,
-                          ergebnis: 'dran',
-                          vorlageId: vorlageFuerProjekt(vorlagen, formular.vorlageId, geerbteProjektId),
-                        });
-                      }
-                    }}
-                    onKeyDown={(ereignis) => {
-                      if (ereignis.key === 'Enter') {
-                        ereignis.preventDefault();
-                        vorhabenUebernehmen();
-                      }
-                    }}
-                  />
-                  <Knopf
-                    onClick={vorhabenUebernehmen}
-                    disabled={!ausstehenderTitel || vorhabenAnlegen.isPending}
-                    aria-label={tx("Vorhaben anlegen")}
-                  >
-                    <Plus className="size-4" />
-                  </Knopf>
-                </div>
+                  <div className="flex min-w-0 gap-2">
+                    <input
+                      className={`${EINGABE_STIL} min-w-0`}
+                      aria-label={tx("Neues Vorhaben")}
+                      placeholder={tx("Neues Vorhaben")}
+                      maxLength={GRENZEN.nameMax}
+                      value={neuesVorhaben}
+                      onChange={(ereignis) => {
+                        setNeuesVorhaben(ereignis.target.value);
+                        if (ereignis.target.value.trim() !== '') {
+                          aendern({
+                            vorhabenId: null,
+                            projektId: geerbteProjektId,
+                            ergebnis: 'dran',
+                            vorlageId: vorlageFuerProjekt(vorlagen, formular.vorlageId, geerbteProjektId),
+                          });
+                        }
+                      }}
+                      onKeyDown={(ereignis) => {
+                        if (ereignis.key === 'Enter') {
+                          ereignis.preventDefault();
+                          vorhabenUebernehmen();
+                        }
+                      }}
+                    />
+                    <Knopf
+                      className="size-12 shrink-0 px-0"
+                      onClick={vorhabenUebernehmen}
+                      disabled={!ausstehenderTitel || vorhabenAnlegen.isPending}
+                      aria-label={tx("Vorhaben anlegen")}
+                    >
+                      <Plus className="size-4" />
+                    </Knopf>
+                  </div>
                 )}
                 <Fehlermeldung fehler={vorhabenAnlegen.error} />
               </div>
             )}
             {zeigtFaehigkeit && (
               <div className="space-y-2">
-                <p className="text-xs font-medium text-leise">{tx("Fähigkeit")}</p>
-                <div className="flex flex-wrap gap-1.5">
-                  <Chip aktiv={formular.faehigkeitId === null} onClick={() => aendern({ faehigkeitId: null })}>
+                {zeigtVorhaben ? <p className="text-[13px] leading-[18px] font-semibold text-leise">{tx("Fähigkeit")}</p> : null}
+                <div className="flex flex-wrap gap-2">
+                  <Chip hoch aktiv={formular.faehigkeitId === null} onClick={() => aendern({ faehigkeitId: null })}>
                     {tx("Keine")}
                   </Chip>
                   {aktiveFaehigkeiten.map((eintrag) => (
                     <Chip
                       key={eintrag.id}
+                      hoch
                       aktiv={formular.faehigkeitId === eintrag.id}
                       farbe={eintrag.farbe}
                       onClick={() => aendern({ faehigkeitId: eintrag.id })}
@@ -421,63 +436,71 @@ export function EintragDialog({
                 </div>
               </div>
             )}
-          </div>
+          </section>
         )}
 
         {mitVorhaben ? (
-          <Feld label={tx("Stand")}>
-            <Segmentauswahl<Ergebnis>
-              optionen={[
-                { wert: 'dran', label: tx("Dran geblieben") },
-                { wert: 'geschafft', label: tx("Geschafft") },
-                { wert: 'gescheitert', label: tx("Gescheitert") },
-              ]}
-              wert={formular.ergebnis}
-              onAendern={(ergebnis) => aendern({ ergebnis })}
-            />
-            {formular.ergebnis === 'gescheitert' && (
-              <textarea
-                className={`${EINGABE_STIL} mt-3 min-h-16`}
-                placeholder={tx("Was nimmst du mit?")}
-                maxLength={GRENZEN.notizMax}
-                value={formular.erkenntnis}
-                onChange={(ereignis) => aendern({ erkenntnis: ereignis.target.value })}
+          <>
+            <Feld label={tx("Stand")}>
+              <Segmentauswahl<Ergebnis>
+                optionen={[
+                  { wert: 'dran', label: tx("Dran geblieben") },
+                  { wert: 'geschafft', label: tx("Geschafft") },
+                  { wert: 'gescheitert', label: tx("Gescheitert") },
+                ]}
+                wert={formular.ergebnis}
+                onAendern={(ergebnis) => aendern({ ergebnis })}
               />
+            </Feld>
+            {formular.ergebnis === 'gescheitert' && (
+              <Feld label={tx("Was nimmst du mit?")}>
+                <textarea
+                  className={`${EINGABE_STIL} min-h-16`}
+                  maxLength={GRENZEN.notizMax}
+                  value={formular.erkenntnis}
+                  onChange={(ereignis) => aendern({ erkenntnis: ereignis.target.value })}
+                />
+              </Feld>
             )}
-          </Feld>
+          </>
         ) : (
-          <div className="relative flex min-h-12 items-center gap-3">
+          <div className="meilenstein-zeile flex min-h-12 items-center">
+            <button
+              type="button"
+              tabIndex={-1}
+              aria-hidden="true"
+              onClick={() => aendern({ meilenstein: !formular.meilenstein })}
+              className="flex min-h-12 min-w-0 items-center gap-3 pr-1 text-left"
+            >
+              <Trophy className={`size-5 shrink-0 ${formular.meilenstein ? 'text-fortschritt' : 'text-leise'}`} />
+              <span className="truncate text-sm font-medium">{tx("Meilenstein")}</span>
+            </button>
+            <InfoHinweis
+              text={MEILENSTEIN_INFO}
+              knopfKlasse="inline-flex size-12 shrink-0 items-center justify-center rounded-full text-leise hover:text-haupt"
+            />
             <button
               type="button"
               role="switch"
               aria-checked={formular.meilenstein}
               aria-label={tx("Meilenstein")}
               onClick={() => aendern({ meilenstein: !formular.meilenstein })}
-              className="absolute inset-0 z-0"
-            />
-            <Trophy className={`pointer-events-none size-5 shrink-0 ${formular.meilenstein ? 'text-xp' : 'text-leise'}`} />
-            <span className="pointer-events-none flex min-w-0 flex-1 items-center">
-              <span className="min-w-0">
-                <span className="block truncate text-sm font-medium">{tx("Meilenstein")}</span>
-              </span>
-              <span className="pointer-events-auto">
-                <InfoHinweis text={MEILENSTEIN_INFO} />
-              </span>
-            </span>
-            <span className="pointer-events-none flex shrink-0 items-center">
+              className="ml-auto flex h-12 min-w-12 shrink-0 items-center justify-end pl-2"
+            >
               <SchalterBahn an={formular.meilenstein} />
-            </span>
+            </button>
           </div>
         )}
 
         <Feld label={tx("Dauer")}>
-          <div className="flex flex-wrap gap-1.5">
-            <Chip aktiv={formular.stunden === null} onClick={() => aendern({ stunden: null })}>
+          <div className="flex flex-wrap gap-2">
+            <Chip hoch aktiv={formular.stunden === null} onClick={() => aendern({ stunden: null })}>
               {tx("Keine Angabe")}
             </Chip>
             {DAUER_OPTIONEN.map((option) => (
               <Chip
                 key={option.stunden}
+                hoch
                 aktiv={formular.stunden === option.stunden}
                 onClick={() => aendern({ stunden: option.stunden })}
               >
@@ -500,7 +523,7 @@ export function EintragDialog({
 
         <Fehlermeldung fehler={eintragen.error} />
 
-        <Knopf type="submit" variante="primaer" className="w-full py-3 text-base" disabled={!kannSpeichern}>
+        <Knopf type="submit" variante="primaer" className="w-full py-3 text-base" disabled={eintragen.isPending}>
           {eintragen.isPending ? tx("Wird eingetragen …") : eintragAktion(nachtragen, zahl(basisXp(formular.stunden)), istMeilenstein)}
         </Knopf>
       </FormularKasten>
@@ -512,7 +535,10 @@ export function EintragDialog({
         gewaehltesProjektId === null ? null : (projekte.find((eintrag) => eintrag.id === gewaehltesProjektId)?.name ?? null)
       }
       onSchliessen={() => setNeueTaetigkeit(false)}
-      onAngelegt={(vorlage) => aendern({ vorlageId: vorlage.id })}
+      onAngelegt={(angelegt) => {
+        setTaetigkeitFehler(null);
+        aendern({ vorlageId: angelegt.id });
+      }}
     />
     </>
   );

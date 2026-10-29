@@ -8,6 +8,7 @@ export function Chip({
   farbe,
   className = '',
   umbruch = false,
+  hoch = false,
 }: {
   aktiv: boolean;
   onClick: () => void;
@@ -15,13 +16,15 @@ export function Chip({
   farbe?: string;
   className?: string;
   umbruch?: boolean;
+  /** 48 px, für Ziele im Dialog. */
+  hoch?: boolean;
 }) {
   return (
     <button
       type="button"
       aria-pressed={aktiv}
       onClick={onClick}
-      className={`chip min-h-9 rounded-full border px-3 py-1.5 text-sm transition ${
+      className={`chip ${hoch ? 'min-h-12' : 'min-h-9'} rounded-full border px-3 py-1.5 text-sm transition ${
         umbruch ? 'inline-block max-w-full text-left whitespace-normal' : 'flex shrink-0 items-center gap-1.5'
       } ${
         aktiv ? 'chip-aktiv border-transparent text-haupt' : 'border-rand text-leise hover:text-haupt'

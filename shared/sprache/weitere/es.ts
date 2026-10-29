@@ -1,5 +1,10 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "+ Tätigkeit": "+ Actividad",
+  "Wähl eine Tätigkeit.": "Elige una actividad.",
+  "Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.": "Al anotar, las actividades van en una fila. El chip + Actividad crea una nueva.",
+  "Wofür? ist eine Überschrift ohne Kasten und ohne Tipp.": "¿Para qué? es un título, sin caja y sin consejo.",
+  "Eintragen bleibt unten im Dialog stehen.": "Anotar se queda abajo en el diálogo.",
   "Seiten im Profil": "Páginas en el perfil",
   "Auf Ziele": "En Objetivos",
   "Regeln": "Reglas",

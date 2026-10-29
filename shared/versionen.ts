@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.35.2',
+    seiten: 'Eintrag',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.',
+          'Wofür? ist eine Überschrift ohne Kasten und ohne Tipp.',
+          'Eintragen bleibt unten im Dialog stehen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.35.1',
     seiten: 'Bereiche, Karten auf Heute',
     abschnitte: [

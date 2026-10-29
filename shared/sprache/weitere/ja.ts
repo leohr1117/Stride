@@ -1,5 +1,10 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "+ Tätigkeit": "+ 活動",
+  "Wähl eine Tätigkeit.": "活動を選んでください。",
+  "Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.": "記入するとき、活動は1行に並びます。+ 活動チップで新しく作ります。",
+  "Wofür? ist eine Überschrift ohne Kasten und ohne Tipp.": "何のため？は見出しで、枠もヒントもありません。",
+  "Eintragen bleibt unten im Dialog stehen.": "記入はダイアログの下に残ります。",
   "Seiten im Profil": "プロフィールのページ",
   "Auf Ziele": "目標上",
   "Regeln": "ルール",

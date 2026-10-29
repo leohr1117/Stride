@@ -49,7 +49,8 @@ test('Im Eintrag öffnet Tätigkeit anlegen das Formular', async ({ page }, test
   await page.getByRole('button', { name: 'Eintrag loggen' }).click();
   const eintrag = page.getByRole('dialog', { name: 'Was hast du getan?' });
   await expect(eintrag).toBeVisible();
-  const knopf = eintrag.getByRole('button', { name: 'Tätigkeit anlegen' });
+  const knopf = eintrag.getByRole('button', { name: '+ Tätigkeit' });
+  await knopf.scrollIntoViewIfNeeded();
   await expect(knopf).toBeVisible();
   await expect(knopf.locator('.lucide-chevron-right')).toHaveCount(0);
   const adresse = page.url();

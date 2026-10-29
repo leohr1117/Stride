@@ -477,6 +477,8 @@ export const PAARE = [
   ['Stand', 'Status'],
   ['Symbol', 'Icon'],
   ['Tätigkeit anlegen', 'Create an activity'],
+  ['+ Tätigkeit', '+ Activity'],
+  ['Wähl eine Tätigkeit.', 'Pick an activity.'],
   ['Tätigkeit wählen …', 'Choose an activity…'],
   ['Token in Todoist öffnen', 'Open the token in Todoist'],
   ['Überspringen', 'Skip'],

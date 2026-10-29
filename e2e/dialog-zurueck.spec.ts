@@ -93,7 +93,7 @@ test('Bei zwei Dialogen schließt Zurück nur den obersten', async ({ page }, te
   await expect(eintrag).toBeVisible();
   await expect.poll(() => dialogId(page)).not.toBeNull();
   const unten = await dialogId(page);
-  await eintrag.getByRole('button', { name: 'Tätigkeit anlegen' }).click();
+  await eintrag.getByRole('button', { name: '+ Tätigkeit' }).click();
   const oben = page.getByRole('dialog', { name: /^Tätigkeit/ });
   await expect(oben).toBeVisible();
   await expect.poll(() => dialogId(page)).not.toBe(unten);

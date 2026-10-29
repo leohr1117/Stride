@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.', 'When logging an entry, activities sit in one row. The + Activity chip adds a new one.'],
+  ['Wofür? ist eine Überschrift ohne Kasten und ohne Tipp.', 'For what? is a heading, with no box and no tip.'],
+  ['Eintragen bleibt unten im Dialog stehen.', 'Log stays at the bottom of the dialog.'],
   ['Bereiche stehen in Gruppen nach dem Fundort. Nach dem Einschalten führt Öffnen dorthin.', 'Areas sit in groups by where they live. After switching on, Open leads there.'],
   ['Karten auf Heute blendet Zeilen ausgeschalteter Bereiche aus.', 'Cards on Today hides rows of switched-off areas.'],
   ['Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.', 'Ability, Assets, Skills, and Investments are their own pages.'],

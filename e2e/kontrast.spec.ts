@@ -125,6 +125,9 @@ test('Kontrastwächter bei eigenen Farben', async ({ page }, testInfo) => {
     await ohneSeitlichenUeberlauf(page);
     await bild('schalter-hell');
     await dialog.getByRole('button', { name: 'Schließen' }).click();
+    const frage = page.getByRole('alertdialog', { name: 'Änderungen verwerfen?' });
+    await expect(frage).toBeVisible();
+    await frage.getByRole('button', { name: 'Verwerfen' }).click();
     await expect(dialog).toBeHidden();
 
     await speichere(page, { stil: 'standard', ...GRAU });

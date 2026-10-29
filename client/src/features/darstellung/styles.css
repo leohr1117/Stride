@@ -235,6 +235,25 @@ html[data-eingabe='zeiger'] :focus {
   display: none;
 }
 
+/* D1: die Reihe scrollt in der Dialogbreite. Der Auslauf liegt im Hinweis, der letzte Chip nicht. */
+.eintrag-chips {
+  min-width: 0;
+  max-width: 100%;
+  scrollbar-width: thin;
+  overscroll-behavior-x: contain;
+}
+
+.eintrag-chips::-webkit-scrollbar {
+  display: block;
+  height: 4px;
+}
+
+/* Der Schieber springt. Sonst liest ein Test die Farbe mitten in der Animation. */
+.meilenstein-zeile .schalter-bahn,
+.meilenstein-zeile .schalter-knopf {
+  transition: none;
+}
+
 @keyframes seite-einblenden {
   from {
     opacity: 0;
@@ -551,8 +570,14 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
 
 .dialog-koerper > .formular > .formular-felder {
   flex: 1 1 auto;
+  min-width: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+
+.dialog-fenster .feld,
+.dialog-fenster .formular {
+  min-width: 0;
 }
 
 html {
@@ -595,6 +620,10 @@ html[data-fab='an'] .dialog-fenster .formular-fuss {
   bottom: auto;
   z-index: 1;
   background: var(--flaeche);
+}
+
+:root[data-stil] .dialog-fenster .formular-fuss .knopf-primaer {
+  white-space: normal;
 }
 
 html[data-tastatur='an'] .formular > .formular-fuss {

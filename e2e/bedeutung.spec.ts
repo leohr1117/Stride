@@ -199,6 +199,9 @@ test('Feste Bedeutungsfarben in Palette Dunkel', async ({ page }, testInfo) => {
     await ohneSeitlichenUeberlauf(page);
     await page.screenshot({ path: `tmp-bau/u8/${projekt}-d1.png` });
     await dialog.getByRole('button', { name: 'Schließen' }).click();
+    const frage = page.getByRole('alertdialog', { name: 'Änderungen verwerfen?' });
+    await expect(frage).toBeVisible();
+    await frage.getByRole('button', { name: 'Verwerfen' }).click();
     await expect(dialog).toBeHidden();
   } finally {
     if (standardFarben) {

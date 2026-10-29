@@ -1,5 +1,10 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "+ Tätigkeit": "+ 活动",
+  "Wähl eine Tätigkeit.": "请选择一项活动。",
+  "Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.": "记录时，活动排成一行。+ 活动芯片用来新建。",
+  "Wofür? ist eine Überschrift ohne Kasten und ohne Tipp.": "为了什么？是标题，没有方框，也没有提示。",
+  "Eintragen bleibt unten im Dialog stehen.": "记下固定在对话框底部。",
   "Seiten im Profil": "资料中的页面",
   "Auf Ziele": "在目标",
   "Regeln": "规则",
