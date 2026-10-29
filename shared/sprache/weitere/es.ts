@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "La similitud con un referente compara la forma del perfil, no la altura de los niveles.",
   "Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.": "En la comparación con un referente, la propia área se ve en el color de acento.",
   "Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.": "El símbolo de información en los referentes tiene el tamaño de los demás y queda centrado en la línea.",
   "Stride wurde aktualisiert.": "Stride se actualizó.",
@@ -1301,7 +1302,7 @@ export const TEXTE: Record<string, string> = {
   "Die {xp} XP werden abgezogen.": "Se restarán los {xp} XP.",
   "Die Investition wird aktiv.": "La inversión se activa.",
   "Die Investition wird inaktiv.": "La inversión se desactiva.",
-  "Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.": "Los valores son estimaciones aproximadas a partir de información pública, no ciencia.",
+  "Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.": "La similitud mide la forma del perfil, no la altura de los niveles. Los valores son estimaciones aproximadas a partir de información pública, no ciencia.",
   "Dieses Vorbild gibt es nicht.": "Este referente no existe.",
   "Dran geblieben": "Siguió",
   "Tage mit einem Eintrag bilden den Streak.": "Los días con un registro forman la racha.",

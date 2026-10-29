@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "与榜样的相似度比较的是档案的形状，不是等级的高低。",
   "Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.": "与榜样对比时，自己的面积以强调色显示。",
   "Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.": "榜样上的信息图标与其他图标一样大，并在行内垂直居中。",
   "Stride wurde aktualisiert.": "Stride 已更新。",
@@ -1301,7 +1302,7 @@ export const TEXTE: Record<string, string> = {
   "Die {xp} XP werden abgezogen.": "这 {xp} XP 会被扣除。",
   "Die Investition wird aktiv.": "投入将生效。",
   "Die Investition wird inaktiv.": "投入将停用。",
-  "Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.": "这些数值是根据公开信息的粗略估计，不是科学。",
+  "Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.": "相似度衡量的是档案的形状，不是等级的高低。这些数值是根据公开信息的粗略估计，不是科学。",
   "Dieses Vorbild gibt es nicht.": "没有这个榜样。",
   "Dran geblieben": "坚持下来了",
   "Tage mit einem Eintrag bilden den Streak.": "有记录的日子组成连续天数。",

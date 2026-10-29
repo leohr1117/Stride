@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "Сходство с ориентиром сравнивает форму профиля, а не высоту уровней.",
   "Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.": "В сравнении с ориентиром своя область видна акцентным цветом.",
   "Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.": "Значок информации у ориентиров такого же размера, как остальные, и стоит по центру строки.",
   "Stride wurde aktualisiert.": "Stride обновился.",
@@ -1301,7 +1302,7 @@ export const TEXTE: Record<string, string> = {
   "Die {xp} XP werden abgezogen.": "{xp} XP будут списаны.",
   "Die Investition wird aktiv.": "Вложение станет активным.",
   "Die Investition wird inaktiv.": "Вложение станет неактивным.",
-  "Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.": "Значения — грубые оценки по открытым данным, не наука.",
+  "Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.": "Сходство измеряет форму профиля, а не высоту уровней. Значения — грубые оценки по открытым данным, не наука.",
   "Dieses Vorbild gibt es nicht.": "Такого ориентира нет.",
   "Dran geblieben": "Держал ритм",
   "Tage mit einem Eintrag bilden den Streak.": "Дни с записью образуют серию.",

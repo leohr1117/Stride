@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.', 'Similarity with a role model compares the shape of the profile, not how high the levels are.'],
   ['Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.', 'In a comparison with a role model, your own area shows in the accent color.'],
   ['Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.', 'The info icon on role models matches the others and sits centered on the line.'],
   ['Nach einem Update erscheint einmal der Hinweis, dass Stride aktualisiert wurde.', 'After an update, a notice appears once that Stride was updated.'],

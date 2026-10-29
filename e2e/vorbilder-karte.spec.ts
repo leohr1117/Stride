@@ -122,9 +122,12 @@ test('Vorbilder: Karte ohne Radar, Prozent auf Karte und Richtung', async ({ pag
   expect(deltaListe ?? 99).toBeLessThanOrEqual(4);
   await hinweis.click();
   await expect(page.getByRole('tooltip')).toHaveText(
-    'Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.',
+    'Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.',
   );
 
+  const alle = page.getByRole('button', { name: /^Alle/ });
+  const beste = Number((await alle.innerText()).match(/(\d+)\s*%/)?.[1]);
+  expect(beste).toBeGreaterThanOrEqual(40);
   const wettkampf = page.getByRole('button', { name: /^Wettkampf/ });
   await expect(wettkampf).toContainText(/%/);
   const chipZahl = (await wettkampf.innerText()).match(/(\d+)\s*%/)?.[1];
@@ -156,7 +159,8 @@ test('Vorbilder: Karte ohne Radar, Prozent auf Karte und Richtung', async ({ pag
   await page.getByRole('link', { name: /Cristiano Ronaldo/ }).click();
   await expect(page.getByRole('heading', { name: 'Cristiano Ronaldo', exact: true })).toBeVisible();
   await expect(page.locator('.recharts-wrapper').first()).toBeVisible();
-  await expect(page.getByText(/\d+\s*%\s*ähnlich/)).toBeVisible();
+  const prozentZeile = page.locator('[data-aehnlichkeit]');
+  await expect(prozentZeile).toContainText(/%\s*ähnlich/);
   const nameHinweis = page.getByRole('button', { name: 'Hinweis zu den Werten' });
   await expect(nameHinweis).toBeVisible();
   const deltaName = await page.locator('.profil-name').evaluate((name) => {

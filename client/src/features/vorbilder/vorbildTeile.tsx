@@ -1,7 +1,8 @@
 import { InfoHinweis } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
 
-export const WERTE_HINWEIS = 'Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.';
+export const WERTE_HINWEIS =
+  'Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.';
 
 const HINWEIS_KNOPF = 'inline-flex size-4 items-center justify-center rounded-full text-leise hover:text-haupt';
 

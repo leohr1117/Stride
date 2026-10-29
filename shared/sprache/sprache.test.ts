@@ -153,7 +153,7 @@ function katalogTexte(): string[] {
     'Ungenutzte Können-Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.',
     'Ungenutzte Haben-Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.',
     'Speichern ergänzt fehlende Attribute, archiviert andere und legt fehlende Starter-Tätigkeiten an.',
-    'Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.',
+    'Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.',
   );
   const funktionen = {
     koennen: true,

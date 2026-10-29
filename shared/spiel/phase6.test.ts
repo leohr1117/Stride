@@ -77,7 +77,7 @@ describe('Vorbilder', () => {
     expect(musk && musk.level).toBeLessThan(10000);
   });
 
-  it('vergleicht Level und bleibt bei gleichen Werten eine Zahl', () => {
+  it('vergleicht die Form und bleibt bei gleicher Form eins', () => {
     if (!musk) {
       return;
     }
@@ -85,7 +85,7 @@ describe('Vorbilder', () => {
     const flach = { koerper: 5, geist: 5, disziplin: 5 };
     const wert = aehnlichkeit(flach, musk.profil);
     expect(wert).not.toBeNull();
-    expect(wert ?? 1).toBeLessThan(0.05);
+    expect(wert ?? 0).toBeGreaterThan(0.4);
     expect(aehnlichkeit({ koerper: 3, geist: 3 }, musk.profil)).not.toBeNull();
     const { koerper, geist, disziplin, intellekt, kreativitaet } = musk.schaetzung;
     const verkleinert = {
@@ -95,7 +95,7 @@ describe('Vorbilder', () => {
       intellekt: intellekt / 10,
       kreativitaet: kreativitaet / 10,
     };
-    expect(aehnlichkeit(verkleinert, musk.schaetzung) ?? 1).toBeLessThan(0.2);
+    expect(aehnlichkeit(verkleinert, musk.schaetzung)).toBeCloseTo(1);
     expect(aehnlichkeit(musk.schaetzung, musk.schaetzung)).toBe(1);
   });
 });

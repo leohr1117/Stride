@@ -418,16 +418,6 @@ export function vergleichspunkte(
   return punkte;
 }
 
-function gewichtetesMittel(werte: readonly number[], gewichte: readonly number[]): number {
-  let summe = 0;
-  let gewichtSumme = 0;
-  for (let index = 0; index < werte.length; index += 1) {
-    summe += gewichte[index] * werte[index];
-    gewichtSumme += gewichte[index];
-  }
-  return summe / gewichtSumme;
-}
-
 export function besteAehnlichkeit(werte: readonly (number | null)[]): number | null {
   let beste: number | null = null;
   for (const wert of werte) {
@@ -441,7 +431,17 @@ export function besteAehnlichkeit(werte: readonly (number | null)[]): number | n
   return beste;
 }
 
-/** Gewichtetes Mittel der Level-Übereinstimmung. Gleiche Level ergeben eine Zahl, keine Lücke. */
+function levelWert(wert: number | undefined): number {
+  if (wert === undefined || !Number.isFinite(wert) || wert <= 0) {
+    return 0;
+  }
+  return wert;
+}
+
+/**
+ * Kosinus der Level-Verteilung.
+ * Gleiche Form ergibt 1, auch wenn alle Level kleiner sind. Unsichere Kennungen zählen halb.
+ */
 export function aehnlichkeit(
   eigene: Partial<KennungsLevel>,
   vorbild: KennungsLevel,
@@ -451,7 +451,29 @@ export function aehnlichkeit(
   if (gemeinsam.length === 0) {
     return null;
   }
-  const gewichte = gemeinsam.map((kennung) => (unsicher?.[kennung] ? UNSICHER_GEWICHT : 1));
-  const werte = gemeinsam.map((kennung) => uebereinstimmung(eigene[kennung] ?? 0, vorbild[kennung] ?? 0));
-  return gewichtetesMittel(werte, gewichte);
+  let produkt = 0;
+  let normEigen = 0;
+  let normVorbild = 0;
+  for (const kennung of gemeinsam) {
+    const gewicht = unsicher?.[kennung] ? UNSICHER_GEWICHT : 1;
+    const links = levelWert(eigene[kennung]);
+    const rechts = levelWert(vorbild[kennung]);
+    produkt += gewicht * links * rechts;
+    normEigen += gewicht * links * links;
+    normVorbild += gewicht * rechts * rechts;
+  }
+  if (normEigen === 0 && normVorbild === 0) {
+    return 1;
+  }
+  if (normEigen === 0 || normVorbild === 0) {
+    return 0;
+  }
+  const wert = produkt / Math.sqrt(normEigen * normVorbild);
+  if (!Number.isFinite(wert) || wert <= 0) {
+    return 0;
+  }
+  if (wert > 1 - 1e-10) {
+    return 1;
+  }
+  return wert;
 }

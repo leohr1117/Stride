@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "お手本との類似度は、レベルの高さではなくプロフィールの形を比べます。",
   "Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.": "お手本との比較では、自分の面がアクセント色で見えます。",
   "Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.": "お手本の情報アイコンは他と同じ大きさで、行の中央に揃います。",
   "Stride wurde aktualisiert.": "Stride を更新しました。",
@@ -1301,7 +1302,7 @@ export const TEXTE: Record<string, string> = {
   "Die {xp} XP werden abgezogen.": "{xp} XPが差し引かれます。",
   "Die Investition wird aktiv.": "投資が有効になります。",
   "Die Investition wird inaktiv.": "投資が無効になります。",
-  "Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.": "値は公開情報からの粗い見積もりで、科学ではありません。",
+  "Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.": "類似度はレベルの高さではなく、プロフィールの形を測ります。値は公開情報からの粗い見積もりで、科学ではありません。",
   "Dieses Vorbild gibt es nicht.": "このお手本はありません。",
   "Dran geblieben": "続けた",
   "Tage mit einem Eintrag bilden den Streak.": "記録がある日が連続日数になります。",

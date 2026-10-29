@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "La similarité avec un modèle compare la forme du profil, pas la hauteur des niveaux.",
   "Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.": "Dans la comparaison avec un modèle, ta propre surface se voit dans la couleur d'accent.",
   "Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.": "L'icône d'info des modèles a la taille des autres et se centre sur la ligne.",
   "Stride wurde aktualisiert.": "Stride a été mis à jour.",
@@ -1301,7 +1302,7 @@ export const TEXTE: Record<string, string> = {
   "Die {xp} XP werden abgezogen.": "Les {xp} XP seront retirés.",
   "Die Investition wird aktiv.": "L'investissement devient actif.",
   "Die Investition wird inaktiv.": "L'investissement devient inactif.",
-  "Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.": "Les valeurs sont des estimations grossières tirées d'infos publiques, pas de la science.",
+  "Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.": "La similarité mesure la forme du profil, pas la hauteur des niveaux. Les valeurs sont des estimations grossières tirées d'infos publiques, pas de la science.",
   "Dieses Vorbild gibt es nicht.": "Ce modèle n'existe pas.",
   "Dran geblieben": "A tenu",
   "Tage mit einem Eintrag bilden den Streak.": "Les jours avec une entrée forment la série.",

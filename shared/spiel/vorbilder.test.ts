@@ -241,18 +241,22 @@ describe('Level-Vergleich', () => {
     expect(Math.abs(ausProfil - davinci.level) / davinci.level).toBeLessThan(ERLAUBTE_LEVEL_ABWEICHUNG);
   });
 
-  it('zeigt die Ähnlichkeit auch bei gleichen Leveln und nur für übergebene Werte', () => {
+  it('misst die Form und bleibt bei kleiner gleicher Form bei eins', () => {
     const davinci = findeVorbild('davinci');
     if (!davinci) {
       throw new Error('da Vinci fehlt');
     }
+    const klein: Partial<KennungsLevel> = {};
     const flach: Partial<KennungsLevel> = {};
     for (const kennung of ATTRIBUT_KENNUNGEN) {
+      klein[kennung] = davinci.profil[kennung] / 100;
       flach[kennung] = 1;
     }
+    expect(aehnlichkeit(klein, davinci.profil, davinci.unsicher)).toBeCloseTo(1);
     const wert = aehnlichkeit(flach, davinci.profil, davinci.unsicher);
     expect(wert).not.toBeNull();
-    expect(wert ?? 1).toBeLessThan(0.01);
+    expect(wert ?? 1).toBeLessThan(1);
+    expect(wert ?? 0).toBeGreaterThan(0.2);
     expect(aehnlichkeit({}, davinci.profil)).toBeNull();
     const nurZwei = { intellekt: davinci.profil.intellekt, kreativitaet: 1 };
     expect(aehnlichkeit(nurZwei, davinci.profil) ?? 0).toBeGreaterThan(0.4);

@@ -181,7 +181,7 @@ export const PAARE = [
   ['Die {xp} XP werden abgezogen.', 'The {xp} XP will be removed.'],
   ['Die Investition wird aktiv.', 'The investment turns on.'],
   ['Die Investition wird inaktiv.', 'The investment turns off.'],
-  ['Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.', 'The values are rough estimates from public information, not science.'],
+  ['Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.', 'Similarity measures the shape of the profile, not how high the levels are. The values are rough estimates from public information, not science.'],
   ['Dieses Vorbild gibt es nicht.', 'This role model doesn’t exist.'],
   ['Dran geblieben', 'Kept it up'],
   ['Tage mit einem Eintrag bilden den Streak.', 'Days with an entry make the streak.'],
