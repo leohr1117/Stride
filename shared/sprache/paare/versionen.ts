@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.', 'On a computer, the sidebar shows the pages in four groups, without a heading.'],
+  ['Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.', 'Profile is an entry with a small picture. The card below it is gone.'],
+  ['Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.', 'Activities sits with the pages. Switched-off pages are missing.'],
   ['Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.', 'The plus button sits at the bottom right and opens the entry.'],
   ['Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.', 'On a project or a skill it takes over the selection. The extra entry button is gone.'],
   ['Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.', 'Dialogs sit in the center or as a sheet. A red button deletes only what cannot be undone.'],

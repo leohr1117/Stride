@@ -44,11 +44,11 @@ test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ pag
   }
 
   const seite = page.locator('aside.seitenleiste');
-  for (const name of ['Übersicht', 'Laufend', 'Basis', 'Ziele', 'Chronik', 'Rückblick', 'Statistiken', 'Vorbilder', 'Handbuch', 'Mehr']) {
+  for (const name of ['Übersicht', 'Ziele', 'Laufend', 'Basis', 'Tätigkeiten', 'Chronik', 'Rückblick', 'Statistiken', 'Vorbilder', 'Profil', 'Handbuch', 'Mehr']) {
     await expect(seite.getByRole('link', { name, exact: true })).toBeVisible();
   }
-  await expect(seite.getByText('Reise', { exact: true })).toBeVisible();
-  for (const name of ['Tätigkeiten', 'Können', 'Haben', 'Fähigkeiten', 'Investitionen', 'Profil']) {
+  await expect(seite.getByText('Reise', { exact: true })).toHaveCount(0);
+  for (const name of ['Können', 'Haben', 'Fähigkeiten', 'Investitionen']) {
     await expect(seite.getByRole('link', { name, exact: true })).toHaveCount(0);
   }
   await bild('uebersicht');
@@ -65,7 +65,7 @@ test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ pag
 
   await seite.getByRole('link', { name: 'Mehr', exact: true }).click();
   await expect(page.locator('main h1')).toHaveText('Mehr');
-  await expect(page.getByRole('link', { name: 'Tätigkeiten' })).toBeVisible();
+  await expect(page.locator('main').getByRole('link', { name: 'Tätigkeiten' })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
   await bild('mehr');
 });

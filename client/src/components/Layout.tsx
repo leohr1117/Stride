@@ -6,7 +6,7 @@ import { api, SCHLUESSEL } from '../api/index.ts';
 import { useEbenen, useFunktionen } from '../funktionen.ts';
 import { hatEintragFab, LEISTE_STANDARD, sichtbareLeiste } from '../../../shared/spiel/leiste.ts';
 import { istAn, pfadAktiv } from '../../../shared/spiel/sichtbarkeit.ts';
-import { EINSTELLUNGEN, HANDBUCH, navAusLeiste, seitenleistenPfade, sichtbareGruppen, type NavEintrag } from '../navigation.ts';
+import { EINSTELLUNGEN, navAusLeiste, seitenleistenPfade, sichtbareGruppen, type NavEintrag } from '../navigation.ts';
 import { AbgleichBeimOeffnen } from '../abgleichBeimOeffnen.tsx';
 import { useStilAbgleich } from '../features/darstellung/stil.ts';
 import type { EintragVorgabe } from '../features/eintraege/EintragDialog.tsx';
@@ -19,8 +19,8 @@ import { klickeHauptseite, useAktiverPlatz, useVerlauf } from '../herkunft.tsx';
 import { setzeNavLage } from '../herkunftLauf.ts';
 import { merkeSitzung, vergiss } from '../speicher.ts';
 import { EinfuehrungAblauf } from './Einfuehrung.tsx';
-import { klassenText, tx } from '../text.ts';
-import { Fehlermeldung, Fortschrittsbalken, Ladeanzeige } from '../ui/index.ts';
+import { tx } from '../text.ts';
+import { Fehlermeldung, Ladeanzeige } from '../ui/index.ts';
 const EintragOeffnenKontext = createContext<((vorgabe?: EintragVorgabe) => void) | null>(null);
 
 export function useEintragOeffnen(): (vorgabe?: EintragVorgabe) => void {
@@ -228,10 +228,10 @@ function Logo() {
 
 function useCharakterKurz() {
   const { data } = useQuery({ queryKey: SCHLUESSEL.uebersicht, queryFn: api.uebersicht });
-  return data ? { name: data.name, klasse: data.klasse, level: data.level } : null;
+  return data ? { klasse: data.klasse } : null;
 }
 
-function NavPunkt({ eintrag }: { eintrag: NavEintrag }) {
+function NavPunkt({ eintrag, bild }: { eintrag: NavEintrag; bild?: ReactNode }) {
   const NavIcon = eintrag.icon;
   const aktiv = useAktiverPlatz() === eintrag.pfad;
   return (
@@ -243,7 +243,7 @@ function NavPunkt({ eintrag }: { eintrag: NavEintrag }) {
         aktiv ? 'bg-flaeche-2 text-haupt' : 'text-leise hover:text-haupt'
       }`}
     >
-      <NavIcon className="size-4 shrink-0" />
+      {bild ?? <NavIcon className="size-4 shrink-0" />}
       <span className="min-w-0 break-words">{tx(eintrag.label)}</span>
     </Link>
   );
@@ -254,7 +254,7 @@ function Seitenleiste() {
   const charakter = useCharakterKurz();
   const funktionen = useFunktionen();
   const ebenen = useEbenen();
-  const charakterAktiv = useAktiverPlatz() === '/charakter';
+  const bloecke = sichtbareGruppen(funktionen, ebenen);
 
   return (
     <aside className="seitenleiste sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-rand bg-flaeche px-4 py-6 md:flex">
@@ -271,47 +271,31 @@ function Seitenleiste() {
         {tx("Eintrag loggen")}
       </button>
 
-      <nav className="mt-6 min-h-0 flex-1 space-y-5 overflow-y-auto">
-        {sichtbareGruppen(funktionen, ebenen).map((gruppe) => (
-          <div key={gruppe.titel ?? 'start'} className="space-y-0.5">
-            {gruppe.titel && (
-              <p className="px-3 pb-1 text-[11px] font-semibold tracking-wider text-leise uppercase">{tx(gruppe.titel)}</p>
-            )}
-            {gruppe.eintraege.map((eintrag) => (
-              <NavPunkt key={eintrag.pfad} eintrag={eintrag} />
-            ))}
-          </div>
-        ))}
-      </nav>
-
-      <div className="mt-4 space-y-2">
-        <div>
-          {istAn('handbuch', { funktionen, ebenen }) && <NavPunkt eintrag={HANDBUCH} />}
-          <NavPunkt eintrag={EINSTELLUNGEN} />
-        </div>
-        {charakter && (
-          <Link
-            to="/charakter"
-            data-platz="/charakter"
-            aria-current={charakterAktiv ? 'page' : undefined}
-            className="block rounded-xl bg-flaeche-2 p-3"
-          >
-            <div className="flex items-center gap-2">
-              <KlassenBild klasse={charakter.klasse} groesse="size-9" />
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-2 text-sm">
-                  <span className="truncate font-medium">{charakter.name}</span>
-                  <span className="zahl shrink-0 whitespace-nowrap text-leise">{tx('Lvl {level}', { level: charakter.level.level })}</span>
-                </div>
-                <p className="text-xs text-leise break-words">{klassenText(charakter.klasse)}</p>
+      <nav className="mt-6 flex min-h-0 flex-1 flex-col">
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          {bloecke.map((gruppe, index) => (
+            <div key={gruppe.eintraege[0]?.pfad ?? index}>
+              {index > 0 && <div className="seitenleiste-trennung mx-3 my-3 border-t border-rand" role="separator" />}
+              <div className="space-y-0.5">
+                {gruppe.eintraege.map((eintrag) => (
+                  <NavPunkt
+                    key={eintrag.pfad}
+                    eintrag={eintrag}
+                    bild={
+                      eintrag.pfad === '/charakter' && charakter ? (
+                        <KlassenBild klasse={charakter.klasse} groesse="size-5" />
+                      ) : undefined
+                    }
+                  />
+                ))}
               </div>
             </div>
-            <div className="mt-2">
-              <Fortschrittsbalken anteil={charakter.level.fortschritt} hoehe="h-1.5" />
-            </div>
-          </Link>
-        )}
-      </div>
+          ))}
+        </div>
+        <div className="mt-3 shrink-0 border-t border-rand pt-3">
+          <NavPunkt eintrag={EINSTELLUNGEN} />
+        </div>
+      </nav>
     </aside>
   );
 }

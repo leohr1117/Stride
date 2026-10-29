@@ -5,12 +5,11 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { LEISTE_STANDARD, sichtbareLeiste } from '../../../../shared/spiel/leiste.ts';
 import { sichtbareMehrBereiche, type MehrBereichId } from '../../../../shared/spiel/mehrBereiche.ts';
-import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { STIL_INFO } from '../../../../shared/features/darstellung/stile.ts';
 import { AKTUELLE_VERSION, VERSIONEN } from '../../../../shared/versionen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
-import { HANDBUCH, sichtbareGruppen } from '../../navigation.ts';
+import { schnellzugriffEintraege } from '../../navigation.ts';
 import { kachelText } from './hinweisGeraet.ts';
 import { verbindungsStand } from './verbindungsStand.ts';
 
@@ -48,10 +47,9 @@ function Schnellzugriff() {
   const inLeiste = new Set(
     sichtbareLeiste(data?.mobilLeiste ?? LEISTE_STANDARD, sichtbarkeit.funktionen, sichtbarkeit.ebenen),
   );
-  const seiten = [
-    ...sichtbareGruppen(sichtbarkeit.funktionen, sichtbarkeit.ebenen).flatMap((gruppe) => gruppe.eintraege),
-    ...(istAn('handbuch', sichtbarkeit) ? [HANDBUCH] : []),
-  ].filter((eintrag) => eintrag.pfad !== '/mehr' && !inLeiste.has(eintrag.pfad));
+  const seiten = schnellzugriffEintraege(sichtbarkeit.funktionen, sichtbarkeit.ebenen).filter(
+    (eintrag) => !inLeiste.has(eintrag.pfad),
+  );
 
   if (seiten.length === 0) {
     return null;

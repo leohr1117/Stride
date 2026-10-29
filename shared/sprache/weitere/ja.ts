@@ -1,5 +1,8 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.": "PCでは、サイドバーがページを四つのグループで表示し、見出しはありません。",
+  "Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.": "プロフィールは小さな画像付きの項目です。下のカードはなくなります。",
+  "Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.": "活動はページの並びにあります。オフのページは出ません。",
   "Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.": "プラスボタンは右下にあり、記録を開きます。",
   "Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.": "プロジェクトやスキルでは選択を引き継ぎます。追加の記録ボタンはなくなります。",
   "Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.": "ダイアログは中央かシートです。赤いボタンは戻せないものだけを削除します。",

@@ -1,5 +1,8 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.": "En el ordenador, la barra lateral muestra las páginas en cuatro grupos, sin título.",
+  "Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.": "Perfil es una entrada con una imagen pequeña. La tarjeta de debajo desaparece.",
+  "Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.": "Actividades está con las páginas. Las páginas apagadas no aparecen.",
   "Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.": "El botón más está abajo a la derecha y abre la entrada.",
   "Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.": "En un proyecto o una habilidad toma la selección. El botón extra de entrada desaparece.",
   "Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.": "Los diálogos van al centro o como hoja. Un botón rojo borra solo lo que no se puede deshacer.",

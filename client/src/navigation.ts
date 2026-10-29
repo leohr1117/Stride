@@ -68,19 +68,23 @@ function mussSeite(pfad: string): Seite {
   return fund;
 }
 
-/**
- * Bis U15 bleibt die bisherige Gruppierung. Die vier Blöcke zeigt erst die neue Seitenleiste.
- * Namen und Symbole kommen aus der Seitentabelle.
- */
-const GRUPPEN_BIS_U15: { titel: string | null; pfade: readonly string[] }[] = [
-  { titel: null, pfade: ['/', '/laufend', '/basis', '/ziele'] },
-  { titel: 'Reise', pfade: ['/chronik', '/rueckblick', '/statistiken', '/vorbilder'] },
-];
+const BLOECKE = [1, 2, 3, 4] as const;
 
-export const NAVIGATION: NavGruppe[] = GRUPPEN_BIS_U15.map((gruppe) => ({
-  titel: gruppe.titel,
-  eintraege: gruppe.pfade.map((pfad) => alsEintrag(mussSeite(pfad))),
-}));
+/**
+ * Chips unter Mehr bis U16. Dieselbe Reihe wie vor der neuen Seitenleiste,
+ * damit Mehr in diesem Schritt gleich bleibt.
+ */
+const SCHNELL_BIS_U16 = [
+  '/',
+  '/laufend',
+  '/basis',
+  '/ziele',
+  '/chronik',
+  '/rueckblick',
+  '/statistiken',
+  '/vorbilder',
+  '/handbuch',
+] as const;
 
 export const EINSTELLUNGEN: NavEintrag = alsEintrag(mussSeite('/mehr'));
 export const HANDBUCH: NavEintrag = alsEintrag(mussSeite('/handbuch'));
@@ -93,25 +97,27 @@ export function navAusLeiste(pfad: string): NavEintrag | undefined {
   return fund ? alsEintrag(fund) : undefined;
 }
 
+/**
+ * Vier Blöcke aus der Seitentabelle, ohne Überschrift. Leere Blöcke fehlen.
+ * Mehr steht nicht darin, es bleibt unten an der Seitenleiste.
+ */
 export function sichtbareGruppen(funktionen: Funktionen, ebenen: Ebenen = standardEbenen()): NavGruppe[] {
   const sichtbarkeit = { funktionen, ebenen };
-  return NAVIGATION.map((gruppe) => ({
-    titel: gruppe.titel,
-    eintraege: gruppe.eintraege.filter((eintrag) => pfadAktiv(eintrag.pfad, sichtbarkeit)),
-  })).filter((gruppe) => gruppe.eintraege.length > 0);
+  return BLOECKE.flatMap((block) => {
+    const eintraege = SEITEN.filter((seite) => seite.block === block && pfadAktiv(seite.pfad, sichtbarkeit)).map(alsEintrag);
+    return eintraege.length > 0 ? [{ titel: null, eintraege }] : [];
+  });
 }
 
-/**
- * Pfade, die am PC als Leistenplatz gelten.
- * Tätigkeiten zählt mit, obwohl der sichtbare Eintrag erst mit der neuen Seitenleiste kommt.
- */
+/** Pfade, die am PC als Leistenplatz gelten. Dieselbe Reihe wie die Seitenleiste, Mehr am Ende. */
 export function seitenleistenPfade(funktionen: Funktionen, ebenen: Ebenen = standardEbenen()): string[] {
-  const sichtbarkeit = { funktionen, ebenen };
   const pfade = sichtbareGruppen(funktionen, ebenen).flatMap((gruppe) => gruppe.eintraege.map((eintrag) => eintrag.pfad));
-  pfade.push(mussSeite('/mehr/inhalte').pfad);
-  if (pfadAktiv(HANDBUCH.pfad, sichtbarkeit)) {
-    pfade.push(HANDBUCH.pfad);
-  }
-  pfade.push(EINSTELLUNGEN.pfad, mussSeite('/charakter').pfad);
+  pfade.push(EINSTELLUNGEN.pfad);
   return pfade;
+}
+
+/** Alte Chip-Reihe auf Mehr. U16 ersetzt sie durch das Seitenverzeichnis. */
+export function schnellzugriffEintraege(funktionen: Funktionen, ebenen: Ebenen = standardEbenen()): NavEintrag[] {
+  const sichtbarkeit = { funktionen, ebenen };
+  return SCHNELL_BIS_U16.flatMap((pfad) => (pfadAktiv(pfad, sichtbarkeit) ? [alsEintrag(mussSeite(pfad))] : []));
 }

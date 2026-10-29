@@ -1,5 +1,8 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.": "На компьютере боковая панель показывает страницы в четырёх группах, без заголовка.",
+  "Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.": "Профиль — пункт с маленькой картинкой. Карточка под ним исчезает.",
+  "Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.": "Занятия стоят среди страниц. Выключенные страницы отсутствуют.",
   "Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.": "Кнопка плюс стоит справа внизу и открывает запись.",
   "Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.": "В проекте или навыке она подставляет выбор. Дополнительная кнопка записи исчезает.",
   "Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.": "Диалоги стоят по центру или как лист. Красная кнопка удаляет только то, что нельзя вернуть.",

@@ -1,5 +1,8 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.": "在电脑上，侧边栏把页面分成四组显示，没有标题。",
+  "Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.": "资料是带小图片的一项。下面的卡片取消。",
+  "Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.": "活动与其他页面放在一起。关闭的页面不显示。",
   "Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.": "加号按钮在右下角，用来打开记录。",
   "Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.": "在项目或技能页，它会带上已选内容。多余的记录按钮取消。",
   "Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.": "对话框居中或作为底部卡片。红色按钮只删除无法撤回的内容。",

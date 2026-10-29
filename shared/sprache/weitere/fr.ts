@@ -1,5 +1,8 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.": "Sur ordinateur, la barre latérale montre les pages en quatre groupes, sans titre.",
+  "Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.": "Profil est une entrée avec une petite image. La carte en dessous disparaît.",
+  "Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.": "Activités se trouve avec les pages. Les pages désactivées sont absentes.",
   "Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.": "Le bouton plus est en bas à droite et ouvre l'entrée.",
   "Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.": "Sur un projet ou une compétence, il reprend la sélection. Le bouton d'entrée en plus disparaît.",
   "Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.": "Les dialogues sont au centre ou en feuille. Un bouton rouge ne supprime que ce qui ne peut pas être annulé.",

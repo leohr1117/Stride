@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.33.0',
+    seiten: 'Übersicht',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Am Computer zeigt die Seitenleiste die Seiten in vier Gruppen, ohne Überschrift.',
+          'Profil ist ein Eintrag mit kleinem Bild. Die Karte darunter entfällt.',
+          'Tätigkeiten steht bei den Seiten. Ausgeschaltete Seiten fehlen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.32.0',
     seiten: 'Übersicht, Projekt, Fähigkeit',
     abschnitte: [

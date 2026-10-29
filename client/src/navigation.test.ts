@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { standardEbenen } from '../../shared/spiel/ebenen.ts';
 import { standardFunktionen, type Funktionen } from '../../shared/spiel/funktionen.ts';
 import { SEITEN } from '../../shared/spiel/navigation.ts';
-import { seitenleistenPfade, sichtbareGruppen } from './navigation.ts';
+import { schnellzugriffEintraege, seitenleistenPfade, sichtbareGruppen } from './navigation.ts';
 
 function alleAn(): Funktionen {
   const funktionen = standardFunktionen();
@@ -13,28 +13,79 @@ function alleAn(): Funktionen {
 }
 
 describe('seitenleistenPfade', () => {
-  it('zählt Tätigkeiten am PC als Leistenplatz', () => {
-    const pfade = seitenleistenPfade(standardFunktionen(), standardEbenen());
-    expect(pfade.filter((pfad) => pfad === '/mehr/inhalte')).toEqual(['/mehr/inhalte']);
+  it('folgt bei Standard der sichtbaren Reihe und zählt Tätigkeiten einmal', () => {
+    expect(seitenleistenPfade(standardFunktionen(), standardEbenen())).toEqual([
+      '/',
+      '/ziele',
+      '/laufend',
+      '/mehr/inhalte',
+      '/chronik',
+      '/charakter',
+      '/handbuch',
+      '/mehr',
+    ]);
   });
 });
 
 describe('Seitenleiste aus der Tabelle', () => {
-  it('behält die Gruppen und liest Namen aus der Seitentabelle', () => {
+  it('zeigt vier Blöcke ohne Überschrift, in der Reihenfolge aus 11.1', () => {
     const gruppen = sichtbareGruppen(alleAn(), standardEbenen());
-    expect(gruppen.map((gruppe) => gruppe.titel)).toEqual([null, 'Reise']);
+    expect(gruppen.map((gruppe) => gruppe.titel)).toEqual([null, null, null, null]);
     const pfade = gruppen.flatMap((gruppe) => gruppe.eintraege.map((eintrag) => eintrag.pfad));
-    expect(pfade).toEqual(['/', '/laufend', '/basis', '/ziele', '/chronik', '/rueckblick', '/statistiken', '/vorbilder']);
+    expect(pfade).toEqual([
+      '/',
+      '/ziele',
+      '/laufend',
+      '/basis',
+      '/mehr/inhalte',
+      '/chronik',
+      '/rueckblick',
+      '/statistiken',
+      '/vorbilder',
+      '/charakter',
+      '/handbuch',
+    ]);
+    expect(pfade).not.toContain('/koennen');
+    expect(pfade).not.toContain('/haben');
+    expect(pfade).not.toContain('/faehigkeiten');
+    expect(pfade).not.toContain('/investitionen');
     for (const eintrag of gruppen.flatMap((gruppe) => gruppe.eintraege)) {
-      expect(eintrag.label).toBe(SEITEN.find((seite) => seite.pfad === eintrag.pfad)?.name);
+      const seite = SEITEN.find((kandidat) => kandidat.pfad === eintrag.pfad);
+      expect(eintrag.label).toBe(seite?.name);
       expect(eintrag.icon).toBeTruthy();
     }
-    expect(seitenleistenPfade(alleAn(), standardEbenen())).toEqual([
-      ...pfade,
-      '/mehr/inhalte',
+    expect(seitenleistenPfade(alleAn(), standardEbenen())).toEqual([...pfade, '/mehr']);
+  });
+
+  it('lässt ausgeschaltete Seiten weg und zeigt keine leere Gruppe', () => {
+    const funktionen = alleAn();
+    funktionen.basis = false;
+    funktionen.chronik = false;
+    funktionen.rueckblick = false;
+    funktionen.statistiken = false;
+    funktionen.vorbilder = false;
+    funktionen.handbuch = false;
+    const ebenen = { visionen: false, organisationen: false, projekte: false, vorhaben: false };
+    const gruppen = sichtbareGruppen(funktionen, ebenen);
+    const pfade = gruppen.flatMap((gruppe) => gruppe.eintraege.map((eintrag) => eintrag.pfad));
+    expect(pfade).toEqual(['/', '/mehr/inhalte', '/charakter']);
+    expect(gruppen.every((gruppe) => gruppe.titel === null && gruppe.eintraege.length > 0)).toBe(true);
+    expect(seitenleistenPfade(funktionen, ebenen)).toEqual([...pfade, '/mehr']);
+  });
+});
+
+describe('Schnellzugriff bis U16', () => {
+  it('behält die alte Chip-Reihe und übernimmt Tätigkeiten und Profil nicht', () => {
+    expect(schnellzugriffEintraege(alleAn(), standardEbenen()).map((eintrag) => eintrag.pfad)).toEqual([
+      '/',
+      '/laufend',
+      '/basis',
+      '/ziele',
+      '/chronik',
+      '/rueckblick',
+      '/statistiken',
+      '/vorbilder',
       '/handbuch',
-      '/mehr',
-      '/charakter',
     ]);
   });
 });
