@@ -1,5 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.": "El botón más está abajo a la derecha y abre la entrada.",
+  "Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.": "En un proyecto o una habilidad toma la selección. El botón extra de entrada desaparece.",
   "Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.": "Los diálogos van al centro o como hoja. Un botón rojo borra solo lo que no se puede deshacer.",
   "Löschen, Loslassen und Zurücknehmen gelten sofort. Eine Meldung bietet Rückgängig.": "Borrar, soltar y retirar valen al momento. Un mensaje ofrece Deshacer.",
   "Der Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle.": "La sección del historial es una lista con punto de color, marca y Todos.",

@@ -14,7 +14,6 @@ import { SchnellNebenaktion, SchnellZeile, useSchnellAktion } from '../../compon
 import { Icon } from '../../components/Icons.tsx';
 import { SkillBaum, skillSchein } from './SkillBaum.tsx';
 import { useKopf } from '../../components/Kopf.tsx';
-import { useEintragOeffnen } from '../../components/Layout.tsx';
 import {
   EINGABE_STIL,
   Feld,
@@ -44,7 +43,6 @@ export function FaehigkeitSeite() {
   const [bearbeiten, setBearbeiten] = useState(false);
   const [knotenBearbeitung, setKnotenBearbeitung] = useState<KnotenBearbeitung>(null);
   const [ausgewaehlt, setAusgewaehlt] = useState<number | null>(null);
-  const eintragOeffnen = useEintragOeffnen();
   useKopf(faehigkeit ? { titel: faehigkeit.name, roh: true } : null);
 
   if (!Number.isInteger(faehigkeitId)) {
@@ -111,12 +109,6 @@ export function FaehigkeitSeite() {
           </div>
         </div>
         <Rangleiste level={faehigkeit.level.level} farbe={faehigkeit.farbe} />
-        {!faehigkeit.archiviert && (
-          <Knopf variante="primaer" className="w-full" onClick={() => eintragOeffnen({ faehigkeitId: faehigkeit.id })}>
-            <Plus className="size-4" />
-            {tx("Eintrag")}
-          </Knopf>
-        )}
       </Karte>
 
       <section className="min-w-0">

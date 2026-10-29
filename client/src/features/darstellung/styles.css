@@ -559,9 +559,17 @@ html {
   scroll-padding-bottom: calc(var(--leisten-hoehe, 0px) + 5rem);
 }
 
+html[data-fab='an'] {
+  scroll-padding-bottom: calc(var(--leisten-hoehe, 0px) + 88px);
+}
+
 @media (max-width: 767px) {
   html {
     scroll-padding-top: var(--mobilkopf-hoehe, 0px);
+  }
+
+  html[data-fab='an'] main {
+    padding-bottom: calc(var(--leisten-hoehe, calc(64px + env(safe-area-inset-bottom))) + 88px);
   }
 }
 
@@ -571,6 +579,15 @@ html {
   z-index: 35;
   padding-top: 1rem;
   background: var(--grund);
+}
+
+/* 88 px über der Leiste: der Plus-Knopf deckt die letzte Zeile nicht. */
+html[data-fab='an'] .formular > .formular-fuss {
+  bottom: calc(var(--leisten-hoehe, 0px) + 88px);
+}
+
+html[data-fab='an'] .dialog-fenster .formular-fuss {
+  bottom: auto;
 }
 
 .dialog-fenster .formular-fuss {
@@ -597,6 +614,24 @@ html[data-tastatur='an'] main {
 
 html[data-tastatur='an'] {
   scroll-padding-bottom: calc(var(--tastatur) + 5rem);
+}
+
+html[data-tastatur='an'][data-fab='an'] {
+  scroll-padding-bottom: calc(var(--tastatur) + 88px);
+}
+
+.eintrag-fab {
+  position: fixed;
+  z-index: 40;
+  right: 16px;
+  bottom: calc(var(--leisten-hoehe, calc(64px + env(safe-area-inset-bottom))) + 16px);
+  width: 56px;
+  height: 56px;
+}
+
+#root[inert] .eintrag-fab,
+body:has([role='dialog'], [role='alertdialog']) .eintrag-fab {
+  display: none;
 }
 
 .toast-lage {

@@ -10,7 +10,7 @@ import {
   LEISTE_MAX,
   LEISTE_STANDARD,
   LEISTEN_SEITEN,
-  leistenMitte,
+  hatEintragFab,
   sichtbareLeiste,
   tauschMitSichtbar,
   bereinigteLeiste,
@@ -44,13 +44,14 @@ describe('istLeiste', () => {
   });
 });
 
-describe('leistenMitte', () => {
-  it('legt den Plus-Knopf in die Mitte, bei ungerader Zahl einen Platz weiter links', () => {
-    expect(leistenMitte(0)).toBe(0);
-    expect(leistenMitte(1)).toBe(1);
-    expect(leistenMitte(2)).toBe(1);
-    expect(leistenMitte(3)).toBe(2);
-    expect(leistenMitte(4)).toBe(2);
+describe('hatEintragFab', () => {
+  it('lässt den Plus-Knopf auf Inhaltsseiten und nimmt ihn von Mehr', () => {
+    expect(hatEintragFab('/')).toBe(true);
+    expect(hatEintragFab('/projekte/4')).toBe(true);
+    expect(hatEintragFab('/faehigkeiten/2')).toBe(true);
+    expect(hatEintragFab('/mehr')).toBe(false);
+    expect(hatEintragFab('/mehr/darstellung')).toBe(false);
+    expect(hatEintragFab('/mehr/darstellung/leiste')).toBe(false);
   });
 });
 

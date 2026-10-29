@@ -1,5 +1,5 @@
 import { tx } from '../text.ts';
-import { ChevronDown, ChevronUp, Minus, Plus, RotateCcw, Undo2, type LucideIcon } from 'lucide-react';
+import { ChevronDown, ChevronUp, Minus, RotateCcw, Undo2, type LucideIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import {
   entfernePlatz,
@@ -7,7 +7,6 @@ import {
   istFesterPlatz,
   LEISTE_MAX,
   LEISTE_STANDARD,
-  leistenMitte,
   sichtbareLeiste,
   tauschMitSichtbar,
 } from '../../../shared/spiel/leiste.ts';
@@ -81,7 +80,6 @@ export function LeistenEditor({
   });
   const beweglich = plaetze.filter((platz) => !istFesterPlatz(platz.eintrag.pfad));
   const fest = plaetze.find((platz) => istFesterPlatz(platz.eintrag.pfad));
-  const mitte = leistenMitte(plaetze.length);
   const vorschau = (platz: { index: number; eintrag: NavEintrag }) => {
     const NavIcon = platz.eintrag.icon;
     return (
@@ -141,17 +139,8 @@ export function LeistenEditor({
         <h2 className="ueberschrift abschnittskopf text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
           {tx("Vorschau")}
         </h2>
-        <div className="mobilleiste flex min-h-16 items-end rounded-2xl border border-rand px-1 pb-1">
-          {plaetze.slice(0, mitte).map(vorschau)}
-          <div className="flex shrink-0 justify-center">
-            <div
-              aria-hidden
-              className="knopf-rund -mt-6 mb-2 flex size-14 items-center justify-center rounded-full bg-akzent text-akzent-text shadow-lg shadow-akzent/30"
-            >
-              <Plus className="size-7" strokeWidth={2.5} />
-            </div>
-          </div>
-          {plaetze.slice(mitte).map(vorschau)}
+        <div className="mobilleiste flex min-h-16 items-center rounded-2xl border border-rand px-1">
+          {plaetze.map(vorschau)}
         </div>
       </section>
 

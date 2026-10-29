@@ -1,5 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.": "Кнопка плюс стоит справа внизу и открывает запись.",
+  "Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.": "В проекте или навыке она подставляет выбор. Дополнительная кнопка записи исчезает.",
   "Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.": "Диалоги стоят по центру или как лист. Красная кнопка удаляет только то, что нельзя вернуть.",
   "Löschen, Loslassen und Zurücknehmen gelten sofort. Eine Meldung bietet Rückgängig.": "Удаление, отпускание и отмена действуют сразу. Сообщение предлагает Отменить.",
   "Der Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle.": "Раздел в истории — список с цветной точкой, галочкой и «Все».",

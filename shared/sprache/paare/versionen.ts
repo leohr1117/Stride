@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.', 'The plus button sits at the bottom right and opens the entry.'],
+  ['Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.', 'On a project or a skill it takes over the selection. The extra entry button is gone.'],
   ['Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.', 'Dialogs sit in the center or as a sheet. A red button deletes only what cannot be undone.'],
   ['Löschen, Loslassen und Zurücknehmen gelten sofort. Eine Meldung bietet Rückgängig.', 'Delete, release, and take-back apply at once. A message offers Undo.'],
   ['Der Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle.', 'The section in the history is a list with a color dot, a check, and All.'],

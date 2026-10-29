@@ -1,5 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.": "プラスボタンは右下にあり、記録を開きます。",
+  "Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.": "プロジェクトやスキルでは選択を引き継ぎます。追加の記録ボタンはなくなります。",
   "Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.": "ダイアログは中央かシートです。赤いボタンは戻せないものだけを削除します。",
   "Löschen, Loslassen und Zurücknehmen gelten sofort. Eine Meldung bietet Rückgängig.": "削除、手放す、取り消しはすぐに効きます。メッセージで元に戻せます。",
   "Der Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle.": "履歴の領域は、色点とチェックと「すべて」の一覧です。",

@@ -4,7 +4,7 @@ import { createContext, lazy, Suspense, useCallback, useContext, useEffect, useL
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useEbenen, useFunktionen } from '../funktionen.ts';
-import { LEISTE_STANDARD, leistenMitte, sichtbareLeiste } from '../../../shared/spiel/leiste.ts';
+import { hatEintragFab, LEISTE_STANDARD, sichtbareLeiste } from '../../../shared/spiel/leiste.ts';
 import { istAn, pfadAktiv } from '../../../shared/spiel/sichtbarkeit.ts';
 import { EINSTELLUNGEN, HANDBUCH, navAusLeiste, seitenleistenPfade, sichtbareGruppen, type NavEintrag } from '../navigation.ts';
 import { AbgleichBeimOeffnen } from '../abgleichBeimOeffnen.tsx';
@@ -33,6 +33,34 @@ export function useEintragOeffnen(): (vorgabe?: EintragVorgabe) => void {
 
 function platzKlasse(aktiv: boolean): string {
   return aktiv ? 'font-semibold text-haupt' : 'font-medium text-leise hover:text-haupt';
+}
+
+function FabAbstand({ an }: { an: boolean }) {
+  useLayoutEffect(() => {
+    if (an) {
+      document.documentElement.dataset.fab = 'an';
+    } else {
+      delete document.documentElement.dataset.fab;
+    }
+    return () => {
+      delete document.documentElement.dataset.fab;
+    };
+  }, [an]);
+  return null;
+}
+
+function EintragFab() {
+  const oeffnen = useEintragOeffnen();
+  return (
+    <button
+      type="button"
+      onClick={() => oeffnen()}
+      aria-label={tx('Eintrag loggen')}
+      className="eintrag-fab knopf-rund flex items-center justify-center rounded-full bg-akzent text-akzent-text shadow-lg shadow-akzent/30 transition active:scale-95"
+    >
+      <Plus className="size-7" strokeWidth={2.5} />
+    </button>
+  );
 }
 
 function useIstPc(): boolean {
@@ -165,6 +193,7 @@ function AppGeruest() {
           <Seitenleiste />
 
           <div className="min-w-0 flex-1">
+            <FabAbstand an={!pc && hatEintragFab(pathname)} />
             <main className="mx-auto w-full max-w-4xl pb-28 md:pb-12">
               <Kopf />
               <div className="px-4 pt-4 md:px-8 md:pt-6">
@@ -182,6 +211,7 @@ function AppGeruest() {
           </div>
 
           <MobilNavigation />
+          {!pc && hatEintragFab(pathname) ? <EintragFab /> : null}
         </div>
       </KopfRahmen>
   );
@@ -299,9 +329,7 @@ function MobilNavigation() {
         return;
       }
       const kasten = element.getBoundingClientRect();
-      const fab = element.querySelector('.knopf-rund')?.getBoundingClientRect();
-      const oben = Math.min(kasten.top, fab?.top ?? kasten.top);
-      const hoehe = Math.max(0, Math.ceil(window.innerHeight - oben));
+      const hoehe = Math.max(0, Math.ceil(window.innerHeight - kasten.top));
       document.documentElement.style.setProperty('--leisten-hoehe', `${hoehe}px`);
     };
     messe();
@@ -314,7 +342,6 @@ function MobilNavigation() {
       document.documentElement.style.removeProperty('--leisten-hoehe');
     };
   }, []);
-  const oeffnen = useEintragOeffnen();
   const funktionen = useFunktionen();
   const ebenen = useEbenen();
   const aktivPlatz = useAktiverPlatz();
@@ -323,7 +350,6 @@ function MobilNavigation() {
     const eintrag = navAusLeiste(pfad);
     return eintrag ? [eintrag] : [];
   });
-  const mitte = leistenMitte(eintraege.length);
   const link = ({ pfad, label, icon: NavIcon }: NavEintrag) => {
     const aktiv = aktivPlatz === pfad;
     return (
@@ -343,20 +369,9 @@ function MobilNavigation() {
   return (
     <nav
       ref={leiste}
-      className="mobilleiste fixed inset-x-0 bottom-0 z-40 flex min-h-[calc(64px+env(safe-area-inset-bottom))] items-end border-t border-rand bg-flaeche/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+      className="mobilleiste fixed inset-x-0 bottom-0 z-40 flex min-h-[calc(64px+env(safe-area-inset-bottom))] items-center border-t border-rand bg-flaeche/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
     >
-      {eintraege.slice(0, mitte).map(link)}
-      <div className="flex shrink-0 justify-center">
-        <button
-          type="button"
-          onClick={() => oeffnen()}
-          aria-label={tx('Eintrag loggen')}
-          className="knopf-rund -mt-6 mb-2 flex size-14 items-center justify-center rounded-full bg-akzent text-akzent-text shadow-lg shadow-akzent/30 transition active:scale-95"
-        >
-          <Plus className="size-7" strokeWidth={2.5} />
-        </button>
-      </div>
-      {eintraege.slice(mitte).map(link)}
+      {eintraege.map(link)}
     </nav>
   );
 }

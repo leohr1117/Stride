@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.32.0',
+    seiten: 'Übersicht, Projekt, Fähigkeit',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.',
+          'Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.31.0',
     seiten: 'Chronik, Mehr',
     abschnitte: [

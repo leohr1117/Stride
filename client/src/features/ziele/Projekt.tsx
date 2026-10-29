@@ -152,12 +152,6 @@ export function ProjektSeite() {
           </p>
         </div>
         <ProjektAbschluss projekt={projekt} />
-        {projekt.aktiv && (
-          <Knopf variante="primaer" className="w-full" onClick={() => eintragOeffnen({ projektId: projekt.id })}>
-            <Plus className="size-4" />
-            {tx("Eintrag")}
-          </Knopf>
-        )}
       </Karte>
 
       {ebenen.vorhaben && (

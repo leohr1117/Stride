@@ -1,5 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.": "Le bouton plus est en bas à droite et ouvre l'entrée.",
+  "Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.": "Sur un projet ou une compétence, il reprend la sélection. Le bouton d'entrée en plus disparaît.",
   "Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.": "Les dialogues sont au centre ou en feuille. Un bouton rouge ne supprime que ce qui ne peut pas être annulé.",
   "Löschen, Loslassen und Zurücknehmen gelten sofort. Eine Meldung bietet Rückgängig.": "Supprimer, lâcher et retirer s'appliquent tout de suite. Un message propose Annuler.",
   "Der Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle.": "Le domaine dans l'historique est une liste avec un point de couleur, une coche et Tous.",

@@ -1,5 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Plus-Knopf sitzt unten rechts und öffnet den Eintrag.": "加号按钮在右下角，用来打开记录。",
+  "Auf einem Projekt oder einer Fähigkeit übernimmt er die Auswahl. Der extra Eintrag-Knopf entfällt.": "在项目或技能页，它会带上已选内容。多余的记录按钮取消。",
   "Dialoge sitzen mittig oder als Blatt. Ein roter Knopf löscht nur, was sich nicht zurücknehmen lässt.": "对话框居中或作为底部卡片。红色按钮只删除无法撤回的内容。",
   "Löschen, Loslassen und Zurücknehmen gelten sofort. Eine Meldung bietet Rückgängig.": "删除、放开和撤回立即生效。提示可以撤销。",
   "Der Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle.": "历史里的分区是带色点、勾选和“全部”的列表。",

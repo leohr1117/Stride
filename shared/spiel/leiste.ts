@@ -98,8 +98,9 @@ export function bereinigteLeiste(wert: unknown): string[] | null {
   return pfade;
 }
 
-export function leistenMitte(anzahl: number): number {
-  return Math.ceil(anzahl / 2);
+/** Der Plus-Knopf steht auf Inhaltsseiten. Mehr und seine Unterseiten haben keinen. */
+export function hatEintragFab(pathname: string): boolean {
+  return pathname !== '/mehr' && !pathname.startsWith('/mehr/');
 }
 
 /** Hängt eine Seite vor Mehr an. Versteckte Pfade zählen nicht mit und bleiben in der Liste. */
