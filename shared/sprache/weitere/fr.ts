@@ -1,5 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Leiste unten zeigt Übersicht, Ziele, Chronik und Mehr. Mehr bleibt fest. Profil und Tätigkeiten kannst du in die Leiste legen.": "La barre du bas affiche Aperçu, Objectifs, Historique et Plus. Plus reste fixe. Tu peux mettre Profil et Activités dans la barre.",
+  "Gilt nur auf dem Handy.": "S'applique uniquement au téléphone.",
   "Leiste, Seitenleiste und Mehr lesen ihre Seiten aus einer gemeinsamen Liste. Was du siehst, bleibt gleich.": "La barre, la barre latérale et Plus lisent leurs pages dans une liste commune. Ce que tu vois reste identique.",
   "Neue Profile haben die Chronik von Anfang an eingeschaltet.": "Les nouveaux profils ont l'historique activé dès le départ.",
   "Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.": "L'anneau de niveau retrouve son dégradé de couleur et le point lumineux à la pointe, aussi en haut à droite.",

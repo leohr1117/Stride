@@ -1,5 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Leiste unten zeigt Übersicht, Ziele, Chronik und Mehr. Mehr bleibt fest. Profil und Tätigkeiten kannst du in die Leiste legen.": "La barra de abajo muestra Resumen, Objetivos, Historial y Más. Más se queda fijo. Puedes poner Perfil y Actividades en la barra.",
+  "Gilt nur auf dem Handy.": "Solo vale en el móvil.",
   "Leiste, Seitenleiste und Mehr lesen ihre Seiten aus einer gemeinsamen Liste. Was du siehst, bleibt gleich.": "La barra, la barra lateral y Más leen sus páginas de una lista común. Lo que ves sigue igual.",
   "Neue Profile haben die Chronik von Anfang an eingeschaltet.": "Los perfiles nuevos tienen el historial activado desde el inicio.",
   "Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.": "El anillo de nivel vuelve a tener su degradado de color y el punto de luz en la punta, también arriba a la derecha.",

@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.30.0',
+    seiten: 'Übersicht, Darstellung',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Die Leiste unten zeigt Übersicht, Ziele, Chronik und Mehr. Mehr bleibt fest. Profil und Tätigkeiten kannst du in die Leiste legen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.29.2',
     seiten: 'Übersicht, Mehr',
     abschnitte: [

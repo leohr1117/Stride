@@ -4,7 +4,9 @@ import { standardFunktionen } from './funktionen.ts';
 import {
   entfernePlatz,
   haengePlatzAn,
+  istFesterPlatz,
   istLeiste,
+  LEISTE_FEST,
   LEISTE_MAX,
   LEISTE_STANDARD,
   LEISTEN_SEITEN,
@@ -13,15 +15,19 @@ import {
   tauschMitSichtbar,
   bereinigteLeiste,
 } from './leiste.ts';
+import { SEITEN } from './navigation.ts';
 
 describe('istLeiste', () => {
   it('nimmt die Standardleiste und eine leere Leiste an', () => {
-    expect(LEISTE_STANDARD).toEqual(['/', '/laufend', '/ziele', '/mehr']);
+    expect(LEISTE_STANDARD).toEqual(['/', '/ziele', '/chronik', '/mehr']);
+    expect(LEISTE_STANDARD.at(-1)).toBe(LEISTE_FEST);
+    expect(istFesterPlatz('/mehr')).toBe(true);
     expect(istLeiste(LEISTE_STANDARD)).toBe(true);
     expect(istLeiste([])).toBe(true);
     const pfade = LEISTEN_SEITEN.map((seite) => seite.pfad);
-    expect(pfade).toContain('/basis');
-    expect(pfade).toContain('/ziele');
+    expect(pfade).toEqual(SEITEN.map((seite) => seite.pfad));
+    expect(pfade).toContain('/charakter');
+    expect(pfade).toContain('/mehr/inhalte');
     expect(pfade.at(-1)).toBe('/mehr');
     expect(istLeiste(['/', '/aufgaben'])).toBe(false);
     expect(istLeiste(['/', '/training'])).toBe(false);
@@ -31,9 +37,9 @@ describe('istLeiste', () => {
     expect(istLeiste(['/unbekannt'])).toBe(false);
     expect(istLeiste(['/', '/'])).toBe(false);
     expect(istLeiste(['/', '/laufend', '/ziele', '/mehr', '/chronik'])).toBe(true);
-    expect(istLeiste(['/charakter'])).toBe(false);
-    expect(istLeiste(['/', '/charakter'])).toBe(false);
-    expect(istLeiste(['/mehr/inhalte'])).toBe(false);
+    expect(istLeiste(['/charakter'])).toBe(true);
+    expect(istLeiste(['/', '/charakter'])).toBe(true);
+    expect(istLeiste(['/mehr/inhalte'])).toBe(true);
     expect(istLeiste('')).toBe(false);
   });
 });
@@ -51,17 +57,19 @@ describe('leistenMitte', () => {
 describe('leistenPlätze', () => {
   const liste = ['/', '/laufend', '/ziele', '/mehr'];
 
-  it('hängt einen freien Platz an und leert einen Platz', () => {
+  it('hängt einen freien Platz vor Mehr an und leert einen Platz', () => {
     expect(haengePlatzAn(['/', '/laufend'], '/ziele')).toEqual(['/', '/laufend', '/ziele']);
+    expect(haengePlatzAn(['/', '/mehr'], '/ziele')).toEqual(['/', '/ziele', '/mehr']);
     expect(haengePlatzAn(liste, '/chronik')).toEqual(liste);
     expect(haengePlatzAn(['/'], '/')).toEqual(['/']);
     expect(entfernePlatz(liste, 2)).toEqual(['/', '/laufend', '/mehr']);
+    expect(entfernePlatz(liste, 3)).toEqual(liste);
     expect(liste).toHaveLength(LEISTE_MAX);
   });
 
   it('zählt nur sichtbare Seiten und lässt versteckte liegen', () => {
     const aktiv = (pfad: string) => pfad !== '/laufend' && pfad !== '/ziele';
-    expect(haengePlatzAn(liste, '/chronik', aktiv)).toEqual(['/', '/laufend', '/ziele', '/mehr', '/chronik']);
+    expect(haengePlatzAn(liste, '/chronik', aktiv)).toEqual(['/', '/laufend', '/ziele', '/chronik', '/mehr']);
     const vierSichtbar = ['/', '/laufend', '/ziele', '/mehr', '/chronik'];
     const fastAlles = (pfad: string) => pfad !== '/laufend';
     expect(haengePlatzAn(vierSichtbar, '/basis', fastAlles)).toEqual(vierSichtbar);
@@ -115,21 +123,22 @@ describe('sichtbareLeiste', () => {
 });
 
 describe('tauschMitSichtbar', () => {
-  it('tauscht mit dem nächsten sichtbaren Platz und lässt versteckte Pfade liegen', () => {
+  it('tauscht mit dem nächsten sichtbaren Platz und lässt versteckte Pfade und Mehr liegen', () => {
     const aktiv = (pfad: string) => pfad !== '/ziele';
-    expect(tauschMitSichtbar(['/', '/ziele', '/mehr'], 2, -1, aktiv)).toEqual(['/mehr', '/ziele', '/']);
-    expect(tauschMitSichtbar(['/', '/ziele', '/mehr'], 0, 1, aktiv)).toEqual(['/mehr', '/ziele', '/']);
+    expect(tauschMitSichtbar(['/', '/chronik', '/mehr'], 1, -1, aktiv)).toEqual(['/chronik', '/', '/mehr']);
+    expect(tauschMitSichtbar(['/', '/ziele', '/mehr'], 0, 1, aktiv)).toEqual(['/', '/ziele', '/mehr']);
+    expect(tauschMitSichtbar(['/', '/ziele', '/mehr'], 2, -1, aktiv)).toEqual(['/', '/ziele', '/mehr']);
     expect(tauschMitSichtbar(['/', '/ziele', '/mehr'], 2, 1, aktiv)).toEqual(['/', '/ziele', '/mehr']);
   });
 });
 
 describe('bereinigteLeiste', () => {
-  it('lässt Charakter und Unbekanntes weg und behält den Rest', () => {
+  it('lässt Unbekanntes weg und behält Profil, Tätigkeiten und den Rest', () => {
     expect(bereinigteLeiste(['/', '/aufgaben', '/mehr'])).toEqual(['/', '/mehr']);
     expect(bereinigteLeiste(['/', '/training', '/mehr'])).toEqual(['/', '/mehr']);
     expect(bereinigteLeiste(['/', '/training/plaene/1', '/ziele'])).toEqual(['/', '/ziele']);
-    expect(bereinigteLeiste(['/', '/charakter', '/ziele', '/mehr'])).toEqual(['/', '/ziele', '/mehr']);
-    expect(bereinigteLeiste(['/', '/mehr/inhalte', '/mehr'])).toEqual(['/', '/mehr']);
+    expect(bereinigteLeiste(['/', '/charakter', '/ziele', '/mehr'])).toEqual(['/', '/charakter', '/ziele', '/mehr']);
+    expect(bereinigteLeiste(['/', '/mehr/inhalte', '/mehr'])).toEqual(['/', '/mehr/inhalte', '/mehr']);
     expect(bereinigteLeiste(['/', '/'])).toEqual(['/']);
     expect(bereinigteLeiste([])).toEqual([]);
     expect(bereinigteLeiste('keine liste')).toBeNull();

@@ -62,7 +62,8 @@ describe('elternZiel', () => {
     expect(elternZiel('/charakter', { leiste: ['/', '/charakter'] })).toBeNull();
     expect(elternZiel('/laufend', { leiste: ['/'] })).toEqual({ pfad: '/ziele', label: 'Ziele' });
     expect(elternZiel('/vorbilder', { leiste: ['/'] })).toEqual({ pfad: '/mehr', label: 'Mehr' });
-    expect(elternZiel('/chronik', { leiste: LEISTE_STANDARD })).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/chronik', { leiste: LEISTE_STANDARD })).toBeNull();
+    expect(elternZiel('/chronik', { leiste: ['/', '/ziele', '/mehr'] })).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/rueckblick', { leiste: ['/'], verlaufAn: true })).toEqual({ pfad: '/chronik', label: 'Verlauf' });
     expect(elternZiel('/statistiken', { leiste: ['/'], verlaufAn: false })).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/mehr/darstellung/leiste')).toEqual({ pfad: '/mehr/darstellung', label: 'Darstellung' });

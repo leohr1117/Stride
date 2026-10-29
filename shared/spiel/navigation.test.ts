@@ -45,9 +45,11 @@ describe('Seitentabelle', () => {
     }
   });
 
-  it('lässt die Leiste Profil und Tätigkeiten noch aus und übernimmt die Namen', () => {
+  it('nimmt alle Seiten der Tabelle in die Leiste und übernimmt die Namen', () => {
     const pfade = LEISTEN_SEITEN.map((seite) => seite.pfad);
-    expect(pfade).toEqual(SEITEN.map((seite) => seite.pfad).filter((pfad) => pfad !== '/charakter' && pfad !== '/mehr/inhalte'));
+    expect(pfade).toEqual(SEITEN.map((seite) => seite.pfad));
+    expect(pfade).toContain('/charakter');
+    expect(pfade).toContain('/mehr/inhalte');
     for (const seite of LEISTEN_SEITEN) {
       expect(seite.label).toBe(SEITEN.find((eintrag) => eintrag.pfad === seite.pfad)?.name);
     }

@@ -1,5 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Leiste unten zeigt Übersicht, Ziele, Chronik und Mehr. Mehr bleibt fest. Profil und Tätigkeiten kannst du in die Leiste legen.": "底部栏显示概览、目标、历史和更多。更多固定在栏上。你可以把档案和活动放到栏上。",
+  "Gilt nur auf dem Handy.": "仅适用于手机。",
   "Leiste, Seitenleiste und Mehr lesen ihre Seiten aus einer gemeinsamen Liste. Was du siehst, bleibt gleich.": "底栏、侧边栏和「更多」从同一份列表读取页面。你看到的内容保持不变。",
   "Neue Profile haben die Chronik von Anfang an eingeschaltet.": "新档案从一开始就开启历史记录。",
   "Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.": "等级环重新有了颜色渐变和尖端的亮点，右上角的也一样。",

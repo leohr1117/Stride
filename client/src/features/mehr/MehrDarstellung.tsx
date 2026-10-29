@@ -34,7 +34,7 @@ function LeisteSeite() {
       zurueck={DARSTELLUNG_ZURUECK}
       kinder={
         <>
-          <p className="hidden text-sm text-leise md:block">{tx("Die Leiste gibt es nur auf dem Handy. Am PC findest du alle Seiten links in der Seitenleiste.")}</p>
+          <p className="hidden text-sm text-leise md:block">{tx("Gilt nur auf dem Handy.")}</p>
           <LeistenEditor
             wert={data.mobilLeiste}
             funktionen={data.funktionen}

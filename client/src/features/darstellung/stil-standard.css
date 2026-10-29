@@ -169,3 +169,7 @@ html[data-stil='standard'] body {
   height: 20px;
   stroke-width: 1.75;
 }
+
+:root[data-stil='standard'] .mobilleiste a[aria-current='page'] svg.lucide {
+  stroke-width: 2.25;
+}

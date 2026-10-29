@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die Leiste unten zeigt Übersicht, Ziele, Chronik und Mehr. Mehr bleibt fest. Profil und Tätigkeiten kannst du in die Leiste legen.', 'The bar at the bottom shows Overview, Goals, History, and More. More stays fixed. You can put Profile and Activities on the bar.'],
   ['Leiste, Seitenleiste und Mehr lesen ihre Seiten aus einer gemeinsamen Liste. Was du siehst, bleibt gleich.', 'The bar, the sidebar, and More read their pages from one shared list. What you see stays the same.'],
   ['Neue Profile haben die Chronik von Anfang an eingeschaltet.', 'New profiles have the history switched on from the start.'],
   ['Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.', 'The level ring has its colour gradient and the bright light dot at the tip again, also at the top right.'],

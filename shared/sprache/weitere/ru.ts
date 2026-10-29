@@ -1,5 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Leiste unten zeigt Übersicht, Ziele, Chronik und Mehr. Mehr bleibt fest. Profil und Tätigkeiten kannst du in die Leiste legen.": "Нижняя панель показывает Обзор, Цели, Историю и Ещё. Ещё закреплено. Профиль и Занятия можно поставить на панель.",
+  "Gilt nur auf dem Handy.": "Только на телефоне.",
   "Leiste, Seitenleiste und Mehr lesen ihre Seiten aus einer gemeinsamen Liste. Was du siehst, bleibt gleich.": "Панель, боковая панель и «Ещё» берут страницы из общего списка. То, что ты видишь, остаётся прежним.",
   "Neue Profile haben die Chronik von Anfang an eingeschaltet.": "В новых профилях история включена с самого начала.",
   "Der Levelring hat wieder seinen Farbverlauf und den hellen Lichtpunkt an der Spitze, auch oben rechts.": "У кольца уровня снова есть цветовой градиент и светлая точка на конце, также справа вверху.",

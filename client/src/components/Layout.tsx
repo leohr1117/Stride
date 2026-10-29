@@ -32,7 +32,7 @@ export function useEintragOeffnen(): (vorgabe?: EintragVorgabe) => void {
 }
 
 function platzKlasse(aktiv: boolean): string {
-  return aktiv ? 'text-haupt' : 'text-leise hover:text-haupt';
+  return aktiv ? 'font-semibold text-haupt' : 'font-medium text-leise hover:text-haupt';
 }
 
 function useIstPc(): boolean {
@@ -324,23 +324,29 @@ function MobilNavigation() {
     return eintrag ? [eintrag] : [];
   });
   const mitte = leistenMitte(eintraege.length);
-  const link = ({ pfad, label, icon: NavIcon }: NavEintrag) => (
-    <Link
-      key={pfad}
-      to={pfad}
-      data-platz={pfad}
-      aria-current={aktivPlatz === pfad ? 'page' : undefined}
-      className={`flex min-w-0 flex-1 flex-col items-center gap-1 px-0.5 py-2 text-center text-[11px] font-medium leading-tight ${platzKlasse(aktivPlatz === pfad)}`}
-    >
-      <NavIcon className="size-5" />
-      <span className="max-w-full break-words">{tx(label)}</span>
-    </Link>
-  );
+  const link = ({ pfad, label, icon: NavIcon }: NavEintrag) => {
+    const aktiv = aktivPlatz === pfad;
+    return (
+      <Link
+        key={pfad}
+        to={pfad}
+        data-platz={pfad}
+        aria-current={aktiv ? 'page' : undefined}
+        className={`flex min-h-12 min-w-12 flex-1 flex-col items-center justify-center gap-1 px-0.5 py-2 text-center text-[11px] leading-tight ${platzKlasse(aktiv)}`}
+      >
+        <NavIcon className="size-5" strokeWidth={aktiv ? 2.25 : 1.75} />
+        <span className="max-w-full break-words">{tx(label)}</span>
+      </Link>
+    );
+  };
 
   return (
-    <nav ref={leiste} className="mobilleiste fixed inset-x-0 bottom-0 z-40 flex items-end border-t border-rand bg-flaeche/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+    <nav
+      ref={leiste}
+      className="mobilleiste fixed inset-x-0 bottom-0 z-40 flex min-h-[calc(64px+env(safe-area-inset-bottom))] items-end border-t border-rand bg-flaeche/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+    >
       {eintraege.slice(0, mitte).map(link)}
-      <div className="flex flex-1 justify-center">
+      <div className="flex shrink-0 justify-center">
         <button
           type="button"
           onClick={() => oeffnen()}

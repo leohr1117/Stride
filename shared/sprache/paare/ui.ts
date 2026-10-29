@@ -543,6 +543,7 @@ export const PAARE = [
   ['Der Name darf nicht leer sein.', 'The name must not be empty.'],
   ['App & Verbindungen', 'App & connections'],
   ['Die Leiste gibt es nur auf dem Handy. Am PC findest du alle Seiten links in der Seitenleiste.', 'The bar only exists on phones. On a computer, all pages are in the sidebar on the left.'],
+  ['Gilt nur auf dem Handy.', 'Applies only on the phone.'],
   ['Karten', 'Cards'],
   ['Benachrichtigungen', 'Notifications'],
   ['Identität', 'Identity'],
