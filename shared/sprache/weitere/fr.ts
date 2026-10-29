@@ -1,5 +1,12 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Stride wurde aktualisiert.": "Stride a été mis à jour.",
+  "Neuigkeiten": "Nouveautés",
+  "Was ist neu": "Nouveautés",
+  "Neu seit deinem letzten Besuch": "Nouveau depuis ta dernière visite",
+  "Nach einem Update erscheint einmal der Hinweis, dass Stride aktualisiert wurde.": "Après une mise à jour, un avis apparaît une fois pour dire que Stride a été mis à jour.",
+  "Mehr zeigt einen Punkt, bis Was ist neu geöffnet wurde.": "Plus affiche un point jusqu'à l'ouverture de Nouveautés.",
+  "Was ist neu stellt die Versionen seit dem letzten Besuch nach oben.": "Nouveautés place en haut les versions depuis la dernière visite.",
   "+ Tätigkeit": "+ Activité",
   "Wähl eine Tätigkeit.": "Choisis une activité.",
   "Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.": "Pour noter, les activités sont sur une ligne. La puce + Activité en crée une nouvelle.",

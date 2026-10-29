@@ -37,6 +37,7 @@ const FEST = new Map<string, string>([
   ['/mehr/funktionen', 'Bereiche'],
   ['/mehr/benachrichtigungen', 'Benachrichtigungen'],
   ['/mehr/daten', 'Daten'],
+  ['/mehr/neu', 'Was ist neu'],
   ['/faehigkeiten', 'Fähigkeiten'],
   ['/koennen', 'Können'],
   ['/haben', 'Haben'],
@@ -183,7 +184,13 @@ export function elternZiel(pfad: string, lage: NavLage = { leiste: [], verlaufAn
   if (rein.startsWith('/mehr/darstellung/')) {
     return ziel('/mehr/darstellung', 'Darstellung');
   }
-  if (rein === '/mehr/uebersicht' || rein === '/mehr/funktionen' || rein === '/mehr/benachrichtigungen' || rein === '/mehr/daten') {
+  if (
+    rein === '/mehr/uebersicht' ||
+    rein === '/mehr/funktionen' ||
+    rein === '/mehr/benachrichtigungen' ||
+    rein === '/mehr/daten' ||
+    rein === '/mehr/neu'
+  ) {
     return ziel('/mehr', 'Mehr');
   }
   return null;

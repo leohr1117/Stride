@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { PROFILNAME_PLATZHALTER, profilFragenOffen } from '../../shared/spiel/profil.ts';
+import { AKTUELLE_VERSION } from '../../shared/versionen.ts';
 import { ausfuehren, eine, mitWelt, schliesseWelt } from '../db.ts';
 import { ladeAttribute } from '../features/attribute/attribute.ts';
 import { aendereEinstellungen, ladeEinstellungen } from '../features/einstellungen/einstellungen.ts';
@@ -96,6 +97,7 @@ describe('profil zurücksetzen', () => {
         fokus: [],
         profilAngelegt: false,
         weltLeer: true,
+        versionHinweis: { benachrichtigt: AKTUELLE_VERSION, gesehen: AKTUELLE_VERSION },
       });
       expect(profilFragenOffen(neu)).toBe(true);
       expect(anzahl('eintraege')).toBe(0);

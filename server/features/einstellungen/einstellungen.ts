@@ -50,6 +50,8 @@ import { wendeStartZielAn, type StartZielArt } from '../../services/startAnlage.
 import { istGewichtEinheit, STANDARD_GEWICHT_EINHEIT, type GewichtEinheit } from '../../../shared/spiel/training.ts';
 import { kartenWahl, type UebersichtKartenWahl } from '../../../shared/spiel/uebersichtKarten.ts';
 import { schreibeHinweisAngebotTesten, setzeHinweisNichtVorWennFehlt } from './hinweisSchluessel.ts';
+import { leseVersionsstand, setzeVersionsstandWennLeer } from './versionHinweis.ts';
+import { AKTUELLE_VERSION } from '../../../shared/versionen.ts';
 
 interface Grundeinstellungen {
   charakterName: string;
@@ -293,6 +295,7 @@ export function ladeEinstellungen(): Einstellungen {
     gewichtEinheit: leseGewichtEinheit(gespeichert.get('gewicht_einheit')),
     uebersichtKarten: leseUebersichtKarten(gespeichert.get(UEBERSICHT_KARTEN_SCHLUESSEL)),
     paletten: lesePaletten(parse(gespeichert.get(PALETTEN_SCHLUESSEL))),
+    versionHinweis: leseVersionsstand(),
   };
 }
 
@@ -638,6 +641,7 @@ export function aendereEinstellungen(
     });
     if (ersteAnlage) {
       setzeHinweisNichtVorWennFehlt(new Date());
+      setzeVersionsstandWennLeer(AKTUELLE_VERSION);
     }
   });
   return ladeEinstellungen();

@@ -1,5 +1,12 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Stride wurde aktualisiert.": "Stride 已更新。",
+  "Neuigkeiten": "新功能",
+  "Was ist neu": "新功能",
+  "Neu seit deinem letzten Besuch": "自上次查看以来的新内容",
+  "Nach einem Update erscheint einmal der Hinweis, dass Stride aktualisiert wurde.": "更新后会出现一次提示，说明 Stride 已更新。",
+  "Mehr zeigt einen Punkt, bis Was ist neu geöffnet wurde.": "「更多」会显示一个圆点，直到打开「新功能」。",
+  "Was ist neu stellt die Versionen seit dem letzten Besuch nach oben.": "「新功能」把上次查看之后的版本放在上面。",
   "+ Tätigkeit": "+ 活动",
   "Wähl eine Tätigkeit.": "请选择一项活动。",
   "Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.": "记录时，活动排成一行。+ 活动芯片用来新建。",

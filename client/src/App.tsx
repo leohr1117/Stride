@@ -35,6 +35,7 @@ const UebersichtSeite = seite(ladeUebersicht, (modul) => modul.UebersichtSeite);
 const LaufendSeite = seite(ladeLaufend, (modul) => modul.LaufendSeite);
 const ZieleSeite = seite(ladeZiele, (modul) => modul.ZieleSeite);
 const MehrSeite = seite(ladeMehr, (modul) => modul.MehrSeite);
+const WasNeuSeite = seite(ladeMehr, (modul) => modul.WasNeuSeite);
 const CharakterSeite = seite(ladeCharakter, (modul) => modul.CharakterSeite);
 const KoennenSeite = seite(ladeAttributSeite, (modul) => modul.KoennenSeite);
 const HabenSeite = seite(ladeAttributSeite, (modul) => modul.HabenSeite);
@@ -87,6 +88,7 @@ const router = createBrowserRouter([
       { path: 'training', element: <Navigate to="/" replace /> },
       { path: 'training/*', element: <Navigate to="/" replace /> },
       { path: 'mehr', element: <MehrSeite /> },
+      { path: 'mehr/neu', element: <WasNeuSeite /> },
       { path: 'mehr/profil', element: <MehrProfilSeite /> },
       { path: 'mehr/profil/benutzernamen/:kontoId', element: <MehrProfilSeite /> },
       { path: 'mehr/profil/benutzernamen', element: <MehrProfilSeite /> },

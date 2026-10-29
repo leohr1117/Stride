@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.35.3',
+    seiten: 'Mehr',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Nach einem Update erscheint einmal der Hinweis, dass Stride aktualisiert wurde.',
+          'Mehr zeigt einen Punkt, bis Was ist neu geöffnet wurde.',
+          'Was ist neu stellt die Versionen seit dem letzten Besuch nach oben.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.35.2',
     seiten: 'Eintrag',
     abschnitte: [

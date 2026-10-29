@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { createContext, lazy, Suspense, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router';
+import type { Einstellungen } from '../../../shared/api/einstellungen.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useEbenen, useFunktionen } from '../funktionen.ts';
 import { hatEintragFab, LEISTE_STANDARD, sichtbareLeiste } from '../../../shared/spiel/leiste.ts';
@@ -12,6 +13,7 @@ import { useStilAbgleich } from '../features/darstellung/stil.ts';
 import type { EintragVorgabe } from '../features/eintraege/EintragDialog.tsx';
 
 const EintragDialog = lazy(() => import('../features/eintraege/EintragDialog.tsx').then((modul) => ({ default: modul.EintragDialog })));
+import { UpdateHinweis, useNeuMarkierung, verbindeVersionsstand } from '../updateHinweis.tsx';
 import { Kopf, KopfRahmen } from './Kopf.tsx';
 import { KlassenBild } from './KlassenBild.tsx';
 import { profilFragenOffen } from '../../../shared/spiel/profil.ts';
@@ -161,7 +163,7 @@ function AppGeruest() {
     void api
       .aendereEinstellungen({ zeitzone: aktuell })
       .then((neu) => {
-        client.setQueryData(SCHLUESSEL.einstellungen, neu);
+        client.setQueryData<Einstellungen>(SCHLUESSEL.einstellungen, (alt) => verbindeVersionsstand(alt, neu));
       })
       .catch(() => {
         zoneGemeldet.current = null;
@@ -211,6 +213,7 @@ function AppGeruest() {
           </div>
 
           <MobilNavigation />
+          <UpdateHinweis />
           {!pc && hatEintragFab(pathname) ? <EintragFab /> : null}
         </div>
       </KopfRahmen>
@@ -231,9 +234,15 @@ function useCharakterKurz() {
   return data ? { klasse: data.klasse } : null;
 }
 
+function NeuPunkt() {
+  return <span data-neu-punkt="" className="pointer-events-none absolute -top-1 -right-1.5 size-2 rounded-full bg-fortschritt" aria-hidden="true" />;
+}
+
 function NavPunkt({ eintrag, bild }: { eintrag: NavEintrag; bild?: ReactNode }) {
   const NavIcon = eintrag.icon;
   const aktiv = useAktiverPlatz() === eintrag.pfad;
+  const neu = useNeuMarkierung();
+  const punkt = eintrag.pfad === '/mehr' && neu;
   return (
     <Link
       to={eintrag.pfad}
@@ -243,7 +252,10 @@ function NavPunkt({ eintrag, bild }: { eintrag: NavEintrag; bild?: ReactNode }) 
         aktiv ? 'bg-flaeche-2 text-haupt' : 'text-leise hover:text-haupt'
       }`}
     >
-      {bild ?? <NavIcon className="size-4 shrink-0" />}
+      <span className="relative shrink-0">
+        {bild ?? <NavIcon className="size-4" />}
+        {punkt ? <NeuPunkt /> : null}
+      </span>
       <span className="min-w-0 break-words">{tx(eintrag.label)}</span>
     </Link>
   );
@@ -334,6 +346,7 @@ function MobilNavigation() {
     const eintrag = navAusLeiste(pfad);
     return eintrag ? [eintrag] : [];
   });
+  const neu = useNeuMarkierung();
   const link = ({ pfad, label, icon: NavIcon }: NavEintrag) => {
     const aktiv = aktivPlatz === pfad;
     return (
@@ -344,7 +357,10 @@ function MobilNavigation() {
         aria-current={aktiv ? 'page' : undefined}
         className={`flex min-h-12 min-w-12 flex-1 flex-col items-center justify-center gap-1 px-0.5 py-2 text-center text-[11px] leading-tight ${platzKlasse(aktiv)}`}
       >
-        <NavIcon className="size-5" strokeWidth={aktiv ? 2.25 : 1.75} />
+        <span className="relative">
+          <NavIcon className="size-5" strokeWidth={aktiv ? 2.25 : 1.75} />
+          {pfad === '/mehr' && neu ? <NeuPunkt /> : null}
+        </span>
         <span className="max-w-full break-words">{tx(label)}</span>
       </Link>
     );

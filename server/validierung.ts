@@ -439,6 +439,15 @@ export function beschreibeValidierungsfehler(fehler: z.ZodError): string {
   return feld ? `${erster.message} (${feld})` : erster.message;
 }
 
+const versionsnummer = z.string().regex(/^\d+\.\d+\.\d+$/, 'Die Version hat das Format 1.2.3.');
+
+export const versionHinweisSchema = z
+  .object({
+    benachrichtigt: versionsnummer.optional(),
+    gesehen: versionsnummer.optional(),
+  })
+  .refine((wert) => wert.benachrichtigt !== undefined || wert.gesehen !== undefined, 'Eine Version fehlt.');
+
 const datenWert = z.union([z.string(), z.number(), z.null()]);
 
 export const datenImportSchema = z.object({

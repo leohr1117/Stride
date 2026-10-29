@@ -119,7 +119,7 @@ test('Chronik, Vision und Version', async ({ page }, testInfo) => {
   const bild = (name: string) => page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-${name}.png` });
 
   await page.goto('/mehr');
-  const version = page.getByRole('button', { name: /Version \d+\.\d+\.\d+/ });
+  const version = page.getByRole('link', { name: 'Was ist neu' });
   await version.scrollIntoViewIfNeeded();
   await expect(version).toBeVisible();
   await expect(page.getByText('Der Versionsverlauf lässt sich aufklappen.')).toHaveCount(0);

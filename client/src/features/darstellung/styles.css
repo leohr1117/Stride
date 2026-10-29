@@ -668,6 +668,10 @@ body:has([role='dialog'], [role='alertdialog']) .eintrag-fab {
   z-index: 80;
 }
 
+html[data-fab='an'] .toast-lage {
+  padding-right: 88px;
+}
+
 .sicht-mitte {
   box-sizing: border-box;
   min-height: var(--sicht-hoehe);

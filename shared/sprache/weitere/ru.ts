@@ -1,5 +1,12 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Stride wurde aktualisiert.": "Stride обновился.",
+  "Neuigkeiten": "Что нового",
+  "Was ist neu": "Что нового",
+  "Neu seit deinem letzten Besuch": "Новое с прошлого визита",
+  "Nach einem Update erscheint einmal der Hinweis, dass Stride aktualisiert wurde.": "После обновления один раз появляется сообщение, что Stride обновился.",
+  "Mehr zeigt einen Punkt, bis Was ist neu geöffnet wurde.": "Раздел «Ещё» показывает точку, пока не открыто «Что нового».",
+  "Was ist neu stellt die Versionen seit dem letzten Besuch nach oben.": "«Что нового» ставит наверх версии с прошлого визита.",
   "+ Tätigkeit": "+ Занятие",
   "Wähl eine Tätigkeit.": "Выбери занятие.",
   "Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.": "При записи занятия стоят в одной строке. Чип + Занятие создаёт новое.",

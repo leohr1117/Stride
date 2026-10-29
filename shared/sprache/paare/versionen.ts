@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Nach einem Update erscheint einmal der Hinweis, dass Stride aktualisiert wurde.', 'After an update, a notice appears once that Stride was updated.'],
+  ['Mehr zeigt einen Punkt, bis Was ist neu geöffnet wurde.', "More shows a dot until What's new has been opened."],
+  ['Was ist neu stellt die Versionen seit dem letzten Besuch nach oben.', "What's new puts the versions since the last visit at the top."],
   ['Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.', 'When logging an entry, activities sit in one row. The + Activity chip adds a new one.'],
   ['Wofür? ist eine Überschrift ohne Kasten und ohne Tipp.', 'For what? is a heading, with no box and no tip.'],
   ['Eintragen bleibt unten im Dialog stehen.', 'Log stays at the bottom of the dialog.'],

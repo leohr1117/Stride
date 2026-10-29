@@ -601,8 +601,7 @@ test('Nachschlagen erklärt Benachrichtigungen', async ({ page }) => {
   await karte.screenshot({ path: `tmp-bau/49/${projekt}-karte.png` });
   await page.screenshot({ path: `tmp-bau/49/${projekt}-seite.png` });
 
-  await page.goto('/mehr');
-  await page.getByRole('button', { name: /^Version / }).click();
+  await page.goto('/mehr/neu');
   const verlauf = page.getByRole('region', { name: 'Version 3.17.0' });
   await expect(verlauf).toBeVisible();
   await expect(verlauf.getByText('Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag.')).toBeVisible();

@@ -1,5 +1,12 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Stride wurde aktualisiert.": "Stride se actualizó.",
+  "Neuigkeiten": "Novedades",
+  "Was ist neu": "Novedades",
+  "Neu seit deinem letzten Besuch": "Nuevo desde tu última visita",
+  "Nach einem Update erscheint einmal der Hinweis, dass Stride aktualisiert wurde.": "Tras una actualización aparece una vez el aviso de que Stride se actualizó.",
+  "Mehr zeigt einen Punkt, bis Was ist neu geöffnet wurde.": "Más muestra un punto hasta que se abre Novedades.",
+  "Was ist neu stellt die Versionen seit dem letzten Besuch nach oben.": "Novedades coloca arriba las versiones desde la última visita.",
   "+ Tätigkeit": "+ Actividad",
   "Wähl eine Tätigkeit.": "Elige una actividad.",
   "Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.": "Al anotar, las actividades van en una fila. El chip + Actividad crea una nueva.",

@@ -226,8 +226,7 @@ test('Nachschlagen erklärt Schutz und Rückkehr', async ({ page }) => {
   await karte.screenshot({ path: `tmp-bau/38/${projekt}-karte.png` });
   await page.screenshot({ path: `tmp-bau/38/${projekt}-seite.png` });
 
-  await page.goto('/mehr');
-  await page.getByRole('button', { name: /^Version / }).click();
+  await page.goto('/mehr/neu');
   const verlauf = page.getByRole('region', { name: 'Version 3.16.0' });
   await expect(verlauf).toBeVisible();
   await expect(verlauf.getByText('Der Schutz hält den Streak, wenn ein Tag Pause nicht reicht. Du verdienst ihn alle sieben Tage und setzt ihn unter Heute ein.')).toBeVisible();

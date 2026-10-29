@@ -1,5 +1,12 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Stride wurde aktualisiert.": "Stride を更新しました。",
+  "Neuigkeiten": "新着",
+  "Was ist neu": "新着",
+  "Neu seit deinem letzten Besuch": "前回から新しくなった内容",
+  "Nach einem Update erscheint einmal der Hinweis, dass Stride aktualisiert wurde.": "更新のあと、Stride が更新されたという案内が一度出ます。",
+  "Mehr zeigt einen Punkt, bis Was ist neu geöffnet wurde.": "「その他」は、「新着」を開くまで点が付きます。",
+  "Was ist neu stellt die Versionen seit dem letzten Besuch nach oben.": "「新着」は、前回から新しい版を上に置きます。",
   "+ Tätigkeit": "+ 活動",
   "Wähl eine Tätigkeit.": "活動を選んでください。",
   "Beim Eintragen stehen die Tätigkeiten in einer Zeile. Der Chip + Tätigkeit legt eine neue an.": "記入するとき、活動は1行に並びます。+ 活動チップで新しく作ります。",

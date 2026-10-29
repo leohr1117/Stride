@@ -1,5 +1,9 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Stride wurde aktualisiert.', 'Stride was updated.'],
+  ['Neuigkeiten', "What's new"],
+  ['Was ist neu', "What's new"],
+  ['Neu seit deinem letzten Besuch', 'New since your last visit'],
   ['Noch keine Attribute.', 'No attributes yet.'],
   ['Attribut hinzufügen', 'Add an attribute'],
   ['Investition anlegen', 'Add an investment'],

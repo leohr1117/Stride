@@ -49,8 +49,7 @@ test('Handbuch und Einführung nennen die Bereiche nicht mehr', async ({ page },
   await expect(page.getByRole('tooltip')).toContainText('Erledigte Aufgaben werden zu Einträgen');
   await page.keyboard.press('Escape');
 
-  await page.goto('/mehr');
-  await page.getByRole('button', { name: /^Version / }).click();
+  await page.goto('/mehr/neu');
   const satz = page.getByText('Handbuch und Einführung nennen die Bereiche Aufgaben und Training nicht mehr.');
   await satz.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'nearest' }));
   await expect(satz).toBeVisible();

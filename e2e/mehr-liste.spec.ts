@@ -116,12 +116,11 @@ test('Mehr ist das Seitenverzeichnis und die Einstellungen', async ({ page }, te
   await page.locator('a[data-zurueck]').click();
   await expect(page).toHaveURL(/\/mehr$/);
 
-  const version = page.locator('[data-version] button');
+  const version = page.getByRole('link', { name: 'Was ist neu' });
   await version.scrollIntoViewIfNeeded();
-  await expect(version).toHaveAttribute('aria-expanded', 'false');
   await version.click();
-  await expect(version).toHaveAttribute('aria-expanded', 'true');
-  await expect(page.locator('[data-version]')).toContainText('Mehr zeigt alle eingeschalteten Seiten');
+  await expect(page).toHaveURL(/\/mehr\/neu$/);
+  await expect(page.locator('[data-changelog]')).toContainText('Mehr zeigt alle eingeschalteten Seiten');
   await ohneSeitlichenUeberlauf(page);
   await bild('version');
 

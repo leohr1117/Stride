@@ -1,5 +1,7 @@
 import { spawn, type ChildProcess } from 'node:child_process';
+import fs from 'node:fs';
 import net from 'node:net';
+import { AKTUELLE_VERSION } from '../shared/versionen.ts';
 import { starteTodoistAttrappe, type TodoistAttrappe } from '../server/integrationen/todoistAttrappe.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { erstelleTestkopie, loescheTestkopie } from './kopie.ts';
@@ -33,6 +35,31 @@ async function warteAufServer(kind: ChildProcess): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 200));
   }
   throw new Error(`Testserver auf ${TEST_URL} nicht bereit: ${letzter}`);
+}
+
+async function setzeHinweisAktuell(): Promise<void> {
+  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
+  const passwort = text.match(/Benutzername: testvoll\s+Passwort:\s*(\S+)/)?.[1];
+  if (!passwort) {
+    throw new Error('Testzugang fehlt.');
+  }
+  const login = await fetch(`${TEST_URL}/api/zugang`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ benutzername: 'testvoll', passwort }),
+  });
+  if (!login.ok) {
+    throw new Error(`Anmeldung für den Update-Hinweis fehlgeschlagen: ${login.status}`);
+  }
+  const keks = login.headers.getSetCookie().map((zeile) => zeile.split(';')[0]).join('; ');
+  const schreiben = await fetch(`${TEST_URL}/api/version-hinweis`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', cookie: keks },
+    body: JSON.stringify({ benachrichtigt: AKTUELLE_VERSION, gesehen: AKTUELLE_VERSION }),
+  });
+  if (!schreiben.ok) {
+    throw new Error(`Update-Hinweis ließ sich nicht setzen: ${schreiben.status}`);
+  }
 }
 
 function beende(kind: ChildProcess): Promise<void> {
@@ -101,6 +128,7 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
 
   try {
     await warteAufServer(kind);
+    await setzeHinweisAktuell();
   } catch (fehler) {
     await beende(kind);
     await attrappe.stop();

@@ -7,6 +7,8 @@ import { migriere, uebernimmDatenbank } from '../db.ts';
 import { sperreEchteDatenbankImTest } from '../testpfad.ts';
 import { schalteErfolgeFrei } from '../features/erfolge/erfolge.ts';
 import { ladeEinstellungen } from '../features/einstellungen/einstellungen.ts';
+import { setzeVersionsstand } from '../features/einstellungen/versionHinweis.ts';
+import { AKTUELLE_VERSION } from '../../shared/versionen.ts';
 
 const NEBENDATEIEN = ['', '-journal', '-wal', '-shm'];
 
@@ -28,6 +30,7 @@ export function setzeProfilZurueck(): Einstellungen {
     }
     uebernimmDatenbank(pfad);
     schalteErfolgeFrei();
+    setzeVersionsstand(AKTUELLE_VERSION);
     return ladeEinstellungen();
   } finally {
     entferne(pfad);

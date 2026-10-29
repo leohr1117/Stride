@@ -44,6 +44,7 @@ const SEITENTITEL: Record<string, string> = {
   '/vorbilder': 'Vorbilder',
   '/handbuch': 'Handbuch',
   '/mehr': 'Mehr',
+  '/mehr/neu': 'Was ist neu',
   '/charakter': 'Profil',
   '/koennen': 'Können',
   '/haben': 'Haben',

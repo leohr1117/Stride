@@ -41,6 +41,8 @@ export interface Einstellungen {
   gewichtEinheit: GewichtEinheit;
   /** Welche Karten die Übersicht zeigt. Ein fehlender Eintrag gilt als an. */
   uebersichtKarten: UebersichtKartenWahl;
+  /** Update-Hinweis je Profil. Null, bis die Snackbar erschien bzw. der Changelog offen war. */
+  versionHinweis: { benachrichtigt: string | null; gesehen: string | null };
 }
 
 /** PATCH-Körper. `farbenZuruecksetzen` löscht die eigenen Farben der Zielansicht. */

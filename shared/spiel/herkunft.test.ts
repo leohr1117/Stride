@@ -71,6 +71,7 @@ describe('elternZiel', () => {
     expect(elternZiel('/mehr/profil/fokus')).toEqual({ pfad: '/mehr/profil', label: 'Konto' });
     expect(elternZiel('/mehr/inhalte/verbindungen')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/mehr/uebersicht')).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/mehr/neu')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/projekte/4')).toEqual({ pfad: '/ziele', label: 'Ziele' });
     expect(elternZiel('/faehigkeiten')).toEqual({ pfad: '/charakter', label: 'Profil' });
     expect(elternZiel('/faehigkeiten', { leiste: ['/', '/faehigkeiten'] })).toBeNull();
@@ -97,6 +98,7 @@ describe('herkunftsLabel', () => {
     expect(herkunftsLabel('/statistiken')).toBe('Statistik');
     expect(herkunftsLabel('/mehr/uebersicht')).toBe('Karten auf Heute');
     expect(herkunftsLabel('/mehr/funktionen')).toBe('Bereiche');
+    expect(herkunftsLabel('/mehr/neu')).toBe('Was ist neu');
     expect(herkunftsLabel('/faehigkeiten')).toBe('Fähigkeiten');
     expect(herkunftsLabel('/koennen')).toBe('Können');
     expect(herkunftsLabel('/haben')).toBe('Haben');
