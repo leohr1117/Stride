@@ -17,8 +17,14 @@ const VERZEICHNIS = [
   ['/statistiken', 'Statistiken', 'diagramm', 2],
   ['/vorbilder', 'Vorbilder', 'stern', 2],
   ['/charakter', 'Profil', 'person', 3],
+  ['/koennen', 'Können', 'hirn', 3],
+  ['/haben', 'Haben', 'boerse', 3],
+  ['/faehigkeiten', 'Fähigkeiten', 'funken', 3],
+  ['/investitionen', 'Investitionen', 'juwel', 3],
   ['/handbuch', 'Handbuch', 'buch', 4],
 ] as const;
+
+const PROFILZEILE = new Set(['/koennen', '/haben', '/faehigkeiten', '/investitionen']);
 
 describe('Seitentabelle', () => {
   it('hat für jede Seite Name, Symbol und Block, in der Reihenfolge aus 11.1', () => {
@@ -40,7 +46,7 @@ describe('Seitentabelle', () => {
       expect(seite.name.trim()).toBe(seite.name);
       expect(seite.symbol.length).toBeGreaterThan(0);
       expect(seite.toastZiel).toBe(seite.pfad);
-      expect(seite.profilzeile).toBe(false);
+      expect(seite.profilzeile).toBe(PROFILZEILE.has(seite.pfad));
       expect(hatSchluessel(seite.name)).toBe(true);
     }
   });
@@ -61,8 +67,10 @@ describe('Seitentabelle', () => {
       basis: false,
       chronik: false,
       handbuch: false,
+      koennen: false,
       rueckblick: false,
       statistiken: false,
+      status: false,
       vorbilder: false,
     };
     const ebenen = { visionen: false, organisationen: false, projekte: false, vorhaben: false };
@@ -80,5 +88,7 @@ describe('Seitentabelle', () => {
     expect(pfadAktiv('/vorbilder/ada', aus)).toBe(false);
     expect(seiteZuPfad('/vorbilder/ada')?.pfad).toBe('/vorbilder');
     expect(seiteZuPfad('/vorbilder/ada')?.schalter).toBe('vorbilder');
+    expect(seiteZuPfad('/faehigkeiten/2')?.pfad).toBe('/faehigkeiten');
+    expect(seiteZuPfad('/faehigkeiten/2')?.schalter).toBe('faehigkeiten');
   });
 });

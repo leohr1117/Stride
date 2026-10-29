@@ -21,6 +21,10 @@ export type SeitenSymbol =
   | 'diagramm'
   | 'stern'
   | 'person'
+  | 'hirn'
+  | 'boerse'
+  | 'funken'
+  | 'juwel'
   | 'buch'
   | 'zahnrad';
 
@@ -35,7 +39,7 @@ export interface Seite {
   /** null nur bei Mehr: fest unten, nicht in den vier Blöcken. */
   block: Block | null;
   schalter: SeitenSchalter | null;
-  /** true, sobald die Zeile auf dem Profil existiert. Bis U17 überall false. */
+  /** true, wenn das Profil die Seite als Zeile mit Anzahl zeigt. */
   profilzeile: boolean;
   /** Ziel des Toasts „Öffnen“. Bei diesen Seiten die Seite selbst. */
   toastZiel: string;
@@ -45,7 +49,6 @@ export interface Seite {
 
 /**
  * Vorhandene Seiten in der Reihenfolge aus Teil 11.1.
- * Können, Haben, Fähigkeiten und Investitionen kommen in U17 dazu.
  * Mehr steht hinter dem Verzeichnis, weil es in keinen Block gehört.
  */
 export const SEITEN: readonly Seite[] = [
@@ -68,6 +71,27 @@ export const SEITEN: readonly Seite[] = [
     unterseiten: true,
   },
   { pfad: '/charakter', name: 'Profil', symbol: 'person', block: 3, schalter: null, profilzeile: false, toastZiel: '/charakter' },
+  { pfad: '/koennen', name: 'Können', symbol: 'hirn', block: 3, schalter: 'koennen', profilzeile: true, toastZiel: '/koennen' },
+  { pfad: '/haben', name: 'Haben', symbol: 'boerse', block: 3, schalter: 'status', profilzeile: true, toastZiel: '/haben' },
+  {
+    pfad: '/faehigkeiten',
+    name: 'Fähigkeiten',
+    symbol: 'funken',
+    block: 3,
+    schalter: 'faehigkeiten',
+    profilzeile: true,
+    toastZiel: '/faehigkeiten',
+    unterseiten: true,
+  },
+  {
+    pfad: '/investitionen',
+    name: 'Investitionen',
+    symbol: 'juwel',
+    block: 3,
+    schalter: 'ausruestung',
+    profilzeile: true,
+    toastZiel: '/investitionen',
+  },
   { pfad: '/handbuch', name: 'Handbuch', symbol: 'buch', block: 4, schalter: 'handbuch', profilzeile: false, toastZiel: '/handbuch' },
   { pfad: '/mehr', name: 'Mehr', symbol: 'zahnrad', block: null, schalter: null, profilzeile: false, toastZiel: '/mehr' },
 ];

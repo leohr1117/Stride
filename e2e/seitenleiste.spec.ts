@@ -12,6 +12,10 @@ const REIHE = [
   '/statistiken',
   '/vorbilder',
   '/charakter',
+  '/koennen',
+  '/haben',
+  '/faehigkeiten',
+  '/investitionen',
   '/handbuch',
   '/mehr',
 ];
@@ -67,9 +71,6 @@ test('PC-Seitenleiste in vier Blöcken, Handy bleibt bei der Leiste', async ({ p
   await expect(seite.locator('[role="separator"]')).toHaveCount(3);
   const profil = seite.getByRole('link', { name: 'Profil', exact: true });
   await expect(profil.locator('.klassenbild')).toBeVisible();
-  for (const name of ['Können', 'Haben', 'Fähigkeiten', 'Investitionen']) {
-    await expect(seite.getByRole('link', { name, exact: true })).toHaveCount(0);
-  }
   await expect(page.getByText('Lädt …')).toHaveCount(0);
   await bild('uebersicht');
 

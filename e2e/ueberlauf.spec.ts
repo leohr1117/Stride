@@ -20,6 +20,10 @@ const FEST = [
   '/rueckblick',
   '/statistiken',
   '/charakter',
+  '/koennen',
+  '/haben',
+  '/faehigkeiten',
+  '/investitionen',
   '/vorbilder',
   '/vorbilder/ronaldo',
   '/vorbilder/durchschnitt',
@@ -224,7 +228,7 @@ test('Ansichten bleiben bei 390 und 1440 im Bild', async ({ page }, testInfo) =>
     await page.goto(pfad);
     await page.getByRole('heading').first().waitFor();
     await oeffneAbschnitte(page);
-    if (pfad === '/charakter' || pfad.includes('vorbild') || pfad === '/statistiken' || pfad === '/rueckblick') {
+    if (pfad === '/koennen' || pfad === '/haben' || pfad.includes('vorbild') || pfad === '/statistiken' || pfad === '/rueckblick') {
       await page.locator('.recharts-surface').first().waitFor({ timeout: 2500 }).catch(() => undefined);
     }
     const funde = await miss(page);

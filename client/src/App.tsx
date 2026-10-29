@@ -17,6 +17,9 @@ const ladeLaufend = () => import('./features/ziele/Laufend.tsx');
 const ladeZiele = () => import('./features/ziele/Ziele.tsx');
 const ladeMehr = () => import('./features/mehr/Mehr.tsx');
 const ladeCharakter = () => import('./features/attribute/Charakter.tsx');
+const ladeAttributSeite = () => import('./features/attribute/AttributSeite.tsx');
+const ladeFaehigkeiten = () => import('./features/faehigkeiten/FaehigkeitenSeite.tsx');
+const ladeInvestitionen = () => import('./features/investitionen/Investitionen.tsx');
 const ladeMehrBereiche = () => import('./features/mehr/bereiche.ts');
 const ladeBasis = () => import('./features/basis/BasisSeite.tsx');
 const ladeChronik = () => import('./features/eintraege/Chronik.tsx');
@@ -33,6 +36,10 @@ const LaufendSeite = seite(ladeLaufend, (modul) => modul.LaufendSeite);
 const ZieleSeite = seite(ladeZiele, (modul) => modul.ZieleSeite);
 const MehrSeite = seite(ladeMehr, (modul) => modul.MehrSeite);
 const CharakterSeite = seite(ladeCharakter, (modul) => modul.CharakterSeite);
+const KoennenSeite = seite(ladeAttributSeite, (modul) => modul.KoennenSeite);
+const HabenSeite = seite(ladeAttributSeite, (modul) => modul.HabenSeite);
+const FaehigkeitenSeite = seite(ladeFaehigkeiten, (modul) => modul.FaehigkeitenSeite);
+const InvestitionenSeite = seite(ladeInvestitionen, (modul) => modul.InvestitionenSeite);
 const MehrProfilSeite = seite(ladeMehrBereiche, (modul) => modul.MehrProfilSeite);
 const MehrInhalteSeite = seite(ladeMehrBereiche, (modul) => modul.MehrInhalteSeite);
 const MehrDarstellungSeite = seite(ladeMehrBereiche, (modul) => modul.MehrDarstellungSeite);
@@ -67,7 +74,11 @@ const router = createBrowserRouter([
       { path: 'statistiken', element: <StatistikenSeite /> },
       { path: 'ziele', element: <ZieleSeite /> },
       { path: 'projekte/:id', element: <ProjektSeite /> },
+      { path: 'koennen', element: <KoennenSeite /> },
+      { path: 'haben', element: <HabenSeite /> },
+      { path: 'faehigkeiten', element: <FaehigkeitenSeite /> },
       { path: 'faehigkeiten/:id', element: <FaehigkeitSeite /> },
+      { path: 'investitionen', element: <InvestitionenSeite /> },
       { path: 'charakter', element: <CharakterSeite /> },
       { path: 'vorbilder', element: <VorbilderSeite /> },
       { path: 'vorbilder/:schluessel', element: <VorbildProfilSeite /> },

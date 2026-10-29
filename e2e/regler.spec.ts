@@ -123,9 +123,8 @@ test('Regler lässt das Textfeld los', async ({ page }, testInfo) => {
   await ohneSeitlichenUeberlauf(page);
   await page.keyboard.press('Escape');
 
-  await page.goto('/charakter');
-  const kopf = page.locator('div').filter({ has: page.getByRole('heading', { name: 'Investitionen', level: 2 }) }).first();
-  await kopf.getByRole('button', { name: 'Neu', exact: true }).click();
+  await page.goto('/investitionen');
+  await page.getByRole('button', { name: /Investition anlegen/ }).click();
   const investition = page.getByRole('dialog', { name: 'Neue Investition' });
   await expect(investition).toBeVisible();
   const investitionName = investition.getByRole('textbox', { name: 'Name' });

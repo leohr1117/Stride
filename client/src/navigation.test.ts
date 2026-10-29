@@ -21,6 +21,8 @@ describe('seitenleistenPfade', () => {
       '/mehr/inhalte',
       '/chronik',
       '/charakter',
+      '/koennen',
+      '/haben',
       '/handbuch',
       '/mehr',
     ]);
@@ -43,12 +45,12 @@ describe('Seitenleiste aus der Tabelle', () => {
       '/statistiken',
       '/vorbilder',
       '/charakter',
+      '/koennen',
+      '/haben',
+      '/faehigkeiten',
+      '/investitionen',
       '/handbuch',
     ]);
-    expect(pfade).not.toContain('/koennen');
-    expect(pfade).not.toContain('/haben');
-    expect(pfade).not.toContain('/faehigkeiten');
-    expect(pfade).not.toContain('/investitionen');
     for (const eintrag of gruppen.flatMap((gruppe) => gruppe.eintraege)) {
       const seite = SEITEN.find((kandidat) => kandidat.pfad === eintrag.pfad);
       expect(eintrag.label).toBe(seite?.name);
@@ -68,7 +70,7 @@ describe('Seitenleiste aus der Tabelle', () => {
     const ebenen = { visionen: false, organisationen: false, projekte: false, vorhaben: false };
     const gruppen = sichtbareGruppen(funktionen, ebenen);
     const pfade = gruppen.flatMap((gruppe) => gruppe.eintraege.map((eintrag) => eintrag.pfad));
-    expect(pfade).toEqual(['/', '/mehr/inhalte', '/charakter']);
+    expect(pfade).toEqual(['/', '/mehr/inhalte', '/charakter', '/koennen', '/haben', '/faehigkeiten', '/investitionen']);
     expect(gruppen.every((gruppe) => gruppe.titel === null && gruppe.eintraege.length > 0)).toBe(true);
     expect(seitenleistenPfade(funktionen, ebenen)).toEqual([...pfade, '/mehr']);
   });

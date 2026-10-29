@@ -39,9 +39,9 @@ test('Attributnamen sind nur sichtbar', async ({ page }, testInfo) => {
     expect(gespeichert.name).toBe(eintrag.name);
   }
 
-  await page.goto('/charakter');
-  const bereich = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Können', exact: true }) });
-  const knopf = bereich.getByRole('button', { name: / bearbeiten$/ }).first();
+  await page.goto('/koennen');
+  const bereich = page.locator('main');
+  const knopf = bereich.getByRole('button', { name: koennen.name, exact: true });
   await knopf.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
   await knopf.click();
 
@@ -65,7 +65,7 @@ test('Attributnamen sind nur sichtbar', async ({ page }, testInfo) => {
   await dialog.getByRole('textbox', { name: 'Beschreibung' }).fill(notiz);
   await dialog.getByRole('button', { name: 'Speichern' }).click();
   await expect(dialog).toBeHidden();
-  await expect(page).toHaveURL(/\/charakter$/);
+  await expect(page).toHaveURL(/\/koennen$/);
 
   const nachher = await attribute(page);
   expect(nachher.map((eintrag) => eintrag.name).sort()).toEqual(namen);
@@ -74,10 +74,10 @@ test('Attributnamen sind nur sichtbar', async ({ page }, testInfo) => {
   const original = geaendert ? vorher.find((eintrag) => eintrag.id === geaendert.id) : undefined;
   expect(original && geaendert && geaendert.name === original.name).toBe(true);
 
-  await page.getByRole('button', { name: `${sichtbar} bearbeiten` }).first().evaluate((element) => {
+  await page.getByRole('button', { name: sichtbar, exact: true }).first().evaluate((element) => {
     element.scrollIntoView({ block: 'center', inline: 'nearest' });
   });
-  await page.getByRole('button', { name: `${sichtbar} bearbeiten` }).first().click();
+  await page.getByRole('button', { name: sichtbar, exact: true }).first().click();
   const wieder = page.getByRole('dialog', { name: `${sichtbar} bearbeiten` });
   await expect(wieder).toHaveCSS('opacity', '1');
   await expect(wieder.getByRole('textbox', { name: 'Name' })).toHaveCount(0);
@@ -88,8 +88,8 @@ test('Attributnamen sind nur sichtbar', async ({ page }, testInfo) => {
   await wieder.getByRole('button', { name: 'Schließen' }).click();
   await expect(wieder).toBeHidden();
   await expect(page.locator('.dialog-fenster')).toHaveCount(0);
-  await expect(page).toHaveURL(/\/charakter$/);
-  await expect(bereich.getByRole('heading', { name: 'Körper', exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/koennen$/);
+  await expect(bereich.getByRole('button', { name: 'Körper', exact: true })).toBeVisible();
   await bild('liste');
 
   if (original && geaendert) {

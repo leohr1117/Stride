@@ -1,6 +1,5 @@
 import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
-import { Plus } from 'lucide-react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import type { Attribut, Investition, InvestitionAenderung, InvestitionDaten, InvestitionsArt, InvestitionsZiel, Projekt, ProjektAenderung, ProjektDetail, Vision, Ziele } from '../../../../shared/api/index.ts';
 import type { Sichtbarkeit } from '../../../../shared/spiel/sichtbarkeit.ts';
@@ -10,14 +9,14 @@ import { INVESTITION_GROESSEN, INVESTITION_INFO, RESSOURCEN_INFO, RESSOURCEN_SCH
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { bonusProzent } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
-import { Abschnitt, KurzListe } from '../../components/Ausklappbar.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
+import { useKopf } from '../../components/Kopf.tsx';
+import { ArchivListe } from '../../components/ArchivListe.tsx';
 import { SchnellNebenaktion, SchnellZeile } from '../../components/SchnellAktion.tsx';
+import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
-import { Zeile, ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
-import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf, Leer, Regler, Segmentauswahl } from '../../ui/index.ts';
-
-const LISTE_SICHTBAR = 4;
+import { AnlegeZeile, Liste, Zeile, ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
+import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Ladeanzeige, Leer, Regler, Segmentauswahl } from '../../ui/index.ts';
 
 function zielText(ziel: InvestitionsZiel | null, visionen: Vision[], projekte: Projekt[], attribute: Attribut[]): string | null {
   if (!ziel) {
@@ -325,103 +324,80 @@ function schreibeProjekt(client: QueryClient, projekt: Projekt): void {
   });
 }
 
-export function InvestitionenBereich() {
+export function InvestitionenSeite() {
+  useKopf({ titel: 'Investitionen', info: INVESTITION_INFO });
   const sichtbarkeit = useSichtbarkeit();
   const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
   const { data: attribute = [] } = useQuery({ queryKey: SCHLUESSEL.attribute, queryFn: api.attribute });
-  const { data: investitionen = [] } = useQuery({ queryKey: SCHLUESSEL.investitionen, queryFn: api.investitionen });
+  const { data: investitionen, error, isPending } = useQuery({ queryKey: SCHLUESSEL.investitionen, queryFn: api.investitionen });
   const [dialog, setDialog] = useState<Investition | null | 'neu'>(null);
-  const projekte = (ziele?.projekte ?? []).filter((projekt) => projekt.investition && !projekt.archiviert);
-  const eigene = investitionen.filter((eintrag) => !eintrag.archiviert);
+  const liste = investitionen ?? [];
+  const eigene = liste.filter((eintrag) => !eintrag.archiviert);
+  const archiv = liste.filter((eintrag) => eintrag.archiviert);
   const visionen = ziele?.visionen ?? [];
   const alleProjekte = ziele?.projekte ?? [];
   const attributeWahl = waehlbareAttribute(attribute, sichtbarkeit.funktionen);
 
+  if (isPending) {
+    return <Ladeanzeige />;
+  }
+
   return (
-    <Abschnitt
-      titel={tx("Investitionen")}
-      kennung="ausruestung"
-      info={INVESTITION_INFO}
-      aktion={
-        <Knopf variante="leise" className="px-2 py-1" onClick={() => setDialog('neu')}>
-          <Plus className="size-4" />
-          {tx("Neu")}
-        </Knopf>
-      }
-    >
-      {projekte.length === 0 && eigene.length === 0 ? (
-        <Leer text={tx("Noch keine Investitionen.")} />
+    <div className="space-y-6">
+      <Fehlermeldung fehler={error} />
+      {eigene.length === 0 ? (
+        <Leer text={tx('Noch keine Investition.')} aktion={<Knopf onClick={() => setDialog('neu')}>{tx('Investition anlegen')}</Knopf>} />
       ) : (
-        <Karte dicht>
-          <KurzListe
-            eintraege={[
-              ...projekte.map((projekt) => ({ art: 'projekt' as const, projekt })),
-              ...eigene.map((investition) => ({ art: 'eigen' as const, investition })),
-            ]}
-            anzahl={LISTE_SICHTBAR}
-            className="divide-y divide-rand"
-            darstellen={(eintrag) => {
-              if (eintrag.art === 'projekt') {
-                const projekt = eintrag.projekt;
-                const name = zielText(projekt.investitionZiel, visionen, alleProjekte, attribute);
-                return (
-                  <SchnellZeile
-                    key={`p-${projekt.id}`}
-                    ziel={{ art: 'projekt', id: projekt.id, name: projekt.name, archiviert: projekt.archiviert, loeschbar: projekt.loeschbar }}
-                  >
-                    {(menue) => (
-                      <Zeile
-                        nach={`/projekte/${projekt.id}`}
-                        name={projekt.name}
-                        rechts={menue}
-                        titel={
-                          <span className="block min-w-0">
-                            <span className="block truncate">{projekt.name}</span>
-                            {name ? <span className="block truncate text-xs font-normal text-leise">{name}</span> : null}
-                          </span>
-                        }
-                        wert={projekt.geschafftAm && projekt.investitionZiel ? bonusProzent(projekt.investitionBonus) : undefined}
-                      />
-                    )}
-                  </SchnellZeile>
-                );
-              }
-              const investition = eintrag.investition;
-              const untertitel = [investition.attributName, investition.zielName].filter((teil) => teil).join(' · ');
-              return (
-                <SchnellZeile
-                  key={`i-${investition.id}`}
-                  ziel={{
-                    art: 'investition',
-                    id: investition.id,
-                    name: investition.name,
-                    archiviert: investition.archiviert,
-                    loeschbar: investition.loeschbar,
-                  }}
-                >
-                  {(menue) => (
-                    <Zeile
-                      name={investition.name}
-                      rechts={menue}
-                      onKlick={() => setDialog(investition)}
-                      titel={
-                        <span className="block min-w-0">
-                          <span className="block truncate">{investition.name}</span>
-                          {untertitel ? <span className="block truncate text-xs font-normal text-leise">{untertitel}</span> : null}
-                        </span>
-                      }
-                      wert={bonusProzent(investition.bonus)}
-                    />
-                  )}
-                </SchnellZeile>
-              );
-            }}
-          />
-        </Karte>
+        <Liste>
+          {eigene.map((investition) => {
+            const ziel = investition.zielName ?? zielText(investition.ziel, visionen, alleProjekte, attribute);
+            const neben = [bonusProzent(investition.bonus), ziel].filter((teil) => teil).join(' · ');
+            return (
+              <SchnellZeile
+                key={investition.id}
+                ziel={{
+                  art: 'investition',
+                  id: investition.id,
+                  name: investition.name,
+                  archiviert: investition.archiviert,
+                  loeschbar: investition.loeschbar,
+                }}
+              >
+                {(menue) => (
+                  <Zeile
+                    name={investition.name}
+                    onKlick={() => setDialog(investition)}
+                    pfeil={false}
+                    symbol={<Icon name={investition.icon} />}
+                    titel={investition.name}
+                    neben={neben}
+                    rechts={menue}
+                  />
+                )}
+              </SchnellZeile>
+            );
+          })}
+          <AnlegeZeile text="Investition anlegen" onKlick={() => setDialog('neu')} />
+        </Liste>
       )}
+      <ArchivListe
+        eintraege={archiv.map((eintrag) => ({
+          schluessel: `i-${eintrag.id}`,
+          name: eintrag.name,
+          icon: eintrag.icon,
+          farbe: NEUTRAL_FARBE,
+          ziel: {
+            art: 'investition' as const,
+            id: eintrag.id,
+            name: eintrag.name,
+            archiviert: true,
+            loeschbar: eintrag.loeschbar,
+          },
+        }))}
+      />
       <Dialog
         offen={dialog !== null}
-        titel={dialog === 'neu' ? tx("Neue Investition") : tx("Investition")}
+        titel={dialog === 'neu' ? tx('Neue Investition') : tx('Investition')}
         onSchliessen={() => setDialog(null)}
       >
         {dialog !== null && (
@@ -432,7 +408,7 @@ export function InvestitionenBereich() {
           />
         )}
       </Dialog>
-    </Abschnitt>
+    </div>
   );
 }
 

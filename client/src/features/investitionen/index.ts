@@ -1,1 +1,1 @@
-export { InvestitionenBereich, ProjektInvestition } from './Investitionen.tsx';
+export { InvestitionenSeite, ProjektInvestition } from './Investitionen.tsx';

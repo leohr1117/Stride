@@ -29,7 +29,7 @@ async function iconLage(seite: Page, wurzel: string): Promise<{ abstand: number;
     const huelle = knopf.parentElement;
     const abstand = huelle ? Number.parseFloat(getComputedStyle(huelle).marginInlineStart) || 0 : 0;
     const zeile = knopf.closest('h1, h2, h3, #funktion-ausruestung') ?? knopf.parentElement?.parentElement;
-    const titel = zeile?.querySelector(':scope > .text-sm, :scope > h1, :scope > h2, :scope > h3, .text-sm');
+    const titel = zeile?.querySelector(':scope > .text-base, :scope > h1, :scope > h2, :scope > h3, .text-base');
     const titelKasten = titel?.getBoundingClientRect();
     const delta = titelKasten ? kasten.top + kasten.height / 2 - (titelKasten.top + titelKasten.height / 2) : null;
     return { abstand, delta };
@@ -54,8 +54,9 @@ test('Info-Icon sitzt nah und mittig an der Labelzeile', async ({ page }) => {
   expect(funktion.abstand).toBeLessThanOrEqual(8);
   expect(Math.abs(funktion.delta ?? 99)).toBeLessThanOrEqual(4);
 
-  await page.goto('/charakter');
-  const kopf = page.getByRole('heading', { name: 'Investitionen', exact: true });
+  await page.goto('/investitionen');
+  await expect(page.getByText('Lädt …')).toHaveCount(0);
+  const kopf = page.locator('[data-kopf]').getByRole('heading', { name: 'Investitionen', exact: true });
   await kopf.scrollIntoViewIfNeeded();
   const lage = await page.getByRole('heading', { name: 'Investitionen', exact: true }).evaluate((titel) => {
     const knopf = titel.parentElement?.querySelector('button[aria-label="Info"]');
@@ -71,6 +72,10 @@ test('Info-Icon sitzt nah und mittig an der Labelzeile', async ({ page }) => {
   expect(lage.abstand).toBeGreaterThanOrEqual(5);
   expect(lage.abstand).toBeLessThanOrEqual(8);
   expect(Math.abs(lage.delta ?? 99)).toBeLessThanOrEqual(4);
+  await page.locator('[data-kopf]').getByRole('button', { name: 'Info' }).click();
+  await expect(page.getByRole('tooltip')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('tooltip')).toHaveCount(0);
 });
 
 test('Vorbilder zeigen die Ähnlichkeit und behalten den Filter', async ({ page }) => {

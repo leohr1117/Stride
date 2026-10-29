@@ -1,6 +1,6 @@
 import { klassenText, tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BookMarked, Flame, RotateCcw } from 'lucide-react';
+import { BookMarked, ChevronRight, Flame, RotateCcw } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import type { Attribut, Erschoepfung, HeatmapTag, VorhabenMitProjekt } from '../../../../shared/api/index.ts';
@@ -139,10 +139,10 @@ export function UebersichtSeite() {
         <Abschnitt titel={tx("Werte")} kennung="uebersicht-werte" anfangEingeklappt>
           <div className="grid gap-4 md:grid-cols-2">
             {funktionen.koennen && (
-              <Werte titel={tx("Können")} werte={uebersicht.attribute} erschoepfungen={uebersicht.erschoepfungen} />
+              <Werte titel={tx("Können")} pfad="/koennen" werte={uebersicht.attribute} erschoepfungen={uebersicht.erschoepfungen} />
             )}
             {funktionen.status && (
-              <Werte titel={tx("Haben")} werte={uebersicht.status} erschoepfungen={uebersicht.erschoepfungen} />
+              <Werte titel={tx("Haben")} pfad="/haben" werte={uebersicht.status} erschoepfungen={uebersicht.erschoepfungen} />
             )}
           </div>
         </Abschnitt>
@@ -277,10 +277,12 @@ const WERTE_SICHTBAR = 5;
 
 function Werte({
   titel,
+  pfad,
   werte,
   erschoepfungen,
 }: {
   titel: string;
+  pfad: string;
   werte: Attribut[];
   erschoepfungen: Erschoepfung[];
 }) {
@@ -289,7 +291,15 @@ function Werte({
   );
   return (
     <Karte>
-      <Ueberschrift titel={titel} aktion={<AllgemeinerXpAbzug prozent={bild.allgemein} />} />
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
+          <Link to={pfad} className="inline-flex items-center">
+            {titel}
+            <ChevronRight className="size-4 shrink-0" aria-hidden />
+          </Link>
+        </h2>
+        <AllgemeinerXpAbzug prozent={bild.allgemein} />
+      </div>
       <KurzListe
         eintraege={werte}
         anzahl={WERTE_SICHTBAR}

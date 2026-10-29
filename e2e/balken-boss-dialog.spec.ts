@@ -348,8 +348,8 @@ test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
   await anmelden(page);
   await test.step('Attribut-Balken', async () => pruefeBalken(page, testInfo));
   await test.step('Erschöpfung', async () => {
-    await page.goto('/charakter');
-    const koennen = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Können', exact: true }) });
+    await page.goto('/koennen');
+    const koennen = page.locator('main');
     await expect(koennen.getByText('zu niedrig', { exact: true })).toHaveCount(0);
     const hinweis = koennen.getByRole('button', { name: 'Lvl zu niedrig' }).first();
     await expect(hinweis).toBeVisible();
@@ -357,7 +357,7 @@ test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
     await expect(page.getByRole('tooltip')).toHaveText('Lvl zu niedrig');
     await page.keyboard.press('Escape');
     await expect(koennen.locator('.text-gefahr', { hasText: /^Lvl / }).first()).toBeVisible();
-    const knopf = koennen.getByRole('button', { name: 'Geist bearbeiten' });
+    const knopf = koennen.getByRole('button', { name: 'Geist', exact: true });
     if ((await knopf.count()) === 0) {
       await koennen.getByRole('button', { name: /Alle anzeigen/ }).click();
     }

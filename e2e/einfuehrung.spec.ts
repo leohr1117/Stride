@@ -270,7 +270,7 @@ test('Weg C legt eine Fähigkeit an', async ({ page }) => {
   await expect(page.getByText('Fähigkeit', { exact: true })).toBeVisible();
   await expect(page.getByText('Gitarre', { exact: true })).toBeVisible();
   await knopf(page, 'de', 'Fertig').click();
-  await page.goto('/charakter');
+  await page.goto('/faehigkeiten');
   await expect(page.getByText('Gitarre', { exact: true })).toBeVisible();
 });
 

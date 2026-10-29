@@ -60,8 +60,8 @@ test('Speichern bleibt bei offener Tastatur im sichtbaren Bereich', async ({ pag
   const hoehe = 460;
   const tastatur = layout - hoehe;
 
-  await page.goto('/charakter');
-  await page.getByRole('button', { name: 'Fähigkeit', exact: true }).click();
+  await page.goto('/faehigkeiten');
+  await page.getByRole('button', { name: /Fähigkeit anlegen/ }).click();
   const dialog = page.getByRole('dialog', { name: 'Neue Fähigkeit' });
   await expect(dialog).toHaveCSS('opacity', '1');
   const speichern = dialog.getByRole('button', { name: 'Speichern' });

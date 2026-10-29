@@ -44,13 +44,10 @@ test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ pag
   }
 
   const seite = page.locator('aside.seitenleiste');
-  for (const name of ['Übersicht', 'Ziele', 'Laufend', 'Basis', 'Tätigkeiten', 'Chronik', 'Rückblick', 'Statistiken', 'Vorbilder', 'Profil', 'Handbuch', 'Mehr']) {
+  for (const name of ['Übersicht', 'Ziele', 'Laufend', 'Basis', 'Tätigkeiten', 'Chronik', 'Rückblick', 'Statistiken', 'Vorbilder', 'Profil', 'Können', 'Haben', 'Fähigkeiten', 'Investitionen', 'Handbuch', 'Mehr']) {
     await expect(seite.getByRole('link', { name, exact: true })).toBeVisible();
   }
   await expect(seite.getByText('Reise', { exact: true })).toHaveCount(0);
-  for (const name of ['Können', 'Haben', 'Fähigkeiten', 'Investitionen']) {
-    await expect(seite.getByRole('link', { name, exact: true })).toHaveCount(0);
-  }
   await bild('uebersicht');
 
   await seite.getByRole('link', { name: 'Ziele', exact: true }).click();

@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.', 'Ability, Assets, Skills, and Investments are their own pages.'],
+  ['Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.', 'The profile shows each as a row with the count. Each page has its own archive.'],
+  ['Unter Werte auf der Übersicht führen Können und Haben auf die Seite.', 'Under Values on the overview, Ability and Assets lead to the page.'],
   ['Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.', 'More shows every switched-on page in four lists, including the ones on the bar.'],
   ['Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.', 'Activities sits with the pages. Settings show the current value on the right.'],
   ['Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.', 'Connections sits directly under More. Shortcuts are gone.'],

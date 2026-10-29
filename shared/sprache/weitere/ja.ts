@@ -1,5 +1,12 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.": "能力、資産、スキル、投資はそれぞれのページです。",
+  "Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.": "プロフィールは件数つきの行で示します。各ページに自分のアーカイブがあります。",
+  "Unter Werte auf der Übersicht führen Können und Haben auf die Seite.": "概要の値では、能力と資産がページへ進みます。",
+  "Noch keine Attribute.": "属性はまだありません。",
+  "Attribut hinzufügen": "属性を追加",
+  "Investition anlegen": "投資を作る",
+  "Noch keine Investition.": "投資はまだありません。",
   "Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.": "その他は、オンになっているページを4つのリストで表示します。バーにあるページも含みます。",
   "Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.": "活動はページの中にあります。設定は右側に今の値を表示します。",
   "Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.": "つながりはその他の直下にあります。ショートカットはなくなります。",

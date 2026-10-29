@@ -1,10 +1,9 @@
-import { attributBeschreibung, attributName, tx } from '../../text.ts';
+import { attributName, tx } from '../../text.ts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Pencil, Plus } from 'lucide-react';
-import { useState, type FormEvent } from 'react';
+import { useState, type CSSProperties, type FormEvent } from 'react';
 import type { AktivierungsModus, Attribut, Erschoepfung } from '../../../../shared/api/index.ts';
 import { ATTRIBUT_KATALOG, type AttributVorlage } from '../../../../shared/features/attribute/attributKatalog.ts';
-import { ATTRIBUT_TYP_INFO, GRENZEN, type AttributKennung, type AttributTyp, type IconName } from '../../../../shared/spiel/begriffe.ts';
+import { GRENZEN, type AttributKennung, type AttributTyp, type IconName } from '../../../../shared/spiel/begriffe.ts';
 import { ERSCHOEPFUNG_SCHALTER, VERFALL_STUFE_LABEL, VERFALL_STUFEN, abzugNebenNamen, erschoepfungsBild, type VerfallStufe } from '../../../../shared/spiel/belastung.ts';
 import { verfallFunktion } from '../../../../shared/spiel/funktionen.ts';
 import { berechneLevel, LEVEL_KURVEN, verlustBalken } from '../../../../shared/spiel/level.ts';
@@ -13,14 +12,13 @@ import { zielXpNachAnteil } from '../../../../shared/spiel/umverteilung.ts';
 import { api } from '../../api/index.ts';
 import { zahl } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
-import { Abschnitt, KurzListe } from '../../components/Ausklappbar.tsx';
 import { SchnellNebenaktion, SchnellZeile } from '../../components/SchnellAktion.tsx';
+import { AnlegeZeile, Liste, Zeile } from '../../components/Zeile.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
 import { AttributRadar } from '../../components/mitDiagramm.tsx';
 import {
   AllgemeinerXpAbzug,
-  AttributBezeichnung,
   EINGABE_STIL,
   Farbauswahl,
   Feld,
@@ -31,9 +29,11 @@ import {
   Knopf,
   Schalter,
   Segmentauswahl,
+  XpAbzug,
+  ZuNiedrigHinweis,
 } from '../../ui/index.ts';
 
-const KARTEN_SICHTBAR = 4;
+const EINZUG = { '--liste-einzug': '48px' } as CSSProperties;
 
 export function AttributBereich({
   typ,
@@ -52,94 +52,64 @@ export function AttributBereich({
     erschoepfungen.map((eintrag) => ({ quelleId: eintrag.attributId, zielId: eintrag.zielId, faktor: eintrag.faktor })),
   );
   return (
-    <Abschnitt
-      titel={ATTRIBUT_TYP_INFO[typ].mehrzahl}
-      kennung={`attribute-${typ}`}
-      zusatz={bild.allgemein !== null ? <AllgemeinerXpAbzug prozent={bild.allgemein} /> : undefined}
-      aktion={
-        <Knopf variante="leise" className="px-2 py-1" onClick={onNeu}>
-          <Plus className="size-4" />
-          {tx("Hinzufügen")}
-        </Knopf>
-      }
-      bleibend={
-        werte.length >= MIN_RADAR_ACHSEN ? (
-          <Karte>
-            <AttributRadar typ={typ} werte={werte} />
-          </Karte>
-        ) : undefined
-      }
-    >
-      <KurzListe
-        eintraege={werte}
-        anzahl={KARTEN_SICHTBAR}
-        className="grid grid-cols-1 gap-3 md:grid-cols-2"
-        darstellen={(attribut) => {
+    <div className="space-y-4">
+      {bild.allgemein !== null ? <AllgemeinerXpAbzug prozent={bild.allgemein} /> : null}
+      {werte.length >= MIN_RADAR_ACHSEN ? (
+        <Karte>
+          <AttributRadar typ={typ} werte={werte} />
+        </Karte>
+      ) : null}
+      <Liste>
+        {werte.map((attribut) => {
+          const name = attributName(attribut);
           const hoechstXp = Number.isFinite(attribut.hoechstXp) ? attribut.hoechstXp : attribut.level.xpGesamt;
           const balken = verlustBalken(attribut.level.xpGesamt, hoechstXp, LEVEL_KURVEN[attribut.typ]);
           const ursache = bild.ursachen.includes(attribut.id);
           const prozent = abzugNebenNamen(bild, attribut.id);
+          const stufe = tx('Lvl {level}', { level: attribut.level.level });
           return (
-            <SchnellZeile
-              key={attribut.id}
-              className="rounded-2xl"
-              ziel={{
-                art: 'attribut',
-                id: attribut.id,
-                name: attributName(attribut),
-                archiviert: attribut.archiviert,
-                loeschbar: attribut.loeschbar,
-                gesperrt: werte.length <= 1,
-              }}
-            >
-              {(menue) => (
-            <Karte>
-              <div className="flex items-start gap-3">
-                <div
-                  className="flex size-10 shrink-0 items-center justify-center rounded-xl"
-                  style={{ backgroundColor: `${attribut.farbe}22`, color: attribut.farbe }}
-                >
-                  <Icon name={attribut.icon} className="size-5" />
+            <div key={attribut.id} className="attributzeile" style={EINZUG}>
+              <SchnellZeile
+                ziel={{
+                  art: 'attribut',
+                  id: attribut.id,
+                  name,
+                  archiviert: attribut.archiviert,
+                  loeschbar: attribut.loeschbar,
+                  gesperrt: werte.length <= 1,
+                }}
+              >
+                {(menue) => (
+                  <Zeile
+                    name={name}
+                    onKlick={() => onBearbeiten(attribut)}
+                    pfeil={false}
+                    symbol={<Icon name={attribut.icon} style={{ color: attribut.farbe }} />}
+                    titel={
+                      <span className="flex min-w-0 items-center gap-1">
+                        <span className="min-w-0 break-words">{name}</span>
+                        {prozent !== null ? <XpAbzug prozent={prozent} /> : null}
+                      </span>
+                    }
+                    wert={<span className={ursache ? 'font-semibold text-gefahr' : undefined}>{stufe}</span>}
+                    rechts={menue}
+                  />
+                )}
+              </SchnellZeile>
+              {ursache ? (
+                <div className="relative z-10 -mt-1 ps-12 pb-1">
+                  <ZuNiedrigHinweis />
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="min-w-0 flex-1 font-semibold">
-                      <AttributBezeichnung name={attribut.name} kennung={attribut.kennung} ursache={ursache} prozent={prozent} schrift="font-semibold" />
-                    </h3>
-                    <span className={`zahl shrink-0 whitespace-nowrap text-sm font-semibold ${ursache ? 'text-gefahr' : ''}`}>
-                      {tx('Lvl {level}', { level: attribut.level.level })}
-                    </span>
-                  </div>
-                  <p className="text-xs text-leise break-words">{attributBeschreibung(attribut)}</p>
-                </div>
-                {menue}
-                <Knopf
-                  variante="leise"
-                  className="-mt-1 -mr-1 p-2"
-                  aria-label={tx('{name} bearbeiten', { name: attributName(attribut) })}
-                  onClick={() => onBearbeiten(attribut)}
-                >
-                  <Pencil className="size-4" />
-                </Knopf>
+              ) : null}
+              <div className="px-4 pb-3">
+                <Fortschrittsbalken anteil={balken.stand} verlustBis={balken.verlustBis} farbe="var(--fortschritt)" hoehe="h-1.5" />
               </div>
-              <div className="mt-3">
-                <Fortschrittsbalken
-                  anteil={balken.stand}
-                  verlustBis={balken.verlustBis}
-                  farbe={attribut.farbe}
-                  hoehe="h-1.5"
-                />
-                <p className="zahl mt-1.5 text-right text-xs text-leise">
-                  {zahl(attribut.level.xpImLevel)} / {zahl(attribut.level.xpFuerNaechstes)} XP
-                </p>
-              </div>
-            </Karte>
-              )}
-            </SchnellZeile>
+            </div>
           );
-        }}
-      />
-    </Abschnitt>
+        })}
+        <AnlegeZeile text="Attribut hinzufügen" onKlick={onNeu} />
+      </Liste>
+    </div>
   );
 }
 

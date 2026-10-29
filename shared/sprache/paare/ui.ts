@@ -1,5 +1,9 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Noch keine Attribute.', 'No attributes yet.'],
+  ['Attribut hinzufügen', 'Add an attribute'],
+  ['Investition anlegen', 'Add an investment'],
+  ['Noch keine Investition.', 'No investment yet.'],
   ['Änderungen verwerfen?', 'Discard changes?'],
   ['Die Eingaben in diesem Blatt gehen verloren.', 'The entries in this sheet will be lost.'],
   ['Weiter bearbeiten', 'Keep editing'],

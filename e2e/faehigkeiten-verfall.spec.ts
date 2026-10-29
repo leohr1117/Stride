@@ -260,15 +260,15 @@ test('XP-Verlust ist für Können und Haben getrennt', async ({ page }) => {
       return;
     }
 
-    await page.goto('/charakter');
-    await alleAnzeigen(page);
-    await tippe(page.getByRole('button', { name: `${koennenAttribut.name} bearbeiten` }));
+    await page.goto('/koennen');
+    await page.getByRole('button', { name: koennenAttribut.name, exact: true }).click();
     const koennenDialog = page.getByRole('dialog', { name: `${koennenAttribut.name} bearbeiten` });
     await expect(koennenDialog.getByText('Verlust bei Nichtnutzung')).toBeVisible();
     await expect(koennenDialog.getByText('Verlust über Zeit')).toBeVisible();
     await koennenDialog.getByRole('button', { name: 'Schließen' }).click();
 
-    await tippe(page.getByRole('button', { name: `${habenAttribut.name} bearbeiten` }));
+    await page.goto('/haben');
+    await page.getByRole('button', { name: habenAttribut.name, exact: true }).click();
     const habenDialog = page.getByRole('dialog', { name: `${habenAttribut.name} bearbeiten` });
     await expect(habenDialog.getByText('Verlust bei Nichtnutzung')).toHaveCount(0);
     await expect(habenDialog.getByText('Verlust über Zeit')).toHaveCount(0);

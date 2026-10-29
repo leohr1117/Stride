@@ -350,14 +350,10 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     await expect(chronik.getByText(`Investitionen +${Math.round(erwartet * 100)} %`)).toBeVisible();
     await chronik.getByRole('button', { name: 'Schließen' }).click();
 
-    await page.goto('/charakter');
-    const listeBereich = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Investitionen', exact: true }) });
-    const mehr = listeBereich.getByRole('button', { name: /Alle anzeigen/ });
-    if (await mehr.isVisible()) {
-      await mehr.click();
-    }
-    await expect(listeBereich.getByText(ziel.name).first()).toBeVisible();
-    await listeBereich.getByRole('button', { name: 'Neu' }).click();
+    await page.goto('/investitionen');
+    const listeBereich = page.locator('main');
+    await expect(listeBereich.locator('a[href^="/projekte/"]')).toHaveCount(0);
+    await listeBereich.getByRole('button', { name: /Investition anlegen/ }).click();
     const neu = page.getByRole('dialog', { name: 'Neue Investition' });
     await neu.getByRole('textbox', { name: 'Name' }).fill(name);
     const eigenRegler = neu.getByRole('slider', { name: 'Größe' });
@@ -378,9 +374,6 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     }
     await neu.getByRole('button', { name: 'Speichern' }).click();
     await expect(neu).toBeHidden();
-    if (await mehr.isVisible()) {
-      await mehr.click();
-    }
     await expect(listeBereich.getByRole('button', { name, exact: true })).toBeVisible();
 
     const angelegt = await page.evaluate(async (titel) => {
@@ -449,10 +442,7 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     halt.aus();
     await page.keyboard.press('Escape');
 
-    await page.goto('/charakter');
-    if (await mehr.isVisible()) {
-      await mehr.click();
-    }
+    await page.goto('/investitionen');
     await listeBereich.getByRole('button', { name, exact: true }).click();
     const bearbeiten = page.getByRole('dialog', { name: 'Investition' });
     await bearbeiten.getByRole('textbox', { name: 'Name' }).fill(nameNeu);

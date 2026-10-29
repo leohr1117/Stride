@@ -68,7 +68,7 @@ test('Vorbilder zeigen Prozent, aktive Level und das Spektrum', async ({ page },
   await radar.screenshot({ path: bild(info, 'radar') });
   await ohneSeitlichenUeberlauf(page);
 
-  await page.goto('/charakter');
+  await page.goto('/koennen');
   const spektrum = page.locator('[data-spektrum="attribut"]');
   await expect(spektrum).toBeVisible();
   const werte = (await spektrum.getAttribute('data-werte'))?.split(',').map(Number) ?? [];
@@ -79,11 +79,8 @@ test('Vorbilder zeigen Prozent, aktive Level und das Spektrum', async ({ page },
   await spektrum.scrollIntoViewIfNeeded();
   await page.waitForTimeout(600);
   await page.screenshot({ path: bild(info, 'spektrum') });
-  await page.getByRole('button', { name: 'Können', exact: true }).click();
   await expect(spektrum).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Körper', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Können', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Körper', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Körper', exact: true })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
 
   const liste = await page.request.get('/api/attribute');
@@ -109,9 +106,9 @@ test('Vorbilder zeigen Prozent, aktive Level und das Spektrum', async ({ page },
     await page.locator('[data-vergleich]').screenshot({ path: bild(info, 'balken') });
     await ohneSeitlichenUeberlauf(page);
 
-    await page.goto('/charakter');
+    await page.goto('/koennen');
     await expect(page.locator('[data-spektrum="attribut"]')).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Disziplin', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Disziplin', exact: true })).toBeVisible();
     await page.screenshot({ path: bild(info, 'wenig') });
   } finally {
     for (const eintrag of archivieren) {

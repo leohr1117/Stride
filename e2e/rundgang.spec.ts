@@ -447,11 +447,11 @@ test('Seiten, Sprachen, Darstellung, Vorbilder und Todoist', async ({ page }) =>
     await expect(page.getByText(/%/).first()).toBeVisible();
     await page.goBack();
 
-    await page.goto('/charakter');
+    await page.goto('/faehigkeiten');
     const skill = page.locator('a[href^="/faehigkeiten/"]').first();
     if (await skill.count()) {
       await skill.click();
-      await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Profil');
+      await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Fähigkeiten');
       await expect(page.locator('svg, canvas').first()).toBeVisible();
     }
 

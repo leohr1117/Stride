@@ -75,10 +75,7 @@ export function pfadAktiv(pfad: string, sichtbarkeit: Sichtbarkeit): boolean {
     return seite.schalter === null || istAn(seite.schalter, sichtbarkeit);
   }
   const rein = pfadKern(pfad);
-  // Noch keine eigenen Seiten. Fähigkeiten kommt in U17, Projekte bleibt Teil von Ziele.
-  if (/^\/faehigkeiten\/[^/]+$/.test(rein)) {
-    return istAn('faehigkeiten', sichtbarkeit);
-  }
+  // Projekte bleibt Teil von Ziele. Fähigkeiten trägt die Seite mit Unterpfaden.
   if (/^\/projekte\/[^/]+$/.test(rein)) {
     return istAn('projekte', sichtbarkeit);
   }

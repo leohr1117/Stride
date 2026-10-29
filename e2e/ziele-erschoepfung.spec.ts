@@ -280,16 +280,20 @@ test('Erschöpfung steht neben dem Namen', async ({ page }, testInfo) => {
     }
   }
 
-  await page.goto('/charakter');
-  await alleAnzeigen(page.locator('body'));
-  for (const liste of listen) {
-    const abschnitt = page.locator('section').filter({ has: page.getByRole('heading', { name: liste.titel, exact: true }) }).first();
+  const seiten = [
+    { pfad: '/koennen', titel: 'Können', werte: daten.attribute },
+    { pfad: '/haben', titel: 'Haben', werte: daten.status },
+  ];
+  for (const liste of seiten) {
+    await page.goto(liste.pfad);
+    const abschnitt = page.locator('main');
+    await expect(abschnitt.getByRole('heading', { name: liste.titel, exact: true })).toBeVisible();
     const abzug = abschnitt.locator('[data-abzug="allgemein"]');
     await expect(abzug).toHaveCount(bild.allgemein !== null ? 1 : 0);
     if (bild.allgemein !== null && liste.werte[0]) {
       await expect(abzug).toHaveText(abzugText(bild.allgemein));
       const abzugKasten = await abzug.boundingBox();
-      const nameKasten = await abschnitt.locator('h3', { hasText: liste.werte[0].name }).boundingBox();
+      const nameKasten = await abschnitt.getByText(liste.werte[0].name, { exact: true }).first().boundingBox();
       expect(abzugKasten && nameKasten).toBeTruthy();
       if (abzugKasten && nameKasten) {
         expect(abzugKasten.y + abzugKasten.height).toBeLessThanOrEqual(nameKasten.y + 2);
@@ -298,11 +302,10 @@ test('Erschöpfung steht neben dem Namen', async ({ page }, testInfo) => {
   }
   if (gezielt.length > 0) {
     const probe = gezielt[0];
-    const karte = page.locator('section.karte').filter({
-      has: page.locator('h3').getByText(probe.attribut.name, { exact: true }),
-    });
-    await expect(karte.locator('[data-abzug="allgemein"]')).toHaveCount(0);
-    await pruefeAbzugNebenNamen(karte, probe.attribut.name, probe.prozent);
+    await page.goto(daten.attribute.some((eintrag) => eintrag.id === probe.attribut.id) ? '/koennen' : '/haben');
+    const zeile = page.locator('.attributzeile').filter({ hasText: probe.attribut.name }).first();
+    await expect(zeile.locator('[data-abzug="allgemein"]')).toHaveCount(0);
+    await pruefeAbzugNebenNamen(zeile, probe.attribut.name, probe.prozent);
   }
   await page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-lauf65-erschoepfung.png`, fullPage: true });
 });

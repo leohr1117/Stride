@@ -1,16 +1,20 @@
 import {
   Activity,
   BookMarked,
+  Brain,
   CalendarCheck,
   ChartColumn,
   Compass,
+  Gem,
   House,
   Layers,
   ListChecks,
   Route,
   Settings,
+  Sparkles,
   Star,
   User,
+  Wallet,
   type LucideIcon,
 } from 'lucide-react';
 import { standardEbenen, type Ebenen } from '../../shared/spiel/ebenen.ts';
@@ -42,6 +46,10 @@ const SYMBOL: Record<SeitenSymbol, LucideIcon> = {
   diagramm: ChartColumn,
   stern: Star,
   person: User,
+  hirn: Brain,
+  boerse: Wallet,
+  funken: Sparkles,
+  juwel: Gem,
   buch: BookMarked,
   zahnrad: Settings,
 };

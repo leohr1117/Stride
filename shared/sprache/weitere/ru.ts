@@ -1,5 +1,12 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.": "Умения, Активы, Навыки и Вложения стали отдельными страницами.",
+  "Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.": "Профиль показывает их строкой с числом. У каждой страницы свой архив.",
+  "Unter Werte auf der Übersicht führen Können und Haben auf die Seite.": "В блоке Значения на обзоре Умения и Активы ведут на страницу.",
+  "Noch keine Attribute.": "Атрибутов пока нет.",
+  "Attribut hinzufügen": "Добавить атрибут",
+  "Investition anlegen": "Создать вложение",
+  "Noch keine Investition.": "Вложения пока нет.",
   "Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.": "Ещё показывает все включённые страницы в четырёх списках, включая те, что на панели.",
   "Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.": "Занятия стоят среди страниц. Настройки показывают справа текущее значение.",
   "Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.": "Связи стоят прямо в Ещё. Ярлыки убраны.",

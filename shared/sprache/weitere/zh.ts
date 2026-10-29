@@ -1,5 +1,12 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.": "能力、资产、技能和投入各自成为页面。",
+  "Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.": "资料用一行显示数量。每个页面有自己的归档。",
+  "Unter Werte auf der Übersicht führen Können und Haben auf die Seite.": "总览的数值里，能力和资产通向该页面。",
+  "Noch keine Attribute.": "还没有属性。",
+  "Attribut hinzufügen": "添加属性",
+  "Investition anlegen": "新建投入",
+  "Noch keine Investition.": "还没有投入。",
   "Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.": "更多把所有已开启的页面分成四个列表，包括栏里的页面。",
   "Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.": "活动在页面里。设置在右侧显示当前的值。",
   "Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.": "关联直接在更多下面。快捷没有了。",

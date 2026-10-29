@@ -1,5 +1,12 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.": "Capacidad, Bienes, Habilidades e Inversiones son páginas propias.",
+  "Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.": "El perfil las muestra en una fila con la cantidad. Cada página tiene su propio archivo.",
+  "Unter Werte auf der Übersicht führen Können und Haben auf die Seite.": "En Valores del resumen, Capacidad y Bienes llevan a la página.",
+  "Noch keine Attribute.": "Aún no hay atributos.",
+  "Attribut hinzufügen": "Añadir un atributo",
+  "Investition anlegen": "Crear una inversión",
+  "Noch keine Investition.": "Aún no hay inversión.",
   "Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.": "Más muestra todas las páginas activadas en cuatro listas, también las de la barra.",
   "Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.": "Actividades está con las páginas. Los ajustes muestran a la derecha el valor actual.",
   "Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.": "Conexiones está directamente en Más. Los accesos desaparecen.",

@@ -12,6 +12,10 @@ const SEITEN = [
   '/statistiken',
   '/vorbilder',
   '/charakter',
+  '/koennen',
+  '/haben',
+  '/faehigkeiten',
+  '/investitionen',
   '/handbuch',
 ];
 
@@ -50,9 +54,6 @@ test('Mehr ist das Seitenverzeichnis und die Einstellungen', async ({ page }, te
     knoten.map((knoten) => (knoten instanceof HTMLAnchorElement ? knoten.getAttribute('href') : null)),
   );
   expect(pfade).toEqual(SEITEN);
-  for (const name of ['Können', 'Haben', 'Fähigkeiten', 'Investitionen']) {
-    await expect(page.locator('[data-seitenliste]').getByRole('link', { name, exact: true })).toHaveCount(0);
-  }
   await expect(page.locator('[data-seitenliste] a[href="/mehr"]')).toHaveCount(0);
   const profil = page.locator('[data-seitenliste] a[href="/charakter"]');
   await expect(profil.locator('xpath=..').locator('.klassenbild')).toBeVisible();

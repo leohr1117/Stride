@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.35.0',
+    seiten: 'Profil, Übersicht',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.',
+          'Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.',
+          'Unter Werte auf der Übersicht führen Können und Haben auf die Seite.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.34.0',
     seiten: 'Mehr',
     abschnitte: [

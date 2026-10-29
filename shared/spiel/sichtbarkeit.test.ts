@@ -64,7 +64,12 @@ describe('pfadAktiv', () => {
     expect(pfadAktiv('/chronik', aus)).toBe(true);
     expect(pfadAktiv('/vorbilder', aus)).toBe(false);
     expect(pfadAktiv('/vorbilder/ada', aus)).toBe(false);
+    expect(pfadAktiv('/koennen', aus)).toBe(true);
+    expect(pfadAktiv('/haben', aus)).toBe(true);
+    expect(pfadAktiv('/faehigkeiten', aus)).toBe(false);
+    expect(pfadAktiv('/investitionen', aus)).toBe(false);
     expect(pfadAktiv('/faehigkeiten/4', aus)).toBe(false);
+    expect(pfadAktiv('/koennen', sicht({ koennen: false }))).toBe(false);
     expect(pfadAktiv('/handbuch', aus)).toBe(true);
     expect(pfadAktiv('/rueckblick?woche=1', aus)).toBe(false);
     expect(pfadAktiv('/statistiken/', aus)).toBe(false);
@@ -81,6 +86,8 @@ describe('pfadAktiv', () => {
     expect(pfadAktiv('/chronik', an)).toBe(true);
     expect(pfadAktiv('/vorbilder/ada', an)).toBe(true);
     expect(pfadAktiv('/faehigkeiten/4', an)).toBe(true);
+    expect(pfadAktiv('/faehigkeiten', an)).toBe(true);
+    expect(pfadAktiv('/investitionen', sicht({ ausruestung: true }))).toBe(true);
     expect(pfadAktiv('/rueckblick', an)).toBe(true);
     expect(pfadAktiv('/statistiken', an)).toBe(true);
   });

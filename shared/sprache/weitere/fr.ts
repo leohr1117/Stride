@@ -1,5 +1,12 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Können, Haben, Fähigkeiten und Investitionen sind eigene Seiten.": "Aptitude, Biens, Compétences et Investissements sont des pages à part.",
+  "Das Profil zeigt sie als Zeile mit der Anzahl. Jede Seite hat ihr eigenes Archiv.": "Le profil les montre en ligne avec le nombre. Chaque page a ses archives.",
+  "Unter Werte auf der Übersicht führen Können und Haben auf die Seite.": "Sous Valeurs dans l'aperçu, Aptitude et Biens mènent à la page.",
+  "Noch keine Attribute.": "Pas encore d'attribut.",
+  "Attribut hinzufügen": "Ajouter un attribut",
+  "Investition anlegen": "Créer un investissement",
+  "Noch keine Investition.": "Pas encore d'investissement.",
   "Mehr zeigt alle eingeschalteten Seiten in vier Listen, auch die aus der Leiste.": "Plus affiche toutes les pages activées en quatre listes, y compris celles de la barre.",
   "Tätigkeiten steht bei den Seiten. Die Einstellungen zeigen rechts den aktuellen Wert.": "Activités est avec les pages. Les réglages affichent la valeur actuelle à droite.",
   "Verbindungen steht direkt unter Mehr. Der Schnellzugriff entfällt.": "Connexions est directement sous Plus. Les raccourcis disparaissent.",
