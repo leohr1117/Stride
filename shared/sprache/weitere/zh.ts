@@ -1,5 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.": "与榜样对比时，自己的面积以强调色显示。",
+  "Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.": "榜样上的信息图标与其他图标一样大，并在行内垂直居中。",
   "Stride wurde aktualisiert.": "Stride 已更新。",
   "Neuigkeiten": "新功能",
   "Was ist neu": "新功能",

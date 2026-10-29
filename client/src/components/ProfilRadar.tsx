@@ -1,4 +1,5 @@
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { duZeichenwert } from '../../../shared/spiel/radar.ts';
 import { zahl } from '../format.ts';
 import { tx } from '../text.ts';
 import { DIAGRAMM_ANIMATION_MS, DiagrammTooltip } from './DiagrammBasis.tsx';
@@ -21,11 +22,23 @@ export function ProfilRadar({
   maximum: number;
   hoehe: string;
 }) {
+  let duMax = 0;
+  for (const zeile of zeilen) {
+    if (zeile.du > duMax) {
+      duMax = zeile.du;
+    }
+  }
+  const gezeichnet = zeilen.map((zeile) => ({
+    ...zeile,
+    duZeichnung: duZeichenwert(zeile.du, duMax, maximum),
+  }));
+  const duRing = maximum > 0 ? duZeichenwert(duMax, duMax, maximum) / maximum : 0;
+
   return (
-    <div data-radar="vergleich">
+    <div data-radar="vergleich" data-du-ring={duRing}>
       <div className={hoehe}>
         <ResponsiveContainer width="100%" height="100%">
-          <RadarChart data={zeilen} outerRadius="68%">
+          <RadarChart data={gezeichnet} outerRadius="68%">
             <PolarGrid stroke="var(--rand)" />
             <PolarAngleAxis dataKey="name" tick={{ fill: 'var(--leise)', fontSize: 11 }} />
             <PolarRadiusAxis type="number" domain={[0, maximum]} allowDataOverflow niceTicks="none" tick={false} axisLine={false} />
@@ -38,12 +51,13 @@ export function ProfilRadar({
               fillOpacity={0.12}
             />
             <Radar
+              className="radar-du"
               animationDuration={DIAGRAMM_ANIMATION_MS}
-              dataKey="du"
+              dataKey="duZeichnung"
               stroke="var(--akzent)"
-              strokeWidth={2}
+              strokeWidth={2.5}
               fill="var(--akzent)"
-              fillOpacity={0.35}
+              fillOpacity={0.42}
             />
             <Tooltip
               content={(eigenschaften) => {

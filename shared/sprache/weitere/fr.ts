@@ -1,5 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.": "Dans la comparaison avec un modèle, ta propre surface se voit dans la couleur d'accent.",
+  "Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.": "L'icône d'info des modèles a la taille des autres et se centre sur la ligne.",
   "Stride wurde aktualisiert.": "Stride a été mis à jour.",
   "Neuigkeiten": "Nouveautés",
   "Was ist neu": "Nouveautés",

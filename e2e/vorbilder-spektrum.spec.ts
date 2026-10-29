@@ -61,8 +61,14 @@ test('Vorbilder zeigen Prozent, aktive Level und das Spektrum', async ({ page },
   expect(Math.max(...eigene) / achse).toBeLessThan(0.05);
   const radar = page.locator('[data-radar="vergleich"]');
   await expect(radar).toBeVisible();
+  expect(Number(await radar.getAttribute('data-du-ring'))).toBeGreaterThanOrEqual(0.62);
   await radar.scrollIntoViewIfNeeded();
   await page.waitForTimeout(600);
+  const flaechenGroesse = await radar.locator('path.radar-du').evaluate((element) => {
+    const flaeche = element.getBoundingClientRect();
+    return Math.max(flaeche.width, flaeche.height);
+  });
+  expect(flaechenGroesse).toBeGreaterThan(48);
   await page.screenshot({ path: bild(info, 'detail') });
   await kopf.screenshot({ path: bild(info, 'prozent') });
   await radar.screenshot({ path: bild(info, 'radar') });

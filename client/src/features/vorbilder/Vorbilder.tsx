@@ -85,19 +85,17 @@ export function VorbilderSeite() {
 
   return (
     <div className="space-y-4">
-      <header className="flex flex-wrap items-end justify-between gap-2">
-        <div className="flex min-w-0 items-center">
-          <WerteHinweis />
-        </div>
-        {uebersicht && (
-          <p className="zahl text-sm text-leise">
-            <span className="inline-flex items-center gap-1.5">
+      <header className="flex items-center">
+        <p className="inline-flex min-w-0 items-center text-sm text-leise">
+          {uebersicht && (
+            <span className="zahl inline-flex min-w-0 items-center gap-1.5">
               {funktionen.koennen && <KlassenBild klasse={uebersicht.klasse} groesse="size-4" rahmen={false} />}
               {tx('Du · Level {level}', { level: zahl(uebersicht.level.level) })}
               {funktionen.koennen && ` · ${klassenText(uebersicht.klasse)}`}
             </span>
-          </p>
-        )}
+          )}
+          <WerteHinweis />
+        </p>
       </header>
       {massstab && <VorbildKarte auswertung={massstab} />}
       <div className="flex flex-wrap gap-1.5">

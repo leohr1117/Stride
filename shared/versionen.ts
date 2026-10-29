@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.35.4',
+    seiten: 'Vorbilder',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.',
+          'Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.35.3',
     seiten: 'Mehr',
     abschnitte: [

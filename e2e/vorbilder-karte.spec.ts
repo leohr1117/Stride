@@ -101,7 +101,25 @@ test('Vorbilder: Karte ohne Radar, Prozent auf Karte und Richtung', async ({ pag
 
   const hinweis = page.getByRole('button', { name: 'Hinweis zu den Werten' });
   const kasten = await hinweis.boundingBox();
-  expect(kasten && kasten.width <= 40 && kasten.height <= 40).toBe(true);
+  expect(kasten).toBeTruthy();
+  if (kasten) {
+    expect(kasten.width).toBeGreaterThanOrEqual(14);
+    expect(kasten.width).toBeLessThanOrEqual(20);
+    expect(kasten.height).toBeGreaterThanOrEqual(14);
+    expect(kasten.height).toBeLessThanOrEqual(20);
+  }
+  const deltaListe = await page.locator('header p').evaluate((zeile) => {
+    const knopf = zeile.querySelector('button');
+    const text = zeile.querySelector('span');
+    if (!knopf || !text) {
+      return null;
+    }
+    const icon = knopf.getBoundingClientRect();
+    const schrift = text.getBoundingClientRect();
+    return Math.abs(icon.top + icon.height / 2 - (schrift.top + schrift.height / 2));
+  });
+  expect(deltaListe).not.toBeNull();
+  expect(deltaListe ?? 99).toBeLessThanOrEqual(4);
   await hinweis.click();
   await expect(page.getByRole('tooltip')).toHaveText(
     'Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.',
@@ -139,7 +157,19 @@ test('Vorbilder: Karte ohne Radar, Prozent auf Karte und Richtung', async ({ pag
   await expect(page.getByRole('heading', { name: 'Cristiano Ronaldo', exact: true })).toBeVisible();
   await expect(page.locator('.recharts-wrapper').first()).toBeVisible();
   await expect(page.getByText(/\d+\s*%\s*ähnlich/)).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Hinweis zu den Werten' })).toBeVisible();
+  const nameHinweis = page.getByRole('button', { name: 'Hinweis zu den Werten' });
+  await expect(nameHinweis).toBeVisible();
+  const deltaName = await page.locator('.profil-name').evaluate((name) => {
+    const knopf = name.parentElement?.querySelector('button');
+    if (!knopf) {
+      return null;
+    }
+    const icon = knopf.getBoundingClientRect();
+    const schrift = name.getBoundingClientRect();
+    return Math.abs(icon.top + icon.height / 2 - (schrift.top + schrift.height / 2));
+  });
+  expect(deltaName).not.toBeNull();
+  expect(deltaName ?? 99).toBeLessThanOrEqual(4);
   await expect(page.locator('body')).not.toContainText('°');
   await ohneSeitlichenUeberlauf(page);
 

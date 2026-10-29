@@ -3,9 +3,11 @@ import { tx } from '../../text.ts';
 
 export const WERTE_HINWEIS = 'Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.';
 
+const HINWEIS_KNOPF = 'inline-flex size-4 items-center justify-center rounded-full text-leise hover:text-haupt';
+
 export function WerteHinweis() {
   return (
-    <InfoHinweis text={WERTE_HINWEIS} label={tx("Hinweis zu den Werten")} />
+    <InfoHinweis text={WERTE_HINWEIS} label={tx("Hinweis zu den Werten")} knopfKlasse={HINWEIS_KNOPF} />
   );
 }
 

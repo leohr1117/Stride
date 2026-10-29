@@ -1,5 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.": "お手本との比較では、自分の面がアクセント色で見えます。",
+  "Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.": "お手本の情報アイコンは他と同じ大きさで、行の中央に揃います。",
   "Stride wurde aktualisiert.": "Stride を更新しました。",
   "Neuigkeiten": "新着",
   "Was ist neu": "新着",

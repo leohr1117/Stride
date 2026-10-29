@@ -143,8 +143,8 @@ export function VorbildProfilSeite() {
       <Karte className="space-y-3">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div className="min-w-0 sm:flex-1">
-            <div className="flex min-w-0 flex-wrap items-center">
-              <span className="profil-name min-w-0 max-w-full break-words text-[1.05rem] leading-tight font-bold sm:text-2xl">
+            <div className="flex min-w-0 items-center">
+              <span className="profil-name min-w-0 break-words text-[1.05rem] leading-tight font-bold sm:text-2xl">
                 {tx(vorbild.name)}
               </span>
               <WerteHinweis />

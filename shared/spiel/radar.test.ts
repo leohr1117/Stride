@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { LevelInfo } from './level.ts';
-import { achsenMaximum, radarMaximum, radarWert } from './radar.ts';
+import { achsenMaximum, DU_RING_MIN, duZeichenwert, radarMaximum, radarWert } from './radar.ts';
 
 function level(stufe: number, fortschritt = 0): LevelInfo {
   return { level: stufe, xpGesamt: 100, xpImLevel: 0, xpFuerNaechstes: 100, fortschritt };
@@ -24,5 +24,15 @@ describe('radarMaximum', () => {
     const gemischt = achsenMaximum([2, 2, 2, 40]);
     expect(gemischt).toBe(40);
     expect(2 / gemischt).toBe(0.05);
+  });
+
+  it('hebt nur die gezeichnete eigene Fläche an, nicht die Level', () => {
+    const achse = 1000;
+    const spitze = duZeichenwert(10, 10, achse);
+    expect(spitze / achse).toBeCloseTo(DU_RING_MIN);
+    expect(duZeichenwert(5, 10, achse) / spitze).toBeCloseTo(0.5);
+    expect(duZeichenwert(80, 80, 100)).toBeCloseTo(80);
+    expect(duZeichenwert(0, 10, achse)).toBe(0);
+    expect(duZeichenwert(4, 0, achse)).toBe(0);
   });
 });

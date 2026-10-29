@@ -1,5 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.": "En la comparación con un referente, la propia área se ve en el color de acento.",
+  "Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.": "El símbolo de información en los referentes tiene el tamaño de los demás y queda centrado en la línea.",
   "Stride wurde aktualisiert.": "Stride se actualizó.",
   "Neuigkeiten": "Novedades",
   "Was ist neu": "Novedades",
