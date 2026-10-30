@@ -1,5 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.": "Pour les activités, les parts s'affichent en pourcentage et font ensemble 100 %.",
+  "Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.": "Dans la barre, chaque morceau a la largeur de sa part. Les couleurs identiques restent séparées.",
   "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "La similarité avec un modèle compare la forme du profil, pas la hauteur des niveaux.",
   "Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.": "Dans la comparaison avec un modèle, ta propre surface se voit dans la couleur d'accent.",
   "Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.": "L'icône d'info des modèles a la taille des autres et se centre sur la ligne.",

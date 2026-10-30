@@ -1,5 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.": "У занятий доли показаны в процентах и в сумме дают 100 %.",
+  "Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.": "В полосе каждый кусок такой ширины, как его доля. Одинаковые цвета остаются раздельно.",
   "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "Сходство с ориентиром сравнивает форму профиля, а не высоту уровней.",
   "Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.": "В сравнении с ориентиром своя область видна акцентным цветом.",
   "Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.": "Значок информации у ориентиров такого же размера, как остальные, и стоит по центру строки.",

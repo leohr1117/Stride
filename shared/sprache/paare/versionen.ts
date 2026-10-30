@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.', 'On activities, the shares are shown in percent and add up to 100%.'],
+  ['Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.', 'In the bar, each piece is as wide as its share. Matching colors stay separate.'],
   ['Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.', 'Similarity with a role model compares the shape of the profile, not how high the levels are.'],
   ['Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.', 'In a comparison with a role model, your own area shows in the accent color.'],
   ['Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.', 'The info icon on role models matches the others and sits centered on the line.'],

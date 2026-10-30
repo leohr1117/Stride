@@ -1,5 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.": "活动下显示的是百分比，加起来正好是 100%。",
+  "Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.": "色条里每一段的宽度等于它的份额。相同的颜色保持分开。",
   "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "与榜样的相似度比较的是档案的形状，不是等级的高低。",
   "Im Vergleich mit einem Vorbild ist die eigene Fläche in der Akzentfarbe zu sehen.": "与榜样对比时，自己的面积以强调色显示。",
   "Das Info-Symbol an Vorbildern hat die Größe der anderen und sitzt mittig an der Zeile.": "榜样上的信息图标与其他图标一样大，并在行内垂直居中。",

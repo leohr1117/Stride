@@ -2,6 +2,7 @@ import { attributName, tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import type { Attribut, Vorlage, VorlageGewicht } from '../../../../shared/api/index.ts';
+import { anteileInProzent } from '../../../../shared/spiel/anteile.ts';
 import { ATTRIBUT_TYP_INFO, ATTRIBUT_TYPEN, GRENZEN, type IconName } from '../../../../shared/spiel/begriffe.ts';
 import { istTypAktiv } from '../../../../shared/spiel/funktionen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
@@ -23,18 +24,6 @@ function gebundenerName(vorlage: Vorlage | null, projektId: number | null, proje
     return vorlage.projektName ?? projektName;
   }
   return null;
-}
-
-function prozente(gewichte: Map<number, number>): Map<number, number> {
-  let summe = 0;
-  for (const wert of gewichte.values()) {
-    summe += wert;
-  }
-  const ergebnis = new Map<number, number>();
-  for (const [id, wert] of gewichte) {
-    ergebnis.set(id, summe === 0 ? 0 : Math.round((wert / summe) * 100));
-  }
-  return ergebnis;
 }
 
 export function TaetigkeitFormular({
@@ -62,7 +51,8 @@ export function TaetigkeitFormular({
   const gewaehlt: VorlageGewicht[] = [...gewichte]
     .filter(([attributId, gewicht]) => gewicht > 0 && aktive.some((attribut) => attribut.id === attributId))
     .map(([attributId, gewicht]) => ({ attributId, gewicht }));
-  const anteile = prozente(new Map(gewaehlt.map((gewicht) => [gewicht.attributId, gewicht.gewicht])));
+  const prozentWerte = anteileInProzent(gewaehlt.map((gewicht) => gewicht.gewicht));
+  const anteile = new Map(gewaehlt.map((gewicht, index) => [gewicht.attributId, prozentWerte[index] ?? 0]));
   const zuViele = gewaehlt.length > GRENZEN.vorlageAttributeMax;
   const nurFuer = gebundenerName(vorlage, projektId, projektName);
 

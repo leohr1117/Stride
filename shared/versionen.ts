@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.35.6',
+    seiten: 'Tätigkeiten',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.',
+          'Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.35.5',
     seiten: 'Vorbilder',
     abschnitte: [
