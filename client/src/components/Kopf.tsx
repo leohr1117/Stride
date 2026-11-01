@@ -11,6 +11,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { pfadname } from '../../../shared/spiel/herkunft.ts';
 import { LEISTE_STANDARD, sichtbareLeiste } from '../../../shared/spiel/leiste.ts';
@@ -32,6 +33,8 @@ export interface KopfAngabe {
 
 const KopfSetzen = createContext<(wert: KopfAngabe | null) => void>(() => {});
 const KopfLesen = createContext<KopfAngabe | null>(null);
+const KopfSlotSetzen = createContext<(knoten: HTMLElement | null) => void>(() => {});
+const KopfSlotLesen = createContext<HTMLElement | null>(null);
 
 const SEITENTITEL: Record<string, string> = {
   '/': 'Heute',
@@ -104,14 +107,31 @@ function gleicheAngabe(links: KopfAngabe | null, rechts: KopfAngabe | null): boo
 
 export function KopfRahmen({ children }: { children: ReactNode }) {
   const [angabe, setAngabe] = useState<KopfAngabe | null>(null);
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
   const setze = useCallback((wert: KopfAngabe | null) => {
     setAngabe((bisher) => (gleicheAngabe(bisher, wert) ? bisher : wert));
   }, []);
+  const setzeSlot = useCallback((knoten: HTMLElement | null) => {
+    setSlot((bisher) => (bisher === knoten ? bisher : knoten));
+  }, []);
   return (
     <KopfSetzen.Provider value={setze}>
-      <KopfLesen.Provider value={angabe}>{children}</KopfLesen.Provider>
+      <KopfSlotSetzen.Provider value={setzeSlot}>
+        <KopfLesen.Provider value={angabe}>
+          <KopfSlotLesen.Provider value={slot}>{children}</KopfSlotLesen.Provider>
+        </KopfLesen.Provider>
+      </KopfSlotSetzen.Provider>
     </KopfSetzen.Provider>
   );
+}
+
+/** Seite legt eine Aktion links neben den Profilring. Der leere Platz erzeugt keine Box. */
+export function KopfAktion({ children }: { children: ReactNode }) {
+  const slot = useContext(KopfSlotLesen);
+  if (!slot) {
+    return null;
+  }
+  return createPortal(children, slot);
 }
 
 /** Seite setzt den Titel im Kopf. Ohne Aufruf gilt der Seitentitel der Route. */
@@ -167,6 +187,13 @@ export function Kopf() {
   const navigiere = useNavigate();
   const ziel = useZurueck(null);
   const angabe = useContext(KopfLesen);
+  const setzeSlot = useContext(KopfSlotSetzen);
+  const slotRef = useCallback(
+    (knoten: HTMLDivElement | null) => {
+      setzeSlot(knoten);
+    },
+    [setzeSlot],
+  );
   const funktionen = useFunktionen();
   const ebenen = useEbenen();
   const kopf = useRef<HTMLElement>(null);
@@ -175,6 +202,8 @@ export function Kopf() {
   const leiste = sichtbareLeiste(einstellungen.data?.mobilLeiste ?? LEISTE_STANDARD, funktionen, ebenen);
   const profilInLeiste = leiste.includes('/charakter');
   const titel = angabe?.roh ? (angabe.titel ?? '') : tx(angabe?.titel ?? standardTitel(pathname));
+
+  useEffect(() => () => setzeSlot(null), [setzeSlot]);
 
   useEffect(() => {
     const knoten = kopf.current;
@@ -227,6 +256,7 @@ export function Kopf() {
           )}
           {angabe?.info ? <InfoHinweis text={angabe.info} /> : null}
         </div>
+        <div ref={slotRef} className="contents" data-kopf-aktion="" />
         {!ziel && !profilInLeiste && uebersicht && (
           <Link
             to="/charakter"

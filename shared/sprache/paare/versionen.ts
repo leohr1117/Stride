@@ -1,5 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf Ziele legt Neu eine Vision, eine Organisation oder ein Projekt an.', 'On Goals, New adds a vision, an organisation, or a project.'],
+  ['Jede Vision ist ein Abschnitt mit Farbpunkt. Laufend steht als Zeile darüber.', 'Each vision is a section with a color dot. Active sits in a row above.'],
+  ['Das Archiv ist zugeklappt.', 'The archive stays collapsed.'],
+  ['Am Projekt liegt das Menü im Kopf. Der Stift ist weg.', 'On a project, the menu sits in the header. The pencil is gone.'],
+  ['Vorhaben, Tätigkeiten nur für das Projekt und die Basis stehen in eigenen Abschnitten.', 'Tasks, activities only for the project, and basics sit in their own sections.'],
   ['Auf Heute stehen die ersten Schritte, bis der erste XP da ist.', 'On Today, the first steps stay until the first XP.'],
   ['Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.', 'A finished step shows a check and the name. There is no counter.'],
   ['Die ersten Schritte stehen nur noch auf Heute.', 'The first steps live only on Today.'],

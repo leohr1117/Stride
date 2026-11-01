@@ -53,7 +53,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-bosse-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/bosse/${testInfo.project.name}-${name}.png` });
   const erwachtTitel = 'Erste Version raus';
   const still = await page.evaluate(async (titel) => {
     const laufend = (await fetch('/api/laufend').then((antwort) => antwort.json())) as {
@@ -99,9 +99,30 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
   }
   expect(still.boss).toBeNull();
 
+  const kreuz = await page.evaluate(async () => {
+    const laufend = (await fetch('/api/laufend').then((antwort) => antwort.json())) as {
+      bosse: { id: number; titel: string; boss: { deadline: string } | null }[];
+    };
+    const fund = laufend.bosse.find((eintrag) => eintrag.titel === 'Kreuzheben 100 Kilo');
+    if (!fund?.boss) {
+      return null;
+    }
+    const morgen = new Date();
+    morgen.setDate(morgen.getDate() + 14);
+    const deadline = `${morgen.getFullYear()}-${String(morgen.getMonth() + 1).padStart(2, '0')}-${String(morgen.getDate()).padStart(2, '0')}`;
+    const antwort = await fetch(`/api/vorhaben/${fund.id}`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ boss: { deadline } }),
+    });
+    return antwort.ok ? { id: fund.id, vorher: fund.boss.deadline } : null;
+  });
+  expect(kreuz).not.toBeNull();
+
+  try {
   await page.goto('/laufend');
-  const erwacht = page.locator('.rounded-2xl', { hasText: erwachtTitel });
-  const entsteht = page.locator('.rounded-2xl', { hasText: 'Kreuzheben 100 Kilo' });
+  const erwacht = page.locator('.zeile', { hasText: erwachtTitel });
+  const entsteht = page.locator('.zeile', { hasText: 'Kreuzheben 100 Kilo' });
   await expect(erwacht).toContainText(/Erwacht · seit /);
   await expect(entsteht).toContainText(/Entsteht · /);
   await expect(erwacht.getByText(/\d[\d.]* XP/)).toHaveCount(0);
@@ -120,9 +141,22 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
   await expect(page.getByText('Kreuzheben 100 Kilo')).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
   await bild('angriff');
+  } finally {
+    if (kreuz) {
+      await page.evaluate(async ({ id, vorher }) => {
+        await fetch(`/api/vorhaben/${id}`, {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ boss: { deadline: vorher } }),
+        });
+      }, kreuz);
+    }
+  }
 
   await page.goto(`/projekte/${still.projektId}`);
-  await page.locator('.rounded-2xl', { hasText: erwachtTitel }).getByTitle('Boss bearbeiten').click();
+  const bossZeile = page.locator('.rounded-2xl', { hasText: erwachtTitel });
+  await bossZeile.getByRole('button', { name: `Aktionen für ${erwachtTitel}`, exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Boss bearbeiten', exact: true }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog.locator('input[type="date"]')).toBeVisible();
   await expect(dialog.locator('input[type="number"]')).toHaveCount(0);

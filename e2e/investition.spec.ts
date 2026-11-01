@@ -286,11 +286,11 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
       await frage.getByRole('button', { name: 'Abschließen', exact: true }).click();
       await expect(frage).toBeHidden();
     }
-    await expect(page.getByRole('button', { name: 'Öffnen', exact: true })).toBeVisible();
-    await expect(zeile).toContainText('Aktiv · +10 %');
+    await expect(page.getByRole('button', { name: 'Wieder öffnen', exact: true })).toBeVisible();
+    await expect(zeile).toContainText('+10 %');
     await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
-    await page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-investition-projekt.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/investition/${testInfo.project.name}-projekt.png`, fullPage: true });
     await expect(zeile.getByText(ziel.name).first()).toBeVisible();
 
     await expect.poll(async () => {
@@ -418,7 +418,7 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
 
     await page.goto(`/projekte/${ziel.id}`);
     await page.reload();
-    await expect(page.locator('#projekt-investition')).toContainText('Aktiv · +10 %');
+    await expect(page.locator('#projekt-investition')).toContainText('+10 %');
     await page.getByRole('button', { name: 'Investition', exact: true }).click();
     const erneut = page.getByRole('dialog', { name: 'Investition' });
     await expect(erneut.getByRole('slider', { name: 'Größe' })).toHaveValue('1');
@@ -455,7 +455,7 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     await expect(loeschen).toBeHidden();
     await expect(listeBereich.getByText(nameNeu)).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);
-    await page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-investition-charakter.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/investition/${testInfo.project.name}-charakter.png`, fullPage: true });
   } finally {
     await halt.weg();
     await wiederherstellen(page, ziel);

@@ -1,5 +1,18 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele legt Neu eine Vision, eine Organisation oder ein Projekt an.": "Dans Objectifs, Nouveau crée une vision, une organisation ou un projet.",
+  "Jede Vision ist ein Abschnitt mit Farbpunkt. Laufend steht als Zeile darüber.": "Chaque vision est une section avec un point de couleur. En cours est une ligne au-dessus.",
+  "Das Archiv ist zugeklappt.": "L'archive est repliée.",
+  "Am Projekt liegt das Menü im Kopf. Der Stift ist weg.": "Sur le projet, le menu est dans l'en-tête. Le crayon a disparu.",
+  "Vorhaben, Tätigkeiten nur für das Projekt und die Basis stehen in eigenen Abschnitten.": "Les tâches, les activités seulement pour le projet et la base ont chacune une section.",
+  "Noch keine Ziele.": "Pas encore d'objectifs.",
+  "Ziel anlegen": "Ajouter un objectif",
+  "Laufend · {anzahl}": "En cours · {anzahl}",
+  "Archiv": "Archive",
+  "Wieder öffnen": "Rouvrir",
+  "Nur für dieses Projekt": "Seulement pour ce projet",
+  "Tätigkeit nur für dieses Projekt": "Activité seulement pour ce projet",
+  "Umbenennen": "Renommer",
   "Auf Heute stehen die ersten Schritte, bis der erste XP da ist.": "Sur Aujourd'hui, les premiers pas restent jusqu'au premier XP.",
   "Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.": "Une étape faite montre une coche et le nom. Il n'y a pas de compteur.",
   "Die ersten Schritte stehen nur noch auf Heute.": "Les premiers pas ne sont plus que sur Aujourd'hui.",

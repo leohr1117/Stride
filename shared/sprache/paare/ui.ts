@@ -624,4 +624,12 @@ export const PAARE = [
   ['Tätigkeit für {name}', 'Activity for {name}'],
   ['{name} · nur dieses Projekt', '{name} · this project only'],
   ['Voreinstellung für Einträge in diesem Projekt.', 'Default for entries in this project.'],
+  ['Noch keine Ziele.', 'No goals yet.'],
+  ['Ziel anlegen', 'Add a goal'],
+  ['Laufend · {anzahl}', 'Active · {anzahl}'],
+  ['Archiv', 'Archive'],
+  ['Wieder öffnen', 'Reopen'],
+  ['Nur für dieses Projekt', 'Only for this project'],
+  ['Tätigkeit nur für dieses Projekt', 'Activity only for this project'],
+  ['Umbenennen', 'Rename'],
 ] as const;

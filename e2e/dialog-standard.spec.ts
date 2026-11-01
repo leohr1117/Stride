@@ -200,9 +200,10 @@ test('Loslassen gilt sofort und die Meldung bietet Rückgängig', async ({ page 
   await expect(boss).toBeVisible();
   await boss.click();
   await expect(page).toHaveURL(/\/projekte\/\d+$/);
-  const loslassen = page.getByRole('button', { name: 'Loslassen' }).first();
-  await loslassen.scrollIntoViewIfNeeded();
-  await loslassen.click();
+  const zeile = page.locator('main .rounded-2xl').first();
+  await zeile.scrollIntoViewIfNeeded();
+  await zeile.getByRole('button', { name: /Aktionen für/ }).click();
+  await page.getByRole('menuitem', { name: 'Loslassen', exact: true }).click();
   await expect(page.getByRole('alertdialog')).toHaveCount(0);
   const status = page.getByRole('status');
   await expect(status).toContainText('Losgelassen');
@@ -210,5 +211,6 @@ test('Loslassen gilt sofort und die Meldung bietet Rückgängig', async ({ page 
   await page.screenshot({ path: `tmp-test/dialog-standard/${testInfo.project.name}-toast.png` });
   await status.getByRole('button', { name: 'Rückgängig' }).click();
   await expect(status).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Loslassen' }).first()).toBeVisible();
+  await zeile.getByRole('button', { name: /Aktionen für/ }).click();
+  await expect(page.getByRole('menuitem', { name: 'Loslassen', exact: true })).toBeVisible();
 });

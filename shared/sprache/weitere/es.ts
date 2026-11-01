@@ -1,5 +1,18 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele legt Neu eine Vision, eine Organisation oder ein Projekt an.": "En Metas, Nuevo crea una visión, una organización o un proyecto.",
+  "Jede Vision ist ein Abschnitt mit Farbpunkt. Laufend steht als Zeile darüber.": "Cada visión es una sección con un punto de color. En curso está en una fila encima.",
+  "Das Archiv ist zugeklappt.": "El archivo está plegado.",
+  "Am Projekt liegt das Menü im Kopf. Der Stift ist weg.": "En el proyecto, el menú está en la cabecera. El lápiz ya no está.",
+  "Vorhaben, Tätigkeiten nur für das Projekt und die Basis stehen in eigenen Abschnitten.": "Las tareas, las actividades solo para el proyecto y la base están en secciones propias.",
+  "Noch keine Ziele.": "Aún no hay metas.",
+  "Ziel anlegen": "Crear una meta",
+  "Laufend · {anzahl}": "En curso · {anzahl}",
+  "Archiv": "Archivo",
+  "Wieder öffnen": "Volver a abrir",
+  "Nur für dieses Projekt": "Solo para este proyecto",
+  "Tätigkeit nur für dieses Projekt": "Actividad solo para este proyecto",
+  "Umbenennen": "Cambiar el nombre",
   "Auf Heute stehen die ersten Schritte, bis der erste XP da ist.": "En Hoy están los primeros pasos, hasta el primer XP.",
   "Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.": "Un paso hecho muestra una marca y el nombre. No hay contador.",
   "Die ersten Schritte stehen nur noch auf Heute.": "Los primeros pasos están solo en Hoy.",

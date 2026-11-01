@@ -55,7 +55,7 @@ test('Farbpunkt statt Linie und Balken', async ({ page }, testInfo) => {
 
   await page.goto('/ziele');
   await expect(page.getByRole('heading', { name: 'Ziele', level: 1 })).toBeVisible();
-  const fit = page.locator('section.karte').filter({ has: page.getByRole('heading', { name: 'Fit und belastbar', level: 2 }) });
+  const fit = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Fit und belastbar', level: 2 }) });
   await keineFarbLinie(fit);
   await expect(fit.locator('.h-1')).toHaveCount(0);
   const visionKopf = fit.getByRole('heading', { name: 'Fit und belastbar', level: 2 });
@@ -103,12 +103,11 @@ test('Farbpunkt statt Linie und Balken', async ({ page }, testInfo) => {
   const wahl = page.getByRole('dialog', { name: 'Projekt' });
   await expect(wahl).toBeVisible();
   await keineFarbLinie(wahl);
-  const fitWahl = wahl.locator('[data-ast="vision"]').filter({ has: page.getByRole('heading', { name: 'Fit und belastbar' }) });
-  await punktIst10(fitWahl.getByRole('heading', { name: 'Fit und belastbar' }).locator('[data-farbpunkt]'));
-  const orgWahl = fitWahl.locator('[data-ast="organisation"]').filter({ has: page.getByRole('heading', { name: 'Lauftreff' }) });
-  await punktIst10(orgWahl.getByRole('heading', { name: 'Lauftreff' }).locator('[data-farbpunkt]'));
-  await expect(orgWahl.getByRole('option', { name: 'Gruppenläufe', exact: true })).toBeVisible();
-  await expect(fitWahl.getByRole('option', { name: 'Krafttraining', exact: true })).toBeVisible();
+  const punktBei = (name: string) => wahl.getByText(name, { exact: true }).locator('xpath=..').locator('[data-farbpunkt]');
+  await punktIst10(punktBei('Fit und belastbar'));
+  await punktIst10(punktBei('Lauftreff'));
+  await expect(wahl.getByRole('option', { name: 'Gruppenläufe', exact: true })).toBeVisible();
+  await expect(wahl.getByRole('option', { name: 'Krafttraining', exact: true })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
   await bild('auswahl');
 });

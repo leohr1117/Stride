@@ -147,7 +147,7 @@ test('Abgeschlossen bleibt in der Kopfzeile', async ({ page }, testInfo) => {
     }
     await expect(untertitel).not.toContainText('abgeschlossen');
     await ohneSeitlichenUeberlauf(page);
-    await page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-lauf66-kopf.png`, fullPage: false });
+    await page.screenshot({ path: `tmp-test/ziele-faehigkeiten/${testInfo.project.name}-kopf.png`, fullPage: false });
 
     await page.goto('/ziele');
     const link = page.locator(`a[href="/projekte/${ziel.id}"]`);
@@ -221,5 +221,5 @@ test('Skill-Blasen zeigen XP ohne Haken', async ({ page }, testInfo) => {
     }
   }
 
-  await page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-lauf66-baum.png`, fullPage: false });
+  await page.screenshot({ path: `tmp-test/ziele-faehigkeiten/${testInfo.project.name}-baum.png`, fullPage: false });
 });

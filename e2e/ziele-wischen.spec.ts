@@ -53,30 +53,28 @@ async function attributId(seite: Page): Promise<number> {
   return id;
 }
 
-async function visionAnlegen(seite: Page, titel: string, mitProjekt: boolean): Promise<void> {
-  const vision = await api<{ id: number }>(seite, '/api/visionen', 'POST', {
-    titel,
+async function projektAnlegen(seite: Page, name: string, vorlageId: number, mitEintrag: boolean): Promise<void> {
+  const projekt = await api<{ id: number }>(seite, '/api/projekte', 'POST', {
+    name,
     beschreibung: '',
-    farbe: '#336699',
-    woopErgebnis: '',
-    woopHindernis: '',
-    woopPlan: '',
-    level: null,
+    visionId: null,
+    organisationId: null,
+    standardVorlageId: vorlageId,
   });
-  if (!mitProjekt) {
+  if (!mitEintrag) {
     return;
   }
-  const vorlage = await api<{ id: number }>(seite, '/api/vorlagen', 'POST', {
-    name: `${titel}-tun`,
-    icon: 'sparkles',
-    gewichte: [{ attributId: await attributId(seite), gewicht: 1 }],
-  });
-  await api(seite, '/api/projekte', 'POST', {
-    name: `${titel}-projekt`,
-    beschreibung: '',
-    visionId: vision.id,
-    organisationId: null,
-    standardVorlageId: vorlage.id,
+  await api(seite, '/api/eintraege', 'POST', {
+    projektId: projekt.id,
+    vorlageId,
+    vorhaben: null,
+    abschluss: null,
+    erkenntnis: '',
+    stunden: 1,
+    notiz: '',
+    meilenstein: false,
+    faehigkeitId: null,
+    datum: null,
   });
 }
 
@@ -112,13 +110,18 @@ test('wischen archiviert und löscht', async ({ page }, testInfo) => {
   const genutzt = 'Lauf73-genutzt-handy';
   const taetigkeit = 'Lauf73-tat-handy';
   await vorbereiten(page);
-  await visionAnlegen(page, leer, false);
-  await visionAnlegen(page, genutzt, true);
+  const vorhandene = await api<{ id: number; archiviert: boolean }[]>(page, '/api/vorlagen', 'GET');
+  const basisId = vorhandene.find((eintrag) => !eintrag.archiviert)?.id;
+  if (basisId === undefined) {
+    throw new Error('Keine Tätigkeit.');
+  }
   await api(page, '/api/vorlagen', 'POST', {
     name: taetigkeit,
     icon: 'sparkles',
     gewichte: [{ attributId: await attributId(page), gewicht: 1 }],
   });
+  await projektAnlegen(page, leer, basisId, false);
+  await projektAnlegen(page, genutzt, basisId, true);
 
   await page.goto('/ziele');
   await expect(page.getByRole('heading', { name: 'Ziele' })).toBeVisible();
@@ -161,12 +164,12 @@ test('menü und tastatur archivieren und brechen ab', async ({ page }, testInfo)
   const genutzt = 'Lauf73-genutzt-desktop';
   const notiz = 'Lauf73-notiz-desktop';
   await vorbereiten(page);
-  await visionAnlegen(page, genutzt, true);
   const vorlagen = await api<{ id: number; archiviert: boolean }[]>(page, '/api/vorlagen', 'GET');
   const vorlageId = vorlagen.find((vorlage) => !vorlage.archiviert)?.id;
   if (vorlageId === undefined) {
     throw new Error('Keine Tätigkeit.');
   }
+  await projektAnlegen(page, genutzt, vorlageId, true);
   await api(page, '/api/eintraege', 'POST', {
     projektId: null,
     vorlageId,

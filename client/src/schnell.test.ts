@@ -70,6 +70,14 @@ describe('menueTeile', () => {
   });
 });
 
+describe('SchnellPunkt', () => {
+  it('lässt die Standardpunkte ohne eigene id und ohne Wischmarke', () => {
+    const punkte = punkteFuer({ art: 'projekt', archiviert: false, loeschbar: false });
+    expect(punkte.map((punkt) => punkt.art)).toEqual(['archivieren']);
+    expect(punkte.every((punkt) => punkt.id === undefined && punkt.wisch !== true)).toBe(true);
+  });
+});
+
 describe('primaerPunkt', () => {
   it('bevorzugt Löschen vor Archivieren und Wiederherstellen', () => {
     const punkte: SchnellPunkt[] = [

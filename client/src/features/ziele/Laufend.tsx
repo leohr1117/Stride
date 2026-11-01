@@ -1,20 +1,16 @@
 import { tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
 import { Swords } from 'lucide-react';
-import { Link } from 'react-router';
 import type { VorhabenMitProjekt } from '../../../../shared/api/index.ts';
 import { zielTitel } from '../../../../shared/spiel/ebenen.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
-import { Abschnitt, KurzListe } from '../../components/Ausklappbar.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
+import { Liste, Zeile } from '../../components/Zeile.tsx';
 import { BossRing } from '../bosse/BossRing.tsx';
-import { Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
+import { Fehlermeldung, Knopf, Ladeanzeige, Leer, Ueberschrift } from '../../ui/index.ts';
 import { bossZeile, VorhabenKennzahlen } from '../../components/VorhabenInfo.tsx';
-
-const BOSSE_SICHTBAR = 4;
-const VORHABEN_SICHTBAR = 8;
 
 export function LaufendSeite() {
   const sichtbarkeit = useSichtbarkeit();
@@ -35,32 +31,28 @@ export function LaufendSeite() {
 
   return (
     <div className="space-y-6">
-      {leer && <Leer text={tx("Nichts am Laufen.")} />}
+      {leer && <Leer text={tx('Nichts am Laufen.')} />}
 
       {bosse.length > 0 && (
-        <Abschnitt titel={tx("Bosse")} kennung="laufend-bosse">
-          <KurzListe
-            eintraege={bosse}
-            anzahl={BOSSE_SICHTBAR}
-            className="grid grid-cols-1 gap-3 md:grid-cols-2"
-            darstellen={(eintrag) => (
+        <section className="space-y-2">
+          <Ueberschrift titel={tx('Bosse')} />
+          <Liste>
+            {bosse.map((eintrag) => (
               <LaufendesVorhaben key={eintrag.id} vorhaben={eintrag} zeigeBoss projekteAn={projekteAn} />
-            )}
-          />
-        </Abschnitt>
+            ))}
+          </Liste>
+        </section>
       )}
 
       {vorhaben.length > 0 && (
-        <Abschnitt titel={zielTitel('vorhaben')} kennung="laufend-vorhaben">
-          <KurzListe
-            eintraege={vorhaben}
-            anzahl={VORHABEN_SICHTBAR}
-            className="space-y-2"
-            darstellen={(eintrag) => (
+        <section className="space-y-2">
+          <Ueberschrift titel={tx(zielTitel('vorhaben'))} />
+          <Liste>
+            {vorhaben.map((eintrag) => (
               <LaufendesVorhaben key={eintrag.id} vorhaben={eintrag} zeigeBoss={false} projekteAn={projekteAn} />
-            )}
-          />
-        </Abschnitt>
+            ))}
+          </Liste>
+        </section>
       )}
     </div>
   );
@@ -77,41 +69,49 @@ function LaufendesVorhaben({
 }) {
   const eintragOeffnen = useEintragOeffnen();
   const boss = zeigeBoss ? vorhaben.boss : null;
+  const weiter = () =>
+    eintragOeffnen(
+      projekteAn && vorhaben.projektId !== null
+        ? { projektId: vorhaben.projektId, vorhabenId: vorhaben.id }
+        : { vorhabenId: vorhaben.id },
+    );
+  const zumProjekt = projekteAn && vorhaben.projektId !== null ? `/projekte/${vorhaben.projektId}` : undefined;
 
-  return (
-    <div className={`rounded-2xl border bg-flaeche px-4 py-3 ${boss ? 'border-gefahr/40' : 'border-rand'}`}>
-      <div className="flex items-center gap-3">
-        {boss && <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />}
+  if (boss) {
+    return (
+      <div className="zeile flex min-h-12 items-center gap-3 px-4 py-3">
+        <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />
         <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-1.5 text-sm font-medium">
-            {boss && <Swords className="size-4 shrink-0 text-gefahr" />}
+          <p className="flex items-center gap-1.5 text-base leading-6">
+            <Swords className="size-4 shrink-0 text-gefahr" />
             <span className="truncate">{vorhaben.titel}</span>
           </p>
-          {boss && <p className="truncate text-xs text-leise">{bossZeile(boss)}</p>}
-          {projekteAn && vorhaben.projektId !== null && (
-            <Link
-              to={`/projekte/${vorhaben.projektId}`}
-              className="flex items-center gap-1.5 text-xs text-leise hover:text-haupt"
-            >
-              <span className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: vorhaben.farbe }} />
-              <span className="truncate">{vorhaben.projektName}</span>
-            </Link>
-          )}
-          <VorhabenKennzahlen vorhaben={vorhaben} ohneXp={boss !== null} />
+          <p className="truncate text-[13px] leading-[18px] text-leise">{bossZeile(boss)}</p>
+          {projekteAn && vorhaben.projektName ? (
+            <p className="truncate text-[13px] leading-[18px] text-leise">{vorhaben.projektName}</p>
+          ) : null}
+          <VorhabenKennzahlen vorhaben={vorhaben} ohneXp />
         </div>
-        <Knopf
-          className="shrink-0 px-3 py-1.5"
-          onClick={() =>
-            eintragOeffnen(
-              projekteAn && vorhaben.projektId !== null
-                ? { projektId: vorhaben.projektId, vorhabenId: vorhaben.id }
-                : { vorhabenId: vorhaben.id },
-            )
-          }
-        >
-          {tx("Weiter")}
+        <Knopf className="shrink-0" data-schnell-frei="" onClick={weiter}>
+          {tx('Weiter')}
         </Knopf>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <Zeile
+      typ="lesen"
+      pfeil={false}
+      nach={zumProjekt}
+      name={vorhaben.titel}
+      titel={vorhaben.titel}
+      neben={projekteAn && vorhaben.projektName ? vorhaben.projektName : undefined}
+      rechts={
+        <Knopf className="shrink-0" data-schnell-frei="" onClick={weiter}>
+          {tx('Weiter')}
+        </Knopf>
+      }
+    />
   );
 }

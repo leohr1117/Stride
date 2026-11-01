@@ -574,10 +574,9 @@ export function ProjektInvestition({ projekt }: { projekt: Projekt }) {
     (eintrag) => eintrag.kennung === 'ressourcen' && !eintrag.archiviert && istTypAktiv(sichtbarkeit.funktionen, eintrag.typ),
   );
   const zielIstRessourcen = ziel?.art === 'attribut' && ressourcen !== undefined && ziel.id === ressourcen.id;
-  const status =
-    projekt.investition && projekt.geschafftAm !== null
-      ? tx('Aktiv · {bonus}', { bonus: bonusProzent(investitionsBonus(projekt.investitionGroesse)) })
-      : undefined;
+  const status = projekt.investition
+    ? bonusProzent(investitionsBonus(projekt.investitionGroesse))
+    : tx('Aus');
 
   return (
     <>

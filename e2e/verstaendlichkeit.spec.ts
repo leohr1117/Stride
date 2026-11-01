@@ -22,7 +22,7 @@ test('Hierarchie, Funktionen und Projekt-Tätigkeit sind erkennbar', async ({ pa
 
   await page.goto('/ziele');
   await expect(page.getByRole('heading', { name: 'Ziele', level: 1 })).toBeVisible();
-  const fit = page.locator('section.karte').filter({ has: page.getByRole('heading', { name: 'Fit und belastbar', level: 2 }) });
+  const fit = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Fit und belastbar', level: 2 }) });
   const org = fit.locator('[data-ast="organisation"]').filter({ has: page.getByRole('heading', { name: 'Lauftreff', level: 3 }) });
   await expect(org.getByRole('link', { name: /Gruppenläufe/ })).toBeVisible();
   await expect(org.getByRole('link', { name: /Krafttraining/ })).toHaveCount(0);
@@ -35,15 +35,11 @@ test('Hierarchie, Funktionen und Projekt-Tätigkeit sind erkennbar', async ({ pa
 
   await page.getByRole('link', { name: /App bauen/ }).click();
   await expect(page).toHaveURL(/\/projekte\/\d+$/);
-  const taetigkeiten = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Tätigkeiten' }) });
+  const taetigkeiten = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Nur für dieses Projekt' }) });
   await expect(taetigkeiten.getByText('Nur für App bauen')).toBeVisible();
   await expect(taetigkeiten.getByText('App-Feinschliff')).toBeVisible();
-  await taetigkeiten.getByRole('button', { name: 'Info' }).click();
-  const listenHinweis = page.getByRole('tooltip');
-  await expect(listenHinweis).toContainText('nur für dieses Projekt');
-  imBild(await listenHinweis.boundingBox(), sicht.width, sicht.height);
-  await page.keyboard.press('Escape');
-  await taetigkeiten.getByRole('button', { name: 'Tätigkeit', exact: true }).click();
+  await expect(taetigkeiten.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await taetigkeiten.getByRole('button', { name: '+ Tätigkeit nur für dieses Projekt', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Tätigkeit für App bauen' });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText('Nur für App bauen')).toBeVisible();

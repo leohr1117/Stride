@@ -447,11 +447,11 @@ function Menue({
       aria-label={tx("Aktionen")}
       style={stil}
       onKeyDown={beiTaste}
-      className="fixed z-[80] min-w-44 rounded-xl border border-rand bg-flaeche py-1 shadow-lg"
+      className="fixed z-[95] min-w-44 rounded-xl border border-rand bg-flaeche py-1 shadow-lg"
     >
       {teile.oben.map((punkt) => (
         <button
-          key={punkt.art}
+          key={punkt.id ?? punkt.art}
           type="button"
           role="menuitem"
           className="block w-full px-3 py-2.5 text-left text-sm hover:bg-flaeche-2"
@@ -484,14 +484,21 @@ export function SchnellZeile({
   className = '',
   hintergrund = 'bg-flaeche',
   children,
+  eintraege,
+  onEintrag,
 }: {
   ziel: SchnellZiel;
   className?: string;
   hintergrund?: string;
   children: ReactNode | ((menue: ReactNode) => ReactNode);
+  /** Steht vor Archivieren und Löschen. Ohne Angabe bleibt die Zeile wie bisher. */
+  eintraege?: SchnellPunkt[];
+  onEintrag?: (punkt: SchnellPunkt) => void;
 }) {
   const aktion = useSchnell();
-  const punkte = punkteFuer(ziel);
+  const standard = punkteFuer(ziel);
+  const eigen = eintraege && eintraege.length > 0 ? eintraege : null;
+  const punkte = eigen ? [...eigen, ...standard] : standard;
   const huelle = useRef<HTMLDivElement>(null);
   const knopf = useRef<HTMLButtonElement>(null);
   const start = useRef<{ x: number; y: number; id: number } | null>(null);
@@ -530,15 +537,28 @@ export function SchnellZeile({
     );
   }
 
-  const primaer = primaerPunkt(punkte);
+  const standardPrimaer = primaerPunkt(standard);
+  const wirksam =
+    eigen && !eigen.some((punkt) => punkt.wisch) && standardPrimaer
+      ? punkte.map((punkt) => (punkt === standardPrimaer ? { ...punkt, wisch: true } : punkt))
+      : punkte;
+  const primaer = primaerPunkt(wirksam);
+  const ausloeser = wirksam.find((punkt) => punkt.wisch) ?? primaer;
   const oeffne = (punkt: { x: number; y: number }) => {
     setAnker(punkt);
     setOffen(true);
   };
-  const beiWahl = (punkt: SchnellPunkt) => {
+  const fuehreAus = (punkt: SchnellPunkt | null) => {
+    if (!punkt) {
+      return;
+    }
     setOffen(false);
     setX(0);
     stand.current = 0;
+    if (punkt.id) {
+      onEintrag?.(punkt);
+      return;
+    }
     void aktion.ausfuehren(ziel, punkt.art);
   };
   const beiDown = (ereignis: ReactPointerEvent) => {
@@ -593,10 +613,8 @@ export function SchnellZeile({
       return;
     }
     unterdruecke.current = true;
-    if (zug <= -AUSLOESEN_PX && primaer) {
-      setX(0);
-      stand.current = 0;
-      void aktion.ausfuehren(ziel, primaer.art);
+    if (zug <= -AUSLOESEN_PX && ausloeser) {
+      fuehreAus(ausloeser);
       return;
     }
     if (zug <= -ZEIGE_PX * OFFEN_ANTEIL) {
@@ -654,7 +672,7 @@ export function SchnellZeile({
       {menue}
     </div>
   );
-  const farbe = primaer?.art === 'loeschen' ? 'bg-gefahr text-gefahr-text' : 'bg-akzent text-akzent-text';
+  const farbe = ausloeser?.art === 'loeschen' ? 'bg-gefahr text-gefahr-text' : 'bg-akzent text-akzent-text';
 
   return (
     <div
@@ -685,15 +703,9 @@ export function SchnellZeile({
           aria-hidden={x === 0}
           className="shrink-0 text-sm font-medium"
           style={{ width: ZEIGE_PX }}
-          onClick={() => {
-            if (primaer) {
-              setX(0);
-              stand.current = 0;
-              void aktion.ausfuehren(ziel, primaer.art);
-            }
-          }}
+          onClick={() => fuehreAus(ausloeser)}
         >
-          {primaer ? tx(primaer.label) : null}
+          {ausloeser ? tx(ausloeser.label) : null}
         </button>
       </div>
       <div
@@ -705,8 +717,63 @@ export function SchnellZeile({
       >
         {inhalt}
       </div>
-      {offen && anker ? <Menue punkte={punkte} anker={anker} onWahl={beiWahl} onSchliessen={schliessen} /> : null}
+      {offen && anker ? <Menue punkte={wirksam} anker={anker} onWahl={fuehreAus} onSchliessen={schliessen} /> : null}
     </div>
+  );
+}
+
+export function SchnellMenueKnopf({
+  ziel,
+  davor = [],
+  className = '',
+}: {
+  ziel: SchnellZiel;
+  davor?: { id: string; label: string; onWahl: () => void }[];
+  className?: string;
+}) {
+  const aktion = useSchnell();
+  const extra = davor.map((eintrag) => ({ art: 'archivieren' as const, label: eintrag.label, id: eintrag.id }));
+  const punkte = [...extra, ...punkteFuer(ziel)];
+  const knopf = useRef<HTMLButtonElement>(null);
+  const [offen, setOffen] = useState(false);
+  const [anker, setAnker] = useState<{ x: number; y: number } | null>(null);
+  const schliessen = useCallback(() => {
+    setOffen(false);
+    knopf.current?.focus();
+  }, []);
+  if (punkte.length === 0) {
+    return null;
+  }
+  const beiWahl = (punkt: SchnellPunkt) => {
+    setOffen(false);
+    if (punkt.id) {
+      davor.find((eintrag) => eintrag.id === punkt.id)?.onWahl();
+      return;
+    }
+    void aktion.ausfuehren(ziel, punkt.art);
+  };
+  return (
+    <>
+      <button
+        ref={knopf}
+        type="button"
+        data-schnell-menue=""
+        aria-label={tx('Aktionen für {name}', { name: ziel.name })}
+        aria-haspopup="menu"
+        aria-expanded={offen}
+        className={`flex size-11 shrink-0 items-center justify-center rounded-full text-leise hover:bg-flaeche-2 hover:text-haupt ${className}`}
+        onClick={(ereignis) => {
+          ereignis.preventDefault();
+          ereignis.stopPropagation();
+          const kasten = knopf.current?.getBoundingClientRect();
+          setAnker(kasten ? { x: kasten.left, y: kasten.bottom } : { x: ereignis.clientX, y: ereignis.clientY });
+          setOffen(true);
+        }}
+      >
+        <EllipsisVertical className="size-5" />
+      </button>
+      {offen && anker ? <Menue punkte={punkte} anker={anker} onWahl={beiWahl} onSchliessen={schliessen} /> : null}
+    </>
   );
 }
 

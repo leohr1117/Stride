@@ -77,11 +77,48 @@ test('Heute behält den Boss und Ziele behält Archiv und Scrollstand', async ({
   await page.goBack();
   await expect(page).toHaveURL(/\/$/);
 
+  const archivProjekt = await page.evaluate(async () => {
+    const vorlagen = (await fetch('/api/vorlagen').then((antwort) => antwort.json())) as {
+      id: number;
+      archiviert: boolean;
+      projektId: number | null;
+    }[];
+    const vorlage = vorlagen.find((eintrag) => !eintrag.archiviert && eintrag.projektId === null);
+    if (!vorlage) {
+      return null;
+    }
+    const angelegt = await fetch('/api/projekte', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        name: 'Archiv-Rueckweg',
+        beschreibung: '',
+        visionId: null,
+        organisationId: null,
+        standardVorlageId: vorlage.id,
+        abschlussVorlageId: null,
+      }),
+    });
+    if (!angelegt.ok) {
+      return null;
+    }
+    const projekt = (await angelegt.json()) as { id: number };
+    const archiv = await fetch(`/api/projekte/${projekt.id}`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ archiviert: true }),
+    });
+    return archiv.ok ? projekt.id : null;
+  });
+  expect(archivProjekt).not.toBeNull();
+  try {
+  await page.evaluate(() => localStorage.removeItem('ascend.eingeklappt.ziele-archiv'));
   await page.goto('/ziele');
-  const archiv = page.getByRole('button', { name: /Archiv anzeigen/ });
+  const archiv = page.getByRole('button', { name: 'Archiv', exact: true });
   await expect(archiv).toBeVisible();
+  await expect(archiv).toHaveAttribute('aria-expanded', 'false');
   await archiv.click();
-  await expect(page.getByRole('button', { name: 'Archiv ausblenden' })).toBeVisible();
+  await expect(archiv).toHaveAttribute('aria-expanded', 'true');
   await page.evaluate(() => {
     const haupt = document.querySelector('main');
     if (haupt) haupt.style.minHeight = '2400px';
@@ -95,10 +132,17 @@ test('Heute behält den Boss und Ziele behält Archiv und Scrollstand', async ({
   await bild('projekt');
   await page.locator('a[data-zurueck]').click();
   await expect(page).toHaveURL(/\/ziele$/);
-  await expect(page.getByRole('button', { name: 'Archiv ausblenden' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Archiv', exact: true })).toHaveAttribute('aria-expanded', 'true');
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(400);
   await ohneSeitlichenUeberlauf(page);
   await bild('ziele-archiv');
+  } finally {
+    if (archivProjekt !== null) {
+      await page.evaluate(async (id) => {
+        await fetch(`/api/projekte/${id}`, { method: 'DELETE' });
+      }, archivProjekt);
+    }
+  }
 });
 
 test('Ein Platz merkt sich die letzte Seite und der Tipp kehrt an den Anfang', async ({ page }, testInfo) => {

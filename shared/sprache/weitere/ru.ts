@@ -1,5 +1,18 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele legt Neu eine Vision, eine Organisation oder ein Projekt an.": "В Целях пункт Новое создаёт видение, организацию или проект.",
+  "Jede Vision ist ein Abschnitt mit Farbpunkt. Laufend steht als Zeile darüber.": "Каждое видение — раздел с цветной точкой. Текущее стоит строкой выше.",
+  "Das Archiv ist zugeklappt.": "Архив свёрнут.",
+  "Am Projekt liegt das Menü im Kopf. Der Stift ist weg.": "У проекта меню в шапке. Карандаша больше нет.",
+  "Vorhaben, Tätigkeiten nur für das Projekt und die Basis stehen in eigenen Abschnitten.": "Задачи, занятия только для проекта и база стоят в своих разделах.",
+  "Noch keine Ziele.": "Целей пока нет.",
+  "Ziel anlegen": "Добавить цель",
+  "Laufend · {anzahl}": "Текущее · {anzahl}",
+  "Archiv": "Архив",
+  "Wieder öffnen": "Открыть снова",
+  "Nur für dieses Projekt": "Только для этого проекта",
+  "Tätigkeit nur für dieses Projekt": "Занятие только для этого проекта",
+  "Umbenennen": "Переименовать",
   "Auf Heute stehen die ersten Schritte, bis der erste XP da ist.": "На странице Сегодня первые шаги остаются до первого XP.",
   "Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.": "Готовый шаг показывает галочку и имя. Счётчика нет.",
   "Die ersten Schritte stehen nur noch auf Heute.": "Первые шаги есть только на странице Сегодня.",

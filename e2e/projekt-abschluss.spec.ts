@@ -99,7 +99,8 @@ test('Abschlusstätigkeit, einmaliger Bonus und Übersicht', async ({ page }, te
   });
 
   await page.goto(`/projekte/${angelegt.id}`);
-  await page.getByRole('button', { name: 'Projekt bearbeiten', exact: true }).click();
+  await page.getByRole('button', { name: `Aktionen für ${name}`, exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Bearbeiten', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Projekt bearbeiten' });
   const feld = dialog.locator('.feld').filter({ hasText: 'Abschlusstätigkeit' });
   await expect(feld.locator('select')).toHaveValue(String(abschluss.id));
@@ -119,7 +120,7 @@ test('Abschlusstätigkeit, einmaliger Bonus und Übersicht', async ({ page }, te
   await expect(feier.getByText('Projekt abgeschlossen', { exact: true })).toBeVisible();
   const weiter = page.getByRole('button', { name: 'Weiter', exact: true });
   await expect(weiter).toBeVisible();
-  await page.screenshot({ path: `e2e/bilder/lauf80-${testInfo.project.name}-feier.png` });
+  await page.screenshot({ path: `tmp-test/projekt-abschluss/${testInfo.project.name}-feier.png` });
   await weiter.click();
   await feier.getByRole('button', { name: 'Schließen', exact: true }).click();
   await expect(feier).toHaveCount(0);
@@ -133,16 +134,17 @@ test('Abschlusstätigkeit, einmaliger Bonus und Übersicht', async ({ page }, te
   await region.getByRole('button', { name: 'Info', exact: true }).click();
   await expect(page.getByRole('tooltip')).toContainText('Wieder öffnen gibt den Bonus nicht noch einmal.');
   await ohneUeberlauf(page);
-  await page.screenshot({ path: `e2e/bilder/lauf80-${testInfo.project.name}-uebersicht.png`, fullPage: true });
+  await page.screenshot({ path: `tmp-test/projekt-abschluss/${testInfo.project.name}-uebersicht.png`, fullPage: true });
   const nachAbschluss = await stand(page, angelegt.id);
   expect(nachAbschluss.abschluss?.stunden).toBe(2);
   expect(nachAbschluss.abschluss?.eintraege).toBe(2);
   expect(nachAbschluss.geschafftAm).not.toBeNull();
 
-  await page.getByRole('button', { name: 'Öffnen', exact: true }).click();
+  await page.getByRole('button', { name: 'Wieder öffnen', exact: true }).click();
   const oeffnen = page.getByRole('alertdialog', { name: 'Projekt wieder öffnen?' });
   await oeffnen.getByRole('button', { name: 'Öffnen', exact: true }).click();
-  await expect(region).toHaveCount(0);
+  await expect(region).toBeVisible();
+  await expect(region.getByRole('button', { name: 'Abschließen', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Abschließen', exact: true }).click();
   const nochmal = page.getByRole('alertdialog', { name: `"${name}" abschließen?` });
   await nochmal.getByRole('button', { name: 'Abschließen', exact: true }).click();

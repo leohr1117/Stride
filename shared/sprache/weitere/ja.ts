@@ -1,5 +1,18 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele legt Neu eine Vision, eine Organisation oder ein Projekt an.": "目標では、新規からビジョン、組織、プロジェクトを作れます。",
+  "Jede Vision ist ein Abschnitt mit Farbpunkt. Laufend steht als Zeile darüber.": "各ビジョンは色の点がある区間です。進行中はその上の行です。",
+  "Das Archiv ist zugeklappt.": "アーカイブはたたまれています。",
+  "Am Projekt liegt das Menü im Kopf. Der Stift ist weg.": "プロジェクトではメニューがヘッダーにあります。鉛筆はありません。",
+  "Vorhaben, Tätigkeiten nur für das Projekt und die Basis stehen in eigenen Abschnitten.": "タスク、このプロジェクトだけの活動、基本はそれぞれ区間にあります。",
+  "Noch keine Ziele.": "まだ目標がありません。",
+  "Ziel anlegen": "目標を追加",
+  "Laufend · {anzahl}": "進行中 · {anzahl}",
+  "Archiv": "アーカイブ",
+  "Wieder öffnen": "もう一度開く",
+  "Nur für dieses Projekt": "このプロジェクトだけ",
+  "Tätigkeit nur für dieses Projekt": "このプロジェクトだけの活動",
+  "Umbenennen": "名前を変える",
   "Auf Heute stehen die ersten Schritte, bis der erste XP da ist.": "今日のページでは、最初の XP まで最初の手順が残る。",
   "Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.": "終わった手順はチェックと名前を示す。数は出ない。",
   "Die ersten Schritte stehen nur noch auf Heute.": "最初の手順は今日のページにだけある。",

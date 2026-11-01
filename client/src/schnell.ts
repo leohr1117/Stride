@@ -41,6 +41,10 @@ export interface SchnellZiel {
 export interface SchnellPunkt {
   art: SchnellPunktArt;
   label: string;
+  /** Eigene Aktion. Ohne id läuft Archivieren, Wiederherstellen oder Löschen. */
+  id?: string;
+  /** Dieser Punkt ist die Wischaktion, auch wenn Löschen in der Liste steht. */
+  wisch?: boolean;
 }
 
 export interface Bestaetigungstext {

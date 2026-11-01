@@ -158,8 +158,13 @@ test('Beschriftungen folgen der Sprache', async ({ page }) => {
     await page.getByRole('button', { name: 'Log entry' }).waitFor();
     await page.goto('/ziele');
     await expect(page.getByRole('heading', { name: 'Goals' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Show archive' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Project' }).first()).toBeVisible();
+    await page.getByRole('button', { name: 'New', exact: true }).click();
+    const menue = page.getByRole('menu', { name: 'New' });
+    await expect(menue.getByRole('menuitem')).toHaveText(['Vision', 'Organization', 'Project']);
+    await menue.getByRole('menuitem', { name: 'Vision', exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'New Vision' })).toBeVisible();
+    await page.getByRole('button', { name: 'Close' }).click();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(
       page.getByRole('heading', { name: zeige('Ohne {name}', 'en', { name: zeige('Vision', 'en') }), exact: true }),
     ).toBeVisible();
@@ -169,10 +174,6 @@ test('Beschriftungen folgen der Sprache', async ({ page }) => {
         exact: true,
       }),
     ).toBeVisible();
-    await page.getByRole('button', { name: 'Vision' }).first().click();
-    await expect(page.getByRole('dialog', { name: 'New Vision' })).toBeVisible();
-    await page.getByRole('button', { name: 'Close' }).click();
-    await expect(page.getByRole('dialog')).toHaveCount(0);
 
     await page.goto('/statistiken');
     await expect(page.getByRole('button', { name: '3 months' })).toBeVisible();
@@ -259,17 +260,20 @@ test('Wischen löscht sofort und der nächste Toast ersetzt den ersten', async (
   await page.getByRole('button', { name: 'Eintrag loggen' }).waitFor();
   const angelegt: number[] = [];
   try {
-    for (const titel of [ersteName, zweiteName]) {
-      const vision = await api<{ id: number }>(page, '/api/visionen', 'POST', {
-        titel,
+    const vorlagen = await api<{ id: number; archiviert: boolean }[]>(page, '/api/vorlagen', 'GET');
+    const vorlageId = vorlagen.find((eintrag) => !eintrag.archiviert)?.id;
+    if (vorlageId === undefined) {
+      throw new Error('Keine Tätigkeit.');
+    }
+    for (const name of [ersteName, zweiteName]) {
+      const projekt = await api<{ id: number }>(page, '/api/projekte', 'POST', {
+        name,
         beschreibung: '',
-        farbe: '#336699',
-        woopErgebnis: '',
-        woopHindernis: '',
-        woopPlan: '',
-        level: null,
+        visionId: null,
+        organisationId: null,
+        standardVorlageId: vorlageId,
       });
-      angelegt.push(vision.id);
+      angelegt.push(projekt.id);
     }
     await page.goto('/ziele');
     const ersteZeile = page.locator(`[data-schnell="${ersteName}"]`);
@@ -289,13 +293,13 @@ test('Wischen löscht sofort und der nächste Toast ersetzt den ersten', async (
     await expect(zweiteZeile).toBeVisible();
     await expect(ersteZeile).toHaveCount(0);
   } finally {
-    const ziele = await api<{ visionen: { id: number }[] }>(page, '/api/ziele', 'GET').catch(() => null);
-    const da = new Set((ziele?.visionen ?? []).map((vision) => vision.id));
+    const ziele = await api<{ projekte: { id: number }[] }>(page, '/api/ziele', 'GET').catch(() => null);
+    const da = new Set((ziele?.projekte ?? []).map((projekt) => projekt.id));
     for (const id of angelegt) {
       if (ziele && !da.has(id)) {
         continue;
       }
-      await api(page, `/api/visionen/${id}`, 'DELETE').catch(() => undefined);
+      await api(page, `/api/projekte/${id}`, 'DELETE').catch(() => undefined);
     }
     await setzen(page, { ebenen: vorher.ebenen, sprache: vorher.sprache ?? 'de' }).catch(() => undefined);
   }
@@ -486,8 +490,9 @@ test('Seiten, Sprachen, Darstellung, Vorbilder und Todoist', async ({ page }) =>
       await page.goto('/ziele');
       await page.reload();
       await expect(page.getByRole('heading', { name: zeige('Ziele', sprache) })).toBeVisible();
-      await expect(page.getByRole('button', { name: zeige('Archiv anzeigen', sprache) })).toBeVisible();
-      await expect(page.getByRole('button', { name: zeige('Projekt', sprache) }).first()).toBeVisible();
+      await page.getByRole('button', { name: zeige('Neu', sprache), exact: true }).click();
+      await expect(page.getByRole('menuitem', { name: zeige('Projekt', sprache), exact: true })).toBeVisible();
+      await page.keyboard.press('Escape');
       await expect(
         page.getByRole('heading', { name: zeige('Ohne {name}', sprache, { name: zeige('Vision', sprache) }), exact: true }),
       ).toBeVisible();

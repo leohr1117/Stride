@@ -1,5 +1,18 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele legt Neu eine Vision, eine Organisation oder ein Projekt an.": "在目标页，新建可以添加愿景、组织或项目。",
+  "Jede Vision ist ein Abschnitt mit Farbpunkt. Laufend steht als Zeile darüber.": "每个愿景是带色点的一节。进行中是上面的一行。",
+  "Das Archiv ist zugeklappt.": "归档是收起的。",
+  "Am Projekt liegt das Menü im Kopf. Der Stift ist weg.": "项目的菜单在页头。铅笔没有了。",
+  "Vorhaben, Tätigkeiten nur für das Projekt und die Basis stehen in eigenen Abschnitten.": "事项、仅用于此项目的活动和基础各自成节。",
+  "Noch keine Ziele.": "还没有目标。",
+  "Ziel anlegen": "添加目标",
+  "Laufend · {anzahl}": "进行中 · {anzahl}",
+  "Archiv": "归档",
+  "Wieder öffnen": "重新打开",
+  "Nur für dieses Projekt": "仅用于此项目",
+  "Tätigkeit nur für dieses Projekt": "仅用于此项目的活动",
+  "Umbenennen": "重命名",
   "Auf Heute stehen die ersten Schritte, bis der erste XP da ist.": "在今天页上，第一步会保留到获得第一个 XP。",
   "Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.": "完成的步骤显示勾和名称。没有计数。",
   "Die ersten Schritte stehen nur noch auf Heute.": "第一步只出现在今天页。",

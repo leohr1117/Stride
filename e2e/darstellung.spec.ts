@@ -408,8 +408,9 @@ test('Info-Icon hat überall Abstand zum Namen', async ({ page }) => {
   await oeffneGeschlossene(page);
   const projekt = await missAbstaende(page, 'projekt');
   pruefeAbstaende(projekt, 1);
-  const bossKnopf = page.getByTitle(/Boss bearbeiten|Zum Boss machen/).first();
-  await bossKnopf.click();
+  const bossZeile = page.locator('main .rounded-2xl').first();
+  await bossZeile.getByRole('button', { name: /Aktionen für/ }).click();
+  await page.getByRole('menuitem', { name: /Boss bearbeiten|Zum Boss machen/ }).click();
   await expect(page.getByRole('dialog').getByRole('button', { name: 'Info', exact: true })).toBeVisible();
   const deadline = await missAbstaende(page, 'deadline');
   pruefeAbstaende(deadline, 1);

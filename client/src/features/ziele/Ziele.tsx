@@ -1,33 +1,41 @@
-import { katalogName, tx } from '../../text.ts';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Archive, ChevronRight, Landmark, Pencil, Plus } from 'lucide-react';
-import { useEffect, useState, type ReactNode } from 'react';
+import { tx } from '../../text.ts';
+import { useQuery } from '@tanstack/react-query';
+import { Plus } from 'lucide-react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
-import { merkeStand } from '../../herkunftLauf.ts';
+import { createPortal } from 'react-dom';
 import type { Organisation, Projekt, Vision, VorhabenMitProjekt } from '../../../../shared/api/index.ts';
 import { ZIEL_MARKE, zielTitel } from '../../../../shared/spiel/ebenen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { KettenAnzeige } from '../../components/KettenAnzeige.tsx';
-import { useSchnellAktion } from '../../components/SchnellAktion.tsx';
+import { KopfAktion } from '../../components/Kopf.tsx';
+import { SchnellMenueKnopf, SchnellZeile, useSchnellAktion } from '../../components/SchnellAktion.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
-import { SchnellZeile } from '../../components/SchnellAktion.tsx';
-import { archivBeschriftung, Farbpunkt, Fehlermeldung, Karte, Knopf, Ladeanzeige, Leer, Ueberschrift } from '../../ui/index.ts';
+import { Liste, Zeile } from '../../components/Zeile.tsx';
+import { Abschnitt } from '../../components/Ausklappbar.tsx';
+import { Farbpunkt, Fehlermeldung, Knopf, Ladeanzeige, Leer, Ueberschrift } from '../../ui/index.ts';
 import { ZielDialog, type ZielBearbeitung } from './ZielDialoge.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { kurzesDatum, zahl } from '../../format.ts';
 import { useEbenen } from '../../funktionen.ts';
 import { gliedereProjekte } from '../../projektHierarchie.ts';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function ZieleSeite() {
   const ebenen = useEbenen();
   const { data: ziele, error, isPending } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
+  const laufend = useQuery({
+    queryKey: SCHLUESSEL.laufendes,
+    queryFn: api.laufendes,
+    enabled: ebenen.vorhaben,
+  });
   const [bearbeitung, setBearbeitung] = useState<ZielBearbeitung>(null);
+  const [menue, setMenue] = useState<{ x: number; y: number } | null>(null);
   const ort = useLocation();
   const navigiere = useNavigate();
   const anlegen = (ort.state as { anlegen?: string } | null)?.anlegen;
-  const [archivAnzeigen, setArchivAnzeigen] = useState(() => Boolean((ort.state as { archiv?: boolean } | null)?.archiv));
   useEffect(() => {
     if (anlegen !== 'vision' && anlegen !== 'projekt') {
       return;
@@ -42,6 +50,29 @@ export function ZieleSeite() {
   }, [anlegen, ebenen.projekte, ebenen.visionen, navigiere, ort.pathname]);
   const [detailId, setDetailId] = useState<number | null>(null);
 
+  const neuPunkte = [
+    ebenen.visionen ? { id: 'vision', label: tx('Vision') } : null,
+    ebenen.organisationen ? { id: 'organisation', label: tx('Organisation') } : null,
+    ebenen.projekte ? { id: 'projekt', label: tx('Projekt') } : null,
+  ].filter((eintrag): eintrag is { id: string; label: string } => eintrag !== null);
+
+  const oeffneMenue = (knopf: HTMLElement) => {
+    const kasten = knopf.getBoundingClientRect();
+    setMenue({ x: kasten.left, y: kasten.bottom });
+  };
+  const waehleNeu = (id: string) => {
+    setMenue(null);
+    if (id === 'vision') {
+      setBearbeitung({ art: 'vision', vision: null });
+    }
+    if (id === 'organisation') {
+      setBearbeitung({ art: 'organisation', organisation: null });
+    }
+    if (id === 'projekt') {
+      setBearbeitung({ art: 'projekt', projekt: null, visionId: null, organisationId: null });
+    }
+  };
+
   if (isPending) {
     return <Ladeanzeige />;
   }
@@ -49,110 +80,115 @@ export function ZieleSeite() {
     return <Fehlermeldung fehler={error} />;
   }
 
-  const sichtbar = <T extends { archiviert: boolean }>(liste: T[]) =>
-    liste.filter((eintrag) => archivAnzeigen || !eintrag.archiviert);
-  const projekteVon = (filter: (projekt: Projekt) => boolean) => sichtbar(ziele.projekte.filter(filter));
-  const aktiveVisionen = ziele.visionen.filter((vision) => !vision.archiviert);
-  const freieOrganisationen = sichtbar(ziele.organisationen.filter((organisation) => organisation.visionId === null));
-  const archivierteVisionen = ziele.visionen.filter((vision) => vision.archiviert);
-  const ohneEltern = projekteVon((projekt) => projekt.visionId === null && projekt.organisationId === null);
-  const flacheProjekte = ebenen.organisationen
-    ? projekteVon((projekt) => projekt.organisationId === null)
-    : sichtbar(ziele.projekte);
-
+  const aktiv = <T extends { archiviert: boolean }>(liste: T[]) => liste.filter((eintrag) => !eintrag.archiviert);
+  const aktiveVisionen = ebenen.visionen ? aktiv(ziele.visionen) : [];
+  const aktiveOrganisationen = ebenen.organisationen ? aktiv(ziele.organisationen) : [];
+  const aktiveProjekte = ebenen.projekte ? aktiv(ziele.projekte) : [];
+  const gliederung = gliedereProjekte(aktiveProjekte, aktiveVisionen, aktiveOrganisationen, {
+    leereVisionen: true,
+    leereOrganisationen: true,
+  });
+  const archivVisionen = ebenen.visionen ? ziele.visionen.filter((vision) => vision.archiviert) : [];
+  const archivOrganisationen = ebenen.organisationen ? ziele.organisationen.filter((organisation) => organisation.archiviert) : [];
+  const archivProjekte = ebenen.projekte ? ziele.projekte.filter((projekt) => projekt.archiviert) : [];
+  const archivZahl = archivVisionen.length + archivOrganisationen.length + archivProjekte.length;
+  const ohneProjekt = ziele.vorhaben.filter((eintrag) => eintrag.projektId === null && eintrag.status === 'offen');
+  const laufendZahl = (laufend.data?.bosse.length ?? 0) + (laufend.data?.vorhaben.length ?? 0);
+  const allesAus = !ebenen.visionen && !ebenen.organisationen && !ebenen.projekte && !ebenen.vorhaben;
+  const hatZiele =
+    gliederung.visionen.length > 0 ||
+    gliederung.freieOrganisationen.length > 0 ||
+    gliederung.lose.length > 0 ||
+    (ebenen.vorhaben && !ebenen.projekte && ziele.vorhaben.length > 0) ||
+    ohneProjekt.length > 0 ||
+    archivZahl > 0;
   const neuesProjekt = (visionId: number | null, organisationId: number | null) =>
     setBearbeitung({ art: 'projekt', projekt: null, visionId, organisationId });
   const detail = detailId === null ? null : (ziele.visionen.find((vision) => vision.id === detailId) ?? null);
-  const leer =
-    (!ebenen.visionen || aktiveVisionen.length === 0) &&
-    (!ebenen.projekte || sichtbar(ziele.projekte).length === 0) &&
-    (!ebenen.vorhaben || ziele.vorhaben.length === 0) &&
-    (!ebenen.organisationen || freieOrganisationen.length === 0);
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-end justify-end gap-4">
-        <div className="flex flex-wrap gap-2">
-          {ebenen.organisationen && (
-            <Knopf onClick={() => setBearbeitung({ art: 'organisation', organisation: null })}>
-              <Plus className="size-4" />
-              <ZielMarke ebene="organisationen" />
-            </Knopf>
-          )}
-          {ebenen.projekte && (
-            <Knopf onClick={() => neuesProjekt(null, null)}>
-              <Plus className="size-4" />
-              <ZielMarke ebene="projekte" />
-            </Knopf>
-          )}
-          {ebenen.visionen && (
-            <Knopf variante="primaer" onClick={() => setBearbeitung({ art: 'vision', vision: null })}>
-              <Plus className="size-4" />
-              <ZielMarke ebene="visionen" />
-            </Knopf>
-          )}
-        </div>
-      </header>
-
-      {!ebenen.visionen && !ebenen.projekte && !ebenen.vorhaben && !ebenen.organisationen && (
-        <Leer text={tx("Alle Ziel-Stufen sind aus.")} />
+      {neuPunkte.length > 0 && (
+        <KopfAktion>
+          <button
+            type="button"
+            className="inline-flex h-12 items-center px-3 text-base font-medium text-haupt"
+            aria-haspopup="menu"
+            aria-expanded={menue !== null}
+            onClick={(ereignis) => oeffneMenue(ereignis.currentTarget)}
+          >
+            {tx('Neu')}
+          </button>
+        </KopfAktion>
+      )}
+      {menue && (
+        <NeuMenue anker={menue} punkte={neuPunkte} onWahl={waehleNeu} onSchliessen={() => setMenue(null)} />
       )}
 
-      {ebenen.visionen &&
-        aktiveVisionen.length === 0 &&
-        freieOrganisationen.length === 0 &&
-        ohneEltern.length === 0 &&
-        !(ebenen.vorhaben && !ebenen.projekte && ziele.vorhaben.length > 0) && (
-          <Leer text={tx(ZIEL_MARKE.visionen.leer)} />
-        )}
+      {ebenen.vorhaben && (
+        <Liste>
+          <Zeile
+            nach="/laufend"
+            titel={tx('Laufend · {anzahl}', { anzahl: zahl(laufendZahl) })}
+            name={tx('Laufend · {anzahl}', { anzahl: zahl(laufendZahl) })}
+          />
+        </Liste>
+      )}
 
-      {ebenen.visionen &&
-        aktiveVisionen.map((vision) => {
-          const organisationen = ebenen.organisationen
-            ? sichtbar(ziele.organisationen.filter((organisation) => organisation.visionId === vision.id))
-            : [];
-          const vonOrganisation = (id: number) =>
-            ebenen.projekte ? projekteVon((projekt) => projekt.organisationId === id) : [];
-          return (
-            <VisionKarte
-              key={vision.id}
-              vision={vision}
-              projekte={ebenen.projekte ? projekteVon((projekt) => projekt.visionId === vision.id) : []}
-              organisationen={organisationen}
-              projekteVonOrganisation={vonOrganisation}
-              onOeffnen={() => setDetailId(vision.id)}
-            />
-          );
-        })}
+      {allesAus && <Leer text={tx('Alle Ziel-Stufen sind aus.')} />}
+      {!allesAus && !hatZiele && (
+        <Leer
+          text={tx('Noch keine Ziele.')}
+          aktion={
+            neuPunkte.length > 0 ? (
+              <Knopf variante="primaer" onClick={(ereignis) => oeffneMenue(ereignis.currentTarget)}>
+                {tx('Ziel anlegen')}
+              </Knopf>
+            ) : undefined
+          }
+        />
+      )}
 
-      {ebenen.visionen && ebenen.projekte && ohneEltern.length > 0 && (
+      {gliederung.visionen.map((ast) => (
+        <section key={ast.vision.id}>
+          <Liste>
+            <VisionKopf vision={ast.vision} onOeffnen={() => setDetailId(ast.vision.id)} />
+            {ast.direkte.map((projekt) => (
+              <div key={projekt.id} data-ast="vision">
+                <ProjektZeile projekt={projekt} />
+              </div>
+            ))}
+            {ast.organisationen.map((gruppe) => (
+              <div key={gruppe.organisation.id} data-ast="organisation">
+                <OrganisationsKopf
+                  organisation={gruppe.organisation}
+                  onBearbeiten={() => setBearbeitung({ art: 'organisation', organisation: gruppe.organisation })}
+                />
+                {gruppe.projekte.length > 0 && (
+                  <div className="liste ps-4">
+                    {gruppe.projekte.map((projekt) => (
+                      <ProjektZeile key={projekt.id} projekt={projekt} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </Liste>
+        </section>
+      ))}
+
+      {ebenen.visionen && gliederung.lose.length > 0 && (
         <section>
           <Ueberschrift titel={tx('Ohne {name}', { name: tx(ZIEL_MARKE.visionen.name) })} />
-          <ProjektListe projekte={ohneEltern} />
+          <Liste>
+            {gliederung.lose.map((projekt) => (
+              <ProjektZeile key={projekt.id} projekt={projekt} />
+            ))}
+          </Liste>
         </section>
       )}
 
-      {ebenen.organisationen && !ebenen.visionen && !ebenen.projekte && freieOrganisationen.length === 0 && (
-        <Leer text={tx(ZIEL_MARKE.organisationen.leer)} />
-      )}
-
-      {ebenen.organisationen && !ebenen.visionen && freieOrganisationen.length > 0 && (
-        <section className="space-y-4">
-          {freieOrganisationen.map((organisation) => (
-            <Karte key={organisation.id}>
-              <OrganisationBlock
-                organisation={organisation}
-                projekte={projekteVon((projekt) => projekt.organisationId === organisation.id)}
-                mitProjekten={ebenen.projekte}
-                onBearbeiten={() => setBearbeitung({ art: 'organisation', organisation })}
-                onProjektNeu={() => neuesProjekt(null, organisation.id)}
-              />
-            </Karte>
-          ))}
-        </section>
-      )}
-
-      {ebenen.organisationen && ebenen.visionen && freieOrganisationen.length > 0 && (
+      {ebenen.visionen && ebenen.organisationen && gliederung.freieOrganisationen.length > 0 && (
         <section>
           <Ueberschrift
             titel={tx('{mehrzahl} ohne {name}', {
@@ -160,59 +196,75 @@ export function ZieleSeite() {
               name: tx(ZIEL_MARKE.visionen.name),
             })}
           />
-          <div className="space-y-4">
-            {freieOrganisationen.map((organisation) => (
-              <Karte key={organisation.id}>
-                <OrganisationBlock
-                  organisation={organisation}
-                  projekte={projekteVon((projekt) => projekt.organisationId === organisation.id)}
-                  mitProjekten={ebenen.projekte}
-                  onBearbeiten={() => setBearbeitung({ art: 'organisation', organisation })}
-                  onProjektNeu={() => neuesProjekt(null, organisation.id)}
+          <Liste>
+            {gliederung.freieOrganisationen.map((gruppe) => (
+              <div key={gruppe.organisation.id} data-ast="organisation">
+                <OrganisationsKopf
+                  organisation={gruppe.organisation}
+                  onBearbeiten={() => setBearbeitung({ art: 'organisation', organisation: gruppe.organisation })}
                 />
-              </Karte>
+                {gruppe.projekte.length > 0 && (
+                  <div className="liste ps-4">
+                    {gruppe.projekte.map((projekt) => (
+                      <ProjektZeile key={projekt.id} projekt={projekt} />
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
-          </div>
+          </Liste>
         </section>
       )}
 
-      {ebenen.projekte && !ebenen.visionen && (
-        <section>
-          {flacheProjekte.length === 0 && freieOrganisationen.length === 0 && (
-            <Leer text={tx(ZIEL_MARKE.projekte.leer)} />
-          )}
-          <ProjektListe projekte={flacheProjekte} />
-        </section>
-      )}
-
-      {ebenen.vorhaben && !ebenen.projekte && <VorhabenBereich vorhaben={ziele.vorhaben} leer={leer} />}
-      {ebenen.vorhaben && ebenen.projekte && (
-        <FreieVorhaben
-        vorhaben={ziele.vorhaben.filter((eintrag) => eintrag.projektId === null && eintrag.status === 'offen')}
-      />
-      )}
-
-      <div className="flex justify-center">
-        <Knopf
-          variante="leise"
-          onClick={() => {
-            const neu = !archivAnzeigen;
-            setArchivAnzeigen(neu);
-            merkeStand({ archiv: neu, strideScroll: window.scrollY });
-          }}
-        >
-          <Archive className="size-4" />
-          {archivBeschriftung(archivAnzeigen)}
-        </Knopf>
-      </div>
-
-      {archivAnzeigen && archivierteVisionen.length > 0 && (
-        <section className="space-y-3">
-          <Ueberschrift titel={tx('Archivierte {mehrzahl}', { mehrzahl: tx(ZIEL_MARKE.visionen.mehrzahl) })} />
-          {archivierteVisionen.map((vision) => (
-            <ArchivierteVision key={vision.id} vision={vision} />
+      {!ebenen.visionen && ebenen.organisationen && gliederung.freieOrganisationen.length > 0 && (
+        <Liste>
+          {gliederung.freieOrganisationen.map((gruppe) => (
+            <div key={gruppe.organisation.id} data-ast="organisation">
+              <OrganisationsKopf
+                organisation={gruppe.organisation}
+                onBearbeiten={() => setBearbeitung({ art: 'organisation', organisation: gruppe.organisation })}
+              />
+              {gruppe.projekte.length > 0 && (
+                <div className="liste ps-4">
+                  {gruppe.projekte.map((projekt) => (
+                    <ProjektZeile key={projekt.id} projekt={projekt} />
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
-        </section>
+        </Liste>
+      )}
+
+      {!ebenen.visionen && ebenen.projekte && gliederung.lose.length > 0 && (
+        <Liste>
+          {gliederung.lose.map((projekt) => (
+            <ProjektZeile key={projekt.id} projekt={projekt} />
+          ))}
+        </Liste>
+      )}
+
+      {ebenen.vorhaben && !ebenen.projekte && <VorhabenBereich vorhaben={ziele.vorhaben} />}
+      {ebenen.vorhaben && ebenen.projekte && ohneProjekt.length > 0 && <FreieVorhaben vorhaben={ohneProjekt} />}
+
+      {archivZahl > 0 && (
+        <Abschnitt titel="Archiv" zusatz={`(${zahl(archivZahl)})`} kennung="ziele-archiv" anfangEingeklappt>
+          <Liste>
+            {archivVisionen.map((vision) => (
+              <ArchivVision key={vision.id} vision={vision} onOeffnen={() => setDetailId(vision.id)} onBearbeiten={() => setBearbeitung({ art: 'vision', vision })} />
+            ))}
+            {archivOrganisationen.map((organisation) => (
+              <ArchivOrganisation
+                key={organisation.id}
+                organisation={organisation}
+                onBearbeiten={() => setBearbeitung({ art: 'organisation', organisation })}
+              />
+            ))}
+            {archivProjekte.map((projekt) => (
+              <ProjektZeile key={projekt.id} projekt={projekt} />
+            ))}
+          </Liste>
+        </Abschnitt>
       )}
 
       <ZielDialog bearbeitung={bearbeitung} onSchliessen={() => setBearbeitung(null)} />
@@ -220,11 +272,11 @@ export function ZieleSeite() {
         <VisionDetail
           vision={detail}
           organisationen={
-            ebenen.organisationen
-              ? sichtbar(ziele.organisationen.filter((organisation) => organisation.visionId === detail.id))
-              : []
+            ebenen.organisationen ? ziele.organisationen.filter((organisation) => organisation.visionId === detail.id && !organisation.archiviert) : []
           }
-          projekteVonOrganisation={(id) => (ebenen.projekte ? projekteVon((projekt) => projekt.organisationId === id) : [])}
+          projekteVonOrganisation={(id) =>
+            ebenen.projekte ? aktiveProjekte.filter((projekt) => projekt.organisationId === id) : []
+          }
           mitProjekten={ebenen.projekte}
           onSchliessen={() => setDetailId(null)}
           onBearbeiten={() => {
@@ -245,89 +297,153 @@ export function ZieleSeite() {
   );
 }
 
-function projekteDerKarte(
-  projekte: Projekt[],
-  organisationen: Organisation[],
-  projekteVonOrganisation: (organisationId: number) => Projekt[],
-): Projekt[] {
-  const gesehen = new Set<number>();
-  const alle: Projekt[] = [];
-  for (const projekt of [...projekte, ...organisationen.flatMap((organisation) => projekteVonOrganisation(organisation.id))]) {
-    if (gesehen.has(projekt.id)) {
-      continue;
+function NeuMenue({
+  anker,
+  punkte,
+  onWahl,
+  onSchliessen,
+}: {
+  anker: { x: number; y: number };
+  punkte: { id: string; label: string }[];
+  onWahl: (id: string) => void;
+  onSchliessen: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [stil, setStil] = useState({ top: anker.y, left: anker.x });
+  useLayoutEffect(() => {
+    const kasten = ref.current?.getBoundingClientRect();
+    if (!kasten) {
+      return;
     }
-    gesehen.add(projekt.id);
-    alle.push(projekt);
-  }
-  return alle;
+    let links = anker.x;
+    let oben = anker.y;
+    if (links + kasten.width > window.innerWidth - 8) {
+      links = window.innerWidth - kasten.width - 8;
+    }
+    if (oben + kasten.height > window.innerHeight - 8) {
+      oben = Math.max(8, anker.y - kasten.height);
+    }
+    setStil({ top: Math.max(8, oben), left: Math.max(8, links) });
+  }, [anker]);
+  useEffect(() => {
+    ref.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus();
+    const beiTaste = (ereignis: KeyboardEvent) => {
+      if (ereignis.key !== 'Escape') {
+        return;
+      }
+      ereignis.preventDefault();
+      onSchliessen();
+    };
+    const beiZeiger = (ereignis: PointerEvent) => {
+      const ziel = ereignis.target;
+      if (ziel instanceof Node && ref.current?.contains(ziel)) {
+        return;
+      }
+      onSchliessen();
+    };
+    window.addEventListener('keydown', beiTaste, true);
+    document.addEventListener('pointerdown', beiZeiger);
+    return () => {
+      window.removeEventListener('keydown', beiTaste, true);
+      document.removeEventListener('pointerdown', beiZeiger);
+    };
+  }, [onSchliessen]);
+
+  return createPortal(
+    <div
+      ref={ref}
+      role="menu"
+      aria-label={tx('Neu')}
+      style={stil}
+      className="fixed z-[95] min-w-44 rounded-xl border border-rand bg-flaeche py-1 shadow-lg"
+    >
+      {punkte.map((punkt) => (
+        <button
+          key={punkt.id}
+          type="button"
+          role="menuitem"
+          className="block w-full px-3 py-2.5 text-left text-sm hover:bg-flaeche-2"
+          onClick={() => onWahl(punkt.id)}
+        >
+          {punkt.label}
+        </button>
+      ))}
+    </div>,
+    document.body,
+  );
 }
 
-function VisionKarte({
-  vision,
-  projekte,
-  organisationen,
-  projekteVonOrganisation,
-  onOeffnen,
-}: {
-  vision: Vision;
-  projekte: Projekt[];
-  organisationen: Organisation[];
-  projekteVonOrganisation: (organisationId: number) => Projekt[];
-  onOeffnen: () => void;
-}) {
-  const ast = gliedereProjekte(projekteDerKarte(projekte, organisationen, projekteVonOrganisation), [vision], organisationen, {
-    leereOrganisationen: true,
-    leereVisionen: true,
-  }).visionen[0];
-  const direkte = ast?.direkte ?? [];
-  const gruppen = ast?.organisationen ?? [];
-  const hatKinder = direkte.length > 0 || gruppen.length > 0;
+function VisionKopf({ vision, onOeffnen }: { vision: Vision; onOeffnen: () => void }) {
   return (
-    <Karte className="overflow-hidden p-0">
-      <SchnellZeile
-        ziel={{ art: 'vision', id: vision.id, name: vision.titel, archiviert: vision.archiviert, loeschbar: vision.loeschbar }}
-      >
-        {(menue) => (
-          <div className="flex items-start">
-            <button
-              type="button"
-              onClick={onOeffnen}
-              className={`flex min-w-0 flex-1 items-center gap-2 px-4 text-left ${hatKinder ? 'pt-3 pb-2' : 'py-4'}`}
-            >
-              <h2 className="min-w-0 flex-1 text-lg leading-snug font-semibold">
-                <Farbpunkt farbe={vision.farbe} className="me-2" />
-                <span className="break-words">{vision.titel}</span>
-              </h2>
-              <ChevronRight className="size-4 shrink-0 text-leise" />
-            </button>
-            {menue}
-          </div>
-        )}
-      </SchnellZeile>
-      {hatKinder && (
-        <div className="space-y-3 px-4 pb-4">
-          {direkte.length > 0 && (
-            <div data-ast="vision" className="ps-3">
-              <ProjektListe projekte={direkte} />
-            </div>
-          )}
-          {gruppen.map((gruppe) => (
-            <div key={gruppe.organisation.id} data-ast="organisation" className="space-y-2">
-              <h3 className="min-w-0 text-sm leading-snug font-medium">
-                <Farbpunkt farbe={gruppe.organisation.farbe} className="me-2" />
-                <Landmark className="me-2 inline-block size-4 align-middle text-leise" />
-                <span className="align-middle">{gruppe.organisation.name}</span>
-              </h3>
-              {gruppe.projekte.length > 0 && (
-                <div className="ps-3">
-                  <ProjektListe projekte={gruppe.projekte} />
-                </div>
-              )}
-            </div>
-          ))}
+    <div className="flex min-h-12 items-center gap-3 px-4 py-3">
+      <button type="button" onClick={onOeffnen} className="flex min-w-0 flex-1 items-center text-left">
+        <h2 className="min-w-0 flex-1 text-base leading-6 font-semibold">
+          <Farbpunkt farbe={vision.farbe} className="me-2" />
+          <span className="break-words">{vision.titel}</span>
+        </h2>
+      </button>
+      {vision.level !== null ? (
+        <span className="zahl shrink-0 text-sm font-semibold text-leise">{tx('Lvl {level}', { level: vision.level })}</span>
+      ) : null}
+    </div>
+  );
+}
+
+function OrganisationsKopf({ organisation, onBearbeiten }: { organisation: Organisation; onBearbeiten: () => void }) {
+  return (
+    <SchnellZeile
+      hintergrund="bg-flaeche"
+      eintraege={[{ art: 'archivieren', id: 'bearbeiten', label: 'Bearbeiten' }]}
+      onEintrag={() => onBearbeiten()}
+      ziel={{
+        art: 'organisation',
+        id: organisation.id,
+        name: organisation.name,
+        archiviert: organisation.archiviert,
+        loeschbar: organisation.loeschbar,
+      }}
+    >
+      {(menue) => (
+        <div className={`flex min-h-12 items-center gap-3 px-4 py-3 ${organisation.archiviert ? 'opacity-50' : ''}`}>
+          <h3 className="min-w-0 flex-1 text-[13px] leading-[18px] font-semibold text-leise">
+            <Farbpunkt farbe={organisation.farbe} className="me-2" />
+            <span className="break-words align-middle">{organisation.name}</span>
+          </h3>
+          {menue}
         </div>
       )}
-    </Karte>
+    </SchnellZeile>
+  );
+}
+
+function ProjektZeile({ projekt }: { projekt: Projekt }) {
+  const neben = `${tx('{anzahl} Einträge', { anzahl: zahl(projekt.anzahlEintraege) })} · ${tx('{anzahl} Vorhaben offen', { anzahl: zahl(projekt.offeneVorhaben) })}`;
+  return (
+    <SchnellZeile
+      hintergrund="bg-flaeche"
+      ziel={{ art: 'projekt', id: projekt.id, name: projekt.name, archiviert: projekt.archiviert, loeschbar: projekt.loeschbar }}
+    >
+      {(menue) => (
+        <div className={`flex min-h-12 items-center ${projekt.archiviert ? 'opacity-50' : ''}`}>
+          <Link to={`/projekte/${projekt.id}`} className="flex min-w-0 flex-1 items-center gap-3 px-4 py-3">
+            <span className="min-w-0 flex-1">
+              <span className="flex min-w-0 items-center gap-2 text-base leading-6">
+                <span className="min-w-0 truncate">{projekt.name}</span>
+                {projekt.geschafftAm ? (
+                  <span className="shrink-0 text-xs font-normal whitespace-nowrap text-leise">{tx('abgeschlossen')}</span>
+                ) : null}
+              </span>
+              <span className="block truncate text-[13px] leading-[18px] text-leise">{neben}</span>
+            </span>
+            <KettenAnzeige kette={projekt.kette} className="max-w-full min-w-0 shrink truncate" />
+            <span className="zahl shrink-0 whitespace-nowrap text-sm font-semibold">
+              {tx('Lvl {level}', { level: projekt.level.level })}
+            </span>
+          </Link>
+          {menue}
+        </div>
+      )}
+    </SchnellZeile>
   );
 }
 
@@ -351,25 +467,30 @@ function VisionDetail({
   onProjektNeu: (visionId: number | null, organisationId: number | null) => void;
 }) {
   const abschluss = useVisionAbschluss(vision);
+  const davor = [
+    { id: 'bearbeiten', label: 'Bearbeiten', onWahl: onBearbeiten },
+    ...(abschluss.punkt ? [abschluss.punkt] : []),
+  ];
   return (
-    <Dialog offen titel={vision.titel} vorTitel={<Farbpunkt farbe={vision.farbe} className="me-2" />} onSchliessen={onSchliessen}>
+    <Dialog
+      offen
+      titel={vision.titel}
+      vorTitel={<Farbpunkt farbe={vision.farbe} className="me-2" />}
+      onSchliessen={onSchliessen}
+      menu={
+        <SchnellMenue ziel={vision} davor={davor} />
+      }
+    >
       <div className="space-y-4">
+        {abschluss.fehler}
         {vision.beschreibung ? <p className="text-sm">{vision.beschreibung}</p> : null}
         {vision.woopPlan ? (
           <p className="text-sm leading-snug">
-            <span className="font-medium">{tx("Plan ·")} </span>
+            <span className="font-medium">{tx('Plan ·')} </span>
             {vision.woopPlan}
           </p>
         ) : null}
         <p className="zahl text-sm text-leise">{visionStand(vision)}</p>
-        {abschluss.fehler}
-        <div className="flex flex-wrap gap-2">
-          {abschluss.knopf}
-          <Knopf onClick={onBearbeiten} aria-label={tx("Vision bearbeiten")}>
-            <Pencil className="size-4" />
-            {tx("Bearbeiten")}
-          </Knopf>
-        </div>
         {mitProjekten && (
           <Knopf variante="leise" className="px-2 py-1" onClick={() => onProjektNeu(vision.id, null)}>
             <Plus className="size-4" />
@@ -381,17 +502,12 @@ function VisionDetail({
             <div className="flex items-center justify-between gap-2">
               <span className="flex min-w-0 items-center gap-2 text-sm font-medium">
                 <Farbpunkt farbe={organisation.farbe} />
-                <Landmark className="size-4 shrink-0 text-leise" />
                 <span className="truncate">{organisation.name}</span>
               </span>
-              <Knopf
-                variante="leise"
-                className="p-2"
-                aria-label={tx("Organisation bearbeiten")}
-                onClick={() => onOrganisationBearbeiten(organisation)}
-              >
-                <Pencil className="size-4" />
-              </Knopf>
+              <SchnellMenue
+                ziel={organisation}
+                davor={[{ id: 'bearbeiten', label: 'Bearbeiten', onWahl: () => onOrganisationBearbeiten(organisation) }]}
+              />
             </div>
             <ProjektListe projekte={projekteVonOrganisation(organisation.id)} />
             {mitProjekten && (
@@ -407,7 +523,27 @@ function VisionDetail({
   );
 }
 
-function useVisionAbschluss(vision: Vision): { knopf: ReactNode; fehler: ReactNode } {
+function SchnellMenue({
+  ziel,
+  davor,
+}: {
+  ziel: Vision | Organisation;
+  davor: { id: string; label: string; onWahl: () => void }[];
+}) {
+  const art = 'titel' in ziel ? 'vision' : 'organisation';
+  const name = 'titel' in ziel ? ziel.titel : ziel.name;
+  return (
+    <SchnellMenueKnopf
+      ziel={{ art, id: ziel.id, name, archiviert: ziel.archiviert, loeschbar: ziel.loeschbar }}
+      davor={davor}
+    />
+  );
+}
+
+function useVisionAbschluss(vision: Vision): {
+  punkt: { id: string; label: string; onWahl: () => void } | null;
+  fehler: ReactNode;
+} {
   const schnell = useSchnellAktion();
   const queryClient = useQueryClient();
   const feiern = useFeiern();
@@ -428,18 +564,30 @@ function useVisionAbschluss(vision: Vision): { knopf: ReactNode; fehler: ReactNo
     },
   });
 
-  const knopf =
-    vision.level !== null && vision.erreichtAm ? (
-      <Knopf variante="leise" className="shrink-0 px-2 py-1 text-xs" onClick={() => zuruecknehmen.mutate()} disabled={zuruecknehmen.isPending}>
-        {tx("Zurücknehmen")}
-      </Knopf>
-    ) : vision.level !== null ? (
-      <Knopf variante="primaer" className="shrink-0 px-3 py-1.5" onClick={() => erreichen.mutate()} disabled={erreichen.isPending || vision.archiviert}>
-        {tx("Erreicht")}
-      </Knopf>
-    ) : null;
+  const punkt =
+    vision.level !== null && vision.erreichtAm
+      ? {
+          id: 'zuruecknehmen',
+          label: 'Zurücknehmen',
+          onWahl: () => {
+            if (!zuruecknehmen.isPending) {
+              zuruecknehmen.mutate();
+            }
+          },
+        }
+      : vision.level !== null && !vision.archiviert
+        ? {
+            id: 'erreicht',
+            label: 'Erreicht',
+            onWahl: () => {
+              if (!erreichen.isPending) {
+                erreichen.mutate();
+              }
+            },
+          }
+        : null;
 
-  return { knopf, fehler: <Fehlermeldung fehler={erreichen.error ?? zuruecknehmen.error} /> };
+  return { punkt, fehler: <Fehlermeldung fehler={erreichen.error ?? zuruecknehmen.error} /> };
 }
 
 function visionStand(vision: Vision): string {
@@ -448,7 +596,7 @@ function visionStand(vision: Vision): string {
     teile.push(tx('Level {level}', { level: zahl(vision.level) }));
     teile.push(tx('Beute {xp} XP', { xp: zahl(vision.beute) }));
   }
-  teile.push(`${zahl(vision.meilensteine)} ${vision.meilensteine === 1 ? tx("Meilenstein") : tx("Meilensteine")}`);
+  teile.push(`${zahl(vision.meilensteine)} ${vision.meilensteine === 1 ? tx('Meilenstein') : tx('Meilensteine')}`);
   teile.push(`${zahl(vision.xpGesamt)} XP`);
   if (vision.erreichtAm) {
     teile.push(tx('erreicht {datum}', { datum: kurzesDatum(vision.erreichtAm) }));
@@ -456,155 +604,60 @@ function visionStand(vision: Vision): string {
   return teile.join(' · ');
 }
 
-function OrganisationBlock({
-  organisation,
-  projekte,
-  mitProjekten,
-  onBearbeiten,
-  onProjektNeu,
-}: {
-  organisation: Organisation;
-  projekte: Projekt[];
-  mitProjekten: boolean;
-  onBearbeiten: () => void;
-  onProjektNeu: () => void;
-}) {
-  return (
-    <div className={`space-y-3 ${organisation.archiviert ? 'opacity-50' : ''}`}>
-      <SchnellZeile
-        ziel={{
-          art: 'organisation',
-          id: organisation.id,
-          name: organisation.name,
-          archiviert: organisation.archiviert,
-          loeschbar: organisation.loeschbar,
-        }}
-      >
-        {(menue) => (
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex min-w-0 items-center gap-2">
-              <Farbpunkt farbe={organisation.farbe} />
-              <Landmark className="size-4 shrink-0 text-leise" />
-              <span className="truncate font-medium">{organisation.name}</span>
-              {organisation.archiviert && <span className="text-xs text-leise">{tx('archiviert')}</span>}
-            </div>
-            <div className="flex shrink-0 items-center gap-1">
-              <span className="zahl mr-2 text-xs text-leise" title={katalogName('Ansehen')}>
-                {tx('Ansehen Lvl {level}', { level: organisation.ansehen.level })}
-              </span>
-              {menue}
-              <Knopf variante="leise" className="p-2" aria-label={tx("Organisation bearbeiten")} onClick={onBearbeiten}>
-                <Pencil className="size-4" />
-              </Knopf>
-            </div>
-          </div>
-        )}
-      </SchnellZeile>
-      {projekte.length > 0 && (
-        <div className="ps-3">
-          <ProjektListe projekte={projekte} />
-        </div>
-      )}
-      {mitProjekten && (
-        <Knopf variante="leise" className="px-2 py-1" onClick={onProjektNeu}>
-          <Plus className="size-4" />
-          {tx('{name} in {organisation}', { name: tx(ZIEL_MARKE.projekte.name), organisation: organisation.name })}
-        </Knopf>
-      )}
-    </div>
-  );
-}
-
 function ProjektListe({ projekte }: { projekte: Projekt[] }) {
   if (projekte.length === 0) {
     return null;
   }
   return (
-    <ul className="space-y-2">
+    <div className="space-y-2">
       {projekte.map((projekt) => (
-        <li key={projekt.id}>
-          <SchnellZeile
-            hintergrund="bg-flaeche-2"
-            className="rounded-xl"
-            ziel={{ art: 'projekt', id: projekt.id, name: projekt.name, archiviert: projekt.archiviert, loeschbar: projekt.loeschbar }}
-          >
-            {(menue) => (
-              <div className={`flex items-center ${projekt.archiviert ? 'opacity-50' : ''}`}>
-                <Link
-                  to={`/projekte/${projekt.id}`}
-                  className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2.5 transition hover:brightness-95 dark:hover:brightness-125"
-                >
-                  <div className="min-w-36 flex-1">
-                    <p className="flex min-w-0 items-center gap-2 text-sm font-medium">
-                      <span className="min-w-0 flex-1 truncate">{projekt.name}</span>
-                      {projekt.geschafftAm ? (
-                        <span className="shrink-0 text-xs font-normal whitespace-nowrap text-leise">{tx('abgeschlossen')}</span>
-                      ) : null}
-                      {projekt.archiviert ? (
-                        <span className="shrink-0 text-xs font-normal whitespace-nowrap text-leise">{tx('archiviert')}</span>
-                      ) : null}
-                    </p>
-                    <p className="text-xs text-leise break-words">
-                      {tx('{anzahl} Einträge', { anzahl: zahl(projekt.anzahlEintraege) })}
-                      {projekt.offeneVorhaben > 0 &&
-                        ` · ${tx('{anzahl} Vorhaben offen', { anzahl: zahl(projekt.offeneVorhaben) })}`}
-                    </p>
-                  </div>
-                  <KettenAnzeige kette={projekt.kette} className="max-w-full min-w-0 shrink truncate" />
-                  <span className="zahl shrink-0 whitespace-nowrap text-right text-sm font-semibold">{tx('Lvl {level}', { level: projekt.level.level })}</span>
-                </Link>
-                {menue}
-              </div>
-            )}
-          </SchnellZeile>
-        </li>
+        <ProjektZeile key={projekt.id} projekt={projekt} />
       ))}
-    </ul>
+    </div>
   );
 }
 
-function VorhabenBereich({ vorhaben, leer }: { vorhaben: VorhabenMitProjekt[]; leer: boolean }) {
+function VorhabenBereich({ vorhaben }: { vorhaben: VorhabenMitProjekt[] }) {
   const eintragOeffnen = useEintragOeffnen();
   const offene = vorhaben.filter((eintrag) => eintrag.status === 'offen');
   const fertig = vorhaben.filter((eintrag) => eintrag.status !== 'offen');
-
+  if (offene.length === 0 && fertig.length === 0) {
+    return null;
+  }
   return (
     <section className="space-y-3">
       <Ueberschrift titel={tx(zielTitel('vorhaben'))} />
-      {offene.length === 0 && fertig.length === 0 && leer && (
-        <Leer text={tx(ZIEL_MARKE.vorhaben.leer)} />
-      )}
-      <ul className="space-y-2">
-        {offene.map((eintrag) => (
-          <li key={eintrag.id}>
+      {offene.length > 0 && (
+        <Liste>
+          {offene.map((eintrag) => (
             <SchnellZeile
-              className="rounded-xl"
+              key={eintrag.id}
+              hintergrund="bg-flaeche"
               ziel={{ art: 'vorhaben', id: eintrag.id, name: eintrag.titel, loeschbar: eintrag.loeschbar }}
             >
               {(menue) => (
-                <div className="flex items-center gap-1 bg-flaeche py-1 pr-1 pl-3">
-                  <span className="min-w-0 flex-1 truncate text-sm font-medium">{eintrag.titel}</span>
+                <div className="flex min-h-12 items-center gap-3 px-4 py-3">
+                  <span className="min-w-0 flex-1 truncate text-base leading-6">{eintrag.titel}</span>
                   {menue}
-                  <Knopf className="px-3 py-1.5" onClick={() => eintragOeffnen({ vorhabenId: eintrag.id })}>
-                    {tx("Weiter")}
+                  <Knopf data-schnell-frei="" onClick={() => eintragOeffnen({ vorhabenId: eintrag.id })}>
+                    {tx('Weiter')}
                   </Knopf>
                 </div>
               )}
             </SchnellZeile>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </Liste>
+      )}
       {fertig.length > 0 && (
-        <div className="space-y-2">
-          <Ueberschrift titel={tx("Abgeschlossen")} />
-          <ul className="space-y-2">
+        <Abschnitt titel="Abgeschlossen" zusatz={`(${zahl(fertig.length)})`} kennung="ziele-vorhaben-fertig" anfangEingeklappt>
+          <Liste>
             {fertig.map((eintrag) => (
-              <li key={eintrag.id} className="rounded-xl bg-flaeche-2 px-3 py-2 text-sm text-leise">
+              <div key={eintrag.id} className="px-4 py-3 text-sm text-leise">
                 {eintrag.titel}
-              </li>
+              </div>
             ))}
-          </ul>
-        </div>
+          </Liste>
+        </Abschnitt>
       )}
     </section>
   );
@@ -612,47 +665,82 @@ function VorhabenBereich({ vorhaben, leer }: { vorhaben: VorhabenMitProjekt[]; l
 
 function FreieVorhaben({ vorhaben }: { vorhaben: VorhabenMitProjekt[] }) {
   const eintragOeffnen = useEintragOeffnen();
-  if (vorhaben.length === 0) {
-    return null;
-  }
   return (
     <section className="space-y-2">
-      <Ueberschrift titel={tx("Ohne Projekt")} />
-      <ul className="space-y-2">
+      <Ueberschrift titel={tx('Ohne Projekt')} />
+      <Liste>
         {vorhaben.map((eintrag) => (
-          <li key={eintrag.id}>
-            <SchnellZeile
-              className="rounded-xl"
-              ziel={{ art: 'vorhaben', id: eintrag.id, name: eintrag.titel, loeschbar: eintrag.loeschbar }}
-            >
-              {(menue) => (
-                <div className="flex items-center gap-1 bg-flaeche py-1 pr-1 pl-3">
-                  <span className="min-w-0 flex-1 truncate text-sm font-medium">{eintrag.titel}</span>
-                  {menue}
-                  <Knopf className="px-3 py-1.5" onClick={() => eintragOeffnen({ vorhabenId: eintrag.id })}>
-                    {tx("Weiter")}
-                  </Knopf>
-                </div>
-              )}
-            </SchnellZeile>
-          </li>
+          <SchnellZeile
+            key={eintrag.id}
+            hintergrund="bg-flaeche"
+            ziel={{ art: 'vorhaben', id: eintrag.id, name: eintrag.titel, loeschbar: eintrag.loeschbar }}
+          >
+            {(menue) => (
+              <div className="flex min-h-12 items-center gap-3 px-4 py-3">
+                <span className="min-w-0 flex-1 truncate text-base leading-6">{eintrag.titel}</span>
+                {menue}
+                <Knopf data-schnell-frei="" onClick={() => eintragOeffnen({ vorhabenId: eintrag.id })}>
+                  {tx('Weiter')}
+                </Knopf>
+              </div>
+            )}
+          </SchnellZeile>
         ))}
-      </ul>
+      </Liste>
     </section>
   );
 }
 
-function ArchivierteVision({ vision }: { vision: Vision }) {
+function ArchivVision({
+  vision,
+  onOeffnen,
+  onBearbeiten,
+}: {
+  vision: Vision;
+  onOeffnen: () => void;
+  onBearbeiten: () => void;
+}) {
   return (
     <SchnellZeile
-      className="rounded-xl border border-rand"
+      hintergrund="bg-flaeche"
+      eintraege={[{ art: 'archivieren', id: 'bearbeiten', label: 'Bearbeiten' }]}
+      onEintrag={() => onBearbeiten()}
       ziel={{ art: 'vision', id: vision.id, name: vision.titel, archiviert: true, loeschbar: vision.loeschbar }}
     >
       {(menue) => (
-        <div className="flex items-center justify-between gap-2 py-1 pr-1 pl-4">
-          <span className="flex min-w-0 items-center gap-2 text-sm">
-            <Farbpunkt farbe={vision.farbe} />
-            <span className="truncate">{vision.titel}</span>
+        <div className="flex min-h-12 items-center opacity-50">
+          <button type="button" onClick={onOeffnen} className="flex min-w-0 flex-1 items-center px-4 py-3 text-left">
+            <span className="min-w-0 flex-1 text-base leading-6">
+              <Farbpunkt farbe={vision.farbe} className="me-2" />
+              <span className="break-words">{vision.titel}</span>
+            </span>
+          </button>
+          {menue}
+        </div>
+      )}
+    </SchnellZeile>
+  );
+}
+
+function ArchivOrganisation({ organisation, onBearbeiten }: { organisation: Organisation; onBearbeiten: () => void }) {
+  return (
+    <SchnellZeile
+      hintergrund="bg-flaeche"
+      eintraege={[{ art: 'archivieren', id: 'bearbeiten', label: 'Bearbeiten' }]}
+      onEintrag={() => onBearbeiten()}
+      ziel={{
+        art: 'organisation',
+        id: organisation.id,
+        name: organisation.name,
+        archiviert: true,
+        loeschbar: organisation.loeschbar,
+      }}
+    >
+      {(menue) => (
+        <div className="flex min-h-12 items-center gap-3 px-4 py-3 opacity-50">
+          <span className="min-w-0 flex-1 text-[13px] leading-[18px] font-semibold text-leise">
+            <Farbpunkt farbe={organisation.farbe} className="me-2" />
+            <span className="break-words align-middle">{organisation.name}</span>
           </span>
           {menue}
         </div>

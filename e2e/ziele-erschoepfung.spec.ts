@@ -138,11 +138,11 @@ test('Projekt abschließen aktiviert die Investition und lässt sich öffnen', a
     await page.goto(`/projekte/${ziel.id}`);
     await expect(page.getByRole('heading', { name: ziel.name, exact: true })).toBeVisible();
     await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Öffnen', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Wieder öffnen', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Abschließen', exact: true })).toHaveCount(0);
     const zeile = page.locator('#projekt-investition');
-    await expect(zeile).toContainText('Aktiv · +10 %');
-    const status = zeile.getByText('Aktiv · +10 %', { exact: true });
+    await expect(zeile).toContainText('+10 %');
+    const status = zeile.getByText('+10 %', { exact: true });
     expect(await status.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
     await zeile.getByRole('button', { name: 'Investition', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Investition' });
@@ -161,10 +161,10 @@ test('Projekt abschließen aktiviert die Investition und lässt sich öffnen', a
     await expect(marke).toHaveClass(/text-leise/);
     await expect(link.getByText(ziel.name, { exact: true })).toBeVisible();
     await expect(link).not.toHaveClass(/opacity-50/);
-    await page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-lauf65-liste.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/ziele-erschoepfung/${testInfo.project.name}-liste.png`, fullPage: true });
 
     await page.goto(`/projekte/${ziel.id}`);
-    await page.getByRole('button', { name: 'Öffnen', exact: true }).click();
+    await page.getByRole('button', { name: 'Wieder öffnen', exact: true }).click();
     const oeffnen = page.getByRole('alertdialog', { name: 'Projekt wieder öffnen?' });
     await expect(oeffnen.getByText('Der Bonus bleibt, und die Investition wird inaktiv.')).toBeVisible();
     await oeffnen.getByRole('button', { name: 'Öffnen', exact: true }).click();
@@ -189,12 +189,12 @@ test('Projekt abschließen aktiviert die Investition und lässt sich öffnen', a
     await nochmal.getByRole('button', { name: 'Abschließen', exact: true }).click();
     await expect(nochmal).toBeHidden();
     await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toBeVisible();
-    await expect(zeile).toContainText('Aktiv · +10 %');
+    await expect(zeile).toContainText('+10 %');
     await expect.poll(async () => {
       const stand = (await projekte(page)).find((projekt) => projekt.id === ziel.id);
       return stand?.geschafftAm !== null && stand?.investition === true;
     }).toBe(true);
-    await page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-lauf65-projekt.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/ziele-erschoepfung/${testInfo.project.name}-projekt.png`, fullPage: true });
   } finally {
     await stelleProjekt(page, ziel.id, {
       investition: ziel.investition,
@@ -307,7 +307,7 @@ test('Erschöpfung steht neben dem Namen', async ({ page }, testInfo) => {
     await expect(zeile.locator('[data-abzug="allgemein"]')).toHaveCount(0);
     await pruefeAbzugNebenNamen(zeile, probe.attribut.name, probe.prozent);
   }
-  await page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-lauf65-erschoepfung.png`, fullPage: true });
+  await page.screenshot({ path: `tmp-test/ziele-erschoepfung/${testInfo.project.name}-erschoepfung.png`, fullPage: true });
 });
 
 test('Ein Tipp in die Einstellungszeile trifft den Schalter', async ({ page }, testInfo) => {
@@ -360,7 +360,7 @@ test('Ein Tipp in die Einstellungszeile trifft den Schalter', async ({ page }, t
     await expect(schalter).toHaveAttribute('aria-checked', nachMitte ?? '');
     await page.keyboard.press('Escape');
     await expect(page.getByRole('tooltip')).toHaveCount(0);
-    await page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-lauf65-zeile.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/ziele-erschoepfung/${testInfo.project.name}-zeile.png`, fullPage: true });
   } finally {
     await page.evaluate(async (funktionen) => {
       await fetch('/api/einstellungen', {

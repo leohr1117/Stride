@@ -88,7 +88,7 @@ test('Projekt-Tätigkeiten nur beim eigenen Projekt', async ({ page }, testInfo)
   await page.getByRole('button', { name: 'Eintrag loggen' }).click();
   await expect(chip(gebunden.name)).toBeVisible();
   await expect(chip(allgemein.name)).toBeVisible();
-  await page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-eintrag.png` });
+  await page.screenshot({ path: `tmp-test/korrektur/${testInfo.project.name}-eintrag.png` });
   await page.keyboard.press('Escape');
 
   await page.goto('/basis');
@@ -116,7 +116,7 @@ test('Projekt-Tätigkeiten nur beim eigenen Projekt', async ({ page }, testInfo)
 });
 
 test('Chronik, Vision und Version', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/korrektur/${testInfo.project.name}-${name}.png` });
 
   await page.goto('/mehr');
   const version = page.getByRole('link', { name: 'Was ist neu' });
@@ -177,7 +177,8 @@ test('Chronik, Vision und Version', async ({ page }, testInfo) => {
   await expect(dialog.getByText(/Beute/)).toBeVisible();
   await expect(dialog.getByText(/Meilenstein/)).toBeVisible();
   await expect(dialog.getByText(/XP/).first()).toBeVisible();
-  await expect(dialog.getByRole('button', { name: 'Vision bearbeiten' })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Aktionen für Fit und belastbar', exact: true }).click();
+  await expect(page.getByRole('menuitem', { name: 'Bearbeiten', exact: true })).toBeVisible();
   await page.waitForTimeout(500);
   await ohneSeitlichenUeberlauf(page);
   await bild('vision-detail');

@@ -1,24 +1,25 @@
 import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CircleCheck, CircleX, Pencil, Plus, RotateCcw, Swords, Wind, Wrench } from 'lucide-react';
-import { useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { CircleCheck, CircleX, Pencil, RotateCcw, Swords, Wind, Wrench } from 'lucide-react';
+import { useState, type FormEvent, type ReactNode } from 'react';
 import { useParams } from 'react-router';
 import type { BasisAufgabe, Projekt, Vorlage, Vorhaben } from '../../../../shared/api/index.ts';
-import { GRENZEN, NEUTRAL_FARBE, VORHABEN_STATUS_LABEL } from '../../../../shared/spiel/begriffe.ts';
+import { GRENZEN, VORHABEN_STATUS_LABEL } from '../../../../shared/spiel/begriffe.ts';
 import { zielTitel } from '../../../../shared/spiel/ebenen.ts';
 import { BOSS_DATUM_INFO, NEUER_ANLAUF } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { BasisFormular, BasisListe, useBasisAufgaben } from '../basis/Basis.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
-import { Abschnitt, EinklappKopf } from '../../components/Ausklappbar.tsx';
+import { Abschnitt } from '../../components/Ausklappbar.tsx';
 import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
-import { SchnellZeile, useSchnellAktion } from '../../components/SchnellAktion.tsx';
-import { wendeAlle } from '../../schnell.ts';
+import { AnlegeZeile, ZeilenGruppe } from '../../components/Zeile.tsx';
+import { SchnellMenueKnopf, SchnellZeile, useSchnellAktion } from '../../components/SchnellAktion.tsx';
+import { wendeAlle, type SchnellPunkt } from '../../schnell.ts';
 import { Icon } from '../../components/Icons.tsx';
 import { KettenAnzeige } from '../../components/KettenAnzeige.tsx';
 import { ProjektInvestition } from '../investitionen/Investitionen.tsx';
-import { useKopf } from '../../components/Kopf.tsx';
+import { KopfAktion, useKopf } from '../../components/Kopf.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { BossRing } from '../bosse/BossRing.tsx';
 import {
@@ -26,10 +27,10 @@ import {
   Fehlermeldung,
   Formular,
   InfoHinweis,
-  Karte,
   Knopf,
   Ladeanzeige,
   LevelRing,
+  Ueberschrift,
 } from '../../ui/index.ts';
 import { bossZeile, VorhabenKennzahlen } from '../../components/VorhabenInfo.tsx';
 import { TaetigkeitFormular } from '../taetigkeiten/TaetigkeitFormular.tsx';
@@ -64,6 +65,7 @@ export function ProjektSeite() {
   const funktionen = sichtbarkeit.funktionen;
   const ebenen = sichtbarkeit.ebenen;
   const bosseAn = istAn('bossAngriffe', sichtbarkeit);
+  const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
   const [bearbeitung, setBearbeitung] = useState<ZielBearbeitung>(null);
   const [bossVorhaben, setBossVorhaben] = useState<Vorhaben | null>(null);
   useKopf(data?.projekt.name ? { titel: data.projekt.name, roh: true } : null);
@@ -79,83 +81,78 @@ export function ProjektSeite() {
   }
 
   const { projekt, vorhaben } = data;
-  const kontextFarbe = projekt.kontext?.farbe ?? NEUTRAL_FARBE;
   const offene = vorhaben.filter((eintrag) => eintrag.status === 'offen');
   const abgeschlossene = vorhaben.filter((eintrag) => eintrag.status !== 'offen');
   const investitionAn = istAn('ausruestung', sichtbarkeit);
+  const visionName =
+    ziele && projekt.visionId !== null ? (ziele.visionen.find((eintrag) => eintrag.id === projekt.visionId)?.titel ?? null) : null;
+  const organisationsName =
+    ziele && projekt.organisationId !== null
+      ? (ziele.organisationen.find((eintrag) => eintrag.id === projekt.organisationId)?.name ?? null)
+      : null;
+  const zuordnung = [visionName, organisationsName].filter((teil): teil is string => Boolean(teil));
+  const kontext = ziele ? (zuordnung.length > 0 ? zuordnung.join(' · ') : tx('Ohne Zuordnung')) : (projekt.kontext?.titel ?? tx('Ohne Zuordnung'));
 
   return (
     <div className="space-y-6">
-      <Karte className="space-y-4">
-        <div className="flex items-start gap-5">
-          <LevelRing level={projekt.level.level} anteil={projekt.level.fortschritt} groesse={88} />
-          <div className="min-w-0 flex-1">
-            <SchnellZeile
-              ziel={{ art: 'projekt', id: projekt.id, name: projekt.name, archiviert: projekt.archiviert, loeschbar: projekt.loeschbar }}
-            >
-              {(menue) => (
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <ZielMarke ebene="projekte" />
-                    <div className="flex min-w-0 flex-nowrap items-center gap-1.5">
-                      <span data-projektname="" className="min-w-0 truncate text-2xl font-bold tracking-tight">
-                        {projekt.name}
-                      </span>
-                      {projekt.geschafftAm ? <AbschlussMarke /> : null}
-                    </div>
-                    <p className="flex min-w-0 items-center gap-1.5 text-sm text-leise">
-                      <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: kontextFarbe }} />
-                      <span className="min-w-0 truncate">{projekt.kontext?.titel ?? tx("Ohne Zuordnung")}</span>
-                      {projekt.archiviert ? <span className="shrink-0 whitespace-nowrap">{tx("· archiviert")}</span> : null}
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 items-start">
-                    {menue}
-                    <Knopf
-                      variante="leise"
-                      className="p-2"
-                      aria-label={tx("Projekt bearbeiten")}
-                      onClick={() => setBearbeitung({ art: 'projekt', projekt, visionId: null, organisationId: null })}
-                    >
-                      <Pencil className="size-4" />
-                    </Knopf>
-                  </div>
-                </div>
-              )}
-            </SchnellZeile>
-            {projekt.beschreibung && <p className="mt-2 text-sm">{projekt.beschreibung}</p>}
-          </div>
-        </div>
-        <div className="space-y-1 text-xs text-leise">
-          <div className="flex items-center justify-between gap-3">
-            <span className="zahl">
-              {tx('Erfahrung {aktuell} / {gesamt} XP', {
-                aktuell: zahl(projekt.level.xpImLevel),
-                gesamt: zahl(projekt.level.xpFuerNaechstes),
-              })}
+      <KopfAktion>
+        <SchnellMenueKnopf
+          ziel={{ art: 'projekt', id: projekt.id, name: projekt.name, archiviert: projekt.archiviert, loeschbar: projekt.loeschbar }}
+          davor={[
+            {
+              id: 'bearbeiten',
+              label: 'Bearbeiten',
+              onWahl: () => setBearbeitung({ art: 'projekt', projekt, visionId: null, organisationId: null }),
+            },
+          ]}
+        />
+      </KopfAktion>
+      <div className="flex items-start gap-5">
+        <LevelRing level={projekt.level.level} anteil={projekt.level.fortschritt} groesse={96} />
+        <div className="min-w-0 flex-1">
+          <ZielMarke ebene="projekte" />
+          <div className="flex min-w-0 flex-nowrap items-center gap-1.5">
+            <span data-projektname="" className="kopfblock-name min-w-0 truncate text-2xl font-bold tracking-tight">
+              {projekt.name}
             </span>
-            <span className="flex shrink-0 items-center gap-3">
-              {investitionAn && projekt.ausruestungBonus > 0 && (
-                <span className="zahl flex items-center gap-1 font-medium text-xp">
-                  <Wrench className="size-3.5" />
-                  {bonusProzent(projekt.ausruestungBonus)}
-                </span>
-              )}
-              <KettenAnzeige kette={projekt.kette} />
-            </span>
+            {projekt.geschafftAm ? <AbschlussMarke /> : null}
           </div>
-          <p className="zahl break-words">
-            {tx('noch {rest} bis Level {level}', {
-              rest: zahl(projekt.level.xpFuerNaechstes - projekt.level.xpImLevel),
-              level: projekt.level.level + 1,
-            })}
+          <p className="truncate text-sm text-leise">
+            {kontext}
+            {projekt.archiviert ? <span className="whitespace-nowrap">{` ${tx('· archiviert')}`}</span> : null}
           </p>
         </div>
-        <ProjektAbschluss projekt={projekt} />
-      </Karte>
+      </div>
+      <div className="space-y-1 text-xs text-leise">
+        <div className="flex items-center justify-between gap-3">
+          <span className="zahl">
+            {tx('Erfahrung {aktuell} / {gesamt} XP', {
+              aktuell: zahl(projekt.level.xpImLevel),
+              gesamt: zahl(projekt.level.xpFuerNaechstes),
+            })}
+          </span>
+          <span className="flex shrink-0 items-center gap-3">
+            {investitionAn && projekt.ausruestungBonus > 0 && (
+              <span className="zahl flex items-center gap-1 font-medium text-xp">
+                <Wrench className="size-3.5" />
+                {bonusProzent(projekt.ausruestungBonus)}
+              </span>
+            )}
+            <KettenAnzeige kette={projekt.kette} />
+          </span>
+        </div>
+        <p className="zahl break-words">
+          {tx('noch {rest} bis Level {level}', {
+            rest: zahl(projekt.level.xpFuerNaechstes - projekt.level.xpImLevel),
+            level: projekt.level.level + 1,
+          })}
+        </p>
+      </div>
+      <ProjektAbschluss projekt={projekt} />
 
       {ebenen.vorhaben && (
-        <Abschnitt titel={zielTitel('vorhaben')} kennung="projekt-vorhaben">
+        <section className="space-y-2">
+          <Ueberschrift titel={tx(zielTitel('vorhaben'))} />
           {projekt.aktiv && <VorhabenAnlegen projektId={projekt.id} />}
           <div className="space-y-2">
             {offene.map((eintrag) => (
@@ -169,9 +166,14 @@ export function ProjektSeite() {
             ))}
           </div>
           {abgeschlossene.length > 0 && (
-            <AbgeschlosseneVorhaben vorhaben={abgeschlossene} aktiv={projekt.aktiv} bosseAn={bosseAn} />
+            <AbgeschlosseneVorhaben
+              vorhaben={abgeschlossene}
+              aktiv={projekt.aktiv}
+              bosseAn={bosseAn}
+              projektId={projekt.id}
+            />
           )}
-        </Abschnitt>
+        </section>
       )}
 
       <ProjektTaetigkeiten projektId={projekt.id} projektName={projekt.name} aktiv={projekt.aktiv} />
@@ -241,7 +243,7 @@ function useProjektAbschluss(projekt: Projekt): { knopf: ReactNode; fehler: Reac
 
   const knopf = projekt.geschafftAm ? (
     <Knopf variante="leise" className="shrink-0 px-2 py-1 text-xs" onClick={beimOeffnen} disabled={oeffnen.isPending}>
-      {tx("Öffnen")}
+      {tx("Wieder öffnen")}
     </Knopf>
   ) : (
     <Knopf
@@ -261,27 +263,25 @@ function ProjektAbschluss({ projekt }: { projekt: Projekt }) {
   const abschluss = useProjektAbschluss(projekt);
   const stand = projekt.geschafftAm ? projekt.abschluss : null;
   return (
-    <div className="space-y-2">
+    <section aria-label={tx('Abschluss')} className="min-w-0 space-y-2">
       {abschluss.fehler}
+      <div className="flex min-w-0 items-center">
+        <h2 className="text-sm font-medium">{tx('Abschluss')}</h2>
+        <InfoHinweis text="Einmalig Bonus-XP nach den Einträgen im Projekt. Wieder öffnen gibt den Bonus nicht noch einmal." />
+      </div>
       {stand && (
-        <section aria-label={tx('Abschluss')} className="min-w-0 space-y-2">
-          <div className="flex min-w-0 items-center">
-            <h2 className="text-sm font-medium">{tx('Abschluss')}</h2>
-            <InfoHinweis text="Einmalig Bonus-XP nach den Einträgen im Projekt. Wieder öffnen gibt den Bonus nicht noch einmal." />
-          </div>
-          <p className="flex min-w-0 flex-wrap gap-x-3 gap-y-1 text-sm text-leise">
-            <span className="zahl">{tx('{xp} XP', { xp: zahl(stand.xp) })}</span>
-            <span>{tx('Level {level}', { level: stand.level })}</span>
-            <span className="min-w-0 break-words">
-              {tx('{von} bis {bis}', { von: kurzesDatum(stand.von), bis: kurzesDatum(stand.bis) })}
-            </span>
-            <span>{tx('{anzahl} Einträge', { anzahl: zahl(stand.eintraege) })}</span>
-            <span className="zahl">{stundenText(stand.stunden)}</span>
-          </p>
-        </section>
+        <p className="flex min-w-0 flex-wrap gap-x-3 gap-y-1 text-sm text-leise">
+          <span className="zahl">{tx('{xp} XP', { xp: zahl(stand.xp) })}</span>
+          <span>{tx('Level {level}', { level: stand.level })}</span>
+          <span className="min-w-0 break-words">
+            {tx('{von} bis {bis}', { von: kurzesDatum(stand.von), bis: kurzesDatum(stand.bis) })}
+          </span>
+          <span>{tx('{anzahl} Einträge', { anzahl: zahl(stand.eintraege) })}</span>
+          <span className="zahl">{stundenText(stand.stunden)}</span>
+        </p>
       )}
       <div className="flex flex-wrap gap-2">{abschluss.knopf}</div>
-    </div>
+    </section>
   );
 }
 
@@ -294,22 +294,14 @@ function ProjektBasis({ projektId, aktiv }: { projektId: number; aktiv: boolean 
     return null;
   }
   return (
-    <Abschnitt
-      titel={tx("Basis")}
-      kennung="projekt-basis"
-      aktion={
-        <Knopf variante="leise" className="px-2 py-1" onClick={() => setBearbeitung({ aufgabe: null })}>
-          <Plus className="size-4" />
-          {tx("Aufgabe")}
-        </Knopf>
-      }
-    >
-      <Fehlermeldung fehler={error} />
-      {eigene.length > 0 && (
-        <Karte>
+    <>
+      <ZeilenGruppe titel="Basis">
+        <Fehlermeldung fehler={error} />
+        {eigene.length > 0 && (
           <BasisListe aufgaben={eigene} mitProjekt={false} onBearbeiten={(aufgabe) => setBearbeitung({ aufgabe })} />
-        </Karte>
-      )}
+        )}
+        <AnlegeZeile text="Basis-Aufgabe" onKlick={() => setBearbeitung({ aufgabe: null })} />
+      </ZeilenGruppe>
       <Dialog
         offen={bearbeitung !== null}
         titel={bearbeitung?.aufgabe ? tx("Aufgabe bearbeiten") : tx("Neue Aufgabe")}
@@ -324,7 +316,7 @@ function ProjektBasis({ projektId, aktiv }: { projektId: number; aktiv: boolean 
           />
         )}
       </Dialog>
-    </Abschnitt>
+    </>
   );
 }
 
@@ -345,47 +337,39 @@ function ProjektTaetigkeiten({
     return null;
   }
   return (
-    <Abschnitt
-      titel={tx("Tätigkeiten")}
-      kennung="projekt-taetigkeiten"
-      info="Diese Tätigkeiten gelten nur für dieses Projekt."
-      aktion={
-        <Knopf variante="leise" className="px-2 py-1" onClick={() => setBearbeitung({ vorlage: null })}>
-          <Plus className="size-4" />
-          {tx("Tätigkeit")}
-        </Knopf>
-      }
-    >
-      <Fehlermeldung fehler={error} />
-      {eigene.length > 0 && (
-        <Karte dicht className="divide-y divide-rand">
-          {eigene.map((vorlage) => (
-            <SchnellZeile
-              key={vorlage.id}
-              ziel={{ art: 'vorlage', id: vorlage.id, name: vorlage.name, archiviert: vorlage.archiviert, loeschbar: vorlage.loeschbar }}
-            >
-              {(menue) => (
-                <div className="flex items-center gap-1 py-1 pr-1 pl-3">
-                  <Icon name={vorlage.icon} className="size-4 shrink-0" />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-medium">{vorlage.name}</span>
-                    <span className="block truncate text-xs text-leise">{tx('Nur für {name}', { name: projektName })}</span>
+    <>
+      <ZeilenGruppe titel="Nur für dieses Projekt">
+        <Fehlermeldung fehler={error} />
+        {eigene.map((vorlage) => (
+          <SchnellZeile
+            key={vorlage.id}
+            hintergrund="bg-flaeche"
+            ziel={{ art: 'vorlage', id: vorlage.id, name: vorlage.name, archiviert: vorlage.archiviert, loeschbar: vorlage.loeschbar }}
+          >
+            {(menue) => (
+              <div className="flex min-h-12 items-center gap-3 px-4 py-3">
+                <Icon name={vorlage.icon} className="size-5 shrink-0 text-leise" />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-base leading-6">{vorlage.name}</span>
+                  <span className="block truncate text-[13px] leading-[18px] text-leise">
+                    {tx('Nur für {name}', { name: projektName })}
                   </span>
-                  {menue}
-                  <Knopf
-                    variante="leise"
-                    className="shrink-0 p-2"
-                    aria-label={tx('{name} bearbeiten', { name: vorlage.name })}
-                    onClick={() => setBearbeitung({ vorlage })}
-                  >
-                    <Pencil className="size-4" />
-                  </Knopf>
-                </div>
-              )}
-            </SchnellZeile>
-          ))}
-        </Karte>
-      )}
+                </span>
+                {menue}
+                <Knopf
+                  variante="leise"
+                  className="shrink-0 p-2"
+                  aria-label={tx('{name} bearbeiten', { name: vorlage.name })}
+                  onClick={() => setBearbeitung({ vorlage })}
+                >
+                  <Pencil className="size-4" />
+                </Knopf>
+              </div>
+            )}
+          </SchnellZeile>
+        ))}
+        <AnlegeZeile text="Tätigkeit nur für dieses Projekt" onKlick={() => setBearbeitung({ vorlage: null })} />
+      </ZeilenGruppe>
       <Dialog
         offen={bearbeitung !== null}
         titel={
@@ -405,7 +389,7 @@ function ProjektTaetigkeiten({
           />
         )}
       </Dialog>
-    </Abschnitt>
+    </>
   );
 }
 
@@ -429,16 +413,20 @@ function VorhabenAnlegen({ projektId }: { projektId: number }) {
 
   return (
     <form onSubmit={absenden} className="space-y-2">
+      <label htmlFor={`vorhaben-${projektId}`} className="block text-sm font-medium">
+        {tx('Neues Vorhaben')}
+      </label>
       <div className="flex gap-2">
         <input
-          className={EINGABE_STIL}
-          placeholder={tx("Neues Vorhaben")}
+          id={`vorhaben-${projektId}`}
+          className={`${EINGABE_STIL} min-w-0 flex-1`}
+          aria-label={tx('Neues Vorhaben')}
           maxLength={GRENZEN.nameMax}
           value={titel}
           onChange={(ereignis) => setTitel(ereignis.target.value)}
         />
-        <Knopf type="submit" disabled={!titel.trim() || anlegen.isPending} aria-label={tx("Vorhaben anlegen")}>
-          <Plus className="size-4" />
+        <Knopf type="submit" disabled={!titel.trim() || anlegen.isPending}>
+          {tx('Hinzufügen')}
         </Knopf>
       </div>
       <Fehlermeldung fehler={anlegen.error} />
@@ -467,13 +455,17 @@ function OffenesVorhaben({
   const boss = bosseAn ? vorhaben.boss : null;
   const [titelOffen, setTitelOffen] = useState(false);
   const [titelText, setTitelText] = useState(vorhaben.titel);
-  const titelAbbruch = useRef(false);
+  const eintraege: SchnellPunkt[] = [{ art: 'archivieren', id: 'umbenennen', label: 'Umbenennen' }];
+  if (bosseAn) {
+    eintraege.push({
+      art: 'archivieren',
+      id: 'boss',
+      label: boss ? 'Boss bearbeiten' : 'Zum Boss machen',
+    });
+  }
+  eintraege.push({ art: 'archivieren', id: 'loslassen', label: 'Loslassen', wisch: true });
 
   const speichereTitel = () => {
-    if (titelAbbruch.current) {
-      titelAbbruch.current = false;
-      return;
-    }
     const wert = titelText.trim();
     setTitelOffen(false);
     if (wert && wert !== vorhaben.titel) {
@@ -497,79 +489,69 @@ function OffenesVorhaben({
   };
 
   return (
-    <SchnellZeile
-      className={`rounded-2xl border ${boss ? 'border-gefahr/40' : 'border-rand'}`}
-      ziel={{ art: 'vorhaben', id: vorhaben.id, name: vorhaben.titel, loeschbar: vorhaben.loeschbar }}
-    >
-      {(menue) => (
-    <div className="bg-flaeche px-4 py-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex min-w-0 basis-full items-center gap-3 sm:basis-auto sm:flex-1">
-          {boss && <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />}
-          <div className="min-w-0 flex-1">
-            {titelOffen ? (
-              <input
-                className={`${EINGABE_STIL} min-w-0 flex-1`}
-                value={titelText}
-                maxLength={GRENZEN.nameMax}
-                aria-label={tx('Titel')}
-                autoFocus
-                onChange={(ereignis) => setTitelText(ereignis.target.value)}
-                onKeyDown={(ereignis) => {
-                  if (ereignis.key === 'Enter') {
-                    ereignis.preventDefault();
-                    speichereTitel();
-                  } else if (ereignis.key === 'Escape') {
-                    ereignis.preventDefault();
-                    titelAbbruch.current = true;
-                    setTitelText(vorhaben.titel);
-                    setTitelOffen(false);
-                  }
-                }}
-                onBlur={speichereTitel}
-              />
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  setTitelText(vorhaben.titel);
-                  setTitelOffen(true);
-                }}
-                className="group flex min-w-0 items-center gap-1.5 text-left"
-              >
-                {boss && <Swords className="size-4 shrink-0 text-gefahr" />}
-                <span className="truncate text-sm font-medium">{vorhaben.titel}</span>
-                <Pencil className="size-3 shrink-0 text-leise opacity-0 transition group-hover:opacity-100" />
-              </button>
-            )}
-            {boss && <p className="text-xs text-leise">{bossZeile(boss)}</p>}
-            <VorhabenKennzahlen vorhaben={vorhaben} ohneXp={boss !== null} />
+    <>
+      <SchnellZeile
+        className={`rounded-2xl border ${boss ? 'border-gefahr/40' : 'border-rand'}`}
+        eintraege={eintraege}
+        onEintrag={(punkt) => {
+          if (punkt.id === 'umbenennen') {
+            setTitelText(vorhaben.titel);
+            setTitelOffen(true);
+          }
+          if (punkt.id === 'boss') {
+            onBoss();
+          }
+          if (punkt.id === 'loslassen') {
+            beimLoslassen();
+          }
+        }}
+        ziel={{ art: 'vorhaben', id: vorhaben.id, name: vorhaben.titel, loeschbar: vorhaben.loeschbar }}
+      >
+        {(menue) => (
+          <div className="bg-flaeche px-4 py-3">
+            <div className="flex items-center gap-3">
+              {boss && <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />}
+              <div className="min-w-0 flex-1">
+                <p className="flex min-w-0 items-center gap-1.5 text-base leading-6">
+                  {boss && <Swords className="size-4 shrink-0 text-gefahr" />}
+                  <span className="truncate">{vorhaben.titel}</span>
+                </p>
+                {boss && <p className="truncate text-xs text-leise">{bossZeile(boss)}</p>}
+                <VorhabenKennzahlen vorhaben={vorhaben} ohneXp={boss !== null} />
+              </div>
+              {menue}
+              <Knopf className="shrink-0 px-3 py-1.5" data-schnell-frei="" onClick={onWeiter}>
+                {tx('Weiter')}
+              </Knopf>
+            </div>
+            <Fehlermeldung fehler={umbenennen.error} />
           </div>
-        </div>
-        <div className="ml-auto flex shrink-0 items-center gap-2">
-          {menue}
-          {bosseAn && (
-            <Knopf
-              variante="leise"
-              className={`px-2 py-1.5 ${boss ? 'text-gefahr' : ''}`}
-              onClick={onBoss}
-              title={boss ? tx("Boss bearbeiten") : tx("Zum Boss machen")}
-            >
-              <Swords className="size-4" />
-            </Knopf>
-          )}
-          <Knopf variante="leise" className="px-2 py-1.5" onClick={beimLoslassen} title={tx("Loslassen")}>
-            <Wind className="size-4" />
+        )}
+      </SchnellZeile>
+      <Dialog offen={titelOffen} titel={tx('Umbenennen')} onSchliessen={() => setTitelOffen(false)}>
+        <Formular
+          onAbsenden={(ereignis) => {
+            ereignis.preventDefault();
+            speichereTitel();
+          }}
+        >
+          <label className="block space-y-1.5">
+            <span className="text-sm font-medium">{tx('Titel')}</span>
+            <input
+              className={EINGABE_STIL}
+              value={titelText}
+              maxLength={GRENZEN.nameMax}
+              aria-label={tx('Titel')}
+              autoFocus
+              onChange={(ereignis) => setTitelText(ereignis.target.value)}
+            />
+          </label>
+          <Knopf type="submit" variante="primaer" disabled={!titelText.trim() || umbenennen.isPending}>
+            {tx('Speichern')}
           </Knopf>
-          <Knopf className="px-3 py-1.5" onClick={onWeiter}>
-            {tx("Weiter")}
-          </Knopf>
-        </div>
-      </div>
-      <Fehlermeldung fehler={umbenennen.error} />
-    </div>
-      )}
-    </SchnellZeile>
+        </Formular>
+      </Dialog>
+    </>
   );
 }
 
@@ -641,14 +623,15 @@ function AbgeschlosseneVorhaben({
   vorhaben,
   aktiv,
   bosseAn,
+  projektId,
 }: {
   vorhaben: Vorhaben[];
   aktiv: boolean;
   bosseAn: boolean;
+  projektId: number;
 }) {
   const queryClient = useQueryClient();
   const feiern = useFeiern();
-  const [offen, setOffen] = useState(false);
   const anlauf = useMutation({
     mutationFn: (id: number) => api.starteNeuenAnlauf(id),
     onSuccess: (ergebnis) => {
@@ -658,16 +641,8 @@ function AbgeschlosseneVorhaben({
   });
 
   return (
-    <div className="mt-4">
-      <EinklappKopf
-        element="span"
-        titel={`Abgeschlossen (${vorhaben.length})`}
-        titelStil="text-sm font-normal tracking-normal text-leise normal-case"
-        offen={offen}
-        onToggle={() => setOffen(!offen)}
-      />
-      {offen && (
-        <div className="mt-2 space-y-2">
+    <Abschnitt titel="Abgeschlossen" zusatz={`(${zahl(vorhaben.length)})`} kennung={`projekt-${projektId}-abgeschlossen`} anfangEingeklappt>
+      <div className="space-y-2">
           {vorhaben.map((eintrag) => (
             <div key={eintrag.id} className="rounded-2xl border border-rand bg-flaeche px-4 py-3">
               <div className="flex items-center gap-3">
@@ -722,7 +697,6 @@ function AbgeschlosseneVorhaben({
           ))}
           <Fehlermeldung fehler={anlauf.error} />
         </div>
-      )}
-    </div>
+    </Abschnitt>
   );
 }
