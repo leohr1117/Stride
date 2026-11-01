@@ -28,7 +28,7 @@ async function iconLage(seite: Page, wurzel: string): Promise<{ abstand: number;
     const kasten = knopf.getBoundingClientRect();
     const huelle = knopf.parentElement;
     const abstand = huelle ? Number.parseFloat(getComputedStyle(huelle).marginInlineStart) || 0 : 0;
-    const zeile = knopf.closest('h1, h2, h3, #funktion-ausruestung') ?? knopf.parentElement?.parentElement;
+    const zeile = knopf.closest('h1, h2, h3, [data-zeile]') ?? knopf.parentElement?.parentElement;
     const titel = zeile?.querySelector(':scope > .text-base, :scope > h1, :scope > h2, :scope > h3, .text-base');
     const titelKasten = titel?.getBoundingClientRect();
     const delta = titelKasten ? kasten.top + kasten.height / 2 - (titelKasten.top + titelKasten.height / 2) : null;
@@ -44,15 +44,23 @@ test.beforeEach(async ({ page }) => {
   await anmelden(page);
 });
 
-test('Info-Icon sitzt nah und mittig an der Labelzeile', async ({ page }) => {
+test('Info-Icon sitzt nah und mittig an der Labelzeile', async ({ page }, testInfo) => {
   await page.goto('/mehr/funktionen');
-  const investition = page.locator('#funktion-ausruestung');
-  await investition.scrollIntoViewIfNeeded();
-  await expect(investition).toBeVisible();
-  const funktion = await iconLage(page, '#funktion-ausruestung');
+  const basis = page.locator('#funktion-basis');
+  await basis.scrollIntoViewIfNeeded();
+  await expect(basis).toBeVisible();
+  const funktion = await iconLage(page, '#funktion-basis');
   expect(funktion.abstand).toBeGreaterThanOrEqual(5);
   expect(funktion.abstand).toBeLessThanOrEqual(8);
   expect(Math.abs(funktion.delta ?? 99)).toBeLessThanOrEqual(4);
+  await basis.getByRole('button', { name: 'Info', exact: true }).click();
+  await expect(page.getByRole('tooltip')).toHaveText('Tägliche Aufgaben zum Abhaken.');
+  await page.screenshot({ path: `tmp-test/info-vorbilder-zurueck/${testInfo.project.name}-basis.png` });
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('tooltip')).toHaveCount(0);
+  const investition = page.locator('#funktion-ausruestung');
+  await expect(investition).toBeVisible();
+  await expect(investition.getByRole('button', { name: 'Info', exact: true })).toHaveCount(0);
 
   await page.goto('/investitionen');
   await expect(page.getByText('Lädt …')).toHaveCount(0);
@@ -74,6 +82,7 @@ test('Info-Icon sitzt nah und mittig an der Labelzeile', async ({ page }) => {
   expect(Math.abs(lage.delta ?? 99)).toBeLessThanOrEqual(4);
   await page.locator('[data-kopf]').getByRole('button', { name: 'Info' }).click();
   await expect(page.getByRole('tooltip')).toBeVisible();
+  await page.screenshot({ path: `tmp-test/info-vorbilder-zurueck/${testInfo.project.name}-investitionen.png` });
   await page.keyboard.press('Escape');
   await expect(page.getByRole('tooltip')).toHaveCount(0);
 });
@@ -81,12 +90,12 @@ test('Info-Icon sitzt nah und mittig an der Labelzeile', async ({ page }) => {
 test('Vorbilder zeigen die Ähnlichkeit und behalten den Filter', async ({ page }) => {
   await page.goto('/vorbilder');
   await expect(page.getByRole('heading', { name: 'Vorbilder', exact: true })).toBeVisible();
-  const karten = page.locator('a[href^="/vorbilder/"]');
-  await expect(karten.first()).toBeVisible();
-  const anzahl = await karten.count();
+  const zeilen = page.locator('[data-zeile]').filter({ has: page.locator('a[href^="/vorbilder/"]') });
+  await expect(zeilen.first()).toBeVisible();
+  const anzahl = await zeilen.count();
   expect(anzahl).toBeGreaterThan(10);
   for (let index = 0; index < Math.min(anzahl, 8); index += 1) {
-    await expect(karten.nth(index)).toContainText(/%/);
+    await expect(zeilen.nth(index)).toContainText(/%/);
   }
 
   const wettkampf = page.getByRole('button', { name: /^Wettkampf/ });

@@ -1,5 +1,13 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Profil fasst Level, Kennzahlen, Erfolge und die Seiten im Profil zusammen.": "プロフィールはレベル、数値、成果、プロフィール内のページをまとめます。",
+  "Die Spektren von Können und Haben stehen klein nebeneinander.": "能力と資産のスペクトルは小さく横に並びます。",
+  "Der Stift im Profil öffnet das Konto.": "プロフィールの鉛筆はアカウントを開きます。",
+  "An einer Fähigkeit liegt das Menü im Kopf.": "スキルのメニューはヘッダーにあります。",
+  "Vorbilder sind eine Liste. Die Richtungen rollen seitlich.": "お手本はリストです。方向は横にスクロールします。",
+  "Profil bearbeiten": "プロフィールを編集",
+  "Ähnlich": "似ている",
+  "Stärken": "強み",
   "Auf Ziele legt Neu eine Vision, eine Organisation oder ein Projekt an.": "目標では、新規からビジョン、組織、プロジェクトを作れます。",
   "Jede Vision ist ein Abschnitt mit Farbpunkt. Laufend steht als Zeile darüber.": "各ビジョンは色の点がある区間です。進行中はその上の行です。",
   "Das Archiv ist zugeklappt.": "アーカイブはたたまれています。",

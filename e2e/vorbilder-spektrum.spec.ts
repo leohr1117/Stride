@@ -39,9 +39,9 @@ test('Vorbilder zeigen Prozent, aktive Level und das Spektrum', async ({ page },
 
   await page.goto('/vorbilder');
   await expect(page.getByRole('heading', { name: 'Vorbilder', exact: true })).toBeVisible();
-  const karten = page.locator('a[href^="/vorbilder/"]');
-  await expect(karten.first()).toBeVisible();
-  await expect(karten.first()).toContainText(/%/);
+  const zeilen = page.locator('[data-zeile]').filter({ has: page.locator('a[href^="/vorbilder/"]') });
+  await expect(zeilen.first()).toBeVisible();
+  await expect(zeilen.first()).toContainText(/%/);
   await expect(page.getByRole('button', { name: /^Alle/ })).toContainText(/%/);
   await page.screenshot({ path: bild(info, 'liste') });
   await ohneSeitlichenUeberlauf(page);

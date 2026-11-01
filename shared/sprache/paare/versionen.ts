@@ -1,5 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Das Profil fasst Level, Kennzahlen, Erfolge und die Seiten im Profil zusammen.', 'The profile sums up level, figures, achievements, and the pages in the profile.'],
+  ['Die Spektren von Können und Haben stehen klein nebeneinander.', 'The spectra of ability and assets sit small, side by side.'],
+  ['Der Stift im Profil öffnet das Konto.', 'The pencil on the profile opens the account.'],
+  ['An einer Fähigkeit liegt das Menü im Kopf.', 'On a skill, the menu sits in the header.'],
+  ['Vorbilder sind eine Liste. Die Richtungen rollen seitlich.', 'Role models are a list. The directions scroll sideways.'],
   ['Auf Ziele legt Neu eine Vision, eine Organisation oder ein Projekt an.', 'On Goals, New adds a vision, an organisation, or a project.'],
   ['Jede Vision ist ein Abschnitt mit Farbpunkt. Laufend steht als Zeile darüber.', 'Each vision is a section with a color dot. Active sits in a row above.'],
   ['Das Archiv ist zugeklappt.', 'The archive stays collapsed.'],

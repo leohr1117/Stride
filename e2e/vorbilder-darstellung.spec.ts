@@ -130,20 +130,16 @@ async function pruefeKopf(seite: Page, name: string): Promise<void> {
       karte: kasten(bereich),
       titel: kasten(bereich?.querySelector('.profil-name') ?? null),
       level: kasten(bereich?.querySelector('p.text-3xl:not([data-aehnlichkeit])') ?? null),
-      icon: kasten(bereich?.querySelector('button') ?? null),
       untertitel: kasten(bereich?.querySelector('p.text-sm') ?? null),
     };
   });
-  expect(kaesten.karte && kaesten.titel && kaesten.level && kaesten.icon, name).toBeTruthy();
-  if (!kaesten.karte || !kaesten.titel || !kaesten.level || !kaesten.icon) {
+  expect(kaesten.karte && kaesten.titel && kaesten.level, name).toBeTruthy();
+  if (!kaesten.karte || !kaesten.titel || !kaesten.level) {
     return;
   }
   expect(innerhalb(kaesten.titel, kaesten.karte), `${name} Titel`).toBe(true);
   expect(innerhalb(kaesten.level, kaesten.karte), `${name} Level`).toBe(true);
-  expect(innerhalb(kaesten.icon, kaesten.karte), `${name} Hinweis`).toBe(true);
   expect(ueberlappt(kaesten.titel, kaesten.level), `${name} Titel/Level`).toBe(false);
-  expect(ueberlappt(kaesten.icon, kaesten.level), `${name} Hinweis/Level`).toBe(false);
-  expect(ueberlappt(kaesten.titel, kaesten.icon), `${name} Titel/Hinweis`).toBe(false);
   if (name === 'Durchschnittsmensch') {
     const zeilen = await titel.evaluate((element) => {
       const hoehe = Number.parseFloat(getComputedStyle(element).lineHeight);
@@ -196,13 +192,12 @@ test.afterEach(async ({ page }) => {
 
 test('Profil: langer Titel und Level überlappen sich nicht', async ({ page }, testInfo) => {
   await page.goto('/vorbilder');
-  const karte = page.locator('a[href="/vorbilder/durchschnitt"]');
-  await karte.scrollIntoViewIfNeeded();
-  await expect(karte.getByRole('heading', { name: 'Durchschnittsmensch', exact: true })).toBeVisible();
-  await expect(karte).toContainText('Weltweit, etwa 40 Jahre');
-  await expect(karte).toContainText('Lvl 800');
-  const kartenUeberlauf = await karte.evaluate((element) => element.scrollWidth > element.clientWidth + 1);
-  expect(kartenUeberlauf).toBe(false);
+  const zeile = page.locator('[data-zeile]').filter({ has: page.locator('a[href="/vorbilder/durchschnitt"]') });
+  await zeile.scrollIntoViewIfNeeded();
+  await expect(zeile.getByRole('link', { name: 'Durchschnittsmensch', exact: true })).toBeVisible();
+  await expect(zeile).toContainText(/%/);
+  const zeilenUeberlauf = await zeile.evaluate((element) => element.scrollWidth > element.clientWidth + 1);
+  expect(zeilenUeberlauf).toBe(false);
 
   await oeffneProfil(page, 'durchschnitt', 'Durchschnittsmensch');
   const kopf = page.locator('section.karte').first();
@@ -223,7 +218,7 @@ test('Profil: langer Titel und Level überlappen sich nicht', async ({ page }, t
   await oeffneProfil(page, 'durchschnitt', 'Durchschnittsmensch', 'antik');
   await expect(page.locator('section.karte').first().locator('p.text-3xl:not([data-aehnlichkeit])')).toHaveText('Lvl 800');
   await page.locator('section.karte').first().screenshot({
-    path: `e2e/bilder/${testInfo.project.name}-lauf72-profil.png`,
+    path: `tmp-test/vorbilder-darstellung/${testInfo.project.name}-profil.png`,
   });
   await oeffneProfil(page, 'mozart', 'Wolfgang Amadeus Mozart', 'antik');
   await ohneSeitlichenUeberlauf(page);
@@ -268,7 +263,7 @@ test('Darstellung: Farben anderer Designs, sofort und auf jeder Seite', async ({
     await expect(page.getByRole('region', { name: label })).toBeVisible();
   }
   await ohneSeitlichenUeberlauf(page);
-  await page.screenshot({ path: `e2e/bilder/${testInfo.project.name}-lauf72-farben.png`, fullPage: true });
+  await page.screenshot({ path: `tmp-test/vorbilder-darstellung/${testInfo.project.name}-farben.png`, fullPage: true });
 
   let freigabe: () => void = () => undefined;
   const sperre = new Promise<void>((resolve) => {

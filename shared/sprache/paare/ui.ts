@@ -1,5 +1,8 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Profil bearbeiten', 'Edit profile'],
+  ['Ähnlich', 'Similar'],
+  ['Stärken', 'Strengths'],
   ['Stride wurde aktualisiert.', 'Stride was updated.'],
   ['Neuigkeiten', "What's new"],
   ['Was ist neu', "What's new"],

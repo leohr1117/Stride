@@ -17,6 +17,22 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.39.0',
+    seiten: 'Profil, Fähigkeit, Vorbilder',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Das Profil fasst Level, Kennzahlen, Erfolge und die Seiten im Profil zusammen.',
+          'Die Spektren von Können und Haben stehen klein nebeneinander.',
+          'Der Stift im Profil öffnet das Konto.',
+          'An einer Fähigkeit liegt das Menü im Kopf.',
+          'Vorbilder sind eine Liste. Die Richtungen rollen seitlich.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.38.0',
     seiten: 'Ziele, Laufend, Projekt',
     abschnitte: [

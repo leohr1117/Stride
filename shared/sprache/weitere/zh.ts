@@ -1,5 +1,13 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Profil fasst Level, Kennzahlen, Erfolge und die Seiten im Profil zusammen.": "档案汇总等级、数字、成就和档案里的页面。",
+  "Die Spektren von Können und Haben stehen klein nebeneinander.": "能力和资产的图谱缩小后并排显示。",
+  "Der Stift im Profil öffnet das Konto.": "档案上的铅笔打开账户。",
+  "An einer Fähigkeit liegt das Menü im Kopf.": "技能的菜单在页眉。",
+  "Vorbilder sind eine Liste. Die Richtungen rollen seitlich.": "榜样是一个列表。方向可以横向滚动。",
+  "Profil bearbeiten": "编辑档案",
+  "Ähnlich": "相似",
+  "Stärken": "长处",
   "Auf Ziele legt Neu eine Vision, eine Organisation oder ein Projekt an.": "在目标页，新建可以添加愿景、组织或项目。",
   "Jede Vision ist ein Abschnitt mit Farbpunkt. Laufend steht als Zeile darüber.": "每个愿景是带色点的一节。进行中是上面的一行。",
   "Das Archiv ist zugeklappt.": "归档是收起的。",

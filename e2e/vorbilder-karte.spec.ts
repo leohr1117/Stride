@@ -33,31 +33,28 @@ test.beforeEach(async ({ page }) => {
   await anmelden(page);
 });
 
-test('Vorbilder: Karte ohne Radar, Prozent auf Karte und Richtung', async ({ page }) => {
+test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ page }) => {
   await page.goto('/vorbilder');
   await expect(page.getByRole('heading', { name: 'Vorbilder', exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Durchschnittsmensch', exact: true })).toBeVisible();
   await expect(page.locator('.recharts-wrapper')).toHaveCount(0);
 
-  const karten = page.locator('a[href^="/vorbilder/"]');
-  const anzahl = await karten.count();
+  const zeilen = page.locator('[data-zeile]').filter({ has: page.locator('a[href^="/vorbilder/"]') });
+  const massstab = zeilen.filter({ has: page.locator('a[href="/vorbilder/durchschnitt"]') });
+  await expect(massstab).toContainText('Durchschnittsmensch');
+  await expect(massstab).toContainText(/%/);
+  const anzahl = await zeilen.count();
   expect(anzahl).toBeGreaterThan(10);
   for (let index = 0; index < anzahl; index += 1) {
-    await expect(karten.nth(index)).toContainText(/%/);
+    await expect(zeilen.nth(index)).toContainText(/%/);
   }
 
   const breite = page.viewportSize()?.width ?? 0;
-  const raster = page.locator('.grid a');
-  const erste = await raster.nth(0).boundingBox();
-  const zweite = await raster.nth(1).boundingBox();
+  const erste = await zeilen.nth(0).boundingBox();
+  const zweite = await zeilen.nth(1).boundingBox();
   expect(erste && zweite).toBeTruthy();
   if (erste && zweite) {
-    if (breite >= 768) {
-      expect(zweite.x).toBeGreaterThan(erste.x + 40);
-    } else {
-      expect(Math.abs(zweite.x - erste.x)).toBeLessThan(2);
-      expect(zweite.y).toBeGreaterThan(erste.y + 20);
-    }
+    expect(Math.abs(zweite.x - erste.x)).toBeLessThan(2);
+    expect(zweite.y).toBeGreaterThan(erste.y + 20);
   }
 
   const richtungen = [
@@ -82,11 +79,18 @@ test('Vorbilder: Karte ohne Radar, Prozent auf Karte und Richtung', async ({ pag
     const kasten = await chip.boundingBox();
     expect(kasten, name).toBeTruthy();
     if (kasten) {
-      expect(kasten.x, name).toBeGreaterThanOrEqual(-1);
-      expect(kasten.x + kasten.width, name).toBeLessThanOrEqual(breite + 1);
       kaesten.push(kasten);
     }
   }
+  const rolle = page.locator('div.overflow-x-auto').filter({ has: page.getByRole('button', { name: /^Alle/ }) });
+  const rollKasten = await rolle.boundingBox();
+  expect(rollKasten).toBeTruthy();
+  if (rollKasten) {
+    expect(rollKasten.x).toBeGreaterThanOrEqual(-1);
+    expect(rollKasten.x + rollKasten.width).toBeLessThanOrEqual(breite + 1);
+  }
+  const chipY = kaesten.map((kasten) => kasten.y);
+  expect(Math.max(...chipY) - Math.min(...chipY)).toBeLessThan(8);
   for (let links = 0; links < kaesten.length; links += 1) {
     for (let rechts = links + 1; rechts < kaesten.length; rechts += 1) {
       const a = kaesten[links];
@@ -108,14 +112,13 @@ test('Vorbilder: Karte ohne Radar, Prozent auf Karte und Richtung', async ({ pag
     expect(kasten.height).toBeGreaterThanOrEqual(14);
     expect(kasten.height).toBeLessThanOrEqual(20);
   }
-  const deltaListe = await page.locator('header p').evaluate((zeile) => {
-    const knopf = zeile.querySelector('button');
-    const text = zeile.querySelector('span');
-    if (!knopf || !text) {
+  const deltaListe = await page.getByRole('heading', { name: 'Ähnlich', exact: true }).evaluate((titel) => {
+    const knopf = titel.parentElement?.querySelector('button');
+    if (!knopf) {
       return null;
     }
     const icon = knopf.getBoundingClientRect();
-    const schrift = text.getBoundingClientRect();
+    const schrift = titel.getBoundingClientRect();
     return Math.abs(icon.top + icon.height / 2 - (schrift.top + schrift.height / 2));
   });
   expect(deltaListe).not.toBeNull();
@@ -126,6 +129,8 @@ test('Vorbilder: Karte ohne Radar, Prozent auf Karte und Richtung', async ({ pag
   );
 
   const alle = page.getByRole('button', { name: /^Alle/ });
+  await expect(alle).toHaveAttribute('aria-pressed', 'true');
+  await expect(alle.locator('svg')).toHaveCount(1);
   const beste = Number((await alle.innerText()).match(/(\d+)\s*%/)?.[1]);
   expect(beste).toBeGreaterThanOrEqual(40);
   const wettkampf = page.getByRole('button', { name: /^Wettkampf/ });
@@ -133,12 +138,16 @@ test('Vorbilder: Karte ohne Radar, Prozent auf Karte und Richtung', async ({ pag
   const chipZahl = (await wettkampf.innerText()).match(/(\d+)\s*%/)?.[1];
   expect(chipZahl).toBeTruthy();
   await wettkampf.click();
+  await expect(wettkampf.locator('svg')).toHaveCount(1);
+  await expect(alle.locator('svg')).toHaveCount(0);
   await expect(page.getByRole('link', { name: /Elon Musk/ })).toHaveCount(0);
   await expect(page.getByRole('link', { name: /Cristiano Ronaldo/ })).toBeVisible();
   await expect(page.getByRole('link', { name: /Lionel Messi/ })).toBeVisible();
-  await expect(raster.first()).toContainText(`${chipZahl} %`);
-  const karteLaeuftUeber = await raster.first().evaluate((element) => element.scrollWidth > element.clientWidth + 1);
-  expect(karteLaeuftUeber).toBe(false);
+  const aehnlich = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Ähnlich', exact: true }) });
+  const ersteZeile = aehnlich.locator('[data-zeile]').first();
+  await expect(ersteZeile).toContainText(`${chipZahl} %`);
+  const zeileLaeuftUeber = await ersteZeile.evaluate((element) => element.scrollWidth > element.clientWidth + 1);
+  expect(zeileLaeuftUeber).toBe(false);
   await ohneSeitlichenUeberlauf(page);
 
   await page.getByRole('button', { name: /^Content/ }).click();
@@ -163,13 +172,13 @@ test('Vorbilder: Karte ohne Radar, Prozent auf Karte und Richtung', async ({ pag
   await expect(prozentZeile).toContainText(/%\s*ähnlich/);
   const nameHinweis = page.getByRole('button', { name: 'Hinweis zu den Werten' });
   await expect(nameHinweis).toBeVisible();
-  const deltaName = await page.locator('.profil-name').evaluate((name) => {
-    const knopf = name.parentElement?.querySelector('button');
+  const deltaName = await page.getByRole('heading', { name: 'Profil im Vergleich', exact: true }).evaluate((titel) => {
+    const knopf = titel.parentElement?.querySelector('button');
     if (!knopf) {
       return null;
     }
     const icon = knopf.getBoundingClientRect();
-    const schrift = name.getBoundingClientRect();
+    const schrift = titel.getBoundingClientRect();
     return Math.abs(icon.top + icon.height / 2 - (schrift.top + schrift.height / 2));
   });
   expect(deltaName).not.toBeNull();

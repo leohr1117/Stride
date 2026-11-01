@@ -1,15 +1,20 @@
 import { klassenText, tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
-import { Award, Shapes } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
+import { Award, Pencil } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router';
 import type { Charakter, Erfolge, ErfolgKategorie, ErfolgStufe } from '../../../../shared/api/index.ts';
+import type { AttributTyp } from '../../../../shared/spiel/begriffe.ts';
 import { erfolgSichtbar, istAn, pfadAktiv, type Sichtbarkeit } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { SEITEN } from '../../../../shared/spiel/navigation.ts';
+import { MIN_RADAR_ACHSEN } from '../../../../shared/spiel/radar.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { Dialog } from '../../components/Dialog.tsx';
+import { KopfAktion } from '../../components/Kopf.tsx';
 import { Liste, Zeile } from '../../components/Zeile.tsx';
 import { KlassenUndTitel } from '../../components/KlassenTitel.tsx';
-import { Fehlermeldung, Fortschrittsbalken, Karte, Ladeanzeige, LevelRing } from '../../ui/index.ts';
+import { AttributRadar } from '../../components/mitDiagramm.tsx';
+import { Fehlermeldung, Fortschrittsbalken, Ladeanzeige, LevelRing } from '../../ui/index.ts';
 import { kurzesDatum, zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 
@@ -29,9 +34,20 @@ export function CharakterSeite() {
     return <Fehlermeldung fehler={error} />;
   }
 
+  const klassenName = funktionen.koennen ? tx("Klassen und Titel") : tx("Titel");
+
   return (
     <div className="space-y-6">
-      <Karte className="flex items-center gap-5">
+      <KopfAktion>
+        <Link
+          to="/mehr/profil"
+          aria-label={tx("Profil bearbeiten")}
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-leise hover:bg-flaeche-2 hover:text-haupt"
+        >
+          <Pencil className="size-5" aria-hidden="true" />
+        </Link>
+      </KopfAktion>
+      <div className="flex items-center gap-5">
         <LevelRing level={charakter.level.level} anteil={charakter.level.fortschritt} groesse={104} />
         <div className="min-w-0 flex-1">
           <p className="kopfblock-name truncate text-2xl font-bold tracking-tight">{charakter.name}</p>
@@ -44,25 +60,15 @@ export function CharakterSeite() {
             })}
           </p>
         </div>
-      </Karte>
-
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Statistik label={tx("Einträge")} wert={charakter.statistik.eintraegeGesamt} />
-        <Statistik label={tx("Meilensteine")} wert={charakter.statistik.meilensteine} />
-        {istAn('vorhaben', sichtbarkeit) && (
-          <Statistik label={tx("Kleine Ziele geschafft")} wert={charakter.statistik.vorhabenGeschafft} />
-        )}
-        <Statistik label={tx("Aktive Tage")} wert={charakter.statistik.aktiveTage} />
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <ErfolgeKnopf onClick={() => setAnsicht('erfolge')} />
-        <AnsichtKnopf
-          icon={<Shapes className="size-4 text-akzent" />}
-          label={funktionen.koennen ? tx("Klassen und Titel") : tx("Titel")}
-          onClick={() => setAnsicht('klassen')}
-        />
-      </div>
+      <Kennzahlen charakter={charakter} />
+      <Spektren charakter={charakter} />
+
+      <Liste>
+        <ErfolgeZeile onClick={() => setAnsicht('erfolge')} />
+        <Zeile titel={klassenName} name={klassenName} onKlick={() => setAnsicht('klassen')} />
+      </Liste>
 
       <ProfilZeilen charakter={charakter} />
 
@@ -105,33 +111,7 @@ function Identitaet({ klasse, titel }: { klasse: string; titel: string | null })
   return <p className="mt-0.5 text-sm font-medium break-words text-akzent">{text}</p>;
 }
 
-function AnsichtKnopf({
-  icon,
-  label,
-  wert,
-  onClick,
-}: {
-  icon: ReactNode;
-  label: string;
-  wert?: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex w-full items-center justify-between gap-3 rounded-2xl border border-rand bg-flaeche px-4 py-3 text-left transition hover:border-leise/50"
-    >
-      <span className="flex items-center gap-2 text-sm font-medium">
-        {icon}
-        {label}
-      </span>
-      {wert && <span className="zahl text-sm text-leise">{wert}</span>}
-    </button>
-  );
-}
-
-function ErfolgeKnopf({ onClick }: { onClick: () => void }) {
+function ErfolgeZeile({ onClick }: { onClick: () => void }) {
   const sichtbarkeit = useSichtbarkeit();
   const { data: erfolge } = useQuery({ queryKey: SCHLUESSEL.erfolge, queryFn: api.erfolge });
   const kategorien = sichtbareKategorien(erfolge, sichtbarkeit);
@@ -139,13 +119,54 @@ function ErfolgeKnopf({ onClick }: { onClick: () => void }) {
   for (const kategorie of kategorien) {
     gesamt += kategorie.stufen.length;
   }
+  const stand = erfolge ? `${freigeschalteteStufen(kategorien).length}/${gesamt}` : undefined;
+  return <Zeile titel={tx("Erfolge")} name={tx("Erfolge")} wert={stand} onKlick={onClick} />;
+}
+
+function Kennzahlen({ charakter }: { charakter: Charakter }) {
+  const sichtbarkeit = useSichtbarkeit();
+  const werte = [
+    { label: tx("Einträge"), wert: charakter.statistik.eintraegeGesamt },
+    { label: tx("Meilensteine"), wert: charakter.statistik.meilensteine },
+    ...(istAn('vorhaben', sichtbarkeit)
+      ? [{ label: tx("Kleine Ziele geschafft"), wert: charakter.statistik.vorhabenGeschafft }]
+      : []),
+    { label: tx("Aktive Tage"), wert: charakter.statistik.aktiveTage },
+  ];
   return (
-    <AnsichtKnopf
-      icon={<Award className="size-4 text-xp" />}
-      label={tx("Erfolge")}
-      wert={erfolge ? `${freigeschalteteStufen(kategorien).length} / ${gesamt}` : undefined}
-      onClick={onClick}
-    />
+    <div className="flex" data-kennzahlen="">
+      {werte.map((eintrag) => (
+        <div key={eintrag.label} className="min-w-0 flex-1 border-e border-rand px-2 py-1 last:border-e-0">
+          <p className="zahl text-lg font-bold">{zahl(eintrag.wert)}</p>
+          <p className="text-[11px] leading-tight text-leise">{eintrag.label}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Spektren({ charakter }: { charakter: Charakter }) {
+  const sichtbarkeit = useSichtbarkeit();
+  const kandidaten: { typ: AttributTyp; name: string; werte: Charakter['attribute'] }[] = [];
+  if (istAn('koennen', sichtbarkeit)) {
+    kandidaten.push({ typ: 'attribut', name: 'Können', werte: charakter.attribute });
+  }
+  if (istAn('status', sichtbarkeit)) {
+    kandidaten.push({ typ: 'status', name: 'Haben', werte: charakter.status });
+  }
+  const bloecke = kandidaten.filter((eintrag) => eintrag.werte.length >= MIN_RADAR_ACHSEN);
+  if (bloecke.length === 0) {
+    return null;
+  }
+  return (
+    <div className="flex w-full min-w-0 max-w-full gap-3 overflow-x-auto overscroll-x-contain" data-spektren="">
+      {bloecke.map((eintrag) => (
+        <div key={eintrag.typ} className="min-w-[168px] flex-1">
+          <p className="mb-1 text-center text-[13px] leading-[18px] font-semibold text-leise">{tx(eintrag.name)}</p>
+          <AttributRadar typ={eintrag.typ} werte={eintrag.werte} kompakt />
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -233,11 +254,4 @@ function ProfilZeilen({ charakter }: { charakter: Charakter }) {
   );
 }
 
-function Statistik({ label, wert }: { label: string; wert: number }) {
-  return (
-    <div className="rounded-2xl border border-rand bg-flaeche p-3">
-      <p className="zahl text-xl font-bold">{zahl(wert)}</p>
-      <p className="truncate text-xs text-leise">{label}</p>
-    </div>
-  );
-}
+

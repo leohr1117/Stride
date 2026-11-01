@@ -6,7 +6,16 @@ import { zahl } from '../format.ts';
 import { attributName, tx } from '../text.ts';
 import { DIAGRAMM_ANIMATION_MS, DiagrammTooltip } from './DiagrammBasis.tsx';
 
-export function AttributRadar({ typ, werte }: { typ: AttributTyp; werte: Attribut[] }) {
+export function AttributRadar({
+  typ,
+  werte,
+  kompakt = false,
+}: {
+  typ: AttributTyp;
+  werte: Attribut[];
+  /** Kleine Form für die Profilzeile. Die Seiten Können und Haben bleiben bei der großen Form. */
+  kompakt?: boolean;
+}) {
   if (werte.length < MIN_RADAR_ACHSEN) {
     return null;
   }
@@ -16,11 +25,11 @@ export function AttributRadar({ typ, werte }: { typ: AttributTyp; werte: Attribu
 
   return (
     <div data-spektrum={typ} data-achsen-max={radarRand} data-werte={radarDaten.map((eintrag) => eintrag.wert).join(',')}>
-      <div className="h-56">
+      <div className={kompakt ? 'h-32' : 'h-56'}>
         <ResponsiveContainer width="100%" height="100%">
-          <RadarChart data={radarDaten} outerRadius="70%">
+          <RadarChart data={radarDaten} outerRadius={kompakt ? '78%' : '70%'}>
             <PolarGrid stroke="var(--rand)" />
-            <PolarAngleAxis dataKey="name" tick={{ fill: 'var(--leise)', fontSize: 12 }} />
+            <PolarAngleAxis dataKey="name" tick={kompakt ? false : { fill: 'var(--leise)', fontSize: 12 }} />
             <PolarRadiusAxis type="number" domain={[0, radarRand]} allowDataOverflow niceTicks="none" tick={false} axisLine={false} />
             <Radar animationDuration={DIAGRAMM_ANIMATION_MS} dataKey="wert" stroke={farbe} fill={farbe} fillOpacity={0.25} />
             <Tooltip

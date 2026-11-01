@@ -1,5 +1,13 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Profil fasst Level, Kennzahlen, Erfolge und die Seiten im Profil zusammen.": "Le profil résume le niveau, les chiffres, les succès et les pages du profil.",
+  "Die Spektren von Können und Haben stehen klein nebeneinander.": "Les spectres d'Aptitude et de Biens restent petits, côte à côte.",
+  "Der Stift im Profil öffnet das Konto.": "Le crayon du profil ouvre le compte.",
+  "An einer Fähigkeit liegt das Menü im Kopf.": "Sur une compétence, le menu est dans l'en-tête.",
+  "Vorbilder sind eine Liste. Die Richtungen rollen seitlich.": "Les modèles sont une liste. Les directions défilent sur le côté.",
+  "Profil bearbeiten": "Modifier le profil",
+  "Ähnlich": "Similaires",
+  "Stärken": "Forces",
   "Auf Ziele legt Neu eine Vision, eine Organisation oder ein Projekt an.": "Dans Objectifs, Nouveau crée une vision, une organisation ou un projet.",
   "Jede Vision ist ein Abschnitt mit Farbpunkt. Laufend steht als Zeile darüber.": "Chaque vision est une section avec un point de couleur. En cours est une ligne au-dessus.",
   "Das Archiv ist zugeklappt.": "L'archive est repliée.",

@@ -1,19 +1,20 @@
 import { klassenText, tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
+import { Check } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import { auswahlAus, gespeicherteRichtung, speichereRichtung, type VorbildAuswahl } from './vorbilderAuswahl.ts';
 import {
   aehnlichkeit,
   besteAehnlichkeit,
   DURCHSCHNITT,
-  klasseAus,
   RICHTUNGEN,
   VORBILDER,
   type Vorbild,
 } from '../../../../shared/features/vorbilder/index.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { KlassenBild } from '../../components/KlassenBild.tsx';
+import { Liste, Zeile } from '../../components/Zeile.tsx';
 import { Chip, Fehlermeldung, Ladeanzeige } from '../../ui/index.ts';
 import { prozentText, zahl } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
@@ -24,14 +25,12 @@ const ALLE = 'alle';
 
 interface VorbildAuswertung {
   vorbild: Vorbild;
-  klasse: string;
   aehnlichkeit: number | null;
 }
 
 function auswerten(profil: EigenesProfil): VorbildAuswertung[] {
   return VORBILDER.map((vorbild) => ({
     vorbild,
-    klasse: klasseAus(vorbild.schaetzung),
     aehnlichkeit: aehnlichkeit(profil.level, vorbild.profil, vorbild.unsicher),
   })).sort((a, b) => (b.aehnlichkeit ?? -1) - (a.aehnlichkeit ?? -1));
 }
@@ -85,22 +84,23 @@ export function VorbilderSeite() {
 
   return (
     <div className="space-y-4">
-      <header className="flex items-center">
-        <p className="inline-flex min-w-0 items-center text-sm text-leise">
-          {uebersicht && (
-            <span className="zahl inline-flex min-w-0 items-center gap-1.5">
-              {funktionen.koennen && <KlassenBild klasse={uebersicht.klasse} groesse="size-4" rahmen={false} />}
-              {tx('Du · Level {level}', { level: zahl(uebersicht.level.level) })}
-              {funktionen.koennen && ` · ${klassenText(uebersicht.klasse)}`}
-            </span>
-          )}
-          <WerteHinweis />
+      {uebersicht && (
+        <p className="inline-flex min-w-0 items-center gap-1.5 text-sm text-leise">
+          {funktionen.koennen && <KlassenBild klasse={uebersicht.klasse} groesse="size-4" rahmen={false} />}
+          <span className="zahl min-w-0 break-words">
+            {tx('Du · Level {level}', { level: zahl(uebersicht.level.level) })}
+            {funktionen.koennen && ` · ${klassenText(uebersicht.klasse)}`}
+          </span>
         </p>
-      </header>
-      {massstab && <VorbildKarte auswertung={massstab} />}
-      <div className="flex flex-wrap gap-1.5">
+      )}
+      {massstab && (
+        <Liste>
+          <VorbildZeile auswertung={massstab} />
+        </Liste>
+      )}
+      <div className="flex w-full min-w-0 max-w-full gap-2 overflow-x-auto overscroll-x-contain pb-1">
         <RichtungsChip
-          label={tx("Alle")}
+          label="Alle"
           aktiv={auswahl === ALLE}
           prozent={besteAehnlichkeit(personen.map((eintrag) => eintrag.aehnlichkeit))}
           onClick={() => setzeAuswahl(ALLE)}
@@ -118,18 +118,21 @@ export function VorbilderSeite() {
           );
         })}
       </div>
-      <div className="grid gap-3 md:grid-cols-2">
-        {sichtbar.map((auswertung) => (
-          <VorbildKarte key={auswertung.vorbild.schluessel} auswertung={auswertung} />
-        ))}
-      </div>
+      <section>
+        <div className="mb-2 flex items-center">
+          <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] leading-[18px] font-semibold tracking-normal text-leise normal-case">
+            {tx("Ähnlich")}
+          </h2>
+          <WerteHinweis />
+        </div>
+        <Liste>
+          {sichtbar.map((auswertung) => (
+            <VorbildZeile key={auswertung.vorbild.schluessel} auswertung={auswertung} />
+          ))}
+        </Liste>
+      </section>
     </div>
   );
-}
-
-function chipText(label: string) {
-  const teile = tx(label).split('/');
-  return teile.map((teil, index) => (index === 0 ? teil : <span key={teil}>/<wbr />{teil}</span>));
 }
 
 function RichtungsChip({
@@ -144,38 +147,19 @@ function RichtungsChip({
   onClick: () => void;
 }) {
   return (
-    <Chip aktiv={aktiv} onClick={onClick} umbruch>
-      {chipText(label)}
+    <Chip aktiv={aktiv} onClick={onClick} className="whitespace-nowrap">
+      {aktiv ? <Check className="size-3.5 shrink-0" aria-hidden="true" /> : null}
+      {tx(label)}
       {prozent !== null && <span className="zahl whitespace-nowrap"> {prozentText(prozent)}</span>}
     </Chip>
   );
 }
 
-function VorbildKarte({ auswertung }: { auswertung: VorbildAuswertung }) {
-  const { vorbild } = auswertung;
-  return (
-    <Link
-      to={`/vorbilder/${vorbild.schluessel}`}
-      className="block space-y-3 rounded-2xl border border-rand bg-flaeche p-4 transition hover:border-leise/50"
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h2 className="truncate font-semibold">{tx(vorbild.name)}</h2>
-          <p className="text-xs text-leise break-words">{tx(vorbild.bekanntFuer)}</p>
-        </div>
-        <p className="shrink-0 whitespace-nowrap text-xl leading-tight font-bold">{tx('Lvl {level}', { level: zahl(vorbild.level) })}</p>
-      </div>
-      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        <p className="inline-flex min-w-0 items-center gap-1.5 text-xs text-leise">
-          <KlassenBild klasse={auswertung.klasse} groesse="size-4" rahmen={false} />
-          <span className="break-words">{klassenText(auswertung.klasse)}</span>
-        </p>
-        {auswertung.aehnlichkeit !== null && (
-          <span className="zahl shrink-0 text-sm font-medium whitespace-nowrap text-haupt">
-            {tx('{prozent} ähnlich', { prozent: prozentText(auswertung.aehnlichkeit) })}
-          </span>
-        )}
-      </div>
-    </Link>
-  );
+function VorbildZeile({ auswertung }: { auswertung: VorbildAuswertung }) {
+  const name = tx(auswertung.vorbild.name);
+  const wert =
+    auswertung.aehnlichkeit !== null
+      ? tx('{prozent} ähnlich', { prozent: prozentText(auswertung.aehnlichkeit) })
+      : undefined;
+  return <Zeile nach={`/vorbilder/${auswertung.vorbild.schluessel}`} titel={name} name={name} wert={wert} />;
 }

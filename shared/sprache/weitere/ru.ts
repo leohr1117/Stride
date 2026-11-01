@@ -1,5 +1,13 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Profil fasst Level, Kennzahlen, Erfolge und die Seiten im Profil zusammen.": "Профиль собирает уровень, показатели, успехи и страницы профиля.",
+  "Die Spektren von Können und Haben stehen klein nebeneinander.": "Спектры умений и активов стоят рядом и остаются маленькими.",
+  "Der Stift im Profil öffnet das Konto.": "Карандаш в профиле открывает аккаунт.",
+  "An einer Fähigkeit liegt das Menü im Kopf.": "У навыка меню находится в шапке.",
+  "Vorbilder sind eine Liste. Die Richtungen rollen seitlich.": "Ориентиры идут списком. Направления прокручиваются вбок.",
+  "Profil bearbeiten": "Изменить профиль",
+  "Ähnlich": "Похожие",
+  "Stärken": "Сильные стороны",
   "Auf Ziele legt Neu eine Vision, eine Organisation oder ein Projekt an.": "В Целях пункт Новое создаёт видение, организацию или проект.",
   "Jede Vision ist ein Abschnitt mit Farbpunkt. Laufend steht als Zeile darüber.": "Каждое видение — раздел с цветной точкой. Текущее стоит строкой выше.",
   "Das Archiv ist zugeklappt.": "Архив свёрнут.",

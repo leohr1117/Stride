@@ -143,12 +143,9 @@ export function VorbildProfilSeite() {
       <Karte className="space-y-3">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div className="min-w-0 sm:flex-1">
-            <div className="flex min-w-0 items-center">
-              <span className="profil-name min-w-0 break-words text-[1.05rem] leading-tight font-bold sm:text-2xl">
-                {tx(vorbild.name)}
-              </span>
-              <WerteHinweis />
-            </div>
+            <span className="profil-name min-w-0 break-words text-[1.05rem] leading-tight font-bold sm:text-2xl">
+              {tx(vorbild.name)}
+            </span>
             <p className="break-words text-sm text-leise">
               {tx(vorbild.bekanntFuer)}
               {lebensdaten(vorbild) && ` · ${lebensdaten(vorbild)}`}
@@ -169,15 +166,24 @@ export function VorbildProfilSeite() {
           </p>
         )}
         <p className="text-sm leading-relaxed">{tx(vorbild.beschreibung)}</p>
-        {staerkeListe && (
-          <p className="text-xs text-leise break-words">{tx('Stärken: {liste}', { liste: staerkeListe })}</p>
-        )}
       </Karte>
+
+      {staerkeListe ? (
+        <section>
+          <Ueberschrift titel={tx('Stärken')} />
+          <p className="text-sm break-words">{staerkeListe}</p>
+        </section>
+      ) : null}
 
       {punkte.length > 0 && (
         <div data-vergleich="" data-achsen-max={maximum}>
           <Karte className="space-y-3">
-            <Ueberschrift titel={tx('Profil im Vergleich')} />
+            <div className="mb-2 flex items-center">
+              <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] leading-[18px] font-semibold tracking-normal text-leise normal-case">
+                {tx('Profil im Vergleich')}
+              </h2>
+              <WerteHinweis />
+            </div>
             {punkte.length >= MIN_RADAR_ACHSEN && (
               <ProfilRadar
                 person={tx(vorbild.name)}

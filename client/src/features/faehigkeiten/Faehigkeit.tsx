@@ -10,10 +10,10 @@ import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { FaehigkeitFormular } from '../../components/FaehigkeitFormular.tsx';
-import { SchnellNebenaktion, SchnellZeile, useSchnellAktion } from '../../components/SchnellAktion.tsx';
+import { SchnellMenueKnopf, SchnellNebenaktion, useSchnellAktion } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { SkillBaum, skillSchein } from './SkillBaum.tsx';
-import { useKopf } from '../../components/Kopf.tsx';
+import { KopfAktion, useKopf } from '../../components/Kopf.tsx';
 import {
   EINGABE_STIL,
   Feld,
@@ -62,6 +62,18 @@ export function FaehigkeitSeite() {
 
   return (
     <div className="space-y-6" style={farbStil}>
+      <KopfAktion>
+        <SchnellMenueKnopf
+          ziel={{
+            art: 'faehigkeit',
+            id: faehigkeit.id,
+            name: faehigkeit.name,
+            archiviert: faehigkeit.archiviert,
+            loeschbar: faehigkeit.loeschbar,
+          }}
+          davor={[{ id: 'bearbeiten', label: 'Bearbeiten', onWahl: () => setBearbeiten(true) }]}
+        />
+      </KopfAktion>
       <Karte className="relative space-y-5 overflow-hidden">
         <div
           className="glimm-fleck pointer-events-none absolute -top-24 -right-24 size-64 rounded-full opacity-25 blur-3xl"
@@ -70,36 +82,13 @@ export function FaehigkeitSeite() {
         <div className="relative flex items-center gap-5">
           <SkillRing frei={frei} gesamt={gesamt} farbe={faehigkeit.farbe} icon={faehigkeit.icon} />
           <div className="min-w-0 flex-1">
-            <SchnellZeile
-              ziel={{
-                art: 'faehigkeit',
-                id: faehigkeit.id,
-                name: faehigkeit.name,
-                archiviert: faehigkeit.archiviert,
-                loeschbar: faehigkeit.loeschbar,
-              }}
-            >
-              {(menue) => (
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <span className="block truncate text-2xl font-bold tracking-tight">{faehigkeit.name}</span>
-                    <p className="zahl text-sm text-leise break-words">
-                      {tx('Level {level} · {anzahl} Einträge', {
-                        level: faehigkeit.level.level,
-                        anzahl: zahl(faehigkeit.anzahlEintraege),
-                      })}
-                      {faehigkeit.archiviert && ` ${tx('· archiviert')}`}
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 items-start">
-                    {menue}
-                    <Knopf variante="leise" className="p-2" aria-label={tx("Fähigkeit bearbeiten")} onClick={() => setBearbeiten(true)}>
-                      <Pencil className="size-4" />
-                    </Knopf>
-                  </div>
-                </div>
-              )}
-            </SchnellZeile>
+            <p className="zahl text-sm text-leise break-words">
+              {tx('Level {level} · {anzahl} Einträge', {
+                level: faehigkeit.level.level,
+                anzahl: zahl(faehigkeit.anzahlEintraege),
+              })}
+              {faehigkeit.archiviert && ` ${tx('· archiviert')}`}
+            </p>
             <div className="mt-3">
               <Fortschrittsbalken anteil={faehigkeit.level.fortschritt} farbe={faehigkeit.farbe} />
               <p className="zahl mt-1 text-right text-xs text-leise">
