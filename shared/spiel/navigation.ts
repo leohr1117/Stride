@@ -53,7 +53,7 @@ export interface Seite {
  * Mehr steht hinter dem Verzeichnis, weil es in keinen Block gehört.
  */
 export const SEITEN: readonly Seite[] = [
-  { pfad: '/', name: 'Heute', symbol: 'haus', block: 1, schalter: null, profilzeile: false, toastZiel: '/' },
+  { pfad: '/', name: 'Übersicht', symbol: 'haus', block: 1, schalter: null, profilzeile: false, toastZiel: '/' },
   { pfad: '/ziele', name: 'Ziele', symbol: 'kompass', block: 1, schalter: 'ziele', profilzeile: false, toastZiel: '/ziele' },
   { pfad: '/laufend', name: 'Laufend', symbol: 'laufend', block: 1, schalter: 'laufend', profilzeile: false, toastZiel: '/laufend' },
   { pfad: '/basis', name: 'Basis', symbol: 'schichten', block: 1, schalter: 'basis', profilzeile: false, toastZiel: '/basis' },

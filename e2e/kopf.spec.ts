@@ -18,7 +18,7 @@ test('Kopf zeigt Titel, Profilring oder genau einen Pfeil', async ({ page }, tes
   const profilInLeiste = (await leiste(page)).includes('/charakter');
 
   await page.goto('/');
-  await expect(page.locator('main h1')).toHaveText('Heute');
+  await expect(page.locator('main h1')).toHaveText('Übersicht');
   await expect(page.locator('a[data-zurueck]')).toHaveCount(0);
   await expect(page.locator('main').getByText('Test Voll', { exact: true }).locator('visible=true')).toHaveCount(1);
   if (!profilInLeiste) {

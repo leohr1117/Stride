@@ -366,7 +366,7 @@ test.describe('Französisch', () => {
     expect(await gespeicherteSprache(page)).toBe('fr');
     await page.evaluate(() => localStorage.removeItem('ascend-sprache'));
     await page.reload();
-    await expect(page.getByRole('navigation').getByRole('link', { name: zeige('Heute', 'fr'), exact: true })).toBeVisible();
+    await expect(page.getByRole('navigation').getByRole('link', { name: zeige('Übersicht', 'fr'), exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Overview', exact: true })).toHaveCount(0);
   });
 });

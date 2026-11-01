@@ -1,9 +1,5 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
-  "Die Startseite heißt Heute. Oben stehen Name, Level und die Kennzahlen in einer Zeile.": "起始页叫今天。上方是名字、等级和一行数字。",
-  "Die Karte unter den Kennzahlen heißt Streak. Bosse führen auf Laufend, Basis auf die Basis-Seite.": "数字下方的卡片叫连续。首领通向进行中，基础通向基础页。",
-  "Ein Tag Pause ist frei. Danach ist der Streak angeschlagen.": "可以休息一天。之后连续记录会受损。",
-  "Weitermachen": "继续",
   "Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.": "活动下显示的是百分比，加起来正好是 100%。",
   "Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.": "色条里每一段的宽度等于它的份额。相同的颜色保持分开。",
   "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "与榜样的相似度比较的是档案的形状，不是等级的高低。",

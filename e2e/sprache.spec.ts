@@ -44,8 +44,8 @@ async function setzeSprache(seite: Page, wert: Sprache): Promise<void> {
       throw new Error(`sprache ${antwort.status}`);
     }
   }, wert);
-  await seite.goto('/');
-  await seite.getByRole('link', { name: zeige('Heute', wert) }).waitFor();
+  await seite.reload();
+  await seite.getByRole('button', { name: zeige('Eintrag loggen', wert) }).waitFor();
 }
 
 async function ohneSeitlichenUeberhang(seite: Page): Promise<void> {
@@ -85,8 +85,8 @@ test('Englisch bleibt bei 390 und 1440 lesbar', async ({ page }) => {
       const daten = (await antwort.json()) as { charakterName: string };
       return daten.charakterName;
     });
-    await expect(page.locator('[data-identitaet] .kopfblock-name')).toHaveText(name);
-    await expect(page.getByRole('link', { name: 'Today' })).toBeVisible();
+    await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Overview' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Log entry' })).toBeVisible();
     await ohneSeitlichenUeberhang(page);
 
@@ -115,13 +115,12 @@ test('Englisch bleibt bei 390 und 1440 lesbar', async ({ page }) => {
 
 test('jede Sprache bleibt auf 390 px vollständig sichtbar', async ({ page }, info) => {
   test.skip(info.project.name !== 'handy', 'Stichprobe nur auf 390 px');
-  test.setTimeout(180_000);
   await anmelden(page);
   const vorher = await gespeicherteSprache(page);
   try {
     for (const code of SPRACHEN) {
       await setzeSprache(page, code);
-      await expect(page.getByRole('link', { name: zeige('Heute', code) })).toBeVisible();
+      await expect(page.getByRole('link', { name: zeige('Übersicht', code) })).toBeVisible();
       await expect(page.getByRole('button', { name: zeige('Eintrag loggen', code) })).toBeVisible();
       await ohneSeitlichenUeberhang(page);
       for (const ziel of [

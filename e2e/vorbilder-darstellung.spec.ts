@@ -290,7 +290,7 @@ test('Darstellung: Farben anderer Designs, sofort und auf jeder Seite', async ({
   const vignette = await page.evaluate(() => getComputedStyle(document.body).backgroundImage);
   expect(vignette).not.toMatch(/rgba\(0,\s*0,\s*0,\s*0\.6\)|rgb\(0 0 0 \/ 60%\)/);
 
-  await page.getByRole('navigation').getByRole('link', { name: 'Heute' }).click();
+  await page.getByRole('navigation').getByRole('link', { name: 'Übersicht' }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect.poll(() => variable(page, '--grund')).toBe(hell.hintergrund);
   await expect.poll(() => variable(page, '--akzent')).toBe(hell.primaer);
@@ -332,7 +332,7 @@ test('Darstellung: Farben anderer Designs, sofort und auf jeder Seite', async ({
   await jadeGespeichert;
   await expect.poll(() => variable(page, '--grund')).toBe(jade.hintergrund);
   await expect.poll(() => variable(page, '--akzent')).toBe(jade.primaer);
-  await page.getByRole('navigation').getByRole('link', { name: 'Heute' }).click();
+  await page.getByRole('navigation').getByRole('link', { name: 'Übersicht' }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect.poll(() => variable(page, '--akzent')).toBe(jade.primaer);
   await page.reload();

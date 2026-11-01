@@ -1,13 +1,13 @@
 import { klassenText, tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BookMarked, Flame, RotateCcw } from 'lucide-react';
+import { BookMarked, ChevronRight, Flame, RotateCcw } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import type { Attribut, Erschoepfung, HeatmapTag, VorhabenMitProjekt } from '../../../../shared/api/index.ts';
 import { abzugNebenNamen, erschoepfungsBild } from '../../../../shared/spiel/belastung.ts';
 import { TAGE_PRO_WOCHE } from '../../../../shared/spiel/datum.ts';
 import { LEVEL_KURVEN, verlustBalken } from '../../../../shared/spiel/level.ts';
-import { NEUER_ANLAUF } from '../../../../shared/spiel/xp.ts';
+import { NEUER_ANLAUF, WEITERMACHEN } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { BossRing } from '../bosse/BossRing.tsx';
 import { bossZeile } from '../../components/VorhabenInfo.tsx';
@@ -34,7 +34,7 @@ import { HinweisAngebot } from './HinweisAngebot.tsx';
 
 import { ausTagesSchluessel, faktorText, kurzesDatum, monatKurz, zahl } from '../../format.ts';
 import { useSichtbarkeit, useUebersichtKarten } from '../../funktionen.ts';
-import { istAn, laufendAktiv } from '../../../../shared/spiel/sichtbarkeit.ts';
+import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { karteGewaehlt } from '../../../../shared/spiel/uebersichtKarten.ts';
 
 const HEATMAP_STUFEN = [0.25, 0.5, 0.75, 1];
@@ -63,39 +63,46 @@ export function UebersichtSeite() {
   return (
     <div className="space-y-6">
       {karteGewaehlt('identitaet', karten) && (
-      <div data-identitaet="">
-      <Karte className="flex flex-col gap-4">
-        <div className="flex items-center gap-4">
-          <LevelRing level={uebersicht.level.level} anteil={uebersicht.level.fortschritt} groesse={64} />
-          <div className="min-w-0 flex-1">
-            <p className="kopfblock-name truncate text-[17px] leading-6 font-semibold">{uebersicht.name}</p>
+      <Karte className="flex flex-col gap-5 sm:flex-row sm:items-center">
+        <div className="flex items-center gap-5">
+          <LevelRing level={uebersicht.level.level} anteil={uebersicht.level.fortschritt} />
+          <div className="min-w-0 flex-1 sm:hidden">
+            <p className="kopfblock-name truncate text-2xl font-bold tracking-tight">{uebersicht.name}</p>
             <p className="text-sm font-medium break-words text-akzent">{identitaet}</p>
             <p className="zahl text-sm text-leise break-words">{levelZeile}</p>
           </div>
         </div>
-        <div className="flex items-stretch" data-kennzahlen="">
-          <Wochenwert label={tx('XP diese Woche')} wert={`+${zahl(uebersicht.wocheXp)}`} hervorheben="fortschritt" />
-          <span className="w-px shrink-0 self-stretch bg-rand" aria-hidden />
-          <Wochenwert
-            label={tx('Streak')}
-            info={
-              <InfoHinweis text="Ein Tag Pause ist frei. Danach ist der Streak angeschlagen." amKasten />
-            }
-            wert={
-              <span
-                className={`flex items-center justify-center gap-1 ${uebersicht.serie.angeknackst ? 'text-leise' : uebersicht.serie.laenge > 0 ? 'text-streak' : ''}`}
-                title={uebersicht.serie.angeknackst ? tx('Gestern ausgesetzt') : undefined}
-              >
-                <Flame className="size-4 text-streak" />
-                {uebersicht.serie.laenge}
-              </span>
-            }
-          />
-          <span className="w-px shrink-0 self-stretch bg-rand" aria-hidden />
-          <Wochenwert label={tx('Momentum')} wert={faktorText(uebersicht.momentum)} />
+        <div className="min-w-0 flex-1 space-y-3">
+          <div className="hidden min-w-0 sm:block">
+            <p className="kopfblock-name truncate text-2xl font-bold tracking-tight">{uebersicht.name}</p>
+            <p className="text-sm font-medium break-words text-akzent">{identitaet}</p>
+            <p className="zahl text-sm text-leise">{levelZeile}</p>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <Wochenwert label={tx("XP diese Woche")} wert={`+${zahl(uebersicht.wocheXp)}`} hervorheben="fortschritt" />
+            <Wochenwert
+              label={tx("Streak")}
+              info={
+                <InfoHinweis
+                  text="Ein Tag Pause ist frei. Danach ist die Kette angeschlagen. Der Schutz ist die eine Zeile unter Heute."
+                  abstand={false}
+                  amKasten
+                />
+              }
+              wert={
+                <span
+                  className={`flex items-center justify-center gap-1 ${uebersicht.serie.angeknackst ? 'text-leise' : uebersicht.serie.laenge > 0 ? 'text-streak' : ''}`}
+                  title={uebersicht.serie.angeknackst ? tx("Gestern ausgesetzt") : undefined}
+                >
+                  <Flame className="size-4" />
+                  {uebersicht.serie.laenge}
+                </span>
+              }
+            />
+            <Wochenwert label={tx("Momentum")} wert={faktorText(uebersicht.momentum)} />
+          </div>
         </div>
       </Karte>
-      </div>
       )}
 
       <BewertungKarte />
@@ -119,11 +126,7 @@ export function UebersichtSeite() {
       <HeuteKarte />
 
       {karteGewaehlt('bosse', karten) && istAn('bossAngriffe', sichtbarkeit) && uebersicht.angriffe.length > 0 && (
-        <Angriffe
-          bosse={uebersicht.angriffe}
-          projekteAn={istAn('projekte', sichtbarkeit)}
-          laufendAn={laufendAktiv(sichtbarkeit)}
-        />
+        <Angriffe bosse={uebersicht.angriffe} projekteAn={istAn('projekte', sichtbarkeit)} />
       )}
 
       {karteGewaehlt('comeback', karten) && istAn('vorhaben', sichtbarkeit) && uebersicht.comebacks.length > 0 && (
@@ -168,37 +171,18 @@ function Wochenwert({
   info?: ReactNode;
 }) {
   return (
-    <div className="relative min-w-0 flex-1 px-2 py-1 text-center" data-wochenwert={label} data-info-kasten>
+    <div className="relative rounded-xl bg-flaeche-2 px-2 py-2" data-wochenwert={label} data-info-kasten>
+      {info ? <span className="absolute end-1 top-1 z-10 flex">{info}</span> : null}
       <p className={`zahl text-lg font-bold ${hervorheben === 'fortschritt' ? 'text-fortschritt' : ''}`}>{wert}</p>
-      <p className="flex items-center justify-center text-[11px] leading-tight text-leise">
-        {label}
-        {info}
-      </p>
+      <p className="text-[11px] leading-tight text-leise">{label}</p>
     </div>
   );
 }
 
-function Angriffe({
-  bosse,
-  projekteAn,
-  laufendAn,
-}: {
-  bosse: VorhabenMitProjekt[];
-  projekteAn: boolean;
-  laufendAn: boolean;
-}) {
+function Angriffe({ bosse, projekteAn }: { bosse: VorhabenMitProjekt[]; projekteAn: boolean }) {
   return (
     <section>
-      <Ueberschrift
-        titel={tx('Bosse greifen an')}
-        aktion={
-          laufendAn ? (
-            <Link to="/laufend" className="inline-flex items-center text-[13px] font-semibold leading-[18px] text-leise">
-              {tx('Laufend')} ›
-            </Link>
-          ) : null
-        }
-      />
+      <Ueberschrift titel={tx("Bosse greifen an")} />
       <div className="space-y-2">
         {bosse.map((vorhaben) => {
           const klasse =
@@ -277,7 +261,7 @@ function Comebacks({ comebacks, projekteAn }: { comebacks: VorhabenMitProjekt[];
                     )
                   }
                 >
-                  {tx('Weitermachen')}
+                  {tx('Weitermachen · +{xp}', { xp: WEITERMACHEN.disziplin + WEITERMACHEN.geist })}
                 </Knopf>
               )}
             </div>
@@ -311,7 +295,7 @@ function Werte({
         <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
           <Link to={pfad} className="inline-flex items-center">
             {titel}
-            <span aria-hidden="true"> ›</span>
+            <ChevronRight className="size-4 shrink-0" aria-hidden />
           </Link>
         </h2>
         <AllgemeinerXpAbzug prozent={bild.allgemein} />

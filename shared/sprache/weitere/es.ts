@@ -1,9 +1,5 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
-  "Die Startseite heißt Heute. Oben stehen Name, Level und die Kennzahlen in einer Zeile.": "La página de inicio se llama Hoy. Arriba están el nombre, el nivel y las cifras en una fila.",
-  "Die Karte unter den Kennzahlen heißt Streak. Bosse führen auf Laufend, Basis auf die Basis-Seite.": "La tarjeta bajo las cifras se llama Racha. Los jefes llevan a En curso, lo básico a la página de Básicos.",
-  "Ein Tag Pause ist frei. Danach ist der Streak angeschlagen.": "Un día de pausa es libre. Después la racha queda tocada.",
-  "Weitermachen": "Seguir",
   "Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.": "En las actividades, las partes se muestran en porcentaje y suman 100 %.",
   "Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.": "En la barra, cada trozo es tan ancho como su parte. Los colores iguales siguen separados.",
   "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "La similitud con un referente compara la forma del perfil, no la altura de los niveles.",

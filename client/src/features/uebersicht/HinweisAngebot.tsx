@@ -36,19 +36,17 @@ export function HinweisAngebot() {
   };
 
   return (
-    <Karte label={frage} className="space-y-2">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <p className="min-w-0 flex-1 text-base">{frage}</p>
-        <Link
-          to="/mehr/benachrichtigungen"
-          className="knopf knopf-primaer inline-flex min-h-12 items-center rounded-lg bg-aktion px-4 text-sm font-medium text-aktion-text"
-        >
-          {tx('Ansehen')}
-        </Link>
-        <button type="button" className="knopf min-h-12 px-0 text-sm text-leise" onClick={weglegen}>
-          {tx('Nicht jetzt')}
-        </button>
-      </div>
+    <Karte label={frage} className="space-y-3">
+      <p className="text-base">{frage}</p>
+      <Link
+        to="/mehr/benachrichtigungen"
+        className="knopf knopf-primaer inline-flex w-fit rounded-xl bg-akzent px-4 py-2.5 text-sm font-medium text-akzent-text"
+      >
+        {tx('Ansehen')}
+      </Link>
+      <button type="button" className="knopf block px-0 py-1 text-left text-sm text-leise" onClick={weglegen}>
+        {tx('Nicht jetzt')}
+      </button>
       <Fehlermeldung fehler={angebotFehler()} />
     </Karte>
   );

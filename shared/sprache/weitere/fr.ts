@@ -1,9 +1,5 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
-  "Die Startseite heißt Heute. Oben stehen Name, Level und die Kennzahlen in einer Zeile.": "La page d'accueil s'appelle Aujourd'hui. En haut figurent le nom, le niveau et les chiffres sur une ligne.",
-  "Die Karte unter den Kennzahlen heißt Streak. Bosse führen auf Laufend, Basis auf die Basis-Seite.": "La carte sous les chiffres s'appelle Série. Les bosses mènent à En cours, les bases à la page Bases.",
-  "Ein Tag Pause ist frei. Danach ist der Streak angeschlagen.": "Un jour de pause est libre. Ensuite la série est fragilisée.",
-  "Weitermachen": "Continuer",
   "Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.": "Pour les activités, les parts s'affichent en pourcentage et font ensemble 100 %.",
   "Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.": "Dans la barre, chaque morceau a la largeur de sa part. Les couleurs identiques restent séparées.",
   "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "La similarité avec un modèle compare la forme du profil, pas la hauteur des niveaux.",

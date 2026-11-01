@@ -38,12 +38,12 @@ export function BewertungKarte() {
   return (
     <Karte label={frage} className="space-y-3">
       <p className="text-base">{frage}</p>
-      <div className="flex gap-1 rounded-lg bg-flaeche-2 p-1" role="group" aria-label={frage}>
+      <div className="flex justify-start gap-2">
         {ZAHLEN.map((wert) => (
           <button
             key={wert}
             type="button"
-            className="knopf flex min-h-12 flex-1 items-center justify-center rounded-lg py-2 text-sm font-medium text-leise hover:text-haupt"
+            className="knopf inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-akzent bg-transparent text-base uppercase text-haupt"
             onClick={() => speichern({ wert })}
           >
             {wert}

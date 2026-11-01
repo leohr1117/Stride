@@ -61,7 +61,7 @@ test('Feste Bedeutungsfarben in Palette Dunkel', async ({ page }, testInfo) => {
 
   try {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'Heute', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Übersicht', exact: true })).toBeVisible();
     await expect(page.locator('[data-kopf] .klassenbild')).toBeVisible();
     const kopfVorher = await page.evaluate(() => {
       const ring = document.querySelector('[data-kopfring]');

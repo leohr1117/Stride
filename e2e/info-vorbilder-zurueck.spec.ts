@@ -140,7 +140,7 @@ test('Zurück folgt der Elternseite und ein Tab setzt den Verlauf zurück', asyn
   await frisch.getByRole('link', { name: /^Darstellung/ }).click();
   await frisch.getByRole('link', { name: 'Leiste', exact: true }).click();
   await expect(frisch).toHaveURL(/\/mehr\/darstellung\/leiste$/);
-  await tab(frisch, 'Heute').click();
+  await tab(frisch, 'Übersicht').click();
   await expect(frisch).toHaveURL(/\/$/);
   await expect(frisch.locator('[data-zurueck]')).toHaveCount(0);
   await frisch.goBack().catch(() => undefined);

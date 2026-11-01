@@ -1,6 +1,5 @@
 import { ChevronRight } from 'lucide-react';
 import { useId, useState, type ReactNode } from 'react';
-import { Link } from 'react-router';
 import { merke } from '../speicher.ts';
 import { tx } from '../text.ts';
 import { InfoHinweis } from '../ui/index.ts';
@@ -15,7 +14,6 @@ export function EinklappKopf({
   zusatz,
   info,
   aktion,
-  nach,
   beimOeffnen,
   titelStil = STANDARD_TITEL,
   element: Tag = 'h2',
@@ -27,7 +25,6 @@ export function EinklappKopf({
   zusatz?: ReactNode;
   info?: string;
   aktion?: ReactNode;
-  nach?: string;
   beimOeffnen?: () => void;
   titelStil?: string;
   element?: 'h2' | 'span';
@@ -36,21 +33,11 @@ export function EinklappKopf({
   const titelId = useId();
   const spalten = aktion ? 'grid-cols-[minmax(0,1fr)_auto_2rem]' : 'grid-cols-[minmax(0,1fr)_2rem]';
   const pfeilSpalte = aktion ? 'col-start-3' : 'col-start-2';
-  const name = tx(titel);
   return (
     <div className={`relative grid min-h-12 items-center gap-x-2 ${spalten} ${className}`}>
       <button type="button" onClick={onToggle} aria-expanded={offen} aria-labelledby={titelId} className="absolute inset-0 z-0" />
       <span className="pointer-events-none col-start-1 row-start-1 flex min-w-0 items-center">
-        <Tag id={titelId} className={`min-w-0 text-balance break-words ${titelStil}`}>
-          {nach ? (
-            <Link to={nach} className="pointer-events-auto relative z-10 inline-flex min-w-0 items-center">
-              {name}
-              <span aria-hidden="true"> ›</span>
-            </Link>
-          ) : (
-            name
-          )}
-        </Tag>
+        <Tag id={titelId} className={`min-w-0 text-balance break-words ${titelStil}`}>{tx(titel)}</Tag>
         {info ? (
           <span className="pointer-events-auto relative z-10 inline-flex shrink-0 self-center">
             <InfoHinweis text={info} />
