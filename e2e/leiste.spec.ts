@@ -30,7 +30,7 @@ test('Untere Leiste: gespeicherte Plätze, Standard, Mehr fest, Profil wählbar'
   expect(await leseLeiste(page)).toEqual(ORIGINAL);
 
   await page.goto('/');
-  await expect(page.locator('main h1')).toHaveText('Übersicht');
+  await expect(page.locator('main h1')).toHaveText('Heute');
   await ohneSeitlichenUeberlauf(page);
 
   if (handy) {

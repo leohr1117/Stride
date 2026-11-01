@@ -28,7 +28,7 @@ async function seiteIstGeblieben(seite: Page): Promise<void> {
 test.beforeEach(async ({ page }) => {
   await anmelden(page);
   await page.goto('/');
-  const boss = page.locator('section', { has: page.getByRole('heading', { name: 'Bosse greifen an' }) }).locator('a').first();
+  const boss = page.locator('section', { has: page.getByRole('heading', { name: 'Bosse greifen an' }) }).locator('a[href^="/projekte/"]').first();
   await expect(boss).toBeVisible();
   await boss.click();
   await expect(page).toHaveURL(/\/projekte\/\d+$/);

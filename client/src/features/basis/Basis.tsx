@@ -174,6 +174,7 @@ export function BasisKarte() {
     <Karte>
       <EinklappKopf
         titel={tx("Basis")}
+        titelPfad="/basis"
         offen={!eingeklappt}
         onToggle={umschalten}
         zusatz={

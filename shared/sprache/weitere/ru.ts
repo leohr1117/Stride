@@ -1,5 +1,9 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Startseite heißt Heute.": "Стартовая страница называется Сегодня.",
+  "XP diese Woche, Streak und Momentum stehen nebeneinander.": "XP за неделю, серия и импульс стоят рядом.",
+  "Rückkehr, Schutz und ein angeschlagener Streak stehen im Abschnitt Streak.": "Возвращение, защита и надломленная серия стоят в разделе Серия.",
+  "Neben Bosse greifen an steht der Weg zu Laufend. Basis öffnet die Basis-Seite.": "Рядом с «Боссы атакуют» есть путь в Текущее. База открывает страницу базы.",
   "Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.": "У занятий доли показаны в процентах и в сумме дают 100 %.",
   "Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.": "В полосе каждый кусок такой ширины, как его доля. Одинаковые цвета остаются раздельно.",
   "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "Сходство с ориентиром сравнивает форму профиля, а не высоту уровней.",

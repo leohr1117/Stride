@@ -62,6 +62,21 @@ export function UebersichtSeite() {
 
   return (
     <div className="space-y-6">
+      {uebersicht.level.xpGesamt === 0 && istAn('handbuch', sichtbarkeit) && (
+        <Karte className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-semibold">{tx("Willkommen bei Stride")}</h2>
+          </div>
+          <Link
+            to="/handbuch"
+            className="knopf knopf-primaer inline-flex items-center gap-2 rounded-xl bg-akzent px-4 py-2.5 text-sm font-medium text-akzent-text"
+          >
+            <BookMarked className="size-4" />
+            {tx("Zum Handbuch")}
+          </Link>
+        </Karte>
+      )}
+
       {karteGewaehlt('identitaet', karten) && (
       <Karte className="flex flex-col gap-5 sm:flex-row sm:items-center">
         <div className="flex items-center gap-5">
@@ -78,7 +93,7 @@ export function UebersichtSeite() {
             <p className="text-sm font-medium break-words text-akzent">{identitaet}</p>
             <p className="zahl text-sm text-leise">{levelZeile}</p>
           </div>
-          <div className="grid grid-cols-3 gap-2 text-center">
+          <div className="grid grid-cols-3 text-center">
             <Wochenwert label={tx("XP diese Woche")} wert={`+${zahl(uebersicht.wocheXp)}`} hervorheben="fortschritt" />
             <Wochenwert
               label={tx("Streak")}
@@ -108,25 +123,14 @@ export function UebersichtSeite() {
       <BewertungKarte />
       <HinweisAngebot />
 
-      {uebersicht.level.xpGesamt === 0 && istAn('handbuch', sichtbarkeit) && (
-        <Karte className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="font-semibold">{tx("Willkommen bei Stride")}</h2>
-          </div>
-          <Link
-            to="/handbuch"
-            className="knopf knopf-primaer inline-flex items-center gap-2 rounded-xl bg-akzent px-4 py-2.5 text-sm font-medium text-akzent-text"
-          >
-            <BookMarked className="size-4" />
-            {tx("Zum Handbuch")}
-          </Link>
-        </Karte>
-      )}
-
       <HeuteKarte />
 
       {karteGewaehlt('bosse', karten) && istAn('bossAngriffe', sichtbarkeit) && uebersicht.angriffe.length > 0 && (
-        <Angriffe bosse={uebersicht.angriffe} projekteAn={istAn('projekte', sichtbarkeit)} />
+        <Angriffe
+          bosse={uebersicht.angriffe}
+          projekteAn={istAn('projekte', sichtbarkeit)}
+          laufendAn={istAn('laufend', sichtbarkeit)}
+        />
       )}
 
       {karteGewaehlt('comeback', karten) && istAn('vorhaben', sichtbarkeit) && uebersicht.comebacks.length > 0 && (
@@ -171,7 +175,7 @@ function Wochenwert({
   info?: ReactNode;
 }) {
   return (
-    <div className="relative rounded-xl bg-flaeche-2 px-2 py-2" data-wochenwert={label} data-info-kasten>
+    <div className="relative border-e border-rand px-2 py-2 last:border-e-0" data-wochenwert={label} data-info-kasten>
       {info ? <span className="absolute end-1 top-1 z-10 flex">{info}</span> : null}
       <p className={`zahl text-lg font-bold ${hervorheben === 'fortschritt' ? 'text-fortschritt' : ''}`}>{wert}</p>
       <p className="text-[11px] leading-tight text-leise">{label}</p>
@@ -179,10 +183,28 @@ function Wochenwert({
   );
 }
 
-function Angriffe({ bosse, projekteAn }: { bosse: VorhabenMitProjekt[]; projekteAn: boolean }) {
+function Angriffe({
+  bosse,
+  projekteAn,
+  laufendAn,
+}: {
+  bosse: VorhabenMitProjekt[];
+  projekteAn: boolean;
+  laufendAn: boolean;
+}) {
   return (
     <section>
-      <Ueberschrift titel={tx("Bosse greifen an")} />
+      <Ueberschrift
+        titel={tx("Bosse greifen an")}
+        aktion={
+          laufendAn ? (
+            <Link to="/laufend" className="inline-flex items-center text-[13px] font-semibold leading-[18px]">
+              {tx("Laufend")}
+              <ChevronRight className="size-4 shrink-0" aria-hidden />
+            </Link>
+          ) : undefined
+        }
+      />
       <div className="space-y-2">
         {bosse.map((vorhaben) => {
           const klasse =

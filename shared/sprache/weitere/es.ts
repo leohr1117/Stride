@@ -1,5 +1,9 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Startseite heißt Heute.": "La página de inicio se llama Hoy.",
+  "XP diese Woche, Streak und Momentum stehen nebeneinander.": "XP esta semana, racha e impulso están uno al lado del otro.",
+  "Rückkehr, Schutz und ein angeschlagener Streak stehen im Abschnitt Streak.": "Regreso, protección y una racha dañada están en la sección Racha.",
+  "Neben Bosse greifen an steht der Weg zu Laufend. Basis öffnet die Basis-Seite.": "Junto a Los jefes atacan está el camino a En curso. Base abre la página Base.",
   "Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.": "En las actividades, las partes se muestran en porcentaje y suman 100 %.",
   "Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.": "En la barra, cada trozo es tan ancho como su parte. Los colores iguales siguen separados.",
   "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "La similitud con un referente compara la forma del perfil, no la altura de los niveles.",

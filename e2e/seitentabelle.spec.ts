@@ -10,7 +10,7 @@ test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ pag
   const bild = (name: string) => page.screenshot({ path: `tmp-bau/u12b/${testInfo.project.name}-${name}.png` });
 
   await page.goto('/');
-  await expect(page.locator('main h1')).toHaveText('Übersicht');
+  await expect(page.locator('main h1')).toHaveText('Heute');
   await ohneSeitlichenUeberlauf(page);
 
   if (handy) {

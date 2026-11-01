@@ -1,5 +1,9 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die Startseite heißt Heute.', 'The home page is called Today.'],
+  ['XP diese Woche, Streak und Momentum stehen nebeneinander.', 'XP this week, streak, and momentum sit side by side.'],
+  ['Rückkehr, Schutz und ein angeschlagener Streak stehen im Abschnitt Streak.', 'Return, protection, and a cracked streak sit in the Streak section.'],
+  ['Neben Bosse greifen an steht der Weg zu Laufend. Basis öffnet die Basis-Seite.', 'Next to Bosses are attacking is the way to Active. Basics opens the basics page.'],
   ['Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.', 'On activities, the shares are shown in percent and add up to 100%.'],
   ['Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.', 'In the bar, each piece is as wide as its share. Matching colors stay separate.'],
   ['Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.', 'Similarity with a role model compares the shape of the profile, not how high the levels are.'],

@@ -59,7 +59,7 @@ test('Vorbilder ohne Leistenplatz führt nach Mehr, mit Leistenplatz hat keinen 
 test('Heute behält den Boss und Ziele behält Archiv und Scrollstand', async ({ page }, testInfo) => {
   const bild = (name: string) => page.screenshot({ path: `tmp-bau/u1/${testInfo.project.name}-${name}.png`, fullPage: true });
   await page.goto('/');
-  const boss = page.locator('section', { has: page.getByRole('heading', { name: 'Bosse greifen an' }) }).locator('a').first();
+  const boss = page.locator('section', { has: page.getByRole('heading', { name: 'Bosse greifen an' }) }).locator('a[href^="/projekte/"]').first();
   await expect(boss).toBeVisible();
   await boss.click();
   await expect(page).toHaveURL(/\/projekte\/\d+$/);
@@ -73,7 +73,7 @@ test('Heute behält den Boss und Ziele behält Archiv und Scrollstand', async ({
   await expect(page.locator('a[data-zurueck]')).toHaveCount(0);
 
   await page.goto('/');
-  await page.locator('section', { has: page.getByRole('heading', { name: 'Bosse greifen an' }) }).locator('a').first().click();
+  await page.locator('section', { has: page.getByRole('heading', { name: 'Bosse greifen an' }) }).locator('a[href^="/projekte/"]').first().click();
   await page.goBack();
   await expect(page).toHaveURL(/\/$/);
 

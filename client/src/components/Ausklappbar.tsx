@@ -1,5 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import { useId, useState, type ReactNode } from 'react';
+import { Link } from 'react-router';
 import { merke } from '../speicher.ts';
 import { tx } from '../text.ts';
 import { InfoHinweis } from '../ui/index.ts';
@@ -16,6 +17,7 @@ export function EinklappKopf({
   aktion,
   beimOeffnen,
   titelStil = STANDARD_TITEL,
+  titelPfad,
   element: Tag = 'h2',
   className = '',
 }: {
@@ -27,6 +29,8 @@ export function EinklappKopf({
   aktion?: ReactNode;
   beimOeffnen?: () => void;
   titelStil?: string;
+  /** Die Überschrift führt auf diese Seite. Ohne Angabe bleibt sie nur Text. */
+  titelPfad?: string;
   element?: 'h2' | 'span';
   className?: string;
 }) {
@@ -37,7 +41,16 @@ export function EinklappKopf({
     <div className={`relative grid min-h-12 items-center gap-x-2 ${spalten} ${className}`}>
       <button type="button" onClick={onToggle} aria-expanded={offen} aria-labelledby={titelId} className="absolute inset-0 z-0" />
       <span className="pointer-events-none col-start-1 row-start-1 flex min-w-0 items-center">
-        <Tag id={titelId} className={`min-w-0 text-balance break-words ${titelStil}`}>{tx(titel)}</Tag>
+        <Tag id={titelId} className={`min-w-0 text-balance break-words ${titelStil}`}>
+          {titelPfad ? (
+            <Link to={titelPfad} className="pointer-events-auto relative z-10 inline-flex items-center">
+              {tx(titel)}
+              <ChevronRight className="size-4 shrink-0" aria-hidden />
+            </Link>
+          ) : (
+            tx(titel)
+          )}
+        </Tag>
         {info ? (
           <span className="pointer-events-auto relative z-10 inline-flex shrink-0 self-center">
             <InfoHinweis text={info} />

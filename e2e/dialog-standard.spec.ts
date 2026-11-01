@@ -196,7 +196,7 @@ test('Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle', async ({
 test('Loslassen gilt sofort und die Meldung bietet Rückgängig', async ({ page }, testInfo) => {
   fs.mkdirSync('tmp-bau/u11a', { recursive: true });
   await anmelden(page);
-  const boss = page.locator('section', { has: page.getByRole('heading', { name: 'Bosse greifen an' }) }).locator('a').first();
+  const boss = page.locator('section', { has: page.getByRole('heading', { name: 'Bosse greifen an' }) }).locator('a[href^="/projekte/"]').first();
   await expect(boss).toBeVisible();
   await boss.click();
   await expect(page).toHaveURL(/\/projekte\/\d+$/);

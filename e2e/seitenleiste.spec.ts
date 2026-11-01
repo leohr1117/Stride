@@ -34,7 +34,7 @@ test('PC-Seitenleiste in vier Blöcken, Handy bleibt bei der Leiste', async ({ p
   const bild = (name: string) => page.screenshot({ path: `tmp-bau/u15/${testInfo.project.name}-${name}.png` });
 
   await page.goto('/');
-  await expect(page.locator('main h1')).toHaveText('Übersicht');
+  await expect(page.locator('main h1')).toHaveText('Heute');
   await ohneSeitlichenUeberlauf(page);
 
   if (handy) {

@@ -76,7 +76,7 @@ test('Mehr ist das Seitenverzeichnis und die Einstellungen', async ({ page }, te
 
   await page.locator('[data-seitenliste] a[href="/"]').click();
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.locator('main h1')).toHaveText('Übersicht');
+  await expect(page.locator('main h1')).toHaveText('Heute');
   if (handy) {
     await page.locator('nav.mobilleiste').getByRole('link', { name: 'Mehr' }).click();
   } else {

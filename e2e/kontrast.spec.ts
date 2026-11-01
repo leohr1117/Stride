@@ -84,13 +84,13 @@ test('Kontrastwächter bei eigenen Farben', async ({ page }, testInfo) => {
   try {
     await speichere(page, { stil: 'standard', ...HELL });
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'Übersicht', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Heute', exact: true })).toBeVisible();
     await expect(page.getByText('Lädt …')).toHaveCount(0);
     await pruefeVariablen(page, HELL);
     const ring = await page.evaluate(() => {
       const strich = document.querySelector('[data-kopfring]');
-      const bahn = strich?.parentElement?.querySelector('circle');
-      if (!(strich instanceof Element) || !(bahn instanceof Element)) {
+      const bahn = strich?.closest('span')?.querySelector('circle');
+      if (!(strich instanceof Element) || !(bahn instanceof Element) || strich === bahn) {
         return null;
       }
       return { strich: getComputedStyle(strich).stroke, bahn: getComputedStyle(bahn).stroke };
@@ -132,7 +132,7 @@ test('Kontrastwächter bei eigenen Farben', async ({ page }, testInfo) => {
 
     await speichere(page, { stil: 'standard', ...GRAU });
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'Übersicht', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Heute', exact: true })).toBeVisible();
     await expect(page.getByText('Lädt …')).toHaveCount(0);
     const fest = bedeutungsfarben(erscheinungAus(GRAU).flaechen.schema);
     await pruefeVariablen(page, GRAU);

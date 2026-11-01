@@ -1,5 +1,9 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Startseite heißt Heute.": "La page d'accueil s'appelle Aujourd'hui.",
+  "XP diese Woche, Streak und Momentum stehen nebeneinander.": "XP cette semaine, série et élan sont côte à côte.",
+  "Rückkehr, Schutz und ein angeschlagener Streak stehen im Abschnitt Streak.": "Retour, protection et une série fragilisée sont dans la section Série.",
+  "Neben Bosse greifen an steht der Weg zu Laufend. Basis öffnet die Basis-Seite.": "À côté de Les boss attaquent se trouve le chemin vers En cours. Base ouvre la page Base.",
   "Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.": "Pour les activités, les parts s'affichent en pourcentage et font ensemble 100 %.",
   "Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.": "Dans la barre, chaque morceau a la largeur de sa part. Les couleurs identiques restent séparées.",
   "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "La similarité avec un modèle compare la forme du profil, pas la hauteur des niveaux.",

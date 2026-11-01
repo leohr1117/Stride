@@ -1,5 +1,9 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Startseite heißt Heute.": "開始ページの名前は今日です。",
+  "XP diese Woche, Streak und Momentum stehen nebeneinander.": "今週のXP、連続、勢いは横に並びます。",
+  "Rückkehr, Schutz und ein angeschlagener Streak stehen im Abschnitt Streak.": "復帰、保護、途切れた連続は「連続」の節にあります。",
+  "Neben Bosse greifen an steht der Weg zu Laufend. Basis öffnet die Basis-Seite.": "「ボスが攻める」の横に進行中への入口があります。基本はそのページを開きます。",
   "Bei den Tätigkeiten stehen die Anteile in Prozent und ergeben zusammen 100 %.": "活動の下には割合がパーセントで並び、合計は 100% になります。",
   "Im Balken ist jedes Stück so breit wie sein Anteil. Gleiche Farben bleiben getrennt.": "バーでは各色の幅がその割合と同じです。同じ色は分かれたままです。",
   "Die Ähnlichkeit mit einem Vorbild vergleicht die Form des Profils, nicht die Höhe der Level.": "お手本との類似度は、レベルの高さではなくプロフィールの形を比べます。",
