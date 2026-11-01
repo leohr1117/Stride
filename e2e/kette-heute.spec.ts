@@ -145,7 +145,7 @@ test('Kettenfehler bleibt in Heute', async ({ page }, testInfo) => {
   await page.reload();
   await expect(page.locator('[data-heute]')).toContainText('Etwas ist schiefgelaufen.');
   await expect(page.getByText('Server nicht erreichbar.')).toHaveCount(0);
-  await expect(page.getByText('Streak', { exact: true })).toBeVisible();
+  await expect(page.locator('[data-wochenwert="Streak"]')).toBeVisible();
   await expect(page.getByText('Momentum')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Basis' })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);

@@ -516,11 +516,11 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
     if (oben && kasten) {
       expect(kasten.y).toBeGreaterThanOrEqual(oben.y + oben.height - 1);
     }
-    const heute = page.getByRole('heading', { name: 'Heute', exact: true });
-    if ((await heute.count()) > 0 && (await heute.isVisible())) {
-      const heuteKasten = await heute.boundingBox();
-      if (heuteKasten && kasten) {
-        expect(heuteKasten.y).toBeGreaterThan(kasten.y);
+    const streak = page.getByRole('heading', { name: 'Streak', exact: true });
+    if ((await streak.count()) > 0 && (await streak.isVisible())) {
+      const streakKasten = await streak.boundingBox();
+      if (streakKasten && kasten) {
+        expect(streakKasten.y).toBeGreaterThan(kasten.y);
       }
     }
     await ohneSeitlichenUeberlauf(page);

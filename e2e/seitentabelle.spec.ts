@@ -10,12 +10,12 @@ test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ pag
   const bild = (name: string) => page.screenshot({ path: `tmp-bau/u12b/${testInfo.project.name}-${name}.png` });
 
   await page.goto('/');
-  await expect(page.locator('main h1')).toHaveText('Übersicht');
+  await expect(page.locator('main h1')).toHaveText('Heute');
   await ohneSeitlichenUeberlauf(page);
 
   if (handy) {
     const leiste = page.locator('nav.mobilleiste');
-    await expect(leiste.getByRole('link', { name: 'Übersicht' })).toBeVisible();
+    await expect(leiste.getByRole('link', { name: 'Heute' })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Laufend' })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Chronik' })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Mehr' })).toBeVisible();
@@ -44,7 +44,7 @@ test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ pag
   }
 
   const seite = page.locator('aside.seitenleiste');
-  for (const name of ['Übersicht', 'Ziele', 'Laufend', 'Basis', 'Tätigkeiten', 'Chronik', 'Rückblick', 'Statistiken', 'Vorbilder', 'Profil', 'Können', 'Haben', 'Fähigkeiten', 'Investitionen', 'Handbuch', 'Mehr']) {
+  for (const name of ['Heute', 'Ziele', 'Laufend', 'Basis', 'Tätigkeiten', 'Chronik', 'Rückblick', 'Statistiken', 'Vorbilder', 'Profil', 'Können', 'Haben', 'Fähigkeiten', 'Investitionen', 'Handbuch', 'Mehr']) {
     await expect(seite.getByRole('link', { name, exact: true })).toBeVisible();
   }
   await expect(seite.getByText('Reise', { exact: true })).toHaveCount(0);

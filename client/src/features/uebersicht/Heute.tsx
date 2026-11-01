@@ -1,17 +1,16 @@
 import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, Flame, RotateCcw, Shield } from 'lucide-react';
+import { Flame, RotateCcw, Shield } from 'lucide-react';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { ausTagesSchluessel, kurzesDatum, zahl } from '../../format.ts';
 import { Fehlermeldung, InfoHinweis, Karte, Knopf } from '../../ui/index.ts';
 
-function HeuteKopf() {
+function StreakKopf() {
   return (
-    <div className="flex items-center">
-      <h2 className="ueberschrift min-w-0 text-sm font-semibold tracking-wide text-leise uppercase">{tx("Heute")}</h2>
-      <InfoHinweis text="Ein Eintrag in sieben Tagen, ohne Abzug." />
-    </div>
+    <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
+      {tx('Streak')}
+    </h2>
   );
 }
 
@@ -46,7 +45,7 @@ export function HeuteKarte() {
     return (
       <div data-heute>
         <Karte className="space-y-3">
-          <HeuteKopf />
+          <StreakKopf />
           <Fehlermeldung fehler={new Error('Etwas ist schiefgelaufen.')} />
         </Karte>
       </div>
@@ -64,33 +63,36 @@ export function HeuteKarte() {
   return (
     <div data-heute>
       <Karte className="space-y-3">
-        <HeuteKopf />
+        <StreakKopf />
         <Fehlermeldung fehler={einsetzen.error} />
         {rueckkehr && (
           <div className="flex min-h-11 items-center gap-3" data-kette="rueckkehr">
             <RotateCcw className="size-4 shrink-0 text-leise" aria-hidden="true" />
-            <Zeilentext name={tx("Rückkehr")} sache={tx("Bis {datum}", { datum: kurzesDatum(ausTagesSchluessel(rueckkehr.fristAm).toISOString()) })} />
-            <button
-              type="button"
-              aria-label={tx("Eintrag")}
-              onClick={() => eintragOeffnen()}
-              className="flex size-11 shrink-0 items-center justify-center rounded-full bg-akzent text-akzent-text"
-            >
-              <Check className="size-5" aria-hidden="true" />
-            </button>
+            <div className="min-w-0 flex-1">
+              <p className="flex min-w-0 items-center text-sm font-medium">
+                <span className="truncate">{tx('Rückkehr')}</span>
+                <InfoHinweis text="Ein Eintrag in sieben Tagen, ohne Abzug." />
+              </p>
+              <p className="text-xs text-leise">
+                {tx('Bis {datum}', { datum: kurzesDatum(ausTagesSchluessel(rueckkehr.fristAm).toISOString()) })}
+              </p>
+            </div>
+            <Knopf variante="primaer" className="min-h-11 shrink-0 whitespace-nowrap px-3" onClick={() => eintragOeffnen()}>
+              {tx('Eintrag')}
+            </Knopf>
           </div>
         )}
         {schutzSichtbar && stand.schutzLaenge !== null && (
           <div className="flex min-h-11 items-center gap-3" data-kette="schutz">
             <Shield className="size-4 shrink-0 text-leise" aria-hidden="true" />
-            <Zeilentext name={tx("Schutz einsetzen")} sache={tx("Hält die {n} Tage", { n: zahl(stand.schutzLaenge) })} />
+            <Zeilentext name={tx('Schutz')} sache={tx('Hält die {n} Tage', { n: zahl(stand.schutzLaenge) })} />
             <Knopf
               variante="primaer"
               className="min-h-11 shrink-0 whitespace-nowrap px-3"
               disabled={einsetzen.isPending}
               onClick={() => einsetzen.mutate()}
             >
-              {tx("Einsetzen")}
+              {tx('Einsetzen')}
             </Knopf>
           </div>
         )}

@@ -8,7 +8,7 @@ import { pfadAktiv } from './sichtbarkeit.ts';
 import { karteSichtbar, UEBERSICHT_KARTEN } from './uebersichtKarten.ts';
 
 const VERZEICHNIS = [
-  ['/', 'Übersicht', 'haus', 1],
+  ['/', 'Heute', 'haus', 1],
   ['/ziele', 'Ziele', 'kompass', 1],
   ['/laufend', 'Laufend', 'laufend', 1],
   ['/basis', 'Basis', 'schichten', 1],

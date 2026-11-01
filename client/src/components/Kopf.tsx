@@ -34,7 +34,7 @@ const KopfSetzen = createContext<(wert: KopfAngabe | null) => void>(() => {});
 const KopfLesen = createContext<KopfAngabe | null>(null);
 
 const SEITENTITEL: Record<string, string> = {
-  '/': 'Übersicht',
+  '/': 'Heute',
   '/ziele': 'Ziele',
   '/laufend': 'Laufend',
   '/chronik': 'Chronik',

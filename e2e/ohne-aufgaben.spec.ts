@@ -23,7 +23,7 @@ test('Aufgaben sind aus Navigation, Funktionen und Übersicht', async ({ page },
   await page.goto('/aufgaben');
   await expect(page).toHaveURL('/');
   await expect(page.locator('a[href="/aufgaben"]')).toHaveCount(0);
-  await expect(page.getByRole('heading', { name: 'Übersicht', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Heute', level: 1 })).toBeVisible();
   await expect(page.locator('main').getByText('Test Voll', { exact: true }).locator('visible=true')).toHaveCount(1);
   await ohneSeitlichenUeberlauf(page);
   await bild('uebersicht');

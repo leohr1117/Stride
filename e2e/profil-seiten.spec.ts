@@ -105,7 +105,7 @@ test('Profilzeilen öffnen Können, Haben, Fähigkeiten und Investitionen', asyn
     }
     await page.goto('/koennen');
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.locator('main h1')).toHaveText('Übersicht');
+    await expect(page.locator('main h1')).toHaveText('Heute');
   } finally {
     await setzeFunktion(page, { koennen: true });
   }

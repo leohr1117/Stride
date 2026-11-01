@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.36.0',
+    seiten: 'Heute',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Die Startseite heißt Heute. Oben stehen Name, Level und die Kennzahlen in einer Zeile.',
+          'Die Karte unter den Kennzahlen heißt Streak. Bosse führen auf Laufend, Basis auf die Basis-Seite.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.35.6',
     seiten: 'Tätigkeiten',
     abschnitte: [

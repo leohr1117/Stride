@@ -34,13 +34,13 @@ test('PC-Seitenleiste in vier Blöcken, Handy bleibt bei der Leiste', async ({ p
   const bild = (name: string) => page.screenshot({ path: `tmp-bau/u15/${testInfo.project.name}-${name}.png` });
 
   await page.goto('/');
-  await expect(page.locator('main h1')).toHaveText('Übersicht');
+  await expect(page.locator('main h1')).toHaveText('Heute');
   await ohneSeitlichenUeberlauf(page);
 
   if (handy) {
     await expect(page.locator('aside.seitenleiste')).toBeHidden();
     const leiste = page.locator('nav.mobilleiste');
-    await expect(leiste.getByRole('link', { name: 'Übersicht' })).toBeVisible();
+    await expect(leiste.getByRole('link', { name: 'Heute' })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Laufend' })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Chronik' })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Mehr' })).toBeVisible();
@@ -52,7 +52,7 @@ test('PC-Seitenleiste in vier Blöcken, Handy bleibt bei der Leiste', async ({ p
     await expect(page.locator('main h1')).toHaveText('Mehr');
     await expect(page.getByText('Schnellzugriff', { exact: true })).toHaveCount(0);
     const seiten = page.locator('[data-seitenliste]');
-    await expect(seiten.getByRole('link', { name: 'Übersicht', exact: true })).toBeVisible();
+    await expect(seiten.getByRole('link', { name: 'Heute', exact: true })).toBeVisible();
     await expect(seiten.getByRole('link', { name: 'Laufend', exact: true })).toBeVisible();
     await expect(seiten.getByRole('link', { name: 'Chronik', exact: true })).toBeVisible();
     await expect(page.locator('[data-abschnitt="einstellungen"] a[href="/mehr/inhalte"]')).toHaveCount(0);
