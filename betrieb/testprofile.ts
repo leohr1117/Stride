@@ -33,7 +33,7 @@ const TAGE_VOLL = 35;
 const TAGE_TEIL = 14;
 const ZUFALL_VOLL = 20261022;
 const ZUFALL_TEIL = 20261023;
-const GESCHUETZTE_NAMEN = new Set(['leonardo', 'schlafkopf']);
+const GESCHUETZTE_NAMEN = leseGeschuetzteNamen();
 
 const TESTKONTEN = {
   voll: { benutzername: 'testvoll', profilname: 'Test Voll' },
@@ -64,6 +64,14 @@ function waehle<T>(liste: T[]): T {
 
 function nameNorm(benutzername: string): string {
   return benutzername.trim().toLocaleLowerCase('de-DE');
+}
+
+/** Konten, die nie überschrieben werden: STRIDE_GESCHUETZTE_KONTEN (Komma) und data/geschuetzte-konten.txt (je Zeile ein Name). */
+function leseGeschuetzteNamen(): Set<string> {
+  const datei = path.join(path.dirname(KONFIG.datenbankPfad), 'geschuetzte-konten.txt');
+  const ausDatei = fs.existsSync(datei) ? fs.readFileSync(datei, 'utf8').split(/\r?\n/) : [];
+  const ausEnv = (process.env.STRIDE_GESCHUETZTE_KONTEN ?? '').split(',');
+  return new Set([...ausDatei, ...ausEnv].map(nameNorm).filter((name) => name.length > 0));
 }
 
 function tagVor(tage: number): string {
@@ -166,8 +174,10 @@ function istGeschuetzt(konto: { benutzername: string; rolle: string; weltdatei: 
   if (welt === path.resolve(KONFIG.datenbankPfad)) {
     return true;
   }
-  const schlafkopf = listeKonten().find((eintrag) => nameNorm(eintrag.benutzername) === 'schlafkopf');
-  return schlafkopf !== undefined && welt === path.resolve(loeseWeltdatei(schlafkopf.weltdatei));
+  return listeKonten().some(
+    (eintrag) =>
+      GESCHUETZTE_NAMEN.has(nameNorm(eintrag.benutzername)) && welt === path.resolve(loeseWeltdatei(eintrag.weltdatei)),
+  );
 }
 
 function holeOderLegeAn(benutzername: string, profilname: string, passwort: string): string {

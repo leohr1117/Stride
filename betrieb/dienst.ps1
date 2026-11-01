@@ -1,9 +1,8 @@
 ﻿$ErrorActionPreference = 'Continue'
-$root = 'C:\Users\Administrator\ascend'
+$root = Split-Path -Parent $PSScriptRoot
 $node = 'C:\Program Files\nodejs\node.exe'
-$cloudflared = 'C:\Program Files (x86)\cloudflared\cloudflared.exe'
+$cloudflared = if ($env:STRIDE_CLOUDFLARED) { $env:STRIDE_CLOUDFLARED } else { 'C:\Program Files (x86)\cloudflared\cloudflared.exe' }
 $logDir = Join-Path $root 'betrieb'
-$desktop = 'C:\Users\Administrator\Desktop'
 $serverPid = Join-Path $logDir 'server.pid'
 $tunnelPid = Join-Path $logDir 'tunnel.pid'
 $serverOut = Join-Path $logDir 'server.out.log'
@@ -13,10 +12,10 @@ $tunnelErr = Join-Path $logDir 'tunnel.err.log'
 $domainPid = Join-Path $logDir 'domain.pid'
 $domainErr = Join-Path $logDir 'domain.err.log'
 $domainOut = Join-Path $logDir 'domain.out.log'
-$domainCfg = 'C:\Users\Administrator\.cloudflared\stride.yml'
+$domainCfg = if ($env:STRIDE_TUNNEL_CONFIG) { $env:STRIDE_TUNNEL_CONFIG } else { Join-Path $HOME '.cloudflared\stride.yml' }
 $dienstLog = Join-Path $logDir 'dienst.log'
 $urlDatei = Join-Path $logDir 'url.txt'
-$desktopDatei = Join-Path $desktop 'Ascend-Adresse.txt'
+$adressKopie = $env:STRIDE_ADRESSE_DATEI
 $mutex = New-Object System.Threading.Mutex($false, 'Global\AscendDienst')
 if (-not $mutex.WaitOne(0, $false)) { exit 0 }
 
@@ -87,7 +86,7 @@ function Update-Adresse {
   if ($url -eq $script:letzteUrl) { return }
   $script:letzteUrl = $url
   Set-Content -Path $urlDatei -Value $url -Encoding ASCII
-  Set-Content -Path $desktopDatei -Value $url -Encoding ASCII
+  if ($adressKopie) { Set-Content -Path $adressKopie -Value $url -Encoding ASCII }
   Write-Log "Adresse $url"
 }
 

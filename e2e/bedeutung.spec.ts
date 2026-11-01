@@ -135,7 +135,7 @@ test('Feste Bedeutungsfarben in Palette Dunkel', async ({ page }, testInfo) => {
       );
     }
     const ringHtml = await page.locator('.levelring').first().innerHTML();
-    // Lichtpunkt und Farbverlauf (Leonardo 28.10.).
+    // Lichtpunkt und Farbverlauf.
     expect(ringHtml.toLowerCase()).toContain('fill="white"');
     expect(ringHtml).toContain('conic-gradient');
     expect(ringHtml).toContain('feGaussianBlur');
