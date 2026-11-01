@@ -1,5 +1,13 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die ersten Schritte, bis der erste XP da ist.": "На странице Сегодня первые шаги остаются до первого XP.",
+  "Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.": "Готовый шаг показывает галочку и имя. Счётчика нет.",
+  "Die ersten Schritte stehen nur noch auf Heute.": "Первые шаги есть только на странице Сегодня.",
+  "Erste Tätigkeit anlegen": "Создать первое занятие",
+  "Vision „{name}\"": "Видение «{name}»",
+  "Projekt „{name}\"": "Проект «{name}»",
+  "Vorhaben „{name}\"": "Задача «{name}»",
+  "Fähigkeit „{name}\"": "Навык «{name}»",
   "Die Startseite heißt Heute.": "Стартовая страница называется Сегодня.",
   "XP diese Woche, Streak und Momentum stehen nebeneinander.": "XP за неделю, серия и импульс стоят рядом.",
   "Rückkehr, Schutz und ein angeschlagener Streak stehen im Abschnitt Streak.": "Возвращение, защита и надломленная серия стоят в разделе Серия.",

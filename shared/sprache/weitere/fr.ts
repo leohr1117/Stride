@@ -1,5 +1,13 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die ersten Schritte, bis der erste XP da ist.": "Sur Aujourd'hui, les premiers pas restent jusqu'au premier XP.",
+  "Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.": "Une étape faite montre une coche et le nom. Il n'y a pas de compteur.",
+  "Die ersten Schritte stehen nur noch auf Heute.": "Les premiers pas ne sont plus que sur Aujourd'hui.",
+  "Erste Tätigkeit anlegen": "Crée ta première activité",
+  "Vision „{name}\"": "Vision « {name} »",
+  "Projekt „{name}\"": "Projet « {name} »",
+  "Vorhaben „{name}\"": "Tâche « {name} »",
+  "Fähigkeit „{name}\"": "Compétence « {name} »",
   "Die Startseite heißt Heute.": "La page d'accueil s'appelle Aujourd'hui.",
   "XP diese Woche, Streak und Momentum stehen nebeneinander.": "XP cette semaine, série et élan sont côte à côte.",
   "Rückkehr, Schutz und ein angeschlagener Streak stehen im Abschnitt Streak.": "Retour, protection et une série fragilisée sont dans la section Série.",

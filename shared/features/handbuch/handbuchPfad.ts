@@ -3,8 +3,14 @@ import type { Funktion, Funktionen } from '../../spiel/funktionen.ts';
 import { FOKUS_IDS, type FokusId, type Zielstrebigkeit } from '../../spiel/profil.ts';
 import { BOSS_SCHALTER } from '../../spiel/xp.ts';
 
-export type StartSchritt = 'taetigkeiten' | 'ziel' | 'faehigkeit' | 'eintrag';
+export type StartSchritt = 'ersteTaetigkeit' | 'ziel' | 'faehigkeit' | 'eintrag';
 export type StartZielArt = 'visionen' | 'projekte' | 'vorhaben' | 'faehigkeit';
+
+export type WillkommenZeile =
+  | { schluessel: 'ersteTaetigkeit'; erledigt: false }
+  | { schluessel: 'ziel'; art: Exclude<StartZielArt, 'faehigkeit'>; erledigt: boolean }
+  | { schluessel: 'faehigkeit'; erledigt: boolean }
+  | { schluessel: 'eintrag'; erledigt: boolean };
 
 /** Die ersten Schritte. Funktionsempfehlungen liefert empfohleneFunktionen. */
 export type Empfehlung = { art: 'start'; schritt: StartSchritt };
@@ -83,8 +89,8 @@ export function empfohleneFunktionen(
 }
 
 export interface PfadStand {
-  /** Die Tätigkeiten-Seite wurde geöffnet. Anlegen allein zählt nicht. */
-  taetigkeitenGeprueft: boolean;
+  /** Aktive Tätigkeiten. Eine archivierte zählt nicht, die Seite gesehen zu haben auch nicht. */
+  taetigkeiten: number;
   visionen: number;
   projekte: number;
   vorhaben: number;
@@ -118,23 +124,30 @@ export function zielAnzahl(
   return 0;
 }
 
-/** Starter-Tätigkeiten zählen nicht. Die Seite gesehen oder ein echter Eintrag schon. */
-export function taetigkeitenSchrittErledigt(stand: Pick<PfadStand, 'taetigkeitenGeprueft' | 'eintraege'>): boolean {
-  return stand.taetigkeitenGeprueft || stand.eintraege > 0;
+/** Zeilen der Willkommenskarte. „Tätigkeiten prüfen“ gibt es nicht. Ohne Tätigkeit kein Eintrag. */
+export function willkommensZeilen(stand: PfadStand): WillkommenZeile[] {
+  const zeilen: WillkommenZeile[] = [];
+  if (stand.taetigkeiten <= 0) {
+    zeilen.push({ schluessel: 'ersteTaetigkeit', erledigt: false });
+  }
+  const art = startZielArt(stand.ebenen, stand.funktionen);
+  if (art === 'faehigkeit') {
+    zeilen.push({ schluessel: 'faehigkeit', erledigt: stand.faehigkeiten > 0 });
+  } else if (art !== null) {
+    zeilen.push({ schluessel: 'ziel', art, erledigt: zielAnzahl(stand) > 0 });
+  }
+  if (stand.taetigkeiten > 0) {
+    zeilen.push({ schluessel: 'eintrag', erledigt: stand.eintraege > 0 });
+  }
+  return zeilen;
 }
 
 export function naechsteEmpfehlung(stand: PfadStand): Empfehlung | null {
-  if (!taetigkeitenSchrittErledigt(stand)) {
-    return { art: 'start', schritt: 'taetigkeiten' };
+  const offen = willkommensZeilen(stand).find((zeile) => !zeile.erledigt);
+  if (!offen) {
+    return null;
   }
-  const art = startZielArt(stand.ebenen, stand.funktionen);
-  if (art !== null && zielAnzahl(stand) <= 0) {
-    return { art: 'start', schritt: art === 'faehigkeit' ? 'faehigkeit' : 'ziel' };
-  }
-  if (stand.eintraege <= 0) {
-    return { art: 'start', schritt: 'eintrag' };
-  }
-  return null;
+  return { art: 'start', schritt: offen.schluessel };
 }
 
 export function empfehlungSchluessel(empfehlung: Empfehlung | null): string | null {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Navigate, useParams } from 'react-router';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router';
 import type { Vorlage } from '../../../../shared/api/index.ts';
 import { Dialog } from '../../components/Dialog.tsx';
 import { TaetigkeitFormular } from '../taetigkeiten/TaetigkeitFormular.tsx';
@@ -11,9 +11,19 @@ import { Bereich, FUNKTIONEN_ZURUECK, INHALTE_HASH, useHashWeiter } from './rahm
 
 function InhalteListe() {
   const [bearbeitung, setBearbeitung] = useState<{ vorlage: Vorlage | null } | null>(null);
+  const ort = useLocation();
+  const navigiere = useNavigate();
+  const anlegen = (ort.state as { anlegen?: string } | null)?.anlegen;
   useEffect(() => {
     merke(TAETIGKEITEN_GESEHEN, true);
   }, []);
+  useEffect(() => {
+    if (anlegen !== 'taetigkeit') {
+      return;
+    }
+    setBearbeitung({ vorlage: null });
+    navigiere(ort.pathname, { replace: true, state: null });
+  }, [anlegen, navigiere, ort.pathname]);
   return (
     <Bereich
       titel={tx("Tätigkeiten")}

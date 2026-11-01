@@ -1,8 +1,8 @@
 import { katalogName, tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Archive, ChevronRight, Landmark, Pencil, Plus } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
-import { Link, useLocation } from 'react-router';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { merkeStand } from '../../herkunftLauf.ts';
 import type { Organisation, Projekt, Vision, VorhabenMitProjekt } from '../../../../shared/api/index.ts';
 import { ZIEL_MARKE, zielTitel } from '../../../../shared/spiel/ebenen.ts';
@@ -25,7 +25,21 @@ export function ZieleSeite() {
   const { data: ziele, error, isPending } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
   const [bearbeitung, setBearbeitung] = useState<ZielBearbeitung>(null);
   const ort = useLocation();
+  const navigiere = useNavigate();
+  const anlegen = (ort.state as { anlegen?: string } | null)?.anlegen;
   const [archivAnzeigen, setArchivAnzeigen] = useState(() => Boolean((ort.state as { archiv?: boolean } | null)?.archiv));
+  useEffect(() => {
+    if (anlegen !== 'vision' && anlegen !== 'projekt') {
+      return;
+    }
+    if (anlegen === 'vision' && ebenen.visionen) {
+      setBearbeitung({ art: 'vision', vision: null });
+    }
+    if (anlegen === 'projekt' && ebenen.projekte) {
+      setBearbeitung({ art: 'projekt', projekt: null, visionId: null, organisationId: null });
+    }
+    navigiere(ort.pathname, { replace: true, state: null });
+  }, [anlegen, ebenen.projekte, ebenen.visionen, navigiere, ort.pathname]);
   const [detailId, setDetailId] = useState<number | null>(null);
 
   if (isPending) {

@@ -1,22 +1,15 @@
 import { tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
-import { Flag, ListChecks, Mountain, Plus, Sparkles, Target, type LucideIcon } from 'lucide-react';
-import { type CSSProperties, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { DAUER_OPTIONEN } from '../../../../shared/spiel/begriffe.ts';
 import { funktionsSperre } from '../../../../shared/spiel/abhaengigkeiten.ts';
 import { FUNKTION_BLOECKE, type Funktion } from '../../../../shared/spiel/funktionen.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import {
-  empfehlungSchluessel,
   empfohleneFunktionen,
   investitionWegenRessourcen,
-  naechsteEmpfehlung,
-  startZielArt,
-  taetigkeitenSchrittErledigt,
-  zielAnzahl,
   type FunktionsEmpfehlung,
-  type StartZielArt,
 } from '../../../../shared/features/handbuch/handbuchPfad.ts';
 import { LEVEL_KURVEN, xpBisLevel } from '../../../../shared/spiel/level.ts';
 import { momentumFuerSerie } from '../../../../shared/spiel/momentum.ts';
@@ -26,20 +19,12 @@ import { basisXp, visionBeute } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { Abschnitt } from '../../components/Ausklappbar.tsx';
 import { EbenenWahl } from '../../components/EbenenWahl.tsx';
-import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { FUNKTION_BILD } from '../../funktionsBild.tsx';
-import { Karte, Knopf, Ladeanzeige } from '../../ui/index.ts';
+import { Karte, Ladeanzeige } from '../../ui/index.ts';
 import { faktorText, zahl, zeitspanne } from '../../format.ts';
 import { HinweisKarte } from './HinweisKarte.tsx';
 import { SchutzKarte } from './SchutzKarte.tsx';
-import { TAETIGKEITEN_GESEHEN, leseMerker } from '../../speicher.ts';
-
-const ZIEL_STATION: Record<Exclude<StartZielArt, 'faehigkeit'>, { titel: string; icon: LucideIcon }> = {
-  visionen: { titel: 'Vision anlegen', icon: Mountain },
-  projekte: { titel: 'Projekt anlegen', icon: Flag },
-  vorhaben: { titel: 'Vorhaben anlegen', icon: Target },
-};
 
 const STREAK_BEISPIELE = [7, 30, 100, 365];
 
@@ -50,23 +35,8 @@ function texteZusammen(...teile: Array<string | null | undefined>): string | und
   return texte.length > 0 ? texte.join(' ') : undefined;
 }
 
-interface Station {
-  schluessel: string;
-  titel: ReactNode;
-  an: boolean;
-  aktion?: ReactNode;
-}
-
 export function HandbuchSeite() {
-  const eintragOeffnen = useEintragOeffnen();
   const { data: einstellungen, isPending } = useQuery({ queryKey: SCHLUESSEL.einstellungen, queryFn: api.einstellungen });
-  const { data: erfolge } = useQuery({ queryKey: SCHLUESSEL.erfolge, queryFn: api.erfolge });
-  const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
-  const { data: faehigkeitenListe } = useQuery({
-    queryKey: SCHLUESSEL.faehigkeiten,
-    queryFn: api.faehigkeiten,
-    enabled: Boolean(einstellungen?.funktionen.faehigkeiten),
-  });
   const { data: attribute = [] } = useQuery({
     queryKey: SCHLUESSEL.attribute,
     queryFn: api.attribute,
@@ -77,82 +47,10 @@ export function HandbuchSeite() {
     return <Ladeanzeige />;
   }
 
-  const visionen = ziele?.visionen.length ?? 0;
-  const projekte = ziele?.projekte.length ?? 0;
-  const vorhaben = ziele?.vorhaben.length ?? 0;
-  const eintraege = erfolge?.kategorien.find((kategorie) => kategorie.kennzahl === 'eintraege')?.wert ?? 0;
-  const bereit = Boolean(ziele && erfolge);
-  const pfadStand = {
-    taetigkeitenGeprueft: leseMerker(TAETIGKEITEN_GESEHEN),
-    visionen,
-    projekte,
-    vorhaben,
-    faehigkeiten: faehigkeitenListe?.length ?? 0,
-    eintraege,
-    stufe: einstellungen.zielstrebigkeit,
-    funktionen: einstellungen.funktionen,
-    ebenen: einstellungen.ebenen,
-  };
-  const empfohlen = bereit ? empfehlungSchluessel(naechsteEmpfehlung(pfadStand)) : null;
   const ressourcenAn = investitionWegenRessourcen(einstellungen.funktionen.status, attribute);
   const vorschlaege = empfohleneFunktionen(einstellungen.fokus, { ressourcen: ressourcenAn });
   const vorschlagAus = new Set(vorschlaege.filter((eintrag) => !einstellungen.funktionen[eintrag.funktion]).map((eintrag) => eintrag.funktion));
   const vorschlagInfo = new Map(vorschlaege.map((eintrag) => [eintrag.funktion, eintrag.info]));
-  const taetigkeitenErledigt = taetigkeitenSchrittErledigt(pfadStand);
-  const art = startZielArt(einstellungen.ebenen, einstellungen.funktionen);
-
-  const startStationen: Station[] = [
-    {
-      schluessel: 'start:taetigkeiten',
-      titel: tx("Tätigkeiten prüfen"),
-      an: taetigkeitenErledigt,
-      aktion: (
-        <Link to="/mehr/inhalte#taetigkeiten" className="inline-flex items-center gap-1 text-sm font-medium text-akzent hover:underline">
-          <ListChecks className="size-4" />
-          {tx("Tätigkeiten ansehen")}
-        </Link>
-      ),
-    },
-  ];
-  if (art === 'faehigkeit') {
-    startStationen.push({
-      schluessel: 'start:faehigkeit',
-      titel: tx("Fähigkeit anlegen"),
-      an: pfadStand.faehigkeiten > 0,
-      aktion: (
-        <Link to="/charakter" className="inline-flex items-center gap-1 text-sm font-medium text-akzent hover:underline">
-          <Sparkles className="size-4" />
-          {tx("Unter Charakter anlegen")}
-        </Link>
-      ),
-    });
-  } else if (art !== null) {
-    const ziel = ZIEL_STATION[art];
-    const Icon = ziel.icon;
-    startStationen.push({
-      schluessel: 'start:ziel',
-      titel: tx(ziel.titel),
-      an: zielAnzahl(pfadStand) > 0,
-      aktion: (
-        <Link to="/ziele" className="inline-flex items-center gap-1 text-sm font-medium text-akzent hover:underline">
-          <Icon className="size-4" />
-          {tx("Unter Ziele anlegen")}
-        </Link>
-      ),
-    });
-  }
-  startStationen.push({
-    schluessel: 'start:eintrag',
-    titel: tx("Ersten Eintrag anlegen"),
-    an: eintraege > 0,
-    aktion: (
-      <Knopf variante="primaer" onClick={() => eintragOeffnen()}>
-        <Plus className="size-4" />
-        {tx("Eintrag anlegen")}
-      </Knopf>
-    ),
-  });
-  const startGeschafft = startStationen.filter((station) => station.an).length;
 
   const funktionsInfo = (funktion: Funktion, grund?: string) =>
     texteZusammen(
@@ -177,23 +75,6 @@ export function HandbuchSeite() {
             ))}
         </ZeilenGruppe>
       )}
-
-      <Abschnitt
-        titel={tx("Erste Schritte")}
-        kennung="handbuch-erste-schritte"
-        aktion={<span className="zahl text-sm text-leise">{startGeschafft} / {startStationen.length}</span>}
-      >
-        <ol className="space-y-3">
-          {startStationen.map((station, index) => (
-            <PfadStation
-              key={station.schluessel}
-              station={station}
-              letzte={index === startStationen.length - 1}
-              empfohlen={empfohlen === station.schluessel}
-            />
-          ))}
-        </ol>
-      </Abschnitt>
 
       <Abschnitt
         titel={tx("Nach Vorliebe")}
@@ -268,28 +149,6 @@ function FunktionsZeile({
         </span>
       }
     />
-  );
-}
-
-function PfadStation({ station, letzte, empfohlen }: { station: Station; letzte: boolean; empfohlen: boolean }) {
-  return (
-    <li className="relative pl-8" aria-current={empfohlen ? 'step' : undefined}>
-      {!letzte && <span className="absolute top-5 bottom-0 left-[0.7rem] w-px bg-rand" aria-hidden />}
-      <span
-        className={`absolute top-4 left-0 z-10 size-6 rounded-full border-2 ${
-          station.an ? 'pfad-an border-akzent bg-akzent' : empfohlen ? 'skill-leuchten border-akzent bg-flaeche' : 'border-rand bg-flaeche-2'
-        }`}
-        style={empfohlen && !station.an ? ({ '--skillfarbe': 'var(--akzent)' } as CSSProperties) : undefined}
-        aria-hidden
-      />
-      <Karte className={`space-y-2 ${empfohlen ? 'border-akzent bg-akzent/10' : station.an ? 'border-akzent/35' : ''}`}>
-        <div className="min-w-0">
-          {empfohlen && <p className="text-[10px] font-semibold tracking-wide text-akzent uppercase">{tx("Empfohlen")}</p>}
-          <div className="font-medium break-words">{typeof station.titel === 'string' ? tx(station.titel) : station.titel}</div>
-        </div>
-        {station.aktion}
-      </Karte>
-    </li>
   );
 }
 

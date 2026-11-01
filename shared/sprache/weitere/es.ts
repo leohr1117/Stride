@@ -1,5 +1,13 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die ersten Schritte, bis der erste XP da ist.": "En Hoy están los primeros pasos, hasta el primer XP.",
+  "Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.": "Un paso hecho muestra una marca y el nombre. No hay contador.",
+  "Die ersten Schritte stehen nur noch auf Heute.": "Los primeros pasos están solo en Hoy.",
+  "Erste Tätigkeit anlegen": "Crea tu primera actividad",
+  "Vision „{name}\"": "Visión «{name}»",
+  "Projekt „{name}\"": "Proyecto «{name}»",
+  "Vorhaben „{name}\"": "Tarea «{name}»",
+  "Fähigkeit „{name}\"": "Habilidad «{name}»",
   "Die Startseite heißt Heute.": "La página de inicio se llama Hoy.",
   "XP diese Woche, Streak und Momentum stehen nebeneinander.": "XP esta semana, racha e impulso están uno al lado del otro.",
   "Rückkehr, Schutz und ein angeschlagener Streak stehen im Abschnitt Streak.": "Regreso, protección y una racha dañada están en la sección Racha.",

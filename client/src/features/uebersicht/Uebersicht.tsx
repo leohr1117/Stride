@@ -1,8 +1,9 @@
 import { klassenText, tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BookMarked, ChevronRight, Flame, RotateCcw } from 'lucide-react';
+import { ChevronRight, Flame, RotateCcw } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
+import { WillkommenKarte } from './Willkommen.tsx';
 import type { Attribut, Erschoepfung, HeatmapTag, VorhabenMitProjekt } from '../../../../shared/api/index.ts';
 import { abzugNebenNamen, erschoepfungsBild } from '../../../../shared/spiel/belastung.ts';
 import { TAGE_PRO_WOCHE } from '../../../../shared/spiel/datum.ts';
@@ -62,20 +63,7 @@ export function UebersichtSeite() {
 
   return (
     <div className="space-y-6">
-      {uebersicht.level.xpGesamt === 0 && istAn('handbuch', sichtbarkeit) && (
-        <Karte className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="font-semibold">{tx("Willkommen bei Stride")}</h2>
-          </div>
-          <Link
-            to="/handbuch"
-            className="knopf knopf-primaer inline-flex items-center gap-2 rounded-xl bg-akzent px-4 py-2.5 text-sm font-medium text-akzent-text"
-          >
-            <BookMarked className="size-4" />
-            {tx("Zum Handbuch")}
-          </Link>
-        </Karte>
-      )}
+      <WillkommenKarte xp={uebersicht.level.xpGesamt} />
 
       {karteGewaehlt('identitaet', karten) && (
       <Karte className="flex flex-col gap-5 sm:flex-row sm:items-center">

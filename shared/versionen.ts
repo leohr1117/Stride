@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.37.0',
+    seiten: 'Heute',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Auf Heute stehen die ersten Schritte, bis der erste XP da ist.',
+          'Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.',
+          'Die ersten Schritte stehen nur noch auf Heute.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.36.1',
     seiten: 'Heute',
     abschnitte: [

@@ -1,5 +1,13 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die ersten Schritte, bis der erste XP da ist.": "在今天页上，第一步会保留到获得第一个 XP。",
+  "Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.": "完成的步骤显示勾和名称。没有计数。",
+  "Die ersten Schritte stehen nur noch auf Heute.": "第一步只出现在今天页。",
+  "Erste Tätigkeit anlegen": "新建第一个活动",
+  "Vision „{name}\"": "愿景「{name}」",
+  "Projekt „{name}\"": "项目「{name}」",
+  "Vorhaben „{name}\"": "事项「{name}」",
+  "Fähigkeit „{name}\"": "技能「{name}」",
   "Die Startseite heißt Heute.": "起始页的名称是今天。",
   "XP diese Woche, Streak und Momentum stehen nebeneinander.": "本周 XP、连续和势头并排显示。",
   "Rückkehr, Schutz und ein angeschlagener Streak stehen im Abschnitt Streak.": "回归、保护和中断的连续在「连续」一节。",

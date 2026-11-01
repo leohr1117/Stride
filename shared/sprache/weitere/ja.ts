@@ -1,5 +1,13 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die ersten Schritte, bis der erste XP da ist.": "今日のページでは、最初の XP まで最初の手順が残る。",
+  "Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.": "終わった手順はチェックと名前を示す。数は出ない。",
+  "Die ersten Schritte stehen nur noch auf Heute.": "最初の手順は今日のページにだけある。",
+  "Erste Tätigkeit anlegen": "最初の活動を作る",
+  "Vision „{name}\"": "ビジョン「{name}」",
+  "Projekt „{name}\"": "プロジェクト「{name}」",
+  "Vorhaben „{name}\"": "タスク「{name}」",
+  "Fähigkeit „{name}\"": "スキル「{name}」",
   "Die Startseite heißt Heute.": "開始ページの名前は今日です。",
   "XP diese Woche, Streak und Momentum stehen nebeneinander.": "今週のXP、連続、勢いは横に並びます。",
   "Rückkehr, Schutz und ein angeschlagener Streak stehen im Abschnitt Streak.": "復帰、保護、途切れた連続は「連続」の節にあります。",

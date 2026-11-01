@@ -1,8 +1,8 @@
 import { tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronRight } from 'lucide-react';
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { ArchivListe } from '../../components/ArchivListe.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
@@ -15,6 +15,15 @@ export function FaehigkeitenSeite() {
   const { data: faehigkeiten, error, isPending } = useQuery({ queryKey: SCHLUESSEL.faehigkeiten, queryFn: api.faehigkeiten });
   const [neuOffen, setNeuOffen] = useState(false);
   const navigieren = useNavigate();
+  const ort = useLocation();
+  const anlegen = (ort.state as { anlegen?: string } | null)?.anlegen;
+  useEffect(() => {
+    if (anlegen !== 'faehigkeit') {
+      return;
+    }
+    setNeuOffen(true);
+    navigieren(ort.pathname, { replace: true, state: null });
+  }, [anlegen, navigieren, ort.pathname]);
   const liste = faehigkeiten ?? [];
   const aktive = liste.filter((faehigkeit) => !faehigkeit.archiviert);
   const archiv = liste.filter((faehigkeit) => faehigkeit.archiviert);

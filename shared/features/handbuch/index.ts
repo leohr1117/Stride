@@ -4,11 +4,12 @@ export {
   investitionWegenRessourcen,
   naechsteEmpfehlung,
   startZielArt,
-  taetigkeitenSchrittErledigt,
+  willkommensZeilen,
   zielAnzahl,
   type Empfehlung,
   type FunktionsEmpfehlung,
   type PfadStand,
   type StartSchritt,
   type StartZielArt,
+  type WillkommenZeile,
 } from './handbuchPfad.ts';

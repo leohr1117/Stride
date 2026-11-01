@@ -7,6 +7,7 @@ import {
   investitionWegenRessourcen,
   naechsteEmpfehlung,
   startZielArt,
+  willkommensZeilen,
   type PfadStand,
 } from '../features/handbuch/handbuchPfad.ts';
 import { FOKUS_IDS, type FokusId } from './profil.ts';
@@ -14,7 +15,7 @@ import { FOKUS_IDS, type FokusId } from './profil.ts';
 function stand(teil: Partial<PfadStand> = {}): PfadStand {
   const stufe = teil.stufe ?? 'traeumer';
   return {
-    taetigkeitenGeprueft: false,
+    taetigkeiten: 0,
     visionen: 0,
     projekte: 0,
     vorhaben: 0,
@@ -28,36 +29,37 @@ function stand(teil: Partial<PfadStand> = {}): PfadStand {
 }
 
 describe('naechsteEmpfehlung', () => {
-  it('führt von Tätigkeiten über das passende Ziel zum Eintrag', () => {
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand()))).toBe('start:taetigkeiten');
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeitenGeprueft: true })))).toBe('start:ziel');
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ eintraege: 1 })))).toBe('start:ziel');
-    expect(
-      empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeitenGeprueft: true, stufe: 'macher', projekte: 1 }))),
-    ).toBe('start:eintrag');
+  it('führt ohne Tätigkeit zur Tätigkeit, sonst über das Ziel zum Eintrag', () => {
+    expect(empfehlungSchluessel(naechsteEmpfehlung(stand()))).toBe('start:ersteTaetigkeit');
+    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeiten: 1 })))).toBe('start:ziel');
+    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ eintraege: 1 })))).toBe('start:ersteTaetigkeit');
+    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeiten: 1, stufe: 'macher', projekte: 1 })))).toBe(
+      'start:eintrag',
+    );
     expect(
       empfehlungSchluessel(
-        naechsteEmpfehlung(stand({ taetigkeitenGeprueft: true, stufe: 'bodenstaendig', visionen: 4, vorhaben: 1 })),
+        naechsteEmpfehlung(stand({ taetigkeiten: 1, stufe: 'bodenstaendig', visionen: 4, vorhaben: 1 })),
       ),
     ).toBe('start:ziel');
     expect(
       empfehlungSchluessel(
         naechsteEmpfehlung(
-          stand({ taetigkeitenGeprueft: true, stufe: 'bodenstaendig', visionen: 4, projekte: 1, vorhaben: 1 }),
+          stand({ taetigkeiten: 1, stufe: 'bodenstaendig', visionen: 4, projekte: 1, vorhaben: 1 }),
         ),
       ),
     ).toBe('start:eintrag');
-    expect(naechsteEmpfehlung(stand({ taetigkeitenGeprueft: true, visionen: 1, eintraege: 1 }))).toBeNull();
-    expect(naechsteEmpfehlung(stand({ visionen: 1, eintraege: 1 }))).toBeNull();
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeitenGeprueft: true, stufe: 'uebung' })))).toBe(
+    expect(naechsteEmpfehlung(stand({ taetigkeiten: 1, visionen: 1, eintraege: 1 }))).toBeNull();
+    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ visionen: 1, eintraege: 1 })))).toBe(
+      'start:ersteTaetigkeit',
+    );
+    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeiten: 1, stufe: 'uebung' })))).toBe(
       'start:faehigkeit',
     );
     expect(
-      empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeitenGeprueft: true, stufe: 'uebung', faehigkeiten: 1 }))),
+      empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeiten: 1, stufe: 'uebung', faehigkeiten: 1 }))),
     ).toBe('start:eintrag');
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeitenGeprueft: true, stufe: 'einfach' })))).toBe(
-      'start:eintrag',
-    );
+    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeiten: 1, stufe: 'einfach' })))).toBe('start:eintrag');
+    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ stufe: 'einfach' })))).toBe('start:ersteTaetigkeit');
   });
 
   it('nimmt die aktiven Ziel-Stufen, nicht die gespeicherte Stufe', () => {
@@ -65,7 +67,7 @@ describe('naechsteEmpfehlung', () => {
       empfehlungSchluessel(
         naechsteEmpfehlung(
           stand({
-            taetigkeitenGeprueft: true,
+            taetigkeiten: 1,
             stufe: 'traeumer',
             ebenen: ebenenFuerStufe('bodenstaendig'),
           }),
@@ -76,7 +78,7 @@ describe('naechsteEmpfehlung', () => {
       empfehlungSchluessel(
         naechsteEmpfehlung(
           stand({
-            taetigkeitenGeprueft: true,
+            taetigkeiten: 1,
             stufe: 'traeumer',
             ebenen: ebenenFuerStufe('einfach'),
           }),
@@ -87,7 +89,7 @@ describe('naechsteEmpfehlung', () => {
       empfehlungSchluessel(
         naechsteEmpfehlung(
           stand({
-            taetigkeitenGeprueft: true,
+            taetigkeiten: 1,
             stufe: 'einfach',
             ebenen: ebenenFuerStufe('macher'),
           }),
@@ -100,13 +102,49 @@ describe('naechsteEmpfehlung', () => {
     expect(
       naechsteEmpfehlung(
         stand({
-          taetigkeitenGeprueft: true,
+          taetigkeiten: 1,
           visionen: 1,
           eintraege: 1,
           ebenen: { visionen: true, organisationen: false, projekte: false, vorhaben: false },
         }),
       ),
     ).toBeNull();
+  });
+});
+
+describe('willkommensZeilen', () => {
+  it('zeigt das angelegte Ziel mit Haken und den Eintrag nur bei einer Tätigkeit', () => {
+    expect(willkommensZeilen(stand({ taetigkeiten: 2, stufe: 'macher', projekte: 1 }))).toEqual([
+      { schluessel: 'ziel', art: 'projekte', erledigt: true },
+      { schluessel: 'eintrag', erledigt: false },
+    ]);
+    expect(willkommensZeilen(stand({ stufe: 'macher' }))).toEqual([
+      { schluessel: 'ersteTaetigkeit', erledigt: false },
+      { schluessel: 'ziel', art: 'projekte', erledigt: false },
+    ]);
+    expect(willkommensZeilen(stand({ taetigkeiten: 1, stufe: 'einfach' }))).toEqual([
+      { schluessel: 'eintrag', erledigt: false },
+    ]);
+    expect(willkommensZeilen(stand({ stufe: 'traeumer' }))).toEqual([
+      { schluessel: 'ersteTaetigkeit', erledigt: false },
+      { schluessel: 'ziel', art: 'visionen', erledigt: false },
+    ]);
+    expect(willkommensZeilen(stand({ taetigkeiten: 1, stufe: 'uebung', faehigkeiten: 1, eintraege: 1 }))).toEqual([
+      { schluessel: 'faehigkeit', erledigt: true },
+      { schluessel: 'eintrag', erledigt: true },
+    ]);
+    expect(
+      willkommensZeilen(
+        stand({
+          taetigkeiten: 1,
+          ebenen: { visionen: false, organisationen: false, projekte: false, vorhaben: true },
+          funktionen: { ...standardFunktionen(), ...funktionenFuerStufe('bodenstaendig') },
+        }),
+      ),
+    ).toEqual([
+      { schluessel: 'ziel', art: 'vorhaben', erledigt: false },
+      { schluessel: 'eintrag', erledigt: false },
+    ]);
   });
 });
 

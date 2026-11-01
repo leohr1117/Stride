@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf Heute stehen die ersten Schritte, bis der erste XP da ist.', 'On Today, the first steps stay until the first XP.'],
+  ['Ein erledigter Schritt zeigt einen Haken und den Namen. Einen Zähler gibt es nicht.', 'A finished step shows a check and the name. There is no counter.'],
+  ['Die ersten Schritte stehen nur noch auf Heute.', 'The first steps live only on Today.'],
   ['Die Startseite heißt Heute.', 'The home page is called Today.'],
   ['XP diese Woche, Streak und Momentum stehen nebeneinander.', 'XP this week, streak, and momentum sit side by side.'],
   ['Rückkehr, Schutz und ein angeschlagener Streak stehen im Abschnitt Streak.', 'Return, protection, and a cracked streak sit in the Streak section.'],
