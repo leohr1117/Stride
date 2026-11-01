@@ -19,7 +19,7 @@ async function setzeFunktionen(seite: Page, funktionen: Record<string, boolean>)
 
 test('Bereiche → Toast Öffnen → Fähigkeiten → Zurück = Bereiche', async ({ page }, testInfo) => {
   const handy = testInfo.project.name === 'handy';
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u17b/${testInfo.project.name}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/bereiche/${testInfo.project.name}-${name}.png`, fullPage: true });
   await anmelden(page);
   const vorher = await liesFunktionen(page);
   try {

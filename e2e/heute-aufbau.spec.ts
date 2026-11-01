@@ -3,8 +3,8 @@ import { expect, test, type Page } from '@playwright/test';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 async function bild(seite: Page, name: string, volleSeite = true): Promise<void> {
-  fs.mkdirSync('tmp-bau/u18', { recursive: true });
-  await seite.screenshot({ path: `tmp-bau/u18/${name}.png`, fullPage: volleSeite });
+  fs.mkdirSync('tmp-test/heute-aufbau', { recursive: true });
+  await seite.screenshot({ path: `tmp-test/heute-aufbau/${name}.png`, fullPage: volleSeite });
 }
 
 test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) => {

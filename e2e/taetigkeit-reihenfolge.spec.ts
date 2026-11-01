@@ -15,7 +15,7 @@ async function vorlagen(seite: Page): Promise<VorlageZeile[]> {
 }
 
 test('Tätigkeiten lassen sich anordnen, die oberste steht zuerst', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/n4/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/taetigkeit-reihenfolge/${testInfo.project.name}-${name}.png` });
   let ursprung: number[] | null = null;
 
   try {

@@ -41,8 +41,8 @@ async function stelleHer(seite: Page, id: number): Promise<void> {
 }
 
 test('Nutzer ändert den eigenen Namen nicht, nur der Admin', async ({ page, request }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/n1k/${testInfo.project.name}-${name}.png`, fullPage: true });
-  const frei = `N1k${testInfo.project.name}`;
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/benutzername/${testInfo.project.name}-${name}.png`, fullPage: true });
+  const frei = `Neu${testInfo.project.name}`;
   let kontoId: number | null = null;
   let fremd = false;
   try {

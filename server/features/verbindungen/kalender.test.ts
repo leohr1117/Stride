@@ -7,7 +7,7 @@ import { erstelleProjekt, erstelleVision } from '../../services/struktur.ts';
 import { erstelleVorlage } from '../taetigkeiten/vorlagen.ts';
 import { erstelleKalender, gleicheKalenderAb, loescheKalender, pruefeKalender } from './kalender.ts';
 
-const basis = path.join('tmp-bau', 'kalender-vitest');
+const basis = path.join('tmp-test', 'kalender-vitest');
 mkdirSync(basis, { recursive: true });
 const ordner = mkdtempSync(path.join(basis, 'lauf-'));
 const offen: string[] = [];

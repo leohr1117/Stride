@@ -4,8 +4,8 @@ import { SPRACH_NAME, SPRACHEN, type Sprache } from '../shared/sprache/kern.ts';
 import { zeige } from '../shared/sprache/index.ts';
 
 async function merkbild(seite: Page, name: string): Promise<void> {
-  fs.mkdirSync('tmp-bau/u6', { recursive: true });
-  await seite.screenshot({ path: `tmp-bau/u6/${test.info().project.name}-${name}.png`, fullPage: true });
+  fs.mkdirSync('tmp-test/einfuehrung', { recursive: true });
+  await seite.screenshot({ path: `tmp-test/einfuehrung/${test.info().project.name}-${name}.png`, fullPage: true });
 }
 
 async function passwort(): Promise<string> {

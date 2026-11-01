@@ -55,7 +55,7 @@ test.afterEach(async ({ page }) => {
 });
 
 test('Speichern bleibt bei offener Tastatur im sichtbaren Bereich', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/b2/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/tastatur-speichern/${testInfo.project.name}-${name}.png` });
   const layout = page.viewportSize()?.height ?? 844;
   const hoehe = 460;
   const tastatur = layout - hoehe;

@@ -170,14 +170,14 @@ async function wischen(seite: Page, ziel: Locator): Promise<void> {
 }
 
 test('Chronik zeigt Löschen nur beim Wischen', async ({ page }, testInfo) => {
-  fs.mkdirSync('tmp-bau/a2', { recursive: true });
+  fs.mkdirSync('tmp-test/chronik-wischen', { recursive: true });
   const handy = testInfo.project.name === 'handy';
   await anmelden(page);
   await page.goto('/chronik');
   await expect(page.getByRole('heading', { name: /Chronik|History/ })).toBeVisible();
   const karten = page.locator('[data-schnell]');
   await expect(karten.first()).toBeVisible();
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/a2/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/chronik-wischen/${testInfo.project.name}-${name}.png` });
 
   const pruefeRuhe = async (name: string) => {
     const anzahl = Math.min(await karten.count(), 4);

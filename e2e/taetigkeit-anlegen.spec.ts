@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Tätigkeit anlegen ist ein Knopf und öffnet das Formular hier', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/d1/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/taetigkeit-anlegen/${testInfo.project.name}-${name}.png` });
 
   await page.goto('/mehr/inhalte');
   await expect(page.locator('main h1')).toHaveText('Tätigkeiten');
@@ -59,5 +59,5 @@ test('Im Eintrag öffnet Tätigkeit anlegen das Formular', async ({ page }, test
   const dialog = page.getByRole('dialog', { name: 'Tätigkeit anlegen' });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByRole('textbox', { name: 'Name' })).toBeVisible();
-  await page.screenshot({ path: `tmp-bau/d1/${testInfo.project.name}-eintrag.png` });
+  await page.screenshot({ path: `tmp-test/taetigkeit-anlegen/${testInfo.project.name}-eintrag.png` });
 });

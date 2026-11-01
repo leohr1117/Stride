@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 
 test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ page }, testInfo) => {
   const handy = testInfo.project.name === 'handy';
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u12b/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/seitentabelle/${testInfo.project.name}-${name}.png` });
 
   await page.goto('/');
   await expect(page.locator('main h1')).toHaveText('Heute');

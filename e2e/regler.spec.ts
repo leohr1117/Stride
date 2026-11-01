@@ -76,7 +76,7 @@ test.afterEach(async ({ page }) => {
 });
 
 test('Regler lässt das Textfeld los', async ({ page }, testInfo) => {
-  const bild = `tmp-bau/b1/${testInfo.project.name}`;
+  const bild = `tmp-test/regler/${testInfo.project.name}`;
 
   await page.goto('/mehr/inhalte');
   await page.getByRole('button', { name: 'Tätigkeit anlegen' }).click();
@@ -163,7 +163,7 @@ test('Regler lässt das Textfeld los', async ({ page }, testInfo) => {
 });
 
 test('Fokus-Ring nur bei der Tastatur', async ({ page }, testInfo) => {
-  const bild = `tmp-bau/b1/${testInfo.project.name}`;
+  const bild = `tmp-test/regler/${testInfo.project.name}`;
   await page.goto('/mehr/funktionen');
   const info = page.getByRole('button', { name: 'Info' }).first();
   await info.scrollIntoViewIfNeeded();

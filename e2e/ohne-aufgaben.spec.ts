@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 
 test('Aufgaben sind aus Navigation, Funktionen und Übersicht', async ({ page }, testInfo) => {
   const projekt = testInfo.project.name;
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/r1/${projekt}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/ohne-aufgaben/${projekt}-${name}.png`, fullPage: true });
 
   await page.goto('/mehr/funktionen');
   await expect(page.locator('#funktion-basis')).toBeVisible();

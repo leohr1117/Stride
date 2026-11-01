@@ -18,7 +18,7 @@ test.beforeEach(async ({ page }) => {
 
 test('Plus-Knopf unten rechts, nicht auf Mehr, mit Vorauswahl', async ({ page }, testInfo) => {
   const handy = testInfo.project.name === 'handy';
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u14/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/plus-knopf/${testInfo.project.name}-${name}.png` });
 
   await page.goto('/');
   await expect(page.locator('main h1')).toBeVisible();

@@ -79,7 +79,7 @@ test('Kontrastwächter bei eigenen Farben', async ({ page }, testInfo) => {
   const original = await leseDarstellung(page);
   const standardFarben = original.ansichtFarben.standard;
   const projekt = testInfo.project.name;
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u9/${projekt}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/kontrast/${projekt}-${name}.png`, fullPage: true });
 
   try {
     await speichere(page, { stil: 'standard', ...HELL });

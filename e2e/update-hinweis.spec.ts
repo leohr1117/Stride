@@ -4,8 +4,8 @@ import { AKTUELLE_VERSION } from '../shared/versionen.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 test('eine Snackbar bei verpassten Versionen, keine beim aktuellen Stand, Punkt weg nach dem Changelog', async ({ page }, testInfo) => {
-  fs.mkdirSync('tmp-bau/u18a', { recursive: true });
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u18a/${testInfo.project.name}-${name}.png`, fullPage: false });
+  fs.mkdirSync('tmp-test/update-hinweis', { recursive: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/update-hinweis/${testInfo.project.name}-${name}.png`, fullPage: false });
   const setzen = async (stand: { benachrichtigt: string; gesehen: string }) => {
     const antwort = await page.request.patch('/api/version-hinweis', { data: stand });
     expect(antwort.ok()).toBeTruthy();

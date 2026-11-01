@@ -4,7 +4,7 @@ import { afterAll, afterEach, describe, expect, it } from 'vitest';
 import { eine, mitWelt, schliesseWelt } from '../../db.ts';
 import { aendereVorlage, erstelleVorlage, ladeVorlagen, ordneVorlagen } from './vorlagen.ts';
 
-const wurzel = path.join(process.cwd(), 'tmp-bau', 'n4-vitest');
+const wurzel = path.join(process.cwd(), 'tmp-test', 'vorlagen');
 mkdirSync(wurzel, { recursive: true });
 const ordner = path.join(wurzel, `lauf-${process.pid}`);
 mkdirSync(ordner, { recursive: true });

@@ -12,7 +12,7 @@ test.beforeEach(async ({ page }) => {
 
 test('Profilzeilen öffnen Können, Haben, Fähigkeiten und Investitionen', async ({ page }, testInfo) => {
   const handy = testInfo.project.name === 'handy';
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u17/${testInfo.project.name}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/profil-seiten/${testInfo.project.name}-${name}.png`, fullPage: true });
   const zahlen = await page.evaluate(async () => {
     const charakter = (await fetch('/api/charakter').then((antwort) => antwort.json())) as {
       attribute: unknown[];

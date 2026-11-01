@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Attributnamen sind nur sichtbar', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/a4/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/attribut-name/${testInfo.project.name}-${name}.png` });
   const vorher = await attribute(page);
   const namen = vorher.map((eintrag) => eintrag.name).sort();
   const koennen = vorher.find((eintrag) => eintrag.typ === 'attribut' && !eintrag.archiviert);

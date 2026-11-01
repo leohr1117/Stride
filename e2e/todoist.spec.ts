@@ -24,7 +24,7 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
   await expect(page.getByText('Kopiere den API-Token.')).toBeVisible();
   await expect(page.getByText('Füge ihn hier ein und tippe auf Verbinden.')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Token in Todoist öffnen' })).toHaveAttribute('href', TOKEN_SEITE);
-  await page.screenshot({ path: `tmp-bau/u5/todoist-token-${info.project.name}.png`, fullPage: true });
+  await page.screenshot({ path: `tmp-test/todoist/todoist-token-${info.project.name}.png`, fullPage: true });
 
   const vorschauAufrufe: string[] = [];
   page.on('request', (anfrage) => {
@@ -98,5 +98,5 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
   await labels.getByRole('button', { name: 'Sport nach oben' }).click();
 
   await ohneSeitlichenUeberlauf(page);
-  await page.screenshot({ path: `tmp-bau/u5/todoist-${info.project.name}.png`, fullPage: true });
+  await page.screenshot({ path: `tmp-test/todoist/todoist-${info.project.name}.png`, fullPage: true });
 });

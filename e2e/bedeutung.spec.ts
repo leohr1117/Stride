@@ -57,7 +57,7 @@ test('Feste Bedeutungsfarben in Palette Dunkel', async ({ page }, testInfo) => {
   const original = await leseDarstellung(page);
   const standardFarben = original.ansichtFarben.standard;
   const projekt = testInfo.project.name;
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u8/${projekt}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/bedeutung/${projekt}-${name}.png`, fullPage: true });
 
   try {
     await page.goto('/');
@@ -197,7 +197,7 @@ test('Feste Bedeutungsfarben in Palette Dunkel', async ({ page }, testInfo) => {
     expect(kontrast(knopfAn, bahnAn)).toBeGreaterThanOrEqual(3);
     await expect.poll(() => knopf.evaluate((element) => element.getBoundingClientRect().left)).toBeGreaterThan(linksAus);
     await ohneSeitlichenUeberlauf(page);
-    await page.screenshot({ path: `tmp-bau/u8/${projekt}-d1.png` });
+    await page.screenshot({ path: `tmp-test/bedeutung/${projekt}-dialog.png` });
     await dialog.getByRole('button', { name: 'Schließen' }).click();
     const frage = page.getByRole('alertdialog', { name: 'Änderungen verwerfen?' });
     await expect(frage).toBeVisible();

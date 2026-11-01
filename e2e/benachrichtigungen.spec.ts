@@ -6,7 +6,7 @@ import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { TEST_KOPIE, TEST_URL } from './testdaten.ts';
 
-const ENDPUNKTE = ['https://geraet.example/phase4', 'https://geraet.example/phase4-zwei'] as const;
+const ENDPUNKTE = ['https://geraet.example/abo', 'https://geraet.example/abo-zwei'] as const;
 const HINWEIS = ['hinweis_streak', 'hinweis_rueckkehr', 'hinweis_boss', 'hinweis_ruhe_von', 'hinweis_ruhe_bis'] as const;
 const STREAK_INFO = 'Am angeschlagenen Tag, einmal. Der Text bittet um einen Eintrag.';
 const RUHIG = '21:00 – 07:00';
@@ -42,7 +42,7 @@ function snapshot(): Record<string, string | null> {
 
 function setzeAbo(endpoint: string): void {
   mitDb((db) => {
-    db.prepare('INSERT INTO push_abos (endpoint, p256dh, auth) VALUES (?, ?, ?)').run(endpoint, 'phase4-p256', 'phase4-auth');
+    db.prepare('INSERT INTO push_abos (endpoint, p256dh, auth) VALUES (?, ?, ?)').run(endpoint, 'abo-p256', 'abo-auth');
   });
 }
 
@@ -100,7 +100,7 @@ function imBild(kasten: { x: number; y: number; width: number; height: number } 
 
 test('Benachrichtigungen stehen unter Mehr vor Daten', async ({ page }, testInfo) => {
   test.setTimeout(120_000);
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/phase4/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/benachrichtigungen/${testInfo.project.name}-${name}.png` });
   const hinweis = { patch: 0, post: 0 };
   page.on('request', (anfrage) => {
     const url = anfrage.url();
@@ -284,7 +284,7 @@ test('ein iPhone-Tab lässt Einschalten aus', async ({ browser }, testInfo) => {
     } else {
       await expect(seite.locator('[data-hinweis-knopf]').getByRole('button', { name: 'Info', exact: true })).toHaveCount(0);
     }
-    await seite.screenshot({ path: `tmp-bau/phase4/${testInfo.project.name}-ios.png` });
+    await seite.screenshot({ path: `tmp-test/benachrichtigungen/${testInfo.project.name}-ios.png` });
   } finally {
     await context.close();
   }
@@ -488,8 +488,8 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
       return original(...(args as []));
     }) as typeof meldung.requestPermission;
   });
-  fs.mkdirSync('tmp-bau/48', { recursive: true });
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/48/${testInfo.project.name}-${name}.png`, fullPage: true });
+  fs.mkdirSync('tmp-test/benachrichtigungen', { recursive: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/benachrichtigungen/${testInfo.project.name}-${name}.png`, fullPage: true });
   try {
     await vorbereitenTeil(page);
     await zumStartTeil(page);
@@ -596,10 +596,10 @@ test('Nachschlagen erklärt Benachrichtigungen', async ({ page }) => {
   expect(abgeschnitten).toBe(false);
   await ohneSeitlichenUeberlauf(page);
   await karte.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
-  fs.mkdirSync('tmp-bau/49', { recursive: true });
+  fs.mkdirSync('tmp-test/benachrichtigungen', { recursive: true });
   const projekt = test.info().project.name;
-  await karte.screenshot({ path: `tmp-bau/49/${projekt}-karte.png` });
-  await page.screenshot({ path: `tmp-bau/49/${projekt}-seite.png` });
+  await karte.screenshot({ path: `tmp-test/benachrichtigungen/${projekt}-karte.png` });
+  await page.screenshot({ path: `tmp-test/benachrichtigungen/${projekt}-seite.png` });
 
   await page.goto('/mehr/neu');
   const verlauf = page.getByRole('region', { name: 'Version 3.17.0' });
@@ -610,5 +610,5 @@ test('Nachschlagen erklärt Benachrichtigungen', async ({ page }) => {
   await expect(verlauf.getByText('Nach einem Erfolg kann die Übersicht einmal fragen, ob du Benachrichtigungen einschalten willst.')).toBeVisible();
   await verlauf.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
   await ohneSeitlichenUeberlauf(page);
-  await page.screenshot({ path: `tmp-bau/49/${projekt}-version.png` });
+  await page.screenshot({ path: `tmp-test/benachrichtigungen/${projekt}-version.png` });
 });

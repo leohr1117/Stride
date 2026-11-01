@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Vorbilder ohne Leistenplatz führt nach Mehr, mit Leistenplatz hat keinen Pfeil', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u1/${testInfo.project.name}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/zurueck-stapel/${testInfo.project.name}-${name}.png`, fullPage: true });
   const pc = (page.viewportSize()?.width ?? 0) >= 768;
   const inDerLeiste = (await leiste(page)).includes('/vorbilder');
   await page.goto('/mehr');
@@ -57,7 +57,7 @@ test('Vorbilder ohne Leistenplatz führt nach Mehr, mit Leistenplatz hat keinen 
 });
 
 test('Heute behält den Boss und Ziele behält Archiv und Scrollstand', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u1/${testInfo.project.name}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/zurueck-stapel/${testInfo.project.name}-${name}.png`, fullPage: true });
   await page.goto('/');
   const boss = page.locator('section', { has: page.getByRole('heading', { name: 'Bosse greifen an' }) }).locator('a[href^="/projekte/"]').first();
   await expect(boss).toBeVisible();
@@ -102,7 +102,7 @@ test('Heute behält den Boss und Ziele behält Archiv und Scrollstand', async ({
 });
 
 test('Ein Platz merkt sich die letzte Seite und der Tipp kehrt an den Anfang', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u1/${testInfo.project.name}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/zurueck-stapel/${testInfo.project.name}-${name}.png`, fullPage: true });
   const vorher = await leiste(page);
   await page.evaluate(async () => {
     await fetch('/api/einstellungen', {
@@ -156,7 +156,7 @@ test('Tätigkeiten ist am PC ein Leistenplatz und führt sonst nach Mehr', async
     await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Mehr');
     await expect(page.locator('nav.mobilleiste a[href="/mehr"]')).toHaveAttribute('aria-current', 'page');
   }
-  await page.screenshot({ path: `tmp-bau/u1b/${testInfo.project.name}-taetigkeiten.png`, fullPage: true });
+  await page.screenshot({ path: `tmp-test/zurueck-stapel/${testInfo.project.name}-taetigkeiten.png`, fullPage: true });
   await ohneSeitlichenUeberlauf(page);
 
   if (pc) {

@@ -51,7 +51,7 @@ async function keineFarbLinie(wurzel: Locator): Promise<void> {
 
 test('Farbpunkt statt Linie und Balken', async ({ page }, testInfo) => {
   const bild = (name: string, ganz = false) =>
-    page.screenshot({ path: `tmp-bau/u4/${testInfo.project.name}-${name}.png`, fullPage: ganz });
+    page.screenshot({ path: `tmp-test/farblinie/${testInfo.project.name}-${name}.png`, fullPage: ganz });
 
   await page.goto('/ziele');
   await expect(page.getByRole('heading', { name: 'Ziele', level: 1 })).toBeVisible();

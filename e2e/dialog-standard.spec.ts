@@ -31,8 +31,8 @@ async function klickScrim(seite: Page): Promise<void> {
 }
 
 test('Blatt, Fokus und Verwerfen folgen dem Dialog-Standard', async ({ page }, testInfo) => {
-  fs.mkdirSync('tmp-bau/u11a', { recursive: true });
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u11a/${testInfo.project.name}-${name}.png` });
+  fs.mkdirSync('tmp-test/dialog-standard', { recursive: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/dialog-standard/${testInfo.project.name}-${name}.png` });
   const handy = testInfo.project.name === 'handy';
   await anmelden(page);
 
@@ -80,7 +80,7 @@ test('Blatt, Fokus und Verwerfen folgen dem Dialog-Standard', async ({ page }, t
   await ausloeser.click();
   await expect(blatt).toBeVisible();
   const notiz = blatt.getByRole('textbox', { name: 'Notiz' });
-  await notiz.fill('U11a noch offen');
+  await notiz.fill('Notiz noch offen');
   await klickScrim(page);
   const frage = page.getByRole('alertdialog', { name: 'Änderungen verwerfen?' });
   await expect(frage).toBeVisible();
@@ -90,7 +90,7 @@ test('Blatt, Fokus und Verwerfen folgen dem Dialog-Standard', async ({ page }, t
   await bild('verwerfen');
   await frage.getByRole('button', { name: 'Weiter bearbeiten' }).click();
   await expect(frage).toBeHidden();
-  await expect(notiz).toHaveValue('U11a noch offen');
+  await expect(notiz).toHaveValue('Notiz noch offen');
   await page.keyboard.press('Escape');
   await expect(frage).toBeVisible();
   await frage.getByRole('button', { name: 'Verwerfen' }).click();
@@ -100,7 +100,7 @@ test('Blatt, Fokus und Verwerfen folgen dem Dialog-Standard', async ({ page }, t
 });
 
 test('Warndialog sitzt mittig und der Fokus startet auf Abbrechen', async ({ page }, testInfo) => {
-  fs.mkdirSync('tmp-bau/u11a', { recursive: true });
+  fs.mkdirSync('tmp-test/dialog-standard', { recursive: true });
   await anmelden(page);
   await page.goto('/mehr/profil');
   const abmelden = page.getByRole('button', { name: 'Abmelden', exact: true });
@@ -131,15 +131,15 @@ test('Warndialog sitzt mittig und der Fokus startet auf Abbrechen', async ({ pag
   await page.keyboard.press('Tab');
   await expect(abbrechen).toBeFocused();
   await ohneSeitlichenUeberlauf(page);
-  await page.screenshot({ path: `tmp-bau/u11a/${testInfo.project.name}-warnung.png` });
+  await page.screenshot({ path: `tmp-test/dialog-standard/${testInfo.project.name}-warnung.png` });
   await abbrechen.click();
   await expect(warnung).toBeHidden();
   await expect(abmelden).toBeFocused();
 });
 
 test('Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle', async ({ page }, testInfo) => {
-  fs.mkdirSync('tmp-bau/u11a', { recursive: true });
-  const titel = `U11a-Bereich-${testInfo.project.name}`;
+  fs.mkdirSync('tmp-test/dialog-standard', { recursive: true });
+  const titel = `Bereich-Test-${testInfo.project.name}`;
   await anmelden(page);
   const vorher = await api<{ ebenen: { visionen: boolean } }>(page, '/api/einstellungen', 'GET');
   let visionId: number | null = null;
@@ -180,7 +180,7 @@ test('Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle', async ({
     await page.keyboard.press('Shift+Tab');
     await expect(blatt.getByRole('button', { name: 'Anwenden' })).toBeFocused();
     await ohneSeitlichenUeberlauf(page);
-    await page.screenshot({ path: `tmp-bau/u11a/${testInfo.project.name}-bereich.png` });
+    await page.screenshot({ path: `tmp-test/dialog-standard/${testInfo.project.name}-bereich.png` });
     await blatt.getByRole('button', { name: 'Anwenden' }).click();
     await expect(blatt).toBeHidden();
     await expect(wahl).toContainText(titel);
@@ -194,7 +194,7 @@ test('Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle', async ({
 });
 
 test('Loslassen gilt sofort und die Meldung bietet Rückgängig', async ({ page }, testInfo) => {
-  fs.mkdirSync('tmp-bau/u11a', { recursive: true });
+  fs.mkdirSync('tmp-test/dialog-standard', { recursive: true });
   await anmelden(page);
   const boss = page.locator('section', { has: page.getByRole('heading', { name: 'Bosse greifen an' }) }).locator('a[href^="/projekte/"]').first();
   await expect(boss).toBeVisible();
@@ -207,7 +207,7 @@ test('Loslassen gilt sofort und die Meldung bietet Rückgängig', async ({ page 
   const status = page.getByRole('status');
   await expect(status).toContainText('Losgelassen');
   await expect(status.getByRole('button', { name: 'Rückgängig' })).toBeVisible();
-  await page.screenshot({ path: `tmp-bau/u11a/${testInfo.project.name}-toast.png` });
+  await page.screenshot({ path: `tmp-test/dialog-standard/${testInfo.project.name}-toast.png` });
   await status.getByRole('button', { name: 'Rückgängig' }).click();
   await expect(status).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Loslassen' }).first()).toBeVisible();

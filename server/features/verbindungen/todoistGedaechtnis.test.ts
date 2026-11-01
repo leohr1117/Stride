@@ -10,7 +10,7 @@ import { ordneTodoistProjektZu } from './todoistZuordnung.ts';
 import { ladeTodoistStatus, trenneTodoist, verbindeTodoist } from './todoist.ts';
 
 const TOKEN = 'test-token-1234';
-const basis = path.join('tmp-bau', 'todoist-gedaechtnis');
+const basis = path.join('tmp-test', 'todoist-gedaechtnis');
 mkdirSync(basis, { recursive: true });
 const ordner = mkdtempSync(path.join(basis, 'lauf-'));
 const offen: string[] = [];

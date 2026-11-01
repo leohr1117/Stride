@@ -139,13 +139,13 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
       expect(await flaecheGleich(page, '.mobilkopf')).toBe(true);
     }
     await ohneSeitlichenUeberlauf(page);
-    await page.screenshot({ path: `tmp-bau/u7-${projekt}-darstellung.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/standard-stil/${projekt}-darstellung.png`, fullPage: true });
 
     await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('data-stil', 'standard');
     expect(await eckenRadius(page, '.karte')).toBe('8px');
     await ohneSeitlichenUeberlauf(page);
-    await page.screenshot({ path: `tmp-bau/u7-${projekt}-heute.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/standard-stil/${projekt}-heute.png`, fullPage: true });
 
     await page.getByRole('button', { name: 'Eintrag loggen' }).click();
     const dialog = page.getByRole('dialog', { name: 'Was hast du getan?' });
@@ -158,7 +158,7 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
     expect(dialogEcken[1]).toBe('12px');
     expect(dialogEcken[2]).toBe(projekt === 'handy' ? '0px' : '12px');
     expect(dialogEcken[3]).toBe(projekt === 'handy' ? '0px' : '12px');
-    await page.screenshot({ path: `tmp-bau/u7-${projekt}-eintrag.png` });
+    await page.screenshot({ path: `tmp-test/standard-stil/${projekt}-eintrag.png` });
     await dialog.getByRole('button', { name: 'Schließen' }).click();
     await expect(dialog).toBeHidden();
 
@@ -166,13 +166,13 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
     await expect(page.getByRole('heading', { name: 'Ziele', exact: true })).toBeVisible();
     await expect(page.getByText('Lädt …')).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);
-    await page.screenshot({ path: `tmp-bau/u7-${projekt}-ziele.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/standard-stil/${projekt}-ziele.png`, fullPage: true });
 
     await page.goto('/mehr');
     await expect(page.getByRole('heading', { name: 'Mehr', exact: true })).toBeVisible();
     await expect(page.getByText('Lädt …')).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);
-    await page.screenshot({ path: `tmp-bau/u7-${projekt}-mehr.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/standard-stil/${projekt}-mehr.png`, fullPage: true });
 
     await page.goto('/mehr/darstellung');
     await waehleAnsicht(page, 'Minimal', 'minimal');
@@ -184,7 +184,7 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
     const zurueckMinimal = await eckenRadius(page, '[data-zurueck]');
     expect(Number.parseFloat(zurueckMinimal)).toBeGreaterThan(8);
     await ohneSeitlichenUeberlauf(page);
-    await page.screenshot({ path: `tmp-bau/u7-${projekt}-minimal.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/standard-stil/${projekt}-minimal.png`, fullPage: true });
 
     await speichere(page, { stil: 'schlicht' });
     expect((await leseDarstellung(page)).stil).toBe('standard');

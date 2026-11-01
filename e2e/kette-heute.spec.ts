@@ -35,8 +35,8 @@ function lokalesDatum(iso: string): string {
 }
 
 async function bild(seite: Page, name: string): Promise<void> {
-  fs.mkdirSync('tmp-bau/35', { recursive: true });
-  await seite.screenshot({ path: `tmp-bau/35/${name}.png` });
+  fs.mkdirSync('tmp-test/kette-heute', { recursive: true });
+  await seite.screenshot({ path: `tmp-test/kette-heute/${name}.png` });
 }
 
 async function beideBreiten(seite: Page, name: string): Promise<void> {

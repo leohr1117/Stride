@@ -35,7 +35,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Browser-Zurück schließt nur den Eintrag-Dialog', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u3/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/dialog-zurueck/${testInfo.project.name}-${name}.png` });
   const adresse = page.url();
   await seiteBleibt(page);
   await page.getByRole('button', { name: 'Eintrag loggen' }).click();
@@ -85,7 +85,7 @@ test('Esc und Schließen nehmen den Verlaufseintrag mit', async ({ page }) => {
 });
 
 test('Bei zwei Dialogen schließt Zurück nur den obersten', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u3/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/dialog-zurueck/${testInfo.project.name}-${name}.png` });
   const adresse = page.url();
   await seiteBleibt(page);
   await page.getByRole('button', { name: 'Eintrag loggen' }).click();

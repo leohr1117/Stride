@@ -40,7 +40,7 @@ test.beforeEach(async ({ page }) => {
 
 test('Mehr ist das Seitenverzeichnis und die Einstellungen', async ({ page }, testInfo) => {
   const handy = testInfo.project.name === 'handy';
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u16/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/mehr-liste/${testInfo.project.name}-${name}.png` });
   await page.goto('/mehr');
   await expect(page.locator('main h1')).toHaveText('Mehr');
   await expect(page.getByRole('heading', { name: 'Seiten', exact: true })).toBeVisible();

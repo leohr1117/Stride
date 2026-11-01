@@ -76,7 +76,7 @@ async function setzeFarbfeld(dialog: Locator, label: string, wert: string): Prom
 
 test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', async ({ page }, testInfo) => {
   test.setTimeout(120_000);
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/n5/${testInfo.project.name}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/paletten/${testInfo.project.name}-${name}.png`, fullPage: true });
   page.on('dialog', (dialog) => {
     void dialog.dismiss();
     throw new Error(`Unerwartetes Browser-Fenster: ${dialog.type()}`);

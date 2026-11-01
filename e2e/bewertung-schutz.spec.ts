@@ -39,8 +39,8 @@ async function vorbereiten(seite: Page): Promise<void> {
 }
 
 function bildBewertung(seite: Page, name: string): Promise<void> {
-  fs.mkdirSync('tmp-bau/37', { recursive: true });
-  return seite.screenshot({ path: `tmp-bau/37/${test.info().project.name}-${name}.png` });
+  fs.mkdirSync('tmp-test/bewertung-schutz', { recursive: true });
+  return seite.screenshot({ path: `tmp-test/bewertung-schutz/${test.info().project.name}-${name}.png` });
 }
 
 async function uebungOhneBoss(seite: Page): Promise<void> {
@@ -221,10 +221,10 @@ test('Nachschlagen erklärt Schutz und Rückkehr', async ({ page }) => {
   expect(abgeschnitten).toBe(false);
   await ohneSeitlichenUeberlauf(page);
   await karte.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
-  fs.mkdirSync('tmp-bau/38', { recursive: true });
+  fs.mkdirSync('tmp-test/bewertung-schutz', { recursive: true });
   const projekt = test.info().project.name;
-  await karte.screenshot({ path: `tmp-bau/38/${projekt}-karte.png` });
-  await page.screenshot({ path: `tmp-bau/38/${projekt}-seite.png` });
+  await karte.screenshot({ path: `tmp-test/bewertung-schutz/${projekt}-karte.png` });
+  await page.screenshot({ path: `tmp-test/bewertung-schutz/${projekt}-seite.png` });
 
   await page.goto('/mehr/neu');
   const verlauf = page.getByRole('region', { name: 'Version 3.16.0' });
@@ -233,5 +233,5 @@ test('Nachschlagen erklärt Schutz und Rückkehr', async ({ page }) => {
   await expect(verlauf.getByText('Bricht der Streak, bleiben sieben Tage für die Rückkehr. Ein Eintrag in der Frist schließt sie.')).toBeVisible();
   await verlauf.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
   await ohneSeitlichenUeberlauf(page);
-  await page.screenshot({ path: `tmp-bau/38/${projekt}-version.png` });
+  await page.screenshot({ path: `tmp-test/bewertung-schutz/${projekt}-version.png` });
 });

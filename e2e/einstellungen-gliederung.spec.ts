@@ -12,7 +12,7 @@ const EINSTELLUNGEN = [
 ];
 
 test('Einstellungen zeigen Karten auf Heute und Benachrichtigungen vor Daten', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/n2/${testInfo.project.name}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/einstellungen-gliederung/${testInfo.project.name}-${name}.png`, fullPage: true });
   await anmelden(page);
   await page.goto('/mehr');
   await expect(page.locator('main h1')).toHaveText('Mehr');

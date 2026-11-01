@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 
 test('Handbuch und Einführung nennen die Bereiche nicht mehr', async ({ page }, testInfo) => {
   const projekt = testInfo.project.name;
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/r3/${projekt}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/reste/${projekt}-${name}.png`, fullPage: true });
 
   await page.goto('/handbuch');
   await expect(page.getByRole('heading', { name: 'Handbuch', level: 1 })).toBeVisible();

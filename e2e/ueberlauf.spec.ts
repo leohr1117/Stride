@@ -49,7 +49,7 @@ const FEST = [
 ];
 
 function ordner(): void {
-  fs.mkdirSync('tmp-bau/b3', { recursive: true });
+  fs.mkdirSync('tmp-test/ueberlauf', { recursive: true });
 }
 
 async function pfade(seite: Page): Promise<string[]> {
@@ -234,7 +234,7 @@ test('Ansichten bleiben bei 390 und 1440 im Bild', async ({ page }, testInfo) =>
     const funde = await miss(page);
     if (funde.length > 0) {
       berichte.push({ name: pfad, funde });
-      await page.screenshot({ path: `tmp-bau/b3/${projekt}-fehler.png` });
+      await page.screenshot({ path: `tmp-test/ueberlauf/${projekt}-fehler.png` });
     }
   }
 
@@ -255,6 +255,6 @@ test('Ansichten bleiben bei 390 und 1440 im Bild', async ({ page }, testInfo) =>
     berichte.push({ name: 'dialog-taetigkeit', funde: taetigkeit });
   }
 
-  fs.writeFileSync(`tmp-bau/b3/${projekt}.json`, JSON.stringify(berichte, null, 2));
+  fs.writeFileSync(`tmp-test/ueberlauf/${projekt}.json`, JSON.stringify(berichte, null, 2));
   expect(berichte).toEqual([]);
 });

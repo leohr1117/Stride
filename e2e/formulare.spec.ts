@@ -85,13 +85,13 @@ function flaecheMindestens(kasten: { width: number; height: number } | null, px:
 
 test('Formular, Warndialog und Toast halten die Maße', async ({ page }, testInfo) => {
   test.setTimeout(120_000);
-  fs.mkdirSync('tmp-bau/u11', { recursive: true });
+  fs.mkdirSync('tmp-test/formulare', { recursive: true });
   const stand = await anmelden(page);
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u11/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/formulare/${testInfo.project.name}-${name}.png` });
   let visionId: number | null = null;
   let projektId: number | null = null;
   let vorlageId: number | null = null;
-  const titel = `U11 ${testInfo.project.name}`;
+  const titel = `Formular ${testInfo.project.name}`;
 
   try {
     await stelleStandard(page);

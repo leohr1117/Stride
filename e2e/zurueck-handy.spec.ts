@@ -57,7 +57,7 @@ async function pfeilImKopf(seite: Page): Promise<void> {
 
 test('Zurück-Pfeil sitzt im Kopf', async ({ page }, testInfo) => {
   const handy = testInfo.project.name === 'handy';
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/a1/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/zurueck-handy/${testInfo.project.name}-${name}.png` });
 
   await page.goto('/mehr');
   await expect(page).toHaveURL(/\/mehr$/);

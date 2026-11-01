@@ -16,7 +16,7 @@ async function speichern(seite: Page, koerper: Record<string, unknown>): Promise
 
 test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInfo) => {
   test.setTimeout(120_000);
-  fs.mkdirSync('tmp-bau/u10', { recursive: true });
+  fs.mkdirSync('tmp-test/bausteine', { recursive: true });
   await anmelden(page);
   const original = await page.evaluate(async () => {
     const daten = (await fetch('/api/einstellungen').then((antwort) => antwort.json())) as {
@@ -25,7 +25,7 @@ test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInf
     };
     return { stil: daten.stil, glimmen: daten.glimmen };
   });
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u10/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/bausteine/${testInfo.project.name}-${name}.png` });
 
   try {
     await page.goto('/mehr/darstellung');

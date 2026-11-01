@@ -6,7 +6,7 @@ import { zeige } from '../shared/sprache/index.ts';
 test.use({ locale: 'en-US' });
 
 function bild(info: TestInfo, sprache: Sprache, name: string): string {
-  const ordner = 'tmp-bau/l2';
+  const ordner = 'tmp-test/sprache-funde';
   fs.mkdirSync(ordner, { recursive: true });
   return `${ordner}/${info.project.name}-${sprache}-${name}.png`;
 }

@@ -9,3 +9,4 @@ tmp-*/
 test-results/
 playwright-report/
 *.db
+tmp-test/

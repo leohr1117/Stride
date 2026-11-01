@@ -327,14 +327,14 @@ test('Eigene Farben bleiben beim Ansichtswechsel erhalten', async ({ page }, tes
     const gespeichert = await leseDarstellung(page);
     expect(gespeichert.akzent).toBe('#ff00aa');
     expect(gespeichert.stil).toBe(vorher.stil);
-    await page.screenshot({ path: `tmp-bau/a3-${testInfo.project.name}-eigene.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/darstellung/${testInfo.project.name}-eigene.png`, fullPage: true });
 
     await waehleAnsicht(page, ANSICHT_NAME[andere]);
     await expect(akzent).not.toHaveValue('#ff00aa');
     const fremd = await leseDarstellung(page);
     expect(fremd.stil).toBe(andere);
     expect(fremd.akzent).not.toBe('#ff00aa');
-    await page.screenshot({ path: `tmp-bau/a3-${testInfo.project.name}-wechsel.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/darstellung/${testInfo.project.name}-wechsel.png`, fullPage: true });
 
     await setzeFarbe(page, 'Akzent', '#00cc88');
     await expect(akzent).toHaveValue('#00cc88');
@@ -342,7 +342,7 @@ test('Eigene Farben bleiben beim Ansichtswechsel erhalten', async ({ page }, tes
     await waehleAnsicht(page, ANSICHT_NAME[vorher.stil]);
     await expect(akzent).toHaveValue('#ff00aa');
     expect((await leseDarstellung(page)).akzent).toBe('#ff00aa');
-    await page.screenshot({ path: `tmp-bau/a3-${testInfo.project.name}-zurueck.png`, fullPage: true });
+    await page.screenshot({ path: `tmp-test/darstellung/${testInfo.project.name}-zurueck.png`, fullPage: true });
 
     await page.reload();
     await expect(page.getByRole('heading', { name: 'Eigene Farben', exact: true })).toBeVisible();

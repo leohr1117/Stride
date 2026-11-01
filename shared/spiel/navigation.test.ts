@@ -152,7 +152,7 @@ describe('17 Schalter', () => {
     }
   });
 
-  it('blendet in S34 die Zeile ausgeschalteter Bereiche aus', () => {
+  it('blendet die Zeile ausgeschalteter Bereiche aus', () => {
     const funktionen: Funktionen = { ...standardFunktionen() };
     for (const schluessel of Object.keys(funktionen) as (keyof Funktionen)[]) {
       funktionen[schluessel] = true;

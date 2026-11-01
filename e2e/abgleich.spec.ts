@@ -121,7 +121,7 @@ async function gleicherNeu(seite: Page): Promise<void> {
 }
 
 test('Abgleich zeigt den Stand, behält Einträge und importiert nicht doppelt', async ({ page }, info) => {
-  fs.mkdirSync('tmp-bau', { recursive: true });
+  fs.mkdirSync('tmp-test', { recursive: true });
   const name = `V3 ${info.project.name}`;
   const termin = `V3 Termin ${info.project.name}`;
   const ende = new Date(Date.now() - 45 * 60 * 1000);
@@ -137,14 +137,14 @@ test('Abgleich zeigt den Stand, behält Einträge und importiert nicht doppelt',
     await expect(zeile).toContainText('1 übernommen');
     await expect(zeile).toContainText(/Abgeglichen /);
     await zeile.scrollIntoViewIfNeeded();
-    await page.screenshot({ path: `tmp-bau/v3-stand-${info.project.name}.png` });
+    await page.screenshot({ path: `tmp-test/abgleich/stand-${info.project.name}.png` });
     await ohneSeitlichenUeberlauf(page);
 
     server.lage.status = 500;
     await gleicherNeu(page);
     await expect(zeile).toContainText('Der Kalender hat die Anfrage abgelehnt.');
     await zeile.scrollIntoViewIfNeeded();
-    await page.screenshot({ path: `tmp-bau/v3-fehler-${info.project.name}.png` });
+    await page.screenshot({ path: `tmp-test/abgleich/fehler-${info.project.name}.png` });
     await ohneSeitlichenUeberlauf(page);
 
     await kalenderKarte(page).getByRole('heading', { name: 'Kalender', level: 2 }).locator('xpath=..').getByRole('button', { name: 'Info' }).click();

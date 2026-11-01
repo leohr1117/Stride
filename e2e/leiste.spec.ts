@@ -25,7 +25,7 @@ test.afterEach(async ({ page }) => {
 
 test('Untere Leiste: gespeicherte Plätze, Standard, Mehr fest, Profil wählbar', async ({ page }, testInfo) => {
   const handy = testInfo.project.name === 'handy';
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u13/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/leiste/${testInfo.project.name}-${name}.png` });
 
   expect(await leseLeiste(page)).toEqual(ORIGINAL);
 

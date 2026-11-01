@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 
 test('Kopf zeigt Titel, Profilring oder genau einen Pfeil', async ({ page }, testInfo) => {
   const handy = testInfo.project.name === 'handy';
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u2/${testInfo.project.name}-${name}.png` });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/kopf/${testInfo.project.name}-${name}.png` });
   const profilInLeiste = (await leiste(page)).includes('/charakter');
 
   await page.goto('/');

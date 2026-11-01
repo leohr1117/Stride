@@ -26,7 +26,7 @@ async function anmelden(seite: Page): Promise<void> {
 }
 
 function bild(info: TestInfo, name: string): string {
-  return `tmp-screens/81-${info.project.name}-${name}.png`;
+  return `tmp-test/vorbilder-spektrum/${info.project.name}-${name}.png`;
 }
 
 async function ohneSeitlichenUeberlauf(seite: Page): Promise<void> {

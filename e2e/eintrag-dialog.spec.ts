@@ -23,9 +23,9 @@ async function ganzInDerReihe(reihe: Locator, chip: Locator): Promise<void> {
   expect(beschnitten).toBe(false);
 }
 
-test('Eintrag D1 ist ein Blatt ohne Tipp, mit lesbaren Chips und Info', async ({ page }, testInfo) => {
-  fs.mkdirSync('tmp-bau/u17c', { recursive: true });
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/u17c/${testInfo.project.name}-${name}.png` });
+test('Eintrag-Dialog ist ein Blatt ohne Tipp, mit lesbaren Chips und Info', async ({ page }, testInfo) => {
+  fs.mkdirSync('tmp-test/eintrag-dialog', { recursive: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/eintrag-dialog/${testInfo.project.name}-${name}.png` });
   await anmelden(page);
   await page.getByRole('button', { name: 'Eintrag loggen' }).click();
   const dialog = page.getByRole('dialog', { name: 'Was hast du getan?' });

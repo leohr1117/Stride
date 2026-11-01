@@ -17,7 +17,7 @@ function imBild(kasten: { x: number; y: number; width: number; height: number } 
 }
 
 test('Hierarchie, Funktionen und Projekt-Tätigkeit sind erkennbar', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/n9/${testInfo.project.name}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/verstaendlichkeit/${testInfo.project.name}-${name}.png`, fullPage: true });
   const sicht = page.viewportSize() ?? { width: 390, height: 844 };
 
   await page.goto('/ziele');

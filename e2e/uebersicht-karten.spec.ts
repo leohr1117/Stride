@@ -21,7 +21,7 @@ async function karten(seite: Page): Promise<{ aktivitaet: boolean; boss: boolean
 }
 
 test('Nutzer wählt die Karten der Übersicht', async ({ page }, testInfo) => {
-  const bild = (name: string) => page.screenshot({ path: `tmp-bau/n3/${testInfo.project.name}-${name}.png`, fullPage: true });
+  const bild = (name: string) => page.screenshot({ path: `tmp-test/uebersicht-karten/${testInfo.project.name}-${name}.png`, fullPage: true });
   let geaendert = false;
   try {
     await anmelden(page);

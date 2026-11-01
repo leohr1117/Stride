@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
-const NAME = 'U21d Anteile';
+const NAME = 'Anteile Test';
 const GEWICHTE = [
   { kennung: 'ansehen', gewicht: 50, prozent: 36 },
   { kennung: 'einfluss', gewicht: 30, prozent: 22 },
@@ -94,8 +94,8 @@ test('Tätigkeiten zeigen Prozent, die 100 ergeben, und gleich breite gleiche Fa
 
     await ohneSeitlichenUeberlauf(page);
     await zeile.scrollIntoViewIfNeeded();
-    await page.screenshot({ path: `tmp-bau/u21d/${testInfo.project.name}-liste.png` });
-    await zeile.locator('[data-anteile]').screenshot({ path: `tmp-bau/u21d/${testInfo.project.name}-balken.png` });
+    await page.screenshot({ path: `tmp-test/taetigkeit-anteile/${testInfo.project.name}-liste.png` });
+    await zeile.locator('[data-anteile]').screenshot({ path: `tmp-test/taetigkeit-anteile/${testInfo.project.name}-balken.png` });
 
     await zeile.getByRole('button', { name: `${NAME} bearbeiten` }).click();
     const dialog = page.getByRole('dialog', { name: 'Tätigkeit bearbeiten' });
@@ -114,7 +114,7 @@ test('Tätigkeiten zeigen Prozent, die 100 ergeben, und gleich breite gleiche Fa
     await ansehenProzent.evaluate((element) => element.scrollIntoView({ block: 'center' }));
     await expect(ansehenProzent).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
-    await page.screenshot({ path: `tmp-bau/u21d/${testInfo.project.name}-dialog.png` });
+    await page.screenshot({ path: `tmp-test/taetigkeit-anteile/${testInfo.project.name}-dialog.png` });
   } finally {
     if (id !== null) {
       await page.request.delete(`/api/vorlagen/${id}`);
