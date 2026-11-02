@@ -92,7 +92,7 @@ test('Projekt-Tätigkeiten nur beim eigenen Projekt', async ({ page }, testInfo)
   await page.keyboard.press('Escape');
 
   await page.goto('/basis');
-  await page.getByRole('button', { name: 'Aufgabe' }).click();
+  await page.getByRole('button', { name: '+ Basis-Aufgabe', exact: true }).click();
   const dialog = page.getByRole('dialog');
   const auswahl = dialog.getByRole('combobox', { name: 'Tätigkeit', exact: true });
   const projektFeld = dialog.getByRole('combobox', { name: /^Projekt\b/ });
@@ -106,8 +106,11 @@ test('Projekt-Tätigkeiten nur beim eigenen Projekt', async ({ page }, testInfo)
   await page.keyboard.press('Escape');
 
   await page.goto('/chronik');
-  await expect(page.locator('.chip-reihe').getByRole('button', { name: gebunden.name, exact: true })).toHaveCount(0);
-  await expect(page.locator('.chip-reihe').getByRole('button', { name: allgemein.name, exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Filter', exact: true }).click();
+  const filter = page.getByRole('dialog', { name: 'Filter' });
+  await expect(filter.locator('.chip-reihe').getByRole('button', { name: gebunden.name, exact: true })).toHaveCount(0);
+  await expect(filter.locator('.chip-reihe').getByRole('button', { name: allgemein.name, exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
   await expect(page.getByText(/KW \d/)).toHaveCount(0);
   const tage = await page.locator('h2').allInnerTexts();
   for (const tag of tage) {
@@ -149,7 +152,7 @@ test('Chronik, Vision und Version', async ({ page }, testInfo) => {
   await ohneSeitlichenUeberlauf(page);
 
   await page.goto('/chronik');
-  await expect(page.getByRole('heading', { name: 'Chronik' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Verlauf' })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
   await bild('chronik');
   const eintrag = page.locator('section button').filter({ hasText: 'XP' }).first();

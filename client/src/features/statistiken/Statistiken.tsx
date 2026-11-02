@@ -8,7 +8,7 @@ import { useSichtbarkeit } from '../../funktionen.ts';
 import { BalkenListe, type SaeulenWert } from '../../components/DiagrammBasis.tsx';
 import { LinienDiagramm, SaeulenDiagramm } from '../../components/mitDiagramm.tsx';
 import { Icon } from '../../components/Icons.tsx';
-import { Fehlermeldung, Karte, Ladeanzeige, Leer, Segmentauswahl, Ueberschrift } from '../../ui/index.ts';
+import { Fehlermeldung, Ladeanzeige, Leer, Segmentauswahl, Ueberschrift } from '../../ui/index.ts';
 import { ausTagesSchluessel, kalenderwoche, kurzesDatum, monatKurz, stunden, zahl } from '../../format.ts';
 
 const ZEITRAUM_LABEL: Record<Zeitraum, string> = {
@@ -61,9 +61,11 @@ export function StatistikenSeite() {
       {isPending && <Ladeanzeige />}
       <Fehlermeldung fehler={error} />
 
-      {statistiken && (
+      {statistiken && statistiken.kennzahlen.eintraege === 0 && <Leer text={tx("Noch keine Einträge.")} />}
+
+      {statistiken && statistiken.kennzahlen.eintraege > 0 && (
         <div className={`space-y-6 transition-opacity ${isPlaceholderData ? 'opacity-60' : ''}`}>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3">
             <Kennzahl label={tx("Einträge")} wert={zahl(statistiken.kennzahlen.eintraege)} />
             <Kennzahl label={tx("Stunden")} wert={zahl(Math.round(statistiken.kennzahlen.stunden))} />
             <Kennzahl label={tx("Aktive Tage")} wert={zahl(statistiken.kennzahlen.aktiveTage)} />
@@ -72,13 +74,13 @@ export function StatistikenSeite() {
             {bosseAn && <Kennzahl label={tx("Bosse besiegt")} wert={zahl(statistiken.kennzahlen.bosseBesiegt)} />}
           </div>
 
-          <Karte>
+          <section>
             <Ueberschrift titel={statistiken.verlaufEinheit === 'woche' ? tx("XP pro Woche") : tx("XP pro Monat")} />
             <LinienDiagramm werte={verlaufWerte(statistiken)} einheit="XP" />
-          </Karte>
+          </section>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <Karte>
+          <div className="grid gap-6 md:grid-cols-2">
+            <section>
               <Ueberschrift titel={tx("Tätigkeiten")} />
               {statistiken.vorlagen.length === 0 ? (
                 <Leer text={tx("Noch keine Einträge.")} />
@@ -97,9 +99,9 @@ export function StatistikenSeite() {
                   }))}
                 />
               )}
-            </Karte>
+            </section>
             {projekteAn && (
-              <Karte>
+              <section>
                 <Ueberschrift titel={tx("Projekte")} />
                 {statistiken.projekte.length === 0 ? (
                   <Leer text={tx("Noch keine Einträge.")} />
@@ -119,11 +121,11 @@ export function StatistikenSeite() {
                     }))}
                   />
                 )}
-              </Karte>
+              </section>
             )}
           </div>
 
-          <Karte>
+          <section>
             <Ueberschrift titel={tx("Wochentage")} />
             <SaeulenDiagramm
               werte={statistiken.wochentage.map((eintrag) => {
@@ -137,7 +139,7 @@ export function StatistikenSeite() {
               })}
               einheit="XP"
             />
-          </Karte>
+          </section>
         </div>
       )}
     </div>
@@ -146,7 +148,7 @@ export function StatistikenSeite() {
 
 function Kennzahl({ label, wert }: { label: string; wert: string }) {
   return (
-    <div className="rounded-2xl border border-rand bg-flaeche p-3">
+    <div data-kennzahl="">
       <p className="text-xl font-bold">{wert}</p>
       <p className="truncate text-xs text-leise">{label}</p>
     </div>

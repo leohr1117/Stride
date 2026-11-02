@@ -1,5 +1,14 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "履歴はシートで絞り込みます。振り返りと統計は上に行として並びます。",
+  "Löschen im Verlauf ist nur beim Wischen rot.": "履歴の削除はスワイプしているときだけ赤くなります。",
+  "Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.": "振り返りはハイライト、成長、数字を示します。保存は下に残ります。",
+  "Die Statistik zeigt die Kennzahlen ohne Karten.": "統計はカードなしで数字を示します。",
+  "Die Basis gruppiert nach Projekt. Eine Zeile legt eine Basis-Aufgabe an.": "ベースはプロジェクトごとに分かれます。一行で基本タスクを作ります。",
+  "Filter": "フィルター",
+  "Filter zurücksetzen": "フィルターを戻す",
+  "Basis-Aufgabe anlegen": "基本タスクを作る",
+  "Zahlen": "数字",
   "Vorbilder lassen sich als Favorit merken.": "お手本をお気に入りにできます。",
   "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "お気に入りはリストの上にあり、どの方向の絞り込みでも表示されます。",
   "Entfernen gilt sofort. Eine Meldung bietet Rückgängig.": "外すとそのまま反映されます。メッセージから元に戻せます。",

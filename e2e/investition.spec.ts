@@ -1,4 +1,5 @@
 import { expect, test, type Page, type Route } from '@playwright/test';
+import { meilensteineAus } from './helfer.ts';
 import fs from 'node:fs';
 
 interface ZielRef {
@@ -341,10 +342,7 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     expect(ersterEintrag.ausruestungBonus).toBeCloseTo(erwartet, 5);
 
     await page.goto('/chronik');
-    const filter = page.getByRole('switch', { name: 'Nur Meilensteine' });
-    if ((await filter.getAttribute('aria-checked')) === 'true') {
-      await filter.click();
-    }
+    await meilensteineAus(page);
     await page.getByText('Prüfbonus 63').first().click();
     const chronik = page.getByRole('dialog');
     await expect(chronik.getByText(`Investitionen +${Math.round(erwartet * 100)} %`)).toBeVisible();

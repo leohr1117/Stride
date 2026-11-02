@@ -1,5 +1,9 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Filter', 'Filter'],
+  ['Filter zurücksetzen', 'Reset filter'],
+  ['Basis-Aufgabe anlegen', 'Add a basics task'],
+  ['Zahlen', 'Figures'],
   ['Profil bearbeiten', 'Edit profile'],
   ['Ähnlich', 'Similar'],
   ['Favoriten', 'Favorites'],

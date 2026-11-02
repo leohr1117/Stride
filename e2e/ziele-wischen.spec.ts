@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { meilensteineAus } from './helfer.ts';
 import fs from 'node:fs';
 
 async function passwort(): Promise<string> {
@@ -198,7 +199,7 @@ test('menü und tastatur archivieren und brechen ab', async ({ page }, testInfo)
   await expect(genutzteZeile).toBeVisible();
 
   await page.goto('/chronik');
-  await page.getByRole('switch', { name: 'Nur Meilensteine' }).click();
+  await meilensteineAus(page);
   const eintrag = zeile(page, notiz);
   await expect(eintrag).toBeVisible();
   await eintrag.getByRole('button', { name: `Aktionen für ${notiz}`, exact: true }).click();

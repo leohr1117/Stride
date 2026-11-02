@@ -1,5 +1,14 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "L'historique filtre dans une feuille. Bilan et Statistique sont en haut, en lignes.",
+  "Löschen im Verlauf ist nur beim Wischen rot.": "Supprimer dans l'historique n'est rouge qu'en glissant.",
+  "Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.": "Le bilan montre les temps forts, la croissance et les chiffres. Enregistrer reste en bas.",
+  "Die Statistik zeigt die Kennzahlen ohne Karten.": "La statistique montre les chiffres sans cartes.",
+  "Die Basis gruppiert nach Projekt. Eine Zeile legt eine Basis-Aufgabe an.": "La base regroupe par projet. Une ligne crée une tâche de base.",
+  "Filter": "Filtre",
+  "Filter zurücksetzen": "Réinitialiser le filtre",
+  "Basis-Aufgabe anlegen": "Créer une tâche de base",
+  "Zahlen": "Chiffres",
   "Vorbilder lassen sich als Favorit merken.": "Les modèles peuvent être enregistrés comme favoris.",
   "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "Les favoris restent en haut de la liste et visibles avec chaque filtre de direction.",
   "Entfernen gilt sofort. Eine Meldung bietet Rückgängig.": "Retirer s'applique tout de suite. Un message propose Annuler.",

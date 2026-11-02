@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { expect, test, type Page } from '@playwright/test';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
-import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+import { anmelden, meilensteineAus, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 function stempel(datum: Date): string {
   return datum.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
@@ -162,7 +162,7 @@ test('Abgleich zeigt den Stand, behält Einträge und importiert nicht doppelt',
 
     hebeEintrag(termin);
     await page.goto('/chronik');
-    await page.getByRole('switch', { name: 'Nur Meilensteine' }).click();
+    await meilensteineAus(page);
     await expect(page.getByText(termin).first()).toBeVisible();
     const liste = await page.request.get('/api/eintraege?limit=100');
     expect(liste.ok()).toBe(true);

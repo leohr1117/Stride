@@ -54,8 +54,8 @@ test('Hierarchie, Funktionen und Projekt-Tätigkeit sind erkennbar', async ({ pa
   await expect(page).toHaveURL(/\/ziele$/);
 
   await page.goto('/basis');
-  await page.getByRole('button', { name: 'Aufgabe' }).click();
-  const formular = page.getByRole('dialog', { name: 'Neue Aufgabe' });
+  await page.getByRole('button', { name: '+ Basis-Aufgabe', exact: true }).click();
+  const formular = page.getByRole('dialog', { name: 'Basis-Aufgabe' });
   await formular.getByRole('combobox', { name: 'Projekt' }).click();
   const wahl = page.getByRole('dialog', { name: 'Projekt' });
   await expect(wahl.getByRole('option', { name: 'Gruppenläufe', exact: true })).toBeVisible();

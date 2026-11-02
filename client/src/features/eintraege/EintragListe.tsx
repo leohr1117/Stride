@@ -1,13 +1,18 @@
 import { tx } from '../../text.ts';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { RotateCcw, Shield } from 'lucide-react';
+import { RotateCcw, Shield, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import type { ChronikEintrag, EintragFilter, ProtokollArt, ProtokollZeile } from '../../../../shared/api/index.ts';
+import type { ChronikEintrag, Eintrag, EintragFilter, ProtokollArt, ProtokollZeile, SkillEreignis } from '../../../../shared/api/index.ts';
+import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
-import { lokalesDatum, tagesUeberschrift } from '../../format.ts';
+import { dauerText, lokalesDatum, tagesUeberschrift, zahl } from '../../format.ts';
+import { useSichtbarkeit } from '../../funktionen.ts';
 import { Dialog } from '../../components/Dialog.tsx';
-import { EintragDetail, EintragKarte } from '../../components/EintragKarte.tsx';
-import { SkillDetail, SkillKarte } from '../../components/SkillKarte.tsx';
+import { EintragDetail } from '../../components/EintragKarte.tsx';
+import { Icon } from '../../components/Icons.tsx';
+import { SchnellZeile } from '../../components/SchnellAktion.tsx';
+import { SkillDetail } from '../../components/SkillKarte.tsx';
+import { Liste } from '../../components/Zeile.tsx';
 import { Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 
 interface Tag {
@@ -75,22 +80,84 @@ function titelVon(eintrag: ChronikEintrag): string {
   }
 }
 
+function nebenzeile(eintrag: Eintrag): string | null {
+  const teile: string[] = [];
+  if (eintrag.stunden !== null) {
+    teile.push(dauerText(eintrag.stunden));
+  }
+  const notiz = eintrag.notiz.trim().split('\n')[0] ?? '';
+  if (notiz) {
+    teile.push(notiz);
+  } else if (eintrag.vorhaben) {
+    teile.push(eintrag.vorhaben.titel);
+  } else if (eintrag.projektName) {
+    teile.push(eintrag.projektName);
+  }
+  return teile.length > 0 ? teile.join(' · ') : null;
+}
+
 function ProtokollAnsicht({ protokoll }: { protokoll: ProtokollZeile }) {
-  const Icon = protokollIcon(protokoll.art);
+  const Symbol = protokollIcon(protokoll.art);
   return (
-    <div data-protokoll={protokoll.art} className="flex min-h-10 items-center gap-3 rounded-2xl border border-rand bg-flaeche px-3 py-2 text-sm text-leise">
-      <Icon className="size-4 shrink-0" aria-hidden="true" />
-      <span className="min-w-0 truncate">{protokollText(protokoll.art)}</span>
+    <div data-protokoll={protokoll.art} className="zeile flex min-h-12 items-center gap-3 px-4 py-3 text-leise">
+      <Symbol className="size-5 shrink-0" aria-hidden="true" />
+      <span className="min-w-0 flex-1 truncate text-base">{protokollText(protokoll.art)}</span>
     </div>
+  );
+}
+
+function EintragZeile({ eintrag, onOeffnen }: { eintrag: Eintrag; onOeffnen: () => void }) {
+  const sichtbarkeit = useSichtbarkeit();
+  const bossSieg = istAn('bossAngriffe', sichtbarkeit) && eintrag.bossSieg != null;
+  const neben = nebenzeile(eintrag);
+  const name = eintrag.notiz.trim().split('\n')[0] || eintrag.vorlageName;
+  return (
+    <SchnellZeile
+      ziel={{ art: 'eintrag', id: eintrag.id, name, hinweis: tx('Die {xp} XP werden wieder abgezogen.', { xp: eintrag.xp }) }}
+      className={bossSieg ? 'boss-sieg text-gefahr' : ''}
+      hintergrund={bossSieg ? 'bg-gefahr/5' : 'bg-transparent'}
+    >
+      {(menue) => (
+        <div className="flex min-h-12 items-center">
+          <button
+            type="button"
+            onClick={onOeffnen}
+            aria-label={eintrag.vorlageName}
+            className="flex min-h-12 min-w-0 flex-1 items-center gap-3 py-3 pr-1 pl-4 text-left"
+          >
+            <Icon name={eintrag.vorlageIcon} className="size-5 shrink-0 text-leise" />
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-base">{eintrag.vorlageName}</span>
+              {neben ? <span className="block truncate text-[13px] leading-[18px] text-leise">{neben}</span> : null}
+            </span>
+            <span className="zahl shrink-0 text-[15px] leading-5 font-medium text-xp">+{zahl(eintrag.xp)} XP</span>
+          </button>
+          <span className="relative z-10 shrink-0">{menue}</span>
+        </div>
+      )}
+    </SchnellZeile>
+  );
+}
+
+function SkillZeile({ skill, onOeffnen }: { skill: SkillEreignis; onOeffnen: () => void }) {
+  return (
+    <button type="button" onClick={onOeffnen} className="flex min-h-12 w-full items-center gap-3 px-4 py-3 text-left">
+      <Sparkles className="size-5 shrink-0 text-xp" aria-hidden="true" />
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-base">{skill.titel}</span>
+        <span className="block truncate text-[13px] leading-[18px] text-leise">{skill.faehigkeitName}</span>
+      </span>
+      <span className="zahl shrink-0 text-[15px] leading-5 font-medium text-xp">+{zahl(skill.xp)} XP</span>
+    </button>
   );
 }
 
 function ChronikZeile({ eintrag, onOeffnen }: { eintrag: ChronikEintrag; onOeffnen: () => void }) {
   switch (eintrag.typ) {
     case 'eintrag':
-      return <EintragKarte eintrag={eintrag.eintrag} onOeffnen={onOeffnen} />;
+      return <EintragZeile eintrag={eintrag.eintrag} onOeffnen={onOeffnen} />;
     case 'skill':
-      return <SkillKarte skill={eintrag.skill} onOeffnen={onOeffnen} />;
+      return <SkillZeile skill={eintrag.skill} onOeffnen={onOeffnen} />;
     case 'protokoll':
       return <ProtokollAnsicht protokoll={eintrag.protokoll} />;
   }
@@ -110,7 +177,15 @@ function gruppiereNachTag(eintraege: ChronikEintrag[]): Tag[] {
   return tage;
 }
 
-export function EintragListe({ filter, leerText }: { filter: EintragFilter; leerText: string }) {
+export function EintragListe({
+  filter,
+  leerText,
+  onZuruecksetzen,
+}: {
+  filter: EintragFilter;
+  leerText: string;
+  onZuruecksetzen?: () => void;
+}) {
   const [auswahl, setAuswahl] = useState<string | null>(null);
   const abfrage = useInfiniteQuery({
     queryKey: SCHLUESSEL.eintraege(filter),
@@ -128,19 +203,25 @@ export function EintragListe({ filter, leerText }: { filter: EintragFilter; leer
   const gewaehlt = eintraege.find((eintrag) => schluesselVon(eintrag) === auswahl) ?? null;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <Fehlermeldung fehler={abfrage.error} />
 
       {tage.length === 0 ? (
-        <Leer text={leerText} />
+        <Leer
+          text={leerText}
+          aktion={
+            onZuruecksetzen ? (
+              <Knopf onClick={onZuruecksetzen}>{tx('Filter zurücksetzen')}</Knopf>
+            ) : undefined
+          }
+        />
       ) : (
         tage.map((tag) => (
           <section key={tag.schluessel}>
-            <div className="mb-2 flex items-center gap-3">
-              <h2 className="text-xs font-medium text-leise">{tagesUeberschrift(tag.schluessel)}</h2>
-              <span className="h-px flex-1 bg-rand" />
-            </div>
-            <div className="space-y-2">
+            <h2 className="ueberschrift abschnittskopf mb-2 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
+              {tagesUeberschrift(tag.schluessel)}
+            </h2>
+            <Liste>
               {tag.eintraege.map((eintrag) => (
                 <ChronikZeile
                   key={schluesselVon(eintrag)}
@@ -148,7 +229,7 @@ export function EintragListe({ filter, leerText }: { filter: EintragFilter; leer
                   onOeffnen={() => setAuswahl(schluesselVon(eintrag))}
                 />
               ))}
-            </div>
+            </Liste>
           </section>
         ))
       )}

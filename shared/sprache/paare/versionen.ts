@@ -1,5 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.', 'History filters through a sheet. Review and Statistics sit at the top as rows.'],
+  ['Löschen im Verlauf ist nur beim Wischen rot.', 'Delete in History is red only while swiping.'],
+  ['Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.', 'Review shows highlights, growth, and figures. Save stays at the bottom.'],
+  ['Die Statistik zeigt die Kennzahlen ohne Karten.', 'Statistics shows the figures without cards.'],
+  ['Die Basis gruppiert nach Projekt. Eine Zeile legt eine Basis-Aufgabe an.', 'Basics groups by project. A row adds a basics task.'],
   ['Vorbilder lassen sich als Favorit merken.', 'Role models can be saved as favorites.'],
   ['Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.', 'Favorites sit at the top of the list and stay visible with every direction filter.'],
   ['Entfernen gilt sofort. Eine Meldung bietet Rückgängig.', 'Removing applies at once. A message offers Undo.'],

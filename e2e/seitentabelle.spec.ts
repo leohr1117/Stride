@@ -25,7 +25,7 @@ test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ pag
     await bild('uebersicht');
 
     await leiste.getByRole('link', { name: 'Chronik' }).click();
-    await expect(page.locator('main h1')).toHaveText('Chronik');
+    await expect(page.locator('main h1')).toHaveText('Verlauf');
     await ohneSeitlichenUeberlauf(page);
     await bild('chronik');
 
@@ -56,7 +56,7 @@ test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ pag
   await bild('ziele');
 
   await seite.getByRole('link', { name: 'Chronik', exact: true }).click();
-  await expect(page.locator('main h1')).toHaveText('Chronik');
+  await expect(page.locator('main h1')).toHaveText('Verlauf');
   await ohneSeitlichenUeberlauf(page);
   await bild('chronik');
 

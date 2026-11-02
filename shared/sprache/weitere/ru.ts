@@ -1,5 +1,14 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "История фильтруется на листе. Обзор и Статистика стоят сверху строками.",
+  "Löschen im Verlauf ist nur beim Wischen rot.": "Удаление в истории красное только при смахивании.",
+  "Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.": "Обзор показывает главное, рост и цифры. Сохранить остаётся внизу.",
+  "Die Statistik zeigt die Kennzahlen ohne Karten.": "Статистика показывает цифры без карточек.",
+  "Die Basis gruppiert nach Projekt. Eine Zeile legt eine Basis-Aufgabe an.": "База группирует по проекту. Строка создаёт базовую задачу.",
+  "Filter": "Фильтр",
+  "Filter zurücksetzen": "Сбросить фильтр",
+  "Basis-Aufgabe anlegen": "Создать базовую задачу",
+  "Zahlen": "Цифры",
   "Vorbilder lassen sich als Favorit merken.": "Ориентиры можно сохранять в избранном.",
   "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "Избранное стоит вверху списка и остаётся видимым при любом фильтре направления.",
   "Entfernen gilt sofort. Eine Meldung bietet Rückgängig.": "Удаление из избранного действует сразу. Сообщение предлагает отмену.",

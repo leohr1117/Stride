@@ -98,7 +98,7 @@ describe('Vorbild-Favoriten', () => {
       expect(JSON.parse(String(zeile?.wert))).toEqual(['einstein']);
       aendereEinstellungen({ vorbildFavoritWeg: 'einstein' });
       expect(ladeEinstellungen().vorbildFavoriten).toEqual([]);
-      importiereDaten(sicherung, new Date('2026-11-02T12:00:01.000Z'));
+      importiereDaten(sicherung, new Date());
       expect(ladeEinstellungen().vorbildFavoriten).toEqual(['einstein']);
       expect(setzeProfilZurueck().vorbildFavoriten).toEqual([]);
     });

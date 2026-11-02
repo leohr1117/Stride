@@ -17,6 +17,22 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.40.0',
+    seiten: 'Verlauf, Rückblick, Statistik, Basis',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.',
+          'Löschen im Verlauf ist nur beim Wischen rot.',
+          'Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.',
+          'Die Statistik zeigt die Kennzahlen ohne Karten.',
+          'Die Basis gruppiert nach Projekt. Eine Zeile legt eine Basis-Aufgabe an.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.39.1',
     seiten: 'Vorbilder',
     abschnitte: [

@@ -1,5 +1,14 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "El historial filtra en una hoja. Repaso y Estadística están arriba como filas.",
+  "Löschen im Verlauf ist nur beim Wischen rot.": "Eliminar en el historial solo se pone rojo al deslizar.",
+  "Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.": "El repaso muestra lo destacado, el crecimiento y las cifras. Guardar permanece abajo.",
+  "Die Statistik zeigt die Kennzahlen ohne Karten.": "La estadística muestra las cifras sin tarjetas.",
+  "Die Basis gruppiert nach Projekt. Eine Zeile legt eine Basis-Aufgabe an.": "La base agrupa por proyecto. Una fila crea una tarea base.",
+  "Filter": "Filtro",
+  "Filter zurücksetzen": "Restablecer el filtro",
+  "Basis-Aufgabe anlegen": "Crear una tarea base",
+  "Zahlen": "Cifras",
   "Vorbilder lassen sich als Favorit merken.": "Los referentes se pueden guardar como favoritos.",
   "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "Los favoritos quedan arriba en la lista y siguen visibles con cada filtro de dirección.",
   "Entfernen gilt sofort. Eine Meldung bietet Rückgängig.": "Quitar se aplica al momento. Un aviso ofrece Deshacer.",

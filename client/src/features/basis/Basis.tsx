@@ -26,7 +26,7 @@ export function useBasisAufgaben() {
   return useQuery({ queryKey: SCHLUESSEL.basis, queryFn: api.basis });
 }
 
-function useBasisAktionen() {
+export function useBasisAktionen() {
   const queryClient = useQueryClient();
   const feiern = useFeiern();
   const erledigen = useMutation({

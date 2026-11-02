@@ -117,7 +117,12 @@ async function dialogBleibtZeile(seite: Page, zeile: string): Promise<void> {
 
 async function pruefeChronik(seite: Page, projekt: string): Promise<void> {
   await seite.goto('/chronik');
-  await expect(seite.getByRole('switch', { name: 'Nur Meilensteine' })).toBeChecked();
+  await expect(seite.getByRole('heading', { name: 'Verlauf', exact: true })).toBeVisible();
+  await seite.getByRole('button', { name: 'Filter', exact: true }).click();
+  const anfang = seite.getByRole('dialog', { name: 'Filter' });
+  await expect(anfang.getByRole('switch', { name: 'Nur Meilensteine' })).toBeChecked();
+  await seite.keyboard.press('Escape');
+  await expect(anfang).toBeHidden();
   const eingesetzt = seite.locator('[data-protokoll="schutz_eingesetzt"]');
   await expect(eingesetzt).toBeVisible();
   await expect(seite.locator('[data-protokoll="schutz_verdient"]')).toBeVisible();
@@ -126,14 +131,31 @@ async function pruefeChronik(seite: Page, projekt: string): Promise<void> {
   await ohneSeitlichenUeberlauf(seite);
   await bild(seite, `${projekt}-chronik`);
 
-  const bereich = seite.locator('select');
-  await bereich.selectOption({ index: 1 });
+  await seite.getByRole('button', { name: 'Filter', exact: true }).click();
+  const filter = seite.getByRole('dialog', { name: 'Filter' });
+  await filter.getByRole('combobox', { name: 'Bereich' }).click();
+  const bereich = seite.getByRole('dialog', { name: 'Bereich' });
+  await bereich.getByRole('option').nth(1).click();
+  await bereich.getByRole('button', { name: 'Anwenden' }).click();
+  await filter.getByRole('button', { name: 'Anwenden' }).click();
   await expect(seite.locator('[data-protokoll]')).toHaveCount(0);
-  await bereich.selectOption('');
+
+  await seite.getByRole('button', { name: 'Filter', exact: true }).click();
+  const zurueck = seite.getByRole('dialog', { name: 'Filter' });
+  await zurueck.getByRole('button', { name: 'Zurücksetzen' }).click();
+  await zurueck.getByRole('button', { name: 'Anwenden' }).click();
   await expect(eingesetzt).toBeVisible();
-  await seite.locator('.chip-reihe button').nth(1).click();
+
+  await seite.getByRole('button', { name: 'Filter', exact: true }).click();
+  const chips = seite.getByRole('dialog', { name: 'Filter' });
+  await chips.locator('.chip-reihe button').nth(1).click();
+  await chips.getByRole('button', { name: 'Anwenden' }).click();
   await expect(seite.locator('[data-protokoll]')).toHaveCount(0);
-  await seite.getByRole('button', { name: 'Alle', exact: true }).click();
+
+  await seite.getByRole('button', { name: 'Filter', exact: true }).click();
+  const alle = seite.getByRole('dialog', { name: 'Filter' });
+  await alle.getByRole('button', { name: 'Alle', exact: true }).click();
+  await alle.getByRole('button', { name: 'Anwenden' }).click();
   await expect(eingesetzt).toBeVisible();
   await ohneSeitlichenUeberlauf(seite);
   await bild(seite, `${projekt}-chronik-filter`);

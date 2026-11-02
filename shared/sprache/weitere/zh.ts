@@ -1,5 +1,14 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "历程用一张表来筛选。回顾和统计作为行显示在上方。",
+  "Löschen im Verlauf ist nur beim Wischen rot.": "历程里的删除只在滑动时显示为红色。",
+  "Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.": "回顾显示要点、增长和数字。保存留在底部。",
+  "Die Statistik zeigt die Kennzahlen ohne Karten.": "统计用不带卡片的方式显示数字。",
+  "Die Basis gruppiert nach Projekt. Eine Zeile legt eine Basis-Aufgabe an.": "基础按项目分组。一行用来新建基础事项。",
+  "Filter": "筛选",
+  "Filter zurücksetzen": "重置筛选",
+  "Basis-Aufgabe anlegen": "新建基础事项",
+  "Zahlen": "数字",
   "Vorbilder lassen sich als Favorit merken.": "可以把榜样标为收藏。",
   "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "收藏在列表顶部，换方向筛选时仍然可见。",
   "Entfernen gilt sofort. Eine Meldung bietet Rückgängig.": "移除立即生效。提示可以撤销。",

@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { SPRACHEN, type Sprache } from '../shared/sprache/kern.ts';
 import { zeige } from '../shared/sprache/index.ts';
+import { meilensteineAus } from './helfer.ts';
 import { TEST_APP, TEST_ZUGANG } from './testdaten.ts';
 
 process.env.ASCEND_TEST = '1';
@@ -226,10 +227,7 @@ test('Eintrag anlegen und löschen', async ({ page }) => {
     await expect(dialog).toHaveCount(0);
 
     await page.goto('/chronik');
-    const filter = page.getByRole('switch', { name: 'Nur Meilensteine' });
-    if ((await filter.getAttribute('aria-checked')) === 'true') {
-      await filter.click();
-    }
+    await meilensteineAus(page);
     const zeile = page.locator(`[data-schnell="${notiz}"]`);
     await expect(zeile).toBeVisible();
     await zeile.getByRole('button', { name: `Aktionen für ${notiz}`, exact: true }).click();

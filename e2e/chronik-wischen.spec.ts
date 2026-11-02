@@ -174,7 +174,7 @@ test('Chronik zeigt Löschen nur beim Wischen', async ({ page }, testInfo) => {
   const handy = testInfo.project.name === 'handy';
   await anmelden(page);
   await page.goto('/chronik');
-  await expect(page.getByRole('heading', { name: /Chronik|History/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Verlauf|History/ })).toBeVisible();
   const karten = page.locator('[data-schnell]');
   await expect(karten.first()).toBeVisible();
   const bild = (name: string) => page.screenshot({ path: `tmp-test/chronik-wischen/${testInfo.project.name}-${name}.png` });
@@ -195,7 +195,11 @@ test('Chronik zeigt Löschen nur beim Wischen', async ({ page }, testInfo) => {
   };
 
   await pruefeRuhe('meilenstein');
-  await page.getByRole('switch', { name: /Nur Meilensteine|Milestones only/ }).click();
+  await page.getByRole('button', { name: 'Filter', exact: true }).click();
+  const blatt = page.getByRole('dialog', { name: 'Filter' });
+  await blatt.getByRole('switch', { name: /Nur Meilensteine|Milestones only/ }).click();
+  await blatt.getByRole('button', { name: /Anwenden|Apply/ }).click();
+  await expect(blatt).toBeHidden();
   await expect(karten.first()).toBeVisible();
   await pruefeRuhe('alle');
 
@@ -220,7 +224,7 @@ test('Chronik zeigt Löschen nur beim Wischen', async ({ page }, testInfo) => {
   }
   await expect.poll(async () => rotePixel(page, offen.x + offen.width - 20, offen.y + 8)).toBeGreaterThan(0);
   await bild('gewischt');
-  await page.getByRole('heading', { name: /Chronik|History/ }).click();
+  await page.getByRole('heading', { name: /Verlauf|History/ }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(karte.getByRole('button', { name: /^(Löschen|Delete)$/ })).toHaveCount(0);
   const zu = await ruhePunkt(karte);

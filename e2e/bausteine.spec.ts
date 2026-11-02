@@ -111,7 +111,7 @@ test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInf
     await bild('ring-aus');
 
     await page.goto('/chronik');
-    await expect(page.getByRole('heading', { name: 'Chronik', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Verlauf', exact: true })).toBeVisible();
     const karte = page.locator('[data-schnell]').first();
     await expect(karte).toBeVisible();
     await karte.getByRole('button', { name: /Aktionen für/ }).click();

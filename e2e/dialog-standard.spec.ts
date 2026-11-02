@@ -156,7 +156,9 @@ test('Bereich im Verlauf ist eine Liste mit Farbpunkt, Haken und Alle', async ({
     });
     visionId = vision.id;
     await page.goto('/chronik');
-    const wahl = page.getByRole('combobox', { name: 'Bereich' });
+    await page.getByRole('button', { name: 'Filter', exact: true }).click();
+    const filter = page.getByRole('dialog', { name: 'Filter' });
+    const wahl = filter.getByRole('combobox', { name: 'Bereich' });
     await expect(wahl).toBeVisible();
     await wahl.click();
     const blatt = page.getByRole('dialog', { name: 'Bereich' });

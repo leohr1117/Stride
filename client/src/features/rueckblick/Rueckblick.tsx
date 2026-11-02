@@ -12,7 +12,7 @@ import { useSichtbarkeit } from '../../funktionen.ts';
 import { KurzListe } from '../../components/Ausklappbar.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { BalkenListe } from '../../components/DiagrammBasis.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
+import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
 import {
   ausTagesSchluessel,
   datumLang,
@@ -70,7 +70,7 @@ export function RueckblickSeite() {
           <div className="flex items-center justify-between gap-3">
             <Knopf
               variante="leise"
-              className="p-2"
+              className="size-12 p-0"
               aria-label={tx("Vorherige Woche")}
               onClick={() => setWoche(verschiebeTag(woche, -TAGE_PRO_WOCHE))}
             >
@@ -79,7 +79,7 @@ export function RueckblickSeite() {
             <p className="zahl text-center text-sm font-medium">{wochenTitel(rueckblick)}</p>
             <Knopf
               variante="leise"
-              className="p-2"
+              className="size-12 p-0"
               aria-label={tx("Nächste Woche")}
               disabled={rueckblick.aktuelleWoche}
               onClick={() => setWoche(verschiebeTag(woche, TAGE_PRO_WOCHE))}
@@ -88,10 +88,8 @@ export function RueckblickSeite() {
             </Knopf>
           </div>
 
-          <WochenZahlen rueckblick={rueckblick} />
-
           {(rueckblick.meilensteine.length > 0 || rueckblick.erfolge.length > 0) && (
-            <Karte>
+            <section>
               <Ueberschrift titel={tx("Höhepunkte")} />
               <KurzListe
                 eintraege={[
@@ -106,18 +104,18 @@ export function RueckblickSeite() {
                 anzahl={HOEHEPUNKTE_SICHTBAR}
                 className="space-y-2 text-sm"
                 darstellen={({ schluessel, icon: Symbol, titel, zusatz }) => (
-                  <div key={schluessel} className="flex items-center gap-2">
+                  <div key={schluessel} className="flex min-h-12 items-center gap-2">
                     <Symbol className="size-4 shrink-0 text-xp" />
                     <span className="min-w-0 truncate">{titel}</span>
                     {zusatz && <span className="shrink-0 text-xs text-leise">{zusatz}</span>}
                   </div>
                 )}
               />
-            </Karte>
+            </section>
           )}
 
           {rueckblick.attribute.length > 0 && (
-            <Karte>
+            <section>
               <Ueberschrift titel={tx("Gewachsen")} />
               <BalkenListe
                 werte={rueckblick.attribute.map((attribut) => ({
@@ -133,8 +131,10 @@ export function RueckblickSeite() {
                   farbe: attribut.farbe,
                 }))}
               />
-            </Karte>
+            </section>
           )}
+
+          <WochenZahlen rueckblick={rueckblick} />
 
           <RueckblickFormular key={rueckblick.woche} rueckblick={rueckblick} />
         </div>
@@ -146,30 +146,33 @@ export function RueckblickSeite() {
 function WochenZahlen({ rueckblick }: { rueckblick: Rueckblick }) {
   const trend = rueckblick.aktuelleWoche ? null : veraenderung(rueckblick.xp, rueckblick.xpVorwoche);
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <div className="rounded-2xl border border-rand bg-flaeche p-3">
-        <p className="text-xl font-bold text-xp">+{zahl(rueckblick.xp)}</p>
-        <p className="text-xs text-leise">XP{trend && ` · ${trend}`}</p>
+    <section>
+      <Ueberschrift titel={tx("Zahlen")} />
+      <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4">
+        <div>
+          <p className="text-xl font-bold text-xp">+{zahl(rueckblick.xp)}</p>
+          <p className="text-xs text-leise">XP{trend && ` · ${trend}`}</p>
+        </div>
+        <div>
+          <p className="text-xl font-bold">{zahl(rueckblick.eintraege)}</p>
+          <p className="text-xs text-leise">{tx("Einträge")}</p>
+        </div>
+        <div>
+          <p className="text-xl font-bold">
+            {rueckblick.aktiveTage}/{TAGE_PRO_WOCHE}
+          </p>
+          <p className="text-xs text-leise">{tx("Aktive Tage")}</p>
+        </div>
+        <div>
+          <p className="text-xl font-bold">{rueckblick.besterTag ? zahl(rueckblick.besterTag.xp) : '–'}</p>
+          <p className="truncate text-xs text-leise">
+            {rueckblick.besterTag
+              ? tx('Bester Tag · {datum}', { datum: datumLang(rueckblick.besterTag.datum) })
+              : tx('Bester Tag')}
+          </p>
+        </div>
       </div>
-      <div className="rounded-2xl border border-rand bg-flaeche p-3">
-        <p className="text-xl font-bold">{zahl(rueckblick.eintraege)}</p>
-        <p className="text-xs text-leise">{tx("Einträge")}</p>
-      </div>
-      <div className="rounded-2xl border border-rand bg-flaeche p-3">
-        <p className="text-xl font-bold">
-          {rueckblick.aktiveTage}/{TAGE_PRO_WOCHE}
-        </p>
-        <p className="text-xs text-leise">{tx("Aktive Tage")}</p>
-      </div>
-      <div className="rounded-2xl border border-rand bg-flaeche p-3">
-        <p className="text-xl font-bold">{rueckblick.besterTag ? zahl(rueckblick.besterTag.xp) : '–'}</p>
-        <p className="truncate text-xs text-leise">
-          {rueckblick.besterTag
-            ? tx('Bester Tag · {datum}', { datum: datumLang(rueckblick.besterTag.datum) })
-            : tx('Bester Tag')}
-        </p>
-      </div>
-    </div>
+    </section>
   );
 }
 
@@ -197,7 +200,7 @@ function RueckblickFormular({ rueckblick }: { rueckblick: Rueckblick }) {
   };
 
   return (
-    <Karte>
+    <section>
       <Ueberschrift titel={tx("Reflexion")} />
       <Formular onAbsenden={absenden}>
         {FRAGEN.map(({ feld, frage }) => (
@@ -220,6 +223,6 @@ function RueckblickFormular({ rueckblick }: { rueckblick: Rueckblick }) {
             : tx('Speichern')}
         </Knopf>
       </Formular>
-    </Karte>
+    </section>
   );
 }

@@ -1,12 +1,16 @@
 import { tx } from '../../text.ts';
-import { Archive, Plus } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useState } from 'react';
 import type { BasisAufgabe } from '../../../../shared/api/index.ts';
-import { BasisFormular, BasisListe, useBasisAufgaben } from './Basis.tsx';
+import { BasisFormular, useBasisAktionen, useBasisAufgaben } from './Basis.tsx';
+import { Abschnitt } from '../../components/Ausklappbar.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
+import { Icon } from '../../components/Icons.tsx';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
-import { archivBeschriftung, Fehlermeldung, Karte, Knopf, Ladeanzeige, Leer, Ueberschrift } from '../../ui/index.ts';
+import { AnlegeZeile, Liste } from '../../components/Zeile.tsx';
+import { dauerText, zahl } from '../../format.ts';
 import { useEbenen } from '../../funktionen.ts';
+import { Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 
 type Bearbeitung = { aufgabe: BasisAufgabe | null } | null;
 
@@ -31,9 +35,72 @@ function gruppiereNachProjekt(aufgaben: BasisAufgabe[]): ProjektGruppe[] {
   return [...gruppen.values()];
 }
 
+function BasisZeile({
+  aufgabe,
+  mitProjekt,
+  laeuft,
+  onErledigen,
+  onRueckgaengig,
+  onBearbeiten,
+}: {
+  aufgabe: BasisAufgabe;
+  mitProjekt: boolean;
+  laeuft: boolean;
+  onErledigen: () => void;
+  onRueckgaengig: (eintragId: number) => void;
+  onBearbeiten: () => void;
+}) {
+  const heuteEintragId = aufgabe.heuteEintragId;
+  const details = [mitProjekt ? aufgabe.projektName : null, aufgabe.stunden !== null ? dauerText(aufgabe.stunden) : null]
+    .filter((teil) => teil !== null)
+    .join(' · ');
+
+  return (
+    <SchnellZeile
+      hintergrund="bg-transparent"
+      eintraege={[{ art: 'archivieren', id: 'bearbeiten', label: 'Bearbeiten' }]}
+      onEintrag={onBearbeiten}
+      ziel={{ art: 'basis', id: aufgabe.id, name: aufgabe.name, archiviert: aufgabe.archiviert, loeschbar: aufgabe.loeschbar }}
+    >
+      {(menue) => (
+        <div className="flex min-h-12 items-center gap-2 py-1 pr-1 pl-4">
+          <Icon name={aufgabe.icon} className="size-5 shrink-0" style={{ color: aufgabe.farbe }} />
+          <div className="min-w-0 flex-1">
+            <p className={`truncate text-base ${heuteEintragId !== null ? 'text-leise' : ''}`}>{aufgabe.name}</p>
+            {details ? <p className="truncate text-[13px] leading-[18px] text-leise">{details}</p> : null}
+          </div>
+          {menue}
+          {heuteEintragId !== null ? (
+            <button
+              type="button"
+              onClick={() => onRueckgaengig(heuteEintragId)}
+              disabled={laeuft}
+              aria-label={tx("Rückgängig")}
+              className="flex size-12 shrink-0 items-center justify-center rounded-full bg-xp/20 text-xp active:scale-90"
+            >
+              <Check className="size-5" strokeWidth={3} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onErledigen}
+              disabled={laeuft}
+              aria-label={tx("Erledigt")}
+              className="flex size-12 shrink-0 items-center justify-center rounded-full bg-akzent text-akzent-text active:scale-90"
+            >
+              <Check className="size-5" strokeWidth={3} />
+            </button>
+          )}
+        </div>
+      )}
+    </SchnellZeile>
+  );
+}
+
 export function BasisSeite() {
   const ebenen = useEbenen();
   const { data: aufgaben, error, isPending } = useBasisAufgaben();
+  const aktionen = useBasisAktionen();
   const [bearbeitung, setBearbeitung] = useState<Bearbeitung>(null);
 
   if (isPending) {
@@ -44,43 +111,78 @@ export function BasisSeite() {
   }
 
   const aktive = aufgaben.filter((aufgabe) => !aufgabe.archiviert);
+  const archiv = aufgaben.filter((aufgabe) => aufgabe.archiviert);
   const gruppen = ebenen.projekte ? gruppiereNachProjekt(aktive) : [];
+  const oeffne = (aufgabe: BasisAufgabe | null) => setBearbeitung({ aufgabe });
+
+  const zeile = (aufgabe: BasisAufgabe, mitProjekt: boolean) => (
+    <BasisZeile
+      key={aufgabe.id}
+      aufgabe={aufgabe}
+      mitProjekt={mitProjekt}
+      laeuft={aktionen.laeuft}
+      onErledigen={() => aktionen.erledigen(aufgabe.id)}
+      onRueckgaengig={aktionen.rueckgaengig}
+      onBearbeiten={() => oeffne(aufgabe)}
+    />
+  );
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-end justify-end gap-4">
-        <Knopf variante="primaer" onClick={() => setBearbeitung({ aufgabe: null })}>
-          <Plus className="size-4" />
-          {tx("Aufgabe")}
-        </Knopf>
-      </header>
+      <Fehlermeldung fehler={aktionen.fehler} />
 
-      {aktive.length === 0 && <Leer text={tx("Noch keine Basis-Aufgaben.")} />}
-
-      {!ebenen.projekte && aktive.length > 0 && (
-        <Karte>
-          <BasisListe aufgaben={aktive} mitProjekt={false} onBearbeiten={(aufgabe) => setBearbeitung({ aufgabe })} />
-        </Karte>
+      {aktive.length === 0 ? (
+        <Leer
+          text={tx("Noch keine Basis-Aufgaben.")}
+          aktion={<Knopf onClick={() => oeffne(null)}>{tx("Basis-Aufgabe anlegen")}</Knopf>}
+        />
+      ) : ebenen.projekte ? (
+        <>
+          {gruppen.map((gruppe) => (
+            <section key={gruppe.schluessel}>
+              <h2 className="ueberschrift abschnittskopf mb-2 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
+                {gruppe.projektName}
+              </h2>
+              <Liste>{gruppe.aufgaben.map((aufgabe) => zeile(aufgabe, false))}</Liste>
+            </section>
+          ))}
+          <Liste>
+            <AnlegeZeile text="Basis-Aufgabe" onKlick={() => oeffne(null)} />
+          </Liste>
+        </>
+      ) : (
+        <Liste>
+          {aktive.map((aufgabe) => zeile(aufgabe, false))}
+          <AnlegeZeile text="Basis-Aufgabe" onKlick={() => oeffne(null)} />
+        </Liste>
       )}
 
-      {gruppen.map((gruppe) => (
-        <Karte key={gruppe.schluessel}>
-          <Ueberschrift titel={gruppe.projektName} />
-          <BasisListe
-            aufgaben={gruppe.aufgaben}
-            mitProjekt={false}
-            onBearbeiten={(aufgabe) => setBearbeitung({ aufgabe })}
-          />
-        </Karte>
-      ))}
+      {archiv.length > 0 && (
+        <Abschnitt titel="Archiv" zusatz={`(${zahl(archiv.length)})`} kennung="basis-archiv" anfangEingeklappt>
+          <Liste>
+            {archiv.map((aufgabe) => (
+              <SchnellZeile
+                key={aufgabe.id}
+                hintergrund="bg-transparent"
+                ziel={{ art: 'basis', id: aufgabe.id, name: aufgabe.name, archiviert: true, loeschbar: aufgabe.loeschbar }}
+              >
+                {(menue) => (
+                  <div className="flex min-h-12 items-center gap-3 px-4 py-3">
+                    <Icon name={aufgabe.icon} className="size-5 shrink-0" style={{ color: aufgabe.farbe }} />
+                    <span className="min-w-0 flex-1 truncate text-base">
+                      {aufgabe.name}
+                      {ebenen.projekte && aufgabe.projektName ? <span className="text-leise"> · {aufgabe.projektName}</span> : null}
+                    </span>
+                    {menue}
+                  </div>
+                )}
+              </SchnellZeile>
+            ))}
+          </Liste>
+        </Abschnitt>
+      )}
 
-      <BasisArchiv aufgaben={aufgaben.filter((aufgabe) => aufgabe.archiviert)} />
-
-      <Dialog
-        offen={bearbeitung !== null}
-        titel={bearbeitung?.aufgabe ? tx("Aufgabe bearbeiten") : tx("Neue Aufgabe")}
-        onSchliessen={() => setBearbeitung(null)}
-      >
+      <Dialog offen={bearbeitung !== null} titel={tx("Basis-Aufgabe")} onSchliessen={() => setBearbeitung(null)}>
         {bearbeitung && (
           <BasisFormular
             key={bearbeitung.aufgabe?.id ?? 'neu'}
@@ -90,42 +192,5 @@ export function BasisSeite() {
         )}
       </Dialog>
     </div>
-  );
-}
-
-function BasisArchiv({ aufgaben }: { aufgaben: BasisAufgabe[] }) {
-  const ebenen = useEbenen();
-  const [offen, setOffen] = useState(false);
-
-  if (aufgaben.length === 0) {
-    return null;
-  }
-  return (
-    <section className="space-y-2">
-      <div className="flex justify-center">
-        <Knopf variante="leise" onClick={() => setOffen(!offen)}>
-          <Archive className="size-4" />
-          {archivBeschriftung(offen, aufgaben.length)}
-        </Knopf>
-      </div>
-      {offen &&
-        aufgaben.map((aufgabe) => (
-          <SchnellZeile
-            key={aufgabe.id}
-            className="rounded-xl border border-rand"
-            ziel={{ art: 'basis', id: aufgabe.id, name: aufgabe.name, archiviert: true, loeschbar: aufgabe.loeschbar }}
-          >
-            {(menue) => (
-              <div className="flex items-center justify-between py-1 pr-1 pl-4">
-                <span className="text-sm">
-                  {aufgabe.name}
-                  {ebenen.projekte && aufgabe.projektName && <span className="text-leise"> · {aufgabe.projektName}</span>}
-                </span>
-                {menue}
-              </div>
-            )}
-          </SchnellZeile>
-        ))}
-    </section>
   );
 }

@@ -43,6 +43,18 @@ export async function ohneSeitlichenUeberlauf(seite: Page): Promise<void> {
   expect(ueberlauf).toBe(false);
 }
 
+/** Schaltet „Nur Meilensteine“ im Filterblatt aus und übernimmt das. */
+export async function meilensteineAus(seite: Page): Promise<void> {
+  await seite.getByRole('button', { name: 'Filter', exact: true }).click();
+  const blatt = seite.getByRole('dialog', { name: 'Filter' });
+  const schalter = blatt.getByRole('switch', { name: 'Nur Meilensteine' });
+  if ((await schalter.getAttribute('aria-checked')) === 'true') {
+    await schalter.click();
+  }
+  await blatt.getByRole('button', { name: 'Anwenden' }).click();
+  await expect(blatt).toBeHidden();
+}
+
 export async function heuteDerWelt(seite: Page): Promise<string> {
   const antwort = await seite.request.get('/api/einstellungen');
   expect(antwort.ok()).toBe(true);
