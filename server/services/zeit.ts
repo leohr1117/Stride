@@ -13,6 +13,38 @@ export { lokalesDatum, plusTage, tagesbeginn, wochenbeginn };
 const MITTAG = 12;
 const DATUM_FORMAT = /^(\d{4})-(\d{2})-(\d{2})$/;
 
+let testDatum: string | null = null;
+
+/** Nur unter STRIDE_TEST. null stellt die echte Uhr wieder her. */
+export function setzeTestzeit(datum: string | null): void {
+  if (process.env.STRIDE_TEST !== '1') {
+    testDatum = null;
+    return;
+  }
+  if (datum === null) {
+    testDatum = null;
+    return;
+  }
+  if (!DATUM_FORMAT.test(datum)) {
+    throw ungueltig(DATUM_HINWEIS);
+  }
+  const [jahr, monat, tag] = datum.split('-').map(Number);
+  const probe = new Date(jahr, monat - 1, tag, MITTAG, 0, 0, 0);
+  if (probe.getFullYear() !== jahr || probe.getMonth() !== monat - 1 || probe.getDate() !== tag) {
+    throw ungueltig(`Das Datum ${datum} existiert nicht.`);
+  }
+  testDatum = datum;
+}
+
+/** Mittag des Testtags, sonst die echte Uhr. Ohne gesetztes Testdatum identisch zu new Date(). */
+export function leseJetzt(): Date {
+  if (process.env.STRIDE_TEST === '1' && testDatum !== null) {
+    const [jahr, monat, tag] = testDatum.split('-').map(Number);
+    return new Date(jahr, monat - 1, tag, MITTAG, 0, 0, 0);
+  }
+  return new Date();
+}
+
 export function datumPlus(datum: string, tage: number): string {
   if (!DATUM_FORMAT.test(datum)) {
     throw ungueltig(DATUM_HINWEIS);

@@ -1,5 +1,10 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "{name} zählt mit": "{name} cuenta",
+  "Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.": "Base en Hoy se pliega desde fuera de la tarjeta. Dentro, una flecha abre la página.",
+  "Ein Rückblick gibt kein Geist-XP, wenn Geist archiviert oder ausgeschaltet ist. Der Knopf zeigt dann nur Speichern.": "Un repaso no da XP de Mente si Mente está archivado o apagado. El botón muestra solo Guardar.",
+  "Speichern steht unter dem letzten Feld und verdeckt keine Eingabe.": "Guardar queda bajo el último campo y no tapa la entrada.",
+  "Todoist-Projekte und Labels haben wieder einen Schalter. Ausgeschaltet zählen sie nicht. Neue sind aus.": "Los proyectos y las etiquetas de Todoist tienen otra vez un interruptor. Apagados no cuentan. Los nuevos empiezan apagados.",
   "Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.": "Un atributo de la inversión se puede quitar tocando otra vez. Las zonas se llaman Invertido en y Bonificación para.",
   "Blätter bleiben am rechten Rand vollständig sichtbar.": "Las hojas se ven completas en el borde derecho.",
   "Knöpfe zum Anlegen zeigen nur ein Plus.": "Los botones para crear muestran un solo más.",

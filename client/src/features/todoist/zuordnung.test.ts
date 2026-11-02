@@ -9,6 +9,7 @@ import {
   mitVorlage,
   projektAnzeige,
   projektDaten,
+  projektSchalterAnzeige,
   standAusLabel,
   standardAnzeige,
   standardDaten,
@@ -86,16 +87,21 @@ describe('zuordnung', () => {
     expect(erbeName(standard)).toBe('Zählt nicht');
     expect(erbeName({ text: 'Lesen', eigene: true })).toBe('Standard · Lesen');
     expect(standardAnzeige('standard', 3, 'Lesen')).toEqual({ text: 'Lesen', eigene: true });
+    const geerbt = { text: 'Lesen', eigene: true };
+    expect(projektSchalterAnzeige(false, 3, 'Lesen', geerbt)).toEqual({ text: 'Zählt nicht', eigene: false });
+    expect(projektSchalterAnzeige(true, null, null, geerbt)).toEqual({ text: 'Lesen', eigene: false });
   });
 
-  it('setzt ein Label ohne Tätigkeit und ohne Ziel auf inaktiv', () => {
-    const leer = labelDaten(stand());
-    expect(leer.aktiv).toBe(false);
-    expect(leer.vorlageId).toBeNull();
-    expect(labelDaten(stand({ vorlageId: 3 })).aktiv).toBe(true);
+  it('lässt den Schalter unabhängig von der Tätigkeit', () => {
+    const aus = labelDaten(stand({ vorlageId: 3 }), false);
+    expect(aus.aktiv).toBe(false);
+    expect(aus.vorlageId).toBe(3);
+    expect(labelDaten(stand(), false).aktiv).toBe(false);
+    expect(labelDaten(stand({ vorlageId: 3 }), true).aktiv).toBe(true);
     expect(labelWirkt(label({ aktiv: false, stunden: 2 }))).toBe(false);
-    expect(labelAnzeige(false, 4, 'Lesen')).toEqual({ text: 'Wie Projekt', eigene: false });
-    expect(standAusLabel(label()).vorlageId).toBeNull();
+    expect(labelAnzeige(false, 4, 'Lesen')).toEqual({ text: 'Zählt nicht', eigene: false });
+    expect(labelAnzeige(true, null, null)).toEqual({ text: 'Wie Projekt', eigene: false });
+    expect(standAusLabel(label()).vorlageId).toBe(4);
   });
 
   it('gruppiert Tätigkeiten und verschiebt nur innerhalb der Liste', () => {

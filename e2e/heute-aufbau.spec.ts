@@ -81,6 +81,19 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   const basis = page.locator('main a[href="/basis"]');
   await expect(basis).toBeVisible();
   await expect(basis.locator('svg')).toHaveCount(1);
+  const pfeileGetrennt = await page.evaluate(() => {
+    const knoepfe = [...document.querySelectorAll('button[aria-expanded]')];
+    const basisKopf = knoepfe.find((knopf) => {
+      const id = knopf.getAttribute('aria-labelledby');
+      return id !== null && document.getElementById(id)?.textContent === 'Basis';
+    });
+    const link = document.querySelector('main a[href="/basis"]');
+    if (!(basisKopf instanceof HTMLElement) || !(link instanceof HTMLElement)) {
+      return false;
+    }
+    return basisKopf.closest('section.karte') === null && link.closest('section.karte') !== null;
+  });
+  expect(pfeileGetrennt).toBe(true);
   await basis.click();
   await expect(page).toHaveURL(/\/basis$/);
   await expect(page.locator('main h1')).toHaveText('Basis');

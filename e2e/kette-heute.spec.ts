@@ -1,6 +1,14 @@
 import fs from 'node:fs';
+import { DatabaseSync } from 'node:sqlite';
 import { expect, test, type Page } from '@playwright/test';
+import { verweigereEchteDatenbank } from '../server/testpfad.ts';
+import { kettenLaenge } from '../shared/spiel/kette.ts';
+import { SCHUTZ } from '../shared/spiel/schutz.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+
+const SCHUTZ_VORRAT = 'schutz_vorrat';
+const SCHUTZ_SCHWELLE = 'schutz_schwelle_verbraucht';
+const SCHWELLE_OHNE_VERDIENST = SCHUTZ.schwelleTage * 1000;
 
 const MS_PRO_TAG = 86_400_000;
 
@@ -10,21 +18,6 @@ function tagPlus(tag: string, tage: number): string {
   const monatNeu = String(zeitpunkt.getUTCMonth() + 1).padStart(2, '0');
   const tagNeu = String(zeitpunkt.getUTCDate()).padStart(2, '0');
   return `${zeitpunkt.getUTCFullYear()}-${monatNeu}-${tagNeu}`;
-}
-
-function tageZwischen(von: string, bis: string): number {
-  const utc = (tag: string) => {
-    const [jahr, monat, tagImMonat] = tag.split('-').map(Number);
-    return Date.UTC(jahr, monat - 1, tagImMonat);
-  };
-  return Math.round((utc(bis) - utc(von)) / MS_PRO_TAG);
-}
-
-function heuteLokal(): string {
-  const jetzt = new Date();
-  const monat = String(jetzt.getMonth() + 1).padStart(2, '0');
-  const tag = String(jetzt.getDate()).padStart(2, '0');
-  return `${jetzt.getFullYear()}-${monat}-${tag}`;
 }
 
 function lokalesDatum(iso: string): string {
@@ -64,6 +57,145 @@ async function letzterEintragTag(seite: Page): Promise<string> {
     throw new Error('Kein Eintrag in der Chronik.');
   }
   return lokalesDatum(eintrag.eintrag.erstelltAm);
+}
+
+interface RueckkehrZeile {
+  id: number;
+  status: string;
+  geoeffnet_am: string;
+  frist_am: string;
+  eintrag_id: number | null;
+}
+
+interface ProtokollZeile {
+  id: number;
+  art: string;
+  bezug_typ: string | null;
+  bezug_id: number | null;
+  tag: string | null;
+  erstellt_am: string;
+}
+
+function weltDatei(): string {
+  const datei = process.env.PLAYWRIGHT_WELT;
+  if (!datei) {
+    throw new Error('Abbruch: PLAYWRIGHT_WELT fehlt.');
+  }
+  return verweigereEchteDatenbank(datei);
+}
+
+function leseEinstellung(db: DatabaseSync, schluessel: string): string | null {
+  const zeile = db.prepare('SELECT wert FROM einstellungen WHERE schluessel = ?').get(schluessel) as { wert: string } | undefined;
+  return zeile?.wert ?? null;
+}
+
+function schreibeEinstellung(db: DatabaseSync, schluessel: string, wert: string | null): void {
+  if (wert === null) {
+    db.prepare('DELETE FROM einstellungen WHERE schluessel = ?').run(schluessel);
+    return;
+  }
+  db.prepare(
+    `INSERT INTO einstellungen (schluessel, wert) VALUES (?, ?)
+     ON CONFLICT (schluessel) DO UPDATE SET wert = excluded.wert`,
+  ).run(schluessel, wert);
+}
+
+function setzeSchutzZaehler(vorrat: 0 | 1, schwelle: number): void {
+  const db = new DatabaseSync(weltDatei());
+  schreibeEinstellung(db, SCHUTZ_VORRAT, JSON.stringify(vorrat));
+  schreibeEinstellung(db, SCHUTZ_SCHWELLE, JSON.stringify(schwelle));
+  db.close();
+}
+
+/** Tage, die fehlen, damit die Kette am letzten Eintrag mindestens eine Schutzschwelle lang ist. */
+function ketteLuecken(letzter: string): string[] {
+  const db = new DatabaseSync(weltDatei());
+  const tage = (
+    db.prepare(`SELECT DISTINCT date(erstellt_am, 'localtime') AS tag FROM eintraege`).all() as { tag: string }[]
+  ).map((zeile) => zeile.tag);
+  db.close();
+  if (kettenLaenge(tage, letzter) >= SCHUTZ.schwelleTage) {
+    return [];
+  }
+  const fehlend: string[] = [];
+  for (let versatz = SCHUTZ.schwelleTage - 1; versatz >= 0; versatz -= 1) {
+    const tag = tagPlus(letzter, -versatz);
+    if (!tage.includes(tag)) {
+      fehlend.push(tag);
+    }
+  }
+  return fehlend;
+}
+
+/** Hält alte Rückkehren aus dem Bild. Der Schutzzähler steht so, dass erst der Streak-Eintrag ihn verdient. */
+function bereiteKette(heute: string): () => void {
+  const db = new DatabaseSync(weltDatei());
+  const rueckkehr = db.prepare('SELECT id, status, geoeffnet_am, frist_am, eintrag_id FROM rueckkehr').all() as RueckkehrZeile[];
+  const protokoll = db
+    .prepare(`SELECT id, art, bezug_typ, bezug_id, tag, erstellt_am FROM protokoll WHERE art LIKE 'rueckkehr%'`)
+    .all() as ProtokollZeile[];
+  const ab = db.prepare(`SELECT wert FROM einstellungen WHERE schluessel = 'rueckkehr_ab'`).get() as { wert: string } | undefined;
+  const vorratVorher = leseEinstellung(db, SCHUTZ_VORRAT);
+  const schwelleVorher = leseEinstellung(db, SCHUTZ_SCHWELLE);
+  db.exec(`DELETE FROM protokoll WHERE art LIKE 'rueckkehr%'`);
+  db.exec('DELETE FROM rueckkehr');
+  db.prepare('DELETE FROM streak_bruecken WHERE tag = ?').run(tagPlus(heute, -1));
+  schreibeEinstellung(db, SCHUTZ_VORRAT, JSON.stringify(0));
+  schreibeEinstellung(db, SCHUTZ_SCHWELLE, JSON.stringify(SCHWELLE_OHNE_VERDIENST));
+  const wert = JSON.stringify(heute);
+  if (ab) {
+    db.prepare(`UPDATE einstellungen SET wert = ? WHERE schluessel = 'rueckkehr_ab'`).run(wert);
+  } else {
+    db.prepare(`INSERT INTO einstellungen (schluessel, wert) VALUES ('rueckkehr_ab', ?)`).run(wert);
+  }
+  db.close();
+  return () => {
+    const wieder = new DatabaseSync(weltDatei());
+    wieder.exec(`DELETE FROM protokoll WHERE art LIKE 'rueckkehr%'`);
+    wieder.exec('DELETE FROM rueckkehr');
+    const rueck = wieder.prepare('INSERT INTO rueckkehr (id, status, geoeffnet_am, frist_am, eintrag_id) VALUES (?, ?, ?, ?, ?)');
+    for (const zeile of rueckkehr) {
+      rueck.run(zeile.id, zeile.status, zeile.geoeffnet_am, zeile.frist_am, zeile.eintrag_id);
+    }
+    const vorhanden = wieder.prepare('SELECT art FROM protokoll WHERE id = ?');
+    const neu = wieder.prepare(
+      'INSERT INTO protokoll (art, bezug_typ, bezug_id, tag, erstellt_am) VALUES (?, ?, ?, ?, ?)',
+    );
+    const alt = wieder.prepare(
+      'INSERT INTO protokoll (id, art, bezug_typ, bezug_id, tag, erstellt_am) VALUES (?, ?, ?, ?, ?, ?)',
+    );
+    for (const zeile of protokoll) {
+      const da = vorhanden.get(zeile.id) as { art: string } | undefined;
+      if (da?.art === zeile.art) {
+        continue;
+      }
+      if (da) {
+        neu.run(zeile.art, zeile.bezug_typ, zeile.bezug_id, zeile.tag, zeile.erstellt_am);
+        continue;
+      }
+      alt.run(zeile.id, zeile.art, zeile.bezug_typ, zeile.bezug_id, zeile.tag, zeile.erstellt_am);
+    }
+    if (ab) {
+      wieder
+        .prepare(
+          `INSERT INTO einstellungen (schluessel, wert) VALUES ('rueckkehr_ab', ?)
+           ON CONFLICT (schluessel) DO UPDATE SET wert = excluded.wert`,
+        )
+        .run(ab.wert);
+    } else {
+      wieder.prepare(`DELETE FROM einstellungen WHERE schluessel = 'rueckkehr_ab'`).run();
+    }
+    schreibeEinstellung(wieder, SCHUTZ_VORRAT, vorratVorher);
+    schreibeEinstellung(wieder, SCHUTZ_SCHWELLE, schwelleVorher);
+    wieder.close();
+  };
+}
+
+async function setzeHeute(seite: Page, datum: string | null): Promise<void> {
+  const antwort = await seite.request.post('/api/test/heute', { data: { datum } });
+  if (!antwort.ok()) {
+    throw new Error(`Testuhr ${antwort.status()} ${await antwort.text()}`);
+  }
 }
 
 async function freieVorlage(seite: Page): Promise<number> {
@@ -237,37 +369,35 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
 
   const ausgang = page.viewportSize() ?? { width: 390, height: 844 };
   const angelegt: number[] = [];
+  let wieder: (() => void) | null = null;
   try {
-    const heute = heuteLokal();
     const letzter = await letzterEintragTag(page);
-    const abstand = tageZwischen(letzter, heute);
-    if (abstand < 3 || abstand > 10) {
-      throw new Error(`Abstand ${abstand} zwischen ${letzter} und ${heute} liegt außerhalb von 3 bis 10.`);
-    }
+    const heute = tagPlus(letzter, 4);
+    wieder = bereiteKette(heute);
+    await setzeHeute(page, heute);
     const vorlage = await freieVorlage(page);
     const streakTag = tagPlus(heute, -2);
     const bruchTag = tagPlus(heute, -3);
-    // Der Eintrag von vorgestern kommt zuerst. Sonst sieht die Pflege den Bruchtag und öffnet die Rückkehr, bevor der Streak steht.
-    if (abstand >= 4) {
-      angelegt.push(await legeEintrag(page, vorlage, streakTag));
-      const bis = tagPlus(heute, -4);
-      for (let tag = tagPlus(letzter, 1); tag <= bis; tag = tagPlus(tag, 1)) {
-        angelegt.push(await legeEintrag(page, vorlage, tag));
-      }
-      await page.goto('/');
-      await expect(page.locator('[data-kette="streak"]')).toContainText('Pause aufgebraucht');
-      await expect(page.locator('[data-kette="rueckkehr"]')).toHaveCount(0);
-      await expect(page.locator('[data-kette="schutz"]')).toHaveCount(0);
-      await dialogBleibtZeile(page, 'streak');
-      await beideBreiten(page, 'streak');
-      await page.setViewportSize(ausgang);
-      angelegt.push(await legeEintrag(page, vorlage, bruchTag));
-      const streakId = angelegt[0];
-      if (streakId === undefined) {
-        throw new Error('Kein Eintrag für den Streak.');
-      }
-      await loescheStill(page, streakId);
+    for (const tag of ketteLuecken(letzter)) {
+      angelegt.push(await legeEintrag(page, vorlage, tag));
     }
+    setzeSchutzZaehler(0, 0);
+    // Der Eintrag von vorgestern kommt zuerst. Sonst sieht die Pflege den Bruchtag und öffnet die Rückkehr, bevor der Streak steht.
+    const streakId = await legeEintrag(page, vorlage, streakTag);
+    angelegt.push(streakId);
+    const bis = tagPlus(heute, -4);
+    for (let tag = tagPlus(letzter, 1); tag <= bis; tag = tagPlus(tag, 1)) {
+      angelegt.push(await legeEintrag(page, vorlage, tag));
+    }
+    await page.goto('/');
+    await expect(page.locator('[data-kette="streak"]')).toContainText('Pause aufgebraucht');
+    await expect(page.locator('[data-kette="rueckkehr"]')).toHaveCount(0);
+    await expect(page.locator('[data-kette="schutz"]')).toHaveCount(0);
+    await dialogBleibtZeile(page, 'streak');
+    await beideBreiten(page, 'streak');
+    await page.setViewportSize(ausgang);
+    angelegt.push(await legeEintrag(page, vorlage, bruchTag));
+    await loescheStill(page, streakId);
     await page.goto('/');
     await expect(page.locator('[data-kette="rueckkehr"]')).toBeVisible();
     await expect(page.locator('[data-kette="schutz"]')).toContainText('Hält die');
@@ -293,10 +423,12 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
     await page.setViewportSize(ausgang);
     await pruefeChronik(page, 'kette');
   } finally {
+    await setzeHeute(page, null).catch(() => undefined);
     await page.request.post('/api/kette/schutz', { data: {} }).catch(() => undefined);
     for (const id of angelegt) {
       await loescheStill(page, id).catch(() => undefined);
     }
+    wieder?.();
     await page.setViewportSize(ausgang).catch(() => undefined);
   }
 });

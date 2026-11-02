@@ -1,5 +1,10 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "{name} zählt mit": "{name} compte",
+  "Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.": "Base sur Aujourd'hui se replie hors de la carte. Dans la carte, une flèche ouvre la page.",
+  "Ein Rückblick gibt kein Geist-XP, wenn Geist archiviert oder ausgeschaltet ist. Der Knopf zeigt dann nur Speichern.": "Un bilan ne donne pas d'XP d'Esprit si Esprit est archivé ou désactivé. Le bouton affiche seulement Enregistrer.",
+  "Speichern steht unter dem letzten Feld und verdeckt keine Eingabe.": "Enregistrer se place sous le dernier champ et ne cache pas la saisie.",
+  "Todoist-Projekte und Labels haben wieder einen Schalter. Ausgeschaltet zählen sie nicht. Neue sind aus.": "Les projets et les labels Todoist ont de nouveau un interrupteur. Éteints, ils ne comptent pas. Les nouveaux commencent éteints.",
   "Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.": "Un attribut de l'investissement se retire en appuyant encore. Les zones s'appellent Investi dans et Bonus pour.",
   "Blätter bleiben am rechten Rand vollständig sichtbar.": "Les feuilles restent entièrement visibles sur le bord droit.",
   "Knöpfe zum Anlegen zeigen nur ein Plus.": "Les boutons pour créer n'affichent qu'un seul plus.",

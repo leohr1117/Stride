@@ -9,7 +9,7 @@ import { Dialog } from '../../components/Dialog.tsx';
 import { Zeile } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
-import { Fehlermeldung, Knopf } from '../../ui/index.ts';
+import { Fehlermeldung, Knopf, Schalter } from '../../ui/index.ts';
 import { merkeStatus, useTodoistBlick } from './gemeinsam.ts';
 import { ZuordnungBlatt } from './ZuordnungBlatt.tsx';
 import {
@@ -17,8 +17,8 @@ import {
   labelAnzeige,
   labelDaten,
   labelWirkt,
-  projektAnzeige,
   projektDaten,
+  projektSchalterAnzeige,
   standAusLabel,
   standAusProjekt,
   standardAnzeige,
@@ -53,9 +53,13 @@ function Spaltenkopf({ links }: { links: string }) {
   return (
     <div className="flex justify-between px-4 pt-2 pb-1 text-[13px] leading-[18px] text-leise">
       <span>{tx(links)}</span>
-      <span className="pe-7">{tx('zählt als')}</span>
+      <span className="pe-16">{tx('zählt als')}</span>
     </div>
   );
+}
+
+function ZaehlSchalter({ name, an, onAendern }: { name: string; an: boolean; onAendern: (an: boolean) => void }) {
+  return <Schalter kompakt an={an} label={tx('{name} zählt mit', { name })} onAendern={onAendern} />;
 }
 
 function Zeilen({ children }: { children: ReactNode }) {
@@ -151,10 +155,12 @@ export function TodoistZuordnungen({ status }: { status: TodoistStatus }) {
       return;
     }
     if (wahl.art === 'projekt') {
-      speichern.mutate({ art: 'projekt', id: wahl.id, daten: projektDaten(naechster) });
+      const zeile = status.projekte.find((eintrag) => eintrag.todoistId === wahl.id);
+      speichern.mutate({ art: 'projekt', id: wahl.id, daten: projektDaten(naechster, zeile?.aktiv ?? false) });
       return;
     }
-    speichern.mutate({ art: 'label', id: wahl.id, daten: labelDaten(naechster) });
+    const zeile = status.labels.find((eintrag) => eintrag.todoistId === wahl.id);
+    speichern.mutate({ art: 'label', id: wahl.id, daten: labelDaten(naechster, zeile?.aktiv ?? false) });
   };
 
   const verschiebeLabel = (id: string, richtung: -1 | 1) => {
@@ -180,7 +186,12 @@ export function TodoistZuordnungen({ status }: { status: TodoistStatus }) {
         ) : (
           <Zeilen>
             {status.projekte.map((zuordnung) => {
-              const anzeige = projektAnzeige(zuordnung.vorlageId, vorlageName(taetigkeiten, zuordnung.vorlageId), standard);
+              const anzeige = projektSchalterAnzeige(
+                zuordnung.aktiv,
+                zuordnung.vorlageId,
+                vorlageName(taetigkeiten, zuordnung.vorlageId),
+                standard,
+              );
               return (
                 <Zeile
                   key={zuordnung.todoistId}
@@ -188,6 +199,19 @@ export function TodoistZuordnungen({ status }: { status: TodoistStatus }) {
                   name={spaltenSatz('Erledigt in', zuordnung.name, anzeige.text)}
                   wert={wertKnoten(anzeige)}
                   onKlick={() => setWahl({ art: 'projekt', id: zuordnung.todoistId })}
+                  rechts={
+                    <ZaehlSchalter
+                      name={zuordnung.name}
+                      an={zuordnung.aktiv}
+                      onAendern={(an) =>
+                        speichern.mutate({
+                          art: 'projekt',
+                          id: zuordnung.todoistId,
+                          daten: projektDaten(standAusProjekt(zuordnung), an),
+                        })
+                      }
+                    />
+                  }
                 />
               );
             })}
@@ -220,6 +244,19 @@ export function TodoistZuordnungen({ status }: { status: TodoistStatus }) {
                     name={spaltenSatz('Mit Label', label.name, anzeige.text)}
                     wert={wertKnoten(anzeige)}
                     onKlick={() => setWahl({ art: 'label', id: label.todoistId })}
+                    rechts={
+                      <ZaehlSchalter
+                        name={label.name}
+                        an={label.aktiv}
+                        onAendern={(an) =>
+                          speichern.mutate({
+                            art: 'label',
+                            id: label.todoistId,
+                            daten: labelDaten(standAusLabel(label), an),
+                          })
+                        }
+                      />
+                    }
                   />
                 );
               })}

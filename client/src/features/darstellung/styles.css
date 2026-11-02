@@ -654,16 +654,8 @@ html[data-fab='an'] {
 }
 
 .formular > .formular-fuss {
-  position: sticky;
-  bottom: var(--leisten-hoehe, 0px);
-  z-index: 35;
   padding-top: 1rem;
   background: var(--grund);
-}
-
-/* 88 px über der Leiste: der Plus-Knopf deckt die letzte Zeile nicht. */
-html[data-fab='an'] .formular > .formular-fuss {
-  bottom: calc(var(--leisten-hoehe, 0px) + 88px);
 }
 
 html[data-fab='an'] .dialog-fenster .formular-fuss {
@@ -679,10 +671,6 @@ html[data-fab='an'] .dialog-fenster .formular-fuss {
 
 :root[data-stil] .dialog-fenster .formular-fuss .knopf-primaer {
   white-space: normal;
-}
-
-html[data-tastatur='an'] .formular > .formular-fuss {
-  bottom: var(--tastatur);
 }
 
 html[data-tastatur='an'] .dialog-fenster .formular-fuss {

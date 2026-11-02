@@ -497,6 +497,7 @@ export const todoistZuordnungSchema = z.object({
   erkenntnis: freiText('Die Erkenntnis', GRENZEN.notizMax).optional(),
   notiz: freiText('Die Notiz', GRENZEN.notizMax).optional(),
   meilenstein: z.boolean().optional(),
+  aktiv: z.boolean().optional(),
 });
 
 export const todoistLabelSchema = z.object({

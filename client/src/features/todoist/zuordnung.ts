@@ -58,6 +58,19 @@ export function projektAnzeige(vorlageId: number | null, name: string | null, st
   return { text: standard.text, eigene: false };
 }
 
+/** Ausgeschaltet zählt nicht, auch wenn ein Standard gesetzt ist. */
+export function projektSchalterAnzeige(
+  aktiv: boolean,
+  vorlageId: number | null,
+  name: string | null,
+  standard: ZaehlAnzeige,
+): ZaehlAnzeige {
+  if (!aktiv) {
+    return { text: tx('Zählt nicht'), eigene: false };
+  }
+  return projektAnzeige(vorlageId, name, standard);
+}
+
 export function erbeName(standard: ZaehlAnzeige): string {
   if (!standard.eigene) {
     return tx('Zählt nicht');
@@ -75,7 +88,10 @@ export function labelWirkt(label: {
 }
 
 export function labelAnzeige(aktiv: boolean, vorlageId: number | null, name: string | null): ZaehlAnzeige {
-  if (aktiv && vorlageId !== null && name) {
+  if (!aktiv) {
+    return { text: tx('Zählt nicht'), eigene: false };
+  }
+  if (vorlageId !== null && name) {
     return { text: name, eigene: true };
   }
   return { text: tx('Wie Projekt'), eigene: false };
@@ -112,19 +128,18 @@ export function standAusProjekt(zeile: TodoistZuordnung): ZuordnungsStand {
 }
 
 export function standAusLabel(zeile: TodoistLabel): ZuordnungsStand {
-  const wirkt = labelWirkt(zeile);
   const abschluss = zeile.abschluss === 'geschafft' || zeile.abschluss === 'gescheitert' ? zeile.abschluss : null;
   return {
-    zielArt: wirkt ? zeile.zielArt : null,
-    zielId: wirkt ? zeile.zielId : null,
-    projektId: wirkt ? zeile.projektId : null,
-    vorlageId: wirkt ? zeile.vorlageId : null,
+    zielArt: zeile.zielArt,
+    zielId: zeile.zielId,
+    projektId: zeile.projektId,
+    vorlageId: zeile.vorlageId,
     stunden: stundenOderLeer(zeile.stunden),
     faehigkeitId: faehigkeitOderLeer(zeile.faehigkeitId),
-    abschluss: wirkt ? abschluss : null,
-    erkenntnis: wirkt ? zeile.erkenntnis : '',
+    abschluss,
+    erkenntnis: zeile.erkenntnis,
     notiz: zeile.notiz,
-    meilenstein: wirkt && zeile.meilenstein === true,
+    meilenstein: zeile.meilenstein === true,
   };
 }
 
@@ -226,7 +241,7 @@ function hatZiel(stand: ZuordnungsStand): boolean {
   return stand.zielArt !== null && stand.zielId !== null;
 }
 
-export function projektDaten(stand: ZuordnungsStand): TodoistZuordnungDaten {
+export function projektDaten(stand: ZuordnungsStand, aktiv = true): TodoistZuordnungDaten {
   const ziel = hatZiel(stand);
   const vorhaben = ziel && stand.zielArt === 'vorhaben';
   return {
@@ -240,13 +255,13 @@ export function projektDaten(stand: ZuordnungsStand): TodoistZuordnungDaten {
     erkenntnis: stand.abschluss === 'gescheitert' ? stand.erkenntnis : '',
     notiz: stand.notiz,
     meilenstein: !vorhaben && (ziel || stand.vorlageId !== null) ? stand.meilenstein : false,
+    aktiv,
   };
 }
 
-export function labelDaten(stand: ZuordnungsStand): TodoistLabelDaten {
+export function labelDaten(stand: ZuordnungsStand, aktiv: boolean): TodoistLabelDaten {
   const ziel = hatZiel(stand);
   const vorhaben = ziel && stand.zielArt === 'vorhaben';
-  const aktiv = stand.vorlageId !== null || ziel;
   return {
     aktiv,
     zielArt: ziel ? stand.zielArt : null,
@@ -258,7 +273,7 @@ export function labelDaten(stand: ZuordnungsStand): TodoistLabelDaten {
     abschluss: vorhaben ? stand.abschluss : null,
     erkenntnis: stand.abschluss === 'gescheitert' ? stand.erkenntnis : '',
     notiz: stand.notiz,
-    meilenstein: aktiv && !vorhaben ? stand.meilenstein : null,
+    meilenstein: !vorhaben ? stand.meilenstein : null,
   };
 }
 

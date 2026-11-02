@@ -62,7 +62,7 @@ import { verdieneSchutz } from '../kette/kette.ts';
 import { erfuelleRueckkehr, haengeRueckkehrUm, pflegeRueckkehr } from '../kette/rueckkehr.ts';
 import { ladeVorhaben, legeVorhabenAn } from '../ziele/vorhaben.ts';
 import { ladeAktiveGewichte, pruefeVorlageZumProjekt } from '../taetigkeiten/vorlagen.ts';
-import { lokalesDatum, tagesbeginn, zeitpunktFuerEintrag } from '../../services/zeit.ts';
+import { leseJetzt, lokalesDatum, tagesbeginn, zeitpunktFuerEintrag } from '../../services/zeit.ts';
 
 interface EintragZeile extends KontextZeile {
   id: number;
@@ -537,7 +537,7 @@ function ohneEins(multiplikatoren: Multiplikator[]): Multiplikator[] {
 
 export function erstelleEintrag(
   daten: EintragDaten,
-  jetzt = new Date(),
+  jetzt = leseJetzt(),
   sonder: EintragSonder = {},
 ): EintragErgebnis {
   const { projekt, gewichte, bestehendesVorhaben, istMeilenstein, faehigkeit } = bereiteVor(daten);
@@ -797,7 +797,7 @@ export function erstelleEintrag(
   }, jetzt);
 }
 
-export function loescheEintrag(id: number, jetzt = new Date()): void {
+export function loescheEintrag(id: number, jetzt = leseJetzt()): void {
   const eintrag = eine<{
     vorhabenId: number | null;
     abschluss: Abschluss | null;

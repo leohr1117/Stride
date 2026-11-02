@@ -145,10 +145,11 @@ function planeErledigung(
 ): TodoistPlan | { fehler: string } | null {
   const projekt = erledigung.projektId === null ? undefined : projekte.get(erledigung.projektId);
   const regeln = passendeLabels(erledigung.labels ?? [], labels);
-  const projektWahl =
-    projekt !== undefined &&
-    ((alsZiel(projekt.zielArt) !== null && projekt.zielId !== null) || projekt.vorlageId !== null);
-  const basis = projekt !== undefined && projektWahl ? zuQuelle(projekt, projekt.meilenstein === 1) : null;
+  const projektAn = projekt !== undefined && projekt.aktiv === 1;
+  const basis =
+    projektAn && ((alsZiel(projekt.zielArt) !== null && projekt.zielId !== null) || projekt.vorlageId !== null)
+      ? zuQuelle(projekt, projekt.meilenstein === 1)
+      : null;
   const zusammen = fuehreRegelnZusammen(
     regeln.map((label) => zuQuelle(label, label.meilenstein === null ? null : label.meilenstein === 1)),
     basis,
@@ -156,6 +157,9 @@ function planeErledigung(
   const name = projekt?.name ?? regeln[0]?.name ?? 'Todoist';
   if ((zusammen.zielArt !== null && zusammen.zielId !== null) || zusammen.vorlageId !== null) {
     return planAusZusammen(erledigung, zusammen, name);
+  }
+  if (projekt !== undefined && projekt.aktiv !== 1) {
+    return null;
   }
   const ohne = liesTodoistOhne();
   if (ohne.art !== 'standard' || ohne.vorlageId === null) {

@@ -95,17 +95,26 @@ test('Konto gruppiert Profil und Anmeldung', async ({ page }, testInfo) => {
         if (!(knopf instanceof HTMLElement) || !(fuss instanceof HTMLElement)) {
           return null;
         }
+        const feld = document.querySelector('input.feld-eingabe');
+        if (!(feld instanceof HTMLElement)) {
+          return null;
+        }
         const kasten = knopf.getBoundingClientRect();
+        const feldKasten = feld.getBoundingClientRect();
         const sicht = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sicht-hoehe'));
         const mitte = document.elementFromPoint(kasten.left + kasten.width / 2, kasten.top + kasten.height / 2);
+        const feldMitte = document.elementFromPoint(feldKasten.left + feldKasten.width / 2, feldKasten.top + feldKasten.height / 2);
+        const ueberdeckt = !(kasten.bottom <= feldKasten.top + 1 || feldKasten.bottom <= kasten.top + 1);
         return {
           tastaturAn: document.documentElement.dataset.tastatur === 'an',
-          fuss: getComputedStyle(fuss).bottom,
+          lage: getComputedStyle(fuss).position,
+          unterFeld: kasten.top >= feldKasten.bottom - 1,
+          feldFrei: !ueberdeckt && feldMitte instanceof HTMLElement && (feldMitte === feld || feld.contains(feldMitte)),
           imFenster: kasten.top >= 0 && kasten.bottom <= sicht + 1,
           trifft: mitte instanceof Node && knopf.contains(mitte),
         };
       });
-    }).toMatchObject({ tastaturAn: true, fuss: `${tastatur}px`, imFenster: true, trifft: true });
+    }).toMatchObject({ tastaturAn: true, lage: 'static', unterFeld: true, feldFrei: true, imFenster: true, trifft: true });
     await bild('name');
     await page.evaluate(() => {
       const fenster = window as Window & { __strideSicht?: null };

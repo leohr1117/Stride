@@ -6,7 +6,7 @@ import { aktivesAttribut } from '../attribute/attribute.ts';
 import { leseRueckkehrAb, schreibeRueckkehrAb } from '../einstellungen/einstellungen.ts';
 import { bucheAttributXp, type AttributBuchung } from '../../services/fortschritt.ts';
 import { ladeAktiveTage, ladeBrueckentage } from '../../services/serie.ts';
-import { lokalesDatum } from '../../services/zeit.ts';
+import { leseJetzt, lokalesDatum } from '../../services/zeit.ts';
 
 export interface RueckkehrBuchung {
   buchungen: AttributBuchung[];
@@ -109,7 +109,7 @@ function bucheRueckkehr(eintragId: number, zeitpunkt: string): RueckkehrBuchung 
 }
 
 /** Im onRequest-Hook und zu Beginn von erstelleEintrag. Idempotent, keine XP. */
-export function pflegeRueckkehr(jetzt = new Date()): void {
+export function pflegeRueckkehr(jetzt = leseJetzt()): void {
   const heute = lokalesDatum(jetzt);
   inTransaktion(() => {
     if (leseRueckkehrAb() === null) {

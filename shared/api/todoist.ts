@@ -14,6 +14,7 @@ export interface TodoistZuordnung {
   erkenntnis: string;
   notiz: string;
   meilenstein: boolean;
+  aktiv: boolean;
 }
 
 export interface TodoistZuordnungDaten {
@@ -27,6 +28,7 @@ export interface TodoistZuordnungDaten {
   erkenntnis?: string;
   notiz?: string;
   meilenstein?: boolean;
+  aktiv?: boolean;
 }
 
 export interface TodoistLabel {

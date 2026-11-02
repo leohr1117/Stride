@@ -1,5 +1,10 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "{name} zählt mit": "{name} учитывается",
+  "Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.": "База на Сегодня сворачивается снаружи карточки. Внутри карточки одна стрелка открывает страницу.",
+  "Ein Rückblick gibt kein Geist-XP, wenn Geist archiviert oder ausgeschaltet ist. Der Knopf zeigt dann nur Speichern.": "Итог не даёт XP Разума, если Разум в архиве или выключен. Кнопка показывает только Сохранить.",
+  "Speichern steht unter dem letzten Feld und verdeckt keine Eingabe.": "Сохранить стоит под последним полем и не закрывает ввод.",
+  "Todoist-Projekte und Labels haben wieder einen Schalter. Ausgeschaltet zählen sie nicht. Neue sind aus.": "У проектов и меток Todoist снова есть выключатель. Выключенные не считаются. Новые начинаются выключенными.",
   "Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.": "Атрибут инвестиции снимается повторным нажатием. Области называются «Куда вложено» и «Бонус для».",
   "Blätter bleiben am rechten Rand vollständig sichtbar.": "Листы целиком видны у правого края.",
   "Knöpfe zum Anlegen zeigen nur ein Plus.": "Кнопки создания показывают только один плюс.",

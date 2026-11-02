@@ -1,7 +1,8 @@
 import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, Pencil } from 'lucide-react';
+import { Check, ChevronRight, Pencil } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
+import { Link } from 'react-router';
 import type { BasisAufgabe } from '../../../../shared/api/index.ts';
 import { DAUER_OPTIONEN, GRENZEN, type IconName } from '../../../../shared/spiel/begriffe.ts';
 import { fehlendeZuordnung } from '../../../../shared/spiel/ebenen.ts';
@@ -171,10 +172,9 @@ export function BasisKarte() {
   };
 
   return (
-    <Karte>
+    <section className="space-y-2">
       <EinklappKopf
         titel={tx("Basis")}
-        titelPfad="/basis"
         offen={!eingeklappt}
         onToggle={umschalten}
         zusatz={
@@ -184,11 +184,17 @@ export function BasisKarte() {
         }
       />
       {!eingeklappt && (
-        <div className="mt-3">
+        <Karte>
+          <div className="ueberschrift abschnittskopf mb-2 min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
+            <Link to="/basis" className="inline-flex items-center">
+              {tx("Basis")}
+              <ChevronRight className="size-4 shrink-0" aria-hidden />
+            </Link>
+          </div>
           <BasisListe aufgaben={aktive} mitProjekt={ebenen.projekte} />
-        </div>
+        </Karte>
       )}
-    </Karte>
+    </section>
   );
 }
 

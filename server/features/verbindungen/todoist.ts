@@ -30,6 +30,7 @@ export interface TodoistZeile {
   erkenntnis: string;
   notiz: string;
   meilenstein: number | null;
+  aktiv: number;
 }
 
 export interface LabelZeile extends TodoistZeile {
@@ -40,7 +41,8 @@ export interface LabelZeile extends TodoistZeile {
 
 const PROJEKT_SPALTEN = `
   todoist_id AS todoistId, name, ziel_art AS zielArt, ziel_id AS zielId, projekt_id AS projektId,
-  vorlage_id AS vorlageId, stunden, faehigkeit_id AS faehigkeitId, abschluss, erkenntnis, notiz, meilenstein
+  vorlage_id AS vorlageId, stunden, faehigkeit_id AS faehigkeitId, abschluss, erkenntnis, notiz, meilenstein,
+  aktiv
 `;
 
 const LABEL_SPALTEN = `${PROJEKT_SPALTEN}, aktiv, rang, sortierung`;
@@ -97,6 +99,7 @@ function zuZuordnung(zeile: TodoistZeile): TodoistZuordnung {
     erkenntnis: zeile.erkenntnis ?? '',
     notiz: zeile.notiz ?? '',
     meilenstein: zeile.meilenstein === 1,
+    aktiv: zeile.aktiv === 1,
   };
 }
 

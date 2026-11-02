@@ -17,11 +17,13 @@ function schreibeProjekt(todoistId: string, werte: {
   erkenntnis: string;
   notiz: string;
   meilenstein: number;
+  aktiv: number;
 }): void {
   ausfuehren(
     `UPDATE todoist_projekte
      SET ziel_art = ?, ziel_id = ?, projekt_id = ?, vorlage_id = ?, stunden = ?,
-         faehigkeit_id = ?, abschluss = ?, erkenntnis = ?, notiz = ?, meilenstein = ?
+         faehigkeit_id = ?, abschluss = ?, erkenntnis = ?, notiz = ?, meilenstein = ?,
+         aktiv = ?
      WHERE todoist_id = ?`,
     werte.zielArt,
     werte.zielId,
@@ -33,6 +35,7 @@ function schreibeProjekt(todoistId: string, werte: {
     werte.erkenntnis,
     werte.notiz,
     werte.meilenstein,
+    werte.aktiv,
     todoistId,
   );
 }
@@ -75,6 +78,7 @@ export function ordneTodoistProjektZu(todoistId: string, daten: TodoistZuordnung
     erkenntnis,
     notiz,
     meilenstein: meilenstein ? 1 : 0,
+    aktiv: daten.aktiv === undefined ? 1 : daten.aktiv ? 1 : 0,
   });
   return ladeTodoistStatus();
 }

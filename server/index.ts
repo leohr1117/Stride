@@ -5,7 +5,7 @@ import { ZodError } from 'zod';
 import { aktiviereAnfrageSprache } from './anfrageSprache.ts';
 import { KONFIG } from './config.ts';
 import { mitWelt, schliesseDatenbank } from './db.ts';
-import { AppFehler } from './fehler.ts';
+import { AppFehler, ungueltig } from './fehler.ts';
 import { attributRouten } from './features/attribute/routen.ts';
 import { basisRouten } from './features/basis/routen.ts';
 import { bewertungRouten } from './features/bewertung/routen.ts';
@@ -27,6 +27,8 @@ import { schalteErfolgeFrei } from './features/erfolge/erfolge.ts';
 import { loeseWeltdatei, schliesseZugang, sitzungGueltig, weltdateiDerSitzung, weltenPfade } from './features/zugang/zugang.ts';
 import { starteRegelmaessigenAbgleich } from './features/verbindungen/abgleich.ts';
 import { rechneZeitverfallAb } from './features/verfall/verfall.ts';
+import { DATUM_HINWEIS } from '../shared/spiel/datum.ts';
+import { setzeTestzeit } from './services/zeit.ts';
 import { beschreibeValidierungsfehler } from './validierung.ts';
 
 const API_PREFIX = '/api';
@@ -52,6 +54,11 @@ app.setErrorHandler((fehler: FastifyError | Error, anfrage, antwort) => {
 await app.register(
   async (api) => {
     api.addHook('onRequest', (anfrage, antwort, fertig) => {
+      const pfad = anfrage.url.split('?')[0];
+      if (process.env.STRIDE_TEST === '1' && (pfad === '/api/test/heute' || pfad === '/test/heute')) {
+        fertig();
+        return;
+      }
       aktiviereAnfrageSprache(anfrage.headers['accept-language']);
       const token = leseSitzungsToken(anfrage.headers.cookie);
       const weltdatei = weltdateiDerSitzung(token);
@@ -99,6 +106,20 @@ await app.register(
     await api.register(datenRouten);
     await api.register(verbindungsRouten);
     await api.register(zugangRouten);
+    if (process.env.STRIDE_TEST === '1') {
+      api.post('/test/heute', async (anfrage) => {
+        const roh = anfrage.body;
+        if (roh === null || typeof roh !== 'object' || !('datum' in roh)) {
+          throw ungueltig(DATUM_HINWEIS);
+        }
+        const datum = (roh as { datum: unknown }).datum;
+        if (datum !== null && typeof datum !== 'string') {
+          throw ungueltig(DATUM_HINWEIS);
+        }
+        setzeTestzeit(datum);
+        return { datum };
+      });
+    }
   },
   { prefix: API_PREFIX },
 );

@@ -1,5 +1,9 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.', 'Basics on Today collapse from outside the card. Inside the card, one arrow opens the page.'],
+  ['Ein Rückblick gibt kein Geist-XP, wenn Geist archiviert oder ausgeschaltet ist. Der Knopf zeigt dann nur Speichern.', 'A review gives no Mind XP when Mind is archived or switched off. The button then only says Save.'],
+  ['Speichern steht unter dem letzten Feld und verdeckt keine Eingabe.', 'Save sits under the last field and does not cover the input.'],
+  ['Todoist-Projekte und Labels haben wieder einen Schalter. Ausgeschaltet zählen sie nicht. Neue sind aus.', 'Todoist projects and labels have a switch again. Turned off, they do not count. New ones start off.'],
   ['Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.', 'An attribute in an investment can be cleared by tapping it again. The sections are called Invested in and Bonus for.'],
   ['Blätter bleiben am rechten Rand vollständig sichtbar.', 'Sheets stay fully visible at the right edge.'],
   ['Knöpfe zum Anlegen zeigen nur ein Plus.', 'Buttons for adding something show only one plus.'],

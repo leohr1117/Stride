@@ -17,6 +17,22 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.3',
+    seiten: 'Heute, Rückblick, Verbindungen',
+    behoben: 'Heute, Rückblick, Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.',
+          'Ein Rückblick gibt kein Geist-XP, wenn Geist archiviert oder ausgeschaltet ist. Der Knopf zeigt dann nur Speichern.',
+          'Speichern steht unter dem letzten Feld und verdeckt keine Eingabe.',
+          'Todoist-Projekte und Labels haben wieder einen Schalter. Ausgeschaltet zählen sie nicht. Neue sind aus.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.2',
     seiten: 'Heute, Investitionen, Tätigkeiten, Basis, Verbindungen',
     behoben: 'Heute, Investitionen, Tätigkeiten, Basis, Verbindungen',

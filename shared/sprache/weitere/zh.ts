@@ -1,5 +1,10 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "{name} zählt mit": "{name} 计入",
+  "Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.": "今天上的基础从卡片外折叠。卡片里有一个箭头打开页面。",
+  "Ein Rückblick gibt kein Geist-XP, wenn Geist archiviert oder ausgeschaltet ist. Der Knopf zeigt dann nur Speichern.": "如果心智已归档或已关闭，回顾不给心智 XP。按钮这时只显示保存。",
+  "Speichern steht unter dem letzten Feld und verdeckt keine Eingabe.": "保存位于最后一个字段下方，不会挡住输入。",
+  "Todoist-Projekte und Labels haben wieder einen Schalter. Ausgeschaltet zählen sie nicht. Neue sind aus.": "Todoist 的项目和标签重新有了开关。关掉就不计入。新建的默认是关。",
   "Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.": "投资里的属性再点一次就会取消。两个区域分别是投入于和加成用于。",
   "Blätter bleiben am rechten Rand vollständig sichtbar.": "底部面板在右边缘完整可见。",
   "Knöpfe zum Anlegen zeigen nur ein Plus.": "新建按钮只显示一个加号。",

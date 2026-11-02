@@ -1,5 +1,6 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['{name} zählt mit', '{name} counts'],
   ['Jeder vergangene Termin wird ein Eintrag mit XP.', 'Each past event becomes an entry with XP.'],
   ['Termine in', 'Events in'],
   ['zählen als', 'count as'],

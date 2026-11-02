@@ -268,6 +268,7 @@ describe('Todoist-Abgleich', () => {
       ordneTodoistProjektZu('p1', { projektId: null, vorlageId: eigene, stunden: null, zielArt: null, zielId: null });
       ordneTodoistProjektZu('p3', { projektId: null, vorlageId: gebunden, stunden: null, zielArt: null, zielId: null });
       zuProjekt('p2', ziel.id, { stunden: 1, vorlageId: allgemein, notiz: 'vom Projekt' });
+      ordneTodoistProjektZu('p4', { projektId: null, vorlageId: null, stunden: null, aktiv: true });
       labelAn('oben', { vorlageId: eigene });
       labelAn('unten', { zielArt: 'projekt', zielId: anderes.id, projektId: anderes.id, stunden: 3, notiz: 'unten' });
       setzeTodoistOhne('standard', standard);
@@ -335,7 +336,10 @@ describe('Todoist-Abgleich', () => {
       expect(() =>
         ordneTodoistProjektZu('p1', { projektId: null, vorlageId: null, stunden: null, zielArt: 'vision', zielId: lauf.id }),
       ).toThrow(/Wähle ein Projekt/);
-      ausfuehren(`UPDATE todoist_projekte SET ziel_art = 'vision', ziel_id = ?, projekt_id = NULL WHERE todoist_id = 'p1'`, lauf.id);
+      ausfuehren(
+        `UPDATE todoist_projekte SET ziel_art = 'vision', ziel_id = ?, projekt_id = NULL, aktiv = 1 WHERE todoist_id = 'p1'`,
+        lauf.id,
+      );
       const fehler = await gleicheTodoistAb(jetzt);
       expect(fehler.fehler.join(' ')).toMatch(/Wähle ein Projekt/);
       expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM todoist_erledigt')?.wert).toBe(0);
@@ -367,6 +371,31 @@ describe('Todoist-Abgleich', () => {
       const ergebnis = await gleicheTodoistAb(jetzt);
       expect(ergebnis.fehler).toEqual([]);
       expect(eintrag('Trotz aus\nextra').projektId).toBe(ziel.id);
+    });
+  });
+
+  it('lässt ein ausgeschaltetes Projekt aus und nimmt den Standard nicht', async () => {
+    const jetzt = new Date();
+    await mitApi({
+      projekte: [{ id: 'p1', name: 'Post' }],
+      ereignisse: [ereignis('e1', 'Ausgelassen', { datum: jetzt.toISOString() })],
+    });
+    await mitWeltAsync(welt(), async () => {
+      const eigene = taetigkeit('Lesen');
+      const standard = taetigkeit('Standard');
+      await verbindeTodoist(TOKEN, jetzt);
+      ordneTodoistProjektZu('p1', { projektId: null, vorlageId: eigene, stunden: null, aktiv: false });
+      setzeTodoistOhne('standard', standard);
+      const aus = await gleicheTodoistAb(jetzt);
+      expect(aus.fehler).toEqual([]);
+      expect(aus.neu).toBe(0);
+      expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM eintraege')?.wert).toBe(0);
+
+      ordneTodoistProjektZu('p1', { projektId: null, vorlageId: null, stunden: null, aktiv: true });
+      const an = await gleicheTodoistAb(jetzt);
+      expect(an.fehler).toEqual([]);
+      expect(an.neu).toBe(1);
+      expect(eintrag('Ausgelassen').vorlageId).toBe(standard);
     });
   });
 
@@ -435,6 +464,7 @@ describe('Todoist-Abgleich', () => {
       const eigene = taetigkeit('Lesen', ziel.id);
       await verbindeTodoist(TOKEN, jetzt);
       zuProjekt('p1', ziel.id);
+      ordneTodoistProjektZu('p2', { projektId: null, vorlageId: null, stunden: null, aktiv: true });
 
       const erster = await gleicheTodoistAb(jetzt);
       expect(erster.fehler).toEqual([]);

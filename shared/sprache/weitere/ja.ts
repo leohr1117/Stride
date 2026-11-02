@@ -1,5 +1,10 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "{name} zählt mit": "{name} を数える",
+  "Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.": "今日のベーシスはカードの外で折りたたみます。カード内の矢印がページを開きます。",
+  "Ein Rückblick gibt kein Geist-XP, wenn Geist archiviert oder ausgeschaltet ist. Der Knopf zeigt dann nur Speichern.": "心がアーカイブ済みかオフなら、振り返りは心の XP を渡しません。ボタンは保存だけを表示します。",
+  "Speichern steht unter dem letzten Feld und verdeckt keine Eingabe.": "保存は最後の欄の下にあり、入力を隠しません。",
+  "Todoist-Projekte und Labels haben wieder einen Schalter. Ausgeschaltet zählen sie nicht. Neue sind aus.": "Todoist のプロジェクトとラベルにスイッチが戻りました。オフは数えません。新しいものはオフです。",
   "Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.": "投資の属性はもう一度タップすると外れます。区分は投資先とボーナス先です。",
   "Blätter bleiben am rechten Rand vollständig sichtbar.": "シートは右端まで欠けずに表示されます。",
   "Knöpfe zum Anlegen zeigen nur ein Plus.": "作成ボタンのプラスは一つだけです。",

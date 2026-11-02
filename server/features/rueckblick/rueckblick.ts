@@ -122,7 +122,7 @@ export function ladeRueckblick(woche: string, jetzt = new Date()): Rueckblick {
     erfolge,
     antworten: { gut: gespeichert?.gut ?? '', lernen: gespeichert?.lernen ?? '', fokus: gespeichert?.fokus ?? '' },
     belohnt,
-    bonusMoeglich: !belohnt && istBonusMoeglich(woche, jetzt),
+    bonusMoeglich: !belohnt && istBonusMoeglich(woche, jetzt) && aktivesAttribut('geist') !== null,
   };
 }
 

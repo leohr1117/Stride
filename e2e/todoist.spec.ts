@@ -63,7 +63,8 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
   await expect(page.getByText('Jede erledigte Aufgabe wird ein Eintrag mit XP.')).toBeVisible();
   await expect(todoist.getByText('Erledigt in', { exact: true })).toBeVisible();
   await expect(todoist.getByText('zählt als', { exact: true })).toBeVisible();
-  await expect(todoist.getByRole('switch')).toHaveCount(0);
+  await expect(todoist.getByRole('switch')).toHaveCount(2);
+  await expect(todoist.getByRole('switch', { name: 'Posteingang zählt mit' })).not.toBeChecked();
   await expect(page.getByText('Aufgaben ohne Zuordnung')).toHaveCount(0);
   await expect(page.getByText('Ordne das Todoist-Projekt')).toHaveCount(0);
   await expect(page.getByText(/XP für die letzten/)).toHaveCount(0);
@@ -87,6 +88,9 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
 
   const standardZeile = zeile(page, /^Erledigt in Standard/);
   await expect(standardZeile.locator('.text-haupt')).toContainText(standardName);
+  await expect(post).toContainText('Zählt nicht');
+  await expect(post.locator('.text-haupt')).toHaveCount(0);
+  await post.getByRole('switch', { name: 'Posteingang zählt mit' }).click();
   await expect(post).toContainText(standardName);
   await expect(post.locator('.text-haupt')).toHaveCount(0);
 
@@ -123,7 +127,9 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
   await expect(page.getByRole('tooltip')).toContainText('oberste');
   await page.keyboard.press('Escape');
 
+  const labels = page.locator('#todoist-labels');
   for (const name of ['Lesen', 'Sport']) {
+    await labels.getByRole('switch', { name: `${name} zählt mit` }).click();
     await page.getByRole('button', { name: new RegExp(`^Mit Label ${name}`) }).click();
     await waehleZaehltAls(page, name, 1);
     await fertig(page, name);

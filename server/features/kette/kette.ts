@@ -5,7 +5,7 @@ import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
 import { leseSchutzSchwelle, leseSchutzVorrat, schreibeSchutzSchwelle, schreibeSchutzVorrat } from '../einstellungen/einstellungen.ts';
 import { ladeAktiveTage, ladeBrueckentage, ladeSerie } from '../../services/serie.ts';
-import { lokalesDatum } from '../../services/zeit.ts';
+import { leseJetzt, lokalesDatum } from '../../services/zeit.ts';
 
 export const SCHUTZ_HEUTE_NEIN = 'Der Schutz kann heute nicht eingesetzt werden.';
 
@@ -28,7 +28,7 @@ function schutzAntwort(heute: string): SchutzErgebnis {
   };
 }
 
-export function ladeKetteHeute(jetzt = new Date()): KetteHeute {
+export function ladeKetteHeute(jetzt = leseJetzt()): KetteHeute {
   const heute = lokalesDatum(jetzt);
   const tage = ladeAktiveTage();
   const bruecken = ladeBrueckentage();
@@ -47,7 +47,7 @@ export function ladeKetteHeute(jetzt = new Date()): KetteHeute {
   };
 }
 
-export function setzeSchutzEin(jetzt = new Date()): SchutzErgebnis {
+export function setzeSchutzEin(jetzt = leseJetzt()): SchutzErgebnis {
   const heute = lokalesDatum(jetzt);
   const tage = ladeAktiveTage();
   const bruecken = ladeBrueckentage();
