@@ -1,2 +1,2 @@
-export { TodoistEinrichtung, TodoistTokenSchritte } from './Einrichtung.tsx';
+export { TodoistTokenSchritte } from './Einrichtung.tsx';
 export { TodoistZuordnungen } from './Zuordnungen.tsx';

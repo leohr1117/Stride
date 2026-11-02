@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['In Todoist steht bei jedem Projekt, als welche Tätigkeit eine erledigte Aufgabe zählt.', 'In Todoist, each project shows which activity a completed task counts as.'],
+  ['Ohne eigene Wahl gilt die Zeile Standard.', 'Without your own choice, the Standard row applies.'],
+  ['Labels sind zugeklappt. Ein Label geht vor dem Projekt, bei mehreren das oberste.', 'Labels stay collapsed. A label overrides the project, and the top one applies when there are several.'],
   ['Eine erledigte Todoist-Aufgabe zählt mit der Tätigkeit, auch ohne Ziel.', 'A completed Todoist task counts as the activity, even without a goal.'],
   ['Ein Label ersetzt die Zuordnung des Projekts. Bei mehreren gilt das oberste.', 'A label replaces the project assignment. If there are several, the top one applies.'],
   ['Ein vergangener Termin zählt mit der Tätigkeit, auch ohne Projekt.', 'A past appointment counts as the activity, even without a project.'],

@@ -35,9 +35,7 @@ test('Handbuch und Einführung nennen die Bereiche nicht mehr', async ({ page },
 
   await page.goto('/mehr/inhalte/verbindungen');
   await expect(page.getByRole('heading', { name: 'Todoist', level: 2 })).toBeVisible();
-  await page.getByRole('heading', { name: 'Todoist', level: 2 }).locator('xpath=..').getByRole('button', { name: 'Info' }).click();
-  await expect(page.getByRole('tooltip')).toContainText('Erledigte Aufgaben werden zu Einträgen');
-  await page.keyboard.press('Escape');
+  await expect(page.getByText('Jede erledigte Aufgabe wird ein Eintrag mit XP.')).toBeVisible();
 
   await page.goto('/mehr/neu');
   const satz = page.getByText('Handbuch und Einführung nennen die Bereiche Aufgaben und Training nicht mehr.');

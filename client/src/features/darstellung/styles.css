@@ -523,11 +523,12 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
 }
 
 .dialog-fenster .dialog-koerper,
-.dialog-fenster .formular-felder {
+.dialog-fenster .formular-felder,
+.dialog-fenster .blatt-sofort-felder {
   scroll-padding-bottom: 4.5rem;
 }
 
-.dialog-koerper:not(:has(> .formular, > .dialog-auswahl)) {
+.dialog-koerper:not(:has(> .formular, > .dialog-auswahl, > .blatt-sofort)) {
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -554,11 +555,33 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
   overscroll-behavior: contain;
 }
 
-.dialog-koerper:has(> .formular) {
+.dialog-koerper:has(> .formular),
+.dialog-koerper:has(> .blatt-sofort) {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   overflow: hidden;
+}
+
+.blatt-sofort {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.blatt-sofort-felder {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.blatt-sofort-fuss {
+  flex-shrink: 0;
+  padding-top: 1rem;
+  background: var(--flaeche);
 }
 
 .dialog-koerper > .formular {

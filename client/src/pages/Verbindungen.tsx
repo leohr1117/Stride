@@ -1,17 +1,17 @@
 import { tx } from '../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CalendarDays, ListChecks, Pencil, Plus, RefreshCw } from 'lucide-react';
+import { CalendarDays, Pencil, Plus, RefreshCw } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { type Kalender, type TodoistStatus } from '../../../shared/api/index.ts';
 import { istAn } from '../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useSichtbarkeit } from '../funktionen.ts';
 import { Dialog } from '../components/Dialog.tsx';
-import { SchnellZeile } from '../components/SchnellAktion.tsx';
+import { SchnellZeile, useSchnellAktion } from '../components/SchnellAktion.tsx';
 import { fehlerAnzeige } from '../features/mehr/verbindungsStand.ts';
 import { Fehlermeldung, Formular, InfoHinweis, Karte, Knopf, Ladeanzeige, PasswortFeld } from '../ui/index.ts';
 import { KalenderFormular } from '../features/kalender/Einrichtung.tsx';
-import { TodoistEinrichtung, TodoistTokenSchritte } from '../features/todoist/Einrichtung.tsx';
+import { TodoistTokenSchritte } from '../features/todoist/Einrichtung.tsx';
 import { TodoistZuordnungen } from '../features/todoist/Zuordnungen.tsx';
 import { kurzesDatum, uhrzeit, zahl } from '../format.ts';
 
@@ -44,10 +44,18 @@ function Status({ letzter, fehler, uebernommen }: { letzter: string | null; fehl
 
 export function VerbindungenBereich() {
   const queryClient = useQueryClient();
+  const schnell = useSchnellAktion();
   const { data, error, isPending } = useQuery({ queryKey: SCHLUESSEL.verbindungen, queryFn: api.verbindungen });
   const abgleichen = useMutation({
     mutationFn: api.gleicheAb,
-    onSuccess: () => void queryClient.invalidateQueries(),
+    onSuccess: (ergebnis) => {
+      const text =
+        ergebnis.neu === 0
+          ? tx('Keine neuen Einträge.')
+          : tx('{zahl} neue Einträge übernommen.', { zahl: zahl(ergebnis.neu) });
+      schnell.melde(text);
+      void queryClient.invalidateQueries();
+    },
   });
 
   if (isPending) {
@@ -57,35 +65,38 @@ export function VerbindungenBereich() {
     return <Fehlermeldung fehler={error} />;
   }
 
-  const verbunden = data.todoist.verbunden || data.kalender.length > 0;
+  const nurKalender = !data.todoist.verbunden && data.kalender.length > 0;
 
   return (
     <div className="space-y-4">
-      {verbunden ? (
+      {nurKalender ? (
         <div className="flex justify-end">
           <Knopf onClick={() => abgleichen.mutate()} disabled={abgleichen.isPending}>
             <RefreshCw className={`size-4 ${abgleichen.isPending ? 'animate-spin' : ''}`} />
-            {tx("Jetzt abgleichen")}
+            {tx('Jetzt abgleichen')}
           </Knopf>
         </div>
       ) : null}
-      {abgleichen.data && (
-        <p className="text-sm text-leise">
-          {abgleichen.data.neu === 0
-            ? tx("Keine neuen Einträge.")
-            : tx('{zahl} neue Einträge übernommen.', { zahl: zahl(abgleichen.data.neu) })}
-        </p>
-      )}
       <Fehlermeldung fehler={abgleichen.error} />
-
-      <TodoistKarte status={data.todoist} />
+      <TodoistBereich
+        status={data.todoist}
+        abgleichLaeuft={abgleichen.isPending}
+        onAbgleich={() => abgleichen.mutate()}
+      />
       <KalenderKarte kalender={data.kalender} />
     </div>
   );
 }
 
-function TodoistKarte({ status }: { status: TodoistStatus }) {
-  const projekteAn = istAn('projekte', useSichtbarkeit());
+function TodoistBereich({
+  status,
+  abgleichLaeuft,
+  onAbgleich,
+}: {
+  status: TodoistStatus;
+  abgleichLaeuft: boolean;
+  onAbgleich: () => void;
+}) {
   const queryClient = useQueryClient();
   const [token, setToken] = useState('');
   const aktualisieren = () => void queryClient.invalidateQueries({ queryKey: SCHLUESSEL.verbindungen });
@@ -100,52 +111,67 @@ function TodoistKarte({ status }: { status: TodoistStatus }) {
     ereignis.preventDefault();
     verbinden.mutate();
   };
+  const zeit = zeitpunktText(status.letzterAbgleich);
+  const fehlerZeilen = status.fehler ? fehlerAnzeige(status.fehler).split('\n') : [];
 
   return (
-    <Karte className="space-y-4">
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center">
-          <h2 className="ueberschrift text-sm font-semibold tracking-wide text-leise uppercase">{tx("Todoist")}</h2>
-          <InfoHinweis text="Erledigte Aufgaben werden zu Einträgen, sobald du verbunden bist. Beim Öffnen der App und tagsüber alle 15 Minuten, zwischen 23 und 6 Uhr alle 3 Stunden." />
-        </div>
+    <section id="todoist" className="space-y-4">
+      <div>
+        <h2 className="text-base font-semibold leading-6">{tx('Todoist')}</h2>
+        <p className="mt-1 text-sm text-leise">{tx('Jede erledigte Aufgabe wird ein Eintrag mit XP.')}</p>
       </div>
       {status.verbunden ? (
         <>
-          <SchnellZeile ziel={{ art: 'todoist', id: 0, name: tx("Todoist") }}>
+          <SchnellZeile ziel={{ art: 'todoist', id: 0, name: tx('Todoist') }}>
             {(menue) => (
-              <div className="flex items-center gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-akzent/15 text-akzent">
-                  <ListChecks className="size-5" />
-                </div>
+              <div className="flex items-center gap-2">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{status.nutzer}</p>
-                  <Status letzter={status.letzterAbgleich} fehler={status.fehler} uebernommen={status.uebernommen} />
+                  <p className="truncate font-medium">{tx('Verbunden als {name}', { name: status.nutzer ?? '' })}</p>
+                  <p className="flex items-center text-[13px] leading-[18px] text-leise">
+                    <span className="min-w-0">{zeit ? tx('Zuletzt abgeglichen {zeit}', { zeit }) : tx('Noch nicht abgeglichen')}</span>
+                    <InfoHinweis text="Beim Öffnen und alle 15 Minuten, nachts alle 3 Stunden." />
+                  </p>
+                  {fehlerZeilen.map((zeile) => (
+                    <p key={zeile} className="break-words text-xs text-gefahr">
+                      {zeile}
+                    </p>
+                  ))}
                 </div>
-                {menue}
+                <div className="flex shrink-0 items-center">
+                  <button
+                    type="button"
+                    data-schnell-frei=""
+                    className="min-h-12 px-1 text-haupt disabled:opacity-50"
+                    disabled={abgleichLaeuft}
+                    onClick={onAbgleich}
+                  >
+                    {tx('Jetzt abgleichen')}
+                  </button>
+                  {menue}
+                </div>
               </div>
             )}
           </SchnellZeile>
-          <TodoistEinrichtung status={status} />
-          {projekteAn ? <TodoistZuordnungen status={status} /> : null}
+          <TodoistZuordnungen status={status} />
         </>
       ) : (
         <Formular onAbsenden={absenden} abstand="space-y-3">
           <TodoistTokenSchritte />
           <PasswortFeld
-            label={tx("API-Token")}
+            label={tx('API-Token')}
             autoComplete="off"
             value={token}
             onChange={(ereignis) => setToken(ereignis.target.value)}
           />
           <div className="flex justify-end">
             <Knopf type="submit" variante="primaer" disabled={token.trim() === '' || verbinden.isPending}>
-              {verbinden.isPending ? tx("Prüfe …") : tx("Verbinden")}
+              {verbinden.isPending ? tx('Prüfe …') : tx('Verbinden')}
             </Knopf>
           </div>
           <Fehlermeldung fehler={verbinden.error} />
         </Formular>
       )}
-    </Karte>
+    </section>
   );
 }
 

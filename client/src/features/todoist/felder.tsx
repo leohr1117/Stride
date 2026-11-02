@@ -1,6 +1,6 @@
 import { ChevronDown } from 'lucide-react';
-import type { ReactNode } from 'react';
-import type { Faehigkeit, TodoistZielArt, Vorlage } from '../../../../shared/api/index.ts';
+import { useState, type ReactNode } from 'react';
+import type { Faehigkeit, TodoistZielArt } from '../../../../shared/api/index.ts';
 import { DAUER_OPTIONEN, GRENZEN } from '../../../../shared/spiel/begriffe.ts';
 import { HierarchieWahl } from '../../components/HierarchieWahl.tsx';
 import { gliedereProjekte, wahlBaum, type GliedProjekt, type WahlKnoten } from '../../projektHierarchie.ts';
@@ -12,19 +12,17 @@ import { sortiert } from './gemeinsam.ts';
 export function DauerWahl({
   wert,
   onAendern,
-  erben,
   disabled,
 }: {
   wert: number | null;
   onAendern: (stunden: number | null) => void;
-  erben: boolean;
   disabled: boolean;
 }) {
   return (
-    <Feld label="Dauer">
+    <Feld label="Dauer, wenn die Aufgabe keine hat">
       <select
         className={EINGABE_STIL}
-        aria-label={tx('Dauer')}
+        aria-label={tx('Dauer, wenn die Aufgabe keine hat')}
         disabled={disabled}
         value={wert === null ? '' : String(wert)}
         onChange={(ereignis) => {
@@ -32,45 +30,10 @@ export function DauerWahl({
           onAendern(roh === '' ? null : Number(roh));
         }}
       >
-        {erben ? <option value="">{tx('Wie das Projekt')}</option> : null}
-        {erben ? <option value="0">{tx('Keine Angabe')}</option> : <option value="">{tx('Dauer: keine Angabe')}</option>}
+        <option value="">{tx('Keine Angabe')}</option>
         {DAUER_OPTIONEN.map((option) => (
           <option key={option.stunden} value={option.stunden}>
             {tx('Dauer: {label}', { label: tx(option.label) })}
-          </option>
-        ))}
-      </select>
-    </Feld>
-  );
-}
-
-export function TaetigkeitWahl({
-  taetigkeiten,
-  wert,
-  onAendern,
-  erben,
-  disabled,
-}: {
-  taetigkeiten: readonly Vorlage[];
-  wert: number | null;
-  onAendern: (id: number | null) => void;
-  erben: boolean;
-  disabled: boolean;
-}) {
-  const gueltig = taetigkeiten.some((vorlage) => vorlage.id === wert) ? wert : null;
-  return (
-    <Feld label="Tätigkeit">
-      <select
-        className={EINGABE_STIL}
-        aria-label={tx('Tätigkeit')}
-        disabled={disabled}
-        value={gueltig ?? ''}
-        onChange={(ereignis) => onAendern(ereignis.target.value === '' ? null : Number(ereignis.target.value))}
-      >
-        <option value="">{erben ? tx('Wie das Projekt') : tx('Standard des Projekts')}</option>
-        {taetigkeiten.map((vorlage) => (
-          <option key={vorlage.id} value={vorlage.id}>
-            {vorlage.name}
           </option>
         ))}
       </select>
@@ -82,19 +45,18 @@ export function FaehigkeitWahl({
   faehigkeiten,
   wert,
   onAendern,
-  erben,
   disabled,
 }: {
   faehigkeiten: readonly Faehigkeit[];
   wert: number | null;
   onAendern: (id: number | null) => void;
-  erben: boolean;
   disabled: boolean;
 }) {
   return (
     <Feld label="Fähigkeit">
       <select
         className={EINGABE_STIL}
+        aria-label={tx('Fähigkeit')}
         disabled={disabled}
         value={wert === null ? '' : String(wert)}
         onChange={(ereignis) => {
@@ -102,8 +64,7 @@ export function FaehigkeitWahl({
           onAendern(roh === '' ? null : Number(roh));
         }}
       >
-        <option value="">{erben ? tx('Wie das Projekt') : tx('Keine')}</option>
-        {erben ? <option value="0">{tx('Keine')}</option> : null}
+        <option value="">{tx('Keine')}</option>
         {faehigkeiten.map((faehigkeit) => (
           <option key={faehigkeit.id} value={faehigkeit.id}>
             {faehigkeit.name}
@@ -143,12 +104,13 @@ export function TextFeld({
   );
 }
 
-export function WeitereFelder({ offen, onToggle, children }: { offen: boolean; onToggle: () => void; children: ReactNode }) {
+export function WeitereFelder({ anfangOffen, children }: { anfangOffen: boolean; children: ReactNode }) {
+  const [offen, setOffen] = useState(anfangOffen);
   return (
     <div className="space-y-2">
-      <button type="button" className="flex min-h-11 w-full items-center gap-2 text-sm" aria-expanded={offen} onClick={onToggle}>
+      <button type="button" className="flex min-h-12 w-full items-center gap-2 text-sm" aria-expanded={offen} onClick={() => setOffen((wert) => !wert)}>
         <ChevronDown className={`size-4 text-leise transition ${offen ? '' : '-rotate-90'}`} />
-        {tx('Weitere Felder')}
+        {tx('Weiteres')}
       </button>
       {offen ? <div className="space-y-2">{children}</div> : null}
     </div>
@@ -160,14 +122,12 @@ export function ZielWahl({
   art,
   id,
   onAendern,
-  erben,
   disabled,
 }: {
   blick: ZielBlick;
   art: TodoistZielArt | null;
   id: number | null;
   onAendern: (wert: string) => void;
-  erben: boolean;
   disabled: boolean;
 }) {
   const projekte = sortiert(blick.projekte, (projekt) => projekt.name);
@@ -221,7 +181,7 @@ export function ZielWahl({
   const knoten = wahlBaum(
     gliederung,
     {
-      ...(erben ? { leer: tx('Wie das Projekt') } : {}),
+      leer: tx('Kein Ziel'),
       ohneVision: tx('Ohne {name}', { name: tx('Vision') }),
     },
     knotenFuerProjekt,
@@ -256,9 +216,9 @@ export function ZielWahl({
     });
   }
   return (
-    <Feld label="Ziel">
+    <Feld label="Gehört zu">
       <HierarchieWahl
-        label={tx('Ziel')}
+        label={tx('Gehört zu')}
         wert={zielSchluessel(art, id)}
         knoten={knoten}
         disabled={disabled}
