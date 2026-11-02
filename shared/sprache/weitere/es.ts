@@ -1,6 +1,8 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} cuenta",
+  "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "En cada vista se pueden elegir todas las paletas incluidas. Las que creas se quedan en su vista.",
+  "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "El texto y los bordes siguen siendo legibles cuando la paleta viene de otra vista. El anillo de nivel y los errores conservan su color.",
   "Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.": "Base en Hoy se pliega desde fuera de la tarjeta. Dentro, una flecha abre la página.",
   "Ein Rückblick gibt kein Geist-XP, wenn Geist archiviert oder ausgeschaltet ist. Der Knopf zeigt dann nur Speichern.": "Un repaso no da XP de Mente si Mente está archivado o apagado. El botón muestra solo Guardar.",
   "Speichern steht unter dem letzten Feld und verdeckt keine Eingabe.": "Guardar queda bajo el último campo y no tapa la entrada.",

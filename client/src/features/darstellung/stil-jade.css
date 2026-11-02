@@ -51,7 +51,7 @@
 }
 
 :root[data-stil='jade'] :is(.karte, .dialog-fenster, .bg-flaeche.border-rand:not(.seitenleiste)) {
-  border-color: var(--jade-kante);
+  border-color: var(--kante);
   background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 50%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
@@ -71,7 +71,7 @@
 }
 
 :root[data-stil='jade'] .knopf-sekundaer {
-  box-shadow: inset 0 0 0 1px var(--jade-kante);
+  box-shadow: inset 0 0 0 1px var(--kante);
 }
 
 :root[data-stil='jade'] .balken-fuellung {
@@ -80,27 +80,27 @@
 }
 
 :root[data-stil='jade'] .seitenleiste {
-  border-right-color: var(--jade-kante);
+  border-right-color: var(--kante);
   background: color-mix(in srgb, var(--flaeche) 55%, var(--grund));
 }
 
 :root[data-stil='jade'] :is(.seitenleiste, .mobilleiste) a[aria-current='page'] {
-  color: var(--akzent);
+  color: var(--akzent-schrift);
 }
 
 :root[data-stil='jade'] .seitenleiste a[aria-current='page'] {
   background: rgba(255, 255, 255, 0.04);
-  box-shadow: inset 2px 0 0 var(--akzent);
+  box-shadow: inset 2px 0 0 var(--akzent-schrift);
 }
 
 :root[data-stil='jade'] .mobilleiste {
-  border-color: var(--jade-kante);
+  border-color: var(--kante);
   background-color: color-mix(in srgb, var(--grund) 94%, transparent);
 }
 
 @media (max-width: 767px) {
   :root[data-stil='jade'] .mobilkopf {
-    border-color: var(--jade-kante);
+    border-color: var(--kante);
     background-color: color-mix(in srgb, var(--grund) 94%, transparent);
   }
 }

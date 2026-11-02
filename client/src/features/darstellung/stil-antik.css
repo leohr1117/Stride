@@ -62,7 +62,7 @@
 }
 
 :root[data-stil='antik'] .ueberschrift {
-  color: var(--akzent);
+  color: var(--akzent-schrift);
   letter-spacing: 0.18em;
 }
 
@@ -71,7 +71,7 @@
 }
 
 :root[data-stil='antik'] :is(.karte, .dialog-fenster, .bg-flaeche.border-rand:not(.seitenleiste)) {
-  border-color: color-mix(in srgb, var(--akzent) 14%, transparent);
+  border-color: var(--kante);
   background-image:
     linear-gradient(90deg, transparent, var(--antik-linie), transparent),
     linear-gradient(90deg, transparent, var(--antik-hauch), transparent),
@@ -89,7 +89,7 @@
 }
 
 :root[data-stil='antik'] .dialog-fenster h2 {
-  color: var(--akzent);
+  color: var(--akzent-schrift);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -107,8 +107,8 @@ html:is(:lang(fr), :lang(ru))[data-stil='antik'] :is(h1, h2, .dialog-fenster h2)
 
 :root[data-stil='antik'] .knopf.knopf-primaer {
   background: transparent;
-  color: var(--akzent);
-  box-shadow: inset 0 0 0 1px var(--antik-linie);
+  color: var(--akzent-schrift);
+  box-shadow: inset 0 0 0 1px var(--kante);
   font-family: 'Cinzel', Georgia, serif;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -123,14 +123,14 @@ html:is(:lang(fr), :lang(ru))[data-stil='antik'] :is(h1, h2, .dialog-fenster h2)
 
 :root[data-stil='antik'] .knopf-rund {
   background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--flaeche-2) 55%, var(--rand)), color-mix(in srgb, var(--grund) 50%, var(--flaeche)));
-  color: var(--akzent);
+  color: var(--akzent-schrift);
   box-shadow:
-    inset 0 0 0 1px var(--antik-linie),
+    inset 0 0 0 1px var(--kante),
     0 0 24px -6px var(--antik-glanz);
 }
 
 :root[data-stil='antik'] .knopf-sekundaer {
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--akzent) 16%, transparent);
+  box-shadow: inset 0 0 0 1px var(--kante);
 }
 
 :root[data-stil='antik'] .knopf[data-angebot='an'] {
@@ -159,33 +159,33 @@ html:is(:lang(fr), :lang(ru))[data-stil='antik'] :is(h1, h2, .dialog-fenster h2)
 }
 
 :root[data-stil='antik'] .seitenleiste {
-  border-right-color: color-mix(in srgb, var(--akzent) 12%, transparent);
+  border-right-color: var(--kante);
   background: linear-gradient(180deg, var(--flaeche), color-mix(in srgb, var(--grund) 82%, black));
 }
 
 :root[data-stil='antik'] :is(.seitenleiste, .mobilleiste) a[aria-current='page'] {
-  color: var(--akzent);
+  color: var(--akzent-schrift);
 }
 
 :root[data-stil='antik'] .seitenleiste a[aria-current='page'] {
   background: linear-gradient(90deg, color-mix(in srgb, var(--akzent) 13%, transparent), transparent);
-  box-shadow: inset 2px 0 0 var(--akzent);
+  box-shadow: inset 2px 0 0 var(--akzent-schrift);
 }
 
 :root[data-stil='antik'] .mobilleiste {
-  border-color: color-mix(in srgb, var(--akzent) 14%, transparent);
+  border-color: var(--kante);
   background-color: color-mix(in srgb, var(--grund) 94%, transparent);
 }
 
 @media (max-width: 767px) {
   :root[data-stil='antik'] .mobilkopf {
-    border-color: color-mix(in srgb, var(--akzent) 14%, transparent);
+    border-color: var(--kante);
     background-color: color-mix(in srgb, var(--grund) 94%, transparent);
   }
 }
 
 :root[data-stil='antik'] .chip {
-  border-color: color-mix(in srgb, var(--akzent) 18%, transparent);
+  border-color: var(--kante);
 }
 
 :root[data-stil='antik'] .chip-aktiv {

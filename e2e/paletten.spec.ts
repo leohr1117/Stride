@@ -256,6 +256,9 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     expect(weg.ansichtFarben[anfang.stil]).toEqual(TRIO);
     expect(weg.paletten.some((palette) => palette.name === 'Abendrot')).toBe(true);
     expect(weg.primaer).not.toBe(TRIO.primaer);
+    await expect(page.getByRole('button', { name: 'Abendrot', exact: true })).toHaveCount(0);
+    await expect(page.locator('#farben button.rounded-full:disabled')).toHaveCount(0);
+    await expect(page.getByRole('region', { name: 'Jade' }).getByRole('button', { name: 'Jade', exact: true })).toBeEnabled();
 
     const zurueckGespeichert = page.waitForResponse(
       (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
@@ -283,6 +286,14 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     await ohneSeitlichenUeberlauf(page);
     await bild('standard');
 
+    if (anfang.stil !== 'standard') {
+      await page.goto('/mehr/darstellung');
+      const heimGespeichert = page.waitForResponse(
+        (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
+      );
+      await page.locator('button.rounded-xl').filter({ hasText: ANSICHT_NAME[anfang.stil] ?? anfang.stil }).click();
+      await heimGespeichert;
+    }
     await page.goto('/mehr/darstellung/paletten');
     await page.getByRole('button', { name: 'Abendrot', exact: true }).click();
     const loeschDialog = page.getByRole('dialog', { name: 'Abendrot' });

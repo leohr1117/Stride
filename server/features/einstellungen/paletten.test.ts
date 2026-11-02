@@ -113,6 +113,24 @@ describe('eigene Paletten', () => {
     });
   });
 
+  it('merkt die Ansicht an der neuen Palette und behält sie beim Umbenennen', () => {
+    const datei = welt();
+    mitWelt(datei, () => {
+      const standard = aendereEinstellungen({ paletteNeu: { name: 'Morgenrot', ...trio } });
+      expect(standard.paletten[0]?.stil).toBe('standard');
+      aendereEinstellungen({ stil: 'jade' });
+      const jade = aendereEinstellungen({ paletteNeu: { name: 'Abendrot', ...trio } });
+      const jadePalette = jade.paletten.find((palette) => palette.name === 'Abendrot');
+      expect(jadePalette?.stil).toBe('jade');
+      aendereEinstellungen({ stil: 'antik' });
+      const umbenannt = aendereEinstellungen({
+        paletteAendern: { id: jadePalette?.id ?? '', name: 'Dämmerung', ...trio },
+      });
+      expect(umbenannt.paletten.find((palette) => palette.id === jadePalette?.id)?.stil).toBe('jade');
+      expect(umbenannt.paletten.find((palette) => palette.name === 'Morgenrot')?.stil).toBe('standard');
+    });
+  });
+
   it('stoppt bei 24 und lehnt eine ungültige Farbe ab', () => {
     const datei = welt();
     mitWelt(datei, () => {

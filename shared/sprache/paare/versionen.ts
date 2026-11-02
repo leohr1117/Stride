@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.', 'Every look offers all built-in palettes. Palettes you create stay in their look.'],
+  ['Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.', 'Text and borders stay readable when the palette comes from another look. The level ring and errors keep their color.'],
   ['Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.', 'Basics on Today collapse from outside the card. Inside the card, one arrow opens the page.'],
   ['Ein Rückblick gibt kein Geist-XP, wenn Geist archiviert oder ausgeschaltet ist. Der Knopf zeigt dann nur Speichern.', 'A review gives no Mind XP when Mind is archived or switched off. The button then only says Save.'],
   ['Speichern steht unter dem letzten Feld und verdeckt keine Eingabe.', 'Save sits under the last field and does not cover the input.'],

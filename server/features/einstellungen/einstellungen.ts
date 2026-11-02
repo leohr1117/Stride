@@ -516,11 +516,14 @@ function neuePaletteId(liste: readonly { id: string }[]): string {
   throw new PalettenFehler('Die Palette wurde nicht gefunden.');
 }
 
-function wendePaletten(aenderung: {
-  paletteNeu?: PaletteEingabe;
-  paletteAendern?: PaletteEingabe & { id: string };
-  paletteLoeschen?: string;
-}): void {
+function wendePaletten(
+  aenderung: {
+    paletteNeu?: PaletteEingabe;
+    paletteAendern?: PaletteEingabe & { id: string };
+    paletteLoeschen?: string;
+  },
+  stil: Stil,
+): void {
   if (
     aenderung.paletteNeu === undefined &&
     aenderung.paletteAendern === undefined &&
@@ -538,7 +541,8 @@ function wendePaletten(aenderung: {
       liste = paletteAendern(liste, id, { name, primaer, akzent, hintergrund });
     }
     if (aenderung.paletteNeu !== undefined) {
-      liste = paletteAnlegen(liste, aenderung.paletteNeu, neuePaletteId(liste));
+      const eingabe = aenderung.paletteNeu.stil ? aenderung.paletteNeu : { ...aenderung.paletteNeu, stil };
+      liste = paletteAnlegen(liste, eingabe, neuePaletteId(liste));
     }
     speichere(PALETTEN_SCHLUESSEL, liste);
   } catch (fehler) {
@@ -682,7 +686,7 @@ export function aendereEinstellungen(
       );
     }
     wendeFavoriten(aenderung);
-    wendePaletten(aenderung);
+    wendePaletten(aenderung, aenderung.stil ?? bisher.stil);
     if (aenderung.bewertungTesten !== undefined && strideVariable('TEST') === '1') {
       schreibeBewertungTesten(aenderung.bewertungTesten);
     }

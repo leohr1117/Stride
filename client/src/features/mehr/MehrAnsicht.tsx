@@ -1,11 +1,11 @@
 import { Check } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import type { EigenePalette } from '../../../../shared/features/darstellung/eigenePaletten.ts';
-import { standardVorlage, vorlagen, type Farbtrio } from '../../../../shared/features/darstellung/paletten.ts';
+import { palettenDerAnsicht, type EigenePalette } from '../../../../shared/features/darstellung/eigenePaletten.ts';
+import { palettenNachDesign, standardVorlage, type Farbtrio } from '../../../../shared/features/darstellung/paletten.ts';
 import { STIL_INFO, STILE, type Stil } from '../../../../shared/features/darstellung/stile.ts';
 import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { farbAnfang, farbLoslassen, farbUebernehmen, farbZiehen, type FarbZustand } from '../darstellung/ansichtFarbe.ts';
-import { Fehlermeldung, Knopf, Ladeanzeige } from '../../ui/index.ts';
+import { Fehlermeldung, InfoHinweis, Knopf, Ladeanzeige } from '../../ui/index.ts';
 import { wendeErscheinung, wendeStilAn } from '../darstellung/stil.ts';
 import { tx } from '../../text.ts';
 import { useEinstellungen } from './rahmen.tsx';
@@ -143,6 +143,7 @@ function AnsichtWahl({
 
   const soll = standardVorlage(stil, systemDunkel());
   const istStandard = gleicheFarben(farben, soll);
+  const eigene = palettenDerAnsicht(paletten, stil);
 
   const waehleStil = (neu: Stil) => {
     uebernehmen(farbAnfang(farbenDerAnsicht(neu, gemerkt)));
@@ -158,30 +159,38 @@ function AnsichtWahl({
       <div id="farben" className="space-y-6">
         <Abschnittskopf titel={tx("Farben")} leise />
         <div className="space-y-3">
-          <Abschnittskopf ebene="h3" titel={tx("Farben dieser Ansicht")} leise />
-          <div className="flex flex-wrap gap-2" role="group" aria-label={tx("Farben dieser Ansicht")}>
-            {vorlagen(stil).map((vorlage) => {
-              const aktiv = gleicheFarben(farben, vorlage);
-              return (
-                <button
-                  key={vorlage.name}
-                  type="button"
-                  aria-pressed={aktiv}
-                  onClick={() => sofort({ primaer: vorlage.primaer, akzent: vorlage.akzent, hintergrund: vorlage.hintergrund })}
-                  className={`flex max-w-full items-center gap-2 rounded-full border px-2.5 py-1 text-xs ${aktiv ? 'border-akzent' : 'border-rand'}`}
-                >
-                  <Farbpunkte farben={vorlage} />
-                  {tx(vorlage.name)}
-                </button>
-              );
-            })}
+          <div className="flex items-center">
+            <Abschnittskopf ebene="h3" titel={tx("Farben dieser Ansicht")} leise />
+            <InfoHinweis name="Farben dieser Ansicht" text="Die Palette dieser Ansicht, danach die anderen." />
           </div>
+          {palettenNachDesign(stil).map((gruppe) => (
+            <section key={gruppe.stil} aria-label={tx(gruppe.label)} className="space-y-2">
+              <p className="text-xs text-leise">{tx(gruppe.label)}</p>
+              <div className="flex flex-wrap gap-2">
+                {gruppe.vorlagen.map((vorlage) => {
+                  const aktiv = gleicheFarben(farben, vorlage);
+                  return (
+                    <button
+                      key={`${gruppe.stil}-${vorlage.name}`}
+                      type="button"
+                      aria-pressed={aktiv}
+                      onClick={() => sofort({ primaer: vorlage.primaer, akzent: vorlage.akzent, hintergrund: vorlage.hintergrund })}
+                      className={`flex max-w-full items-center gap-2 rounded-full border px-2.5 py-1 text-xs ${aktiv ? 'border-akzent' : 'border-rand'}`}
+                    >
+                      <Farbpunkte farben={vorlage} />
+                      {tx(vorlage.name)}
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
         </div>
         <div className="space-y-3">
           <Abschnittskopf ebene="h3" titel={tx("Eigene Paletten")} leise />
-          {paletten.length > 0 ? (
+          {eigene.length > 0 ? (
             <div className="flex flex-wrap gap-2" role="group" aria-label={tx("Eigene Paletten")}>
-              {paletten.map((palette) => {
+              {eigene.map((palette) => {
                 const aktiv = gleicheFarben(farben, palette);
                 return (
                   <button

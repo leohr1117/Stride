@@ -16,6 +16,8 @@
   --feldrand: #767676;
   --akzent: #141414;
   --akzent-text: #f2f2f2;
+  --akzent-schrift: var(--akzent);
+  --kante: var(--feldrand);
   --aktion: #141414;
   --aktion-text: #f2f2f2;
   --trenner: var(--rand);

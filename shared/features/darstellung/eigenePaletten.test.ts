@@ -6,6 +6,7 @@ import {
   paletteAendern,
   paletteAnlegen,
   paletteLoeschen,
+  palettenDerAnsicht,
 } from './eigenePaletten.ts';
 
 const farben = { primaer: '#112233', akzent: '#445566', hintergrund: '#778899' };
@@ -47,5 +48,20 @@ describe('eigene Paletten', () => {
 
   it('meldet einen fehlenden Eintrag beim Ändern', () => {
     expect(() => paletteAendern([], 'x', { name: 'A', ...farben })).toThrow(/Die Palette wurde nicht gefunden/);
+  });
+
+  it('behält selbst erstellte Paletten in ihrer Ansicht und zeigt alte ohne Ansicht überall', () => {
+    const angelegt = paletteAnlegen([], { name: 'Morgenrot', ...farben, stil: 'jade' }, 'a');
+    expect(angelegt[0]?.stil).toBe('jade');
+    const umbenannt = paletteAendern(angelegt, 'a', { name: 'Abendrot', ...farben, stil: 'antik' });
+    expect(umbenannt[0]?.stil).toBe('jade');
+    const gelesen = lesePaletten([
+      { id: 'a', name: 'Jade', ...farben, stil: 'jade' },
+      { id: 'b', name: 'Alt', ...farben },
+      { id: 'c', name: 'Kaputt', ...farben, stil: 'schlicht' },
+    ]);
+    expect(gelesen.find((palette) => palette.id === 'c')?.stil).toBeUndefined();
+    expect(palettenDerAnsicht(gelesen, 'jade').map((palette) => palette.id)).toEqual(['a', 'b', 'c']);
+    expect(palettenDerAnsicht(gelesen, 'minimal').map((palette) => palette.id)).toEqual(['b', 'c']);
   });
 });

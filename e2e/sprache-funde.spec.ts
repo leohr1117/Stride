@@ -78,11 +78,11 @@ test('übersetzte Funde sind in jeder Sprache sichtbar', async ({ page }, info) 
       if (code !== 'de') {
         await expect(farben.getByRole('button', { name: 'Hell', exact: true })).toHaveCount(0);
       }
-      await page.getByRole('button', { name: zeige('Minimal', code), exact: true }).click();
+      await page.locator('button.rounded-xl').filter({ hasText: zeige('Minimal', code) }).click();
       await expect(farben.getByRole('button', { name: zeige('Tinte', code), exact: true })).toBeVisible();
-      await page.getByRole('button', { name: zeige('Antik', code), exact: true }).click();
+      await page.locator('button.rounded-xl').filter({ hasText: zeige('Antik', code) }).click();
       await expect(farben.getByRole('button', { name: zeige('Purpur', code), exact: true })).toBeVisible();
-      await page.getByRole('button', { name: zeige('Standard', code), exact: true }).click();
+      await page.locator('button.rounded-xl').filter({ hasText: zeige('Standard', code) }).click();
       await expect(farben.getByRole('button', { name: zeige('Nebel', code), exact: true })).toBeVisible();
       await page.screenshot({ path: bild(info, code, 'darstellung') });
 

@@ -21,6 +21,7 @@ const ERLAUBT = new Set([
   'Ungenutzte Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.',
   'Gilt für die Oberfläche. Namen und Einträge bleiben, wie du sie geschrieben hast.',
   'Primär: Knöpfe. Akzent: Hervorhebungen. Hintergrund: Fläche. Streak, Ring und Schalter haben feste Farben.',
+  'Die Palette dieser Ansicht, danach die anderen.',
   'Beim Öffnen und alle 15 Minuten, nachts alle 3 Stunden.',
   INFO_LABELS,
   HINWEIS_MEILENSTEIN,

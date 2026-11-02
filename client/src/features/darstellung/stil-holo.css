@@ -47,7 +47,7 @@
 }
 
 :root[data-stil='holo'] .ueberschrift {
-  color: var(--akzent);
+  color: var(--akzent-schrift);
   letter-spacing: 0.16em;
 }
 
@@ -66,7 +66,7 @@
 }
 
 :root[data-stil='holo'] :is(.karte, .dialog-fenster, .bg-flaeche.border-rand:not(.seitenleiste)) {
-  border-color: var(--holo-kante);
+  border-color: var(--kante);
   background-color: color-mix(in srgb, var(--flaeche) 92%, transparent);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, color-mix(in srgb, white 45%, var(--akzent)) 8%, transparent),
@@ -80,7 +80,7 @@
 }
 
 :root[data-stil='holo'] .dialog-fenster h2 {
-  color: var(--akzent);
+  color: var(--akzent-schrift);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -105,7 +105,7 @@ html:is(:lang(fr), :lang(ru))[data-stil='holo'] :is(h1, h2, .dialog-fenster h2, 
 }
 
 :root[data-stil='holo'] .knopf-sekundaer {
-  box-shadow: inset 0 0 0 1px var(--holo-kante);
+  box-shadow: inset 0 0 0 1px var(--kante);
 }
 
 :root[data-stil='holo'] .balken-fuellung {
@@ -114,29 +114,29 @@ html:is(:lang(fr), :lang(ru))[data-stil='holo'] :is(h1, h2, .dialog-fenster h2, 
 }
 
 :root[data-stil='holo'] .seitenleiste {
-  border-right-color: var(--holo-kante);
+  border-right-color: var(--kante);
   background: linear-gradient(180deg, color-mix(in srgb, var(--flaeche) 97%, transparent), color-mix(in srgb, var(--grund) 97%, transparent));
   box-shadow: 1px 0 28px -10px var(--holo-glimmen);
 }
 
 :root[data-stil='holo'] :is(.seitenleiste, .mobilleiste) a[aria-current='page'] {
-  color: var(--akzent);
+  color: var(--akzent-schrift);
   text-shadow: 0 0 10px var(--holo-leuchten);
 }
 
 :root[data-stil='holo'] .seitenleiste a[aria-current='page'] {
   background: linear-gradient(90deg, color-mix(in srgb, var(--akzent) 16%, transparent), transparent);
-  box-shadow: inset 2px 0 0 var(--akzent);
+  box-shadow: inset 2px 0 0 var(--akzent-schrift);
 }
 
 :root[data-stil='holo'] .mobilleiste {
-  border-color: var(--holo-kante);
+  border-color: var(--kante);
   background-color: color-mix(in srgb, var(--grund) 92%, transparent);
 }
 
 @media (max-width: 767px) {
   :root[data-stil='holo'] .mobilkopf {
-    border-color: var(--holo-kante);
+    border-color: var(--kante);
     background-color: color-mix(in srgb, var(--grund) 92%, transparent);
   }
 }

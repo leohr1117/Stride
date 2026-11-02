@@ -1,6 +1,8 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} を数える",
+  "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "どの表示でも、用意された配色をすべて選べます。自分で作った配色は、作った表示に残ります。",
+  "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "別の表示の配色でも、文字と枠は読めるままです。レベルリングとエラーの色は変わりません。",
   "Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.": "今日のベーシスはカードの外で折りたたみます。カード内の矢印がページを開きます。",
   "Ein Rückblick gibt kein Geist-XP, wenn Geist archiviert oder ausgeschaltet ist. Der Knopf zeigt dann nur Speichern.": "心がアーカイブ済みかオフなら、振り返りは心の XP を渡しません。ボタンは保存だけを表示します。",
   "Speichern steht unter dem letzten Feld und verdeckt keine Eingabe.": "保存は最後の欄の下にあり、入力を隠しません。",

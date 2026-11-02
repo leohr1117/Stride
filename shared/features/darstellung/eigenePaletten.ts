@@ -1,4 +1,5 @@
 import { istHexFarbe, normaleHex } from '../../spiel/farben.ts';
+import { istStil, type Stil } from './stile.ts';
 
 export const PALETTEN_SCHLUESSEL = 'paletten';
 export const PALETTE_NAME_MAX = 40;
@@ -10,6 +11,7 @@ export interface EigenePalette {
   primaer: string;
   akzent: string;
   hintergrund: string;
+  stil?: Stil;
 }
 
 export interface PaletteEingabe {
@@ -17,6 +19,7 @@ export interface PaletteEingabe {
   primaer: string;
   akzent: string;
   hintergrund: string;
+  stil?: Stil;
 }
 
 export class PalettenFehler extends Error {
@@ -64,7 +67,11 @@ export function lesePaletten(roh: unknown): EigenePalette[] {
     }
     ids.add(id);
     namen.add(norm);
-    ergebnis.push({ id, name, primaer, akzent, hintergrund });
+    const palette: EigenePalette = { id, name, primaer, akzent, hintergrund };
+    if (istStil(zeile.stil)) {
+      palette.stil = zeile.stil;
+    }
+    ergebnis.push(palette);
     if (ergebnis.length >= PALETTEN_MAX) {
       break;
     }
@@ -106,7 +113,15 @@ export function paletteAnlegen(liste: readonly EigenePalette[], eingabe: Palette
     throw new PalettenFehler('Die Palette wurde nicht gefunden.');
   }
   const name = pruefeName(eingabe.name, liste);
-  return [...liste, { id: rein, name, ...trio(eingabe) }];
+  const palette: EigenePalette = { id: rein, name, ...trio(eingabe) };
+  if (istStil(eingabe.stil)) {
+    palette.stil = eingabe.stil;
+  }
+  return [...liste, palette];
+}
+
+export function palettenDerAnsicht(liste: readonly EigenePalette[], stil: Stil): readonly EigenePalette[] {
+  return liste.filter((palette) => palette.stil === undefined || palette.stil === stil);
 }
 
 export function paletteAendern(liste: readonly EigenePalette[], id: string, eingabe: PaletteEingabe): EigenePalette[] {
@@ -116,7 +131,12 @@ export function paletteAendern(liste: readonly EigenePalette[], id: string, eing
   }
   const name = pruefeName(eingabe.name, liste, id);
   const kopie = liste.slice();
-  kopie[index] = { id, name, ...trio(eingabe) };
+  const bisher = liste[index];
+  const palette: EigenePalette = { id, name, ...trio(eingabe) };
+  if (bisher?.stil) {
+    palette.stil = bisher.stil;
+  }
+  kopie[index] = palette;
   return kopie;
 }
 

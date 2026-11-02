@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.4',
+    seiten: 'Darstellung',
+    behoben: 'Darstellung',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.',
+          'Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.3',
     seiten: 'Heute, Rückblick, Verbindungen',
     behoben: 'Heute, Rückblick, Verbindungen',

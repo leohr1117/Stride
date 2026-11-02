@@ -1,6 +1,8 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} compte",
+  "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "Chaque apparence propose toutes les palettes fournies. Celles que vous créez restent dans leur apparence.",
+  "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "Le texte et les bordures restent lisibles quand la palette vient d'une autre apparence. L'anneau de niveau et les erreurs gardent leur couleur.",
   "Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.": "Base sur Aujourd'hui se replie hors de la carte. Dans la carte, une flèche ouvre la page.",
   "Ein Rückblick gibt kein Geist-XP, wenn Geist archiviert oder ausgeschaltet ist. Der Knopf zeigt dann nur Speichern.": "Un bilan ne donne pas d'XP d'Esprit si Esprit est archivé ou désactivé. Le bouton affiche seulement Enregistrer.",
   "Speichern steht unter dem letzten Feld und verdeckt keine Eingabe.": "Enregistrer se place sous le dernier champ et ne cache pas la saisie.",

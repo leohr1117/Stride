@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { bedeutungsfarben } from '../../../../shared/features/darstellung/bedeutung.ts';
+import { kombination } from '../../../../shared/features/darstellung/kombination.ts';
 import { wacheKontrast } from '../../../../shared/features/darstellung/kontrastWaechter.ts';
 import { istHexFarbe, normaleHex } from '../../../../shared/spiel/farben.ts';
 import { erscheinungAus, standardVorlage, type Farbtrio } from '../../../../shared/features/darstellung/paletten.ts';
@@ -71,6 +72,7 @@ export function wendeErscheinung(wahl: Farbwahl): void {
   const flaechen = bild.flaechen;
   const bedeutung = bedeutungsfarben(flaechen.schema);
   const wache = wacheKontrast(bild, bedeutung);
+  const abgeleitet = kombination(bild, gelesenerStil(wurzel.dataset.stil) ?? STANDARD_STIL);
   wurzel.style.setProperty('--grund', bild.hintergrund);
   wurzel.style.setProperty('--flaeche', flaechen.flaeche);
   wurzel.style.setProperty('--flaeche-2', flaechen.flaeche2);
@@ -80,6 +82,8 @@ export function wendeErscheinung(wahl: Farbwahl): void {
   wurzel.style.setProperty('--feldrand', wache.feldrand);
   wurzel.style.setProperty('--akzent', wache.aktion);
   wurzel.style.setProperty('--akzent-text', wache.aktionText);
+  wurzel.style.setProperty('--akzent-schrift', abgeleitet.akzentSchrift);
+  wurzel.style.setProperty('--kante', abgeleitet.rahmen);
   wurzel.style.setProperty('--aktion', wache.aktion);
   wurzel.style.setProperty('--aktion-text', wache.aktionText);
   // --xp bleibt die Farbe der Ansicht, nicht der gewählte Akzent.

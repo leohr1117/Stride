@@ -43,6 +43,17 @@ describe('stile', () => {
     expect(antik).toContain("[data-kopf] .klassenbild");
     expect(antik).toContain('9999px');
     expect(antik).toContain('box-shadow: none');
+    expect(standard).not.toContain('--kante');
+    expect(standard).not.toContain('--akzent-schrift');
+    expect(minimal).not.toContain('--kante');
+    expect(minimal).not.toContain('--akzent-schrift');
+    for (const quelle of [jade, holo, antik]) {
+      expect(quelle).toContain('var(--kante)');
+      expect(quelle).toContain('var(--akzent-schrift)');
+    }
+    const kopf = antik.slice(antik.indexOf("[data-kopf] .klassenbild"));
+    expect(kopf).not.toContain('--kante');
+    expect(kopf).not.toContain('--akzent-schrift');
     for (const quelle of [minimal, jade, holo, antik]) {
       expect(quelle).not.toMatch(/--(?:fortschritt|streak|erfolg|gefahr|fokus|schalter)/);
     }

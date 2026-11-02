@@ -388,6 +388,7 @@ export const einstellungenAenderungSchema = z.object({
       primaer: z.string().refine(istHexFarbe, 'Die Primärfarbe braucht das Format #rrggbb.'),
       akzent: z.string().refine(istHexFarbe, 'Die Akzentfarbe braucht das Format #rrggbb.'),
       hintergrund: z.string().refine(istHexFarbe, 'Die Hintergrundfarbe braucht das Format #rrggbb.'),
+      stil: z.enum(STILE).optional(),
     })
     .optional(),
   paletteAendern: z

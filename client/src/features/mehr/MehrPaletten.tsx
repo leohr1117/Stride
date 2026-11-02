@@ -1,6 +1,6 @@
 import { EllipsisVertical } from 'lucide-react';
 import { useEffect, useState, type FormEvent } from 'react';
-import type { EigenePalette, PaletteEingabe } from '../../../../shared/features/darstellung/eigenePaletten.ts';
+import { palettenDerAnsicht, type EigenePalette, type PaletteEingabe } from '../../../../shared/features/darstellung/eigenePaletten.ts';
 import type { Farbtrio } from '../../../../shared/features/darstellung/paletten.ts';
 import { Dialog } from '../../components/Dialog.tsx';
 import { useSchnellAktion } from '../../components/SchnellAktion.tsx';
@@ -177,7 +177,8 @@ export function PalettenSeite() {
     return <Bereich titel={tx("Paletten")} zurueck={DARSTELLUNG_ZURUECK} kinder={<Fehlermeldung fehler={error} />} />;
   }
 
-  const offen = modus?.art === 'lesen' || modus?.art === 'bearbeiten' ? data.paletten.find((palette) => palette.id === modus.id) : undefined;
+  const sichtbar = palettenDerAnsicht(data.paletten, data.stil);
+  const offen = modus?.art === 'lesen' || modus?.art === 'bearbeiten' ? sichtbar.find((palette) => palette.id === modus.id) : undefined;
   const startNeu: PaletteEingabe = {
     name: '',
     primaer: data.primaer,
@@ -193,7 +194,13 @@ export function PalettenSeite() {
         onSuccess: () =>
           schnell.melde(tx('„{name}" gelöscht', { name: palette.name }), () => {
             speichern.mutate({
-              paletteNeu: { name: palette.name, primaer: palette.primaer, akzent: palette.akzent, hintergrund: palette.hintergrund },
+              paletteNeu: {
+                name: palette.name,
+                primaer: palette.primaer,
+                akzent: palette.akzent,
+                hintergrund: palette.hintergrund,
+                ...(palette.stil ? { stil: palette.stil } : {}),
+              },
             });
           }),
       },
@@ -207,9 +214,9 @@ export function PalettenSeite() {
       kinder={
         <div className="space-y-4">
           {!modus && speichern.error ? <Fehlermeldung fehler={speichern.error} /> : null}
-          {data.paletten.length === 0 ? <Leer text={tx("Noch keine Palette.")} /> : null}
+          {sichtbar.length === 0 ? <Leer text={tx("Noch keine Palette.")} /> : null}
           <ZeilenGruppe>
-            {data.paletten.map((palette) => (
+            {sichtbar.map((palette) => (
               <Zeile
                 key={palette.id}
                 titel={palette.name}
@@ -233,7 +240,7 @@ export function PalettenSeite() {
               fehler={speichern.error}
               speichert={speichern.isPending}
               onSchliessen={() => setModus(null)}
-              onSpeichern={(eingabe) => speichern.mutate({ paletteNeu: eingabe }, { onSuccess: () => setModus(null) })}
+              onSpeichern={(eingabe) => speichern.mutate({ paletteNeu: { ...eingabe, stil: data.stil } }, { onSuccess: () => setModus(null) })}
             />
           ) : null}
           {modus?.art === 'lesen' && offen ? (
