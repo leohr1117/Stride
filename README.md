@@ -41,7 +41,7 @@ Weitere Befehle:
 ```bash
 npm test               # Unit-Tests (Vitest)
 npm run typecheck      # Typprüfung
-npx playwright test    # Browser-Tests (brauchen Testkonten in data/)
+npm run e2e            # Browser-Tests (brauchen Testkonten in data/)
 npm run beispieldaten  # Beispielwelt in data/app.db; schaltet die nötigen Bereiche ein
 npm run build          # Produktions-Build nach client/dist
 npm start              # Server mit fertigem Build

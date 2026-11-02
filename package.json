@@ -10,6 +10,7 @@
     "build": "tsc --noEmit && vite build",
     "start": "node --disable-warning=ExperimentalWarning server/index.ts",
     "test": "vitest run",
+    "e2e": "playwright test",
     "typecheck": "tsc --noEmit",
     "beispieldaten": "node --disable-warning=ExperimentalWarning server/beispieldaten.ts"
   },
