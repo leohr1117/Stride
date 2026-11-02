@@ -1,5 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "密码管理器可以填写并保存登录、第一个账号和修改密码。",
+  "Schlägt die Anmeldung fehl, bleibt der Benutzername stehen. Nur das Passwort wird geleert.": "登录失败时，用户名保留。只清空密码。",
   "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "属性上，衰退位于损失栏之上，仅在衰退开启时显示。",
   "Ein neues Attribut legst du über Können oder Haben an. Jede Zeile hat Hinzufügen.": "新属性从能力或资产添加。每一行都有添加。",
   "Klassen und Titel zeigt die Tabelle, darunter den Satz zum stärksten Können.": "职业和称号先显示表格，下面是关于最强能力的句子。",

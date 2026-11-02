@@ -7,6 +7,7 @@ import { DATUM_HINWEIS } from '../shared/spiel/datum.ts';
 import { EBENEN } from '../shared/spiel/ebenen.ts';
 import { FUNKTIONEN } from '../shared/spiel/funktionen.ts';
 import { istLeiste, LEISTEN_SEITEN } from '../shared/spiel/leiste.ts';
+import { PASSWORT_MAX, PASSWORT_MIN } from '../shared/spiel/passwort.ts';
 import { FOKUS_IDS, GEBURTSJAHR_MIN, PROFILNAME_MAX, ZIELSTREBIGKEITEN } from '../shared/spiel/profil.ts';
 import { istHexFarbe } from '../shared/spiel/farben.ts';
 import { PALETTE_NAME_MAX } from '../shared/features/darstellung/eigenePaletten.ts';
@@ -580,8 +581,7 @@ export const hinweisAenderungSchema = z
 
 export const hinweisAngebotSchema = z.object({ nie: z.literal(true) }).strict();
 
-export const PASSWORT_MIN = 10;
-export const PASSWORT_MAX = 200;
+export { PASSWORT_MAX, PASSWORT_MIN };
 export const BENUTZER_MAX = 40;
 
 const benutzernameText = z

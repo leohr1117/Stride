@@ -242,12 +242,16 @@ export function PasswortFeld({
   autoCapitalize,
   autoCorrect,
   spellCheck,
+  benutzername,
+  passwordRules,
   ...rest
 }: Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
   label: string;
   hinweis?: string;
   fehler?: string | null;
   bezeichnung?: string;
+  benutzername?: string;
+  passwordRules?: string;
 }) {
   const generiert = useId();
   const feldId = id ?? generiert;
@@ -259,6 +263,9 @@ export function PasswortFeld({
       <span className="relative block">
         <input
           {...rest}
+          {...(passwordRules !== undefined
+            ? ({ passwordrules: passwordRules } as InputHTMLAttributes<HTMLInputElement>)
+            : null)}
           id={feldId}
           type={sichtbar ? 'text' : 'password'}
           autoCapitalize={autoCapitalize ?? 'none'}
@@ -276,6 +283,9 @@ export function PasswortFeld({
         >
           {sichtbar ? <EyeOff className="size-5" aria-hidden="true" /> : <Eye className="size-5" aria-hidden="true" />}
         </button>
+        {benutzername !== undefined ? (
+          <input type="hidden" id="username" name="username" autoComplete="username" value={benutzername} readOnly />
+        ) : null}
       </span>
     </Feld>
   );

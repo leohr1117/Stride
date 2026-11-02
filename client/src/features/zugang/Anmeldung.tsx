@@ -2,9 +2,11 @@ import { tx } from '../../text.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import type { ZugangModus, ZugangStatus } from '../../../../shared/api/index.ts';
+import { PASSWORT_MAX } from '../../../../shared/spiel/passwort.ts';
 import { api, beobachteAnmeldung } from '../../api/index.ts';
 import { SpracheAbgleich } from '../../sprache.tsx';
 import { Fehlermeldung, Feld, Formular, Knopf, Ladeanzeige, EINGABE_STIL, PasswortFeld } from '../../ui/index.ts';
+import { seitenwechsel } from './anmeldungFelder.ts';
 
 function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' | 'benutzername'>; onErfolg: (status: ZugangStatus) => void }) {
   const [benutzername, setBenutzername] = useState('');
@@ -27,8 +29,12 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
     setLaeuft(true);
     setFehler(null);
     try {
-      onErfolg(await api.anmelden({ benutzername: mitName ? benutzername.trim() : undefined, passwort }));
+      const status = await api.anmelden({ benutzername: mitName ? benutzername.trim() : undefined, passwort });
+      onErfolg(status);
+      seitenwechsel(window);
     } catch (anmeldeFehler) {
+      setPasswort('');
+      setWiederholung('');
       setFehler(anmeldeFehler);
     } finally {
       setLaeuft(false);
@@ -45,6 +51,7 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
         {mitName && (
           <Feld label={tx("Benutzername")}>
             <input
+              id="username"
               className={EINGABE_STIL}
               name="username"
               autoComplete="username"
@@ -59,9 +66,11 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
           </Feld>
         )}
         <PasswortFeld
+          id={neu ? 'new-password' : 'current-password'}
           label={tx("Passwort")}
           name="password"
           autoComplete={neu ? 'new-password' : 'current-password'}
+          maxLength={PASSWORT_MAX}
           autoFocus={!mitName}
           required
           value={passwort}
@@ -69,10 +78,12 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
         />
         {neu && (
           <PasswortFeld
+            id="new-password-repeat"
             label={tx("Passwort wiederholen")}
             fehler={abweichung}
             name="password-repeat"
             autoComplete="new-password"
+            maxLength={PASSWORT_MAX}
             required
             value={wiederholung}
             onChange={(ereignis) => {

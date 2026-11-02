@@ -20,6 +20,7 @@ import { uebersichtRouten } from './features/uebersicht/routen.ts';
 import { istOeffentlicherZugang, leseSitzungsToken, sitzungsCookie, verbindungIstSicher } from './features/zugang/routen.ts';
 import { verbindungsRouten } from './routes/verbindungen.ts';
 import { zielRouten } from './features/ziele/ziele.ts';
+import { registrierePasswortAdresse } from './features/zugang/passwortAdresse.ts';
 import { zugangRouten } from './features/zugang/routen.ts';
 import { rechneBossangriffeAb } from './features/bosse/bossangriffe.ts';
 import { schalteErfolgeFrei } from './features/erfolge/erfolge.ts';
@@ -103,6 +104,7 @@ await app.register(
 );
 
 schalteErfolgeFrei();
+registrierePasswortAdresse(app);
 
 const clientVorhanden = fs.existsSync(KONFIG.clientPfad);
 if (clientVorhanden) {

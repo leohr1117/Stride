@@ -1,5 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "Менеджеры паролей могут заполнять и сохранять вход, первую учётную запись и смену пароля.",
+  "Schlägt die Anmeldung fehl, bleibt der Benutzername stehen. Nur das Passwort wird geleert.": "Если вход не удался, имя пользователя остаётся. Очищается только пароль.",
   "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "У атрибута Спад стоит над полями потери, только если спад включён.",
   "Ein neues Attribut legst du über Können oder Haben an. Jede Zeile hat Hinzufügen.": "Новый атрибут добавляешь через Умения или Активы. В каждой строке есть Добавить.",
   "Klassen und Titel zeigt die Tabelle, darunter den Satz zum stärksten Können.": "Классы и титулы показывают таблицу, а под ней фразу о самом сильном умении.",

@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.', 'Password managers can fill in and save sign-in, the first account, and changing the password.'],
+  ['Schlägt die Anmeldung fehl, bleibt der Benutzername stehen. Nur das Passwort wird geleert.', 'If sign-in fails, the username stays. Only the password is cleared.'],
   ['Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.', 'On an attribute, Decay sits above the loss fields, only when decay is on.'],
   ['Ein neues Attribut legst du über Können oder Haben an. Jede Zeile hat Hinzufügen.', 'You add an attribute from Ability or Assets. Each row has Add.'],
   ['Klassen und Titel zeigt die Tabelle, darunter den Satz zum stärksten Können.', 'Classes and titles show the table, and below it the sentence about the strongest ability.'],

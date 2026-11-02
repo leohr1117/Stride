@@ -1,5 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "Les gestionnaires de mots de passe peuvent remplir et enregistrer la connexion, le premier compte et le changement de mot de passe.",
+  "Schlägt die Anmeldung fehl, bleibt der Benutzername stehen. Nur das Passwort wird geleert.": "Si la connexion échoue, le nom d'utilisateur reste. Seul le mot de passe est vidé.",
   "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "Sur un attribut, Déclin est au-dessus des champs de perte, seulement si le déclin est actif.",
   "Ein neues Attribut legst du über Können oder Haben an. Jede Zeile hat Hinzufügen.": "Tu ajoutes un attribut depuis Aptitude ou Biens. Chaque ligne a Ajouter.",
   "Klassen und Titel zeigt die Tabelle, darunter den Satz zum stärksten Können.": "Classes et titres montrent le tableau, et en dessous la phrase sur l'aptitude la plus forte.",

@@ -1,5 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "パスワードマネージャーは、ログイン、最初のアカウント、パスワードの変更を入力して保存できます。",
+  "Schlägt die Anmeldung fehl, bleibt der Benutzername stehen. Nur das Passwort wird geleert.": "ログインに失敗すると、ユーザー名は残ります。消えるのはパスワードだけです。",
   "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "属性では、減衰がオンのときだけ、損失の欄の上に減衰があります。",
   "Ein neues Attribut legst du über Können oder Haben an. Jede Zeile hat Hinzufügen.": "新しい属性は能力か資産から追加します。各行に追加があります。",
   "Klassen und Titel zeigt die Tabelle, darunter den Satz zum stärksten Können.": "クラスと称号は表を示し、その下に最も強い能力の文があります。",

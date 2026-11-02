@@ -1,7 +1,8 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState, type FormEvent } from 'react';
+import { PASSWORT_MAX, PASSWORT_MIN, PASSWORT_REGEL } from '../../../../shared/spiel/passwort.ts';
 import { FOKUS_PFLICHT, type FokusId } from '../../../../shared/spiel/profil.ts';
-import { api } from '../../api/index.ts';
+import { api, SCHLUESSEL } from '../../api/index.ts';
 import { FokusVorschau, FokusWahl } from '../../components/ProfilErstellung.tsx';
 import { Fehlermeldung, Formular, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
@@ -82,6 +83,7 @@ function passwortOrt(text: string): 'bisher' | 'neu' | null {
 }
 
 export function PasswortSeite() {
+  const { data: zugang } = useQuery({ queryKey: SCHLUESSEL.zugang, queryFn: api.zugang });
   const [bisher, setBisher] = useState('');
   const [neu, setNeu] = useState('');
   const [wiederholung, setWiederholung] = useState('');
@@ -123,9 +125,9 @@ export function PasswortSeite() {
   const senden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
     const naechstes = { bisher: null as string | null, neu: null as string | null, wiederholung: null as string | null };
-    if (neu.length < 10) {
+    if (neu.length < PASSWORT_MIN) {
       naechstes.neu = PASSWORT_KURZ;
-    } else if (neu.length > 200) {
+    } else if (neu.length > PASSWORT_MAX) {
       naechstes.neu = PASSWORT_LANG;
     }
     if (neu !== wiederholung) {
@@ -147,9 +149,11 @@ export function PasswortSeite() {
       kinder={
         <Formular onAbsenden={senden}>
           <PasswortFeld
+            id="current-password"
             label="Bisheriges"
             name="current-password"
             autoComplete="current-password"
+            benutzername={zugang?.benutzername ?? ''}
             value={bisher}
             fehler={feldFehler.bisher}
             onChange={(ereignis) => {
@@ -158,10 +162,13 @@ export function PasswortSeite() {
             }}
           />
           <PasswortFeld
+            id="new-password"
             label="Neues"
             hinweis="Mindestens 10 Zeichen."
             name="new-password"
             autoComplete="new-password"
+            passwordRules={PASSWORT_REGEL}
+            maxLength={PASSWORT_MAX}
             value={neu}
             fehler={feldFehler.neu}
             onChange={(ereignis) => {
@@ -170,9 +177,13 @@ export function PasswortSeite() {
             }}
           />
           <PasswortFeld
+            id="new-password-repeat"
             label="Wiederholen"
+            name="new-password-repeat"
             fehler={feldFehler.wiederholung}
             autoComplete="new-password"
+            passwordRules={PASSWORT_REGEL}
+            maxLength={PASSWORT_MAX}
             value={wiederholung}
             onChange={(ereignis) => {
               setWiederholung(ereignis.target.value);

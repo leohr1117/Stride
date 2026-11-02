@@ -17,6 +17,22 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.49.0',
+    seiten: 'Anmeldung, Passwort',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.',
+        ],
+      },
+      {
+        titel: 'Geändert',
+        punkte: ['Schlägt die Anmeldung fehl, bleibt der Benutzername stehen. Nur das Passwort wird geleert.'],
+      },
+    ],
+  },
+  {
     version: '3.48.0',
     seiten: 'Profil, Können, Haben, Fähigkeiten, Basis, Paletten',
     abschnitte: [
