@@ -46,7 +46,6 @@ export function KlassenUndTitel({ attribute, klasse }: { attribute: Attribut[]; 
             {tx("Deine Klasse:")} <span className="font-semibold break-words text-akzent">{klassenText(klasse)}</span>
           </span>
         </p>
-        <p className="mb-2 text-xs text-leise">{tx("Fett ist dein stärkstes Können. Der Beiname folgt dem zweitstärksten.")}</p>
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-xs text-leise">
@@ -74,6 +73,7 @@ export function KlassenUndTitel({ attribute, klasse }: { attribute: Attribut[]; 
             ))}
           </tbody>
         </table>
+        <p className="mt-2 text-xs text-leise">{tx("Fett ist dein stärkstes Können. Der Beiname folgt dem zweitstärksten.")}</p>
         <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-leise">
           <span className="inline-flex items-center gap-1.5">
             <KlassenBild klasse={KLASSE.startKlasse} groesse="size-4" rahmen={false} />

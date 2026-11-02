@@ -13,7 +13,7 @@ import { dauerText } from '../../format.ts';
 import { useEbenen } from '../../funktionen.ts';
 import { leseMerker, merke } from '../../speicher.ts';
 import { EinklappKopf } from '../../components/Ausklappbar.tsx';
-import { SchnellNebenaktion, SchnellZeile } from '../../components/SchnellAktion.tsx';
+import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
@@ -259,9 +259,8 @@ export function BasisFormular({
       <Feld label={tx("Symbol")}>
         <IconAuswahl wert={icon} farbe="var(--akzent)" onAendern={setIcon} />
       </Feld>
-      <div className={ebenen.projekte ? 'grid grid-cols-2 gap-3' : ''}>
-        {ebenen.projekte && (
-          <Feld label={<ZielMarke ebene="projekte" />}>
+      {ebenen.projekte && (
+        <Feld label={<ZielMarke ebene="projekte" />}>
             <HierarchieWahl
               label={tx("Projekt")}
               wert={projektId === null ? '' : String(projektId)}
@@ -288,8 +287,8 @@ export function BasisFormular({
             />
             {zuordnungHinweis && <p className="text-xs text-leise">{zuordnungHinweis}</p>}
           </Feld>
-        )}
-        <Feld label={tx("Tätigkeit")}>
+      )}
+      <Feld label={tx("Tätigkeit")}>
           <select
             className={EINGABE_STIL}
             value={wirksameVorlageId ?? ''}
@@ -309,7 +308,6 @@ export function BasisFormular({
             ))}
           </select>
         </Feld>
-      </div>
       <Feld label={tx("Dauer")}>
         <div className="chip-reihe -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
           <Chip aktiv={stunden === null} onClick={() => setStunden(null)}>
@@ -323,22 +321,14 @@ export function BasisFormular({
         </div>
       </Feld>
       <Fehlermeldung fehler={speichern.error} />
-      <div className="flex gap-2">
-        {aufgabe ? (
-          <SchnellNebenaktion
-            ziel={{ art: 'basis', id: aufgabe.id, name: aufgabe.name, archiviert: aufgabe.archiviert, loeschbar: aufgabe.loeschbar }}
-            onErledigt={onFertig}
-          />
-        ) : null}
-        <Knopf
-          type="submit"
-          variante="primaer"
-          className="flex-1"
-          disabled={!name.trim() || (wirksameProjektId === null && wirksameVorlageId === null) || speichern.isPending}
-        >
-          {tx("Speichern")}
-        </Knopf>
-      </div>
+      <Knopf
+        type="submit"
+        variante="primaer"
+        className="w-full"
+        disabled={!name.trim() || (wirksameProjektId === null && wirksameVorlageId === null) || speichern.isPending}
+      >
+        {tx("Speichern")}
+      </Knopf>
     </Formular>
   );
 }

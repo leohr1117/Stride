@@ -1,5 +1,15 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "属性では、減衰がオンのときだけ、損失の欄の上に減衰があります。",
+  "Ein neues Attribut legst du über Können oder Haben an. Jede Zeile hat Hinzufügen.": "新しい属性は能力か資産から追加します。各行に追加があります。",
+  "Klassen und Titel zeigt die Tabelle, darunter den Satz zum stärksten Können.": "クラスと称号は表を示し、その下に最も強い能力の文があります。",
+  "Fähigkeit und Knoten heißen im Dialog so. Unter einem Knoten steht Darunter anlegen.": "ダイアログではスキルとノードとその名前です。ノードの下には下に追加があります。",
+  "Eine Palette zeigt die Farben und Auswählen. Bearbeiten und Löschen liegen im Menü.": "パレットは色と選択を示します。編集と削除はメニューにあります。",
+  "Verfall": "減衰",
+  "Darunter anlegen": "下に追加",
+  "Palette": "パレット",
+  "Auswählen": "選択",
+  "Knoten": "ノード",
   "Dialoge für Eintrag, Ziele, Tätigkeiten, Investitionen und Erfolge haben eine feste Reihenfolge.": "記録、目標、活動、投資、成果のダイアログは決まった順です。",
   "Eine neue Tätigkeit aus einem Projekt gilt für alle Projekte oder nur für dieses.": "プロジェクトから作る新しい活動は、すべてのプロジェクトか、このプロジェクトだけに適用されます。",
   "Bei einer Vision steht die XP beim Erreichen neben dem Level.": "ビジョンでは、到達時の XP がレベルの横にあります。",

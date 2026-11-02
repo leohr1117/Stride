@@ -315,7 +315,8 @@ async function pruefeTitel(seite: Page, info: TestInfo): Promise<void> {
       throw new Error('Laufend nicht geladen');
     }
     const daten = (await antwort.json()) as { vorhaben: LaufendZeile[]; bosse: LaufendZeile[] };
-    return [...daten.vorhaben, ...daten.bosse].find((eintrag) => eintrag.projektId !== null) ?? null;
+    const mitProjekt = [...daten.vorhaben, ...daten.bosse].filter((eintrag) => eintrag.projektId !== null);
+    return mitProjekt.find((eintrag) => !eintrag.titel.startsWith('Prüfboss')) ?? mitProjekt[0] ?? null;
   });
   expect(ziel?.projektId).toBeTruthy();
   if (!ziel?.projektId) {
@@ -323,10 +324,12 @@ async function pruefeTitel(seite: Page, info: TestInfo): Promise<void> {
   }
 
   await seite.goto(`/projekte/${ziel.projektId}`);
-  const knopf = seite.getByRole('button', { name: ziel.titel, exact: true });
-  await expect(knopf).toBeVisible();
-  await knopf.click();
-  const feld = seite.getByRole('textbox', { name: 'Titel' });
+  const zeile = seite.locator('[data-schnell]').filter({ hasText: ziel.titel }).first();
+  await expect(zeile).toBeVisible();
+  await zeile.getByRole('button', { name: `Aktionen für ${ziel.titel}`, exact: true }).click();
+  await seite.getByRole('menuitem', { name: 'Umbenennen', exact: true }).click();
+  const dialog = seite.getByRole('dialog', { name: 'Umbenennen', exact: true });
+  const feld = dialog.getByRole('textbox', { name: 'Titel' });
   await expect(feld).toHaveValue(ziel.titel);
   await expect(seite.getByRole('dialog', { name: 'Titel ändern' })).toHaveCount(0);
   await expect.poll(async () =>
@@ -337,10 +340,9 @@ async function pruefeTitel(seite: Page, info: TestInfo): Promise<void> {
   ).toBe(true);
   await ohneSeitlichenUeberlauf(seite);
   await seite.screenshot({ path: `e2e/bilder/${info.project.name}-titel-dialog.png` });
-  await feld.fill('');
   await seite.keyboard.press('Escape');
-  await expect(feld).toHaveCount(0);
-  await expect(seite.getByRole('button', { name: ziel.titel, exact: true })).toBeVisible();
+  await expect(dialog).toHaveCount(0);
+  await expect(zeile.getByText(ziel.titel, { exact: true })).toBeVisible();
 }
 
 test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
@@ -362,7 +364,7 @@ test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
       await koennen.getByRole('button', { name: /Alle anzeigen/ }).click();
     }
     await knopf.click();
-    const dialog = page.getByRole('dialog', { name: 'Geist bearbeiten' });
+    const dialog = page.getByRole('dialog', { name: 'Geist', exact: true });
     await expect(dialog.getByRole('switch', { name: 'Zu niedrig senkt XP anderer Attribute' })).toBeVisible();
     await dialog.getByRole('button', { name: 'Schließen' }).click();
     await expect(dialog).toBeHidden();

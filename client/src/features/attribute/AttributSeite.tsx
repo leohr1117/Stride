@@ -18,9 +18,9 @@ type Bearbeitung =
 
 function dialogTitel(bearbeitung: Bearbeitung): string {
   if (bearbeitung?.art === 'bearbeiten') {
-    return tx('{name} bearbeiten', { name: attributName(bearbeitung.attribut) });
+    return attributName(bearbeitung.attribut);
   }
-  return bearbeitung?.typ === 'status' ? tx('Haben hinzufügen') : tx('Können hinzufügen');
+  return tx('Attribut hinzufügen');
 }
 
 export function KoennenSeite() {
@@ -86,7 +86,6 @@ function AttributSeite({ typ }: { typ: AttributTyp }) {
           <AttributFormular
             key={bearbeitung.attribut.id}
             attribut={bearbeitung.attribut}
-            archivierbar={werte.length > 1}
             andere={aktiveAttribute.filter(
               (attribut) => attribut.id !== bearbeitung.attribut.id && istTypAktiv(funktionen, attribut.typ),
             )}

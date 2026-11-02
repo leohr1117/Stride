@@ -1,5 +1,15 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "En un atributo, Decaimiento está sobre los campos de pérdida, solo cuando el decaimiento está activo.",
+  "Ein neues Attribut legst du über Können oder Haben an. Jede Zeile hat Hinzufügen.": "Un atributo nuevo lo añades desde Capacidad o Bienes. Cada fila tiene Añadir.",
+  "Klassen und Titel zeigt die Tabelle, darunter den Satz zum stärksten Können.": "Clases y títulos muestran la tabla y, debajo, la frase sobre la capacidad más fuerte.",
+  "Fähigkeit und Knoten heißen im Dialog so. Unter einem Knoten steht Darunter anlegen.": "Habilidad y nodo se llaman así en el diálogo. Bajo un nodo está Añadir debajo.",
+  "Eine Palette zeigt die Farben und Auswählen. Bearbeiten und Löschen liegen im Menü.": "Una paleta muestra los colores y Elegir. Editar y eliminar están en el menú.",
+  "Verfall": "Decaimiento",
+  "Darunter anlegen": "Añadir debajo",
+  "Palette": "Paleta",
+  "Auswählen": "Elegir",
+  "Knoten": "Nodo",
   "Dialoge für Eintrag, Ziele, Tätigkeiten, Investitionen und Erfolge haben eine feste Reihenfolge.": "Los diálogos de registro, metas, actividades, inversiones y logros tienen un orden fijo.",
   "Eine neue Tätigkeit aus einem Projekt gilt für alle Projekte oder nur für dieses.": "Una actividad nueva desde un proyecto vale para todos los proyectos o solo para este.",
   "Bei einer Vision steht die XP beim Erreichen neben dem Level.": "En una visión, la XP al alcanzar está junto al nivel.",

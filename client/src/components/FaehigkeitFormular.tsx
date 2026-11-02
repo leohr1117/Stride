@@ -5,7 +5,6 @@ import type { Faehigkeit } from '../../../shared/api/index.ts';
 import { FARBEN, GRENZEN, type IconName } from '../../../shared/spiel/begriffe.ts';
 import { api } from '../api/index.ts';
 import { IconAuswahl } from './IconAuswahl.tsx';
-import { SchnellNebenaktion } from './SchnellAktion.tsx';
 import { EINGABE_STIL, Farbauswahl, Feld, Fehlermeldung, Formular, Knopf } from '../ui/index.ts';
 
 export function FaehigkeitFormular({
@@ -42,7 +41,7 @@ export function FaehigkeitFormular({
 
   return (
     <Formular onAbsenden={absenden}>
-      <Feld label={tx("Name")}>
+      <Feld label={tx("Titel")}>
         <input
           className={EINGABE_STIL}
           value={name}
@@ -66,23 +65,9 @@ export function FaehigkeitFormular({
         <Farbauswahl wert={farbe} onAendern={setFarbe} />
       </Feld>
       <Fehlermeldung fehler={speichern.error} />
-      <div className="flex gap-2">
-        {faehigkeit ? (
-          <SchnellNebenaktion
-            ziel={{
-              art: 'faehigkeit',
-              id: faehigkeit.id,
-              name: faehigkeit.name,
-              archiviert: faehigkeit.archiviert,
-              loeschbar: faehigkeit.loeschbar,
-            }}
-            onErledigt={() => onFertig(faehigkeit)}
-          />
-        ) : null}
-        <Knopf type="submit" variante="primaer" className="flex-1" disabled={!name.trim() || speichern.isPending}>
-          {tx("Speichern")}
-        </Knopf>
-      </div>
+      <Knopf type="submit" variante="primaer" className="w-full" disabled={!name.trim() || speichern.isPending}>
+        {tx("Speichern")}
+      </Knopf>
     </Formular>
   );
 }

@@ -1,5 +1,15 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "У атрибута Спад стоит над полями потери, только если спад включён.",
+  "Ein neues Attribut legst du über Können oder Haben an. Jede Zeile hat Hinzufügen.": "Новый атрибут добавляешь через Умения или Активы. В каждой строке есть Добавить.",
+  "Klassen und Titel zeigt die Tabelle, darunter den Satz zum stärksten Können.": "Классы и титулы показывают таблицу, а под ней фразу о самом сильном умении.",
+  "Fähigkeit und Knoten heißen im Dialog so. Unter einem Knoten steht Darunter anlegen.": "Навык и узел так называются в диалоге. Под узлом стоит Добавить ниже.",
+  "Eine Palette zeigt die Farben und Auswählen. Bearbeiten und Löschen liegen im Menü.": "Палитра показывает цвета и Выбрать. Изменить и удалить лежат в меню.",
+  "Verfall": "Спад",
+  "Darunter anlegen": "Добавить ниже",
+  "Palette": "Палитра",
+  "Auswählen": "Выбрать",
+  "Knoten": "Узел",
   "Dialoge für Eintrag, Ziele, Tätigkeiten, Investitionen und Erfolge haben eine feste Reihenfolge.": "Диалоги записи, целей, дел, вложений и достижений идут в фиксированном порядке.",
   "Eine neue Tätigkeit aus einem Projekt gilt für alle Projekte oder nur für dieses.": "Новое дело из проекта действует для всех проектов или только для этого.",
   "Bei einer Vision steht die XP beim Erreichen neben dem Level.": "У видения XP при достижении стоит рядом с уровнем.",

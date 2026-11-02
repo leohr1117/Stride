@@ -104,7 +104,7 @@ test('An einer Fähigkeit liegt das Menü im Kopf', async ({ page }, info) => {
   expect(await menue.getByRole('menuitem').count()).toBeGreaterThan(1);
   await page.screenshot({ path: bild(info, 'faehigkeit-menue'), fullPage: true });
   await menue.getByRole('menuitem', { name: 'Bearbeiten', exact: true }).click();
-  await expect(page.getByRole('dialog', { name: 'Fähigkeit bearbeiten' })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Fähigkeit', exact: true })).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
 });

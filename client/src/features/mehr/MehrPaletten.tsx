@@ -6,12 +6,15 @@ import { Dialog } from '../../components/Dialog.tsx';
 import { useSchnellAktion } from '../../components/SchnellAktion.tsx';
 import { AnlegeZeile, Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { tx } from '../../text.ts';
-import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
+import { EINGABE_STIL, Fehlermeldung, Feld, Formular, InfoHinweis, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
+import { wendeErscheinung } from '../darstellung/stil.ts';
 import { Bereich, DARSTELLUNG_ZURUECK, useEinstellungen } from './rahmen.tsx';
+
+const ABSCHNITT = 'ueberschrift abschnittskopf text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case';
 
 type Modus = { art: 'neu' } | { art: 'lesen' | 'bearbeiten'; id: string };
 
-function PalettenMenue({ onLoeschen }: { onLoeschen: () => void }) {
+function PalettenMenue({ onBearbeiten, onLoeschen }: { onBearbeiten: () => void; onLoeschen: () => void }) {
   const [offen, setOffen] = useState(false);
   return (
     <div className="relative">
@@ -28,7 +31,17 @@ function PalettenMenue({ onLoeschen }: { onLoeschen: () => void }) {
         <div className="absolute end-0 top-12 z-10 min-w-40 rounded-lg border border-rand bg-flaeche py-1 shadow-lg">
           <button
             type="button"
-            className="flex min-h-12 w-full items-center px-4 text-left text-sm text-gefahr"
+            className="flex min-h-12 w-full items-center px-4 text-left text-sm"
+            onClick={() => {
+              setOffen(false);
+              onBearbeiten();
+            }}
+          >
+            {tx('Bearbeiten')}
+          </button>
+          <button
+            type="button"
+            className="flex min-h-12 w-full items-center border-t border-rand px-4 text-left text-sm text-gefahr"
             onClick={() => {
               setOffen(false);
               onLoeschen();
@@ -76,12 +89,7 @@ function PalettenFormular({
     onSpeichern({ name, primaer, akzent, hintergrund });
   };
   return (
-    <Dialog
-      offen
-      titel={titel}
-      info={tx("Primär für Knöpfe, Akzent für XP, Hintergrund für die Fläche.")}
-      onSchliessen={onSchliessen}
-    >
+    <Dialog offen titel={titel} onSchliessen={onSchliessen}>
       <Formular onAbsenden={senden}>
         <Feld label="Name">
           <input
@@ -92,36 +100,59 @@ function PalettenFormular({
             className={EINGABE_STIL}
           />
         </Feld>
-        <Feld label="Primär">
-          <input
-            type="color"
-            value={primaer}
-            onChange={(ereignis) => setPrimaer(ereignis.currentTarget.value)}
-            className="size-9 cursor-pointer border border-rand bg-transparent p-0.5"
-          />
-        </Feld>
-        <Feld label="Akzent">
-          <input
-            type="color"
-            value={akzent}
-            onChange={(ereignis) => setAkzent(ereignis.currentTarget.value)}
-            className="size-9 cursor-pointer border border-rand bg-transparent p-0.5"
-          />
-        </Feld>
-        <Feld label="Hintergrund">
-          <input
-            type="color"
-            value={hintergrund}
-            onChange={(ereignis) => setHintergrund(ereignis.currentTarget.value)}
-            className="size-9 cursor-pointer border border-rand bg-transparent p-0.5"
-          />
-        </Feld>
+        <div className="space-y-4">
+          <div className="flex items-center">
+            <h3 className={ABSCHNITT}>{tx('Farben')}</h3>
+            <InfoHinweis text="Primär für Knöpfe, Akzent für XP, Hintergrund für die Fläche." />
+          </div>
+          <Feld label="Primär">
+            <input
+              type="color"
+              value={primaer}
+              onChange={(ereignis) => setPrimaer(ereignis.currentTarget.value)}
+              className="size-9 cursor-pointer border border-rand bg-transparent p-0.5"
+            />
+          </Feld>
+          <Feld label="Akzent">
+            <input
+              type="color"
+              value={akzent}
+              onChange={(ereignis) => setAkzent(ereignis.currentTarget.value)}
+              className="size-9 cursor-pointer border border-rand bg-transparent p-0.5"
+            />
+          </Feld>
+          <Feld label="Hintergrund">
+            <input
+              type="color"
+              value={hintergrund}
+              onChange={(ereignis) => setHintergrund(ereignis.currentTarget.value)}
+              className="size-9 cursor-pointer border border-rand bg-transparent p-0.5"
+            />
+          </Feld>
+        </div>
+        <div data-vorschau="" className="flex items-center gap-3 rounded-xl bg-flaeche-2 px-3 py-2">
+          <span className="size-6 shrink-0 rounded-full" style={{ background: primaer }} aria-hidden="true" />
+          <span className="size-6 shrink-0 rounded-full" style={{ background: akzent }} aria-hidden="true" />
+          <span className="size-6 shrink-0 rounded-full border border-rand" style={{ background: hintergrund }} aria-hidden="true" />
+          <span className="min-w-0 break-words text-sm">{name.trim() || tx('Palette')}</span>
+        </div>
         <Fehlermeldung fehler={fehler} />
         <Knopf type="submit" variante="primaer" disabled={speichert}>
           {tx("Speichern")}
         </Knopf>
       </Formular>
     </Dialog>
+  );
+}
+
+function Farbzeile({ label, farbe }: { label: string; farbe: string }) {
+  return (
+    <Feld label={label}>
+      <p className="flex items-center gap-2 text-sm">
+        <span className="size-4 shrink-0 rounded-full border border-rand" style={{ background: farbe }} aria-hidden="true" />
+        <span className="zahl">{farbe}</span>
+      </p>
+    </Feld>
   );
 }
 
@@ -197,7 +228,7 @@ export function PalettenSeite() {
           {modus?.art === 'neu' ? (
             <PalettenFormular
               key="neu"
-              titel={tx("Neue Palette")}
+              titel={tx("Palette")}
               start={startNeu}
               fehler={speichern.error}
               speichert={speichern.isPending}
@@ -210,20 +241,37 @@ export function PalettenSeite() {
               offen
               titel={offen.name}
               onSchliessen={() => setModus(null)}
-              menu={<PalettenMenue onLoeschen={() => loeschen(offen)} />}
-            >
-              <Farbpunkte farben={offen} />
-              <p className="zahl mt-3 text-xs text-leise uppercase">
-                {offen.primaer} · {offen.akzent} · {offen.hintergrund}
-              </p>
-              <div className="mt-5">
-                <Knopf
-                  onClick={() => {
+              menu={
+                <PalettenMenue
+                  onBearbeiten={() => {
                     speichern.reset();
                     setModus({ art: 'bearbeiten', id: offen.id });
                   }}
+                  onLoeschen={() => loeschen(offen)}
+                />
+              }
+            >
+              <div className="space-y-4">
+                <Farbzeile label="Primär" farbe={offen.primaer} />
+                <Farbzeile label="Akzent" farbe={offen.akzent} />
+                <Farbzeile label="Hintergrund" farbe={offen.hintergrund} />
+                <Knopf
+                  variante="primaer"
+                  className="w-full"
+                  onClick={() => {
+                    wendeErscheinung({
+                      primaer: offen.primaer,
+                      akzent: offen.akzent,
+                      hintergrund: offen.hintergrund,
+                      glimmen: data.glimmen,
+                    });
+                    speichern.mutate(
+                      { primaer: offen.primaer, akzent: offen.akzent, hintergrund: offen.hintergrund },
+                      { onSuccess: () => setModus(null) },
+                    );
+                  }}
                 >
-                  {tx("Bearbeiten")}
+                  {tx('Auswählen')}
                 </Knopf>
               </div>
             </Dialog>
@@ -231,7 +279,7 @@ export function PalettenSeite() {
           {modus?.art === 'bearbeiten' && offen ? (
             <PalettenFormular
               key={offen.id}
-              titel={tx("Palette bearbeiten")}
+              titel={tx("Palette")}
               start={offen}
               fehler={speichern.error}
               speichert={speichern.isPending}

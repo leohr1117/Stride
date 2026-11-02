@@ -115,13 +115,14 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
       await expect(page.getByText('Noch keine Palette.')).toBeVisible();
     }
     await page.getByRole('button', { name: '+ Palette anlegen', exact: true }).click();
-    const formular = page.getByRole('dialog', { name: 'Neue Palette' });
+    const formular = page.getByRole('dialog', { name: 'Palette', exact: true });
     await expect(formular).toBeVisible();
     const info = formular.getByRole('button', { name: 'Info' });
     await info.click();
     const hinweis = page.getByRole('tooltip');
     await expect(hinweis).toBeVisible();
     await expect(hinweis).toHaveText('Primär für Knöpfe, Akzent für XP, Hintergrund für die Fläche.');
+    await expect(formular.locator('[data-vorschau]')).toBeVisible();
     const kasten = await hinweis.boundingBox();
     const fenster = page.viewportSize();
     expect(kasten).not.toBeNull();
@@ -158,7 +159,7 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     await bild('paletten');
 
     await page.getByRole('button', { name: '+ Palette anlegen', exact: true }).click();
-    const doppelt = page.getByRole('dialog', { name: 'Neue Palette' });
+    const doppelt = page.getByRole('dialog', { name: 'Palette', exact: true });
     await doppelt.getByRole('textbox', { name: 'Name', exact: true }).fill('morgenrot');
     const abgelehnt = page.waitForResponse(
       (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && !antwort.ok(),
@@ -177,15 +178,19 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     const detail = page.getByRole('dialog', { name: 'Morgenrot' });
     await expect(detail).toBeVisible();
     await expect(detail.locator('input[type="color"]')).toHaveCount(0);
-    await expect(detail.getByRole('button', { name: 'Bearbeiten', exact: true })).toBeVisible();
+    await expect(detail.getByRole('button', { name: 'Auswählen', exact: true })).toBeVisible();
+    await expect(detail.getByRole('button', { name: 'Bearbeiten', exact: true })).toHaveCount(0);
     await detail.getByRole('button', { name: 'Aktionen', exact: true }).click();
+    await expect(detail.getByRole('button', { name: 'Bearbeiten', exact: true })).toBeVisible();
     await expect(detail.getByRole('button', { name: 'Löschen', exact: true })).toBeVisible();
     await detail.getByRole('button', { name: 'Aktionen', exact: true }).click();
     await expect(detail.getByRole('button', { name: 'Löschen', exact: true })).toHaveCount(0);
+    await expect(detail.getByRole('button', { name: 'Bearbeiten', exact: true })).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);
     await bild('detail');
+    await detail.getByRole('button', { name: 'Aktionen', exact: true }).click();
     await detail.getByRole('button', { name: 'Bearbeiten', exact: true }).click();
-    const bearbeiten = page.getByRole('dialog', { name: 'Palette bearbeiten' });
+    const bearbeiten = page.getByRole('dialog', { name: 'Palette', exact: true });
     await expect(bearbeiten).toBeVisible();
     await bearbeiten.getByRole('textbox', { name: 'Name', exact: true }).fill('Abendrot');
     const umbenannt = page.waitForResponse(
@@ -195,6 +200,20 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     await umbenannt;
     await expect(bearbeiten).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Abendrot', exact: true })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Abendrot', exact: true }).click();
+    const auswahlDialog = page.getByRole('dialog', { name: 'Abendrot' });
+    const ausgewaehlt = page.waitForResponse(
+      (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
+    );
+    const xpBeimWaehlen = await variable(page, '--xp');
+    await auswahlDialog.getByRole('button', { name: 'Auswählen', exact: true }).click();
+    await ausgewaehlt;
+    await expect(auswahlDialog).toHaveCount(0);
+    const gewaehlteFarben = erscheinungAus(TRIO);
+    await expect.poll(() => variable(page, '--akzent')).toBe(gewaehlteFarben.primaer);
+    await expect.poll(() => variable(page, '--xp')).toBe(xpBeimWaehlen);
+    await expect.poll(() => variable(page, '--grund')).toBe(gewaehlteFarben.hintergrund);
 
     await page.goto('/mehr/darstellung');
     await expect(page.getByRole('button', { name: 'Bearbeiten', exact: true })).toHaveCount(0);

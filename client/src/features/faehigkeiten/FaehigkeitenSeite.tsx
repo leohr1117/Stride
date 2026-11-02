@@ -86,7 +86,7 @@ export function FaehigkeitenSeite() {
           },
         }))}
       />
-      <Dialog offen={neuOffen} titel={tx('Neue Fähigkeit')} onSchliessen={() => setNeuOffen(false)}>
+      <Dialog offen={neuOffen} titel={tx('Fähigkeit')} onSchliessen={() => setNeuOffen(false)}>
         {neuOffen && (
           <FaehigkeitFormular
             faehigkeit={null}

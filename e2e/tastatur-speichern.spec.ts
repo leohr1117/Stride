@@ -62,7 +62,7 @@ test('Speichern bleibt bei offener Tastatur im sichtbaren Bereich', async ({ pag
 
   await page.goto('/faehigkeiten');
   await page.getByRole('button', { name: /Fähigkeit anlegen/ }).click();
-  const dialog = page.getByRole('dialog', { name: 'Neue Fähigkeit' });
+  const dialog = page.getByRole('dialog', { name: 'Fähigkeit', exact: true });
   await expect(dialog).toHaveCSS('opacity', '1');
   const speichern = dialog.getByRole('button', { name: 'Speichern' });
   await expect(speichern).toBeVisible();
@@ -139,7 +139,7 @@ test('Speichern bleibt bei offener Tastatur im sichtbaren Bereich', async ({ pag
   expect(lage.knopfUnten).toBeLessThanOrEqual(hoehe + 1);
   await bild('tastatur');
 
-  await dialog.getByRole('textbox', { name: 'Name' }).fill('Tastaturprobe');
+  await dialog.getByRole('textbox', { name: 'Titel' }).fill('Tastaturprobe');
   await expect(speichern).toBeEnabled();
   await speichern.click({ trial: true });
   const scroll = await page.evaluate(() => {

@@ -1,5 +1,15 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "属性上，衰退位于损失栏之上，仅在衰退开启时显示。",
+  "Ein neues Attribut legst du über Können oder Haben an. Jede Zeile hat Hinzufügen.": "新属性从能力或资产添加。每一行都有添加。",
+  "Klassen und Titel zeigt die Tabelle, darunter den Satz zum stärksten Können.": "职业和称号先显示表格，下面是关于最强能力的句子。",
+  "Fähigkeit und Knoten heißen im Dialog so. Unter einem Knoten steht Darunter anlegen.": "对话框里技能和节点就这么称呼。节点下方是在下方添加。",
+  "Eine Palette zeigt die Farben und Auswählen. Bearbeiten und Löschen liegen im Menü.": "调色板显示颜色和选择。编辑和删除在菜单里。",
+  "Verfall": "衰退",
+  "Darunter anlegen": "在下方添加",
+  "Palette": "调色板",
+  "Auswählen": "选择",
+  "Knoten": "节点",
   "Dialoge für Eintrag, Ziele, Tätigkeiten, Investitionen und Erfolge haben eine feste Reihenfolge.": "记录、目标、活动、投入和成就的对话框有固定顺序。",
   "Eine neue Tätigkeit aus einem Projekt gilt für alle Projekte oder nur für dieses.": "从项目新建的活动适用于所有项目，或仅适用于这个项目。",
   "Bei einer Vision steht die XP beim Erreichen neben dem Level.": "愿景里，达成时的 XP 写在等级旁边。",

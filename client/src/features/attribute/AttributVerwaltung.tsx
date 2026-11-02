@@ -12,7 +12,7 @@ import { zielXpNachAnteil } from '../../../../shared/spiel/umverteilung.ts';
 import { api } from '../../api/index.ts';
 import { zahl } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
-import { SchnellNebenaktion, SchnellZeile } from '../../components/SchnellAktion.tsx';
+import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { AnlegeZeile, Liste, Zeile } from '../../components/Zeile.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
@@ -78,6 +78,8 @@ export function AttributBereich({
                   loeschbar: attribut.loeschbar,
                   gesperrt: werte.length <= 1,
                 }}
+                eintraege={[{ art: 'archivieren', id: 'bearbeiten', label: 'Bearbeiten' }]}
+                onEintrag={() => onBearbeiten(attribut)}
               >
                 {(menue) => (
                   <Zeile
@@ -113,14 +115,14 @@ export function AttributBereich({
   );
 }
 
+const ABSCHNITT = 'ueberschrift abschnittskopf text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case';
+
 export function AttributFormular({
   attribut,
-  archivierbar,
   andere,
   onFertig,
 }: {
   attribut: Attribut;
-  archivierbar: boolean;
   andere: Attribut[];
   onFertig: () => void;
 }) {
@@ -177,49 +179,39 @@ export function AttributFormular({
         <Farbauswahl wert={farbe} onAendern={setFarbe} />
       </Feld>
       {funktionen[verfallFunktion(attribut.typ)] && (
-        <>
+        <section className="space-y-4">
+          <h3 className={ABSCHNITT}>{tx('Verfall')}</h3>
           <Feld label={tx("Verlust bei Nichtnutzung")}>
             <Segmentauswahl<VerfallStufe> optionen={stufen} wert={verfallBelastung} onAendern={setVerfallBelastung} />
           </Feld>
           <Feld label={tx("Verlust über Zeit")}>
             <Segmentauswahl<VerfallStufe> optionen={stufen} wert={verfallZeit} onAendern={setVerfallZeit} />
           </Feld>
-        </>
+        </section>
       )}
       <div className="space-y-3 rounded-xl bg-flaeche-2 p-3">
         <Schalter an={erschoepfung} onAendern={setErschoepfung} label={ERSCHOEPFUNG_SCHALTER} umbruch />
         {erschoepfung && (
-          <select
-            className={EINGABE_STIL}
-            value={erschoepfungZiel ?? ''}
-            onChange={(ereignis) => setErschoepfungZiel(ereignis.target.value ? Number(ereignis.target.value) : null)}
-          >
-            <option value="">{tx("Für alle XP")}</option>
-            {andere.map((eintrag) => (
-              <option key={eintrag.id} value={eintrag.id}>
-                {tx('Nur für {name}', { name: attributName(eintrag) })}
-              </option>
-            ))}
-          </select>
+          <Feld label={tx("Ziel")}>
+            <select
+              className={EINGABE_STIL}
+              value={erschoepfungZiel ?? ''}
+              onChange={(ereignis) => setErschoepfungZiel(ereignis.target.value ? Number(ereignis.target.value) : null)}
+            >
+              <option value="">{tx("Für alle XP")}</option>
+              {andere.map((eintrag) => (
+                <option key={eintrag.id} value={eintrag.id}>
+                  {tx('Nur für {name}', { name: attributName(eintrag) })}
+                </option>
+              ))}
+            </select>
+          </Feld>
         )}
       </div>
       <Fehlermeldung fehler={speichern.error} />
-      <div className="flex gap-2">
-        <SchnellNebenaktion
-          ziel={{
-            art: 'attribut',
-            id: attribut.id,
-            name: attributName(attribut),
-            archiviert: attribut.archiviert,
-            loeschbar: attribut.loeschbar,
-            gesperrt: !archivierbar,
-          }}
-          onErledigt={onFertig}
-        />
-        <Knopf type="submit" variante="primaer" className="flex-1" disabled={speichern.isPending}>
-          {tx("Speichern")}
-        </Knopf>
-      </div>
+      <Knopf type="submit" variante="primaer" className="w-full" disabled={speichern.isPending}>
+        {tx("Speichern")}
+      </Knopf>
     </Formular>
   );
 }
@@ -309,7 +301,7 @@ function Aktivierung({
         onClick={() => aktivieren.mutate()}
         disabled={aktivieren.isPending || (modus === 'level' && !levelGueltig)}
       >
-        {archiviert ? tx("Wiederherstellen") : tx("Aktivieren")}
+        {archiviert ? tx("Wiederherstellen") : tx("Hinzufügen")}
       </Knopf>
     </div>
   );
@@ -347,28 +339,36 @@ export function AttributKatalog({
         const offen = gewaehlt === vorlage.kennung;
         return (
           <div key={vorlage.kennung} className="rounded-xl border border-rand px-3 py-2.5">
-            <button
-              type="button"
-              onClick={() => setGewaehlt(offen ? null : vorlage.kennung)}
-              className="flex w-full items-center gap-3 text-left"
-            >
-              <div
-                className="flex size-9 shrink-0 items-center justify-center rounded-xl"
-                style={{ backgroundColor: `${vorlage.farbe}22`, color: vorlage.farbe }}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                aria-expanded={offen}
+                onClick={() => setGewaehlt(offen ? null : vorlage.kennung)}
+                className="flex min-w-0 flex-1 items-center gap-3 text-left"
               >
-                <Icon name={vorlage.icon} className="size-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">
-                  {attributName({ kennung: vorlage.kennung, name: archiviert?.name ?? vorlage.name })}
-                </p>
-                <p className="text-xs text-leise break-words">
-                  {archiviert
-                    ? tx('Archiviert · Lvl {level}', { level: archiviert.level.level })
-                    : tx(vorlage.beschreibung)}
-                </p>
-              </div>
-            </button>
+                <div
+                  className="flex size-9 shrink-0 items-center justify-center rounded-xl"
+                  style={{ backgroundColor: `${vorlage.farbe}22`, color: vorlage.farbe }}
+                >
+                  <Icon name={vorlage.icon} className="size-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">
+                    {attributName({ kennung: vorlage.kennung, name: archiviert?.name ?? vorlage.name })}
+                  </p>
+                  <p className="text-xs text-leise break-words">
+                    {archiviert
+                      ? tx('Archiviert · Lvl {level}', { level: archiviert.level.level })
+                      : tx(vorlage.beschreibung)}
+                  </p>
+                </div>
+              </button>
+              {!offen ? (
+                <Knopf className="shrink-0" onClick={() => setGewaehlt(vorlage.kennung)}>
+                  {tx('Hinzufügen')}
+                </Knopf>
+              ) : null}
+            </div>
             {offen && <Aktivierung vorlage={vorlage} archiviert={archiviert} attribute={attribute} onFertig={onFertig} />}
           </div>
         );

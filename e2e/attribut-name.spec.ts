@@ -48,10 +48,10 @@ test('Attributnamen sind nur sichtbar', async ({ page }, testInfo) => {
   const dialog = page.getByRole('dialog');
   await expect(dialog).toHaveCSS('opacity', '1');
   const titel = (await dialog.getAttribute('aria-label')) ?? '';
-  expect(titel.endsWith(' bearbeiten')).toBe(true);
-  const sichtbar = titel.slice(0, -' bearbeiten'.length);
+  const sichtbar = koennen.name;
+  expect(titel).toBe(sichtbar);
   await expect(dialog.getByRole('textbox', { name: 'Name' })).toHaveCount(0);
-  await expect(dialog.getByText(sichtbar, { exact: true })).toBeVisible();
+  await expect(dialog.locator('.feld', { hasText: 'Name' }).getByText(sichtbar, { exact: true })).toBeVisible();
   const werte = await dialog.locator('input, textarea').evaluateAll((felder) =>
     felder.map((feld) => (feld as HTMLInputElement).value),
   );
@@ -78,10 +78,10 @@ test('Attributnamen sind nur sichtbar', async ({ page }, testInfo) => {
     element.scrollIntoView({ block: 'center', inline: 'nearest' });
   });
   await page.getByRole('button', { name: sichtbar, exact: true }).first().click();
-  const wieder = page.getByRole('dialog', { name: `${sichtbar} bearbeiten` });
+  const wieder = page.getByRole('dialog', { name: sichtbar, exact: true });
   await expect(wieder).toHaveCSS('opacity', '1');
   await expect(wieder.getByRole('textbox', { name: 'Name' })).toHaveCount(0);
-  await expect(wieder.getByText(sichtbar, { exact: true })).toBeVisible();
+  await expect(wieder.locator('.feld', { hasText: 'Name' }).getByText(sichtbar, { exact: true })).toBeVisible();
   await expect(wieder.getByRole('textbox', { name: 'Beschreibung' })).toHaveValue(notiz);
   await ohneSeitlichenUeberlauf(page);
   await bild('wieder');

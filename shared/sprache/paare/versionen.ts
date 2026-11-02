@@ -1,5 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.', 'On an attribute, Decay sits above the loss fields, only when decay is on.'],
+  ['Ein neues Attribut legst du über Können oder Haben an. Jede Zeile hat Hinzufügen.', 'You add an attribute from Ability or Assets. Each row has Add.'],
+  ['Klassen und Titel zeigt die Tabelle, darunter den Satz zum stärksten Können.', 'Classes and titles show the table, and below it the sentence about the strongest ability.'],
+  ['Fähigkeit und Knoten heißen im Dialog so. Unter einem Knoten steht Darunter anlegen.', 'Skill and node are named that way in the dialog. Under a node is Add below.'],
+  ['Eine Palette zeigt die Farben und Auswählen. Bearbeiten und Löschen liegen im Menü.', 'A palette shows the colors and Select. Edit and delete sit in the menu.'],
   ['Dialoge für Eintrag, Ziele, Tätigkeiten, Investitionen und Erfolge haben eine feste Reihenfolge.', 'Dialogs for an entry, goals, activities, investments, and achievements follow a fixed order.'],
   ['Eine neue Tätigkeit aus einem Projekt gilt für alle Projekte oder nur für dieses.', 'A new activity from a project applies to all projects or only to this one.'],
   ['Bei einer Vision steht die XP beim Erreichen neben dem Level.', 'On a vision, the XP on reaching sits beside the level.'],

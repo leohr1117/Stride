@@ -1,5 +1,15 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "Sur un attribut, Déclin est au-dessus des champs de perte, seulement si le déclin est actif.",
+  "Ein neues Attribut legst du über Können oder Haben an. Jede Zeile hat Hinzufügen.": "Tu ajoutes un attribut depuis Aptitude ou Biens. Chaque ligne a Ajouter.",
+  "Klassen und Titel zeigt die Tabelle, darunter den Satz zum stärksten Können.": "Classes et titres montrent le tableau, et en dessous la phrase sur l'aptitude la plus forte.",
+  "Fähigkeit und Knoten heißen im Dialog so. Unter einem Knoten steht Darunter anlegen.": "Compétence et nœud s'appellent ainsi dans le dialogue. Sous un nœud se trouve Ajouter en dessous.",
+  "Eine Palette zeigt die Farben und Auswählen. Bearbeiten und Löschen liegen im Menü.": "Une palette montre les couleurs et Choisir. Modifier et supprimer sont dans le menu.",
+  "Verfall": "Déclin",
+  "Darunter anlegen": "Ajouter en dessous",
+  "Palette": "Palette",
+  "Auswählen": "Choisir",
+  "Knoten": "Nœud",
   "Dialoge für Eintrag, Ziele, Tätigkeiten, Investitionen und Erfolge haben eine feste Reihenfolge.": "Les dialogues pour une entrée, les objectifs, les activités, les investissements et les succès ont un ordre fixe.",
   "Eine neue Tätigkeit aus einem Projekt gilt für alle Projekte oder nur für dieses.": "Une nouvelle activité depuis un projet vaut pour tous les projets ou seulement pour celui-ci.",
   "Bei einer Vision steht die XP beim Erreichen neben dem Level.": "Sur une vision, l'XP à l'atteinte est à côté du niveau.",

@@ -1,7 +1,7 @@
 import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Pencil, Plus, Sparkles, Undo2 } from 'lucide-react';
+import { Plus, Sparkles } from 'lucide-react';
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import { useParams } from 'react-router';
 import type { Faehigkeit, SkillKnoten } from '../../../../shared/api/index.ts';
@@ -10,7 +10,7 @@ import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { FaehigkeitFormular } from '../../components/FaehigkeitFormular.tsx';
-import { SchnellMenueKnopf, SchnellNebenaktion, useSchnellAktion } from '../../components/SchnellAktion.tsx';
+import { SchnellMenueKnopf, useSchnellAktion } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { SkillBaum, skillSchein } from './SkillBaum.tsx';
 import { KopfAktion, useKopf } from '../../components/Kopf.tsx';
@@ -43,6 +43,27 @@ export function FaehigkeitSeite() {
   const [bearbeiten, setBearbeiten] = useState(false);
   const [knotenBearbeitung, setKnotenBearbeitung] = useState<KnotenBearbeitung>(null);
   const [ausgewaehlt, setAusgewaehlt] = useState<number | null>(null);
+  const queryClient = useQueryClient();
+  const schnell = useSchnellAktion();
+  const feiern = useFeiern();
+  const freischalten = useMutation({
+    mutationFn: (id: number) => api.schalteSkillFrei(id),
+    onSuccess: (ergebnis) => {
+      void queryClient.invalidateQueries();
+      feiern(ergebnis.belohnung);
+      setAusgewaehlt(null);
+    },
+  });
+  const zuruecknehmen = useMutation({
+    mutationFn: (id: number) => api.sperreSkill(id),
+    onSuccess: (_daten, id) => {
+      void queryClient.invalidateQueries();
+      setAusgewaehlt(null);
+      schnell.melde(tx('Gesperrt'), () => {
+        freischalten.mutate(id);
+      });
+    },
+  });
   useKopf(faehigkeit ? { titel: faehigkeit.name, roh: true } : null);
 
   if (!Number.isInteger(faehigkeitId)) {
@@ -126,16 +147,51 @@ export function FaehigkeitSeite() {
         )}
       </section>
 
-      <Dialog offen={auswahl !== null} titel={auswahl?.titel ?? ''} onSchliessen={() => setAusgewaehlt(null)}>
+      <Dialog
+        offen={auswahl !== null}
+        titel={auswahl?.titel ?? ''}
+        menu={
+          auswahl && !faehigkeit.archiviert ? (
+            <SchnellMenueKnopf
+              ziel={{
+                art: 'knoten',
+                id: auswahl.id,
+                name: auswahl.titel,
+                loeschbar: auswahl.freigeschaltetAm === null && auswahl.loeschbar,
+                hinweis: tx('Alle Skills darunter werden ebenfalls gelöscht.'),
+              }}
+              davor={[
+                {
+                  id: 'bearbeiten',
+                  label: 'Bearbeiten',
+                  onWahl: () => {
+                    setAusgewaehlt(null);
+                    setKnotenBearbeitung({ knoten: auswahl, elternId: auswahl.elternId });
+                  },
+                },
+                ...(auswahl.freigeschaltetAm !== null
+                  ? [
+                      {
+                        id: 'zurueck',
+                        label: 'Zurücknehmen',
+                        onWahl: () => zuruecknehmen.mutate(auswahl.id),
+                      },
+                    ]
+                  : []),
+              ]}
+              onErledigt={() => setAusgewaehlt(null)}
+            />
+          ) : undefined
+        }
+        onSchliessen={() => setAusgewaehlt(null)}
+      >
         {auswahl && (
           <SkillAktionen
             knoten={auswahl}
             faehigkeit={faehigkeit}
-            onSchliessen={() => setAusgewaehlt(null)}
-            onBearbeiten={() => {
-              setAusgewaehlt(null);
-              setKnotenBearbeitung({ knoten: auswahl, elternId: auswahl.elternId });
-            }}
+            laeuft={freischalten.isPending || zuruecknehmen.isPending}
+            fehler={freischalten.error ?? zuruecknehmen.error}
+            onFreischalten={() => freischalten.mutate(auswahl.id)}
             onKind={() => {
               setAusgewaehlt(null);
               setKnotenBearbeitung({ knoten: null, elternId: auswahl.id });
@@ -143,14 +199,10 @@ export function FaehigkeitSeite() {
           />
         )}
       </Dialog>
-      <Dialog offen={bearbeiten} titel={tx("Fähigkeit bearbeiten")} onSchliessen={() => setBearbeiten(false)}>
+      <Dialog offen={bearbeiten} titel={tx("Fähigkeit")} onSchliessen={() => setBearbeiten(false)}>
         {bearbeiten && <FaehigkeitFormular faehigkeit={faehigkeit} onFertig={() => setBearbeiten(false)} />}
       </Dialog>
-      <Dialog
-        offen={knotenBearbeitung !== null}
-        titel={knotenBearbeitung?.knoten ? tx("Bearbeiten") : tx("Neu")}
-        onSchliessen={() => setKnotenBearbeitung(null)}
-      >
+      <Dialog offen={knotenBearbeitung !== null} titel={tx("Knoten")} onSchliessen={() => setKnotenBearbeitung(null)}>
         {knotenBearbeitung && (
           <KnotenFormular
             key={knotenBearbeitung.knoten?.id ?? `neu-${knotenBearbeitung.elternId}`}
@@ -240,40 +292,19 @@ function Rangleiste({ level, farbe }: { level: number; farbe: string }) {
 function SkillAktionen({
   knoten,
   faehigkeit,
-  onSchliessen,
-  onBearbeiten,
+  laeuft,
+  fehler,
+  onFreischalten,
   onKind,
 }: {
   knoten: SkillKnoten;
   faehigkeit: Faehigkeit;
-  onSchliessen: () => void;
-  onBearbeiten: () => void;
+  laeuft: boolean;
+  fehler: unknown;
+  onFreischalten: () => void;
   onKind: () => void;
 }) {
-  const schnell = useSchnellAktion();
-  const queryClient = useQueryClient();
-  const feiern = useFeiern();
-  const aktualisieren = () => void queryClient.invalidateQueries();
-  const freischalten = useMutation({
-    mutationFn: () => api.schalteSkillFrei(knoten.id),
-    onSuccess: (ergebnis) => {
-      aktualisieren();
-      feiern(ergebnis.belohnung);
-      onSchliessen();
-    },
-  });
-  const zuruecknehmen = useMutation({
-    mutationFn: () => api.sperreSkill(knoten.id),
-    onSuccess: () => {
-      aktualisieren();
-      onSchliessen();
-      schnell.melde(tx('Gesperrt'), () => {
-        freischalten.mutate();
-      });
-    },
-  });
   const frei = knoten.freigeschaltetAm !== null;
-  const laeuft = freischalten.isPending || zuruecknehmen.isPending;
   const aenderbar = !faehigkeit.archiviert;
 
   return (
@@ -289,7 +320,7 @@ function SkillAktionen({
       {aenderbar && !frei && (
         <button
           type="button"
-          onClick={() => freischalten.mutate()}
+          onClick={onFreischalten}
           disabled={laeuft}
           className="skill-leuchten flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3.5 text-base font-semibold text-white transition active:scale-[0.98] disabled:opacity-60"
           style={{ backgroundColor: faehigkeit.farbe }}
@@ -300,35 +331,12 @@ function SkillAktionen({
       )}
 
       {aenderbar && (
-        <div className="flex flex-wrap gap-2">
-          <Knopf onClick={onKind} disabled={laeuft}>
-            <Plus className="size-4" />
-            {tx("Darunter")}
-          </Knopf>
-          <Knopf variante="leise" onClick={onBearbeiten} disabled={laeuft}>
-            <Pencil className="size-4" />
-            {tx("Bearbeiten")}
-          </Knopf>
-          {frei ? (
-            <Knopf variante="leise" onClick={() => zuruecknehmen.mutate()} disabled={laeuft}>
-              <Undo2 className="size-4" />
-              {tx("Zurücknehmen")}
-            </Knopf>
-          ) : (
-            <SchnellNebenaktion
-              ziel={{
-                art: 'knoten',
-                id: knoten.id,
-                name: knoten.titel,
-                loeschbar: knoten.loeschbar,
-                hinweis: tx("Alle Skills darunter werden ebenfalls gelöscht."),
-              }}
-              onErledigt={onSchliessen}
-            />
-          )}
-        </div>
+        <Knopf onClick={onKind} disabled={laeuft}>
+          <Plus className="size-4" />
+          {tx('Darunter anlegen')}
+        </Knopf>
       )}
-      <Fehlermeldung fehler={freischalten.error ?? zuruecknehmen.error} />
+      <Fehlermeldung fehler={fehler} />
     </div>
   );
 }

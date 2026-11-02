@@ -17,6 +17,22 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.48.0',
+    seiten: 'Profil, Können, Haben, Fähigkeiten, Basis, Paletten',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.',
+          'Ein neues Attribut legst du über Können oder Haben an. Jede Zeile hat Hinzufügen.',
+          'Klassen und Titel zeigt die Tabelle, darunter den Satz zum stärksten Können.',
+          'Fähigkeit und Knoten heißen im Dialog so. Unter einem Knoten steht Darunter anlegen.',
+          'Eine Palette zeigt die Farben und Auswählen. Bearbeiten und Löschen liegen im Menü.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.47.0',
     seiten: 'Eintrag, Ziele, Tätigkeiten, Investitionen, Erfolge',
     abschnitte: [

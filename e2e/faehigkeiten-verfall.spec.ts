@@ -131,16 +131,16 @@ test('Fähigkeiten zeigen denselben Baum', async ({ page }) => {
   await expect(karte.locator('.baum-knoten', { hasText: '+' })).toHaveCount(0);
 
   await page.getByRole('button', { name: 'Neu', exact: true }).click();
-  const neu = page.getByRole('dialog', { name: 'Neu' });
+  const neu = page.getByRole('dialog', { name: 'Knoten' });
   await expect(neu).toBeVisible();
   await neu.getByRole('button', { name: 'Schließen' }).click();
 
   await naechstes.click();
   const dialog = page.getByRole('dialog');
   await expect(xpImDialog(dialog)).toBeVisible();
-  await dialog.getByRole('button', { name: 'Darunter' }).click();
-  await expect(page.getByRole('dialog', { name: 'Neu' })).toBeVisible();
-  await page.getByRole('dialog', { name: 'Neu' }).getByRole('button', { name: 'Schließen' }).click();
+  await dialog.getByRole('button', { name: 'Darunter anlegen' }).click();
+  await expect(page.getByRole('dialog', { name: 'Knoten' })).toBeVisible();
+  await page.getByRole('dialog', { name: 'Knoten' }).getByRole('button', { name: 'Schließen' }).click();
 
   const extra = await page.evaluate(async (faehigkeitId) => {
     const lege = async (titel: string, elternId: number | null) => {
@@ -260,14 +260,16 @@ test('XP-Verlust ist für Können und Haben getrennt', async ({ page }) => {
 
     await page.goto('/koennen');
     await page.getByRole('button', { name: koennenAttribut.name, exact: true }).click();
-    const koennenDialog = page.getByRole('dialog', { name: `${koennenAttribut.name} bearbeiten` });
+    const koennenDialog = page.getByRole('dialog', { name: koennenAttribut.name, exact: true });
+    await expect(koennenDialog.getByRole('heading', { name: 'Verfall', exact: true })).toBeVisible();
     await expect(koennenDialog.getByText('Verlust bei Nichtnutzung')).toBeVisible();
     await expect(koennenDialog.getByText('Verlust über Zeit')).toBeVisible();
     await koennenDialog.getByRole('button', { name: 'Schließen' }).click();
 
     await page.goto('/haben');
     await page.getByRole('button', { name: habenAttribut.name, exact: true }).click();
-    const habenDialog = page.getByRole('dialog', { name: `${habenAttribut.name} bearbeiten` });
+    const habenDialog = page.getByRole('dialog', { name: habenAttribut.name, exact: true });
+    await expect(habenDialog.getByRole('heading', { name: 'Verfall', exact: true })).toHaveCount(0);
     await expect(habenDialog.getByText('Verlust bei Nichtnutzung')).toHaveCount(0);
     await expect(habenDialog.getByText('Verlust über Zeit')).toHaveCount(0);
     await habenDialog.getByRole('button', { name: 'Schließen' }).click();
