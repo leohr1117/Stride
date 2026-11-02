@@ -371,7 +371,6 @@ test('Info-Icon hat überall Abstand zum Namen', async ({ page }) => {
   const orte: { pfad: string; name: string; mindestens: number }[] = [
     { pfad: '/mehr/funktionen', name: 'funktionen', mindestens: 3 },
     { pfad: '/mehr/profil/fokus', name: 'fokus', mindestens: 1 },
-    { pfad: '/handbuch', name: 'handbuch', mindestens: 1 },
     { pfad: '/charakter', name: 'charakter', mindestens: 1 },
     { pfad: '/vorbilder', name: 'vorbilder', mindestens: 1 },
     { pfad: '/vorbilder/durchschnitt', name: 'durchschnitt', mindestens: 1 },

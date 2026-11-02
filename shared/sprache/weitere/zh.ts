@@ -1,5 +1,14 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.": "指南是可滚动的页面。上方是跳到各节的链接。",
+  "Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.": "记录、连续、等级、愿景和榜样以表格展开。",
+  "Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.": "推荐、按喜好和提示文字已去掉。",
+  "Pause: {tage} Tag frei": "暂停：可空 {tage} 天",
+  "Schutz: alle {tage} Tage, unter Heute einsetzen": "保护：每 {tage} 天一次，在今天使用",
+  "Rückkehr: {frist} Tage, wenn kein Schutz": "回归：没有保护时为 {frist} 天",
+  "Schutz und Rückkehr geben keine XP": "保护和回归不给 XP",
+  "Tage bei {xp} XP am Tag": "每天 {xp} XP 时的天数",
+  "XP beim Erreichen": "达成时的 XP",
   "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "历程用一张表来筛选。回顾和统计作为行显示在上方。",
   "Löschen im Verlauf ist nur beim Wischen rot.": "历程里的删除只在滑动时显示为红色。",
   "Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.": "回顾显示要点、增长和数字。保存留在底部。",

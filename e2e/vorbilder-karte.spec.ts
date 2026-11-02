@@ -193,7 +193,6 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   await ohneSeitlichenUeberlauf(page);
 
   await page.goto('/handbuch');
-  await page.getByRole('button', { name: 'Nachschlagen' }).click();
   const tabelle = page.locator('table').filter({ has: page.getByRole('columnheader', { name: 'Richtung' }) });
   await expect(tabelle.getByRole('columnheader', { name: 'Richtung' })).toBeVisible();
   const zeile = tabelle.getByRole('row').filter({ hasText: 'Cristiano Ronaldo' });

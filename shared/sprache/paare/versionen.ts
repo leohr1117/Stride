@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.', 'The guide is a scrolling page. Jumps to the sections sit at the top.'],
+  ['Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.', 'Entries, streak, level, visions, and role models sit open in tables.'],
+  ['Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.', 'Recommended, By what you like, and the hint texts are gone.'],
   ['Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.', 'History filters through a sheet. Review and Statistics sit at the top as rows.'],
   ['Löschen im Verlauf ist nur beim Wischen rot.', 'Delete in History is red only while swiping.'],
   ['Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.', 'Review shows highlights, growth, and figures. Save stays at the bottom.'],

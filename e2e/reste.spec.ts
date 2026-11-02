@@ -11,25 +11,15 @@ test('Handbuch und Einführung nennen die Bereiche nicht mehr', async ({ page },
 
   await page.goto('/handbuch');
   await expect(page.getByRole('heading', { name: 'Handbuch', level: 1 })).toBeVisible();
-  const nachVorliebe = page.getByRole('button', { name: 'Nach Vorliebe' });
-  if ((await nachVorliebe.getAttribute('aria-expanded')) !== 'true') {
-    await nachVorliebe.click();
-  }
-  await page.getByRole('button', { name: 'Nachschlagen' }).click();
+  await expect(page.getByRole('heading', { name: 'Einträge', exact: true })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Aufgaben', exact: true })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Training', exact: true })).toHaveCount(0);
   await expect(page.locator('a[href="/aufgaben"]')).toHaveCount(0);
   await expect(page.locator('a[href="/training"]')).toHaveCount(0);
-  const basis = page.getByText('Basis', { exact: true }).locator('xpath=ancestor::div[contains(@class,"min-h-12")]').first();
-  await basis.getByRole('button', { name: 'Info' }).click();
-  const hinweis = page.getByRole('tooltip');
-  await expect(hinweis).toBeVisible();
-  await expect(hinweis).toContainText('Tägliche Aufgaben zum Abhaken.');
-  await expect(hinweis).not.toContainText('Eigene Aufgaben');
-  await expect(hinweis).not.toContainText('Trainingsplan');
+  await expect(page.getByText('Eigene Aufgaben')).toHaveCount(0);
+  await expect(page.getByText('Trainingsplan')).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
   await bild('handbuch');
-  await page.keyboard.press('Escape');
 
   await page.goto('/mehr/profil/fokus');
   await expect(page.getByRole('heading', { name: 'Fokus', level: 1 })).toBeVisible();

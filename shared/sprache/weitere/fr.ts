@@ -1,5 +1,14 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.": "Le guide est une page à faire défiler. En haut, des liens vers les sections.",
+  "Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.": "Entrées, série, niveau, visions et modèles sont ouverts dans des tableaux.",
+  "Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.": "Suggéré, Selon tes goûts et les textes d'aide ont disparu.",
+  "Pause: {tage} Tag frei": "Pause : {tage} jour libre",
+  "Schutz: alle {tage} Tage, unter Heute einsetzen": "Protection : tous les {tage} jours, à utiliser sous Aujourd'hui",
+  "Rückkehr: {frist} Tage, wenn kein Schutz": "Retour : {frist} jours sans protection",
+  "Schutz und Rückkehr geben keine XP": "Protection et Retour ne donnent pas d'XP",
+  "Tage bei {xp} XP am Tag": "Jours à {xp} XP par jour",
+  "XP beim Erreichen": "XP à l'atteinte",
   "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "L'historique filtre dans une feuille. Bilan et Statistique sont en haut, en lignes.",
   "Löschen im Verlauf ist nur beim Wischen rot.": "Supprimer dans l'historique n'est rouge qu'en glissant.",
   "Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.": "Le bilan montre les temps forts, la croissance et les chiffres. Enregistrer reste en bas.",

@@ -1,5 +1,14 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.": "ガイドはスクロールするページです。上に各節への移動があります。",
+  "Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.": "記録、連続、レベル、ビジョン、お手本は表で開いています。",
+  "Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.": "推奨、好みで、説明文はなくなりました。",
+  "Pause: {tage} Tag frei": "休止：{tage}日は空いてよい",
+  "Schutz: alle {tage} Tage, unter Heute einsetzen": "保護：{tage}日ごと、今日で使う",
+  "Rückkehr: {frist} Tage, wenn kein Schutz": "復帰：保護がないときは{frist}日",
+  "Schutz und Rückkehr geben keine XP": "保護と復帰はXPにならない",
+  "Tage bei {xp} XP am Tag": "1日{xp} XPの日数",
+  "XP beim Erreichen": "到達時のXP",
   "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "履歴はシートで絞り込みます。振り返りと統計は上に行として並びます。",
   "Löschen im Verlauf ist nur beim Wischen rot.": "履歴の削除はスワイプしているときだけ赤くなります。",
   "Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.": "振り返りはハイライト、成長、数字を示します。保存は下に残ります。",

@@ -79,7 +79,8 @@ test('angelegtes Projekt trägt einen Haken, die Schritte stehen nur hier', asyn
   await page.goto('/handbuch');
   await expect(page.getByText('Erste Schritte', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Tätigkeiten prüfen', { exact: true })).toHaveCount(0);
-  await expect(page.getByText('Nach Vorliebe', { exact: true })).toBeVisible();
+  await expect(page.getByText('Nach Vorliebe', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Einträge', exact: true })).toBeVisible();
 
   await anlegen(page, { funktionen: { handbuch: false } });
   await page.goto('/');

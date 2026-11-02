@@ -1,5 +1,14 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.": "La guía es una página para desplazar. Arriba están los saltos a las secciones.",
+  "Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.": "Registros, racha, nivel, visiones y referentes están abiertos en tablas.",
+  "Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.": "Sugerido, Por lo que te gusta y los textos de aviso ya no están.",
+  "Pause: {tage} Tag frei": "Pausa: {tage} día libre",
+  "Schutz: alle {tage} Tage, unter Heute einsetzen": "Protección: cada {tage} días, usarla en Hoy",
+  "Rückkehr: {frist} Tage, wenn kein Schutz": "Regreso: {frist} días si no hay protección",
+  "Schutz und Rückkehr geben keine XP": "Protección y Regreso no dan XP",
+  "Tage bei {xp} XP am Tag": "Días con {xp} XP al día",
+  "XP beim Erreichen": "XP al alcanzar",
   "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "El historial filtra en una hoja. Repaso y Estadística están arriba como filas.",
   "Löschen im Verlauf ist nur beim Wischen rot.": "Eliminar en el historial solo se pone rojo al deslizar.",
   "Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.": "El repaso muestra lo destacado, el crecimiento y las cifras. Guardar permanece abajo.",

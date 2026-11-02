@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.41.0',
+    seiten: 'Handbuch',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.',
+          'Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.',
+          'Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.40.0',
     seiten: 'Verlauf, Rückblick, Statistik, Basis',
     abschnitte: [

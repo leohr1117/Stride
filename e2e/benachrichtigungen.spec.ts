@@ -562,7 +562,7 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
   }
 });
 
-test('Nachschlagen erklärt Benachrichtigungen', async ({ page }) => {
+test('Handbuch nennt die Benachrichtigungen nicht', async ({ page }) => {
   await anmelden(page);
   const stil = await page.evaluate(async () => {
     const antwort = await fetch('/api/einstellungen', {
@@ -576,29 +576,22 @@ test('Nachschlagen erklärt Benachrichtigungen', async ({ page }) => {
   await page.goto('/handbuch');
   await expect(page.locator('html')).toHaveAttribute('data-stil', 'antik');
   await expect(page.getByRole('heading', { name: 'Handbuch', exact: true })).toBeVisible();
-  const nachschlagen = page.getByRole('button', { name: 'Nachschlagen' });
-  if ((await nachschlagen.getAttribute('aria-expanded')) !== 'true') {
-    await nachschlagen.click();
-  }
-  const karte = page.getByRole('region', { name: 'Benachrichtigungen' });
-  await expect(karte).toBeVisible();
-  await expect(karte.getByRole('heading', { name: 'Streak in Gefahr', exact: true })).toBeVisible();
-  await expect(karte.getByRole('heading', { name: 'Rückkehr', exact: true })).toBeVisible();
-  await expect(karte.getByRole('heading', { name: 'Boss-Datum', exact: true })).toBeVisible();
-  await expect(karte.getByRole('heading', { name: 'Ruhezeit', exact: true })).toBeVisible();
-  await expect(karte).toContainText('Höchstens eine am Tag.');
-  await expect(karte).toContainText('Eine Benachrichtigung gibt keine XP.');
-  await expect(karte).toContainText('Der Sieg bleibt in der App.');
-  await expect(karte.getByRole('button', { name: 'Info' })).toHaveCount(0);
-  await expect(karte.getByText('Fällige Aufgabe')).toHaveCount(0);
-  await expect(karte.getByText('Trainingstag')).toHaveCount(0);
-  const abgeschnitten = await karte.evaluate((el) => el.scrollWidth > el.clientWidth + 1);
+  const seite = page.locator('main');
+  await expect(seite.getByRole('heading', { name: 'Streak', exact: true })).toBeVisible();
+  await expect(seite.getByRole('region', { name: 'Benachrichtigungen' })).toHaveCount(0);
+  await expect(seite.getByText('Streak in Gefahr', { exact: true })).toHaveCount(0);
+  await expect(seite.getByText('Boss-Datum', { exact: true })).toHaveCount(0);
+  await expect(seite.getByText('Ruhezeit', { exact: true })).toHaveCount(0);
+  await expect(seite.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await expect(seite.getByText('Fällige Aufgabe')).toHaveCount(0);
+  await expect(seite.getByText('Trainingstag')).toHaveCount(0);
+  const abgeschnitten = await seite.evaluate((el) => el.scrollWidth > el.clientWidth + 1);
   expect(abgeschnitten).toBe(false);
   await ohneSeitlichenUeberlauf(page);
-  await karte.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
+  await seite.locator('#streak').evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
   fs.mkdirSync('tmp-test/benachrichtigungen', { recursive: true });
   const projekt = test.info().project.name;
-  await karte.screenshot({ path: `tmp-test/benachrichtigungen/${projekt}-karte.png` });
+  await seite.locator('#streak').screenshot({ path: `tmp-test/benachrichtigungen/${projekt}-karte.png` });
   await page.screenshot({ path: `tmp-test/benachrichtigungen/${projekt}-seite.png` });
 
   await page.goto('/mehr/neu');

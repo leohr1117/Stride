@@ -1,5 +1,14 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.": "Справка — страница для прокрутки. Сверху переходы к разделам.",
+  "Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.": "Записи, серия, уровень, видения и ориентиры открыты в таблицах.",
+  "Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.": "Рекомендуется, По интересу и тексты подсказок убраны.",
+  "Pause: {tage} Tag frei": "Пауза: {tage} день можно пропустить",
+  "Schutz: alle {tage} Tage, unter Heute einsetzen": "Защита: каждые {tage} дней, применить в Сегодня",
+  "Rückkehr: {frist} Tage, wenn kein Schutz": "Возвращение: {frist} дней, если нет защиты",
+  "Schutz und Rückkehr geben keine XP": "Защита и возвращение не дают XP",
+  "Tage bei {xp} XP am Tag": "Дней при {xp} XP в день",
+  "XP beim Erreichen": "XP при достижении",
   "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "История фильтруется на листе. Обзор и Статистика стоят сверху строками.",
   "Löschen im Verlauf ist nur beim Wischen rot.": "Удаление в истории красное только при смахивании.",
   "Der Rückblick zeigt Höhepunkte, Wachstum und Zahlen. Speichern bleibt unten.": "Обзор показывает главное, рост и цифры. Сохранить остаётся внизу.",

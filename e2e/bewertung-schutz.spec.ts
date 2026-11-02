@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
+import { ERLAUBTE_PAUSENTAGE } from '../shared/spiel/kette.ts';
 import { RUECKKEHR, SCHUTZ } from '../shared/spiel/schutz.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
@@ -189,7 +190,7 @@ test('testvoll ohne den Testschlüssel zeigt die Karte nicht', async ({ page }) 
   await expect(page.getByRole('region', { name: 'Wie hilfreich ist Stride gerade?' })).toHaveCount(0);
 });
 
-test('Nachschlagen erklärt Schutz und Rückkehr', async ({ page }) => {
+test('Handbuch nennt Schutz und Rückkehr in kurzen Zeilen', async ({ page }) => {
   await anmelden(page);
   const stil = await page.evaluate(async () => {
     const antwort = await fetch('/api/einstellungen', {
@@ -203,19 +204,14 @@ test('Nachschlagen erklärt Schutz und Rückkehr', async ({ page }) => {
   await page.goto('/handbuch');
   await expect(page.locator('html')).toHaveAttribute('data-stil', 'antik');
   await expect(page.getByRole('heading', { name: 'Handbuch', exact: true })).toBeVisible();
-  const nachschlagen = page.getByRole('button', { name: 'Nachschlagen' });
-  if ((await nachschlagen.getAttribute('aria-expanded')) !== 'true') {
-    await nachschlagen.click();
-  }
-  const karte = page.getByRole('region', { name: 'Schutz und Rückkehr' });
+  const karte = page.locator('#streak');
   await expect(karte).toBeVisible();
-  await expect(karte.getByRole('heading', { name: 'Schutz', exact: true })).toBeVisible();
-  await expect(karte.getByRole('heading', { name: 'Rückkehr', exact: true })).toBeVisible();
-  await expect(karte).toContainText(`Alle ${SCHUTZ.schwelleTage} Tage`);
-  await expect(karte).toContainText(`für ${RUECKKEHR.fristTage} Tage`);
-  await expect(karte).toContainText(`${RUECKKEHR.abstandTage} Tage`);
-  await expect(karte).toContainText('Der Schutz gibt keine XP.');
-  await expect(karte).toContainText('Sie lassen sich nicht öffnen.');
+  await expect(karte.getByRole('heading', { name: 'Streak', exact: true })).toBeVisible();
+  await expect(karte).toContainText(`Pause: ${ERLAUBTE_PAUSENTAGE} Tag frei`);
+  await expect(karte).toContainText(`Schutz: alle ${SCHUTZ.schwelleTage} Tage, unter Heute einsetzen`);
+  await expect(karte).toContainText(`Rückkehr: ${RUECKKEHR.fristTage} Tage, wenn kein Schutz`);
+  await expect(karte).toContainText('Schutz und Rückkehr geben keine XP');
+  await expect(karte.getByRole('columnheader', { name: 'Faktor', exact: true })).toBeVisible();
   await expect(karte.getByRole('button', { name: 'Info' })).toHaveCount(0);
   const abgeschnitten = await karte.evaluate((el) => el.scrollWidth > el.clientWidth + 1);
   expect(abgeschnitten).toBe(false);

@@ -93,15 +93,10 @@ test('Hierarchie, Funktionen und Projekt-Tätigkeit sind erkennbar', async ({ pa
   await expect(page).toHaveURL(/\/mehr$/);
 
   await page.goto('/handbuch');
-  const nachVorliebe = page.getByRole('button', { name: 'Nach Vorliebe' });
-  await expect(nachVorliebe).toHaveAttribute('aria-expanded', 'true');
-  const vorliebe = page.locator('section').filter({ has: nachVorliebe });
-  await expect(vorliebe.getByText('Basis', { exact: true }).first()).toBeVisible();
-  const kopf = nachVorliebe.locator('xpath=ancestor::div[contains(@class,"grid")][1]');
-  await kopf.getByRole('button', { name: 'Info' }).click();
-  const handbuchHinweis = page.getByRole('tooltip');
-  await expect(handbuchHinweis).toContainText('App & Verbindungen');
-  imBild(await handbuchHinweis.boundingBox(), sicht.width, sicht.height);
+  await expect(page.getByRole('heading', { name: 'Einträge', exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Streak', exact: true })).toBeVisible();
+  await expect(page.getByText('Nach Vorliebe', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Info' })).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
   await bild('handbuch');
 });

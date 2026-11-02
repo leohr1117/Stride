@@ -1,5 +1,11 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Pause: {tage} Tag frei', 'Pause: {tage} day off'],
+  ['Schutz: alle {tage} Tage, unter Heute einsetzen', 'Protection: every {tage} days, use it under Today'],
+  ['Rückkehr: {frist} Tage, wenn kein Schutz', 'Return: {frist} days if there is no protection'],
+  ['Schutz und Rückkehr geben keine XP', 'Protection and Return grant no XP'],
+  ['Tage bei {xp} XP am Tag', 'Days at {xp} XP a day'],
+  ['XP beim Erreichen', 'XP when reached'],
   ['Filter', 'Filter'],
   ['Filter zurücksetzen', 'Reset filter'],
   ['Basis-Aufgabe anlegen', 'Add a basics task'],
