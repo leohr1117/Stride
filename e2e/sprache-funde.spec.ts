@@ -111,7 +111,8 @@ test('übersetzte Funde sind in jeder Sprache sichtbar', async ({ page }, info) 
       await kalender.getByRole('button', { name: zeige('Schließen', code) }).click();
 
       await page.goto('/ziele');
-      await page.getByRole('button', { name: zeige('Vision', code), exact: true }).click();
+      await page.getByRole('button', { name: zeige('Neu', code), exact: true }).click();
+      await page.getByRole('menuitem', { name: zeige('Vision', code), exact: true }).click();
       const vision = page.getByRole('dialog');
       await expect(vision.getByText(zeige('Wenn-dann-Plan', code), { exact: true })).toBeVisible();
       await vision.locator('textarea').last().evaluate((element) => element.scrollIntoView({ block: 'center' }));

@@ -1,5 +1,10 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Admin ändert einen Benutzernamen im Menü bei Accounts.": "管理员在账户菜单中更改用户名。",
+  "Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.": "如果名称已被使用，错误显示在字段上。原名称保持不变。",
+  "Die Seiten für Benutzernamen führen zu Accounts.": "用户名页面会转到账户。",
+  "Benutzername ändern": "更改用户名",
+  "Neuer Account": "新建账户",
   "Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.": "账户显示资料和登录。用户名只可阅读。",
   "Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.": "目标层级和用户名列表不再出现在账户里。",
   "Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.": "出生年显示大约的年龄。焦点下方写明保存会归档什么。",

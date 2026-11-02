@@ -16,6 +16,7 @@ const UMLENKUNGEN = new Set([
   '/mehr/inhalte/taetigkeiten',
   '/mehr/profil/stufen',
   '/mehr/profil/benutzer',
+  '/mehr/profil/benutzernamen',
   '/mehr/darstellung/ansicht',
 ]);
 
@@ -51,7 +52,6 @@ const PROFIL_TEIL: Record<string, string> = {
   fokus: 'Fokus',
   stufen: 'Ziel-Stufen',
   benutzer: 'Benutzername',
-  benutzernamen: 'Benutzernamen',
   passwort: 'Passwort',
   accounts: 'Accounts',
 };
@@ -100,8 +100,12 @@ export function gleicheAdresse(links: string, rechts: string): boolean {
   return pfadname(links) === pfadname(rechts) && suchtext(links) === suchtext(rechts);
 }
 
+/** Die Konto-Id steckt im Pfad, deshalb liegt sie nicht als fester Eintrag in der Menge. */
+const UMLENK_MUSTER = [/^\/mehr\/profil\/benutzernamen\/[^/]+$/];
+
 export function istUmlenkung(pfad: string): boolean {
-  return UMLENKUNGEN.has(pfadname(pfad));
+  const rein = pfadname(pfad);
+  return UMLENKUNGEN.has(rein) || UMLENK_MUSTER.some((muster) => muster.test(rein));
 }
 
 export function istHauptseite(pfad: string): boolean {
@@ -163,9 +167,6 @@ export function elternZiel(pfad: string, lage: NavLage = { leiste: [], verlaufAn
   if (rein === '/mehr/profil') {
     return ziel('/mehr', 'Mehr');
   }
-  if (/^\/mehr\/profil\/benutzernamen\/[^/]+$/.test(rein)) {
-    return ziel('/mehr/profil/benutzernamen', 'Benutzernamen');
-  }
   if (rein.startsWith('/mehr/profil/')) {
     return ziel('/mehr/profil', 'Konto');
   }
@@ -210,9 +211,6 @@ export function herkunftsLabel(pfad: string): string | null {
   }
   if (/^\/vorbilder\/[^/]+$/.test(rein)) {
     return 'Vorbild';
-  }
-  if (/^\/mehr\/profil\/benutzernamen\/[^/]+$/.test(rein)) {
-    return 'Benutzername';
   }
   const profil = /^\/mehr\/profil\/([^/]+)$/.exec(rein);
   const teil = profil?.[1];

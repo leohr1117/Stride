@@ -258,11 +258,16 @@ test('Formular, Warndialog und Toast halten die Maße', async ({ page }, testInf
     vorlageId = angelegt.vorlageId;
     projektId = angelegt.projektId;
     await page.goto('/ziele');
-    const zeile = page.locator(`[data-schnell="${titel}"]`);
-    await expect(zeile).toBeVisible();
-    await zeile.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
-    await zeile.getByRole('button', { name: `Aktionen für ${titel}`, exact: true }).click();
+    const kopf = page.getByRole('button', { name: titel, exact: true });
+    await expect(kopf).toBeVisible();
+    await kopf.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
+    await kopf.click();
+    const vision = page.getByRole('dialog', { name: titel });
+    await expect(vision).toBeVisible();
+    await vision.getByRole('button', { name: `Aktionen für ${titel}`, exact: true }).click();
     await page.getByRole('menuitem', { name: 'Archivieren', exact: true }).click();
+    await vision.getByRole('button', { name: 'Schließen' }).click();
+    await expect(vision).toBeHidden();
     const rueck = page.getByRole('button', { name: 'Rückgängig' });
     await expect(page.getByRole('status')).toContainText(`${titel} archiviert`);
     await rueck.focus();
@@ -270,7 +275,7 @@ test('Formular, Warndialog und Toast halten die Maße', async ({ page }, testInf
     await expect(rueck).toBeVisible();
     await bild('toast');
     await rueck.click();
-    await expect(zeile).toBeVisible();
+    await expect(kopf).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
   } finally {
     await page.evaluate(async ({ vision, projekt, vorlage }) => {

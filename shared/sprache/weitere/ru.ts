@@ -1,5 +1,10 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Admin ändert einen Benutzernamen im Menü bei Accounts.": "Администратор меняет имя пользователя в меню аккаунтов.",
+  "Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.": "Если имя занято, ошибка стоит у поля. Прежнее имя остаётся.",
+  "Die Seiten für Benutzernamen führen zu Accounts.": "Страницы имён пользователей ведут к аккаунтам.",
+  "Benutzername ändern": "Изменить имя пользователя",
+  "Neuer Account": "Новый аккаунт",
   "Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.": "Аккаунт показывает Профиль и Вход. Имя пользователя только для чтения.",
   "Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.": "Ступени целей и список имён пользователей больше не в аккаунте.",
   "Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.": "Год рождения показывает примерный возраст. Под Фокус написано, что архивирует Сохранить.",

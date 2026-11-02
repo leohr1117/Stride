@@ -69,6 +69,10 @@ describe('elternZiel', () => {
     expect(elternZiel('/mehr/darstellung/leiste')).toEqual({ pfad: '/mehr/darstellung', label: 'Darstellung' });
     expect(elternZiel('/mehr/darstellung/ansicht')).toBeNull();
     expect(elternZiel('/mehr/profil/fokus')).toEqual({ pfad: '/mehr/profil', label: 'Konto' });
+    expect(elternZiel('/mehr/profil/benutzernamen')).toBeNull();
+    expect(elternZiel('/mehr/profil/benutzernamen/4')).toBeNull();
+    expect(schiebeHerkunft(['/mehr/profil'], '/mehr/profil/benutzernamen')).toEqual(['/mehr/profil']);
+    expect(schiebeHerkunft(['/mehr/profil'], '/mehr/profil/benutzernamen/4')).toEqual(['/mehr/profil']);
     expect(elternZiel('/mehr/inhalte/verbindungen')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/mehr/uebersicht')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/mehr/neu')).toEqual({ pfad: '/mehr', label: 'Mehr' });

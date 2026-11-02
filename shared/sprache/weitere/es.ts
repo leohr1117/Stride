@@ -1,5 +1,10 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Admin ändert einen Benutzernamen im Menü bei Accounts.": "El administrador cambia un usuario en el menú de Cuentas.",
+  "Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.": "Si el nombre ya está ocupado, el error queda en el campo. El nombre anterior se queda.",
+  "Die Seiten für Benutzernamen führen zu Accounts.": "Las páginas de usuarios llevan a Cuentas.",
+  "Benutzername ändern": "Cambiar el usuario",
+  "Neuer Account": "Nueva cuenta",
   "Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.": "La cuenta muestra Perfil y Acceso. El usuario es solo de lectura.",
   "Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.": "Los niveles de meta y la lista de usuarios ya no están en la cuenta.",
   "Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.": "El año de nacimiento muestra la edad aproximada. Bajo Foco dice qué archiva Guardar.",

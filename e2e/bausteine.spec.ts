@@ -89,11 +89,12 @@ test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInf
     const schein = page.locator('.levelring-spitze-schein').first();
     await expect(schein).toBeVisible();
     const ringHtml = await page.locator('.levelring').first().innerHTML();
+    const ohneLicht = ringHtml.replace(/<circle[^>]*data-ringlicht=""[^>]*>/g, '');
     expect(ringHtml).toContain('feGaussianBlur');
-    expect(ringHtml).toContain('--fortschritt');
-    expect(ringHtml.toLowerCase()).not.toContain('fill="white"');
+    expect(ringHtml).toContain('color-mix(in srgb, var(--fortschritt)');
+    expect(ringHtml).toContain('var(--haupt)');
+    expect(ohneLicht.toLowerCase()).not.toContain('fill="white"');
     expect(ringHtml).not.toContain('--akzent');
-    expect(ringHtml).not.toContain('--haupt');
     await bild('ring-an');
 
     await page.goto('/mehr/darstellung');

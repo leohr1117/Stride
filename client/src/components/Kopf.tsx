@@ -61,7 +61,6 @@ const SEITENTITEL: Record<string, string> = {
   '/mehr/profil/fokus': 'Fokus',
   '/mehr/profil/passwort': 'Passwort',
   '/mehr/profil/accounts': 'Accounts',
-  '/mehr/profil/benutzernamen': 'Benutzernamen',
   '/mehr/profil/stufen': 'Ziel-Stufen',
   '/mehr/inhalte': 'Tätigkeiten',
   '/mehr/inhalte/verbindungen': 'Verbindungen',
@@ -88,9 +87,6 @@ function standardTitel(pfad: string): string {
   }
   if (/^\/vorbilder\/[^/]+$/.test(rein)) {
     return 'Vorbild';
-  }
-  if (/^\/mehr\/profil\/benutzernamen\/[^/]+$/.test(rein)) {
-    return 'Benutzername';
   }
   return '';
 }

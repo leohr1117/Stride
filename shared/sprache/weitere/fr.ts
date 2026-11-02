@@ -1,5 +1,10 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Admin ändert einen Benutzernamen im Menü bei Accounts.": "L'administrateur change un nom d'utilisateur dans le menu des comptes.",
+  "Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.": "Si le nom est déjà pris, l'erreur s'affiche sur le champ. L'ancien nom reste.",
+  "Die Seiten für Benutzernamen führen zu Accounts.": "Les pages des noms d'utilisateur mènent aux comptes.",
+  "Benutzername ändern": "Changer le nom d'utilisateur",
+  "Neuer Account": "Nouveau compte",
   "Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.": "Le compte affiche Profil et Connexion. Le nom d'utilisateur est en lecture seule.",
   "Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.": "Les niveaux d'objectif et la liste des noms d'utilisateur ne sont plus dans le compte.",
   "Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.": "L'année de naissance indique l'âge approximatif. Sous Focus, le texte dit ce qu'Enregistrer archive.",

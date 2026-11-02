@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.43.0',
+    seiten: 'Accounts',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Der Admin ändert einen Benutzernamen im Menü bei Accounts.',
+          'Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.',
+          'Die Seiten für Benutzernamen führen zu Accounts.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.42.0',
     seiten: 'Konto',
     abschnitte: [

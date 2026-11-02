@@ -77,9 +77,6 @@ test('Nutzer ändert den eigenen Namen nicht, nur der Admin', async ({ page, req
     await ohneSeitlichenUeberlauf(page);
     await bild('profil');
 
-    await page.goto('/mehr/profil/benutzernamen');
-    await expect(page).toHaveURL(/\/mehr\/profil\/benutzernamen$/);
-    await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr/profil');
     const listeAntwort = await page.request.get('/api/zugang/admin/konten');
     expect(listeAntwort.ok()).toBe(true);
     const konten = (await listeAntwort.json()) as AdminKonto[];
@@ -88,23 +85,51 @@ test('Nutzer ändert den eigenen Namen nicht, nur der Admin', async ({ page, req
       throw new Error('testteil fehlt in der Admin-Liste.');
     }
     kontoId = teil.id;
-    await expect(page.getByRole('link', { name: 'testteil', exact: true })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'testvoll', exact: true })).toBeVisible();
+    const kontenVerboten = await page.request.get('/api/zugang/konten');
+    expect(kontenVerboten.status()).toBe(403);
+
+    await page.route('**/api/zugang/konten', (route) =>
+      route.fulfill({ status: 500, contentType: 'application/json', body: '{"fehler":"nein"}' }),
+    );
+    await page.goto('/mehr/profil/benutzernamen');
+    await expect(page).toHaveURL(/\/mehr\/profil\/accounts$/);
+    await page.goto(`/mehr/profil/benutzernamen/${teil.id}`);
+    await expect(page).toHaveURL(/\/mehr\/profil\/accounts$/);
+    await expect(page.getByRole('heading', { name: 'Accounts', exact: true })).toBeVisible();
+    for (const konto of konten) {
+      await expect(page.getByText(konto.benutzername, { exact: true }).first()).toBeVisible();
+    }
+    await expect(page.getByRole('button', { name: 'Account anlegen' })).toHaveCount(0);
+    const kontoZeile = page.locator('.zeile', { hasText: 'testteil' }).first();
+    await expect(kontoZeile).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
     await bild('liste');
 
-    await page.getByRole('link', { name: 'testteil', exact: true }).click();
-    await expect(page).toHaveURL(new RegExp(`/mehr/profil/benutzernamen/${teil.id}$`));
-    await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr/profil/benutzernamen');
-    const feld = page.getByRole('textbox', { name: 'Benutzername', exact: true });
+    await kontoZeile.getByRole('button', { name: 'Aktionen für testteil', exact: true }).click();
+    await expect(page.getByRole('menuitem', { name: 'Benutzername ändern', exact: true })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Löschen', exact: true })).toHaveCount(0);
+    await page.getByRole('menuitem', { name: 'Benutzername ändern', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Benutzername ändern' });
+    await expect(dialog).toBeVisible();
+    const feld = dialog.getByRole('textbox', { name: 'Benutzername', exact: true });
     await expect(feld).toHaveValue('testteil');
-    const speichern = page.getByRole('button', { name: 'Speichern' });
-    await expect(speichern).toBeDisabled();
-    await expect(speichern).toBeInViewport();
+    await expect(feld).toBeFocused();
+    const speichern = dialog.getByRole('button', { name: 'Speichern' });
+    await expect(speichern).toBeEnabled();
+    await ohneSeitlichenUeberlauf(page);
+    await bild('dialog');
 
     await feld.fill('testvoll');
+    await dialog.getByRole('button', { name: 'Abbrechen' }).click();
+    const verwerfen = page.getByRole('alertdialog', { name: 'Änderungen verwerfen?' });
+    await expect(verwerfen).toBeVisible();
+    await verwerfen.getByRole('button', { name: 'Weiter bearbeiten' }).click();
+    await expect(verwerfen).toBeHidden();
+    await expect(feld).toHaveValue('testvoll');
+
     await speichern.click();
-    await expect(page.getByText('Der Benutzername ist schon vergeben.')).toBeVisible();
+    await expect(dialog.getByRole('alert')).toContainText('Der Name ist schon vergeben.');
+    await expect(feld).toHaveValue('testvoll');
     expect((await (await page.request.get('/api/zugang/admin/konten')).json()) as AdminKonto[]).toEqual(
       expect.arrayContaining([expect.objectContaining({ id: teil.id, benutzername: 'testteil' })]),
     );
@@ -114,20 +139,18 @@ test('Nutzer ändert den eigenen Namen nicht, nur der Admin', async ({ page, req
     await feld.fill(frei);
     fremd = true;
     await speichern.click();
-    await expect(feld).toHaveValue(frei);
-    await expect(speichern).toBeDisabled();
+    await expect(dialog).toBeHidden();
+    await expect(page.locator('.dialog-fenster')).toHaveCount(0);
     await expect
       .poll(async () => {
         const aktuell = (await (await page.request.get('/api/zugang/admin/konten')).json()) as AdminKonto[];
         return aktuell.find((konto) => konto.id === teil.id)?.benutzername;
       })
       .toBe(frei);
+    await expect(page.locator('.zeile', { hasText: frei }).first()).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
     await bild('geaendert');
 
-    await page.locator('a[data-zurueck]').click();
-    await expect(page).toHaveURL(/\/mehr\/profil\/benutzernamen$/);
-    await expect(page.getByRole('link', { name: frei, exact: true })).toBeVisible();
     await page.locator('a[data-zurueck]').click();
     await expect(page).toHaveURL(/\/mehr\/profil$/);
     await expect(page.locator('#profil-benutzername')).toContainText('testvoll');

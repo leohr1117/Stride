@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Der Admin ändert einen Benutzernamen im Menü bei Accounts.', 'The admin changes a username from the menu on Accounts.'],
+  ['Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.', 'If the name is taken, the error sits on the field. The current name stays.'],
+  ['Die Seiten für Benutzernamen führen zu Accounts.', 'The username pages lead to Accounts.'],
   ['Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.', 'The account shows Profile and Sign-in. The username is read-only.'],
   ['Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.', 'Goal levels and the username list are no longer on the account.'],
   ['Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.', 'The year of birth shows the approximate age. Under Focus it says what Save archives.'],

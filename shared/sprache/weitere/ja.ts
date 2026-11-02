@@ -1,5 +1,10 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Admin ändert einen Benutzernamen im Menü bei Accounts.": "管理者がアカウントのメニューでユーザー名を変更します。",
+  "Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.": "名前が使われていると、エラーは欄に出ます。これまでの名前はそのままです。",
+  "Die Seiten für Benutzernamen führen zu Accounts.": "ユーザー名のページはアカウントへ移ります。",
+  "Benutzername ändern": "ユーザー名を変更",
+  "Neuer Account": "新しいアカウント",
   "Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.": "アカウントはプロフィールとログインを表示します。ユーザー名は読むだけです。",
   "Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.": "目標の段とユーザー名の一覧はアカウントにありません。",
   "Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.": "生まれ年にはおよその年齢が出ます。焦点の下に、保存が何をアーカイブするかが書いてあります。",

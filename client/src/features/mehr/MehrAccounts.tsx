@@ -1,12 +1,28 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Navigate } from 'react-router';
+import type { Rolle } from '../../../../shared/api/zugang.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
 import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
+import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
+import { BenutzernameDialog, type BenutzernameZiel } from './MehrBenutzerAdmin.tsx';
 import { Bereich, PROFIL_ZURUECK } from './rahmen.tsx';
+
+interface AccountZeile {
+  id: number;
+  benutzername: string;
+  rolle?: Rolle;
+}
+
+function nebenzeile(konto: AccountZeile): string | undefined {
+  if (!konto.rolle) {
+    return undefined;
+  }
+  const rolle = konto.rolle === 'inhaber' ? tx('Inhaber') : tx('Mitglied');
+  return `${konto.benutzername} · ${rolle}`;
+}
 
 export function AccountsBereich() {
   const queryClient = useQueryClient();
@@ -15,7 +31,10 @@ export function AccountsBereich() {
     queryFn: api.zugang,
   });
   const inhaber = zugang?.rolle === 'inhaber';
-  const { data: konten = [] } = useQuery({ queryKey: SCHLUESSEL.konten, queryFn: api.konten, enabled: inhaber });
+  const admin = zugang?.admin === true;
+  const kontenQuery = useQuery({ queryKey: SCHLUESSEL.konten, queryFn: api.konten, enabled: inhaber });
+  const adminQuery = useQuery({ queryKey: SCHLUESSEL.adminKonten, queryFn: api.adminKonten, enabled: admin && !inhaber });
+  const [ziel, setZiel] = useState<BenutzernameZiel | null>(null);
   const [kontoName, setKontoName] = useState('');
   const [kontoPasswort, setKontoPasswort] = useState('');
   const [kontoProfil, setKontoProfil] = useState('');
@@ -40,18 +59,31 @@ export function AccountsBereich() {
   });
 
   if (zugangLaedt) {
-    return <Bereich titel={tx("Accounts")} zurueck={PROFIL_ZURUECK} kinder={<Ladeanzeige />} />;
+    return <Bereich titel={tx('Accounts')} zurueck={PROFIL_ZURUECK} kinder={<Ladeanzeige />} />;
   }
   if (zugangFehler || !zugang) {
-    return <Bereich titel={tx("Accounts")} zurueck={PROFIL_ZURUECK} kinder={<Fehlermeldung fehler={zugangFehler} />} />;
+    return <Bereich titel={tx('Accounts')} zurueck={PROFIL_ZURUECK} kinder={<Fehlermeldung fehler={zugangFehler} />} />;
   }
-  if (!inhaber) {
+  if (!inhaber && !admin) {
     return <Navigate to="/mehr/profil" replace />;
   }
 
+  const listeLaedt = inhaber ? kontenQuery.isPending : adminQuery.isPending;
+  const listeFehler = inhaber ? kontenQuery.error : adminQuery.error;
+  if (listeLaedt) {
+    return <Bereich titel={tx('Accounts')} zurueck={PROFIL_ZURUECK} kinder={<Ladeanzeige />} />;
+  }
+  if (listeFehler) {
+    return <Bereich titel={tx('Accounts')} zurueck={PROFIL_ZURUECK} kinder={<Fehlermeldung fehler={listeFehler} />} />;
+  }
+
+  const konten: AccountZeile[] = inhaber
+    ? (kontenQuery.data ?? []).map((konto) => ({ id: konto.id, benutzername: konto.benutzername, rolle: konto.rolle }))
+    : (adminQuery.data ?? []).map((konto) => ({ id: konto.id, benutzername: konto.benutzername }));
+
   return (
     <Bereich
-      titel={tx("Accounts")}
+      titel={tx('Accounts')}
       zurueck={PROFIL_ZURUECK}
       kinder={
         <div className="space-y-8">
@@ -59,17 +91,19 @@ export function AccountsBereich() {
             {konten.map((konto) => (
               <SchnellZeile
                 key={konto.id}
+                eintraege={admin ? [{ art: 'archivieren', id: 'benutzername', label: 'Benutzername ändern' }] : undefined}
+                onEintrag={() => setZiel({ id: konto.id, benutzername: konto.benutzername })}
                 ziel={{
                   art: 'konto',
                   id: konto.id,
                   name: konto.benutzername,
-                  gesperrt: konto.rolle === 'inhaber',
+                  gesperrt: konto.rolle === undefined || konto.rolle === 'inhaber',
                 }}
               >
                 {(menue) => (
                   <Zeile
                     titel={konto.benutzername}
-                    wert={konto.rolle === 'inhaber' ? tx("Inhaber") : tx("Mitglied")}
+                    neben={nebenzeile(konto)}
                     pfeil={false}
                     rechts={menue}
                   />
@@ -77,53 +111,61 @@ export function AccountsBereich() {
               </SchnellZeile>
             ))}
           </ZeilenGruppe>
-          <Karte>
-            <Formular
-              onAbsenden={(ereignis) => {
-                ereignis.preventDefault();
-                anlegen.mutate();
-              }}
-              abstand="space-y-3"
-            >
-              <Feld label={tx("Benutzername")}>
-                <input
-                  className={EINGABE_STIL}
-                  autoCapitalize="none"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  value={kontoName}
-                  onChange={(ereignis) => {
-                    const wert = ereignis.target.value;
-                    setKontoName(wert);
-                    if (!profilGeaendert) {
-                      setKontoProfil(wert);
-                    }
+          {inhaber ? (
+            <section>
+              <h2 className="ueberschrift abschnittskopf mb-2 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
+                {tx('Neuer Account')}
+              </h2>
+              <Karte>
+                <Formular
+                  onAbsenden={(ereignis) => {
+                    ereignis.preventDefault();
+                    anlegen.mutate();
                   }}
-                />
-              </Feld>
-              <Feld label={tx("Profilname")}>
-                <input
-                  className={EINGABE_STIL}
-                  value={kontoProfil}
-                  onChange={(ereignis) => {
-                    setProfilGeaendert(true);
-                    setKontoProfil(ereignis.target.value);
-                  }}
-                />
-              </Feld>
-              <PasswortFeld
-                label={tx("Passwort")}
-                hinweis={tx("Mindestens 10 Zeichen.")}
-                autoComplete="new-password"
-                value={kontoPasswort}
-                onChange={(ereignis) => setKontoPasswort(ereignis.target.value)}
-              />
-              <Knopf type="submit" variante="primaer" className="w-full" disabled={anlegen.isPending || kontoName.trim() === '' || kontoPasswort === ''}>
-                {tx("Account anlegen")}
-              </Knopf>
-            </Formular>
-            <Fehlermeldung fehler={fehler ?? anlegen.error} />
-          </Karte>
+                  abstand="space-y-3"
+                >
+                  <Feld label={tx('Benutzername')}>
+                    <input
+                      className={EINGABE_STIL}
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      value={kontoName}
+                      onChange={(ereignis) => {
+                        const wert = ereignis.target.value;
+                        setKontoName(wert);
+                        if (!profilGeaendert) {
+                          setKontoProfil(wert);
+                        }
+                      }}
+                    />
+                  </Feld>
+                  <Feld label={tx('Profilname')}>
+                    <input
+                      className={EINGABE_STIL}
+                      value={kontoProfil}
+                      onChange={(ereignis) => {
+                        setProfilGeaendert(true);
+                        setKontoProfil(ereignis.target.value);
+                      }}
+                    />
+                  </Feld>
+                  <PasswortFeld
+                    label={tx('Passwort')}
+                    hinweis={tx('Mindestens 10 Zeichen.')}
+                    autoComplete="new-password"
+                    value={kontoPasswort}
+                    onChange={(ereignis) => setKontoPasswort(ereignis.target.value)}
+                  />
+                  <Knopf type="submit" variante="primaer" className="w-full" disabled={anlegen.isPending || kontoName.trim() === '' || kontoPasswort === ''}>
+                    {tx('Account anlegen')}
+                  </Knopf>
+                </Formular>
+                <Fehlermeldung fehler={fehler ?? anlegen.error} />
+              </Karte>
+            </section>
+          ) : null}
+          <BenutzernameDialog konto={ziel} onSchliessen={() => setZiel(null)} />
         </div>
       }
     />

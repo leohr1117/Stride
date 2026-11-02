@@ -1,135 +1,137 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import { Navigate } from 'react-router';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState, type FormEvent } from 'react';
 import type { AdminKonto } from '../../../../shared/api/zugang.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
-import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Ladeanzeige } from '../../ui/index.ts';
+import { Dialog } from '../../components/Dialog.tsx';
+import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
-import { Bereich, FormularSeite, PROFIL_ZURUECK } from './rahmen.tsx';
 
-const ADMIN_INFO = 'Jeder Name ist nur einmal vergeben. Ist er schon vergeben, bleibt der bisherige.';
-const LISTE_ZURUECK = { pfad: '/mehr/profil/benutzernamen', label: 'Benutzernamen' };
+const NAME_VERGEBEN = 'Der Name ist schon vergeben.';
+const SERVER_VERGEBEN = 'Der Benutzername ist schon vergeben.';
+const NAME_LEER = 'Der Benutzername darf nicht leer sein.';
+const NAME_LANG = 'Der Benutzername darf höchstens 40 Zeichen haben.';
 
-export function BenutzerAdminListe() {
-  const { data: zugang, error, isPending } = useQuery({ queryKey: SCHLUESSEL.zugang, queryFn: api.zugang });
-  const admin = zugang?.admin === true;
-  const konten = useQuery({ queryKey: SCHLUESSEL.adminKonten, queryFn: api.adminKonten, enabled: admin });
-  if (isPending) {
-    return <Bereich titel={tx("Benutzernamen")} info={ADMIN_INFO} zurueck={PROFIL_ZURUECK} kinder={<Ladeanzeige />} />;
-  }
-  if (error || !zugang) {
-    return <Bereich titel={tx("Benutzernamen")} info={ADMIN_INFO} zurueck={PROFIL_ZURUECK} kinder={<Fehlermeldung fehler={error} />} />;
-  }
-  if (!admin) {
-    return <Navigate to="/mehr/profil" replace />;
-  }
-  if (konten.isPending) {
-    return <Bereich titel={tx("Benutzernamen")} info={ADMIN_INFO} zurueck={PROFIL_ZURUECK} kinder={<Ladeanzeige />} />;
-  }
-  if (konten.error || !konten.data) {
-    return <Bereich titel={tx("Benutzernamen")} info={ADMIN_INFO} zurueck={PROFIL_ZURUECK} kinder={<Fehlermeldung fehler={konten.error} />} />;
-  }
-  return (
-    <Bereich
-      titel={tx("Benutzernamen")}
-      info={ADMIN_INFO}
-      zurueck={PROFIL_ZURUECK}
-      kinder={
-        <ZeilenGruppe>
-          {konten.data.map((konto) => (
-            <Zeile key={konto.id} titel={konto.benutzername} nach={`/mehr/profil/benutzernamen/${konto.id}`} />
-          ))}
-        </ZeilenGruppe>
-      }
-    />
-  );
+export interface BenutzernameZiel {
+  id: number;
+  benutzername: string;
 }
 
-export function BenutzerAdminBearbeiten({ kontoId }: { kontoId: string }) {
-  const id = Number(kontoId);
-  const gueltig = Number.isInteger(id) && id > 0;
+function feldAusFehler(fehler: unknown): string | null {
+  const text = fehler instanceof Error ? fehler.message : '';
+  if (text === SERVER_VERGEBEN) {
+    return NAME_VERGEBEN;
+  }
+  if (text === NAME_LEER || text === NAME_LANG) {
+    return text;
+  }
+  return null;
+}
+
+/** Abbrechen geht denselben Weg wie Esc, damit ein geändertes Blatt nachfragt. */
+function schliessenWieEsc(): void {
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+}
+
+export function BenutzernameDialog({
+  konto,
+  onSchliessen,
+}: {
+  konto: BenutzernameZiel | null;
+  onSchliessen: () => void;
+}) {
   const queryClient = useQueryClient();
-  const { data: zugang, error: zugangFehler, isPending: zugangLaedt } = useQuery({
-    queryKey: SCHLUESSEL.zugang,
-    queryFn: api.zugang,
-  });
-  const admin = zugang?.admin === true;
-  const konten = useQuery({ queryKey: SCHLUESSEL.adminKonten, queryFn: api.adminKonten, enabled: admin && gueltig });
-  const konto = konten.data?.find((eintrag) => eintrag.id === id);
-  const [entwurf, setEntwurf] = useState<{ id: number; name: string } | null>(null);
+  const [entwurf, setEntwurf] = useState<string | null>(null);
+  const [feldFehler, setFeldFehler] = useState<string | null>(null);
   const [fehler, setFehler] = useState<unknown>(null);
-  const benutzername = entwurf?.id === id ? entwurf.name : (konto?.benutzername ?? '');
+  const id = konto?.id ?? 0;
+  const bisher = konto?.benutzername ?? '';
+  const name = entwurf ?? bisher;
+
+  useEffect(() => {
+    setEntwurf(null);
+    setFeldFehler(null);
+    setFehler(null);
+  }, [id]);
+
   const speichern = useMutation({
-    mutationFn: () => api.aendereAdminBenutzername(id, benutzername.trim()),
+    mutationFn: (benutzername: string) => api.aendereAdminBenutzername(id, benutzername),
     onSuccess: (gespeichert) => {
       setEntwurf(null);
+      setFeldFehler(null);
       setFehler(null);
-      queryClient.setQueryData<AdminKonto[]>(SCHLUESSEL.adminKonten, (bisher) =>
-        bisher?.map((eintrag) => (eintrag.id === gespeichert.id ? gespeichert : eintrag)),
+      queryClient.setQueryData<AdminKonto[]>(SCHLUESSEL.adminKonten, (alt) =>
+        alt?.map((eintrag) => (eintrag.id === gespeichert.id ? gespeichert : eintrag)),
       );
+      void queryClient.invalidateQueries({ queryKey: SCHLUESSEL.adminKonten });
+      void queryClient.invalidateQueries({ queryKey: SCHLUESSEL.konten });
       void queryClient.invalidateQueries({ queryKey: SCHLUESSEL.zugang });
+      onSchliessen();
     },
-    onError: setFehler,
-  });
-  if (!gueltig) {
-    return <Navigate to="/mehr/profil/benutzernamen" replace />;
-  }
-  if (zugangLaedt || (admin && konten.isPending)) {
-    return <FormularSeite titel={tx("Benutzername")} info={ADMIN_INFO} zurueck={LISTE_ZURUECK} kinder={<Ladeanzeige />} />;
-  }
-  if (zugangFehler || !zugang) {
-    return <FormularSeite titel={tx("Benutzername")} info={ADMIN_INFO} zurueck={LISTE_ZURUECK} kinder={<Fehlermeldung fehler={zugangFehler} />} />;
-  }
-  if (!admin) {
-    return <Navigate to="/mehr/profil" replace />;
-  }
-  if (konten.error) {
-    return <FormularSeite titel={tx("Benutzername")} info={ADMIN_INFO} zurueck={LISTE_ZURUECK} kinder={<Fehlermeldung fehler={konten.error} />} />;
-  }
-  if (!konto) {
-    return (
-      <FormularSeite
-        titel={tx("Benutzername")}
-        info={ADMIN_INFO}
-        zurueck={LISTE_ZURUECK}
-        kinder={<Fehlermeldung fehler={new Error('Der Account existiert nicht.')} />}
-      />
-    );
-  }
-  const unveraendert = benutzername.trim() === '' || benutzername.trim() === konto.benutzername;
-  return (
-    <FormularSeite
-      titel={tx("Benutzername")}
-      info={ADMIN_INFO}
-      zurueck={LISTE_ZURUECK}
-      kinder={
-        <Formular
-          onAbsenden={(ereignis) => {
-            ereignis.preventDefault();
-            if (!unveraendert) {
-              speichern.mutate();
-            }
-          }}
-        >
-          <Feld label={tx("Benutzername")}>
-            <input
-              className={EINGABE_STIL}
-              name="benutzername"
-              autoComplete="off"
-              autoCapitalize="none"
-              autoCorrect="off"
-              spellCheck={false}
-              value={benutzername}
-              onChange={(ereignis) => setEntwurf({ id, name: ereignis.target.value })}
-            />
-          </Feld>
-          <Knopf type="submit" variante="primaer" className="w-full" disabled={speichern.isPending || unveraendert}>
-            {tx("Speichern")}
-          </Knopf>
-          <Fehlermeldung fehler={fehler ?? speichern.error} />
-        </Formular>
+    onError: (speicherFehler) => {
+      const amFeld = feldAusFehler(speicherFehler);
+      if (amFeld) {
+        setFeldFehler(amFeld);
+        setFehler(null);
+        return;
       }
-    />
+      setFeldFehler(null);
+      setFehler(speicherFehler);
+    },
+  });
+
+  const senden = (ereignis: FormEvent) => {
+    ereignis.preventDefault();
+    if (!konto || speichern.isPending) {
+      return;
+    }
+    const naechster = name.trim();
+    if (naechster.length < 1) {
+      setFeldFehler(NAME_LEER);
+      setFehler(null);
+      return;
+    }
+    if (naechster.length > 40) {
+      setFeldFehler(NAME_LANG);
+      setFehler(null);
+      return;
+    }
+    if (naechster === bisher) {
+      onSchliessen();
+      return;
+    }
+    setFeldFehler(null);
+    speichern.mutate(naechster);
+  };
+
+  return (
+    <Dialog offen={konto !== null} titel={tx('Benutzername ändern')} onSchliessen={onSchliessen}>
+      <Formular onAbsenden={senden}>
+        <Feld label="Benutzername" fehler={feldFehler}>
+          <input
+            className={EINGABE_STIL}
+            name="benutzername"
+            autoComplete="off"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            aria-required="true"
+            value={name}
+            onChange={(ereignis) => {
+              setEntwurf(ereignis.target.value);
+              setFeldFehler(null);
+            }}
+          />
+        </Feld>
+        <Fehlermeldung fehler={fehler} />
+        <div className="dialog-aktionen">
+          <Knopf type="button" onClick={schliessenWieEsc}>
+            {tx('Abbrechen')}
+          </Knopf>
+          <Knopf type="submit" variante="primaer" disabled={speichern.isPending}>
+            {tx('Speichern')}
+          </Knopf>
+        </div>
+      </Formular>
+    </Dialog>
   );
 }

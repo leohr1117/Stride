@@ -11,7 +11,6 @@ import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
 import { AccountsBereich } from './MehrAccounts.tsx';
-import { BenutzerAdminBearbeiten, BenutzerAdminListe } from './MehrBenutzerAdmin.tsx';
 import { FokusSeite, PasswortSeite } from './MehrProfilZugang.tsx';
 import { JahrSeite, NameSeite, ZielSeite } from './MehrProfilName.tsx';
 import { Bereich, FormularSeite, PROFIL_HASH, PROFIL_ZURUECK, useEinstellungen, useHashWeiter } from './rahmen.tsx';
@@ -187,14 +186,11 @@ function TitelSeite() {
 }
 
 export function MehrProfilSeite() {
-  const { teil, kontoId } = useParams();
+  const { teil } = useParams();
   const { pathname } = useLocation();
   useHashWeiter(PROFIL_HASH);
-  if (pathname.startsWith('/mehr/profil/benutzernamen/')) {
-    return <BenutzerAdminBearbeiten kontoId={kontoId ?? pathname.split('/').pop() ?? ''} />;
-  }
-  if (teil === 'benutzernamen' || pathname === '/mehr/profil/benutzernamen') {
-    return <BenutzerAdminListe />;
+  if (pathname.startsWith('/mehr/profil/benutzernamen')) {
+    return <Navigate to="/mehr/profil/accounts" replace />;
   }
   if (teil === 'name') {
     return <NameSeite />;
