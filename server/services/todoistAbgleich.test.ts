@@ -188,7 +188,7 @@ function quelleXp(notiz: string, quelle: string): number {
 }
 
 describe('Todoist-Abgleich', () => {
-  it('nimmt Aufgabendauer vor Label und Projekt und führt Labels zusammen', async () => {
+  it('nimmt die Aufgabendauer und lässt das oberste Label das Projekt ersetzen', async () => {
     const jetzt = new Date();
     const daten: AttrappenDaten = {
       projekte: [{ id: 'p1', name: 'Post' }],
@@ -224,16 +224,62 @@ describe('Todoist-Abgleich', () => {
 
       const erster = await gleicheTodoistAb(jetzt);
       expect(erster.fehler).toEqual([]);
-      expect(eintrag('Mit Dauer')).toMatchObject({ stunden: 0.5, vorlageId: eigene, projektId: ziel.id });
-      expect(eintrag('Nur Label').stunden).toBe(2);
-      expect(eintrag('Gemischt\nleise')).toMatchObject({ vorlageId: eigene, faehigkeitId: faehigkeit.id });
-      expect(eintrag('Leer')).toMatchObject({ stunden: null, faehigkeitId: null });
+      expect(eintrag('Mit Dauer')).toMatchObject({ stunden: 0.5, vorlageId: eigene, projektId: null, faehigkeitId: null });
+      expect(eintrag('Nur Label')).toMatchObject({ stunden: 2, vorlageId: eigene, projektId: null });
+      expect(eintrag('Gemischt\nleise')).toMatchObject({ vorlageId: eigene, faehigkeitId: null, projektId: null });
+      expect(eintrag('Leer')).toMatchObject({ stunden: 1, vorlageId: allgemein, faehigkeitId: faehigkeit.id, projektId: ziel.id });
       expect(eintrag('Ganzer Tag').stunden).toBe(24);
       expect(eintrag('Kurz').stunden).toBe(0.25);
-      expect(eintrag('Kapitel\nleise').vorlageId).toBe(eigene);
+      expect(eintrag('Kapitel\nleise')).toMatchObject({ vorlageId: eigene, projektId: null });
       const zweiter = await gleicheTodoistAb(jetzt);
       expect(zweiter.neu).toBe(0);
       expect(eine<{ wert: number }>('SELECT COUNT(*) AS wert FROM eintraege')?.wert).toBe(7);
+    });
+  });
+
+  it('zählt eine Tätigkeit ohne Ziel und lässt den Standard nur ohne Wahl gelten', async () => {
+    const jetzt = new Date();
+    await mitApi({
+      projekte: [
+        { id: 'p1', name: 'Nur Tätigkeit' },
+        { id: 'p2', name: 'Mit Ziel' },
+        { id: 'p3', name: 'Gebunden' },
+        { id: 'p4', name: 'Offen' },
+      ],
+      labels: [
+        { id: 'oben', name: 'Oben' },
+        { id: 'unten', name: 'Unten' },
+      ],
+      ereignisse: [
+        ereignis('e-nur', 'Nur Tätigkeit', { projektId: 'p1', datum: jetzt.toISOString() }),
+        ereignis('e-gebunden', 'Gebunden', { projektId: 'p3', datum: jetzt.toISOString() }),
+        ereignis('e-label', 'Label schlägt Ziel', { projektId: 'p2', labels: ['Unten', 'Oben'], datum: jetzt.toISOString() }),
+        ereignis('e-offen', 'Ohne Wahl', { projektId: 'p4', datum: jetzt.toISOString() }),
+      ],
+    });
+    await mitWeltAsync(welt(), async () => {
+      const allgemein = taetigkeit('Allgemein');
+      const eigene = taetigkeit('Lesen');
+      const standard = taetigkeit('Standard');
+      const ziel = projekt('Ziel', allgemein);
+      const anderes = projekt('Anderes', allgemein);
+      const gebunden = taetigkeit('Gebunden', ziel.id);
+      await verbindeTodoist(TOKEN, jetzt);
+      ordneTodoistProjektZu('p1', { projektId: null, vorlageId: eigene, stunden: null, zielArt: null, zielId: null });
+      ordneTodoistProjektZu('p3', { projektId: null, vorlageId: gebunden, stunden: null, zielArt: null, zielId: null });
+      zuProjekt('p2', ziel.id, { stunden: 1, vorlageId: allgemein, notiz: 'vom Projekt' });
+      labelAn('oben', { vorlageId: eigene });
+      labelAn('unten', { zielArt: 'projekt', zielId: anderes.id, projektId: anderes.id, stunden: 3, notiz: 'unten' });
+      setzeTodoistOhne('standard', standard);
+
+      const ergebnis = await gleicheTodoistAb(jetzt);
+      expect(ergebnis.fehler).toEqual([]);
+      expect(ergebnis.neu).toBe(4);
+      expect(eintrag('Nur Tätigkeit')).toMatchObject({ vorlageId: eigene, projektId: null, stunden: null });
+      expect(eintrag('Gebunden')).toMatchObject({ vorlageId: gebunden, projektId: ziel.id });
+      expect(eintrag('Label schlägt Ziel')).toMatchObject({ vorlageId: eigene, projektId: null, stunden: null });
+      expect(eintrag('Ohne Wahl')).toMatchObject({ vorlageId: standard, projektId: null });
+      expect(eine<{ notiz: string }>('SELECT notiz FROM eintraege WHERE notiz LIKE ?', 'Label schlägt Ziel%')?.notiz).toBe('Label schlägt Ziel');
     });
   });
 
@@ -261,7 +307,7 @@ describe('Todoist-Abgleich', () => {
         zielId: offenVorhaben.id,
         abschluss: 'geschafft',
       });
-      labelAn('dran', { abschluss: 'offen' });
+      labelAn('dran', { zielArt: 'vorhaben', zielId: offenVorhaben.id, projektId: ziel.id, abschluss: 'offen' });
       await gleicheTodoistAb(jetzt);
       expect(eintrag('Offen').vorhabenId).toBe(offenVorhaben.id);
       expect(eine<{ status: string }>(`SELECT status FROM vorhaben WHERE id = ?`, offenVorhaben.id)?.status).toBe('geschafft');

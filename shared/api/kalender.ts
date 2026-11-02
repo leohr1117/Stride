@@ -1,7 +1,7 @@
 export interface Kalender {
   id: number;
   name: string;
-  projektId: number;
+  projektId: number | null;
   vorlageId: number | null;
   filter: string;
   seit: string;
@@ -13,7 +13,7 @@ export interface Kalender {
 export interface KalenderDaten {
   name: string;
   adresse: string;
-  projektId: number;
+  projektId: number | null;
   vorlageId: number | null;
   filter: string;
 }

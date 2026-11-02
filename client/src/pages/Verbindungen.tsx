@@ -182,7 +182,7 @@ function KalenderKarte({ kalender }: { kalender: Kalender[] }) {
                     <p className="truncate font-medium">{eintrag.name}</p>
                     {(projekteAn || eintrag.filter) && (
                       <p className="truncate text-xs text-leise">
-                        {[projekteAn ? (projektName.get(eintrag.projektId) ?? tx("Projekt archiviert")) : null, eintrag.filter || null]
+                        {[projekteAn && eintrag.projektId !== null ? (projektName.get(eintrag.projektId) ?? tx("Projekt archiviert")) : null, eintrag.filter || null]
                           .filter((teil) => teil)
                           .join(' · ')}
                       </p>

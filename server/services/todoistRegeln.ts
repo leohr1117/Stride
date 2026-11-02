@@ -13,11 +13,7 @@ export interface TodoistDauer {
   unit: 'minute' | 'day';
 }
 
-/**
- * Eine Quelle fürs Zusammenführen.
- * null heißt bei Labels „wie das Projekt“. 0 bei Dauer und Fähigkeit und „offen“ beim Stand
- * sind gesetzt und leeren den Wert. Beim Projekt ist null der Basiswert, nicht geerbt.
- */
+/** null bei Tätigkeit und Ziel heißt: diese Quelle ersetzt nichts. 0 und „offen“ leeren den Wert, wenn die Quelle gewinnt. */
 export interface RegelQuelle {
   zielArt: ZielArt | null;
   zielId: number | null;
@@ -98,103 +94,44 @@ export function notizFuerEintrag(aufgabe: string, regel: string): string {
   return teile.join('\n').slice(0, GRENZEN.notizMax);
 }
 
-function erster<T>(regeln: RegelQuelle[], lies: (regel: RegelQuelle) => T | undefined, sonst: T): T {
-  for (const regel of regeln) {
-    const wert = lies(regel);
-    if (wert !== undefined) {
-      return wert;
-    }
-  }
-  return sonst;
+function hatWahl(regel: RegelQuelle): boolean {
+  return regel.vorlageId !== null || (regel.zielArt !== null && regel.zielId !== null);
 }
 
-function basisFuerKette(basis: RegelQuelle): RegelQuelle {
-  return { ...basis, meilenstein: basis.meilenstein === true };
-}
-
-/**
- * Oberste gesetzte Regel pro Feld, danach die Projekt-Basis.
- * Labels stehen vor der Basis. Gleiche Werte sind kein Konflikt.
- * Meilenstein und Stand bleiben getrennt; der Aufrufer wirft weg, was nicht zum Ziel passt.
- */
-export function fuehreRegelnZusammen(labels: RegelQuelle[], basis: RegelQuelle | null): RegelErgebnis {
-  const kette = basis ? [...labels, basisFuerKette(basis)] : [...labels];
-  const ziel = erster(
-    kette,
-    (regel) => {
-      if (regel.zielArt === null || regel.zielId === null) {
-        return undefined;
-      }
-      return { zielArt: regel.zielArt, zielId: regel.zielId, projektId: regel.projektId };
-    },
-    null,
-  );
-  const abschluss = erster(
-    kette,
-    (regel) => {
-      if (regel.abschluss === null) {
-        return undefined;
-      }
-      return regel.abschluss === 'offen' ? null : regel.abschluss;
-    },
-    null,
-  );
-  const gesetzt = kette.find((regel) => regel.abschluss !== null);
-  const erkenntnisDirekt = gesetzt?.erkenntnis.trim() ?? '';
-  const erkenntnis =
-    erkenntnisDirekt !== ''
-      ? erkenntnisDirekt
-      : erster(
-          kette,
-          (regel) => {
-            const text = regel.erkenntnis.trim();
-            return text === '' ? undefined : text;
-          },
-          '',
-        );
+function leeresErgebnis(): RegelErgebnis {
   return {
-    zielArt: ziel?.zielArt ?? null,
-    zielId: ziel?.zielId ?? null,
-    projektId: ziel?.projektId ?? null,
-    vorlageId: erster(
-      kette,
-      (regel) => (regel.vorlageId === null ? undefined : regel.vorlageId),
-      null,
-    ),
-    stunden: erster(
-      kette,
-      (regel) => {
-        if (regel.stunden === null) {
-          return undefined;
-        }
-        return regel.stunden === 0 ? null : regel.stunden;
-      },
-      null,
-    ),
-    faehigkeitId: erster(
-      kette,
-      (regel) => {
-        if (regel.faehigkeitId === null) {
-          return undefined;
-        }
-        return regel.faehigkeitId === 0 ? null : regel.faehigkeitId;
-      },
-      null,
-    ),
-    abschluss,
-    erkenntnis,
-    notiz: erster(
-      kette,
-      (regel) => {
-        const text = regel.notiz.trim();
-        return text === '' ? undefined : text;
-      },
-      '',
-    ),
-    meilenstein: erster(
-      kette,
-      (regel) => (regel.meilenstein === null ? undefined : regel.meilenstein),
-      false,
-    ),
+    zielArt: null,
+    zielId: null,
+    projektId: null,
+    vorlageId: null,
+    stunden: null,
+    faehigkeitId: null,
+    abschluss: null,
+    erkenntnis: '',
+    notiz: '',
+    meilenstein: false,
   };
+}
+
+function ausQuelle(regel: RegelQuelle): RegelErgebnis {
+  const hatZiel = regel.zielArt !== null && regel.zielId !== null;
+  const abschluss = regel.abschluss === 'geschafft' || regel.abschluss === 'gescheitert' ? regel.abschluss : null;
+  return {
+    zielArt: hatZiel ? regel.zielArt : null,
+    zielId: hatZiel ? regel.zielId : null,
+    projektId: hatZiel ? regel.projektId : null,
+    vorlageId: regel.vorlageId,
+    stunden: regel.stunden === null || regel.stunden === 0 ? null : regel.stunden,
+    faehigkeitId: regel.faehigkeitId === null || regel.faehigkeitId === 0 ? null : regel.faehigkeitId,
+    abschluss,
+    erkenntnis: regel.erkenntnis.trim(),
+    notiz: regel.notiz.trim(),
+    meilenstein: regel.meilenstein === true,
+  };
+}
+
+/** Das oberste Label mit Tätigkeit oder Ziel ersetzt das Projekt ganz. Sonst gilt das Projekt, wenn es selbst eines von beiden hat. */
+export function fuehreRegelnZusammen(labels: RegelQuelle[], basis: RegelQuelle | null): RegelErgebnis {
+  const gewinner = labels.find(hatWahl) ?? (basis !== null && hatWahl(basis) ? basis : null);
+  return gewinner === null ? leeresErgebnis() : ausQuelle(gewinner);
 }

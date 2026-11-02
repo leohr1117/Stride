@@ -1,5 +1,8 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine erledigte Todoist-Aufgabe zählt mit der Tätigkeit, auch ohne Ziel.": "Una tarea completada de Todoist cuenta con la actividad, también sin meta.",
+  "Ein Label ersetzt die Zuordnung des Projekts. Bei mehreren gilt das oberste.": "Una etiqueta sustituye la asignación del proyecto. Si hay varias, vale la de arriba.",
+  "Ein vergangener Termin zählt mit der Tätigkeit, auch ohne Projekt.": "Un evento pasado cuenta con la actividad, también sin proyecto.",
   "Beispieldaten": "Datos de ejemplo",
   "Beispieldaten schalten die nötigen Bereiche ein und füllen eine neue Datenbank.": "Los datos de ejemplo activan las áreas necesarias y llenan una base de datos nueva.",
   "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "Los gestores de contraseñas pueden rellenar y guardar el inicio de sesión, la primera cuenta y el cambio de contraseña.",

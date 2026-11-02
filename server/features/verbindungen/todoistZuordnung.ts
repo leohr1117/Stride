@@ -58,9 +58,11 @@ export function ordneTodoistProjektZu(todoistId: string, daten: TodoistZuordnung
       pruefeAktiveVorlage(daten.vorlageId);
       pruefeVorlageZumProjekt(daten.vorlageId, projektId);
     }
-    if (faehigkeitId !== null && faehigkeitId > 0) {
-      pruefeAktiveFaehigkeit(faehigkeitId);
-    }
+  } else if (daten.vorlageId !== null) {
+    pruefeAktiveVorlage(daten.vorlageId);
+  }
+  if ((zielArt !== null && zielId !== null || daten.vorlageId !== null) && faehigkeitId !== null && faehigkeitId > 0) {
+    pruefeAktiveFaehigkeit(faehigkeitId);
   }
   schreibeProjekt(todoistId, {
     zielArt: zielArt !== null && zielId !== null ? zielArt : null,

@@ -82,33 +82,57 @@ function standardZiel(vorlageId: number): { projektId: number | null; vorlageId:
   }
 }
 
+function planAusRegel(
+  erledigung: TodoistErledigung,
+  zusammen: RegelErgebnis,
+  name: string,
+  ziel: { projektId: number | null; vorhabenId: number | null },
+): TodoistPlan {
+  const vorhaben = ziel.vorhabenId !== null;
+  const abschluss = vorhaben ? zusammen.abschluss : null;
+  const meilenstein = vorhaben ? false : zusammen.meilenstein;
+  const deadline = erledigung.deadline ?? null;
+  const boss = !vorhaben && deadline !== null && meilenstein;
+  const gegner = !vorhaben && deadline !== null && !meilenstein;
+  return {
+    name,
+    projektId: ziel.projektId,
+    vorlageId: zusammen.vorlageId,
+    stunden: stundenAusDauer(erledigung.dauer) ?? zusammen.stunden,
+    notiz: notizFuerEintrag(erledigung.inhalt, zusammen.notiz),
+    vorhabenId: ziel.vorhabenId,
+    faehigkeitId: zusammen.faehigkeitId,
+    abschluss,
+    erkenntnis: abschluss === 'gescheitert' ? zusammen.erkenntnis : '',
+    meilenstein: boss || meilenstein,
+    boss,
+    gegner,
+    deadline,
+  };
+}
+
 function planAusZusammen(erledigung: TodoistErledigung, zusammen: RegelErgebnis, name: string): TodoistPlan | { fehler: string } {
-  if (zusammen.zielArt === null || zusammen.zielId === null) {
+  const hatZiel = zusammen.zielArt !== null && zusammen.zielId !== null;
+  if (!hatZiel && zusammen.vorlageId === null) {
     return { fehler: `${name}: ${'Wähle eine Tätigkeit.'}` };
   }
   try {
-    const ziel = loeseZiel(zusammen.zielArt, zusammen.zielId, zusammen.projektId);
-    const vorhaben = ziel.vorhabenId !== null;
-    const abschluss = vorhaben ? zusammen.abschluss : null;
-    const meilenstein = vorhaben ? false : zusammen.meilenstein;
-    const deadline = erledigung.deadline ?? null;
-    const boss = !vorhaben && deadline !== null && meilenstein;
-    const gegner = !vorhaben && deadline !== null && !meilenstein;
-    return {
-      name,
-      projektId: ziel.projektId,
-      vorlageId: zusammen.vorlageId,
-      stunden: stundenAusDauer(erledigung.dauer) ?? zusammen.stunden,
-      notiz: notizFuerEintrag(erledigung.inhalt, zusammen.notiz),
-      vorhabenId: ziel.vorhabenId,
-      faehigkeitId: zusammen.faehigkeitId,
-      abschluss,
-      erkenntnis: abschluss === 'gescheitert' ? zusammen.erkenntnis : '',
-      meilenstein: boss || meilenstein,
-      boss,
-      gegner,
-      deadline,
-    };
+    if (hatZiel && zusammen.zielArt !== null && zusammen.zielId !== null) {
+      const ziel = loeseZiel(zusammen.zielArt, zusammen.zielId, zusammen.projektId);
+      return planAusRegel(erledigung, zusammen, name, ziel);
+    }
+    const vorlageId = zusammen.vorlageId;
+    if (vorlageId === null) {
+      return { fehler: `${name}: ${'Wähle eine Tätigkeit.'}` };
+    }
+    const standard = standardZiel(vorlageId);
+    if (!standard) {
+      return { fehler: `${name}: ${'Die gewählte Tätigkeit ist archiviert.'}` };
+    }
+    return planAusRegel(erledigung, { ...zusammen, vorlageId: standard.vorlageId }, name, {
+      projektId: standard.projektId,
+      vorhabenId: null,
+    });
   } catch (ausnahme) {
     return { fehler: `${name}: ${fehlertext(ausnahme, 'Todoist')}` };
   }
@@ -121,16 +145,16 @@ function planeErledigung(
 ): TodoistPlan | { fehler: string } | null {
   const projekt = erledigung.projektId === null ? undefined : projekte.get(erledigung.projektId);
   const regeln = passendeLabels(erledigung.labels ?? [], labels);
-  const basis =
-    projekt && alsZiel(projekt.zielArt) !== null && projekt.zielId !== null
-      ? zuQuelle(projekt, projekt.meilenstein === 1)
-      : null;
+  const projektWahl =
+    projekt !== undefined &&
+    ((alsZiel(projekt.zielArt) !== null && projekt.zielId !== null) || projekt.vorlageId !== null);
+  const basis = projekt !== undefined && projektWahl ? zuQuelle(projekt, projekt.meilenstein === 1) : null;
   const zusammen = fuehreRegelnZusammen(
     regeln.map((label) => zuQuelle(label, label.meilenstein === null ? null : label.meilenstein === 1)),
     basis,
   );
   const name = projekt?.name ?? regeln[0]?.name ?? 'Todoist';
-  if (zusammen.zielArt !== null && zusammen.zielId !== null) {
+  if ((zusammen.zielArt !== null && zusammen.zielId !== null) || zusammen.vorlageId !== null) {
     return planAusZusammen(erledigung, zusammen, name);
   }
   const ohne = liesTodoistOhne();

@@ -1,5 +1,8 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine erledigte Todoist-Aufgabe zählt mit der Tätigkeit, auch ohne Ziel.": "完了した Todoist のタスクは、目標がなくてもその活動として数えられます。",
+  "Ein Label ersetzt die Zuordnung des Projekts. Bei mehreren gilt das oberste.": "ラベルはプロジェクトの割り当てをまるごと置き換えます。複数あるときは一番上が有効です。",
+  "Ein vergangener Termin zählt mit der Tätigkeit, auch ohne Projekt.": "過ぎた予定は、プロジェクトがなくてもその活動として数えられます。",
   "Beispieldaten": "サンプルデータ",
   "Beispieldaten schalten die nötigen Bereiche ein und füllen eine neue Datenbank.": "サンプルデータは必要な領域をオンにし、新しいデータベースを埋めます。",
   "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "パスワードマネージャーは、ログイン、最初のアカウント、パスワードの変更を入力して保存できます。",

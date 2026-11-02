@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.50.0',
+    seiten: 'Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Eine erledigte Todoist-Aufgabe zählt mit der Tätigkeit, auch ohne Ziel.',
+          'Ein Label ersetzt die Zuordnung des Projekts. Bei mehreren gilt das oberste.',
+          'Ein vergangener Termin zählt mit der Tätigkeit, auch ohne Projekt.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.49.1',
     seiten: 'Beispieldaten',
     abschnitte: [

@@ -1,11 +1,13 @@
 import { createServer, type Server } from 'node:http';
 import { mkdirSync, mkdtempSync } from 'node:fs';
 import path from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
 import { afterEach, describe, expect, it } from 'vitest';
-import { alle, eine, mitWeltAsync, schliesseWelt } from '../../db.ts';
+import { alle, eine, migriere, mitWeltAsync, schliesseWelt } from '../../db.ts';
+import { MIGRATIONEN } from '../../migrationen.ts';
 import { erstelleProjekt, erstelleVision } from '../../services/struktur.ts';
 import { erstelleVorlage } from '../taetigkeiten/vorlagen.ts';
-import { erstelleKalender, gleicheKalenderAb, loescheKalender, pruefeKalender } from './kalender.ts';
+import { aendereKalender, erstelleKalender, gleicheKalenderAb, loescheKalender, pruefeKalender } from './kalender.ts';
 
 const basis = path.join('tmp-test', 'kalender-vitest');
 mkdirSync(basis, { recursive: true });
@@ -234,5 +236,77 @@ describe('Kalenderprüfung und Abgleich', () => {
       expect(gespeichert).not.toContain('Arbeit');
       expect(gespeichert).not.toMatch(/\d/);
     });
+  });
+
+  it('zählt Termine mit einer Tätigkeit und ohne Projekt', async () => {
+    const adresse = await icsServer(kalenderText());
+    await mitWeltAsync(welt(), async () => {
+      await expect(
+        erstelleKalender({ name: 'Leer', adresse, projektId: null, vorlageId: null, filter: '' }, VERBINDET),
+      ).rejects.toThrow(/Tätigkeit/);
+      const vorlageId = erstelleVorlage({
+        name: 'Frei',
+        icon: 'star',
+        gewichte: [{ attributId: koerperId(), gewicht: 1 }],
+      }).id;
+      const kalender = await erstelleKalender({ name: 'Frei', adresse, projektId: null, vorlageId, filter: '' }, VERBINDET);
+      expect(kalender.projektId).toBeNull();
+      expect(kalender.vorlageId).toBe(vorlageId);
+      const ergebnis = await gleicheKalenderAb(SPAETER);
+      expect(ergebnis.fehler).toEqual([]);
+      expect(ergebnis.neu).toBe(3);
+      expect(
+        eine<{ projektId: number | null; vorlageId: number }>(
+          'SELECT projekt_id AS projektId, vorlage_id AS vorlageId FROM eintraege WHERE notiz = ?',
+          'Ueberlappt',
+        ),
+      ).toEqual({ projektId: null, vorlageId });
+      expect(() => aendereKalender(kalender.id, { projektId: null, vorlageId: null })).toThrow(/Tätigkeit/);
+      expect(eine<{ vorlageId: number }>('SELECT vorlage_id AS vorlageId FROM kalender WHERE id = ?', kalender.id)?.vorlageId).toBe(vorlageId);
+    });
+  });
+});
+
+describe('Kalender ohne Projekt', () => {
+  it('behält Kalender und Termine und erlaubt danach ein leeres Projekt', () => {
+    expect(MIGRATIONEN[28]).toContain('CREATE TABLE kalender_neu');
+    expect(MIGRATIONEN[28]).not.toContain('DELETE FROM');
+    const db = new DatabaseSync(path.join(ordner, 'migration.db'));
+    db.exec('PRAGMA foreign_keys = ON');
+    try {
+      migriere(db, 28);
+      db.prepare(`INSERT INTO vorlagen (name, icon) VALUES ('Tun', 'star')`).run();
+      const vorlageId = (db.prepare('SELECT id FROM vorlagen').get() as { id: number }).id;
+      db.prepare(`INSERT INTO projekte (standard_vorlage_id, name) VALUES (?, 'Beruf')`).run(vorlageId);
+      const projektId = (db.prepare('SELECT id FROM projekte').get() as { id: number }).id;
+      db.prepare(
+        `INSERT INTO kalender (name, adresse, projekt_id, vorlage_id, filter, seit) VALUES ('Arbeit', 'https://example.test/a.ics', ?, ?, '', '2026-10-01T00:00:00.000Z')`,
+      ).run(projektId, vorlageId);
+      const kalenderId = (db.prepare('SELECT id FROM kalender').get() as { id: number }).id;
+      db.prepare('INSERT INTO kalender_termine (kalender_id, termin_id) VALUES (?, ?)').run(kalenderId, 'termin-1');
+
+      migriere(db);
+      const zeile = db.prepare('SELECT id, name, projekt_id AS projektId, vorlage_id AS vorlageId FROM kalender').get() as {
+        id: number;
+        name: string;
+        projektId: number;
+        vorlageId: number;
+      };
+      expect(zeile).toEqual({ id: kalenderId, name: 'Arbeit', projektId, vorlageId });
+      expect((db.prepare('SELECT COUNT(*) AS anzahl FROM kalender_termine').get() as { anzahl: number }).anzahl).toBe(1);
+      db.prepare(
+        `INSERT INTO kalender (name, adresse, projekt_id, vorlage_id, filter, seit) VALUES ('Frei', 'https://example.test/b.ics', NULL, ?, '', '2026-10-02T00:00:00.000Z')`,
+      ).run(vorlageId);
+      expect((db.prepare('SELECT COUNT(*) AS anzahl FROM kalender').get() as { anzahl: number }).anzahl).toBe(2);
+      expect(() =>
+        db
+          .prepare(
+            `INSERT INTO kalender (name, adresse, projekt_id, vorlage_id, filter, seit) VALUES ('Leer', 'https://example.test/c.ics', NULL, NULL, '', '2026-10-03T00:00:00.000Z')`,
+          )
+          .run(),
+      ).toThrow();
+    } finally {
+      db.close();
+    }
   });
 });

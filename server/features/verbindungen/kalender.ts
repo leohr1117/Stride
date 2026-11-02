@@ -17,7 +17,7 @@ interface KalenderZeile {
   id: number;
   name: string;
   adresse: string;
-  projektId: number;
+  projektId: number | null;
   vorlageId: number | null;
   filter: string;
   seit: string;

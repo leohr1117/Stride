@@ -84,7 +84,8 @@ export function schemaVersion(datenbank = aktiveDatenbank()): number {
 export function migriere(datenbank: DatabaseSync, zielVersion = AKTUELLE_SCHEMA_VERSION): void {
   for (let index = schemaVersion(datenbank); index < zielVersion; index++) {
     const version = index + 1;
-    const schluesselOffen = MIGRATIONEN[index].includes('CREATE TABLE projekte_neu');
+    const schluesselOffen =
+      MIGRATIONEN[index].includes('CREATE TABLE projekte_neu') || MIGRATIONEN[index].includes('CREATE TABLE kalender_neu');
     if (schluesselOffen) {
       datenbank.exec('PRAGMA foreign_keys = OFF');
     }

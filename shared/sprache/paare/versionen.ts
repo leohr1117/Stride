@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Eine erledigte Todoist-Aufgabe zählt mit der Tätigkeit, auch ohne Ziel.', 'A completed Todoist task counts as the activity, even without a goal.'],
+  ['Ein Label ersetzt die Zuordnung des Projekts. Bei mehreren gilt das oberste.', 'A label replaces the project assignment. If there are several, the top one applies.'],
+  ['Ein vergangener Termin zählt mit der Tätigkeit, auch ohne Projekt.', 'A past appointment counts as the activity, even without a project.'],
   ['Beispieldaten', 'Sample data'],
   ['Beispieldaten schalten die nötigen Bereiche ein und füllen eine neue Datenbank.', 'Sample data turns on the areas it needs and fills a new database.'],
   ['Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.', 'Password managers can fill in and save sign-in, the first account, and changing the password.'],

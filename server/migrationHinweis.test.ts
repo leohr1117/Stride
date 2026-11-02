@@ -57,7 +57,7 @@ function einfuegen(db: DatabaseSync, werte: Record<string, SQLInputValue>): numb
 
 describe('Migration 28', () => {
   it('hängt nur push_abos als 28. Migration an', () => {
-    expect(MIGRATIONEN).toHaveLength(28);
+    expect(MIGRATIONEN.length).toBeGreaterThanOrEqual(28);
     const sql = MIGRATIONEN[27];
     expect(sql).toContain('CREATE TABLE push_abos');
     expect(sql).toContain('endpoint TEXT NOT NULL UNIQUE');

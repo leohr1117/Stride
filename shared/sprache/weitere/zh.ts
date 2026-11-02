@@ -1,5 +1,8 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine erledigte Todoist-Aufgabe zählt mit der Tätigkeit, auch ohne Ziel.": "已完成的 Todoist 任务按该活动计分，即使没有目标。",
+  "Ein Label ersetzt die Zuordnung des Projekts. Bei mehreren gilt das oberste.": "标签会整个替换项目的归属。有多个时，最上面的那个生效。",
+  "Ein vergangener Termin zählt mit der Tätigkeit, auch ohne Projekt.": "已过去的日程按该活动计分，即使没有项目。",
   "Beispieldaten": "示例数据",
   "Beispieldaten schalten die nötigen Bereiche ein und füllen eine neue Datenbank.": "示例数据会打开所需区域，并填入新的数据库。",
   "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "密码管理器可以填写并保存登录、第一个账号和修改密码。",

@@ -66,19 +66,24 @@ describe('nacht', () => {
 });
 
 describe('fuehreRegelnZusammen', () => {
-  it('nimmt pro Feld die oberste gesetzte Regel und danach das Projekt', () => {
+  it('lässt das oberste Label mit Tätigkeit das Projekt ganz ersetzen', () => {
     const oben = quelle({ vorlageId: 3, stunden: null, notiz: '' });
     const unten = quelle({ vorlageId: 9, faehigkeitId: 4, stunden: 2, notiz: 'leise' });
-    const basis = quelle({ zielArt: 'projekt', zielId: 1, projektId: 1, vorlageId: 8, stunden: 1, meilenstein: false, notiz: 'basis' });
+    const basis = quelle({ zielArt: 'projekt', zielId: 1, projektId: 1, vorlageId: 8, stunden: 1, meilenstein: true, notiz: 'basis' });
     const ergebnis = fuehreRegelnZusammen([oben, unten], basis);
-    expect(ergebnis.vorlageId).toBe(3);
-    expect(ergebnis.faehigkeitId).toBe(4);
-    expect(ergebnis.stunden).toBe(2);
-    expect(ergebnis.zielId).toBe(1);
-    expect(ergebnis.notiz).toBe('leise');
+    expect(ergebnis).toMatchObject({
+      vorlageId: 3,
+      faehigkeitId: null,
+      stunden: null,
+      zielArt: null,
+      zielId: null,
+      projektId: null,
+      notiz: '',
+      meilenstein: false,
+    });
   });
 
-  it('leert mit Dauer 0, Fähigkeit 0 und Dran geblieben, ohne leere Notiz', () => {
+  it('ignoriert ein Label ohne Tätigkeit und ohne Ziel', () => {
     const label = quelle({ stunden: 0, faehigkeitId: 0, abschluss: 'offen', erkenntnis: '', notiz: '   ' });
     const basis = quelle({
       zielArt: 'vorhaben',
@@ -92,18 +97,33 @@ describe('fuehreRegelnZusammen', () => {
       meilenstein: true,
     });
     const ergebnis = fuehreRegelnZusammen([label], basis);
-    expect(ergebnis.stunden).toBeNull();
-    expect(ergebnis.faehigkeitId).toBeNull();
-    expect(ergebnis.abschluss).toBeNull();
-    expect(ergebnis.erkenntnis).toBe('alt');
-    expect(ergebnis.notiz).toBe('bleibt');
-    expect(ergebnis.meilenstein).toBe(true);
+    expect(ergebnis).toMatchObject({
+      zielArt: 'vorhaben',
+      zielId: 5,
+      projektId: 1,
+      stunden: 1,
+      faehigkeitId: 7,
+      abschluss: 'geschafft',
+      erkenntnis: 'alt',
+      notiz: 'bleibt',
+      meilenstein: true,
+    });
   });
 
-  it('holt die Erkenntnis der nächsten Regel, wenn die Stand-Regel leer ist', () => {
-    const oben = quelle({ abschluss: 'gescheitert', erkenntnis: '  ' });
-    const unten = quelle({ erkenntnis: 'mehr Pausen' });
-    expect(fuehreRegelnZusammen([oben, unten], null).erkenntnis).toBe('mehr Pausen');
+  it('nimmt eine Tätigkeit ohne Ziel und leert die Dauer nur beim Gewinner', () => {
+    const nurTaetigkeit = fuehreRegelnZusammen([], quelle({ vorlageId: 4, stunden: 2 }));
+    expect(nurTaetigkeit.vorlageId).toBe(4);
+    expect(nurTaetigkeit.zielId).toBeNull();
+    expect(nurTaetigkeit.stunden).toBe(2);
+
+    const oben = quelle({ vorlageId: 3, stunden: 0, erkenntnis: '  ' });
+    const unten = quelle({ zielArt: 'projekt', zielId: 9, projektId: 9, erkenntnis: 'mehr Pausen', stunden: 2 });
+    const geleert = fuehreRegelnZusammen([oben, unten], quelle({ stunden: 1, notiz: 'basis', zielArt: 'projekt', zielId: 1, projektId: 1 }));
+    expect(geleert.vorlageId).toBe(3);
+    expect(geleert.stunden).toBeNull();
+    expect(geleert.zielId).toBeNull();
+    expect(geleert.erkenntnis).toBe('');
+    expect(geleert.notiz).toBe('');
     expect(notizFuerEintrag('Kapitel', 'leise')).toBe('Kapitel\nleise');
     expect(notizFuerEintrag('  ', '')).toBe('');
   });

@@ -1,5 +1,8 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine erledigte Todoist-Aufgabe zählt mit der Tätigkeit, auch ohne Ziel.": "Выполненная задача Todoist считается как занятие, даже без цели.",
+  "Ein Label ersetzt die Zuordnung des Projekts. Bei mehreren gilt das oberste.": "Метка заменяет привязку проекта. Если их несколько, действует верхняя.",
+  "Ein vergangener Termin zählt mit der Tätigkeit, auch ohne Projekt.": "Прошедшее событие считается как занятие, даже без проекта.",
   "Beispieldaten": "Примерные данные",
   "Beispieldaten schalten die nötigen Bereiche ein und füllen eine neue Datenbank.": "Примерные данные включают нужные разделы и заполняют новую базу.",
   "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "Менеджеры паролей могут заполнять и сохранять вход, первую учётную запись и смену пароля.",

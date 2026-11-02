@@ -111,6 +111,9 @@ export function legeEintragAn(
 }
 
 export function pruefeZiel(projektId: number | null, vorlageId: number | null): void {
+  if (projektId === null && vorlageId === null) {
+    throw ungueltig('Wähle eine Tätigkeit.');
+  }
   if (projektId !== null) {
     pruefeProjekt(projektId);
   }

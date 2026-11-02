@@ -526,15 +526,20 @@ export const kalenderPruefSchema = z.object({
   adresse: pflichtText('Die Adresse', ADRESSE_MAX),
 });
 
-export const kalenderSchema = z.object({
+const kalenderKern = z.object({
   name: pflichtText('Der Name', GRENZEN.nameMax),
   adresse: pflichtText('Die Adresse', ADRESSE_MAX),
-  projektId: z.number().int().positive(),
+  projektId: z.number().int().positive().nullable(),
   vorlageId: optionaleId.default(null),
   filter: freiText('Der Filter', GRENZEN.nameMax).default(''),
 });
 
-export const kalenderAenderungSchema = kalenderSchema.omit({ adresse: true }).partial();
+export const kalenderSchema = kalenderKern.refine(
+  (daten) => daten.projektId !== null || daten.vorlageId !== null,
+  'Wähle eine Tätigkeit.',
+);
+
+export const kalenderAenderungSchema = kalenderKern.omit({ adresse: true }).partial();
 
 const HINWEIS_SCHLUESSEL_MAX = 200;
 const HTTPS_ADRESSE = 'Die Adresse muss mit https:// beginnen.';
