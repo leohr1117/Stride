@@ -17,6 +17,22 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.1',
+    seiten: 'Profil, Können, Haben, Fähigkeiten, Heute',
+    behoben: 'Profil, Können, Haben, Fähigkeiten, Heute',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.',
+          'Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.',
+          'Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.',
+          'In der Liste der Fähigkeiten passen Level und Zahl in den Ring.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.0',
     seiten: 'Heute, Ziele, Profil, Mehr, Verbindungen',
     abschnitte: [

@@ -1,5 +1,9 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.": "Los niveles se muestran sin decimales, también en el radar y bajo los gráficos.",
+  "Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.": "En el perfil, los dos gráficos de radar quedan uno al lado del otro. El aviso permanece en la pantalla.",
+  "Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.": "El signo de exclamación de un nivel demasiado bajo queda detrás del nombre.",
+  "In der Liste der Fähigkeiten passen Level und Zahl in den Ring.": "En la lista de habilidades, el nivel y el número caben en el anillo.",
   "Können, Haben, Fähigkeiten und Investitionen haben eigene Seiten. Das Profil fasst sie nur zusammen.": "Capacidad, Bienes, Habilidades e Inversiones tienen cada una su página. El perfil solo las resume.",
   "Mehr ist eine Liste. Verbindungen zeigen, als was erledigte Aufgaben und vergangene Termine zählen.": "Más es una lista. Conexiones muestra como qué cuentan las tareas hechas y los eventos pasados.",
   "Das Handbuch erklärt die Regeln auf einer Seite. Empfehlungen und doppelte Schalter sind weg.": "La guía explica las reglas en una página. Las sugerencias y los interruptores duplicados ya no están.",

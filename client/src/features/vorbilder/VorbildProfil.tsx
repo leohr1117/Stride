@@ -23,7 +23,7 @@ import { KlassenBild } from '../../components/KlassenBild.tsx';
 import type { LebenswegPunkt } from '../../components/LebenswegDiagramm.tsx';
 import { LebenswegDiagramm, ProfilRadar } from '../../components/mitDiagramm.tsx';
 import { Fehlermeldung, Karte, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
-import { prozentText, zahl } from '../../format.ts';
+import { levelZahl, prozentText } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { attributName, klassenText, tx } from '../../text.ts';
 import { eigenesProfil } from '../../pages/eigenesProfil.ts';
@@ -91,9 +91,9 @@ function VergleichListe({
           <Balken anteil={punkt.du / maximum} farbe="var(--akzent)" />
           <Balken anteil={punkt.vorbild / maximum} farbe="var(--diagramm-vorbild)" />
           <p className="text-xs text-leise break-words">
-            {tx('Du')} {tx('Lvl {level}', { level: zahl(punkt.du) })}
+            {tx('Du')} {tx('Lvl {level}', { level: levelZahl(punkt.du) })}
             {' · '}
-            {person} {tx('Lvl {level}', { level: zahl(punkt.vorbild) })}
+            {person} {tx('Lvl {level}', { level: levelZahl(punkt.vorbild) })}
           </p>
         </li>
       ))}
@@ -182,7 +182,7 @@ export function VorbildProfilSeite() {
             </p>
           </div>
           <div className="shrink-0 self-end text-right sm:self-start">
-            <p className="text-3xl leading-tight font-bold break-words">{tx('Lvl {level}', { level: zahl(vorbild.level) })}</p>
+            <p className="text-3xl leading-tight font-bold break-words">{tx('Lvl {level}', { level: levelZahl(vorbild.level) })}</p>
             <p className="inline-flex items-center justify-end gap-1.5 text-sm font-medium text-akzent">
               <KlassenBild klasse={klasse} groesse="size-5" rahmen={false} />
               {klassenText(klasse)}
@@ -249,7 +249,7 @@ export function VorbildProfilSeite() {
             <li key={station.alter} className="flex items-baseline gap-3 py-2">
               <span className="zahl w-14 shrink-0 text-xs text-leise">{tx('{alter} Jahre', { alter: station.alter })}</span>
               <span className="min-w-0 flex-1 break-words">{tx(station.ereignis)}</span>
-              <span className="zahl shrink-0 whitespace-nowrap text-xs text-leise">{tx('Lvl {level}', { level: zahl(station.level) })}</span>
+              <span className="zahl shrink-0 whitespace-nowrap text-xs text-leise">{tx('Lvl {level}', { level: levelZahl(station.level) })}</span>
             </li>
           ))}
         </ul>

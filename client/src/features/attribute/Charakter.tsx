@@ -181,9 +181,9 @@ function Spektren({ charakter }: { charakter: Charakter }) {
     return null;
   }
   return (
-    <div className="flex w-full min-w-0 max-w-full gap-3 overflow-x-auto overscroll-x-contain" data-spektren="">
+    <div className={`grid w-full min-w-0 gap-3 ${bloecke.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`} data-spektren="">
       {bloecke.map((eintrag) => (
-        <div key={eintrag.typ} className="min-w-[168px] flex-1">
+        <div key={eintrag.typ} className="min-w-0">
           <p className="mb-1 text-center text-[13px] leading-[18px] font-semibold text-leise">{tx(eintrag.name)}</p>
           <AttributRadar typ={eintrag.typ} werte={eintrag.werte} kompakt />
         </div>

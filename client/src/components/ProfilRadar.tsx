@@ -1,6 +1,6 @@
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { duZeichenwert } from '../../../shared/spiel/radar.ts';
-import { zahl } from '../format.ts';
+import { levelZahl } from '../format.ts';
 import { tx } from '../text.ts';
 import { DIAGRAMM_ANIMATION_MS, DiagrammTooltip } from './DiagrammBasis.tsx';
 
@@ -69,8 +69,8 @@ export function ProfilRadar({
                   <DiagrammTooltip
                     titel={punkt.name}
                     zeilen={[
-                      { wert: tx('Lvl {level}', { level: zahl(punkt.du) }), name: tx('Du') },
-                      { wert: tx('Lvl {level}', { level: zahl(punkt.vorbild) }), name: person },
+                      { wert: tx('Lvl {level}', { level: levelZahl(punkt.du) }), name: tx('Du') },
+                      { wert: tx('Lvl {level}', { level: levelZahl(punkt.vorbild) }), name: person },
                     ]}
                   />
                 );
@@ -79,7 +79,7 @@ export function ProfilRadar({
           </RadarChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-center text-xs text-leise">{tx('Lvl {level}', { level: zahl(maximum) })}</p>
+      <p className="text-center text-xs text-leise">{tx('Lvl {level}', { level: levelZahl(maximum) })}</p>
     </div>
   );
 }

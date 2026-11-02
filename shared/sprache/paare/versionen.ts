@@ -1,5 +1,9 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.', 'Levels show without decimal places, including in the radar and under the charts.'],
+  ['Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.', 'On the profile, the two radar charts sit side by side. The hint stays on screen.'],
+  ['Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.', 'The exclamation mark for a level that is too low sits after the name.'],
+  ['In der Liste der Fähigkeiten passen Level und Zahl in den Ring.', 'In the skills list, the level and the number fit inside the ring.'],
   ['Können, Haben, Fähigkeiten und Investitionen haben eigene Seiten. Das Profil fasst sie nur zusammen.', 'Ability, Assets, Skills, and Investments each have their own page. The profile only summarizes them.'],
   ['Mehr ist eine Liste. Verbindungen zeigen, als was erledigte Aufgaben und vergangene Termine zählen.', 'More is a list. Connections show what completed tasks and past events count as.'],
   ['Das Handbuch erklärt die Regeln auf einer Seite. Empfehlungen und doppelte Schalter sind weg.', 'The guide explains the rules on one page. Suggestions and duplicate switches are gone.'],

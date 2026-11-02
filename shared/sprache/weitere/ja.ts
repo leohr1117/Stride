@@ -1,5 +1,9 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.": "レベルは小数なしで表示されます。レーダーと図の下も同じです。",
+  "Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.": "プロフィールの2つのレーダーは横に並びます。ヒントは画面内に残ります。",
+  "Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.": "レベルが低すぎるときの感嘆符は、名前の直後にあります。",
+  "In der Liste der Fähigkeiten passen Level und Zahl in den Ring.": "スキル一覧では、レベルと数字がリングの中に収まります。",
   "Können, Haben, Fähigkeiten und Investitionen haben eigene Seiten. Das Profil fasst sie nur zusammen.": "能力、資産、スキル、投資には、それぞれ専用のページがあります。プロフィールはそれらをまとめるだけです。",
   "Mehr ist eine Liste. Verbindungen zeigen, als was erledigte Aufgaben und vergangene Termine zählen.": "その他は一覧です。つながりには、完了したタスクと過ぎた予定が何として数えるかが表示されます。",
   "Das Handbuch erklärt die Regeln auf einer Seite. Empfehlungen und doppelte Schalter sind weg.": "ガイドはルールを1ページで説明します。おすすめと重複したスイッチはありません。",

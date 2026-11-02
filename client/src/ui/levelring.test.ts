@@ -11,6 +11,16 @@ describe('LevelRing', () => {
     expect(html).toMatch(/data-ringlicht="" [^>]*r="1.25" fill="white" fill-opacity="0.75"/);
   });
 
+  it('lässt die Schrift im grossen Ring und verkleinert sie im kleinen', () => {
+    const gross = renderToStaticMarkup(createElement(LevelRing, { level: 12, anteil: 0.4, groesse: 104 }));
+    expect(gross).toContain('text-[10px]');
+    expect(gross).toContain('text-2xl');
+    expect(gross).not.toContain('font-size:');
+    const klein = renderToStaticMarkup(createElement(LevelRing, { level: 12, anteil: 0.4, groesse: 56 }));
+    expect(klein).toContain('font-size:6px');
+    expect(klein).toContain('font-size:14px');
+  });
+
   it('wird mit dem Fortschritt kraeftiger', () => {
     const wenig = renderToStaticMarkup(createElement(LevelRing, { level: 1, anteil: 0.1 }));
     expect(wenig).toContain('var(--fortschritt) 26%');

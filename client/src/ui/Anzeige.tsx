@@ -37,8 +37,8 @@ export function AttributBezeichnung({
   schrift?: string;
 }) {
   return (
-    <span className="flex min-w-0 flex-1 items-center gap-1">
-      <span className={`min-w-0 break-words ${schrift}`}>{attributName({ name, kennung })}</span>
+    <span className="flex min-w-0 flex-1 flex-nowrap items-center gap-1">
+      <span className={`min-w-0 truncate ${schrift}`}>{attributName({ name, kennung })}</span>
       {ursache ? <ZuNiedrigHinweis /> : null}
       {prozent !== null ? <XpAbzug prozent={prozent} /> : null}
     </span>
@@ -181,6 +181,15 @@ function ringSpitze(anteil: number): { cx: number; cy: number } {
   };
 }
 
+const RING_SCHRIFT_AB = 96;
+
+function ringSchrift(groesse: number, basis: number): number | undefined {
+  if (groesse >= RING_SCHRIFT_AB) {
+    return undefined;
+  }
+  return Math.max(1, Math.round((basis * groesse) / RING_SCHRIFT_AB));
+}
+
 export function LevelRing({ level, anteil, groesse = 96 }: { level: number; anteil: number; groesse?: number }) {
   const schein = ringId(useId());
   const begrenzt = Math.min(1, Math.max(0, anteil));
@@ -193,6 +202,8 @@ export function LevelRing({ level, anteil, groesse = 96 }: { level: number; ante
   const verlauf = `conic-gradient(from 0deg, color-mix(in srgb, var(--haupt) ${startKraft}%, transparent) 0deg, ${spitzenFarbe} ${begrenzt * 360}deg, transparent ${begrenzt * 360}deg)`;
   // Die Maske deckt genau den Strich (Mitte 42, Breite 8 in der 100er-Box).
   const maske = 'radial-gradient(farthest-side, transparent 75.2%, #000 76.4%, #000 91.6%, transparent 92.8%)';
+  const labelGroesse = ringSchrift(groesse, 10);
+  const zahlGroesse = ringSchrift(groesse, 24);
 
   return (
     <div className="levelring relative shrink-0" data-levelring="" style={{ width: groesse, height: groesse }}>
@@ -237,8 +248,18 @@ export function LevelRing({ level, anteil, groesse = 96 }: { level: number; ante
         </svg>
       )}
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-[10px] font-medium tracking-wider text-leise uppercase">{tx("Level")}</span>
-        <span className="zahl text-2xl leading-none font-bold">{level}</span>
+        <span
+          className="max-w-full px-1 text-center text-[10px] leading-none font-medium tracking-wider text-leise uppercase"
+          style={labelGroesse ? { fontSize: labelGroesse, lineHeight: 1.1 } : undefined}
+        >
+          {tx("Level")}
+        </span>
+        <span
+          className="zahl text-2xl leading-none font-bold"
+          style={zahlGroesse ? { fontSize: zahlGroesse, lineHeight: 1 } : undefined}
+        >
+          {level}
+        </span>
       </div>
     </div>
   );

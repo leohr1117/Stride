@@ -1,5 +1,9 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.": "Уровни показываются без дробной части, в том числе на радаре и под диаграммами.",
+  "Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.": "В профиле два радара стоят рядом. Подсказка остаётся на экране.",
+  "Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.": "Восклицательный знак при слишком низком уровне стоит за названием.",
+  "In der Liste der Fähigkeiten passen Level und Zahl in den Ring.": "В списке навыков уровень и число помещаются в кольцо.",
   "Können, Haben, Fähigkeiten und Investitionen haben eigene Seiten. Das Profil fasst sie nur zusammen.": "Умения, Активы, Навыки и Вложения имеют отдельные страницы. Профиль только собирает их вместе.",
   "Mehr ist eine Liste. Verbindungen zeigen, als was erledigte Aufgaben und vergangene Termine zählen.": "Ещё — это список. Связи показывают, как что считаются выполненные задачи и прошедшие события.",
   "Das Handbuch erklärt die Regeln auf einer Seite. Empfehlungen und doppelte Schalter sind weg.": "Справка объясняет правила на одной странице. Рекомендации и повторные переключатели убраны.",

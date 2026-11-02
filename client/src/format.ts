@@ -46,6 +46,12 @@ export function zahl(wert: number): string {
   return formate().zahl.format(wert);
 }
 
+/** Ganzes Level. Der Anteil im Level bleibt in Balken und Radar, nicht in der Zahl. */
+export function levelZahl(wert: number): string {
+  const ganz = Number.isFinite(wert) ? Math.floor(wert) : 0;
+  return formate().zahl.format(Math.max(0, ganz));
+}
+
 export function hoechstensEineStelle(wert: number): string {
   return formate().komma.format(wert);
 }

@@ -1,7 +1,7 @@
 import { tx } from '../text.ts';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ALTERS_MARKEN } from '../../../shared/features/vorbilder/vorbilder.ts';
-import { kompakt, zahl } from '../format.ts';
+import { kompakt, levelZahl } from '../format.ts';
 import { DIAGRAMM_ANIMATION_MS, DiagrammTooltip } from './DiagrammBasis.tsx';
 
 const RENTE = 67;
@@ -45,9 +45,9 @@ export function LebenswegDiagramm({ daten, name }: { daten: LebenswegPunkt[]; na
                 return null;
               }
               const zeilen = [
-                ...(punkt.vorbild !== undefined ? [{ wert: `Lvl ${zahl(punkt.vorbild)}`, name }] : []),
-                ...(punkt.durchschnitt !== undefined ? [{ wert: `Lvl ${zahl(punkt.durchschnitt)}`, name: tx("Durchschnitt") }] : []),
-                ...(punkt.du !== undefined ? [{ wert: `Lvl ${zahl(punkt.du)}`, name: tx('Du') }] : []),
+                ...(punkt.vorbild !== undefined ? [{ wert: `Lvl ${levelZahl(punkt.vorbild)}`, name }] : []),
+                ...(punkt.durchschnitt !== undefined ? [{ wert: `Lvl ${levelZahl(punkt.durchschnitt)}`, name: tx("Durchschnitt") }] : []),
+                ...(punkt.du !== undefined ? [{ wert: `Lvl ${levelZahl(punkt.du)}`, name: tx('Du') }] : []),
               ];
               return (
                 <DiagrammTooltip

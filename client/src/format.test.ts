@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { setzeAktiveSprache } from '../../shared/sprache/index.ts';
-import { eineNachkommastelle, hoechstensEineStelle, kompakt, prozentText, stunden, zahl, zeitspanne } from './format.ts';
+import { eineNachkommastelle, hoechstensEineStelle, kompakt, levelZahl, prozentText, stunden, zahl, zeitspanne } from './format.ts';
 
 describe('kompakt', () => {
   afterEach(() => {
@@ -41,6 +41,23 @@ describe('kompakt', () => {
     setzeAktiveSprache('ja');
     expect(zeitspanne(400)).toBe('13か月');
     expect(prozentText(0.12)).toBe('12%');
+  });
+});
+
+describe('levelZahl', () => {
+  afterEach(() => {
+    setzeAktiveSprache('de');
+  });
+
+  it('schneidet den Anteil im Level ab und rundet nicht auf', () => {
+    setzeAktiveSprache('de');
+    expect(levelZahl(50.091)).toBe('50');
+    expect(levelZahl(32.185)).toBe('32');
+    expect(levelZahl(32.9)).toBe('32');
+    expect(levelZahl(7917)).toBe('7.917');
+    setzeAktiveSprache('en');
+    expect(levelZahl(50.091)).toBe('50');
+    expect(levelZahl(1200.4)).toBe('1,200');
   });
 });
 

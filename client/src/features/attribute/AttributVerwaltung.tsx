@@ -88,8 +88,9 @@ export function AttributBereich({
                     pfeil={false}
                     symbol={<Icon name={attribut.icon} style={{ color: attribut.farbe }} />}
                     titel={
-                      <span className="flex min-w-0 items-center gap-1">
-                        <span className="min-w-0 break-words">{name}</span>
+                      <span className="flex min-w-0 flex-nowrap items-center gap-1">
+                        <span className="min-w-0 truncate">{name}</span>
+                        {ursache ? <ZuNiedrigHinweis /> : null}
                         {prozent !== null ? <XpAbzug prozent={prozent} /> : null}
                       </span>
                     }
@@ -98,11 +99,6 @@ export function AttributBereich({
                   />
                 )}
               </SchnellZeile>
-              {ursache ? (
-                <div className="relative z-10 -mt-1 ps-12 pb-1">
-                  <ZuNiedrigHinweis />
-                </div>
-              ) : null}
               <div className="px-4 pb-3">
                 <Fortschrittsbalken anteil={balken.stand} verlustBis={balken.verlustBis} farbe="var(--fortschritt)" hoehe="h-1.5" />
               </div>

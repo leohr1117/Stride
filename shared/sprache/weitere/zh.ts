@@ -1,5 +1,9 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.": "等级显示为整数，雷达图里和下方也一样。",
+  "Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.": "资料页上的两张雷达图并排显示。提示留在画面内。",
+  "Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.": "等级过低时的感叹号紧跟在名称后面。",
+  "In der Liste der Fähigkeiten passen Level und Zahl in den Ring.": "技能列表里，等级和数字都在圆环内。",
   "Können, Haben, Fähigkeiten und Investitionen haben eigene Seiten. Das Profil fasst sie nur zusammen.": "能力、资产、技能和投入各有自己的页面。资料只做汇总。",
   "Mehr ist eine Liste. Verbindungen zeigen, als was erledigte Aufgaben und vergangene Termine zählen.": "更多是一份列表。关联显示已完成的任务和过去的日程算作什么。",
   "Das Handbuch erklärt die Regeln auf einer Seite. Empfehlungen und doppelte Schalter sind weg.": "指南在一页上说明规则。建议和重复的开关已经去掉。",

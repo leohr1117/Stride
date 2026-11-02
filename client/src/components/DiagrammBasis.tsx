@@ -1,7 +1,61 @@
-import type { ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { KurzListe } from './Ausklappbar.tsx';
 
 export const DIAGRAMM_ANIMATION_MS = 450;
+
+const HINWEIS_RAND = 8;
+
+export function FestImBild({
+  coordinate,
+  rahmen,
+  children,
+}: {
+  coordinate?: { x?: number; y?: number };
+  rahmen: RefObject<HTMLElement | null>;
+  children: ReactNode;
+}) {
+  const selbst = useRef<HTMLDivElement>(null);
+  const [stil, setStil] = useState<CSSProperties>({ position: 'fixed', left: 0, top: 0, visibility: 'hidden' });
+  const x = coordinate?.x;
+  const y = coordinate?.y;
+  useLayoutEffect(() => {
+    const kasten = selbst.current?.getBoundingClientRect();
+    const flaeche = rahmen.current?.querySelector('.recharts-wrapper')?.getBoundingClientRect() ?? rahmen.current?.getBoundingClientRect();
+    if (!kasten || !flaeche || x == null || y == null) {
+      return;
+    }
+    const breite = document.documentElement.clientWidth;
+    const hoehe = window.innerHeight;
+    let links = flaeche.left + x + 12;
+    let oben = flaeche.top + y + 12;
+    if (links + kasten.width > breite - HINWEIS_RAND) {
+      links = breite - HINWEIS_RAND - kasten.width;
+    }
+    if (links < HINWEIS_RAND) {
+      links = HINWEIS_RAND;
+    }
+    if (oben + kasten.height > hoehe - HINWEIS_RAND) {
+      oben = flaeche.top + y - kasten.height - 12;
+    }
+    if (oben < HINWEIS_RAND) {
+      oben = HINWEIS_RAND;
+    }
+    setStil({
+      position: 'fixed',
+      left: links,
+      top: oben,
+      visibility: 'visible',
+      zIndex: 40,
+      pointerEvents: 'none',
+      maxWidth: breite - HINWEIS_RAND * 2,
+    });
+  }, [rahmen, x, y, children]);
+  return (
+    <div ref={selbst} style={stil}>
+      {children}
+    </div>
+  );
+}
 
 export function DiagrammTooltip({
   titel,
@@ -13,7 +67,7 @@ export function DiagrammTooltip({
   zeilen: { wert: string; name?: string }[];
 }) {
   return (
-    <div className="max-w-60 rounded-xl border border-rand bg-flaeche px-3 py-2 text-xs shadow-lg">
+    <div data-diagramm-hinweis="" className="max-w-60 rounded-xl border border-rand bg-flaeche px-3 py-2 text-xs shadow-lg break-words">
       <p className="mb-0.5 text-leise">{titel}</p>
       {untertitel && <p className="mb-1 font-medium text-haupt">{untertitel}</p>}
       {zeilen.map((zeile, index) => (

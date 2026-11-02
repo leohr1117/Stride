@@ -1,5 +1,9 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.": "Les niveaux s'affichent sans décimales, y compris dans le radar et sous les graphiques.",
+  "Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.": "Sur le profil, les deux graphiques radar sont côte à côte. L'indication reste à l'écran.",
+  "Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.": "Le point d'exclamation d'un niveau trop bas se place après le nom.",
+  "In der Liste der Fähigkeiten passen Level und Zahl in den Ring.": "Dans la liste des compétences, le niveau et le nombre tiennent dans l'anneau.",
   "Können, Haben, Fähigkeiten und Investitionen haben eigene Seiten. Das Profil fasst sie nur zusammen.": "Aptitude, Biens, Compétences et Investissements ont chacun leur page. Le profil ne fait que les résumer.",
   "Mehr ist eine Liste. Verbindungen zeigen, als was erledigte Aufgaben und vergangene Termine zählen.": "Plus est une liste. Connexions montre comme quoi comptent les tâches terminées et les événements passés.",
   "Das Handbuch erklärt die Regeln auf einer Seite. Empfehlungen und doppelte Schalter sind weg.": "Le guide explique les règles sur une page. Les suggestions et les interrupteurs en double ont disparu.",
