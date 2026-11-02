@@ -1,5 +1,13 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.": "アカウントはプロフィールとログインを表示します。ユーザー名は読むだけです。",
+  "Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.": "目標の段とユーザー名の一覧はアカウントにありません。",
+  "Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.": "生まれ年にはおよその年齢が出ます。焦点の下に、保存が何をアーカイブするかが書いてあります。",
+  "Speichern archiviert abgewählte Attribute.": "保存すると、外した属性はアーカイブされます。",
+  "Bisheriges": "現在",
+  "Neues": "新しい",
+  "Wiederholen": "再入力",
+  "Das bisherige Passwort fehlt.": "現在のパスワードがありません。",
   "Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.": "ガイドはスクロールするページです。上に各節への移動があります。",
   "Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.": "記録、連続、レベル、ビジョン、お手本は表で開いています。",
   "Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.": "推奨、好みで、説明文はなくなりました。",

@@ -1,5 +1,13 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.": "La cuenta muestra Perfil y Acceso. El usuario es solo de lectura.",
+  "Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.": "Los niveles de meta y la lista de usuarios ya no están en la cuenta.",
+  "Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.": "El año de nacimiento muestra la edad aproximada. Bajo Foco dice qué archiva Guardar.",
+  "Speichern archiviert abgewählte Attribute.": "Guardar archiva los atributos que quitas.",
+  "Bisheriges": "Actual",
+  "Neues": "Nueva",
+  "Wiederholen": "Repetir",
+  "Das bisherige Passwort fehlt.": "Falta la contraseña actual.",
   "Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.": "La guía es una página para desplazar. Arriba están los saltos a las secciones.",
   "Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.": "Registros, racha, nivel, visiones y referentes están abiertos en tablas.",
   "Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.": "Sugerido, Por lo que te gusta y los textos de aviso ya no están.",

@@ -1,5 +1,13 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.": "账户显示资料和登录。用户名只可阅读。",
+  "Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.": "目标层级和用户名列表不再出现在账户里。",
+  "Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.": "出生年显示大约的年龄。焦点下方写明保存会归档什么。",
+  "Speichern archiviert abgewählte Attribute.": "保存会归档取消的属性。",
+  "Bisheriges": "当前",
+  "Neues": "新的",
+  "Wiederholen": "再输入",
+  "Das bisherige Passwort fehlt.": "当前密码未填写。",
   "Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.": "指南是可滚动的页面。上方是跳到各节的链接。",
   "Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.": "记录、连续、等级、愿景和榜样以表格展开。",
   "Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.": "推荐、按喜好和提示文字已去掉。",

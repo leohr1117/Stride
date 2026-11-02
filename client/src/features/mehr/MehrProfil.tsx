@@ -1,13 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check } from 'lucide-react';
 import { useState } from 'react';
 import { Navigate, useLocation, useParams } from 'react-router';
 import type { ErfolgStufe, Erfolge } from '../../../../shared/api/index.ts';
-import { EBENEN, ZIEL_MARKE, type Ebenen } from '../../../../shared/spiel/ebenen.ts';
 import { FOKUS_LISTE, ZIEL_FRAGE, ZIELSTREBIGKEIT_INFO, type FokusId } from '../../../../shared/spiel/profil.ts';
 import { erfolgSichtbar, type Sichtbarkeit } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL, meldeAnmeldungAbgelaufen } from '../../api/index.ts';
-import { Fehlermeldung, Karte, Ladeanzeige } from '../../ui/index.ts';
+import { Fehlermeldung, Ladeanzeige, Optionsliste } from '../../ui/index.ts';
 import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
@@ -23,11 +21,6 @@ function fokusText(fokus: readonly FokusId[]): string {
     .map((id) => FOKUS_LISTE.find((eintrag) => eintrag.id === id)?.label)
     .filter((name): name is string => Boolean(name))
     .map((name) => tx(name));
-  return namen.length > 0 ? namen.join(', ') : '—';
-}
-
-function stufenText(ebenen: Ebenen): string {
-  const namen = EBENEN.filter((ebene) => ebenen[ebene]).map((ebene) => tx(ZIEL_MARKE[ebene].mehrzahl));
   return namen.length > 0 ? namen.join(', ') : '—';
 }
 
@@ -71,7 +64,14 @@ function ProfilListe() {
   const { data, error, isPending } = useEinstellungen();
   const { data: zugang, isPending: zugangLaedt } = useQuery({ queryKey: SCHLUESSEL.zugang, queryFn: api.zugang });
   const inhaber = zugang?.rolle === 'inhaber';
+  const admin = Boolean(zugang?.admin);
   const { data: konten } = useQuery({ queryKey: SCHLUESSEL.konten, queryFn: api.konten, enabled: inhaber });
+  const { data: adminKonten } = useQuery({
+    queryKey: SCHLUESSEL.adminKonten,
+    queryFn: api.adminKonten,
+    enabled: admin && !inhaber,
+  });
+  const accountZahl = inhaber ? konten?.length : adminKonten?.length;
   const { data: erfolge } = useQuery({ queryKey: SCHLUESSEL.erfolge, queryFn: api.erfolge });
   const [abmeldeFehler, setAbmeldeFehler] = useState<unknown>(null);
   const bestaetigen = useBestaetigung();
@@ -93,17 +93,17 @@ function ProfilListe() {
     }
   };
   if (isPending || zugangLaedt) {
-    return <Bereich titel={tx("Profil")} kinder={<Ladeanzeige />} />;
+    return <Bereich titel={tx("Konto")} kinder={<Ladeanzeige />} />;
   }
   if (error || !data) {
-    return <Bereich titel={tx("Profil")} kinder={<Fehlermeldung fehler={error} />} />;
+    return <Bereich titel={tx("Konto")} kinder={<Fehlermeldung fehler={error} />} />;
   }
   return (
     <Bereich
-      titel={tx("Profil")}
+      titel={tx("Konto")}
       kinder={
         <div className="space-y-8">
-          <ZeilenGruppe titel="Du">
+          <ZeilenGruppe titel="Profil">
             <Zeile titel={tx("Profilname")} wert={data.charakterName} nach="/mehr/profil/name" />
             <Zeile titel={tx("Titel")} wert={titelName(erfolge)} nach="/mehr/profil/titel" />
             <Zeile
@@ -112,32 +112,27 @@ function ProfilListe() {
               nach="/mehr/profil/jahr"
             />
             <Zeile
-              titel={ZIEL_FRAGE}
+              titel={tx(ZIEL_FRAGE)}
               wert={data.zielstrebigkeit ? tx(ZIELSTREBIGKEIT_INFO[data.zielstrebigkeit].titel) : '—'}
               nach="/mehr/profil/ziel"
             />
             <Zeile titel={tx("Fokus")} wert={fokusText(data.fokus)} nach="/mehr/profil/fokus" />
-            <Zeile titel={tx("Ziel-Stufen")} wert={stufenText(data.ebenen)} nach="/mehr/funktionen#ziel-stufen" />
           </ZeilenGruppe>
-          <ZeilenGruppe titel={tx("Anmeldung")}>
+          <ZeilenGruppe titel="Anmeldung">
             {zugang?.benutzername ? (
               <Zeile
                 id="profil-benutzername"
                 titel={tx("Benutzername")}
                 wert={zugang.benutzername}
                 pfeil={false}
-                info="Den Benutzernamen ändert der Admin."
               />
             ) : null}
-            {zugang?.admin ? <Zeile titel={tx("Benutzernamen")} nach="/mehr/profil/benutzernamen" /> : null}
             <Zeile titel={tx("Passwort")} nach="/mehr/profil/passwort" />
+            {inhaber || admin ? (
+              <Zeile titel={tx("Accounts")} wert={accountZahl === undefined ? undefined : String(accountZahl)} nach="/mehr/profil/accounts" />
+            ) : null}
             <Zeile titel={tx("Abmelden")} gefahr pfeil={false} onKlick={() => void abmelden()} />
           </ZeilenGruppe>
-          {inhaber ? (
-            <ZeilenGruppe titel={tx("Accounts")}>
-              <Zeile titel={tx("Accounts")} wert={konten ? String(konten.length) : undefined} nach="/mehr/profil/accounts" />
-            </ZeilenGruppe>
-          ) : null}
           <Fehlermeldung fehler={abmeldeFehler} />
         </div>
       }
@@ -162,40 +157,28 @@ function TitelSeite() {
   if (error || !erfolge) {
     return <FormularSeite titel={tx("Titel")} zurueck={PROFIL_ZURUECK} kinder={<Fehlermeldung fehler={error} />} />;
   }
-  const optionen: { schluessel: string | null; name: string }[] = [
-    { schluessel: null, name: tx("Kein Titel") },
-    ...waehlbareTitel(erfolge, sichtbarkeit).map((stufe) => ({ schluessel: stufe.schluessel, name: tx(stufe.name) })),
+  const optionen = [
+    { wert: '', label: 'Kein Titel' },
+    ...waehlbareTitel(erfolge, sichtbarkeit).map((stufe) => ({ wert: stufe.schluessel, label: tx(stufe.name) })),
   ];
-  const aktuell = erfolge.titel;
+  const aktuell = erfolge.titel ?? '';
   return (
     <FormularSeite
       titel={tx("Titel")}
       zurueck={PROFIL_ZURUECK}
       kinder={
         <>
-          <Karte dicht>
-            <div className="divide-y divide-rand">
-              {optionen.map((option) => {
-                const aktiv = aktuell === option.schluessel;
-                return (
-                  <button
-                    key={option.schluessel ?? 'kein'}
-                    type="button"
-                    disabled={setzen.isPending}
-                    onClick={() => {
-                      if (!aktiv) {
-                        setzen.mutate(option.schluessel);
-                      }
-                    }}
-                    className="flex min-h-12 w-full items-center gap-3 px-4 text-left"
-                  >
-                    <span className={`min-w-0 flex-1 truncate text-sm font-medium ${aktiv ? 'text-akzent' : ''}`}>{option.name}</span>
-                    {aktiv ? <Check className="size-4 shrink-0 text-akzent" /> : null}
-                  </button>
-                );
-              })}
-            </div>
-          </Karte>
+          <Optionsliste
+            name={tx("Titel")}
+            optionen={optionen}
+            wert={aktuell}
+            onAendern={(wert) => {
+              if (setzen.isPending || wert === aktuell) {
+                return;
+              }
+              setzen.mutate(wert === '' ? null : wert);
+            }}
+          />
           <Fehlermeldung fehler={setzen.error} />
         </>
       }

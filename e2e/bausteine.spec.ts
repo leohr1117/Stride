@@ -40,7 +40,7 @@ test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInf
     await expect(page.locator('html')).toHaveAttribute('data-stil', 'standard');
 
     await page.goto('/mehr/profil');
-    await expect(page.getByRole('heading', { name: 'Profil', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Konto', exact: true })).toBeVisible();
     const zeile = page.locator('.zeile').first();
     await expect(zeile).toBeVisible();
     expect(await zeile.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(48);

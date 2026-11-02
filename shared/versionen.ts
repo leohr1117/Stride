@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.42.0',
+    seiten: 'Konto',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.',
+          'Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.',
+          'Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.41.0',
     seiten: 'Handbuch',
     abschnitte: [

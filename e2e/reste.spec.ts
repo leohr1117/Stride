@@ -29,7 +29,7 @@ test('Handbuch und Einführung nennen die Bereiche nicht mehr', async ({ page },
   await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Konto');
   await page.locator('a[data-zurueck]').click();
   await expect(page).toHaveURL(/\/mehr\/profil$/);
-  await expect(page.getByRole('heading', { name: 'Profil', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Konto', level: 1 })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
   await bild('fokus-zurueck');
 

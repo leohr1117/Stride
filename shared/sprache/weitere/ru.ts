@@ -1,5 +1,13 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.": "Аккаунт показывает Профиль и Вход. Имя пользователя только для чтения.",
+  "Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.": "Ступени целей и список имён пользователей больше не в аккаунте.",
+  "Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.": "Год рождения показывает примерный возраст. Под Фокус написано, что архивирует Сохранить.",
+  "Speichern archiviert abgewählte Attribute.": "Сохранение архивирует снятые атрибуты.",
+  "Bisheriges": "Текущий",
+  "Neues": "Новый",
+  "Wiederholen": "Повтор",
+  "Das bisherige Passwort fehlt.": "Текущий пароль не указан.",
   "Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.": "Справка — страница для прокрутки. Сверху переходы к разделам.",
   "Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.": "Записи, серия, уровень, видения и ориентиры открыты в таблицах.",
   "Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.": "Рекомендуется, По интересу и тексты подсказок убраны.",

@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { ebenenFuerStufe, hinweisAusblenden } from '../../../../shared/spiel/ebenen.ts';
 import { bestaetigeAusblenden } from '../../ebenenFrage.ts';
-import { GEBURTSJAHR_MIN, PROFILNAME_MAX, ZIEL_FRAGE, geburtsjahrGueltig, type Zielstrebigkeit } from '../../../../shared/spiel/profil.ts';
+import { GEBURTSJAHR_MIN, PROFILNAME_MAX, ZIEL_FRAGE, alterInJahren, geburtsjahrGueltig, type Zielstrebigkeit } from '../../../../shared/spiel/profil.ts';
 import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { ZielWahl } from '../../components/ProfilErstellung.tsx';
 import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Ladeanzeige } from '../../ui/index.ts';
@@ -58,6 +58,17 @@ export function NameSeite() {
   );
 }
 
+function altersHinweis(jahr: number): string {
+  const alter = alterInJahren(jahr);
+  if (alter <= 0) {
+    return tx('Du bist in diesem Jahr geboren.');
+  }
+  if (alter === 1) {
+    return tx('Das entspricht ungefähr einem Jahr.');
+  }
+  return tx('Das entspricht ungefähr {alter} Jahren.', { alter });
+}
+
 export function JahrSeite() {
   const { data, error, isPending, speichern } = useEinstellungen();
   const [jahrText, setJahrText] = useState('');
@@ -90,6 +101,7 @@ export function JahrSeite() {
           <Feld
             label={tx("Geburtsjahr")}
             fehler={jahrOk ? null : 'Das Geburtsjahr liegt außerhalb des erlaubten Bereichs.'}
+            hinweis={jahrOk && jahr !== null ? altersHinweis(jahr) : undefined}
           >
             <input
               className={EINGABE_STIL}

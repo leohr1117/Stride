@@ -96,7 +96,7 @@ test('übersetzte Funde sind in jeder Sprache sichtbar', async ({ page }, info) 
 
       await page.goto('/mehr/profil/titel');
       await expect(page.getByRole('heading', { name: zeige('Titel', code), exact: true })).toBeVisible();
-      await expect(page.getByRole('button', { name: zeige('Erwacht', code), exact: true })).toBeVisible();
+      await expect(page.getByRole('radio', { name: zeige('Erwacht', code), exact: true })).toBeVisible();
       await page.screenshot({ path: bild(info, code, 'titel') });
 
       await page.goto('/mehr/inhalte/verbindungen');

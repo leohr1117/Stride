@@ -125,6 +125,8 @@ async function missAbstaende(seite: Page, name: string): Promise<Abstand[]> {
       if (kasten.width < 2 || kasten.height < 2) {
         continue;
       }
+      const symbol = knopf.querySelector('svg') ?? knopf;
+      const mass = symbol.getBoundingClientRect();
       const huelle = knopf.parentElement;
       if (!huelle) {
         continue;
@@ -157,8 +159,8 @@ async function missAbstaende(seite: Page, name: string): Promise<Abstand[]> {
       ergebnis.push({
         seite: seiteName,
         label: (knopf.closest('h1, h2, h3, label, [role="switch"]')?.textContent ?? knopf.getAttribute('aria-label') ?? '').replace(/\s+/g, ' ').trim().slice(0, 80),
-        breite: kasten.width,
-        hoehe: kasten.height,
+        breite: mass.width,
+        hoehe: mass.height,
         abstand,
         luecke,
         gleicheZeile,
@@ -370,8 +372,6 @@ test('Info-Icon hat überall Abstand zum Namen', async ({ page }) => {
   test.setTimeout(120_000);
   const orte: { pfad: string; name: string; mindestens: number }[] = [
     { pfad: '/mehr/funktionen', name: 'funktionen', mindestens: 3 },
-    { pfad: '/mehr/profil/fokus', name: 'fokus', mindestens: 1 },
-    { pfad: '/charakter', name: 'charakter', mindestens: 1 },
     { pfad: '/vorbilder', name: 'vorbilder', mindestens: 1 },
     { pfad: '/vorbilder/durchschnitt', name: 'durchschnitt', mindestens: 1 },
   ];

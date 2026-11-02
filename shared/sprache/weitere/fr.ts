@@ -1,5 +1,13 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.": "Le compte affiche Profil et Connexion. Le nom d'utilisateur est en lecture seule.",
+  "Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.": "Les niveaux d'objectif et la liste des noms d'utilisateur ne sont plus dans le compte.",
+  "Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.": "L'année de naissance indique l'âge approximatif. Sous Focus, le texte dit ce qu'Enregistrer archive.",
+  "Speichern archiviert abgewählte Attribute.": "Enregistrer archive les attributs que tu retires.",
+  "Bisheriges": "Actuel",
+  "Neues": "Nouveau",
+  "Wiederholen": "Répéter",
+  "Das bisherige Passwort fehlt.": "Le mot de passe actuel manque.",
   "Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.": "Le guide est une page à faire défiler. En haut, des liens vers les sections.",
   "Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.": "Entrées, série, niveau, visions et modèles sont ouverts dans des tableaux.",
   "Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.": "Suggéré, Selon tes goûts et les textes d'aide ont disparu.",

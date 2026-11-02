@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Das Konto zeigt Profil und Anmeldung. Der Benutzername ist nur zum Lesen.', 'The account shows Profile and Sign-in. The username is read-only.'],
+  ['Ziel-Stufen und die Liste der Benutzernamen stehen nicht mehr im Konto.', 'Goal levels and the username list are no longer on the account.'],
+  ['Beim Geburtsjahr steht das ungefähre Alter. Unter Fokus steht, was Speichern archiviert.', 'The year of birth shows the approximate age. Under Focus it says what Save archives.'],
   ['Das Handbuch ist eine Scrollseite. Oben stehen Sprünge zu den Abschnitten.', 'The guide is a scrolling page. Jumps to the sections sit at the top.'],
   ['Einträge, Streak, Level, Visionen und Vorbilder stehen offen in Tabellen.', 'Entries, streak, level, visions, and role models sit open in tables.'],
   ['Empfohlen, Nach Vorliebe und die Hinweistexte sind weg.', 'Recommended, By what you like, and the hint texts are gone.'],

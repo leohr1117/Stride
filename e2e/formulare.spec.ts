@@ -210,7 +210,7 @@ test('Formular, Warndialog und Toast halten die Maße', async ({ page }, testInf
     await ohneSeitlichenUeberlauf(page);
     await bild('abmelden');
     await abbrechen.click();
-    await expect(page.getByRole('heading', { name: 'Profil', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Konto', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Abmelden', exact: true })).toBeVisible();
 
     await speichern(page, { ebenen: { ...stand.ebenen, visionen: true, projekte: true } });

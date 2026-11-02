@@ -68,28 +68,16 @@ test('Nutzer ändert den eigenen Namen nicht, nur der Admin', async ({ page, req
 
     await page.goto('/mehr/profil');
     await expect(page.locator('a[href="/mehr/profil/benutzer"]')).toHaveCount(0);
-    await expect(page.locator('#profil-benutzername')).toContainText('testvoll');
-    const info = page.locator('#profil-benutzername').getByRole('button', { name: 'Info' });
-    await info.click();
-    const hinweis = page.getByRole('tooltip');
-    await expect(hinweis).toBeVisible();
-    await expect(hinweis).toHaveText('Den Benutzernamen ändert der Admin.');
-    const kasten = await hinweis.boundingBox();
-    const fenster = page.viewportSize();
-    expect(kasten).not.toBeNull();
-    expect(fenster).not.toBeNull();
-    if (kasten && fenster) {
-      expect(kasten.x).toBeGreaterThanOrEqual(0);
-      expect(kasten.y).toBeGreaterThanOrEqual(0);
-      expect(kasten.x + kasten.width).toBeLessThanOrEqual(fenster.width + 1);
-      expect(kasten.y + kasten.height).toBeLessThanOrEqual(fenster.height + 1);
-    }
-    await page.keyboard.press('Escape');
-    await expect(hinweis).toHaveCount(0);
+    const zeile = page.locator('#profil-benutzername');
+    await expect(zeile).toContainText('testvoll');
+    await expect(zeile).toHaveAttribute('data-zeile', 'lesen');
+    await expect(zeile.locator('a, button, svg')).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Benutzernamen', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Ziel-Stufen', exact: true })).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);
     await bild('profil');
 
-    await page.getByRole('link', { name: 'Benutzernamen' }).click();
+    await page.goto('/mehr/profil/benutzernamen');
     await expect(page).toHaveURL(/\/mehr\/profil\/benutzernamen$/);
     await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr/profil');
     const listeAntwort = await page.request.get('/api/zugang/admin/konten');

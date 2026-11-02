@@ -45,12 +45,28 @@ export function ZielWahl({ wert, onAendern }: { wert: Zielstrebigkeit | null; on
   );
 }
 
-export function FokusWahl({ wert, onAendern }: { wert: readonly FokusId[]; onAendern: (wert: FokusId[]) => void }) {
+export function FokusWahl({
+  wert,
+  onAendern,
+  ungueltig = false,
+  fehlerId,
+}: {
+  wert: readonly FokusId[];
+  onAendern: (wert: FokusId[]) => void;
+  ungueltig?: boolean;
+  fehlerId?: string;
+}) {
   const umschalten = (id: FokusId) => {
     onAendern(wert.includes(id) ? wert.filter((eintrag) => eintrag !== id) : [...wert, id]);
   };
   return (
-    <div role="group" aria-label={tx('Fokus')} className="space-y-2">
+    <div
+      role="group"
+      aria-label={tx('Fokus')}
+      aria-invalid={ungueltig || undefined}
+      aria-describedby={fehlerId}
+      className="space-y-2"
+    >
       {FOKUS_LISTE.map((info) => {
         const aktiv = wert.includes(info.id);
         return (

@@ -53,7 +53,7 @@ const SEITENTITEL: Record<string, string> = {
   '/haben': 'Haben',
   '/faehigkeiten': 'Fähigkeiten',
   '/investitionen': 'Investitionen',
-  '/mehr/profil': 'Profil',
+  '/mehr/profil': 'Konto',
   '/mehr/profil/name': 'Profilname',
   '/mehr/profil/titel': 'Titel',
   '/mehr/profil/jahr': 'Geburtsjahr',
