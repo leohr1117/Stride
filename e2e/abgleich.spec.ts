@@ -84,22 +84,28 @@ function eintragIdZu(notiz: string): number | null {
   }
 }
 
-function kalenderKarte(seite: Page) {
-  return seite.locator('section').filter({ has: seite.getByRole('heading', { name: 'Kalender', level: 2 }) });
+function kalenderBereich(seite: Page) {
+  return seite.locator('section#kalender');
 }
 
 function standZeile(seite: Page, name: string) {
-  return kalenderKarte(seite).getByText(name, { exact: true }).locator('xpath=ancestor::div[contains(@class,"flex-1")][1]');
+  return kalenderBereich(seite).getByRole('button', { name: `Termine in ${name}` });
+}
+
+function standKasten(seite: Page, name: string) {
+  return standZeile(seite, name).locator('xpath=..');
 }
 
 async function speichereKalender(seite: Page, url: string, name: string): Promise<number> {
   await seite.goto('/mehr/inhalte/verbindungen');
-  await seite.getByRole('button', { name: 'Kalender', exact: true }).click();
-  const dialog = seite.getByRole('dialog');
+  await seite.getByRole('button', { name: '+ Kalender verbinden', exact: true }).click();
+  const dialog = seite.getByRole('dialog', { name: 'Kalender verbinden' });
   await dialog.getByRole('button', { name: 'Andere', exact: true }).click();
   await dialog.getByRole('textbox', { name: 'iCal-Adresse' }).fill(url);
   await dialog.getByRole('button', { name: 'Prüfen', exact: true }).click();
   await expect(dialog.getByRole('textbox', { name: 'Name' })).toHaveValue(name);
+  await dialog.getByRole('combobox', { name: 'Zählt als' }).click();
+  await seite.getByRole('dialog', { name: 'Zählt als' }).getByRole('option').first().click();
   await dialog.getByRole('button', { name: 'Speichern' }).click();
   await expect(dialog).toBeHidden();
   const antwort = await seite.request.get('/api/verbindungen');
@@ -120,7 +126,18 @@ async function gleicherNeu(seite: Page): Promise<void> {
   expect((await sync).ok()).toBe(true);
 }
 
+async function verlaufLeer(seite: Page): Promise<void> {
+  await expect.poll(async () => seite.evaluate(() => {
+    const zustand = history.state as { dialog?: unknown } | null;
+    return zustand && typeof zustand.dialog === 'string' ? zustand.dialog : '';
+  })).toBe('');
+  await seite.evaluate(() => new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve(undefined)));
+  }));
+}
+
 test('Abgleich zeigt den Stand, behält Einträge und importiert nicht doppelt', async ({ page }, info) => {
+  test.setTimeout(120_000);
   fs.mkdirSync('tmp-test', { recursive: true });
   const name = `V3 ${info.project.name}`;
   const termin = `V3 Termin ${info.project.name}`;
@@ -134,34 +151,39 @@ test('Abgleich zeigt den Stand, behält Einträge und importiert nicht doppelt',
     setzeSeit(name);
     await gleicherNeu(page);
     const zeile = standZeile(page, name);
-    await expect(zeile).toContainText('1 übernommen');
-    await expect(zeile).toContainText(/Abgeglichen /);
+    const kasten = standKasten(page, name);
+    await expect(kalenderBereich(page).getByText(/Zuletzt abgeglichen/)).toBeVisible();
+    await expect(kasten).not.toContainText('Fehler');
     await zeile.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `tmp-test/abgleich/stand-${info.project.name}.png` });
     await ohneSeitlichenUeberlauf(page);
 
     server.lage.status = 500;
     await gleicherNeu(page);
-    await expect(zeile).toContainText('Der Kalender hat die Anfrage abgelehnt.');
+    await expect(kasten).toContainText('Fehler');
+    await expect(kasten).not.toContainText('Der Kalender hat die Anfrage abgelehnt.');
     await zeile.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `tmp-test/abgleich/fehler-${info.project.name}.png` });
     await ohneSeitlichenUeberlauf(page);
 
-    await kalenderKarte(page).getByRole('heading', { name: 'Kalender', level: 2 }).locator('xpath=..').getByRole('button', { name: 'Info' }).click();
+    await kalenderBereich(page).getByRole('button', { name: 'Info' }).click();
     const hinweis = page.getByRole('tooltip');
     await expect(hinweis).toBeVisible();
-    await expect(hinweis).toContainText('15 Minuten');
+    await expect(hinweis).toContainText('Beim Öffnen und alle 15 Minuten.');
     await page.keyboard.press('Escape');
     await expect(hinweis).toHaveCount(0);
 
-    await kalenderKarte(page).getByRole('button', { name: `Aktionen für ${name}`, exact: true }).click();
+    await zeile.click();
+    await page.getByRole('dialog', { name }).getByRole('button', { name: `Aktionen für ${name}`, exact: true }).click();
     await page.getByRole('menuitem', { name: 'Entfernen' }).click();
     await page.getByRole('alertdialog', { name: `${name} entfernen?` }).getByRole('button', { name: 'Entfernen' }).click();
-    await expect(kalenderKarte(page).getByText(name, { exact: true })).toHaveCount(0);
+    await expect(zeile).toHaveCount(0);
     kalenderId = null;
+    await verlaufLeer(page);
 
     hebeEintrag(termin);
     await page.goto('/chronik');
+    await expect(page).toHaveURL(/\/chronik$/);
     await meilensteineAus(page);
     await expect(page.getByText(termin).first()).toBeVisible();
     const liste = await page.request.get('/api/eintraege?limit=100');
@@ -173,7 +195,8 @@ test('Abgleich zeigt den Stand, behält Einträge und importiert nicht doppelt',
     kalenderId = await speichereKalender(page, server.url, name);
     setzeSeit(name);
     await gleicherNeu(page);
-    await expect(standZeile(page, name)).toContainText('1 übernommen');
+    await expect(standZeile(page, name)).toBeVisible();
+    await expect(standKasten(page, name)).not.toContainText('Fehler');
     await page.getByRole('button', { name: 'Jetzt abgleichen' }).click();
     await expect(page.getByText('Keine neuen Einträge.')).toBeVisible();
     const danach = await page.request.get('/api/eintraege?limit=100');

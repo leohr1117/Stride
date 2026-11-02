@@ -1,5 +1,12 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Jeder vergangene Termin wird ein Eintrag mit XP.', 'Each past event becomes an entry with XP.'],
+  ['Termine in', 'Events in'],
+  ['zählen als', 'count as'],
+  ['Beim Öffnen und alle 15 Minuten.', 'When you open the app and every 15 minutes.'],
+  ['Fehler', 'Error'],
+  ['Nur Termine mit diesen Wörtern', 'Only events with these words'],
+  ['Leer: alle Termine. Komma trennt Wörter.', 'Empty: all events. A comma separates words.'],
   ['Jede erledigte Aufgabe wird ein Eintrag mit XP.', 'Each completed task becomes an entry with XP.'],
   ['Verbunden als {name}', 'Connected as {name}'],
   ['Zuletzt abgeglichen {zeit}', 'Last synced {zeit}'],

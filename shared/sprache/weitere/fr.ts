@@ -1,5 +1,15 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Jeder vergangene Termin wird ein Eintrag mit XP.": "Chaque événement passé devient une entrée avec de l'XP.",
+  "Termine in": "Événements dans",
+  "zählen als": "comptent comme",
+  "Beim Öffnen und alle 15 Minuten.": "À l'ouverture et toutes les 15 minutes.",
+  "Fehler": "Erreur",
+  "Nur Termine mit diesen Wörtern": "Seulement les événements avec ces mots",
+  "Leer: alle Termine. Komma trennt Wörter.": "Vide : tous les événements. La virgule sépare les mots.",
+  "Bei jedem Kalender steht, als welche Tätigkeit vergangene Termine zählen.": "Chaque calendrier indique pour quelle activité les événements passés comptent.",
+  "Gehört zu kann leer bleiben. Ohne Projekt zählt eine allgemeine Tätigkeit.": "Appartient à peut rester vide. Sans projet, une activité générale compte.",
+  "Hat der Kalender einen Fehler, steht rechts Fehler.": "Si le calendrier a une erreur, Erreur apparaît à droite.",
   "Jede erledigte Aufgabe wird ein Eintrag mit XP.": "Chaque tâche terminée devient une entrée avec des XP.",
   "Verbunden als {name}": "Connecté en tant que {name}",
   "Zuletzt abgeglichen {zeit}": "Dernière synchronisation {zeit}",

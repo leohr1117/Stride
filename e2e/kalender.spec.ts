@@ -47,8 +47,16 @@ function icsServer(text: string): Promise<{ url: string; stop: () => Promise<voi
 
 async function oeffneDialog(seite: Page): Promise<void> {
   await seite.goto('/mehr/inhalte/verbindungen');
-  await seite.getByRole('button', { name: 'Kalender', exact: true }).click();
-  await expect(seite.getByRole('dialog')).toBeVisible();
+  await seite.getByRole('button', { name: '+ Kalender verbinden', exact: true }).click();
+  await expect(seite.getByRole('dialog', { name: 'Kalender verbinden' })).toBeVisible();
+}
+
+async function waehleErsteTaetigkeit(seite: Page): Promise<void> {
+  const dialog = seite.getByRole('dialog', { name: 'Kalender verbinden' });
+  await dialog.getByRole('combobox', { name: 'Zählt als' }).click();
+  const wahl = seite.getByRole('dialog', { name: 'Zählt als' });
+  await wahl.getByRole('option').first().click();
+  await expect(wahl).toBeHidden();
 }
 
 test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert werden', async ({ page }, info) => {
@@ -68,14 +76,9 @@ test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert w
     await expect(dialog.getByText('Wähle den Kalender in den Einstellungen.')).toBeVisible();
     await expect(dialog.getByText('Kopiere die geheime Adresse im iCal-Format.')).toBeVisible();
     await expect(dialog.getByRole('link', { name: 'Google Kalender öffnen' })).toHaveAttribute('href', GOOGLE);
-    await dialog.getByRole('link', { name: 'Google Kalender öffnen' }).locator('xpath=..').getByRole('button', { name: 'Info' }).click();
-    const hinweis = page.getByRole('tooltip');
-    await expect(hinweis).toBeVisible();
-    await expect(hinweis).toContainText('alle paar Stunden');
+    await expect(dialog.getByText('Google aktualisiert das Abo nur alle paar Stunden.')).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Info' })).toHaveCount(0);
     await page.screenshot({ path: `tmp-test/kalender/kalender-google-info-${info.project.name}.png` });
-    await page.keyboard.press('Escape');
-    await expect(hinweis).toHaveCount(0);
-    await expect(dialog).toBeVisible();
 
     await dialog.getByRole('button', { name: 'Apple', exact: true }).click();
     await expect(dialog.getByText('Öffne die Kalender-App.')).toBeVisible();
@@ -101,28 +104,37 @@ test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert w
     await expect(dialog.getByText(/XP für die letzten Termine/)).toHaveCount(0);
     await expect(dialog.getByText('Besprechung')).toHaveCount(0);
     await expect(dialog.getByRole('button', { name: 'Überspringen' })).toHaveCount(0);
-    await expect(dialog.getByText('Projekt', { exact: true })).toBeVisible();
-    await expect(dialog.getByRole('combobox', { name: 'Projekt' })).toBeVisible();
-    await expect(dialog.getByText('Tätigkeit', { exact: true })).toBeVisible();
-    await expect(dialog.getByRole('combobox', { name: 'Tätigkeit' })).toBeVisible();
+    await expect(dialog.getByRole('combobox', { name: 'Gehört zu' })).toContainText('Kein Ziel');
+    await expect(dialog.getByRole('combobox', { name: 'Zählt als' })).toBeVisible();
+    await expect(dialog.getByText('Nur Termine mit diesen Wörtern', { exact: true })).toBeVisible();
+    await expect(dialog.getByText('Leer: alle Termine. Komma trennt Wörter.')).toBeVisible();
+    await expect(dialog.getByText('Titel enthält', { exact: true })).toHaveCount(0);
+    await dialog.getByText('Nur Termine mit diesen Wörtern', { exact: true }).scrollIntoViewIfNeeded();
     await page.screenshot({ path: `tmp-test/kalender/kalender-pruefung-${info.project.name}.png` });
-    await dialog.locator('span').filter({ hasText: /^Titel enthält$/ }).getByRole('button', { name: 'Info' }).click();
-    await expect(page.getByRole('tooltip')).toContainText('Ohne passendes Wort');
+    await dialog.getByRole('button', { name: 'Info', exact: true }).click();
+    const hinweis = page.getByRole('tooltip');
+    await expect(hinweis).toBeVisible();
+    await expect(hinweis).toContainText('Dauer des Termins');
     await page.keyboard.press('Escape');
+    await expect(hinweis).toHaveCount(0);
+    await expect(dialog).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
 
+    await waehleErsteTaetigkeit(page);
     await dialog.getByRole('button', { name: 'Speichern' }).click();
     await expect(dialog).toBeHidden();
-    await expect(page.getByText(name, { exact: true })).toBeVisible();
+    const zeile = page.getByRole('button', { name: `Termine in ${name}` });
+    await expect(zeile).toBeVisible();
     await page.getByRole('button', { name: 'Jetzt abgleichen' }).click();
     await expect(page.getByText('Keine neuen Einträge.')).toBeVisible();
     await page.screenshot({ path: `tmp-test/kalender/kalender-liste-${info.project.name}.png` });
 
-    await page.getByRole('button', { name: `${name} bearbeiten` }).click();
-    const bearbeiten = page.getByRole('dialog');
+    await zeile.click();
+    const bearbeiten = page.getByRole('dialog', { name });
     await expect(bearbeiten.getByRole('button', { name: 'Google', exact: true })).toHaveCount(0);
     await expect(bearbeiten.getByRole('textbox', { name: 'Name' })).toHaveValue(name);
     await expect(bearbeiten.getByRole('textbox', { name: 'iCal-Adresse' })).toHaveCount(0);
+    await expect(bearbeiten.getByRole('button', { name: `Aktionen für ${name}`, exact: true })).toBeVisible();
     await bearbeiten.getByRole('button', { name: 'Schließen' }).click();
   } finally {
     await server.stop();

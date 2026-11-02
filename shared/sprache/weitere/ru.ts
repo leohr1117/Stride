@@ -1,5 +1,15 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Jeder vergangene Termin wird ein Eintrag mit XP.": "Каждое прошедшее событие становится записью с XP.",
+  "Termine in": "События в",
+  "zählen als": "считаются как",
+  "Beim Öffnen und alle 15 Minuten.": "При открытии и каждые 15 минут.",
+  "Fehler": "Ошибка",
+  "Nur Termine mit diesen Wörtern": "Только события с этими словами",
+  "Leer: alle Termine. Komma trennt Wörter.": "Пусто: все события. Запятая разделяет слова.",
+  "Bei jedem Kalender steht, als welche Tätigkeit vergangene Termine zählen.": "У каждого календаря видно, какой деятельностью считаются прошедшие события.",
+  "Gehört zu kann leer bleiben. Ohne Projekt zählt eine allgemeine Tätigkeit.": "«Принадлежит к» может остаться пустым. Без проекта считается общее занятие.",
+  "Hat der Kalender einen Fehler, steht rechts Fehler.": "Если у календаря ошибка, справа стоит «Ошибка».",
   "Jede erledigte Aufgabe wird ein Eintrag mit XP.": "Каждая выполненная задача становится записью с XP.",
   "Verbunden als {name}": "Подключено как {name}",
   "Zuletzt abgeglichen {zeit}": "Последняя синхронизация {zeit}",

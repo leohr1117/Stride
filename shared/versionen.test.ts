@@ -4,7 +4,7 @@ import { ABSCHNITTE, AKTUELLE_VERSION, VERSIONEN, type AbschnittTitel } from './
 describe('versionen', () => {
   it('ist absteigend nach Semantic Versioning und nennt Änderungen', () => {
     expect(VERSIONEN.length).toBeGreaterThan(0);
-    expect(AKTUELLE_VERSION).toBe('3.51.0');
+    expect(AKTUELLE_VERSION).toBe('3.52.0');
     expect(AKTUELLE_VERSION).toBe(VERSIONEN[0].version);
     const gesehen = new Set<string>();
     let vorher: number[] | null = null;

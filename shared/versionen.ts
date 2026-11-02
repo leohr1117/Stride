@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.52.0',
+    seiten: 'Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Bei jedem Kalender steht, als welche Tätigkeit vergangene Termine zählen.',
+          'Gehört zu kann leer bleiben. Ohne Projekt zählt eine allgemeine Tätigkeit.',
+          'Hat der Kalender einen Fehler, steht rechts Fehler.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.51.0',
     seiten: 'Verbindungen',
     abschnitte: [

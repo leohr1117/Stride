@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Bei jedem Kalender steht, als welche Tätigkeit vergangene Termine zählen.', 'Each calendar shows which activity past events count as.'],
+  ['Gehört zu kann leer bleiben. Ohne Projekt zählt eine allgemeine Tätigkeit.', 'Belongs to can stay empty. Without a project, a general activity counts.'],
+  ['Hat der Kalender einen Fehler, steht rechts Fehler.', 'If the calendar has an error, Error appears on the right.'],
   ['In Todoist steht bei jedem Projekt, als welche Tätigkeit eine erledigte Aufgabe zählt.', 'In Todoist, each project shows which activity a completed task counts as.'],
   ['Ohne eigene Wahl gilt die Zeile Standard.', 'Without your own choice, the Standard row applies.'],
   ['Labels sind zugeklappt. Ein Label geht vor dem Projekt, bei mehreren das oberste.', 'Labels stay collapsed. A label overrides the project, and the top one applies when there are several.'],

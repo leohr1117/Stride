@@ -1,5 +1,15 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Jeder vergangene Termin wird ein Eintrag mit XP.": "Cada evento pasado se convierte en un registro con XP.",
+  "Termine in": "Eventos en",
+  "zählen als": "cuentan como",
+  "Beim Öffnen und alle 15 Minuten.": "Al abrir la aplicación y cada 15 minutos.",
+  "Fehler": "Error",
+  "Nur Termine mit diesen Wörtern": "Solo eventos con estas palabras",
+  "Leer: alle Termine. Komma trennt Wörter.": "Vacío: todos los eventos. La coma separa palabras.",
+  "Bei jedem Kalender steht, als welche Tätigkeit vergangene Termine zählen.": "En cada calendario se ve como qué actividad cuentan los eventos pasados.",
+  "Gehört zu kann leer bleiben. Ohne Projekt zählt eine allgemeine Tätigkeit.": "Pertenece a puede quedar vacío. Sin proyecto cuenta una actividad general.",
+  "Hat der Kalender einen Fehler, steht rechts Fehler.": "Si el calendario tiene un error, a la derecha aparece Error.",
   "Jede erledigte Aufgabe wird ein Eintrag mit XP.": "Cada tarea completada se convierte en un registro con XP.",
   "Verbunden als {name}": "Conectado como {name}",
   "Zuletzt abgeglichen {zeit}": "Última sincronización {zeit}",

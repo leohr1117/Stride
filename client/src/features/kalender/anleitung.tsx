@@ -1,7 +1,7 @@
 import { ExternalLink } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { tx } from '../../text.ts';
-import { InfoHinweis, Segmentauswahl } from '../../ui/index.ts';
+import { Segmentauswahl } from '../../ui/index.ts';
 
 const GOOGLE_EINSTELLUNGEN = 'https://calendar.google.com/calendar/r/settings';
 const APPLE_IPHONE = 'https://support.apple.com/guide/iphone/iph7613c4fb/ios';
@@ -112,15 +112,12 @@ function Schritt({ bild, text }: { bild: ReactNode; text: string }) {
   );
 }
 
-function LinkZeile({ adresse, label, hinweis }: { adresse: string; label: string; hinweis?: string }) {
+function LinkZeile({ adresse, label }: { adresse: string; label: string }) {
   return (
-    <div className="flex items-center">
-      <a href={adresse} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-sm text-akzent hover:underline">
-        {tx(label)}
-        <ExternalLink className="size-3.5 shrink-0" />
-      </a>
-      {hinweis ? <InfoHinweis text={hinweis} /> : null}
-    </div>
+    <a href={adresse} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-sm text-akzent hover:underline">
+      {tx(label)}
+      <ExternalLink className="size-3.5 shrink-0" />
+    </a>
   );
 }
 
@@ -132,11 +129,8 @@ function GoogleAnleitung() {
         <Schritt bild={<BildListe />} text="Wähle den Kalender in den Einstellungen." />
         <Schritt bild={<BildKopie />} text="Kopiere die geheime Adresse im iCal-Format." />
       </ol>
-      <LinkZeile
-        adresse={GOOGLE_EINSTELLUNGEN}
-        label="Google Kalender öffnen"
-        hinweis="Google aktualisiert das Abo nur alle paar Stunden."
-      />
+      <p className="text-[13px] leading-[18px] text-leise">{tx('Google aktualisiert das Abo nur alle paar Stunden.')}</p>
+      <LinkZeile adresse={GOOGLE_EINSTELLUNGEN} label="Google Kalender öffnen" />
     </div>
   );
 }

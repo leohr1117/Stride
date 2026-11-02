@@ -1,5 +1,15 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Jeder vergangene Termin wird ein Eintrag mit XP.": "過去の予定はそれぞれXP付きの記録になります。",
+  "Termine in": "予定の場所",
+  "zählen als": "として数える",
+  "Beim Öffnen und alle 15 Minuten.": "開いたときと15分ごと。",
+  "Fehler": "エラー",
+  "Nur Termine mit diesen Wörtern": "これらの語を含む予定だけ",
+  "Leer: alle Termine. Komma trennt Wörter.": "空欄：すべての予定。読点で語を区切ります。",
+  "Bei jedem Kalender steht, als welche Tätigkeit vergangene Termine zählen.": "各カレンダーに、過去の予定がどの活動として数えるかが表示されます。",
+  "Gehört zu kann leer bleiben. Ohne Projekt zählt eine allgemeine Tätigkeit.": "所属は空のままで構いません。プロジェクトがないときは一般の活動として数えます。",
+  "Hat der Kalender einen Fehler, steht rechts Fehler.": "カレンダーにエラーがあるとき、右にエラーと出ます。",
   "Jede erledigte Aufgabe wird ein Eintrag mit XP.": "完了したタスクは、それぞれ XP 付きの記録になります。",
   "Verbunden als {name}": "{name} として接続中",
   "Zuletzt abgeglichen {zeit}": "最終同期 {zeit}",

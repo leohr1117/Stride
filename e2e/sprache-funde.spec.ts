@@ -74,11 +74,16 @@ test('übersetzte Funde sind in jeder Sprache sichtbar', async ({ page }, info) 
       const hell = farben.getByRole('button', { name: zeige('Hell', code), exact: true });
       await expect(hell.first()).toBeVisible();
       await expect(farben.getByRole('button', { name: zeige('Dunkel', code), exact: true }).first()).toBeVisible();
-      await expect(farben.getByRole('button', { name: zeige('Tinte', code), exact: true })).toBeVisible();
-      await expect(farben.getByRole('button', { name: zeige('Purpur', code), exact: true })).toBeVisible();
+      await expect(farben.getByRole('button', { name: zeige('Nebel', code), exact: true })).toBeVisible();
       if (code !== 'de') {
         await expect(farben.getByRole('button', { name: 'Hell', exact: true })).toHaveCount(0);
       }
+      await page.getByRole('button', { name: zeige('Minimal', code), exact: true }).click();
+      await expect(farben.getByRole('button', { name: zeige('Tinte', code), exact: true })).toBeVisible();
+      await page.getByRole('button', { name: zeige('Antik', code), exact: true }).click();
+      await expect(farben.getByRole('button', { name: zeige('Purpur', code), exact: true })).toBeVisible();
+      await page.getByRole('button', { name: zeige('Standard', code), exact: true }).click();
+      await expect(farben.getByRole('button', { name: zeige('Nebel', code), exact: true })).toBeVisible();
       await page.screenshot({ path: bild(info, code, 'darstellung') });
 
       await page.goto('/vorbilder/durchschnitt');
@@ -100,7 +105,7 @@ test('übersetzte Funde sind in jeder Sprache sichtbar', async ({ page }, info) 
       await page.screenshot({ path: bild(info, code, 'titel') });
 
       await page.goto('/mehr/inhalte/verbindungen');
-      await page.getByRole('button', { name: zeige('Kalender', code), exact: true }).click();
+      await page.getByRole('button', { name: `+ ${zeige('Kalender verbinden', code)}`, exact: true }).click();
       const kalender = page.getByRole('dialog');
       await kalender.getByRole('button', { name: zeige('Google', code), exact: true }).click();
       const schritt = kalender.getByText(zeige('Kopiere die geheime Adresse im iCal-Format.', code));

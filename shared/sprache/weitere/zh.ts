@@ -1,5 +1,15 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Jeder vergangene Termin wird ein Eintrag mit XP.": "每个已过去的日程都会变成一条带经验值的记录。",
+  "Termine in": "日程在",
+  "zählen als": "计为",
+  "Beim Öffnen und alle 15 Minuten.": "打开时以及每 15 分钟。",
+  "Fehler": "错误",
+  "Nur Termine mit diesen Wörtern": "仅包含这些词的日程",
+  "Leer: alle Termine. Komma trennt Wörter.": "留空：全部日程。逗号分隔词语。",
+  "Bei jedem Kalender steht, als welche Tätigkeit vergangene Termine zählen.": "每个日历都显示已过去的日程算作哪项活动。",
+  "Gehört zu kann leer bleiben. Ohne Projekt zählt eine allgemeine Tätigkeit.": "“属于”可以留空。没有项目时，按一项通用活动计分。",
+  "Hat der Kalender einen Fehler, steht rechts Fehler.": "日历出错时，右侧显示“错误”。",
   "Jede erledigte Aufgabe wird ein Eintrag mit XP.": "每项完成的任务都会变成一条带 XP 的记录。",
   "Verbunden als {name}": "已连接为 {name}",
   "Zuletzt abgeglichen {zeit}": "上次同步 {zeit}",
