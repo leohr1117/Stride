@@ -30,11 +30,18 @@ async function ohneSeitlichenUeberlauf(seite: Page): Promise<void> {
 }
 
 async function leeren(seite: Page): Promise<void> {
-  const antwort = await seite.request.patch('/api/einstellungen', {
-    data: { vorbildFavoritWeg: 'einstein', funktionen: { vorbilder: true } },
-  });
-  if (!antwort.ok()) {
-    throw new Error(`Favorit ließ sich nicht entfernen: ${antwort.status()}`);
+  const stand = await seite.request.get('/api/einstellungen');
+  if (!stand.ok()) {
+    throw new Error(`Favoriten ließen sich nicht lesen: ${stand.status()}`);
+  }
+  const favoriten = ((await stand.json()) as { vorbildFavoriten: string[] }).vorbildFavoriten;
+  for (const schluessel of favoriten) {
+    const antwort = await seite.request.patch('/api/einstellungen', {
+      data: { vorbildFavoritWeg: schluessel, funktionen: { vorbilder: true } },
+    });
+    if (!antwort.ok()) {
+      throw new Error(`Favorit ließ sich nicht entfernen: ${antwort.status()}`);
+    }
   }
 }
 

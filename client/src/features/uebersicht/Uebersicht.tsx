@@ -43,6 +43,7 @@ const WOCHENTAG_LABEL = ['Mo', '', 'Mi', '', 'Fr', '', ''];
 
 export function UebersichtSeite() {
   const { data: uebersicht, error, isPending } = useQuery({ queryKey: SCHLUESSEL.uebersicht, queryFn: api.uebersicht });
+  const kette = useQuery({ queryKey: SCHLUESSEL.ketteHeute, queryFn: api.ketteHeute, retry: false });
   const sichtbarkeit = useSichtbarkeit();
   const karten = useUebersichtKarten();
   const funktionen = sichtbarkeit.funktionen;
@@ -95,7 +96,7 @@ export function UebersichtSeite() {
               }
               wert={
                 <span
-                  className={`flex items-center justify-center gap-1 ${uebersicht.serie.angeknackst ? 'text-leise' : uebersicht.serie.laenge > 0 ? 'text-streak' : ''}`}
+                  className={`flex items-center justify-center gap-1 ${kette.data?.rueckkehr || uebersicht.serie.angeknackst ? 'text-leise' : uebersicht.serie.laenge > 0 ? 'text-streak' : ''}`}
                   title={uebersicht.serie.angeknackst ? tx("Gestern ausgesetzt") : undefined}
                 >
                   <Flame className="size-4" />

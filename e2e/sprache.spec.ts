@@ -104,7 +104,7 @@ test('Englisch bleibt bei 390 und 1440 lesbar', async ({ page }) => {
     }
 
     await expect(page.getByText('Language', { exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Language' }).click();
+    await page.getByRole('button', { name: /^Language,/ }).click();
     await expect(page.getByRole('radio', { name: 'Deutsch', exact: true })).toBeVisible();
     await expect(page.getByRole('radio', { name: 'English', exact: true })).toBeVisible();
   } finally {
@@ -135,7 +135,7 @@ test('jede Sprache bleibt auf 390 px vollständig sichtbar', async ({ page }, in
         await expect(page.getByRole('heading', { name: ziel.text, exact: true })).toBeVisible();
         await ohneSeitlichenUeberhang(page);
       }
-      await page.getByRole('button', { name: zeige('Sprache', code) }).click();
+      await page.getByRole('button', { name: new RegExp(`^${zeige('Sprache', code)},`) }).click();
       const liste = page.getByRole('radiogroup', { name: zeige('Sprache', code) });
       for (const name of SPRACHEN) {
         const knopf = liste.getByRole('radio', { name: SPRACH_NAME[name], exact: true });

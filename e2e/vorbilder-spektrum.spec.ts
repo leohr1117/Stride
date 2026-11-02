@@ -1,5 +1,9 @@
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import fs from 'node:fs';
+import type { Attribut } from '../shared/api/index.ts';
+import { findeVorbild, vergleichspunkte } from '../shared/features/vorbilder/vorbilder.ts';
+import type { Funktionen } from '../shared/spiel/funktionen.ts';
+import { eigenesProfil } from '../client/src/pages/eigenesProfil.ts';
 
 interface AttributZeile {
   id: number;
@@ -53,7 +57,24 @@ test('Vorbilder zeigen Prozent, aktive Level und das Spektrum', async ({ page },
   const aehnlichkeit = page.locator('[data-aehnlichkeit]');
   await expect(aehnlichkeit).toBeVisible();
   await expect(aehnlichkeit).toContainText(/%\s*ähnlich/);
-  await expect(page.locator('[data-kennung]')).toHaveCount(20);
+  const attributeAntwort = await page.request.get('/api/attribute');
+  expect(attributeAntwort.ok()).toBe(true);
+  const profilAttribute = (await attributeAntwort.json()) as Attribut[];
+  const einstellungenAntwort = await page.request.get('/api/einstellungen');
+  expect(einstellungenAntwort.ok()).toBe(true);
+  const funktionen = ((await einstellungenAntwort.json()) as { funktionen: Funktionen }).funktionen;
+  const vorbild = findeVorbild('davinci');
+  if (!vorbild) {
+    throw new Error('Vorbild fehlt.');
+  }
+  const profil = eigenesProfil(profilAttribute, { koennen: funktionen.koennen, status: funktionen.status });
+  const punkte = vergleichspunkte(profil.level, vorbild, profil.kennungen);
+  expect(punkte.length).toBeGreaterThan(2);
+  const kennungen = page.locator('[data-kennung]');
+  await expect(kennungen).toHaveCount(punkte.length);
+  expect(await kennungen.evaluateAll((knoten) => knoten.map((knoten) => knoten.getAttribute('data-kennung')))).toEqual(
+    punkte.map((punkt) => punkt.kennung),
+  );
   await expect(page.locator('[data-kennung="koerper"]')).toBeVisible();
   const achse = Number(await page.locator('[data-vergleich]').getAttribute('data-achsen-max'));
   const eigene = await page.locator('[data-du]').evaluateAll((knoten) => knoten.map((knoten) => Number(knoten.getAttribute('data-du'))));

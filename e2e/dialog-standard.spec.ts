@@ -202,9 +202,10 @@ test('Loslassen gilt sofort und die Meldung bietet Rückgängig', async ({ page 
   await expect(boss).toBeVisible();
   await boss.click();
   await expect(page).toHaveURL(/\/projekte\/\d+$/);
-  const zeile = page.locator('main .rounded-2xl').first();
-  await zeile.scrollIntoViewIfNeeded();
-  await zeile.getByRole('button', { name: /Aktionen für/ }).click();
+  const zeile = page.locator('main [data-schnell]').first();
+  const aktion = zeile.getByRole('button', { name: /Aktionen für/ });
+  await expect(aktion).toBeVisible();
+  await aktion.click();
   await page.getByRole('menuitem', { name: 'Loslassen', exact: true }).click();
   await expect(page.getByRole('alertdialog')).toHaveCount(0);
   const status = page.getByRole('status');

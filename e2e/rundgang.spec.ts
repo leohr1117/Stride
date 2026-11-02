@@ -470,11 +470,11 @@ test('Seiten, Sprachen, Darstellung, Vorbilder und Todoist', async ({ page }) =>
     const token = page.getByRole('textbox', { name: 'API-Token' });
     if (await token.count()) {
       await token.fill('e2e-todoist-token');
-      await page.getByRole('button', { name: 'Verbinden' }).click();
+      await page.getByRole('button', { name: 'Verbinden', exact: true }).click();
       await expect(page.getByRole('button', { name: 'Posteingang' })).toBeVisible();
       await page.getByRole('button', { name: 'Aktionen für Todoist' }).click();
       await page.getByRole('menuitem', { name: 'Trennen' }).click();
-      await page.getByRole('button', { name: 'Trennen' }).click();
+      await page.getByRole('button', { name: 'Trennen', exact: true }).click();
       await expect(token).toBeVisible();
     } else {
       await expect(page.getByRole('button', { name: 'Posteingang' })).toBeVisible();

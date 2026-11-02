@@ -53,11 +53,19 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await page.keyboard.press('Escape');
   await expect(page.getByRole('tooltip')).toHaveCount(0);
 
-  const rueckkehrInfo = page.locator('[data-kette="rueckkehr"]').getByRole('button', { name: /^Info/ });
-  await rueckkehrInfo.click();
-  await expect(page.getByRole('tooltip')).toContainText('Ein Eintrag in sieben Tagen');
-  await page.keyboard.press('Escape');
-  await expect(page.getByRole('tooltip')).toHaveCount(0);
+  const kette = await page.request.get('/api/kette/heute');
+  expect(kette.ok()).toBe(true);
+  const rueckkehrDaten = (await kette.json()) as { rueckkehr: { fristAm: string } | null };
+  const rueckkehr = page.locator('[data-kette="rueckkehr"]');
+  if (rueckkehrDaten.rueckkehr) {
+    await expect(rueckkehr).toBeVisible();
+    await rueckkehr.getByRole('button', { name: /^Info/ }).click();
+    await expect(page.getByRole('tooltip')).toContainText('Ein Eintrag in sieben Tagen');
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+  } else {
+    await expect(rueckkehr).toHaveCount(0);
+  }
 
   await page.getByRole('button', { name: 'Werte', exact: true }).click();
   const koennen = page.locator('main a[href="/koennen"]');

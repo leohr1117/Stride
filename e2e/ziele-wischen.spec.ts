@@ -149,9 +149,7 @@ test('wischen archiviert und löscht', async ({ page }, testInfo) => {
 
   await page.goto('/mehr/inhalte');
   const tatZeile = zeile(page, taetigkeit);
-  if (!(await tatZeile.isVisible())) {
-    await page.getByRole('button', { name: /Alle anzeigen/ }).click();
-  }
+  await tatZeile.scrollIntoViewIfNeeded();
   await expect(tatZeile).toBeVisible();
   await tatZeile.getByRole('button', { name: `Aktionen für ${taetigkeit}`, exact: true }).click();
   await page.getByRole('menuitem', { name: 'Löschen' }).click();

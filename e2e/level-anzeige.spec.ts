@@ -76,9 +76,10 @@ test('Level ohne Bruch, Radare nebeneinander, Hinweis und Ring', async ({ page }
     expect(rechts.rechts).toBeLessThanOrEqual(fenster.width + 1);
   }
   expect(await spektren.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+  const stil = await page.locator('html').getAttribute('data-stil');
   const profilLabel = page.locator('main [data-levelring] span.uppercase');
   await expect(profilLabel).toBeVisible();
-  expect(await profilLabel.evaluate((element) => getComputedStyle(element).fontSize)).toBe('12px');
+  expect(await profilLabel.evaluate((element) => getComputedStyle(element).fontSize)).toBe(stil === 'standard' ? '12px' : '10px');
   const profilZahl = page.locator('main [data-levelring] span.zahl');
   expect(await profilZahl.evaluate((element) => element.getAttribute('style') ?? '')).toBe('');
 

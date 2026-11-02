@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { STIL_INFO, type Stil } from '../shared/features/darstellung/stile.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 const SEITEN = [
@@ -69,7 +70,10 @@ test('Mehr ist das Seitenverzeichnis und die Einstellungen', async ({ page }, te
   await expect(zeile('/mehr/inhalte/verbindungen').locator('span.truncate')).toHaveText(/^(Aus|Todoist|Kalender|Todoist, Kalender)$/);
   await expect(zeile('/mehr/funktionen').locator('span.truncate')).toHaveText(/^\d+ an$/);
   await expect(zeile('/mehr/uebersicht').locator('span.truncate')).toHaveText(/^\d+ von 6$/);
-  await expect(zeile('/mehr/darstellung').locator('span.truncate')).toHaveText('Standard');
+  const gelesen = await page.request.get('/api/einstellungen');
+  expect(gelesen.ok()).toBe(true);
+  const stil = ((await gelesen.json()) as { stil: Stil }).stil;
+  await expect(zeile('/mehr/darstellung').locator('span.truncate')).toHaveText(STIL_INFO[stil].label);
   await expect(zeile('/mehr/daten').locator('span.truncate')).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
   await bild('mehr');

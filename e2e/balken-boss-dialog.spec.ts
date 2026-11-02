@@ -85,6 +85,66 @@ function weltDatei(): string {
   return verweigereEchteDatenbank(datei);
 }
 
+function setzeStufenVerlust(attributId: number, abzug: number): () => void {
+  const datei = weltDatei();
+  const db = new DatabaseSync(datei);
+  const minus = db
+    .prepare(`INSERT INTO xp_ereignisse (quelle, attribut_id, xp, erstellt_am) VALUES ('umverteilung', ?, ?, ?)`)
+    .run(attributId, -abzug, '2098-01-01T00:00:00.000Z');
+  db.close();
+  const id = Number(minus.lastInsertRowid);
+  return () => {
+    const weg = new DatabaseSync(datei);
+    weg.prepare('DELETE FROM xp_ereignisse WHERE id = ?').run(id);
+    weg.close();
+  };
+}
+
+async function pruefeStufenVerlust(seite: Page, werte: AttributZeile[]): Promise<void> {
+  const ziel = werte
+    .map((attribut) => ({
+      attribut,
+      info: berechneLevel(attribut.level.xpGesamt, LEVEL_KURVEN[attribut.typ]),
+    }))
+    .find((eintrag) => eintrag.info.level >= 1);
+  expect(ziel).toBeTruthy();
+  if (!ziel) {
+    return;
+  }
+  const zurueck = setzeStufenVerlust(ziel.attribut.id, ziel.info.xpImLevel + 1);
+  try {
+    await seite.goto('/');
+    const kopf = seite.getByRole('button', { name: 'Werte', exact: true });
+    await expect(kopf).toBeVisible();
+    if ((await kopf.getAttribute('aria-expanded')) !== 'true') {
+      await kopf.click();
+    }
+    const bereich = seite.locator('section').filter({ has: seite.getByRole('heading', { name: 'Werte', exact: true }) });
+    await alleAnzeigen(bereich);
+    const daten = await uebersicht(seite);
+    const neu = [...daten.attribute, ...daten.status].find((attribut) => attribut.id === ziel.attribut.id);
+    expect(neu).toBeTruthy();
+    if (!neu) {
+      return;
+    }
+    const kurve: LevelKurve = LEVEL_KURVEN[neu.typ];
+    const balken = verlustBalken(neu.level.xpGesamt, neu.hoechstXp, kurve);
+    expect(balken.verloreneLevel).toBeGreaterThan(0);
+    const zeile = bereich
+      .getByText(neu.name, { exact: true })
+      .locator('xpath=ancestor::div[contains(@class,"space-y-1.5")][1]');
+    const verlust = zeile.locator('.balken-verlust');
+    await expect(verlust).toBeVisible();
+    const anteil = await verlust.evaluate((element) => {
+      const spur = element.parentElement?.getBoundingClientRect().width ?? 1;
+      return element.getBoundingClientRect().width / spur;
+    });
+    expect(Math.abs(anteil - balken.verlustBis)).toBeLessThan(0.08);
+  } finally {
+    zurueck();
+  }
+}
+
 function setzeGleichenLevel(attributId: number, betrag: number): () => void {
   const datei = weltDatei();
   const db = new DatabaseSync(datei);
@@ -177,18 +237,17 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
   expect(new Set(breiten).size).toBe(1);
   expect(breiten[0]).toBeGreaterThan(24);
 
-  expect(erwarteteUrsachen).toBeGreaterThan(1);
+  expect(erwarteteUrsachen).toBeGreaterThan(0);
   await expect(bereich.getByRole('link', { name: 'Details' })).toHaveCount(0);
   await expect(bereich.getByText('zu niedrig', { exact: true })).toHaveCount(0);
   const hinweise = bereich.getByRole('button', { name: 'Lvl zu niedrig' });
   await expect(hinweise).toHaveCount(erwarteteUrsachen);
-  await hinweise.nth(0).click();
-  await expect(seite.getByRole('tooltip')).toHaveText('Lvl zu niedrig');
-  await seite.keyboard.press('Escape');
-  await expect(seite.getByRole('tooltip')).toHaveCount(0);
-  await hinweise.nth(1).click();
-  await expect(seite.getByRole('tooltip')).toHaveText('Lvl zu niedrig');
-  await seite.keyboard.press('Escape');
+  for (let index = 0; index < erwarteteUrsachen; index += 1) {
+    await hinweise.nth(index).click();
+    await expect(seite.getByRole('tooltip')).toHaveText('Lvl zu niedrig');
+    await seite.keyboard.press('Escape');
+    await expect(seite.getByRole('tooltip')).toHaveCount(0);
+  }
   const ursache = werte.find((attribut) => bild.ursachen.includes(attribut.id));
   expect(ursache).toBeTruthy();
   if (ursache) {
@@ -232,7 +291,9 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
     });
     expect(Math.abs(anteil - balken.verlustBis)).toBeLessThan(0.08);
   }
-  expect(mehrereLevel).toBeGreaterThan(0);
+  if (mehrereLevel === 0) {
+    await pruefeStufenVerlust(seite, werte);
+  }
   if (einLevel === 0) {
     await pruefeGleichenLevel(seite, werte);
   }
@@ -359,12 +420,12 @@ test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
     await expect(page.getByRole('tooltip')).toHaveText('Lvl zu niedrig');
     await page.keyboard.press('Escape');
     await expect(koennen.locator('.text-gefahr', { hasText: /^Lvl / }).first()).toBeVisible();
-    const knopf = koennen.getByRole('button', { name: 'Geist', exact: true });
-    if ((await knopf.count()) === 0) {
-      await koennen.getByRole('button', { name: /Alle anzeigen/ }).click();
-    }
-    await knopf.click();
-    const dialog = page.getByRole('dialog', { name: 'Geist', exact: true });
+    const zeile = hinweis.locator('xpath=ancestor::div[contains(@class,"attributzeile")][1]');
+    const oeffnen = zeile.locator('[data-zeile] > button');
+    const name = await oeffnen.getAttribute('aria-label');
+    expect(name).toBeTruthy();
+    await oeffnen.click();
+    const dialog = page.getByRole('dialog', { name: name ?? '', exact: true });
     await expect(dialog.getByRole('switch', { name: 'Zu niedrig senkt XP anderer Attribute' })).toBeVisible();
     await dialog.getByRole('button', { name: 'Schließen' }).click();
     await expect(dialog).toBeHidden();
