@@ -38,7 +38,8 @@ if (fs.existsSync(DATENBANK)) {
 
 process.env.DB_PFAD = DATENBANK;
 
-const { ladeAttribute } = await import('./features/attribute/attribute.ts');
+const { aktiviereAttribut, ladeAttribute } = await import('./features/attribute/attribute.ts');
+const { aendereEinstellungen } = await import('./features/einstellungen/einstellungen.ts');
 const { erstelleVorlage, ladeVorlagen } = await import('./features/taetigkeiten/vorlagen.ts');
 const struktur = await import('./services/struktur.ts');
 const vorhabenDienst = await import('./features/ziele/vorhaben.ts');
@@ -51,6 +52,36 @@ const { lokalesDatum, tagesbeginn } = await import('./services/zeit.ts');
 const { schliesseDatenbank } = await import('./db.ts');
 
 let zustandZufall = STARTWERT_ZUFALL;
+function schalteBeispielEin(kennungen: readonly AttributKennung[]): void {
+  aendereEinstellungen({
+    funktionen: {
+      koennen: true,
+      status: true,
+      faehigkeiten: true,
+      basis: true,
+      ausruestung: true,
+      bossAngriffe: true,
+    },
+    ebenen: {
+      visionen: true,
+      organisationen: true,
+      projekte: true,
+      vorhaben: true,
+    },
+  });
+  const aktiv = new Set<string>();
+  for (const attribut of ladeAttribute(false)) {
+    if (attribut.kennung !== null) {
+      aktiv.add(attribut.kennung);
+    }
+  }
+  for (const kennung of kennungen) {
+    if (!aktiv.has(kennung)) {
+      aktiviereAttribut(kennung, 'behalten', null);
+    }
+  }
+}
+
 function zufall(): number {
   zustandZufall = (zustandZufall + 0x6d2b79f5) | 0;
   let t = Math.imul(zustandZufall ^ (zustandZufall >>> 15), 1 | zustandZufall);
@@ -91,6 +122,8 @@ const GRUNDTAETIGKEITEN: { name: string; icon: IconName; gewichte: [AttributKenn
   { name: 'Arbeiten', icon: 'briefcase', gewichte: [['ressourcen', 50], ['disziplin', 30], ['intellekt', 20]] },
   { name: 'Erschaffen', icon: 'lightbulb', gewichte: [['kreativitaet', 70], ['disziplin', 30]] },
 ];
+
+schalteBeispielEin([...new Set(GRUNDTAETIGKEITEN.flatMap((grund) => grund.gewichte.map(([kennung]) => kennung)))]);
 
 const attributIds = new Map<AttributKennung, number>();
 for (const attribut of ladeAttribute(false)) {

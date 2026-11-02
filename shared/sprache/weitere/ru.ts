@@ -1,5 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beispieldaten": "Примерные данные",
+  "Beispieldaten schalten die nötigen Bereiche ein und füllen eine neue Datenbank.": "Примерные данные включают нужные разделы и заполняют новую базу.",
   "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "Менеджеры паролей могут заполнять и сохранять вход, первую учётную запись и смену пароля.",
   "Schlägt die Anmeldung fehl, bleibt der Benutzername stehen. Nur das Passwort wird geleert.": "Если вход не удался, имя пользователя остаётся. Очищается только пароль.",
   "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "У атрибута Спад стоит над полями потери, только если спад включён.",

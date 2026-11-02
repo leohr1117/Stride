@@ -1,5 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beispieldaten": "Données d'exemple",
+  "Beispieldaten schalten die nötigen Bereiche ein und füllen eine neue Datenbank.": "Les données d'exemple activent les domaines nécessaires et remplissent une base neuve.",
   "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "Les gestionnaires de mots de passe peuvent remplir et enregistrer la connexion, le premier compte et le changement de mot de passe.",
   "Schlägt die Anmeldung fehl, bleibt der Benutzername stehen. Nur das Passwort wird geleert.": "Si la connexion échoue, le nom d'utilisateur reste. Seul le mot de passe est vidé.",
   "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "Sur un attribut, Déclin est au-dessus des champs de perte, seulement si le déclin est actif.",

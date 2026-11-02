@@ -238,8 +238,19 @@ test('Ansichten bleiben bei 390 und 1440 im Bild', async ({ page }, testInfo) =>
     }
   }
 
+  await page.goto('/mehr/profil/accounts');
+  await page.getByRole('heading', { name: 'Accounts' }).waitFor();
+  await expect(page.getByText('Lädt …')).toHaveCount(0);
+  if (projekt === 'handy') {
+    await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toHaveCount(0);
+  }
+  await page.screenshot({ path: `tmp-test/ueberlauf/${projekt}-accounts.png` });
+
+  await page.goto('/');
+  await page.getByRole('heading', { name: 'Heute' }).waitFor();
   await page.getByRole('button', { name: 'Eintrag loggen' }).click();
   await expect(page.getByRole('dialog', { name: 'Was hast du getan?' })).toBeVisible();
+  await page.screenshot({ path: `tmp-test/ueberlauf/${projekt}-eintrag.png` });
   const eintrag = await miss(page);
   if (eintrag.length > 0) {
     berichte.push({ name: 'dialog-eintrag', funde: eintrag });

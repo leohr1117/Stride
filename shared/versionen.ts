@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.49.1',
+    seiten: 'Beispieldaten',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Beispieldaten schalten die nötigen Bereiche ein und füllen eine neue Datenbank.'],
+      },
+    ],
+  },
+  {
     version: '3.49.0',
     seiten: 'Anmeldung, Passwort',
     abschnitte: [

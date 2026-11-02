@@ -1,5 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beispieldaten": "サンプルデータ",
+  "Beispieldaten schalten die nötigen Bereiche ein und füllen eine neue Datenbank.": "サンプルデータは必要な領域をオンにし、新しいデータベースを埋めます。",
   "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "パスワードマネージャーは、ログイン、最初のアカウント、パスワードの変更を入力して保存できます。",
   "Schlägt die Anmeldung fehl, bleibt der Benutzername stehen. Nur das Passwort wird geleert.": "ログインに失敗すると、ユーザー名は残ります。消えるのはパスワードだけです。",
   "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "属性では、減衰がオンのときだけ、損失の欄の上に減衰があります。",

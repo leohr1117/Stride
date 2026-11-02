@@ -1,5 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beispieldaten": "Datos de ejemplo",
+  "Beispieldaten schalten die nötigen Bereiche ein und füllen eine neue Datenbank.": "Los datos de ejemplo activan las áreas necesarias y llenan una base de datos nueva.",
   "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "Los gestores de contraseñas pueden rellenar y guardar el inicio de sesión, la primera cuenta y el cambio de contraseña.",
   "Schlägt die Anmeldung fehl, bleibt der Benutzername stehen. Nur das Passwort wird geleert.": "Si el inicio de sesión falla, el nombre de usuario se queda. Solo se vacía la contraseña.",
   "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "En un atributo, Decaimiento está sobre los campos de pérdida, solo cuando el decaimiento está activo.",

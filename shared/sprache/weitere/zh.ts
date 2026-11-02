@@ -1,5 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beispieldaten": "示例数据",
+  "Beispieldaten schalten die nötigen Bereiche ein und füllen eine neue Datenbank.": "示例数据会打开所需区域，并填入新的数据库。",
   "Passwortmanager können die Anmeldung, das erste Konto und das Ändern des Passworts ausfüllen und speichern.": "密码管理器可以填写并保存登录、第一个账号和修改密码。",
   "Schlägt die Anmeldung fehl, bleibt der Benutzername stehen. Nur das Passwort wird geleert.": "登录失败时，用户名保留。只清空密码。",
   "Beim Attribut steht Verfall über den Verlust-Feldern, nur wenn Verfall an ist.": "属性上，衰退位于损失栏之上，仅在衰退开启时显示。",

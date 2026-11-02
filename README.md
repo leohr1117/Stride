@@ -42,12 +42,12 @@ Weitere Befehle:
 npm test               # Unit-Tests (Vitest)
 npm run typecheck      # Typprüfung
 npx playwright test    # Browser-Tests (brauchen Testkonten in data/)
-npm run beispieldaten  # Beispieldaten in data/app.db anlegen
+npm run beispieldaten  # Beispielwelt in data/app.db; schaltet die nötigen Bereiche ein
 npm run build          # Produktions-Build nach client/dist
 npm start              # Server mit fertigem Build
 ```
 
-Die Daten liegen in `data/` (`app.db` und `zugang.db`).
+Die Daten liegen in `data/` (`app.db` und `zugang.db`). Liegt `app.db` schon vor, legt `npm run beispieldaten` nichts an. `npm run beispieldaten -- --ersetzen` sichert die alte Datei und baut die Beispielwelt neu. Dafür schaltet das Skript die Bereiche ein, die die Beispielwelt braucht, und aktiviert fehlende Attribute.
 
 ### Umgebungsvariablen
 
