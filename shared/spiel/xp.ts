@@ -72,7 +72,7 @@ export function investitionsBonus(groesse: number): number {
 export const INVESTITION_INFO =
   'Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.';
 
-export const RESSOURCEN_SCHALTER = 'Bonus auch für Ressourcen';
+export const RESSOURCEN_SCHALTER = 'Bonus gilt auch für Ressourcen';
 
 export const RESSOURCEN_INFO = 'Ressourcen werden mit investiert und bekommen denselben Bonus.';
 

@@ -1,5 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Dialoge für Eintrag, Ziele, Tätigkeiten, Investitionen und Erfolge haben eine feste Reihenfolge.', 'Dialogs for an entry, goals, activities, investments, and achievements follow a fixed order.'],
+  ['Eine neue Tätigkeit aus einem Projekt gilt für alle Projekte oder nur für dieses.', 'A new activity from a project applies to all projects or only to this one.'],
+  ['Bei einer Vision steht die XP beim Erreichen neben dem Level.', 'On a vision, the XP on reaching sits beside the level.'],
+  ['Der Investitionsdialog hat kein Info-Icon. Der Schalter heißt Bonus gilt auch für Ressourcen.', 'The investment dialog has no info icon. The switch says the bonus also applies to resources.'],
+  ['Erfolge zeigen den Stand im Titel und die Zeile Titel wählen.', 'Achievements show the count in the title and the row for choosing a title.'],
   ['Auf diesem Gerät ist ein Schalter. Darunter steht, ob Benachrichtigungen an sind.', 'On this device is a switch. Below it says whether notifications are on.'],
   ['Die Arten heißen Streak in Gefahr, Boss einen Tag vorher und Rückkehr geht auf. Ist das Gerät aus, sind die Schalter gesperrt.', 'The types are called Streak at risk, Boss one day before, and Return opens. When the device is off, the switches are locked.'],
   ['Die Ruhezeit steht in einer Zeile und öffnet die Felder Ruhe von und Ruhe bis.', 'Quiet hours sits on a row and opens the fields Quiet from and Quiet until.'],

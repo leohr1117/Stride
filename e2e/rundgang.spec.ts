@@ -163,7 +163,7 @@ test('Beschriftungen folgen der Sprache', async ({ page }) => {
     const menue = page.getByRole('menu', { name: 'New' });
     await expect(menue.getByRole('menuitem')).toHaveText(['Vision', 'Organization', 'Project']);
     await menue.getByRole('menuitem', { name: 'Vision', exact: true }).click();
-    await expect(page.getByRole('dialog', { name: 'New Vision' })).toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Vision', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Close' }).click();
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(

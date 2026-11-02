@@ -5,14 +5,14 @@ import type { Attribut, Investition, InvestitionAenderung, InvestitionDaten, Inv
 import type { Sichtbarkeit } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { ICONS, GRENZEN, NEUTRAL_FARBE, type IconName } from '../../../../shared/spiel/begriffe.ts';
 import { istTypAktiv } from '../../../../shared/spiel/funktionen.ts';
-import { INVESTITION_GROESSEN, INVESTITION_INFO, RESSOURCEN_INFO, RESSOURCEN_SCHALTER, investitionsBonus } from '../../../../shared/spiel/xp.ts';
+import { INVESTITION_GROESSEN, INVESTITION_INFO, RESSOURCEN_SCHALTER, investitionsBonus } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { bonusProzent } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { Dialog } from '../../components/Dialog.tsx';
 import { useKopf } from '../../components/Kopf.tsx';
 import { ArchivListe } from '../../components/ArchivListe.tsx';
-import { SchnellNebenaktion, SchnellZeile } from '../../components/SchnellAktion.tsx';
+import { SchnellMenueKnopf, SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
 import { AnlegeZeile, Liste, Zeile, ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
@@ -346,7 +346,7 @@ export function InvestitionenSeite() {
     <div className="space-y-6">
       <Fehlermeldung fehler={error} />
       {eigene.length === 0 ? (
-        <Leer text={tx('Noch keine Investition.')} aktion={<Knopf onClick={() => setDialog('neu')}>{tx('Investition anlegen')}</Knopf>} />
+        <Leer text={tx('Noch keine Investition.')} aktion={<Knopf onClick={() => setDialog('neu')}>{`+ ${tx('Investition anlegen')}`}</Knopf>} />
       ) : (
         <Liste>
           {eigene.map((investition) => {
@@ -397,7 +397,21 @@ export function InvestitionenSeite() {
       />
       <Dialog
         offen={dialog !== null}
-        titel={dialog === 'neu' ? tx('Neue Investition') : tx('Investition')}
+        titel={tx('Investition')}
+        menu={
+          dialog && dialog !== 'neu' ? (
+            <SchnellMenueKnopf
+              ziel={{
+                art: 'investition',
+                id: dialog.id,
+                name: dialog.name,
+                archiviert: dialog.archiviert,
+                loeschbar: dialog.loeschbar,
+              }}
+              onErledigt={() => setDialog(null)}
+            />
+          ) : undefined
+        }
         onSchliessen={() => setDialog(null)}
       >
         {dialog !== null && (
@@ -489,28 +503,14 @@ function InvestitionFormular({
         <IconAuswahl wert={icon} farbe={NEUTRAL_FARBE} onAendern={setIcon} />
       </Feld>
       <Fehlermeldung fehler={fehler} />
-      <div className="flex gap-2">
-        {investition ? (
-          <SchnellNebenaktion
-            ziel={{
-              art: 'investition',
-              id: investition.id,
-              name: investition.name,
-              archiviert: investition.archiviert,
-              loeschbar: investition.loeschbar,
-            }}
-            onErledigt={onFertig}
-          />
-        ) : null}
-        <Knopf
-          type="submit"
-          variante="primaer"
-          className="flex-1"
-          disabled={!name.trim() || attributId === null || speichern.isPending}
-        >
-          {tx("Speichern")}
-        </Knopf>
-      </div>
+      <Knopf
+        type="submit"
+        variante="primaer"
+        className="w-full"
+        disabled={!name.trim() || attributId === null || speichern.isPending}
+      >
+        {tx("Speichern")}
+      </Knopf>
     </Formular>
   );
 }
@@ -614,8 +614,8 @@ export function ProjektInvestition({ projekt }: { projekt: Projekt }) {
           ) : null}
           {projekt.investition && ressourcen && !zielIstRessourcen ? (
             <ZeileSchalter
-              titel={RESSOURCEN_SCHALTER}
-              info={RESSOURCEN_INFO}
+              titel={tx(RESSOURCEN_SCHALTER)}
+              name={tx(RESSOURCEN_SCHALTER)}
               an={projekt.investitionRessourcen}
               onAendern={(an) => speichere({ investitionRessourcen: an })}
             />

@@ -1,5 +1,4 @@
 import { tx } from '../text.ts';
-import { Lightbulb } from 'lucide-react';
 import { useState } from 'react';
 import type { LevelBeispiel } from '../../../shared/spiel/orientierung.ts';
 import { zahl } from '../format.ts';
@@ -25,9 +24,8 @@ export function LevelBeispiele({
       <button
         type="button"
         onClick={() => setOffen(!offen)}
-        className="flex items-center gap-1 text-xs text-leise transition hover:text-haupt"
+        className="inline-flex min-h-12 items-center rounded-lg px-4 text-sm font-medium text-leise hover:bg-flaeche-2 hover:text-haupt"
       >
-        <Lightbulb className="size-3.5" />
         {tx("Beispiele")}
       </button>
       {offen && (

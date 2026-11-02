@@ -1,14 +1,13 @@
-import { attributName, tx } from '../text.ts';
-import { CircleCheck, CircleX, Swords, Trophy } from 'lucide-react';
-import { Link } from 'react-router';
+import { tx } from '../text.ts';
+import { Swords, Trophy } from 'lucide-react';
 import type { BonusQuelle, Eintrag } from '../../../shared/api/index.ts';
 import { NEUTRAL_FARBE } from '../../../shared/spiel/begriffe.ts';
 import { istAn } from '../../../shared/spiel/sichtbarkeit.ts';
-import { bonusProzent, dauerText, faktorText, lokalesDatum, mitVorzeichen, tagesUeberschrift, uhrzeit, zahl } from '../format.ts';
+import { bonusProzent, dauerText, faktorText, lokalesDatum, tagesUeberschrift, uhrzeit, zahl } from '../format.ts';
 import { useSichtbarkeit } from '../funktionen.ts';
 import type { SchnellZiel } from '../schnell.ts';
 import { Icon } from './Icons.tsx';
-import { SchnellNebenaktion, SchnellZeile } from './SchnellAktion.tsx';
+import { SchnellZeile } from './SchnellAktion.tsx';
 
 const BONUS: Record<BonusQuelle, string> = {
   bestaendigkeit: 'Tageskette',
@@ -53,7 +52,7 @@ function MeilensteinPill({ gross = false }: { gross?: boolean }) {
   );
 }
 
-function schnellZiel(eintrag: Eintrag): SchnellZiel {
+export function eintragSchnellZiel(eintrag: Eintrag): SchnellZiel {
   const notiz = eintrag.notiz.trim().split('\n')[0] ?? '';
   const hinweis = eintrag.abschluss
     ? tx('Die {xp} XP werden wieder abgezogen. Das Vorhaben wird dabei wieder geöffnet.', { xp: eintrag.xp })
@@ -72,7 +71,7 @@ export function EintragKarte({ eintrag, onOeffnen }: { eintrag: Eintrag; onOeffn
       ? 'border-xp/40 bg-xp/5'
       : 'border-rand bg-flaeche';
   return (
-    <SchnellZeile ziel={schnellZiel(eintrag)} className={`rounded-2xl border ${rahmen}`} hintergrund="bg-transparent">
+    <SchnellZeile ziel={eintragSchnellZiel(eintrag)} className={`rounded-2xl border ${rahmen}`} hintergrund="bg-transparent">
       {(menue) => (
     <div className="relative">
     <button
@@ -118,66 +117,85 @@ function MetaChip({ kinder }: { kinder: string }) {
   return <span className="max-w-full truncate rounded-full bg-flaeche-2 px-2.5 py-1 text-xs">{kinder}</span>;
 }
 
-export function EintragDetail({ eintrag, onEntfernt }: { eintrag: Eintrag; onEntfernt?: () => void }) {
+function wofuerText(eintrag: Eintrag, boss: boolean): string {
+  const teile: string[] = [];
+  if (eintrag.projektName) {
+    teile.push(eintrag.projektName);
+  }
+  if (eintrag.kontext && eintrag.kontext.titel !== eintrag.projektName) {
+    teile.push(eintrag.kontext.titel);
+  }
+  if (eintrag.vorhaben && !boss) {
+    const stand =
+      eintrag.abschluss === 'geschafft' ? `${tx('Geschafft:')} ` : eintrag.abschluss === 'gescheitert' ? `${tx('Gescheitert:')} ` : '';
+    const anlauf = eintrag.vorhaben.anlauf > 1 ? ` · ${tx('{anlauf}. Anlauf', { anlauf: eintrag.vorhaben.anlauf })}` : '';
+    teile.push(`${stand}${eintrag.vorhaben.titel}${anlauf}`);
+  }
+  if (eintrag.faehigkeit) {
+    teile.push(eintrag.faehigkeit.name);
+  }
+  if (eintrag.knotenTitel) {
+    teile.push(eintrag.knotenTitel);
+  }
+  if (eintrag.basisAufgabe) {
+    teile.push(eintrag.basisAufgabe);
+  }
+  return teile.join(' · ');
+}
+
+function DetailZeile({ label, wert }: { label: string; wert: string }) {
+  if (!wert) {
+    return null;
+  }
+  return (
+    <div className="flex min-h-12 items-start gap-3 py-3">
+      <span className="w-28 shrink-0 text-sm text-leise">{label}</span>
+      <span className="min-w-0 flex-1 text-sm break-words whitespace-pre-line">{wert}</span>
+    </div>
+  );
+}
+
+export function EintragDetail({ eintrag }: { eintrag: Eintrag }) {
   const sichtbarkeit = useSichtbarkeit();
-  const projekteAn = istAn('projekte', sichtbarkeit);
-  const faehigkeitenAn = istAn('faehigkeiten', sichtbarkeit);
   const boss = istAn('bossAngriffe', sichtbarkeit) && eintrag.bossSieg != null ? eintrag.bossSieg : null;
   const wann = `${tagesUeberschrift(lokalesDatum(new Date(eintrag.erstelltAm)))} · ${uhrzeit(eintrag.erstelltAm)}`;
-  const boni = eintrag.boni
-    .filter((quelle) => quelle !== 'meilenstein' && (boss === null || quelle !== 'beute'))
-    .map((quelle) => tx(BONUS[quelle]));
-  const maxAbs = eintrag.anteile.reduce((bisher, anteil) => Math.max(bisher, Math.abs(anteil.xp)), 0);
-  const faktorAbweichend = Math.abs(eintrag.faktor - 1) > 0.005;
+  const dauer =
+    eintrag.stunden === null
+      ? ''
+      : Math.abs(eintrag.faktor - 1) > 0.005
+        ? `${dauerText(eintrag.stunden)} · ${faktorText(eintrag.faktor)}`
+        : dauerText(eintrag.stunden);
+  const extras = [
+    ...(istAn('ausruestung', sichtbarkeit) && eintrag.ausruestungBonus > 0
+      ? [tx('Investitionen {bonus}', { bonus: bonusProzent(eintrag.ausruestungBonus) })]
+      : []),
+    ...eintrag.boni.filter((quelle) => quelle !== 'meilenstein' && quelle !== 'beute').map((quelle) => tx(BONUS[quelle])),
+  ];
+  const erkenntnis = eintrag.erkenntnis?.trim() ?? '';
+  const notiz = [eintrag.notiz.trim(), erkenntnis ? `${tx('Mitgenommen:')} ${erkenntnis}` : '']
+    .filter((teil) => teil.length > 0)
+    .join('\n');
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 space-y-1">
-          <p className="text-sm text-leise">{wann}</p>
-          {eintrag.meilenstein && boss === null ? <MeilensteinPill gross /> : null}
-        </div>
-        <p className="zahl shrink-0 text-lg font-semibold text-xp">+{zahl(eintrag.xp)} XP</p>
-      </div>
-
-      <div className="space-y-2">
-        {eintrag.projektName &&
-          (projekteAn && eintrag.projektId !== null ? (
-            <Link to={`/projekte/${eintrag.projektId}`} className="block truncate text-sm font-medium hover:underline">
-              {eintrag.projektName}
-            </Link>
-          ) : (
-            <p className="truncate text-sm font-medium">{eintrag.projektName}</p>
-          ))}
-        {eintrag.kontext && eintrag.kontext.titel !== eintrag.projektName && (
-          <p className="flex min-w-0 items-center gap-2 text-sm text-leise">
-            <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: eintrag.kontext.farbe }} />
-            <span className="truncate">{eintrag.kontext.titel}</span>
-          </p>
-        )}
-        {eintrag.vorhaben && boss === null && (
-          <p className="flex items-center gap-1.5 text-sm">
-            {eintrag.abschluss === 'geschafft' && <CircleCheck className="size-4 shrink-0 text-erfolg" />}
-            {eintrag.abschluss === 'gescheitert' && <CircleX className="size-4 shrink-0 text-leise" />}
-            <span className="min-w-0">
-              {eintrag.abschluss === 'geschafft' && `${tx('Geschafft:')} `}
-              {eintrag.abschluss === 'gescheitert' && `${tx('Gescheitert:')} `}
-              {eintrag.vorhaben.titel}
-              {eintrag.vorhaben.anlauf > 1 ? ` · ${tx('{anlauf}. Anlauf', { anlauf: eintrag.vorhaben.anlauf })}` : ''}
+    <div>
+      <DetailZeile label={tx('Tätigkeit')} wert={eintrag.vorlageName} />
+      <DetailZeile label={tx('Wofür?')} wert={wofuerText(eintrag, boss !== null)} />
+      <DetailZeile label={tx('Dauer')} wert={dauer} />
+      <DetailZeile label={tx('Datum')} wert={wann} />
+      <div className="flex min-h-12 items-start gap-3 py-3">
+        <span className="w-28 shrink-0 text-sm text-leise">{tx('XP')}</span>
+        <span className="min-w-0 flex-1 text-sm">
+          <span className="zahl font-semibold text-xp">+{zahl(eintrag.xp)} XP</span>
+          {extras.map((text) => (
+            <span key={text} className="mt-1 block">
+              {text}
             </span>
-          </p>
-        )}
-        {eintrag.notiz && <p className="text-sm whitespace-pre-line">{eintrag.notiz}</p>}
-        {eintrag.erkenntnis && (
-          <p className="text-sm">
-            <span className="text-leise">{tx('Mitgenommen:')} </span>
-            {eintrag.erkenntnis}
-          </p>
-        )}
+          ))}
+        </span>
       </div>
-
+      <DetailZeile label={tx('Notiz')} wert={notiz} />
       {boss && (
-        <div className="rounded-2xl border border-gefahr/40 bg-gefahr/10 p-3">
+        <div className="mt-2 rounded-2xl border border-gefahr/40 bg-gefahr/10 p-3">
           <div className="flex items-center gap-2">
             <Swords className="size-4 shrink-0 text-gefahr" aria-hidden="true" />
             <p className="min-w-0 truncate font-medium text-gefahr">{eintrag.vorhaben?.titel}</p>
@@ -189,64 +207,6 @@ export function EintragDetail({ eintrag, onEntfernt }: { eintrag: Eintrag; onEnt
           </div>
         </div>
       )}
-
-      {(eintrag.stunden !== null ||
-        faktorAbweichend ||
-        (istAn('ausruestung', sichtbarkeit) && eintrag.ausruestungBonus > 0) ||
-        eintrag.basisAufgabe ||
-        eintrag.faehigkeit ||
-        eintrag.knotenTitel ||
-        eintrag.herkunft ||
-        boni.length > 0) && (
-        <div className="flex flex-wrap gap-1.5">
-          {eintrag.stunden !== null ? <MetaChip kinder={dauerText(eintrag.stunden)} /> : null}
-          {faktorAbweichend ? <MetaChip kinder={faktorText(eintrag.faktor)} /> : null}
-          {istAn('ausruestung', sichtbarkeit) && eintrag.ausruestungBonus > 0 ? (
-            <MetaChip kinder={tx('Investitionen {bonus}', { bonus: bonusProzent(eintrag.ausruestungBonus) })} />
-          ) : null}
-          {eintrag.basisAufgabe ? <MetaChip kinder={tx('Basis · {name}', { name: eintrag.basisAufgabe })} /> : null}
-          {eintrag.faehigkeit ? (
-            faehigkeitenAn ? (
-              <Link
-                to={`/faehigkeiten/${eintrag.faehigkeit.id}`}
-                className="max-w-full truncate rounded-full bg-flaeche-2 px-2.5 py-1 text-xs hover:underline"
-              >
-                {tx('Fähigkeit · {name}', { name: eintrag.faehigkeit.name })}
-              </Link>
-            ) : (
-              <MetaChip kinder={tx('Fähigkeit · {name}', { name: eintrag.faehigkeit.name })} />
-            )
-          ) : null}
-          {eintrag.knotenTitel ? <MetaChip kinder={tx('Fertigkeit · {name}', { name: eintrag.knotenTitel })} /> : null}
-          {eintrag.herkunft ? <MetaChip kinder={tx('Herkunft · {name}', { name: eintrag.herkunft })} /> : null}
-          {boni.map((bonus) => (
-            <MetaChip key={bonus} kinder={bonus} />
-          ))}
-        </div>
-      )}
-
-      {eintrag.anteile.length > 0 && (
-        <div className="space-y-1.5">
-          {eintrag.anteile.map((anteil) => {
-            const breite = maxAbs > 0 ? Math.max(8, Math.round((Math.abs(anteil.xp) / maxAbs) * 100)) : 0;
-            const farbe = anteil.xp < 0 ? 'var(--gefahr)' : anteil.farbe || FALLBACK_FARBE;
-            return (
-              <div key={anteil.attributId} className="flex items-center gap-2 rounded-xl bg-flaeche-2 px-2.5 py-1.5">
-                <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: anteil.farbe || FALLBACK_FARBE }} />
-                <span className="min-w-0 flex-1 truncate text-sm">{attributName({ name: anteil.name })}</span>
-                <span className="h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-grund">
-                  <span className="block h-full rounded-full" style={{ width: `${breite}%`, backgroundColor: farbe }} />
-                </span>
-                <span className={`zahl w-12 shrink-0 text-right text-xs ${anteil.xp < 0 ? 'text-gefahr' : ''}`}>
-                  {mitVorzeichen(anteil.xp)}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      <SchnellNebenaktion ziel={schnellZiel(eintrag)} onErledigt={onEntfernt} />
     </div>
   );
 }

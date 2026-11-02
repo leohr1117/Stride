@@ -164,11 +164,38 @@ export function aendereVorlage(id: number, aenderung: Partial<VorlageDaten> & { 
     }
   }
 
+  if (aenderung.projektId !== undefined && aenderung.projektId !== null) {
+    const projekt = eine<{ id: number }>('SELECT id FROM projekte WHERE id = ?', aenderung.projektId);
+    if (!projekt) {
+      throw nichtGefunden('Das Projekt');
+    }
+    const fremd = eine<{ name: string; standard: number; abschluss: number }>(
+      `SELECT p.name,
+              (p.standard_vorlage_id = ?) AS standard,
+              (p.abschluss_vorlage_id = ?) AS abschluss
+       FROM projekte p ${KONTEXT_JOINS}
+       WHERE (p.standard_vorlage_id = ? OR p.abschluss_vorlage_id = ?) AND p.id != ? AND ${PROJEKT_AKTIV}
+       LIMIT 1`,
+      id,
+      id,
+      id,
+      id,
+      aenderung.projektId,
+    );
+    if (fremd?.standard) {
+      throw ungueltig(`Die Tätigkeit ist Standard im Projekt "${fremd.name}". Wähle dort zuerst eine andere.`);
+    }
+    if (fremd?.abschluss) {
+      throw ungueltig(`Die Tätigkeit ist die Abschlusstätigkeit im Projekt "${fremd.name}". Wähle dort zuerst eine andere.`);
+    }
+  }
+
   inTransaktion(() => {
     aktualisiere('vorlagen', id, {
       name: aenderung.name,
       icon: aenderung.icon,
       archiviert: alsZahl(aenderung.archiviert),
+      projekt_id: aenderung.projektId === undefined ? undefined : aenderung.projektId,
     });
     if (aenderung.gewichte !== undefined) {
       setzeGewichte(id, aenderung.gewichte);

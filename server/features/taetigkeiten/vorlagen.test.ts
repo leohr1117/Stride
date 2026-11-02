@@ -2,6 +2,7 @@ import { mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { afterAll, afterEach, describe, expect, it } from 'vitest';
 import { eine, mitWelt, schliesseWelt } from '../../db.ts';
+import { erstelleProjekt } from '../../services/struktur.ts';
 import { aendereVorlage, erstelleVorlage, ladeVorlagen, ordneVorlagen } from './vorlagen.ts';
 
 const wurzel = path.join(process.cwd(), 'tmp-test', 'vorlagen');
@@ -53,6 +54,25 @@ function aktivIds(): number[] {
     .filter((eintrag) => !eintrag.archiviert)
     .map((eintrag) => eintrag.id);
 }
+
+describe('aendereVorlage', () => {
+  it('bindet eine Tätigkeit an ein Projekt und löst die Bindung wieder', () => {
+    mitWelt(welt(), () => {
+      const id = vorlage('Gebunden');
+      const projekt = erstelleProjekt({
+        name: 'Ziel',
+        beschreibung: '',
+        visionId: null,
+        organisationId: null,
+        standardVorlageId: id,
+      });
+      expect(aendereVorlage(id, { projektId: projekt.id }).projektId).toBe(projekt.id);
+      expect(aendereVorlage(id, { projektId: null }).projektId).toBeNull();
+      expect(() => aendereVorlage(id, { projektId: 9_999_999 })).toThrow(/Projekt/);
+      expect(ladeVorlagen().find((eintrag) => eintrag.id === id)?.projektId).toBeNull();
+    });
+  });
+});
 
 describe('ordneVorlagen', () => {
   it('setzt die Reihenfolge und lässt Archivierte unten', () => {

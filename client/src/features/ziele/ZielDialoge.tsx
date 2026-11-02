@@ -1,8 +1,8 @@
 import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
-import type { Organisation, Projekt, Vision } from '../../../../shared/api/index.ts';
+import { useRef, useState, type ReactNode, type RefObject } from 'react';
+import type { Organisation, Projekt, Vision, Vorlage } from '../../../../shared/api/index.ts';
 import { FARBEN, GRENZEN } from '../../../../shared/spiel/begriffe.ts';
 import { VISION_BEISPIELE } from '../../../../shared/spiel/orientierung.ts';
 import { fehlendeZuordnung, ZIEL_MARKE, zielTitel } from '../../../../shared/spiel/ebenen.ts';
@@ -11,11 +11,12 @@ import { VISION, visionBeute } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { zahl } from '../../format.ts';
 import { useEbenen } from '../../funktionen.ts';
+import { AuswahlBlatt, type AuswahlOption } from '../../components/AuswahlBlatt.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
-import { SchnellNebenaktion } from '../../components/SchnellAktion.tsx';
+import { SchnellMenueKnopf } from '../../components/SchnellAktion.tsx';
 import { LevelBeispiele } from '../../components/Orientierung.tsx';
 import { NeueTaetigkeit } from '../taetigkeiten/TaetigkeitFormular.tsx';
-import { EINGABE_STIL, Farbauswahl, Feld, Fehlermeldung, Formular as FormularKasten, InfoHinweis, Knopf } from '../../ui/index.ts';
+import { EINGABE_STIL, Farbauswahl, Feld, Fehlermeldung, Formular as FormularKasten, Knopf } from '../../ui/index.ts';
 
 export type ZielBearbeitung =
   | { art: 'vision'; vision: Vision | null }
@@ -35,24 +36,103 @@ function istBestehend(bearbeitung: NonNullable<ZielBearbeitung>): boolean {
 }
 
 function dialogTitel(bearbeitung: NonNullable<ZielBearbeitung>): string {
-  const name = tx(
+  return tx(
     bearbeitung.art === 'vision'
       ? ZIEL_MARKE.visionen.name
       : bearbeitung.art === 'organisation'
         ? ZIEL_MARKE.organisationen.name
         : ZIEL_MARKE.projekte.name,
   );
-  if (!istBestehend(bearbeitung)) {
-    return tx(bearbeitung.art === 'projekt' ? 'Neues {name}' : 'Neue {name}', { name });
+}
+
+function ZielMenue({ bearbeitung, onErledigt }: { bearbeitung: NonNullable<ZielBearbeitung>; onErledigt: () => void }) {
+  if (bearbeitung.art === 'vision' && bearbeitung.vision) {
+    const vision = bearbeitung.vision;
+    return (
+      <SchnellMenueKnopf
+        ziel={{ art: 'vision', id: vision.id, name: vision.titel, archiviert: vision.archiviert, loeschbar: vision.loeschbar }}
+        onErledigt={onErledigt}
+      />
+    );
   }
-  return tx('{name} bearbeiten', { name });
+  if (bearbeitung.art === 'organisation' && bearbeitung.organisation) {
+    const organisation = bearbeitung.organisation;
+    return (
+      <SchnellMenueKnopf
+        ziel={{
+          art: 'organisation',
+          id: organisation.id,
+          name: organisation.name,
+          archiviert: organisation.archiviert,
+          loeschbar: organisation.loeschbar,
+        }}
+        onErledigt={onErledigt}
+      />
+    );
+  }
+  if (bearbeitung.art === 'projekt' && bearbeitung.projekt) {
+    const projekt = bearbeitung.projekt;
+    return (
+      <SchnellMenueKnopf
+        ziel={{ art: 'projekt', id: projekt.id, name: projekt.name, archiviert: projekt.archiviert, loeschbar: projekt.loeschbar }}
+        onErledigt={onErledigt}
+      />
+    );
+  }
+  return null;
+}
+
+function spurSetzen(feld: RefObject<HTMLInputElement | null>, wert: string, onAendern: (wert: string) => void): void {
+  if (feld.current) {
+    feld.current.value = wert;
+  }
+  feld.current?.dispatchEvent(new Event('input', { bubbles: true }));
+  onAendern(wert);
+}
+
+function Spur({ feld, wert }: { feld: RefObject<HTMLInputElement | null>; wert: string }) {
+  return (
+    <input
+      ref={feld}
+      readOnly
+      tabIndex={-1}
+      aria-hidden="true"
+      value={wert}
+      className="pointer-events-none absolute h-px w-px opacity-0"
+      onChange={() => undefined}
+    />
+  );
+}
+
+function vorlageOptionen(liste: readonly Vorlage[]): AuswahlOption[] {
+  const allgemein = liste.filter((vorlage) => vorlage.projektId === null);
+  const eigen = liste.filter((vorlage) => vorlage.projektId !== null);
+  const optionen: AuswahlOption[] = [];
+  if (allgemein.length > 0) {
+    optionen.push({ wert: 'gruppe-alle', name: tx('Für alle Projekte'), waehlbar: false });
+    for (const vorlage of allgemein) {
+      optionen.push({ wert: String(vorlage.id), name: vorlage.name, ebene: 1 });
+    }
+  }
+  if (eigen.length > 0) {
+    optionen.push({ wert: 'gruppe-nur', name: tx('Nur dieses Projekt'), waehlbar: false });
+    for (const vorlage of eigen) {
+      optionen.push({ wert: String(vorlage.id), name: vorlage.name, ebene: 1 });
+    }
+  }
+  return optionen;
 }
 
 export function ZielDialog({ bearbeitung, onSchliessen }: { bearbeitung: ZielBearbeitung; onSchliessen: () => void }) {
   const titel = bearbeitung ? dialogTitel(bearbeitung) : '';
 
   return (
-    <Dialog offen={bearbeitung !== null} titel={titel} onSchliessen={onSchliessen}>
+    <Dialog
+      offen={bearbeitung !== null}
+      titel={titel}
+      menu={bearbeitung && istBestehend(bearbeitung) ? <ZielMenue bearbeitung={bearbeitung} onErledigt={onSchliessen} /> : undefined}
+      onSchliessen={onSchliessen}
+    >
       {bearbeitung?.art === 'vision' && (
         <VisionFormular key={bearbeitung.vision?.id ?? 'neu'} vision={bearbeitung.vision} onFertig={onSchliessen} />
       )}
@@ -87,18 +167,9 @@ function useSpeichern<T>(speichern: () => Promise<T>, onFertig: () => void) {
   });
 }
 
-function Aktionen({
-  neben,
-  kannSpeichern,
-  laeuft,
-}: {
-  neben?: ReactNode;
-  kannSpeichern: boolean;
-  laeuft: boolean;
-}) {
+function Aktionen({ kannSpeichern, laeuft }: { kannSpeichern: boolean; laeuft: boolean }) {
   return (
     <div className="flex gap-2">
-      {neben}
       <Knopf type="submit" variante="primaer" className="flex-1" disabled={!kannSpeichern || laeuft}>
         {tx("Speichern")}
       </Knopf>
@@ -173,24 +244,21 @@ function VisionFormular({ vision, onFertig }: { vision: Vision | null; onFertig:
           onChange={(ereignis) => setBeschreibung(ereignis.target.value)}
         />
       </Feld>
-      <div className="space-y-2">
-        <Feld label={`Level · Beute ${zahl(visionBeute(levelGueltig ? levelZahl : null))} XP`}>
-          <input
-            className={EINGABE_STIL}
-            type="number"
-            inputMode="numeric"
-            min={VISION.minLevel}
-            max={GRENZEN.visionLevelMax}
-            value={level}
-            onChange={(ereignis) => setLevel(ereignis.target.value)}
-          />
-        </Feld>
-        <LevelBeispiele
-          beispiele={VISION_BEISPIELE}
-          empfohlenAb={VISION.empfohlenAb}
-          onWaehlen={(wert) => setLevel(String(wert))}
+      <Feld label="Level">
+        <input
+          className={EINGABE_STIL}
+          type="number"
+          inputMode="numeric"
+          min={VISION.minLevel}
+          max={GRENZEN.visionLevelMax}
+          value={level}
+          onChange={(ereignis) => setLevel(ereignis.target.value)}
         />
-      </div>
+      </Feld>
+      <p className="zahl text-sm text-leise">
+        {tx('XP beim Erreichen: {xp}', { xp: zahl(visionBeute(levelGueltig ? levelZahl : null)) })}
+      </p>
+      <LevelBeispiele beispiele={VISION_BEISPIELE} empfohlenAb={VISION.empfohlenAb} onWaehlen={(wert) => setLevel(String(wert))} />
       <TextFeld label={tx("Ergebnis")} wert={woopErgebnis} onAendern={setWoopErgebnis} />
       <TextFeld label={tx("Hindernis")} wert={woopHindernis} onAendern={setWoopHindernis} />
       <TextFeld label={tx('Wenn-dann-Plan')} wert={woopPlan} onAendern={setWoopPlan} />
@@ -198,24 +266,14 @@ function VisionFormular({ vision, onFertig }: { vision: Vision | null; onFertig:
         <Farbauswahl wert={farbe} onAendern={setFarbe} />
       </Feld>
       <Fehlermeldung fehler={speichern.error} />
-      <Aktionen
-        neben={
-          vision ? (
-            <SchnellNebenaktion
-              ziel={{ art: 'vision', id: vision.id, name: vision.titel, archiviert: vision.archiviert, loeschbar: vision.loeschbar }}
-              onErledigt={onFertig}
-            />
-          ) : null
-        }
-        kannSpeichern={titel.trim() !== '' && levelGueltig}
-        laeuft={speichern.isPending}
-      />
+      <Aktionen kannSpeichern={titel.trim() !== '' && levelGueltig} laeuft={speichern.isPending} />
     </Formular>
   );
 }
 
 function OrganisationFormular({ organisation, onFertig }: { organisation: Organisation | null; onFertig: () => void }) {
   const ebenen = useEbenen();
+  const visionFeld = useRef<HTMLInputElement>(null);
   const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
   const [name, setName] = useState(organisation?.name ?? '');
   const [beschreibung, setBeschreibung] = useState(organisation?.beschreibung ?? '');
@@ -259,42 +317,26 @@ function OrganisationFormular({ organisation, onFertig }: { organisation: Organi
       </Feld>
       {ebenen.visionen && (
         <Feld label={zielTitel('visionen', false)}>
-          <select
-            className={EINGABE_STIL}
-            value={visionId ?? ''}
-            onChange={(ereignis) => setVisionId(ereignis.target.value ? Number(ereignis.target.value) : null)}
-          >
-            <option value="">{tx("Keine Vision")}</option>
-            {visionen.map((vision) => (
-              <option key={vision.id} value={vision.id}>
-                {vision.titel}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <Spur feld={visionFeld} wert={visionId === null ? '' : String(visionId)} />
+            <AuswahlBlatt
+              label={tx(zielTitel('visionen', false))}
+              modus="einzeln"
+              wert={visionId === null ? '' : String(visionId)}
+              optionen={[
+                { wert: '', name: tx('Keine Vision') },
+                ...visionen.map((vision) => ({ wert: String(vision.id), name: vision.titel })),
+              ]}
+              onAendern={(wert) => spurSetzen(visionFeld, wert, (neu) => setVisionId(neu ? Number(neu) : null))}
+            />
+          </div>
         </Feld>
       )}
       <Feld label={tx("Farbe")}>
         <Farbauswahl wert={farbe} onAendern={setFarbe} />
       </Feld>
       <Fehlermeldung fehler={speichern.error} />
-      <Aktionen
-        neben={
-          organisation ? (
-            <SchnellNebenaktion
-              ziel={{
-                art: 'organisation',
-                id: organisation.id,
-                name: organisation.name,
-                archiviert: organisation.archiviert,
-                loeschbar: organisation.loeschbar,
-              }}
-              onErledigt={onFertig}
-            />
-          ) : null
-        }
-        kannSpeichern={name.trim() !== ''}
-        laeuft={speichern.isPending}
-      />
+      <Aktionen kannSpeichern={name.trim() !== ''} laeuft={speichern.isPending} />
     </Formular>
   );
 }
@@ -325,6 +367,9 @@ function ProjektFormular({
   onFertig: () => void;
 }) {
   const ebenen = useEbenen();
+  const zuordnungFeld = useRef<HTMLInputElement>(null);
+  const vorlageFeld = useRef<HTMLInputElement>(null);
+  const abschlussFeld = useRef<HTMLInputElement>(null);
   const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
   const { data: vorlagen = [] } = useQuery({ queryKey: SCHLUESSEL.vorlagen, queryFn: api.vorlagen });
   const [name, setName] = useState(projekt?.name ?? '');
@@ -387,6 +432,31 @@ function ProjektFormular({
     });
   }, onFertig);
 
+  const gehoertZu: AuswahlOption[] = [{ wert: '', name: tx('Keins') }];
+  if (ebenen.visionen) {
+    const visionen = ziele?.visionen.filter((vision) => !vision.archiviert) ?? [];
+    if (visionen.length > 0) {
+      gehoertZu.push({ wert: 'gruppe-visionen', name: tx(zielTitel('visionen')), waehlbar: false });
+      for (const vision of visionen) {
+        gehoertZu.push({ wert: `vision:${vision.id}`, name: vision.titel, ebene: 1 });
+      }
+    }
+  }
+  if (ebenen.organisationen) {
+    const organisationen = ziele?.organisationen.filter((organisation) => !organisation.archiviert) ?? [];
+    if (organisationen.length > 0) {
+      gehoertZu.push({ wert: 'gruppe-organisationen', name: tx(zielTitel('organisationen')), waehlbar: false });
+      for (const organisation of organisationen) {
+        gehoertZu.push({ wert: `organisation:${organisation.id}`, name: organisation.name, ebene: 1 });
+      }
+    }
+  }
+  const standardOptionen = vorlageOptionen(aktiveVorlagen);
+  const abschlussOptionen: AuswahlOption[] = [
+    { wert: '', name: tx('Keine · Bonus gibt es trotzdem') },
+    ...vorlageOptionen(abschlussVorlagen),
+  ];
+
   return (
     <>
       <Formular onAbsenden={() => speichern.mutate()}>
@@ -400,43 +470,21 @@ function ProjektFormular({
           />
         </Feld>
         {zuordnungSichtbar && (
-          <Feld label={tx("Gehört zu")}>
-            <select className={EINGABE_STIL} value={zuordnung} onChange={(ereignis) => setZuordnung(ereignis.target.value)}>
-              <option value="">{tx("Keins")}</option>
-              {ebenen.visionen && (
-                <optgroup label={tx(zielTitel('visionen'))}>
-                  {ziele?.visionen
-                    .filter((vision) => !vision.archiviert)
-                    .map((vision) => (
-                      <option key={vision.id} value={`vision:${vision.id}`}>
-                        {vision.titel}
-                      </option>
-                    ))}
-                </optgroup>
-              )}
-              {ebenen.organisationen && (
-                <optgroup label={tx(zielTitel('organisationen'))}>
-                  {ziele?.organisationen
-                    .filter((organisation) => !organisation.archiviert)
-                    .map((organisation) => (
-                      <option key={organisation.id} value={`organisation:${organisation.id}`}>
-                        {organisation.name}
-                      </option>
-                    ))}
-                </optgroup>
-              )}
-            </select>
+          <Feld label="Gehört zu">
+            <div className="relative">
+              <Spur feld={zuordnungFeld} wert={zuordnung} />
+              <AuswahlBlatt
+                label={tx('Gehört zu')}
+                modus="einzeln"
+                wert={zuordnung}
+                optionen={gehoertZu}
+                onAendern={(wert) => spurSetzen(zuordnungFeld, wert, setZuordnung)}
+              />
+            </div>
             {zuordnungHinweis && <p className="text-xs text-leise">{zuordnungHinweis}</p>}
           </Feld>
         )}
-        <Feld
-          label={
-            <span className="inline-flex min-w-0 items-center">
-              {tx("Standard-Tätigkeit")}
-              <InfoHinweis text="Voreinstellung für Einträge in diesem Projekt." />
-            </span>
-          }
-        >
+        <Feld label="Vorauswahl beim Eintragen">
           {aktiveVorlagen.length === 0 ? (
             <Knopf className="w-full" onClick={() => setNeueTaetigkeit(true)}>
               <Plus className="size-4" />
@@ -444,43 +492,33 @@ function ProjektFormular({
             </Knopf>
           ) : (
             <div className="flex gap-2">
-              <select
-                className={EINGABE_STIL}
-                value={gewaehlteVorlage ?? ''}
-                onChange={(ereignis) => setVorlageId(Number(ereignis.target.value))}
-              >
-                {aktiveVorlagen.map((vorlage) => (
-                  <option key={vorlage.id} value={vorlage.id}>
-                    {vorlage.projektId !== null ? tx('{name} · nur dieses Projekt', { name: vorlage.name }) : vorlage.name}
-                  </option>
-                ))}
-              </select>
+              <div className="relative min-w-0 flex-1">
+                <Spur feld={vorlageFeld} wert={gewaehlteVorlage === null ? '' : String(gewaehlteVorlage)} />
+                <AuswahlBlatt
+                  label={tx('Vorauswahl beim Eintragen')}
+                  modus="einzeln"
+                  wert={gewaehlteVorlage === null ? '' : String(gewaehlteVorlage)}
+                  optionen={standardOptionen}
+                  onAendern={(wert) => spurSetzen(vorlageFeld, wert, (neu) => setVorlageId(Number(neu)))}
+                />
+              </div>
               <Knopf className="shrink-0 px-3" aria-label={tx("Tätigkeit anlegen")} onClick={() => setNeueTaetigkeit(true)}>
                 <Plus className="size-4" />
               </Knopf>
             </div>
           )}
         </Feld>
-        <Feld
-          label={
-            <span className="inline-flex min-w-0 items-center">
-              {tx('Abschlusstätigkeit')}
-              <InfoHinweis text="Beim Abschließen läuft der Bonus über diese Tätigkeit. Ohne Tätigkeit gibt es den Bonus trotzdem." />
-            </span>
-          }
-        >
-          <select
-            className={EINGABE_STIL}
-            value={abschlussId ?? ''}
-            onChange={(ereignis) => setAbschlussId(ereignis.target.value === '' ? null : Number(ereignis.target.value))}
-          >
-            <option value="">{tx('Keine')}</option>
-            {abschlussVorlagen.map((vorlage) => (
-              <option key={vorlage.id} value={vorlage.id}>
-                {vorlage.projektId !== null ? tx('{name} · nur dieses Projekt', { name: vorlage.name }) : vorlage.name}
-              </option>
-            ))}
-          </select>
+        <Feld label="Tätigkeit beim Abschluss">
+          <div className="relative">
+            <Spur feld={abschlussFeld} wert={abschlussId === null ? '' : String(abschlussId)} />
+            <AuswahlBlatt
+              label={tx('Tätigkeit beim Abschluss')}
+              modus="einzeln"
+              wert={abschlussId === null ? '' : String(abschlussId)}
+              optionen={abschlussOptionen}
+              onAendern={(wert) => spurSetzen(abschlussFeld, wert, (neu) => setAbschlussId(neu === '' ? null : Number(neu)))}
+            />
+          </div>
         </Feld>
         <Feld label={tx("Beschreibung")}>
           <textarea
@@ -491,18 +529,7 @@ function ProjektFormular({
           />
         </Feld>
         <Fehlermeldung fehler={speichern.error} />
-        <Aktionen
-          neben={
-            projekt ? (
-              <SchnellNebenaktion
-                ziel={{ art: 'projekt', id: projekt.id, name: projekt.name, archiviert: projekt.archiviert, loeschbar: projekt.loeschbar }}
-                onErledigt={onFertig}
-              />
-            ) : null
-          }
-          kannSpeichern={name.trim() !== '' && gewaehlteVorlage !== null}
-          laeuft={speichern.isPending}
-        />
+        <Aktionen kannSpeichern={name.trim() !== '' && gewaehlteVorlage !== null} laeuft={speichern.isPending} />
       </Formular>
       <NeueTaetigkeit
         offen={neueTaetigkeit}

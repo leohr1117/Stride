@@ -17,6 +17,22 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.47.0',
+    seiten: 'Eintrag, Ziele, Tätigkeiten, Investitionen, Erfolge',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Dialoge für Eintrag, Ziele, Tätigkeiten, Investitionen und Erfolge haben eine feste Reihenfolge.',
+          'Eine neue Tätigkeit aus einem Projekt gilt für alle Projekte oder nur für dieses.',
+          'Bei einer Vision steht die XP beim Erreichen neben dem Level.',
+          'Der Investitionsdialog hat kein Info-Icon. Der Schalter heißt Bonus gilt auch für Ressourcen.',
+          'Erfolge zeigen den Stand im Titel und die Zeile Titel wählen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.46.0',
     seiten: 'Benachrichtigungen, Daten',
     abschnitte: [

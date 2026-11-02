@@ -1,6 +1,6 @@
 import { attributName, tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import type { Attribut, Vorlage, VorlageGewicht } from '../../../../shared/api/index.ts';
 import { anteileInProzent } from '../../../../shared/spiel/anteile.ts';
 import { ATTRIBUT_TYP_INFO, ATTRIBUT_TYPEN, GRENZEN, type IconName } from '../../../../shared/spiel/begriffe.ts';
@@ -9,21 +9,22 @@ import { api, SCHLUESSEL } from '../../api/index.ts';
 import { prozentPunkte } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { Dialog } from '../../components/Dialog.tsx';
-import { SchnellNebenaktion } from '../../components/SchnellAktion.tsx';
+import { SchnellMenueKnopf } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Formular, InfoHinweis, Knopf, Regler } from '../../ui/index.ts';
+import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Regler, Segmentauswahl } from '../../ui/index.ts';
 
 const GEWICHT_SCHRITT = 10;
 
-function gebundenerName(vorlage: Vorlage | null, projektId: number | null, projektName: string | null): string | null {
-  if (!vorlage && projektId !== null) {
-    return projektName;
-  }
-  if (vorlage?.projektId != null) {
-    return vorlage.projektName ?? projektName;
-  }
-  return null;
+type GiltFuer = 'alle' | 'nur';
+
+export function TaetigkeitMenue({ vorlage, onErledigt }: { vorlage: Vorlage; onErledigt: () => void }) {
+  return (
+    <SchnellMenueKnopf
+      ziel={{ art: 'vorlage', id: vorlage.id, name: vorlage.name, archiviert: vorlage.archiviert, loeschbar: vorlage.loeschbar }}
+      onErledigt={onErledigt}
+    />
+  );
 }
 
 export function TaetigkeitFormular({
@@ -38,12 +39,22 @@ export function TaetigkeitFormular({
   onFertig: (gespeichert: Vorlage) => void;
 }) {
   const queryClient = useQueryClient();
+  const giltRef = useRef<HTMLInputElement>(null);
   const { data: attribute = [] } = useQuery({ queryKey: SCHLUESSEL.attribute, queryFn: api.attribute });
   const [name, setName] = useState(vorlage?.name ?? '');
   const [icon, setIcon] = useState<IconName>((vorlage?.icon as IconName | undefined) ?? 'sparkles');
   const [gewichte, setGewichte] = useState<Map<number, number>>(
     () => new Map((vorlage?.gewichte ?? []).map((gewicht) => [gewicht.attributId, gewicht.gewicht])),
   );
+  const bindungsId = vorlage?.projektId ?? projektId;
+  const bindungsName = (vorlage?.projektId != null ? vorlage.projektName : projektName) ?? projektName;
+  const segmentSichtbar = bindungsId !== null && Boolean(bindungsName);
+  const [giltFuer, setGiltFuer] = useState<GiltFuer>(() => {
+    if (vorlage) {
+      return vorlage.projektId != null ? 'nur' : 'alle';
+    }
+    return projektId !== null ? 'nur' : 'alle';
+  });
 
   const funktionen = useFunktionen();
   const aktive = attribute.filter((attribut) => !attribut.archiviert && istTypAktiv(funktionen, attribut.typ));
@@ -54,15 +65,19 @@ export function TaetigkeitFormular({
   const prozentWerte = anteileInProzent(gewaehlt.map((gewicht) => gewicht.gewicht));
   const anteile = new Map(gewaehlt.map((gewicht, index) => [gewicht.attributId, prozentWerte[index] ?? 0]));
   const zuViele = gewaehlt.length > GRENZEN.vorlageAttributeMax;
-  const nurFuer = gebundenerName(vorlage, projektId, projektName);
 
   const speichern = useMutation({
     mutationFn: () => {
+      const bindung = segmentSichtbar
+        ? { projektId: giltFuer === 'nur' ? bindungsId : null }
+        : !vorlage && projektId !== null
+          ? { projektId }
+          : {};
       const daten = {
         name,
         icon,
         gewichte: gewaehlt,
-        ...(!vorlage && projektId !== null ? { projektId } : {}),
+        ...bindung,
       };
       if (!vorlage) {
         return api.erstelleVorlage(daten);
@@ -77,6 +92,14 @@ export function TaetigkeitFormular({
 
   const setzeGewicht = (attributId: number, wert: number) => {
     setGewichte((aktuell) => new Map(aktuell).set(attributId, wert));
+  };
+
+  const setzeGiltFuer = (wert: GiltFuer) => {
+    if (giltRef.current) {
+      giltRef.current.value = wert;
+    }
+    giltRef.current?.dispatchEvent(new Event('input', { bubbles: true }));
+    setGiltFuer(wert);
   };
 
   const absenden = (ereignis: FormEvent) => {
@@ -98,23 +121,43 @@ export function TaetigkeitFormular({
       <Feld label={tx("Symbol")}>
         <IconAuswahl wert={icon} farbe="var(--akzent)" onAendern={setIcon} />
       </Feld>
-      {nurFuer ? (
-        <p className="flex items-center text-sm">
-          <span>{tx('Nur für {name}', { name: nurFuer })}</span>
-          <InfoHinweis text="Sie gilt nur für dieses Projekt und erscheint nicht als allgemeine Tätigkeit." />
-        </p>
+      {segmentSichtbar && bindungsName ? (
+        <Feld label="Gilt für">
+          <div className="relative">
+            <input
+              ref={giltRef}
+              readOnly
+              tabIndex={-1}
+              aria-hidden="true"
+              value={giltFuer}
+              className="pointer-events-none absolute h-px w-px opacity-0"
+              onChange={() => undefined}
+            />
+            <Segmentauswahl<GiltFuer>
+              optionen={[
+                { wert: 'alle', label: <span>{tx('Alle Projekte')}</span> },
+                { wert: 'nur', label: <span>{tx('Nur {name}', { name: bindungsName })}</span> },
+              ]}
+              wert={giltFuer}
+              onAendern={setzeGiltFuer}
+            />
+          </div>
+        </Feld>
       ) : null}
 
-      {typen.map((typ) => (
-        <GewichtGruppe
-          key={typ}
-          titel={tx(ATTRIBUT_TYP_INFO[typ].mehrzahl)}
-          attribute={aktive.filter((attribut) => attribut.typ === typ)}
-          gewichte={gewichte}
-          anteile={anteile}
-          onAendern={setzeGewicht}
-        />
-      ))}
+      <div className="space-y-4">
+        <p className="text-sm font-semibold">{tx('Stärkt')}</p>
+        {typen.map((typ) => (
+          <GewichtGruppe
+            key={typ}
+            titel={tx(ATTRIBUT_TYP_INFO[typ].mehrzahl)}
+            attribute={aktive.filter((attribut) => attribut.typ === typ)}
+            gewichte={gewichte}
+            anteile={anteile}
+            onAendern={setzeGewicht}
+          />
+        ))}
+      </div>
 
       {zuViele && (
         <p className="feld-fehler text-[13px] leading-[18px] break-words text-gefahr" role="alert">
@@ -123,22 +166,14 @@ export function TaetigkeitFormular({
         </p>
       )}
       <Fehlermeldung fehler={speichern.error} />
-      <div className="flex gap-2">
-        {vorlage ? (
-          <SchnellNebenaktion
-            ziel={{ art: 'vorlage', id: vorlage.id, name: vorlage.name, archiviert: vorlage.archiviert, loeschbar: vorlage.loeschbar }}
-            onErledigt={() => onFertig(vorlage)}
-          />
-        ) : null}
-        <Knopf
-          type="submit"
-          variante="primaer"
-          className="flex-1"
-          disabled={!name.trim() || gewaehlt.length === 0 || zuViele || speichern.isPending}
-        >
-          {tx("Speichern")}
-        </Knopf>
-      </div>
+      <Knopf
+        type="submit"
+        variante="primaer"
+        className="w-full"
+        disabled={!name.trim() || gewaehlt.length === 0 || zuViele || speichern.isPending}
+      >
+        {tx("Speichern")}
+      </Knopf>
     </Formular>
   );
 }
@@ -160,32 +195,31 @@ function GewichtGruppe({
     return null;
   }
   return (
-    <Feld label={tx('Stärkt: {name}', { name: titel })}>
-      <div className="space-y-2.5">
-        {attribute.map((attribut) => {
-          const wert = gewichte.get(attribut.id) ?? 0;
-          return (
-            <div key={attribut.id} className="flex items-center gap-3">
-              <Icon name={attribut.icon} className="size-4 shrink-0" style={{ color: attribut.farbe }} />
-              <span className="min-w-0 flex-1 text-sm break-words">{attributName(attribut)}</span>
-              <Regler
-                min={0}
-                max={GRENZEN.vorlageGewichtMax}
-                step={GEWICHT_SCHRITT}
-                value={wert}
-                onChange={(ereignis) => onAendern(attribut.id, Number(ereignis.target.value))}
-                className="w-28 shrink-0"
-                style={{ accentColor: attribut.farbe }}
-                aria-label={tx('Gewicht {name}', { name: attributName(attribut) })}
-              />
-              <span className="zahl w-12 shrink-0 text-right text-xs text-leise">
-                {wert > 0 ? prozentPunkte(anteile.get(attribut.id) ?? 0) : '–'}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </Feld>
+    <div className="space-y-2.5">
+      <p className="text-sm text-leise">{titel}</p>
+      {attribute.map((attribut) => {
+        const wert = gewichte.get(attribut.id) ?? 0;
+        return (
+          <div key={attribut.id} className="flex items-center gap-3">
+            <Icon name={attribut.icon} className="size-4 shrink-0" style={{ color: attribut.farbe }} />
+            <span className="min-w-0 flex-1 text-sm break-words">{attributName(attribut)}</span>
+            <Regler
+              min={0}
+              max={GRENZEN.vorlageGewichtMax}
+              step={GEWICHT_SCHRITT}
+              value={wert}
+              onChange={(ereignis) => onAendern(attribut.id, Number(ereignis.target.value))}
+              className="w-28 shrink-0"
+              style={{ accentColor: attribut.farbe }}
+              aria-label={tx('Gewicht {name}', { name: attributName(attribut) })}
+            />
+            <span className="zahl w-12 shrink-0 text-right text-xs text-leise">
+              {wert > 0 ? prozentPunkte(anteile.get(attribut.id) ?? 0) : '–'}
+            </span>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
@@ -203,11 +237,7 @@ export function NeueTaetigkeit({
   onAngelegt?: (vorlage: Vorlage) => void;
 }) {
   return (
-    <Dialog
-      offen={offen}
-      titel={projektId !== null && projektName ? tx('Tätigkeit für {name}', { name: projektName }) : tx('Tätigkeit anlegen')}
-      onSchliessen={onSchliessen}
-    >
+    <Dialog offen={offen} titel={tx('Tätigkeit anlegen')} onSchliessen={onSchliessen}>
       {offen && (
         <TaetigkeitFormular
           vorlage={null}
@@ -222,5 +252,3 @@ export function NeueTaetigkeit({
     </Dialog>
   );
 }
-
-

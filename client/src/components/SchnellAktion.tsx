@@ -750,10 +750,12 @@ export function SchnellZeile({
 export function SchnellMenueKnopf({
   ziel,
   davor = [],
+  onErledigt,
   className = '',
 }: {
   ziel: SchnellZiel;
   davor?: { id: string; label: string; onWahl: () => void }[];
+  onErledigt?: () => void;
   className?: string;
 }) {
   const aktion = useSchnell();
@@ -775,7 +777,11 @@ export function SchnellMenueKnopf({
       davor.find((eintrag) => eintrag.id === punkt.id)?.onWahl();
       return;
     }
-    void aktion.ausfuehren(ziel, punkt.art);
+    void aktion.ausfuehren(ziel, punkt.art).then((ok) => {
+      if (ok) {
+        onErledigt?.();
+      }
+    });
   };
   return (
     <>

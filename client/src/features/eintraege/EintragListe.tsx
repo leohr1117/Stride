@@ -8,9 +8,9 @@ import { api, SCHLUESSEL } from '../../api/index.ts';
 import { dauerText, lokalesDatum, tagesUeberschrift, zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { Dialog } from '../../components/Dialog.tsx';
-import { EintragDetail } from '../../components/EintragKarte.tsx';
+import { EintragDetail, eintragSchnellZiel } from '../../components/EintragKarte.tsx';
 import { Icon } from '../../components/Icons.tsx';
-import { SchnellZeile } from '../../components/SchnellAktion.tsx';
+import { SchnellMenueKnopf, SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { SkillDetail } from '../../components/SkillKarte.tsx';
 import { Liste } from '../../components/Zeile.tsx';
 import { Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
@@ -72,7 +72,7 @@ function schluesselVon(eintrag: ChronikEintrag): string {
 function titelVon(eintrag: ChronikEintrag): string {
   switch (eintrag.typ) {
     case 'eintrag':
-      return eintrag.eintrag.vorlageName;
+      return tx('Eintrag');
     case 'skill':
       return eintrag.skill.titel;
     case 'protokoll':
@@ -243,11 +243,14 @@ export function EintragListe({
       <Dialog
         offen={gewaehlt !== null && gewaehlt.typ !== 'protokoll'}
         titel={gewaehlt ? titelVon(gewaehlt) : ''}
+        menu={
+          gewaehlt?.typ === 'eintrag' ? (
+            <SchnellMenueKnopf ziel={eintragSchnellZiel(gewaehlt.eintrag)} onErledigt={() => setAuswahl(null)} />
+          ) : undefined
+        }
         onSchliessen={() => setAuswahl(null)}
       >
-        {gewaehlt?.typ === 'eintrag' ? (
-          <EintragDetail eintrag={gewaehlt.eintrag} onEntfernt={() => setAuswahl(null)} />
-        ) : null}
+        {gewaehlt?.typ === 'eintrag' ? <EintragDetail eintrag={gewaehlt.eintrag} /> : null}
         {gewaehlt?.typ === 'skill' ? <SkillDetail skill={gewaehlt.skill} /> : null}
       </Dialog>
     </div>

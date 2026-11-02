@@ -7,10 +7,8 @@ import { api, SCHLUESSEL } from '../../api/index.ts';
 import { Dialog } from '../../components/Dialog.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { KopfAktion } from '../../components/Kopf.tsx';
-import { Fehlermeldung } from '../../ui/index.ts';
+import { Fehlermeldung, Knopf } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
-
-const INFO = 'Die oberste Tätigkeit steht zuerst, auch beim Eintragen.';
 
 function ReihenfolgeAusloeser({ onOeffnen }: { onOeffnen: () => void }) {
   const knopf = useRef<HTMLButtonElement>(null);
@@ -173,7 +171,8 @@ export function ReihenfolgeKnopf({ vorlagen }: { vorlagen: Vorlage[] }) {
   return (
     <>
       <ReihenfolgeAusloeser onOeffnen={() => setOffen(true)} />
-      <Dialog offen={offen} titel={tx('Reihenfolge')} info={INFO} onSchliessen={() => setOffen(false)}>
+      <Dialog offen={offen} titel={tx('Reihenfolge')} onSchliessen={() => setOffen(false)}>
+        <p className="mb-3 text-sm">{tx('Oben steht zuerst, auch beim Eintragen.')}</p>
         <Fehlermeldung fehler={reihenfolge.error} />
         <div className="divide-y divide-rand">
           {aktiv.map((vorlage, index) => (
@@ -186,25 +185,28 @@ export function ReihenfolgeKnopf({ vorlagen }: { vorlagen: Vorlage[] }) {
               </div>
               <button
                 type="button"
-                className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-flaeche-2 text-haupt disabled:opacity-30"
+                className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-flaeche-2 text-haupt disabled:opacity-30"
                 aria-label={tx('{name} nach oben', { name: vorlage.name })}
                 disabled={reihenfolge.isPending || index === 0}
                 onClick={() => verschiebe(vorlage.id, -1)}
               >
-                <ChevronUp className="size-4" />
+                <ChevronUp className="size-5" />
               </button>
               <button
                 type="button"
-                className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-flaeche-2 text-haupt disabled:opacity-30"
+                className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-flaeche-2 text-haupt disabled:opacity-30"
                 aria-label={tx('{name} nach unten', { name: vorlage.name })}
                 disabled={reihenfolge.isPending || index === aktiv.length - 1}
                 onClick={() => verschiebe(vorlage.id, 1)}
               >
-                <ChevronDown className="size-4" />
+                <ChevronDown className="size-5" />
               </button>
             </div>
           ))}
         </div>
+        <Knopf className="mt-4 w-full" onClick={() => setOffen(false)}>
+          {tx('Fertig')}
+        </Knopf>
       </Dialog>
     </>
   );

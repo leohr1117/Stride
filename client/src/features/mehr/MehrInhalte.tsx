@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router';
 import type { Vorlage } from '../../../../shared/api/index.ts';
 import { Dialog } from '../../components/Dialog.tsx';
-import { TaetigkeitFormular } from '../taetigkeiten/TaetigkeitFormular.tsx';
+import { TaetigkeitFormular, TaetigkeitMenue } from '../taetigkeiten/TaetigkeitFormular.tsx';
 import { TAETIGKEITEN_GESEHEN, merke } from '../../speicher.ts';
 import { tx } from '../../text.ts';
 import { VerbindungenBereich } from '../../pages/Verbindungen.tsx';
@@ -35,6 +35,11 @@ function InhalteListe() {
           <Dialog
             offen={bearbeitung !== null}
             titel={bearbeitung?.vorlage ? tx("Tätigkeit bearbeiten") : tx("Tätigkeit anlegen")}
+            menu={
+              bearbeitung?.vorlage ? (
+                <TaetigkeitMenue vorlage={bearbeitung.vorlage} onErledigt={() => setBearbeitung(null)} />
+              ) : undefined
+            }
             onSchliessen={() => setBearbeitung(null)}
           >
             {bearbeitung && (

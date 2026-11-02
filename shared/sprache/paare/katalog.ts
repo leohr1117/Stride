@@ -86,7 +86,7 @@ export const PAARE = [
   ['Nur ein Datum. Das Leben bleibt verdeckt. Nach der Deadline geht Disziplin verloren.', 'Just a date. The level stays hidden. After the deadline you lose Discipline.'],
   ['Bis zum Datum entsteht er. Danach greift er an.', 'He builds until the date. After that he attacks.'],
   ['Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.', 'An investment of your own, or a finished project, grants more XP for good.'],
-  ['Bonus auch für Ressourcen', 'Bonus for Resources too'],
+  ['Bonus gilt auch für Ressourcen', 'Bonus applies to Resources too'],
   ['Ressourcen werden mit investiert und bekommen denselben Bonus.', 'Resources are invested too and get the same bonus.'],
   ['Eintrag verbessert die Fähigkeit. Ein Vorhaben ist dafür nicht nötig.', 'An entry improves the skill. A task isn’t required.'],
   ['Tägliche Aufgaben zum Abhaken.', 'Daily tasks to check off.'],

@@ -33,7 +33,7 @@ import {
   Ueberschrift,
 } from '../../ui/index.ts';
 import { bossZeile, VorhabenKennzahlen } from '../../components/VorhabenInfo.tsx';
-import { TaetigkeitFormular } from '../taetigkeiten/TaetigkeitFormular.tsx';
+import { TaetigkeitFormular, TaetigkeitMenue } from '../taetigkeiten/TaetigkeitFormular.tsx';
 import { ZielDialog, type ZielBearbeitung } from './ZielDialoge.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
@@ -186,7 +186,7 @@ export function ProjektSeite() {
       {bosseAn && (
         <Dialog
           offen={bossVorhaben !== null}
-          titel={bossVorhaben?.boss ? tx("Boss bearbeiten") : tx("Zum Boss machen")}
+          titel={tx('Boss')}
           onSchliessen={() => setBossVorhaben(null)}
         >
           {bossVorhaben && (
@@ -372,10 +372,11 @@ function ProjektTaetigkeiten({
       </ZeilenGruppe>
       <Dialog
         offen={bearbeitung !== null}
-        titel={
-          bearbeitung?.vorlage
-            ? tx("Tätigkeit bearbeiten")
-            : tx('Tätigkeit für {name}', { name: projektName })
+        titel={bearbeitung?.vorlage ? tx('Tätigkeit bearbeiten') : tx('Tätigkeit anlegen')}
+        menu={
+          bearbeitung?.vorlage ? (
+            <TaetigkeitMenue vorlage={bearbeitung.vorlage} onErledigt={() => setBearbeitung(null)} />
+          ) : undefined
         }
         onSchliessen={() => setBearbeitung(null)}
       >

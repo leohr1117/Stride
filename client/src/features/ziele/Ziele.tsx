@@ -485,18 +485,12 @@ function VisionDetail({
         {abschluss.fehler}
         {vision.beschreibung ? <p className="text-sm">{vision.beschreibung}</p> : null}
         {vision.woopPlan ? (
-          <p className="text-sm leading-snug">
-            <span className="font-medium">{tx('Plan ·')} </span>
-            {vision.woopPlan}
-          </p>
+          <div className="space-y-1">
+            <p className="text-sm font-medium">{tx('Plan')}</p>
+            <p className="text-sm leading-snug">{vision.woopPlan}</p>
+          </div>
         ) : null}
         <p className="zahl text-sm text-leise">{visionStand(vision)}</p>
-        {mitProjekten && (
-          <Knopf variante="leise" className="px-2 py-1" onClick={() => onProjektNeu(vision.id, null)}>
-            <Plus className="size-4" />
-            <ZielMarke ebene="projekte" />
-          </Knopf>
-        )}
         {organisationen.map((organisation) => (
           <div key={organisation.id} className="space-y-2 border-t border-rand pt-3">
             <div className="flex items-center justify-between gap-2">
@@ -518,6 +512,12 @@ function VisionDetail({
             )}
           </div>
         ))}
+        {mitProjekten && (
+          <Knopf variante="leise" className="px-2 py-1" onClick={() => onProjektNeu(vision.id, null)}>
+            <Plus className="size-4" />
+            <ZielMarke ebene="projekte" />
+          </Knopf>
+        )}
       </div>
     </Dialog>
   );

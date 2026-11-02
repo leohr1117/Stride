@@ -262,17 +262,13 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     await expect(regler).toHaveValue('1');
     await expect(dialog.getByText('+10 %').first()).toBeVisible();
 
-    const ressourcen = dialog.getByRole('switch', { name: 'Bonus auch für Ressourcen' });
+    const ressourcen = dialog.getByRole('switch', { name: 'Bonus gilt auch für Ressourcen' });
     await expect(ressourcen).toBeVisible();
     if ((await ressourcen.getAttribute('aria-checked')) !== 'true') {
       await ressourcen.click();
     }
     await expect(ressourcen).toHaveAttribute('aria-checked', 'true');
-    await dialog.getByRole('button', { name: 'Info' }).click();
-    await expect(page.getByRole('tooltip')).toContainText('Ressourcen werden mit investiert');
-    await page.keyboard.press('Escape');
-    await expect(dialog).toBeVisible();
-    await expect(page.getByRole('tooltip')).toHaveCount(0);
+    await expect(dialog.getByRole('button', { name: 'Info' })).toHaveCount(0);
 
     await expect(dialog.getByRole('button', { name: 'Abschließen' })).toHaveCount(0);
     await expect(dialog.getByRole('button', { name: 'Rückgängig' })).toHaveCount(0);
@@ -352,7 +348,7 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     const listeBereich = page.locator('main');
     await expect(listeBereich.locator('a[href^="/projekte/"]')).toHaveCount(0);
     await listeBereich.getByRole('button', { name: /Investition anlegen/ }).click();
-    const neu = page.getByRole('dialog', { name: 'Neue Investition' });
+    const neu = page.getByRole('dialog', { name: 'Investition', exact: true });
     await neu.getByRole('textbox', { name: 'Name' }).fill(name);
     const eigenRegler = neu.getByRole('slider', { name: 'Größe' });
     await eigenRegler.focus();
@@ -449,7 +445,8 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     await expect(listeBereich.getByRole('button', { name: nameNeu, exact: true })).toBeVisible();
     await listeBereich.getByRole('button', { name: nameNeu, exact: true }).click();
     const loeschen = page.getByRole('dialog', { name: 'Investition' });
-    await loeschen.getByRole('button', { name: 'Archivieren' }).click();
+    await loeschen.getByRole('button', { name: `Aktionen für ${nameNeu}` }).click();
+    await page.getByRole('menuitem', { name: 'Archivieren' }).click();
     await expect(loeschen).toBeHidden();
     await expect(listeBereich.getByText(nameNeu)).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);

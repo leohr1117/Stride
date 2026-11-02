@@ -1,6 +1,6 @@
 import { klassenText, tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
-import { Award, Pencil } from 'lucide-react';
+import { Check, Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import type { Charakter, Erfolge, ErfolgKategorie, ErfolgStufe } from '../../../../shared/api/index.ts';
@@ -14,8 +14,8 @@ import { KopfAktion } from '../../components/Kopf.tsx';
 import { Liste, Zeile } from '../../components/Zeile.tsx';
 import { KlassenUndTitel } from '../../components/KlassenTitel.tsx';
 import { AttributRadar } from '../../components/mitDiagramm.tsx';
-import { Fehlermeldung, Fortschrittsbalken, Ladeanzeige, LevelRing } from '../../ui/index.ts';
-import { kurzesDatum, zahl } from '../../format.ts';
+import { Fehlermeldung, Ladeanzeige, LevelRing } from '../../ui/index.ts';
+import { zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 
 type Ansicht = 'erfolge' | 'klassen' | null;
@@ -26,6 +26,8 @@ export function CharakterSeite() {
   const sichtbarkeit = useSichtbarkeit();
   const funktionen = sichtbarkeit.funktionen;
   const [ansicht, setAnsicht] = useState<Ansicht>(null);
+  const { data: erfolge } = useQuery({ queryKey: SCHLUESSEL.erfolge, queryFn: api.erfolge });
+  const erfolgStand = erfolgZahlen(erfolge, sichtbarkeit);
 
   if (isPending) {
     return <Ladeanzeige />;
@@ -74,7 +76,15 @@ export function CharakterSeite() {
 
       <Dialog
         offen={ansicht !== null}
-        titel={ansicht === 'erfolge' ? tx("Erfolge") : funktionen.koennen ? tx("Klassen und Titel") : tx("Titel")}
+        titel={
+          ansicht === 'erfolge'
+            ? erfolgStand
+              ? tx('Erfolge {erreicht}/{gesamt}', { erreicht: zahl(erfolgStand.erreicht), gesamt: zahl(erfolgStand.gesamt) })
+              : tx('Erfolge')
+            : funktionen.koennen
+              ? tx('Klassen und Titel')
+              : tx('Titel')
+        }
         onSchliessen={() => setAnsicht(null)}
       >
         {ansicht === 'erfolge' && <ErfolgeListe />}
@@ -86,6 +96,18 @@ export function CharakterSeite() {
 
 function sichtbareKategorien(erfolge: Erfolge | undefined, sichtbarkeit: Sichtbarkeit): ErfolgKategorie[] {
   return (erfolge?.kategorien ?? []).filter((kategorie) => erfolgSichtbar(kategorie.kennzahl, sichtbarkeit));
+}
+
+function erfolgZahlen(erfolge: Erfolge | undefined, sichtbarkeit: Sichtbarkeit): { erreicht: number; gesamt: number } | null {
+  if (!erfolge) {
+    return null;
+  }
+  const kategorien = sichtbareKategorien(erfolge, sichtbarkeit);
+  let gesamt = 0;
+  for (const kategorie of kategorien) {
+    gesamt += kategorie.stufen.length;
+  }
+  return { erreicht: freigeschalteteStufen(kategorien).length, gesamt };
 }
 
 function freigeschalteteStufen(kategorien: ErfolgKategorie[]): ErfolgStufe[] {
@@ -176,47 +198,26 @@ function ErfolgeListe() {
   if (!erfolge) {
     return <Fehlermeldung fehler={error} />;
   }
+  const kategorien = sichtbareKategorien(erfolge, sichtbarkeit);
   return (
-    <div className="space-y-3">
-      {sichtbareKategorien(erfolge, sichtbarkeit).map((kategorie) => (
-        <ErfolgKarte key={kategorie.kennzahl} kategorie={kategorie} />
+    <div>
+      {kategorien.map((kategorie) => (
+        <div key={kategorie.kennzahl} className="py-2">
+          <p className="text-sm font-medium">{tx(kategorie.label)}</p>
+          {kategorie.stufen.map((stufe) => (
+            <div
+              key={stufe.schluessel}
+              className={`flex min-h-12 items-center gap-3 ${stufe.erreichtAm ? '' : 'text-leise'}`}
+            >
+              {stufe.erreichtAm ? <Check className="size-4 shrink-0" aria-hidden="true" /> : <span className="size-4 shrink-0" aria-hidden="true" />}
+              <span className="min-w-0 flex-1 text-base">{tx(stufe.name)}</span>
+            </div>
+          ))}
+        </div>
       ))}
-    </div>
-  );
-}
-
-function ErfolgKarte({ kategorie }: { kategorie: ErfolgKategorie }) {
-  const naechste = kategorie.stufen.find((stufe) => stufe.erreichtAm === null);
-  return (
-    <div className="rounded-2xl border border-rand bg-flaeche p-4">
-      <div className="flex items-center justify-between gap-2">
-        <h3 className="min-w-0 text-sm font-medium break-words">{tx(kategorie.label)}</h3>
-        <span className="zahl text-xs text-leise">
-          {zahl(Math.floor(kategorie.wert))}
-          {naechste && ` / ${zahl(naechste.schwelle)}`}
-        </span>
-      </div>
-      <div className="mt-2">
-        <Fortschrittsbalken anteil={naechste ? kategorie.wert / naechste.schwelle : 1} farbe="var(--fortschritt)" hoehe="h-1.5" />
-      </div>
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {kategorie.stufen.map((stufe) => (
-          <span
-            key={stufe.schluessel}
-            title={
-              stufe.erreichtAm
-                ? tx('Erreicht am {datum}', { datum: kurzesDatum(stufe.erreichtAm) })
-                : tx('Ab {schwelle}', { schwelle: zahl(stufe.schwelle) })
-            }
-            className={`flex items-center gap-1 rounded-md px-2 py-0.5 text-xs ${
-              stufe.erreichtAm ? 'bg-xp/15 font-medium text-xp' : 'bg-flaeche-2 text-leise'
-            }`}
-          >
-            {stufe.erreichtAm && <Award className="size-3" />}
-            {tx(stufe.name)}
-          </span>
-        ))}
-      </div>
+      <Link to="/mehr/profil/titel" className="flex min-h-12 items-center text-base">
+        {tx('Titel wählen')}
+      </Link>
     </div>
   );
 }

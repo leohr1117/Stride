@@ -94,7 +94,7 @@ export const vorlageSchema = z.object({
   gewichte: gewichteSchema,
   projektId: optionaleId.nullish(),
 });
-export const vorlageAenderungSchema = vorlageSchema.omit({ projektId: true }).partial().extend(archiviert);
+export const vorlageAenderungSchema = vorlageSchema.partial().extend(archiviert);
 export const vorlageReihenfolgeSchema = z.object({
   ids: z.array(z.number().int().positive()).max(500),
 });

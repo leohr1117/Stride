@@ -50,25 +50,11 @@ test('Tätigkeiten lassen sich anordnen, die oberste steht zuerst', async ({ pag
     await expect(zeile(vorher[vorher.length - 1].id).getByRole('button', { name: 'nach unten' })).toBeDisabled();
     await expect(zeile(erste.id)).toContainText(erste.name);
 
-    const info = dialog.getByRole('button', { name: 'Info' });
-    await info.click();
-    const hinweis = page.getByRole('tooltip');
-    await expect(hinweis).toBeVisible();
-    await expect(hinweis).toHaveText('Die oberste Tätigkeit steht zuerst, auch beim Eintragen.');
-    const kasten = await hinweis.boundingBox();
-    const fenster = page.viewportSize();
-    expect(kasten).not.toBeNull();
-    expect(fenster).not.toBeNull();
-    if (kasten && fenster) {
-      expect(kasten.x).toBeGreaterThanOrEqual(0);
-      expect(kasten.y).toBeGreaterThanOrEqual(0);
-      expect(kasten.x + kasten.width).toBeLessThanOrEqual(fenster.width + 1);
-      expect(kasten.y + kasten.height).toBeLessThanOrEqual(fenster.height + 1);
-    }
+    await expect(dialog.getByText('Oben steht zuerst, auch beim Eintragen.')).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Info' })).toHaveCount(0);
+    await expect(dialog.getByRole('button', { name: 'Fertig', exact: true })).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
     await bild('dialog');
-    await page.keyboard.press('Escape');
-    await expect(hinweis).toHaveCount(0);
     await expect(dialog).toBeVisible();
 
     await zeile(zweite.id).getByRole('button', { name: 'nach oben' }).click();

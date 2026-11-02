@@ -116,10 +116,10 @@ test('ohne Tätigkeit führt das Anlegen zum Dialog, der Eintrag fehlt', async (
   await page.goto('/');
   await karte(page).getByRole('button', { name: 'Projekt anlegen' }).click();
   await expect(page).toHaveURL(/\/ziele$/);
-  await expect(page.getByRole('heading', { name: 'Neues Projekt' })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Projekt', exact: true })).toBeVisible();
   await page.getByRole('dialog').getByRole('button', { name: 'Schließen' }).click();
   await page.goto('/ziele');
-  await expect(page.getByRole('heading', { name: 'Neues Projekt' })).toHaveCount(0);
+  await expect(page.getByRole('dialog', { name: 'Projekt', exact: true })).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
 });
 

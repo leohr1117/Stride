@@ -125,7 +125,7 @@ test('Regler lässt das Textfeld los', async ({ page }, testInfo) => {
 
   await page.goto('/investitionen');
   await page.getByRole('button', { name: /Investition anlegen/ }).click();
-  const investition = page.getByRole('dialog', { name: 'Neue Investition' });
+  const investition = page.getByRole('dialog', { name: 'Investition', exact: true });
   await expect(investition).toBeVisible();
   const investitionName = investition.getByRole('textbox', { name: 'Name' });
   const groesse = investition.getByRole('slider', { name: 'Größe' });
