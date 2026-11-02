@@ -29,7 +29,7 @@ import {
   type ZuordnungsStand,
 } from './zuordnung.ts';
 
-const INFO_LABELS = 'Ein Label geht vor dem Projekt. Hat eine Aufgabe mehrere, gilt das oberste.';
+export const INFO_LABELS = 'Ein Label geht vor dem Projekt. Hat eine Aufgabe mehrere, gilt das oberste.';
 
 type Wahl =
   | { art: 'standard' }

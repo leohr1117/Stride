@@ -153,7 +153,7 @@ test('Benachrichtigungen stehen unter Mehr vor Daten', async ({ page }, testInfo
     await expect(page.getByRole('switch', { name: 'Boss-Datum', exact: true })).toHaveCount(0);
     await expect(page.getByRole('switch', { name: 'Rückkehr', exact: true })).toHaveCount(0);
     await expect(page.getByRole('switch', { name: /Fällig|Training/ })).toHaveCount(0);
-    await expect(page.locator('#hinweis-streak').getByRole('button', { name: 'Info', exact: true })).toHaveCount(0);
+    await expect(page.locator('#hinweis-streak').getByRole('button', { name: /^Info/ })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Bearbeiten', exact: true })).toHaveCount(0);
     await expect(page.getByLabel('Ruhe von')).toHaveCount(0);
     await expect(page.getByLabel('Ruhe bis')).toHaveCount(0);
@@ -214,7 +214,7 @@ test('Benachrichtigungen stehen unter Mehr vor Daten', async ({ page }, testInfo
     await expect(page.getByRole('switch', { name: 'Auf diesem Gerät', exact: true })).toHaveAttribute('aria-checked', 'true');
     const streak = page.getByRole('switch', { name: 'Streak in Gefahr', exact: true });
     await expect(streak).toBeEnabled();
-    await expect(page.locator('#hinweis-streak').getByRole('button', { name: 'Info', exact: true })).toHaveCount(0);
+    await expect(page.locator('#hinweis-streak').getByRole('button', { name: /^Info/ })).toHaveCount(0);
     const warAn = await streak.getAttribute('aria-checked');
     const antwort = page.waitForResponse(
       (meldung) => meldung.url().includes('/api/hinweise') && meldung.request().method() === 'PATCH' && meldung.ok(),
@@ -514,7 +514,7 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
     await tragEin(page);
     const karte = page.getByRole('region', { name: FRAGE });
     await expect(karte).toBeVisible();
-    await expect(karte.getByRole('button', { name: 'Info', exact: true })).toHaveCount(0);
+    await expect(karte.getByRole('button', { name: /^Info/ })).toHaveCount(0);
     await expect(karte.getByRole('link', { name: 'Ansehen', exact: true })).toBeVisible();
     await expect(karte.getByRole('button', { name: 'Nicht jetzt', exact: true })).toBeVisible();
     const ident = page.locator('section.karte').filter({ has: page.getByText('Start', { exact: true }) }).first();
@@ -591,7 +591,7 @@ test('Handbuch nennt die Benachrichtigungen nicht', async ({ page }) => {
   await expect(seite.getByText('Streak in Gefahr', { exact: true })).toHaveCount(0);
   await expect(seite.getByText('Boss-Datum', { exact: true })).toHaveCount(0);
   await expect(seite.getByText('Ruhezeit', { exact: true })).toHaveCount(0);
-  await expect(seite.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await expect(seite.getByRole('button', { name: /^Info/ })).toHaveCount(0);
   await expect(seite.getByText('Fällige Aufgabe')).toHaveCount(0);
   await expect(seite.getByText('Trainingstag')).toHaveCount(0);
   const abgeschnitten = await seite.evaluate((el) => el.scrollWidth > el.clientWidth + 1);

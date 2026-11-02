@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Ein Hinweis heißt Info zu dem Namen daneben und lässt sich mit der Tastatur öffnen.', 'A hint is called Info about the name beside it and opens from the keyboard.'],
+  ['Beim Anlegen einer Palette steht, wofür Primär, Akzent und Hintergrund da sind. Streak, Ring und Schalter behalten feste Farben.', 'When you create a palette, it says what primary, accent, and background are for. Streak, ring, and switches keep fixed colors.'],
+  ['Profil zurücksetzen nennt Tätigkeiten.', 'Reset profile says activities.'],
   ['Der Hinweis am Streak nennt nur die freie Pause und den angeschlagenen Streak.', 'The note on the streak only names the free day off and the cracked streak.'],
   ['Bei Bosse steht, dass nur ein Datum gilt und nach der Deadline Disziplin verloren geht.', 'Bosses says that only a date counts and that Discipline is lost after the deadline.'],
   ['Bei Verfall steht, dass ungenutzte Attribute XP verlieren. Die Stärke stellst du pro Attribut ein.', 'Decay says that unused attributes lose XP. You set the strength on each attribute.'],

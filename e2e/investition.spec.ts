@@ -173,7 +173,7 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     const zeile = page.locator('#projekt-investition');
     await expect(zeile).toBeVisible();
     await expect(page.getByRole('slider', { name: 'Größe' })).toHaveCount(0);
-    await zeile.getByRole('button', { name: 'Info' }).click();
+    await zeile.getByRole('button', { name: /^Info/ }).click();
     const hinweis = page.getByRole('tooltip');
     await expect(hinweis).toContainText('Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.');
     const kasten = await hinweis.boundingBox();
@@ -268,7 +268,7 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
       await ressourcen.click();
     }
     await expect(ressourcen).toHaveAttribute('aria-checked', 'true');
-    await expect(dialog.getByRole('button', { name: 'Info' })).toHaveCount(0);
+    await expect(dialog.getByRole('button', { name: /^Info/ })).toHaveCount(0);
 
     await expect(dialog.getByRole('button', { name: 'Abschließen' })).toHaveCount(0);
     await expect(dialog.getByRole('button', { name: 'Rückgängig' })).toHaveCount(0);

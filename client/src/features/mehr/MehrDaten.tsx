@@ -42,7 +42,7 @@ function Gefahrenbereich() {
     if (
       await bestaetigen({
         titel: tx("Profil zurücksetzen?"),
-        text: tx("Einträge, Ziele und Vorlagen dieses Accounts werden gelöscht, dein Login bleibt."),
+        text: tx("Einträge, Ziele und Tätigkeiten dieses Accounts werden gelöscht, dein Login bleibt."),
         knopf: tx("Zurücksetzen"),
         gefahr: true,
         eingabe: { hinweis: tx("Tippe ZURÜCKSETZEN, um fortzufahren."), wert: tx('ZURÜCKSETZEN') },

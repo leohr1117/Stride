@@ -103,7 +103,7 @@ function PalettenFormular({
         <div className="space-y-4">
           <div className="flex items-center">
             <h3 className={ABSCHNITT}>{tx('Farben')}</h3>
-            <InfoHinweis text="Primär für Knöpfe, Akzent für XP, Hintergrund für die Fläche." />
+            <InfoHinweis name="Farben" text="Primär: Knöpfe. Akzent: Hervorhebungen. Hintergrund: Fläche. Streak, Ring und Schalter haben feste Farben." />
           </div>
           <Feld label="Primär">
             <input

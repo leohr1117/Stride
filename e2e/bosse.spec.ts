@@ -169,7 +169,7 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
   expect(speichernSichtbar).toBe(true);
   await ohneSeitlichenUeberlauf(page);
   await bild('formular');
-  await dialog.getByRole('button', { name: 'Info' }).click();
+  await dialog.getByRole('button', { name: /^Info/ }).click();
   await expect(page.getByText('Bis zum Datum entsteht er. Danach greift er an.')).toBeVisible();
   await page.keyboard.press('Escape');
 

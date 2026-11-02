@@ -267,7 +267,7 @@ function ProjektAbschluss({ projekt }: { projekt: Projekt }) {
       {abschluss.fehler}
       <div className="flex min-w-0 items-center">
         <h2 className="text-sm font-medium">{tx('Abschluss')}</h2>
-        <InfoHinweis text="Einmalig Bonus-XP nach den Einträgen im Projekt. Wieder öffnen gibt den Bonus nicht noch einmal." />
+        <InfoHinweis name="Abschluss" text="Einmalig Bonus-XP nach den Einträgen im Projekt. Wieder öffnen gibt den Bonus nicht noch einmal." />
       </div>
       {stand && (
         <p className="flex min-w-0 flex-wrap gap-x-3 gap-y-1 text-sm text-leise">
@@ -587,7 +587,7 @@ function BossFormular({ vorhaben, onFertig }: { vorhaben: Vorhaben; onFertig: ()
       <div className="space-y-1.5">
         <span className="flex items-center text-sm font-medium">
           {tx("Deadline")}
-          <InfoHinweis text={BOSS_DATUM_INFO} />
+          <InfoHinweis name="Deadline" text={BOSS_DATUM_INFO} />
         </span>
         <input
           type="date"

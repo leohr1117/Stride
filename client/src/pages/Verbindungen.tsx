@@ -103,7 +103,7 @@ function TodoistBereich({
                   <p className="truncate font-medium">{tx('Verbunden als {name}', { name: status.nutzer ?? '' })}</p>
                   <p className="flex items-center text-[13px] leading-[18px] text-leise">
                     <span className="min-w-0">{zeit ? tx('Zuletzt abgeglichen {zeit}', { zeit }) : tx('Noch nicht abgeglichen')}</span>
-                    <InfoHinweis text="Beim Öffnen und alle 15 Minuten, nachts alle 3 Stunden." />
+                    <InfoHinweis name="Zuletzt abgeglichen" text="Beim Öffnen und alle 15 Minuten, nachts alle 3 Stunden." />
                   </p>
                   {fehlerZeilen.map((zeile) => (
                     <p key={zeile} className="break-words text-xs text-gefahr">

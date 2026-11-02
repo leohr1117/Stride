@@ -153,7 +153,7 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
         label={
           <span className="inline-flex items-center">
             {tx('Zählt als')}
-            <InfoHinweis text="Die XP richtet sich nach der Dauer des Termins." />
+            <InfoHinweis name="Zählt als" text="Die XP richtet sich nach der Dauer des Termins." />
           </span>
         }
       >

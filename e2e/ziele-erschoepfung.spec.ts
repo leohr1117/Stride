@@ -323,7 +323,7 @@ test('Ein Tipp in die Einstellungszeile trifft den Schalter', async ({ page }, t
     await page.goto('/mehr/funktionen');
     const zeile = page.locator('#funktion-verfallKoennen');
     await zeile.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
-    const info = zeile.getByRole('button', { name: 'Info' });
+    const info = zeile.getByRole('button', { name: /^Info/ });
     const schalter = zeile.getByRole('switch', { name: 'Verfall Können' });
     await expect(schalter).toBeEnabled();
     const zeileKasten = await zeile.boundingBox();

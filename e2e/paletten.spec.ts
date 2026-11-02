@@ -117,11 +117,15 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     await page.getByRole('button', { name: '+ Palette anlegen', exact: true }).click();
     const formular = page.getByRole('dialog', { name: 'Palette', exact: true });
     await expect(formular).toBeVisible();
-    const info = formular.getByRole('button', { name: 'Info' });
-    await info.click();
+    const nameFeld = formular.getByRole('textbox', { name: 'Name', exact: true });
+    await nameFeld.focus();
+    await page.keyboard.press('Tab');
+    const info = formular.getByRole('button', { name: 'Info zu Farben', exact: true });
+    await expect(info).toBeFocused();
+    await page.keyboard.press('Enter');
     const hinweis = page.getByRole('tooltip');
     await expect(hinweis).toBeVisible();
-    await expect(hinweis).toHaveText('Primär für Knöpfe, Akzent für XP, Hintergrund für die Fläche.');
+    await expect(hinweis).toHaveText('Primär: Knöpfe. Akzent: Hervorhebungen. Hintergrund: Fläche. Streak, Ring und Schalter haben feste Farben.');
     await expect(formular.locator('[data-vorschau]')).toBeVisible();
     const kasten = await hinweis.boundingBox();
     const fenster = page.viewportSize();
@@ -133,6 +137,7 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
       expect(kasten.x + kasten.width).toBeLessThanOrEqual(fenster.width + 1);
       expect(kasten.y + kasten.height).toBeLessThanOrEqual(fenster.height + 1);
     }
+    await bild('hinweis');
     await page.keyboard.press('Escape');
     await expect(hinweis).toHaveCount(0);
     await expect(formular).toBeVisible();

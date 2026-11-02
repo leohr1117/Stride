@@ -103,7 +103,7 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   await expect(page.locator('body')).not.toContainText('°');
   await ohneSeitlichenUeberlauf(page);
 
-  const hinweis = page.getByRole('button', { name: 'Hinweis zu den Werten' });
+  const hinweis = page.getByRole('button', { name: /^Info zu / });
   const kasten = await hinweis.boundingBox();
   expect(kasten).toBeTruthy();
   if (kasten) {
@@ -170,7 +170,7 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   await expect(page.locator('.recharts-wrapper').first()).toBeVisible();
   const prozentZeile = page.locator('[data-aehnlichkeit]');
   await expect(prozentZeile).toContainText(/%\s*ähnlich/);
-  const nameHinweis = page.getByRole('button', { name: 'Hinweis zu den Werten' });
+  const nameHinweis = page.getByRole('button', { name: /^Info zu / });
   await expect(nameHinweis).toBeVisible();
   const deltaName = await page.getByRole('heading', { name: 'Profil im Vergleich', exact: true }).evaluate((titel) => {
     const knopf = titel.parentElement?.querySelector('button');
@@ -189,7 +189,7 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   await page.goto('/vorbilder/einstein');
   await expect(page.getByRole('heading', { name: 'Albert Einstein', exact: true })).toBeVisible();
   await expect(page.getByText('1879 bis 1955')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Hinweis zu den Werten' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Info zu / })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
 
   await page.goto('/handbuch');

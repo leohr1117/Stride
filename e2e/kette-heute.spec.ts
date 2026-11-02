@@ -177,7 +177,7 @@ test('Kettenfehler bleibt in Heute', async ({ page }, testInfo) => {
 
 test('Streak-Info öffnet sich', async ({ page }, testInfo) => {
   await anmelden(page);
-  const info = page.locator('[data-wochenwert="Streak"]').getByRole('button', { name: 'Info' });
+  const info = page.locator('[data-wochenwert="Streak"]').getByRole('button', { name: /^Info/ });
   await info.click();
   const tooltip = page.getByRole('tooltip');
   await expect(tooltip).toHaveText('Ein Tag Pause ist frei. Danach ist der Streak angeschlagen.');
@@ -274,7 +274,7 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
     await expect(page.locator('[data-kette="streak"]')).toHaveCount(0);
     await expect(page.locator('[data-wochenwert="Streak"] .text-streak')).toHaveCount(0);
     await dialogBleibtZeile(page, 'rueckkehr');
-    const heuteInfo = page.locator('[data-heute]').getByRole('button', { name: 'Info' });
+    const heuteInfo = page.locator('[data-heute]').getByRole('button', { name: /^Info/ });
     await heuteInfo.click();
     await expect(page.getByRole('tooltip')).toContainText('Ein Eintrag in sieben Tagen');
     await page.keyboard.press('Escape');

@@ -110,7 +110,7 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
     expect(await eckenRadius(page, '.liste')).toBe(projekt === 'handy' ? '0px' : '8px');
     expect(await eckenRadius(page, '[data-zurueck]')).toBe('8px');
     expect(await page.locator('.knopf').first().evaluate((element) => getComputedStyle(element).minHeight)).toBe('48px');
-    const info = page.getByRole('button', { name: 'Info' }).first();
+    const info = page.getByRole('button', { name: /^Info/ }).first();
     const infoLuecke = await info.evaluate((knopf) => {
       const kasten = knopf.getBoundingClientRect();
       const huelle = knopf.parentElement;

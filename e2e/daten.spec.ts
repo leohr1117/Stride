@@ -36,6 +36,8 @@ test('Daten zeigt Export, Import und den Gefahrenbereich', async ({ page }, test
   await gefahr.getByRole('button', { name: 'Profil zurücksetzen', exact: true }).click();
   const reset = page.getByRole('alertdialog', { name: 'Profil zurücksetzen?' });
   await expect(reset).toBeVisible();
+  await expect(reset.getByText('Einträge, Ziele und Tätigkeiten dieses Accounts werden gelöscht, dein Login bleibt.')).toBeVisible();
+  await bild('zuruecksetzen');
   const knopf = reset.getByRole('button', { name: 'Zurücksetzen', exact: true });
   await expect(knopf).toBeDisabled();
   await reset.getByLabel('Tippe ZURÜCKSETZEN, um fortzufahren.').fill('zuruecksetzen');

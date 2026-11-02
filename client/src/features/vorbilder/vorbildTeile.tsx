@@ -1,15 +1,12 @@
 import { InfoHinweis } from '../../ui/index.ts';
-import { tx } from '../../text.ts';
 
 export const WERTE_HINWEIS =
   'Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.';
 
 const HINWEIS_KNOPF = 'inline-flex size-4 items-center justify-center rounded-full text-leise hover:text-haupt';
 
-export function WerteHinweis() {
-  return (
-    <InfoHinweis text={WERTE_HINWEIS} label={tx("Hinweis zu den Werten")} knopfKlasse={HINWEIS_KNOPF} />
-  );
+export function WerteHinweis({ name }: { name: string }) {
+  return <InfoHinweis text={WERTE_HINWEIS} name={name} knopfKlasse={HINWEIS_KNOPF} />;
 }
 
 export function Legende({ eintraege }: { eintraege: { name: string; farbe: string }[] }) {

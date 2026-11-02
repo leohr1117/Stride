@@ -35,7 +35,7 @@ test('Einstellungen zeigen Karten auf Heute und Benachrichtigungen vor Daten', a
   await expect(inhalt.getByRole('link', { name: 'Identität', exact: true })).toHaveCount(0);
   await expect(inhalt.getByRole('switch', { name: 'Identität', exact: true })).toBeChecked();
   await expect(inhalt.getByText('Immer', { exact: true })).toHaveCount(0);
-  await expect(inhalt.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await expect(inhalt.getByRole('button', { name: /^Info/ })).toHaveCount(0);
   await expect(inhalt.getByRole('link', { name: /^Bereich für / })).toHaveCount(0);
   await expect(inhalt.getByRole('switch', { name: 'Aktivität', exact: true })).toBeChecked();
   await expect(inhalt.getByRole('link', { name: 'Aktivität', exact: true })).toHaveCount(0);

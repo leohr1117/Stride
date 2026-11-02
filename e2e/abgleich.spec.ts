@@ -166,7 +166,7 @@ test('Abgleich zeigt den Stand, behält Einträge und importiert nicht doppelt',
     await page.screenshot({ path: `tmp-test/abgleich/fehler-${info.project.name}.png` });
     await ohneSeitlichenUeberlauf(page);
 
-    await kalenderBereich(page).getByRole('button', { name: 'Info' }).click();
+    await kalenderBereich(page).getByRole('button', { name: /^Info/ }).click();
     const hinweis = page.getByRole('tooltip');
     await expect(hinweis).toBeVisible();
     await expect(hinweis).toContainText('Beim Öffnen und alle 15 Minuten.');

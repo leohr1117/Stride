@@ -79,7 +79,7 @@ test('Bereiche → Toast Öffnen → Fähigkeiten → Zurück = Bereiche', async
     await ohneSeitlichenUeberlauf(page);
     await bild('zurueck');
 
-    const basisInfo = page.locator('#funktion-basis').getByRole('button', { name: 'Info' });
+    const basisInfo = page.locator('#funktion-basis').getByRole('button', { name: /^Info/ });
     await basisInfo.click();
     const hinweis = page.getByRole('tooltip');
     await expect(hinweis).toContainText('Tägliche Aufgaben zum Abhaken.');
@@ -96,28 +96,28 @@ test('Bereiche → Toast Öffnen → Fähigkeiten → Zurück = Bereiche', async
     await page.keyboard.press('Escape');
     await expect(hinweis).toHaveCount(0);
 
-    const bossInfo = page.locator('#funktion-bossAngriffe').getByRole('button', { name: 'Info' });
+    const bossInfo = page.locator('#funktion-bossAngriffe').getByRole('button', { name: /^Info/ });
     await bossInfo.click();
     await expect(page.getByRole('tooltip')).toHaveText('Nur ein Datum. Nach der Deadline geht Disziplin verloren.');
     await expect(page.getByRole('tooltip')).not.toContainText('Leben bleibt verdeckt');
     await page.keyboard.press('Escape');
     for (const id of ['verfallKoennen', 'verfallHaben'] as const) {
-      await page.locator(`#funktion-${id}`).getByRole('button', { name: 'Info' }).click();
+      await page.locator(`#funktion-${id}`).getByRole('button', { name: /^Info/ }).click();
       await expect(page.getByRole('tooltip')).toHaveText('Ungenutzte Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.');
       await page.keyboard.press('Escape');
     }
     for (const id of ['chronik', 'rueckblick', 'statistiken', 'vorbilder', 'handbuch', 'koennen', 'status', 'faehigkeiten', 'ausruestung']) {
-      await expect(page.locator(`#funktion-${id}`).getByRole('button', { name: 'Info' })).toHaveCount(0);
+      await expect(page.locator(`#funktion-${id}`).getByRole('button', { name: /^Info/ })).toHaveCount(0);
     }
     for (const id of ['visionen', 'organisationen', 'projekte', 'vorhaben']) {
-      await expect(page.locator(`#ziel-${id}`).getByRole('button', { name: 'Info' })).toHaveCount(0);
+      await expect(page.locator(`#ziel-${id}`).getByRole('button', { name: /^Info/ })).toHaveCount(0);
     }
 
     await setzeEbenen(page, { ...vorher.ebenen, vorhaben: false });
     await page.goto('/mehr/funktionen');
     const bosse = page.locator('#funktion-bossAngriffe');
     await expect(bosse).toContainText('Erst Vorhaben einschalten.');
-    await expect(bosse.getByRole('button', { name: 'Info' })).toHaveCount(0);
+    await expect(bosse.getByRole('button', { name: /^Info/ })).toHaveCount(0);
     await expect(bosse.getByRole('switch', { name: 'Bosse' })).toBeDisabled();
     await ohneSeitlichenUeberlauf(page);
     await bild('gesperrt');

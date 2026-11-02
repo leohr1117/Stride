@@ -180,12 +180,12 @@ function katalogTexte(): string[] {
   if (organisation) {
     texte.push(organisation);
   }
-  texte.push('Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.', 'Karten');
+  texte.push('Karten');
   for (const bereich of MEHR_BEREICHE) {
     texte.push(bereich.label);
   }
   for (const karte of UEBERSICHT_KARTEN) {
-    texte.push(karte.label, karte.regel, karte.info);
+    texte.push(karte.label);
   }
   return texte;
 }

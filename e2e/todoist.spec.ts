@@ -55,7 +55,7 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
   });
 
   await page.getByRole('textbox', { name: 'API-Token' }).fill('e2e-todoist-token');
-  await page.getByRole('button', { name: 'Verbinden' }).click();
+  await page.getByRole('button', { name: 'Verbinden', exact: true }).click();
 
   const todoist = page.locator('#todoist');
   await expect(page.getByText('Verbunden als Todoist Test')).toBeVisible();
@@ -117,9 +117,9 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
   await expect(post).toContainText(geerbt.includes('Standard') ? standardName : 'Zählt nicht');
 
   await expect(page.getByRole('button', { name: /^Mit Label Lesen/ })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Labels' }).click();
+  await page.getByRole('button', { name: 'Labels', exact: true }).click();
   await expect(page.getByRole('button', { name: /^Mit Label Lesen/ })).toBeVisible();
-  await page.locator('#todoist-labels').getByRole('button', { name: 'Info' }).click();
+  await page.locator('#todoist-labels').getByRole('button', { name: /^Info/ }).click();
   await expect(page.getByRole('tooltip')).toContainText('oberste');
   await page.keyboard.press('Escape');
 
@@ -137,7 +137,7 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
   await page.getByRole('button', { name: /^Mit Label Lesen/ }).click();
   const lesen = page.getByRole('dialog', { name: 'Lesen' });
   await lesen.getByRole('button', { name: 'Weiteres' }).click();
-  await lesen.getByRole('button', { name: 'Info' }).click();
+  await lesen.getByRole('button', { name: /^Info/ }).click();
   await expect(page.getByRole('tooltip')).toContainText('Gegner');
   await page.keyboard.press('Escape');
   await page.screenshot({ path: `tmp-test/todoist/todoist-blatt-${info.project.name}.png` });

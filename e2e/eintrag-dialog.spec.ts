@@ -67,7 +67,7 @@ test('Eintrag-Dialog ist ein Blatt ohne Tipp, mit lesbaren Chips und Info', asyn
   await expect(formular).toBeHidden();
   await expect(dialog).toBeVisible();
 
-  const info = dialog.getByRole('button', { name: 'Info', exact: true });
+  const info = dialog.getByRole('button', { name: /^Info/ });
   await info.scrollIntoViewIfNeeded();
   await info.click();
   const hinweis = page.getByRole('tooltip');

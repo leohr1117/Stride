@@ -77,7 +77,7 @@ test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert w
     await expect(dialog.getByText('Kopiere die geheime Adresse im iCal-Format.')).toBeVisible();
     await expect(dialog.getByRole('link', { name: 'Google Kalender öffnen' })).toHaveAttribute('href', GOOGLE);
     await expect(dialog.getByText('Google aktualisiert das Abo nur alle paar Stunden.')).toBeVisible();
-    await expect(dialog.getByRole('button', { name: 'Info' })).toHaveCount(0);
+    await expect(dialog.getByRole('button', { name: /^Info/ })).toHaveCount(0);
     await page.screenshot({ path: `tmp-test/kalender/kalender-google-info-${info.project.name}.png` });
 
     await dialog.getByRole('button', { name: 'Apple', exact: true }).click();
@@ -111,7 +111,7 @@ test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert w
     await expect(dialog.getByText('Titel enthält', { exact: true })).toHaveCount(0);
     await dialog.getByText('Nur Termine mit diesen Wörtern', { exact: true }).scrollIntoViewIfNeeded();
     await page.screenshot({ path: `tmp-test/kalender/kalender-pruefung-${info.project.name}.png` });
-    await dialog.getByRole('button', { name: 'Info', exact: true }).click();
+    await dialog.getByRole('button', { name: /^Info/ }).click();
     const hinweis = page.getByRole('tooltip');
     await expect(hinweis).toBeVisible();
     await expect(hinweis).toContainText('Dauer des Termins');

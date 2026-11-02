@@ -157,7 +157,7 @@ export function ZuordnungBlatt({
                 <div className="flex items-center justify-between gap-3">
                   <span className="flex min-w-0 items-center text-sm font-medium">
                     {tx('Meilenstein')}
-                    <InfoHinweis text={HINWEIS_MEILENSTEIN} />
+                    <InfoHinweis name="Meilenstein" text={HINWEIS_MEILENSTEIN} />
                   </span>
                   <Schalter
                     kompakt

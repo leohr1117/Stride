@@ -65,7 +65,7 @@ test('Dialoge stehen in fester Reihenfolge', async ({ page }, testInfo) => {
   const projektDialog = page.getByRole('dialog', { name: 'Projekt', exact: true });
   await expect(projektDialog.getByText('Vorauswahl beim Eintragen')).toBeVisible();
   await expect(projektDialog.getByText('Tätigkeit beim Abschluss')).toBeVisible();
-  await expect(projektDialog.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await expect(projektDialog.getByRole('button', { name: /^Info/ })).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
   await bild('projekt');
   await projektDialog.getByRole('button', { name: 'Schließen' }).click();
@@ -87,7 +87,7 @@ test('Dialoge stehen in fester Reihenfolge', async ({ page }, testInfo) => {
   await page.getByRole('menuitem', { name: 'Reihenfolge', exact: true }).click();
   const reihe = page.getByRole('dialog', { name: 'Reihenfolge' });
   await expect(reihe.getByText('Oben steht zuerst, auch beim Eintragen.')).toBeVisible();
-  await expect(reihe.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await expect(reihe.getByRole('button', { name: /^Info/ })).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
   await bild('reihenfolge');
   await reihe.getByRole('button', { name: 'Fertig', exact: true }).click();
@@ -113,7 +113,7 @@ test('Dialoge stehen in fester Reihenfolge', async ({ page }, testInfo) => {
   await page.goto(`/projekte/${projekt.id}`);
   await page.getByRole('button', { name: 'Investition', exact: true }).click();
   const investition = page.getByRole('dialog', { name: 'Investition', exact: true });
-  await expect(investition.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await expect(investition.getByRole('button', { name: /^Info/ })).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
   await bild('projekt-investition');
   await investition.getByRole('button', { name: 'Schließen' }).click();
@@ -124,7 +124,7 @@ test('Dialoge stehen in fester Reihenfolge', async ({ page }, testInfo) => {
   await expect(anlegen.getByRole('textbox', { name: 'Name' })).toBeVisible();
   await expect(anlegen.getByText('Symbol')).toBeVisible();
   await expect(anlegen.getByRole('button', { name: 'Speichern' })).toBeVisible();
-  await expect(anlegen.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await expect(anlegen.getByRole('button', { name: /^Info/ })).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
   await bild('investition');
   await anlegen.getByRole('button', { name: 'Schließen' }).click();

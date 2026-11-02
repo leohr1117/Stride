@@ -5,7 +5,8 @@ import { tx } from '../text.ts';
 
 export function InfoHinweis({
   text,
-  label = tx("Info"),
+  name,
+  label,
   icon,
   kompakt = false,
   knopfKlasse,
@@ -13,6 +14,7 @@ export function InfoHinweis({
   amKasten = false,
 }: {
   text: string;
+  name?: string;
   label?: string;
   icon?: ReactNode;
   kompakt?: boolean;
@@ -22,7 +24,8 @@ export function InfoHinweis({
   /** Unter dem Kasten zentrieren, statt direkt unter dem Icon. Die Zahlen im Kasten bleiben frei. */
   amKasten?: boolean;
 }) {
-  const labelText = tx(label);
+  const bezogenerName = name ? tx(name) : '';
+  const labelText = label ? tx(label) : bezogenerName ? tx('Info zu {name}', { name: bezogenerName }) : tx('Info');
   const hinweis = tx(text);
   const [offen, setOffen] = useState(false);
   const [ort, setOrt] = useState<{ top: number; left: number } | null>(null);

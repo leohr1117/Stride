@@ -104,7 +104,7 @@ test('Abschlusstätigkeit, einmaliger Bonus und Übersicht', async ({ page }, te
   const dialog = page.getByRole('dialog', { name: 'Projekt', exact: true });
   const feld = dialog.locator('.feld').filter({ hasText: 'Tätigkeit beim Abschluss' });
   await expect(feld.getByRole('combobox', { name: 'Tätigkeit beim Abschluss' })).toContainText(liefern);
-  await expect(dialog.getByRole('button', { name: 'Info', exact: true })).toHaveCount(0);
+  await expect(dialog.getByRole('button', { name: /^Info/ })).toHaveCount(0);
   await feld.getByRole('combobox', { name: 'Tätigkeit beim Abschluss' }).click();
   const blatt = page.getByRole('dialog', { name: 'Tätigkeit beim Abschluss' });
   await expect(blatt.getByRole('option', { name: 'Keine · Bonus gibt es trotzdem' })).toBeVisible();
@@ -134,7 +134,7 @@ test('Abschlusstätigkeit, einmaliger Bonus und Übersicht', async ({ page }, te
   await expect(region).toContainText('Level');
   await expect(region).toContainText('Einträge');
   await expect(region).toContainText('Std');
-  await region.getByRole('button', { name: 'Info', exact: true }).click();
+  await region.getByRole('button', { name: /^Info/ }).click();
   await expect(page.getByRole('tooltip')).toContainText('Wieder öffnen gibt den Bonus nicht noch einmal.');
   await ohneUeberlauf(page);
   await page.screenshot({ path: `tmp-test/projekt-abschluss/${testInfo.project.name}-uebersicht.png`, fullPage: true });

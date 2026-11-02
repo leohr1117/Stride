@@ -145,7 +145,7 @@ test('Konto gruppiert Profil und Anmeldung', async ({ page }, testInfo) => {
 
     await page.getByRole('link', { name: 'Fokus', exact: true }).click();
     await expect(page.getByText('Speichern archiviert abgewählte Attribute.')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Info' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /^Info/ })).toHaveCount(0);
     const gruppe = page.getByRole('group', { name: 'Fokus' });
     for (let schutz = 0; schutz < 20 && (await gruppe.locator('button[aria-pressed="true"]').count()) > 0; schutz += 1) {
       await gruppe.locator('button[aria-pressed="true"]').first().click();

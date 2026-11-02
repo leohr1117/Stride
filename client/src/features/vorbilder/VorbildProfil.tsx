@@ -212,7 +212,7 @@ export function VorbildProfilSeite() {
               <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] leading-[18px] font-semibold tracking-normal text-leise normal-case">
                 {tx('Profil im Vergleich')}
               </h2>
-              <WerteHinweis />
+              <WerteHinweis name="Profil im Vergleich" />
             </div>
             {punkte.length >= MIN_RADAR_ACHSEN && (
               <ProfilRadar

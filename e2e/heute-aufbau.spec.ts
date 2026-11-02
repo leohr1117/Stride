@@ -47,13 +47,13 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   expect(zeile[0]?.rand).toBe('1px');
   expect(zeile[2]?.rand).toBe('0px');
 
-  const info = page.locator('[data-wochenwert="Streak"]').getByRole('button', { name: 'Info' });
+  const info = page.locator('[data-wochenwert="Streak"]').getByRole('button', { name: /^Info/ });
   await info.click();
   await expect(page.getByRole('tooltip')).toHaveText('Ein Tag Pause ist frei. Danach ist der Streak angeschlagen.');
   await page.keyboard.press('Escape');
   await expect(page.getByRole('tooltip')).toHaveCount(0);
 
-  const rueckkehrInfo = page.locator('[data-kette="rueckkehr"]').getByRole('button', { name: 'Info' });
+  const rueckkehrInfo = page.locator('[data-kette="rueckkehr"]').getByRole('button', { name: /^Info/ });
   await rueckkehrInfo.click();
   await expect(page.getByRole('tooltip')).toContainText('Ein Eintrag in sieben Tagen');
   await page.keyboard.press('Escape');

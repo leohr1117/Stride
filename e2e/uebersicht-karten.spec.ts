@@ -33,7 +33,7 @@ test('Nutzer wählt die Karten der Übersicht', async ({ page }, testInfo) => {
     await expect(aktivitaet).toBeChecked();
     await expect(inhalt.getByRole('switch', { name: 'Identität', exact: true })).toBeChecked();
     await expect(inhalt.getByRole('switch')).toHaveCount(6);
-    await expect(inhalt.getByRole('button', { name: 'Info' })).toHaveCount(0);
+    await expect(inhalt.getByRole('button', { name: /^Info/ })).toHaveCount(0);
     await expect(inhalt.getByText('Immer', { exact: true })).toHaveCount(0);
     await expect(inhalt.getByRole('link', { name: /^Bereich für / })).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);

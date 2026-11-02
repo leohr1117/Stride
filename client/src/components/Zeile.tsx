@@ -125,7 +125,7 @@ export function Zeile({
           <span className={`${TITEL} ${titelFarbe}`}>{titel}</span>
           {info ? (
             <span className="pointer-events-auto inline-flex self-center">
-              <InfoHinweis text={info} knopfKlasse={INFO_IN_ZEILE} />
+              <InfoHinweis text={info} name={typeof titel === 'string' ? titel : name} knopfKlasse={INFO_IN_ZEILE} />
             </span>
           ) : null}
         </span>
@@ -188,7 +188,7 @@ export function ZeileSchalter({
           <span className={`${TITEL} ${deaktiviert ? 'opacity-60' : ''}`}>{titel}</span>
           {info ? (
             <span className="pointer-events-auto inline-flex self-center">
-              <InfoHinweis text={info} knopfKlasse={INFO_IN_ZEILE} />
+              <InfoHinweis text={info} name={typeof titel === 'string' ? titel : name} knopfKlasse={INFO_IN_ZEILE} />
             </span>
           ) : null}
         </span>

@@ -212,7 +212,7 @@ test('Handbuch nennt Schutz und Rückkehr in kurzen Zeilen', async ({ page }) =>
   await expect(karte).toContainText(`Rückkehr: ${RUECKKEHR.fristTage} Tage, wenn kein Schutz`);
   await expect(karte).toContainText('Schutz und Rückkehr geben keine XP');
   await expect(karte.getByRole('columnheader', { name: 'Faktor', exact: true })).toBeVisible();
-  await expect(karte.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await expect(karte.getByRole('button', { name: /^Info/ })).toHaveCount(0);
   const abgeschnitten = await karte.evaluate((el) => el.scrollWidth > el.clientWidth + 1);
   expect(abgeschnitten).toBe(false);
   await ohneSeitlichenUeberlauf(page);

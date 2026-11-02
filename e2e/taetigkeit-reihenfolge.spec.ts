@@ -51,7 +51,7 @@ test('Tätigkeiten lassen sich anordnen, die oberste steht zuerst', async ({ pag
     await expect(zeile(erste.id)).toContainText(erste.name);
 
     await expect(dialog.getByText('Oben steht zuerst, auch beim Eintragen.')).toBeVisible();
-    await expect(dialog.getByRole('button', { name: 'Info' })).toHaveCount(0);
+    await expect(dialog.getByRole('button', { name: /^Info/ })).toHaveCount(0);
     await expect(dialog.getByRole('button', { name: 'Fertig', exact: true })).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
     await bild('dialog');

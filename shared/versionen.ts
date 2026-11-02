@@ -17,6 +17,23 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.54.0',
+    seiten: 'Paletten, Daten',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: ['Ein Hinweis heißt Info zu dem Namen daneben und lässt sich mit der Tastatur öffnen.'],
+      },
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Beim Anlegen einer Palette steht, wofür Primär, Akzent und Hintergrund da sind. Streak, Ring und Schalter behalten feste Farben.',
+          'Profil zurücksetzen nennt Tätigkeiten.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.53.0',
     seiten: 'Heute, Bereiche, Tätigkeiten',
     abschnitte: [

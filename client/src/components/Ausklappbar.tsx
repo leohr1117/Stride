@@ -53,7 +53,7 @@ export function EinklappKopf({
         </Tag>
         {info ? (
           <span className="pointer-events-auto relative z-10 inline-flex shrink-0 self-center">
-            <InfoHinweis text={info} />
+            <InfoHinweis text={info} name={titel} />
           </span>
         ) : null}
         {zusatz ? <span className="ms-2 shrink-0">{zusatz}</span> : null}

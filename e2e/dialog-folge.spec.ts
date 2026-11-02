@@ -281,9 +281,9 @@ test('Weitere Dialoge folgen der festen Reihenfolge', async ({ page }, testInfo)
     await page.goto('/mehr/darstellung/paletten');
     await page.getByRole('button', { name: '+ Palette anlegen', exact: true }).click();
     const palette = page.getByRole('dialog', { name: 'Palette', exact: true });
-    await palette.getByRole('button', { name: 'Info', exact: true }).click();
+    await palette.getByRole('button', { name: /^Info/ }).click();
     const hinweis = page.getByRole('tooltip');
-    await expect(hinweis).toHaveText('Primär für Knöpfe, Akzent für XP, Hintergrund für die Fläche.');
+    await expect(hinweis).toHaveText('Primär: Knöpfe. Akzent: Hervorhebungen. Hintergrund: Fläche. Streak, Ring und Schalter haben feste Farben.');
     await page.keyboard.press('Escape');
     await expect(hinweis).toHaveCount(0);
     await expect(palette).toBeVisible();

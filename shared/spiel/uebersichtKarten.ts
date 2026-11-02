@@ -14,8 +14,6 @@ export type UebersichtKarteId = (typeof UEBERSICHT_KARTEN_IDS)[number];
 export interface UebersichtKarte {
   id: UebersichtKarteId;
   label: string;
-  regel: string;
-  info: string;
 }
 
 export type UebersichtKartenWahl = Record<UebersichtKarteId, boolean>;
@@ -56,40 +54,10 @@ export function karteSichtbar(id: UebersichtKarteId, sichtbarkeit: Sichtbarkeit)
 
 /** Karten der Übersicht, in der Reihenfolge auf der Startseite. Die Willkommenskarte entfällt. */
 export const UEBERSICHT_KARTEN: readonly UebersichtKarte[] = [
-  {
-    id: 'identitaet',
-    label: 'Identität',
-    regel: 'Immer',
-    info: 'Name, Level, Woche, Streak und Momentum.',
-  },
-  {
-    id: 'bosse',
-    label: 'Bosse',
-    regel: 'Bosse an',
-    info: 'Solange ein Boss angreift.',
-  },
-  {
-    id: 'comeback',
-    label: 'Zurück aufstehen',
-    regel: 'Vorhaben an',
-    info: 'Nur wenn ein Vorhaben neu starten kann.',
-  },
-  {
-    id: 'basis',
-    label: 'Basis',
-    regel: 'Basis an',
-    info: 'Tägliche Aufgaben zum Abhaken.',
-  },
-  {
-    id: 'werte',
-    label: 'Werte',
-    regel: 'Können oder Haben',
-    info: 'Haben steht direkt darunter.',
-  },
-  {
-    id: 'aktivitaet',
-    label: 'Aktivität',
-    regel: 'Immer',
-    info: 'XP je Tag.',
-  },
+  { id: 'identitaet', label: 'Identität' },
+  { id: 'bosse', label: 'Bosse' },
+  { id: 'comeback', label: 'Zurück aufstehen' },
+  { id: 'basis', label: 'Basis' },
+  { id: 'werte', label: 'Werte' },
+  { id: 'aktivitaet', label: 'Aktivität' },
 ];

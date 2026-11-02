@@ -250,7 +250,7 @@ export function Kopf() {
               {titel}
             </h1>
           )}
-          {angabe?.info ? <InfoHinweis text={angabe.info} /> : null}
+          {angabe?.info ? <InfoHinweis text={angabe.info} name={angabe.titel} /> : null}
         </div>
         <div ref={slotRef} className="flex shrink-0 items-center empty:contents" data-kopf-aktion="" />
         {!ziel && !profilInLeiste && uebersicht && (

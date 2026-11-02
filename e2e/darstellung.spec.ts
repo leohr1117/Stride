@@ -116,7 +116,7 @@ async function missAbstaende(seite: Page, name: string): Promise<Abstand[]> {
   return seite.evaluate((seiteName) => {
     const knoepfe = [
       ...document.querySelectorAll<HTMLButtonElement>(
-        'button[aria-label="Info"], button[aria-label="Hinweis zu den Werten"]',
+        'button[aria-label^="Info"]',
       ),
     ];
     const ergebnis: Abstand[] = [];
@@ -234,7 +234,7 @@ test('Darstellung: alle Ansichten, Farben getrennt, Glühen unter Sound', async 
   expect(rahmen).toBe('2px');
 
   const sprachzeile = page.locator('[data-zeile]').filter({ has: page.getByRole('button', { name: /^Sprache/ }) });
-  await sprachzeile.getByRole('button', { name: 'Info', exact: true }).click();
+  await sprachzeile.getByRole('button', { name: /^Info/ }).click();
   const hinweis = page.getByRole('tooltip');
   await expect(hinweis).toBeVisible();
   await expect(hinweis).toHaveText('Gilt für die Oberfläche. Namen und Einträge bleiben, wie du sie geschrieben hast.');
@@ -424,7 +424,7 @@ test('Info-Icon hat überall Abstand zum Namen', async ({ page }) => {
   const bossZeile = page.locator('main .rounded-2xl').first();
   await bossZeile.getByRole('button', { name: /Aktionen für/ }).click();
   await page.getByRole('menuitem', { name: /Boss bearbeiten|Zum Boss machen/ }).click();
-  await expect(page.getByRole('dialog').getByRole('button', { name: 'Info', exact: true })).toBeVisible();
+  await expect(page.getByRole('dialog').getByRole('button', { name: /^Info/ })).toBeVisible();
   const deadline = await missAbstaende(page, 'deadline');
   pruefeAbstaende(deadline, 1);
   await page.keyboard.press('Escape');

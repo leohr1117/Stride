@@ -38,13 +38,13 @@ test('Hierarchie, Funktionen und Projekt-Tätigkeit sind erkennbar', async ({ pa
   const taetigkeiten = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Nur für dieses Projekt' }) });
   await expect(taetigkeiten.getByText('Nur für App bauen')).toBeVisible();
   await expect(taetigkeiten.getByText('App-Feinschliff')).toBeVisible();
-  await expect(taetigkeiten.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await expect(taetigkeiten.getByRole('button', { name: /^Info/ })).toHaveCount(0);
   await taetigkeiten.getByRole('button', { name: '+ Tätigkeit nur für dieses Projekt', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Tätigkeit anlegen' });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText('Gilt für')).toBeVisible();
   await expect(dialog.getByRole('button', { name: 'Nur App bauen', exact: true })).toBeVisible();
-  await expect(dialog.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await expect(dialog.getByRole('button', { name: /^Info/ })).toHaveCount(0);
   await bild('taetigkeit');
   await page.keyboard.press('Escape');
   await page.locator('[data-zurueck]').click();
@@ -82,7 +82,7 @@ test('Hierarchie, Funktionen und Projekt-Tätigkeit sind erkennbar', async ({ pa
   await expect(page).toHaveURL(/\/mehr\/funktionen$/);
   await expect(page.getByRole('heading', { name: 'Funktionen', exact: true })).toHaveCount(0);
   await expect(page.getByText('Ausschalten blendet aus. Gelöscht wird nichts.')).toBeVisible();
-  await page.locator('#funktion-basis').getByRole('button', { name: 'Info' }).click();
+  await page.locator('#funktion-basis').getByRole('button', { name: /^Info/ }).click();
   const funktionsHinweis = page.getByRole('tooltip');
   await expect(funktionsHinweis).toContainText('Tägliche Aufgaben zum Abhaken.');
   imBild(await funktionsHinweis.boundingBox(), sicht.width, sicht.height);
@@ -94,7 +94,7 @@ test('Hierarchie, Funktionen und Projekt-Tätigkeit sind erkennbar', async ({ pa
   await expect(page.getByRole('heading', { name: 'Einträge', exact: true })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Streak', exact: true })).toBeVisible();
   await expect(page.getByText('Nach Vorliebe', { exact: true })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Info' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /^Info/ })).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
   await bild('handbuch');
 });

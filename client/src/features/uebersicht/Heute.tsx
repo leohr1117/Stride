@@ -65,7 +65,7 @@ export function HeuteKarte() {
           <div className="flex min-h-11 items-center gap-3" data-kette="rueckkehr">
             <RotateCcw className="size-4 shrink-0 text-leise" aria-hidden="true" />
             <Zeilentext name={tx("Rückkehr")} sache={tx("Bis {datum}", { datum: kurzesDatum(ausTagesSchluessel(rueckkehr.fristAm).toISOString()) })} />
-            <InfoHinweis text="Ein Eintrag in sieben Tagen, ohne Abzug." />
+            <InfoHinweis name="Rückkehr" text="Ein Eintrag in sieben Tagen, ohne Abzug." />
             <Knopf
               variante="primaer"
               className="min-h-11 shrink-0 whitespace-nowrap px-3"

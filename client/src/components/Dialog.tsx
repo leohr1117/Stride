@@ -391,7 +391,7 @@ function DialogSchicht({
                   {vorTitel}
                   <span>{titel}</span>
                 </h2>
-                {info ? <InfoHinweis text={info} /> : null}
+                {info ? <InfoHinweis text={info} name={titel} /> : null}
                 <div className="flex shrink-0 items-center">
                   {menu}
                   <button
@@ -411,7 +411,7 @@ function DialogSchicht({
                 {vorTitel}
                 <span>{titel}</span>
               </h2>
-              {info ? <InfoHinweis text={info} /> : null}
+              {info ? <InfoHinweis text={info} name={titel} /> : null}
             </header>
           )}
           <div className="dialog-koerper min-h-0 px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">{children}</div>

@@ -96,7 +96,7 @@ export function KalenderAbschnitt({ kalender }: { kalender: Kalender[] }) {
             </Zeilen>
             <p className="flex items-center px-4 pt-3 text-[13px] leading-[18px] text-leise">
               <span className="min-w-0">{zeit ? tx('Zuletzt abgeglichen {zeit}', { zeit }) : tx('Noch nicht abgeglichen')}</span>
-              <InfoHinweis text="Beim Öffnen und alle 15 Minuten." />
+              <InfoHinweis name="Zuletzt abgeglichen" text="Beim Öffnen und alle 15 Minuten." />
             </p>
           </>
         ) : null}

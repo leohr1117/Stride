@@ -76,7 +76,7 @@ test('Profilzeilen öffnen Können, Haben, Fähigkeiten und Investitionen', asyn
   await page.goto('/investitionen');
   await expect(page.locator('main h1')).toHaveText('Investitionen');
   await expect(page.locator('main a[href^="/projekte/"]')).toHaveCount(0);
-  await page.locator('[data-kopf]').getByRole('button', { name: 'Info' }).click();
+  await page.locator('[data-kopf]').getByRole('button', { name: /^Info/ }).click();
   await expect(page.getByRole('tooltip')).toBeVisible();
   await page.keyboard.press('Escape');
   await ohneSeitlichenUeberlauf(page);

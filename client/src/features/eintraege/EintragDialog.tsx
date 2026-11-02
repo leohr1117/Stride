@@ -476,6 +476,7 @@ export function EintragDialog({
               <span className="truncate text-sm font-medium">{tx("Meilenstein")}</span>
             </button>
             <InfoHinweis
+              name="Meilenstein"
               text={MEILENSTEIN_INFO}
               knopfKlasse="inline-flex size-12 shrink-0 items-center justify-center rounded-full text-leise hover:text-haupt"
             />

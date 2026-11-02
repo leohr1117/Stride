@@ -151,7 +151,7 @@ export function VorbilderSeite() {
           <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] leading-[18px] font-semibold tracking-normal text-leise normal-case">
             {tx("Ähnlich")}
           </h2>
-          <WerteHinweis />
+          <WerteHinweis name="Ähnlich" />
         </div>
         <Liste>
           {sichtbar.map((auswertung) => (

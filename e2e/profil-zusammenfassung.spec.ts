@@ -113,7 +113,7 @@ test('Vorbilder sind eine Liste mit seitlichen Richtungen', async ({ page }, inf
   await page.goto('/vorbilder');
   await expect(page.getByRole('heading', { name: 'Vorbilder', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Ähnlich', exact: true })).toBeVisible();
-  const hinweis = page.getByRole('button', { name: 'Hinweis zu den Werten' });
+  const hinweis = page.getByRole('button', { name: /^Info zu / });
   await hinweis.click();
   await expect(page.getByRole('tooltip')).toHaveText(
     'Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.',
@@ -134,7 +134,7 @@ test('Vorbilder sind eine Liste mit seitlichen Richtungen', async ({ page }, inf
   await expect(page.locator('.profil-name')).toBeVisible();
   const vergleich = page.getByRole('heading', { name: 'Profil im Vergleich', exact: true });
   await expect(vergleich).toBeVisible();
-  await page.getByRole('button', { name: 'Hinweis zu den Werten' }).click();
+  await page.getByRole('button', { name: /^Info zu / }).click();
   await expect(page.getByRole('tooltip')).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
   await page.screenshot({ path: bild(info, 'vorbild'), fullPage: true });

@@ -59,8 +59,7 @@ export function EbenenWahl() {
               key={ebene}
               symbol={<Icon className="size-5" aria-hidden />}
               titel={ZIEL_MARKE[ebene].mehrzahl}
-              untertitel={ZIEL_MARKE[ebene].kuerzel}
-              info={sperre ?? undefined}
+              untertitel={sperre ? tx(sperre) : ZIEL_MARKE[ebene].kuerzel}
               an={an}
               deaktiviert={sperre !== null}
               onAendern={(wert) => void umschalten(ebene, wert)}
