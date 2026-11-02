@@ -67,7 +67,7 @@ const SEITENTITEL: Record<string, string> = {
   '/mehr/darstellung': 'Darstellung',
   '/mehr/darstellung/leiste': 'Leiste',
   '/mehr/darstellung/paletten': 'Paletten',
-  '/mehr/uebersicht': 'Übersicht',
+  '/mehr/uebersicht': 'Karten auf Heute',
   '/mehr/funktionen': 'Bereiche',
   '/mehr/benachrichtigungen': 'Benachrichtigungen',
   '/mehr/daten': 'Daten',

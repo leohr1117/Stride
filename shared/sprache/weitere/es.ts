@@ -1,5 +1,13 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Sprache steht in einer Zeile und öffnet eine Liste. Die Ansicht wählst du über Vorschaukacheln.": "El idioma está en una fila y abre una lista. La vista se elige con vistas previas.",
+  "Farben dieser Ansicht, eigene Paletten und eigene Farben liegen untereinander. Zurücksetzen holt die Palette.": "Los colores de esta vista, las paletas propias y los colores propios van uno bajo el otro. Restablecer recupera la paleta.",
+  "Karten auf Heute zeigt nur Schalter. Zeilen ausgeschalteter Bereiche fehlen.": "Tarjetas en Hoy solo muestra interruptores. Faltan las filas de las áreas apagadas.",
+  "Farben dieser Ansicht": "Colores de esta vista",
+  "Paletten verwalten": "Gestionar paletas",
+  "Auf Palette zurücksetzen": "Restablecer a la paleta",
+  "Effekte": "Efectos",
+  "Palette anlegen": "Crear paleta",
   "Tätigkeiten zeigt alle Einträge. Die für ein Projekt stehen in einer eigenen Gruppe. Unter dem Namen steht, was sie stärkt.": "Actividades muestra todas las entradas. Las de un proyecto están en un grupo propio. Bajo el nombre dice qué entrena.",
   "Eine Zeile öffnet die Tätigkeit. Die Reihenfolge liegt im Menü oben.": "Una fila abre la actividad. El orden está en el menú de arriba.",
   "Bereiche sagt unter dem Titel, dass Ausschalten nur ausblendet. Ein gesperrter Schalter nennt den Grund in der Zeile.": "Áreas dice bajo el título que apagar solo oculta. Un interruptor bloqueado nombra el motivo en la fila.",

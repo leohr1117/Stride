@@ -431,8 +431,8 @@ test('Seiten, Sprachen, Darstellung, Vorbilder und Todoist', async ({ page }) =>
   ];
   try {
     await page.goto('/mehr/darstellung');
-    await expect(page.getByRole('heading', { name: 'Ansichten' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Standardfarben' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Ansicht', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Farben dieser Ansicht', exact: true })).toBeVisible();
     await expect(page.getByRole('switch', { name: 'Glühen' })).toBeVisible();
     await expect(page.getByRole('switch', { name: 'Sound' })).toBeVisible();
     expect(await seitenrand(page)).toEqual([]);

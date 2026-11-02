@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.45.0',
+    seiten: 'Darstellung, Paletten, Karten auf Heute',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Die Sprache steht in einer Zeile und öffnet eine Liste. Die Ansicht wählst du über Vorschaukacheln.',
+          'Farben dieser Ansicht, eigene Paletten und eigene Farben liegen untereinander. Zurücksetzen holt die Palette.',
+          'Karten auf Heute zeigt nur Schalter. Zeilen ausgeschalteter Bereiche fehlen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.44.0',
     seiten: 'Tätigkeiten, Bereiche',
     abschnitte: [

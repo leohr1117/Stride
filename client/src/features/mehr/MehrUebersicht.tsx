@@ -4,31 +4,26 @@ import { Fehlermeldung, Ladeanzeige } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
 import { Bereich, useEinstellungen } from './rahmen.tsx';
 
-const INFO = 'Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.';
-
 export function MehrUebersichtSeite() {
   const { data, error, isPending, speichern } = useEinstellungen();
   if (isPending) {
-    return <Bereich titel={tx('Übersicht')} kinder={<Ladeanzeige />} />;
+    return <Bereich titel={tx('Karten auf Heute')} kinder={<Ladeanzeige />} />;
   }
   if (error || !data) {
-    return <Bereich titel={tx('Übersicht')} kinder={<Fehlermeldung fehler={error} />} />;
+    return <Bereich titel={tx('Karten auf Heute')} kinder={<Fehlermeldung fehler={error} />} />;
   }
   const karten = UEBERSICHT_KARTEN.filter((karte) => karteSichtbar(karte.id, data));
   return (
     <Bereich
-      titel={tx('Übersicht')}
-      info={INFO}
+      titel={tx('Karten auf Heute')}
       kinder={
         <>
-          <ZeilenGruppe titel="Karten">
+          <ZeilenGruppe>
             {karten.map((karte) => (
               <ZeileSchalter
                 key={karte.id}
                 id={`uebersicht-karte-${karte.id}`}
                 titel={tx(karte.label)}
-                untertitel={tx(karte.regel)}
-                info={karte.info}
                 an={karteGewaehlt(karte.id, data.uebersichtKarten)}
                 deaktiviert={speichern.isPending}
                 onAendern={(an) =>

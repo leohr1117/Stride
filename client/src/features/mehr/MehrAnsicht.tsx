@@ -1,10 +1,11 @@
+import { Check } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { EigenePalette } from '../../../../shared/features/darstellung/eigenePaletten.ts';
-import { palettenNachDesign, standardVorlage, type Farbtrio } from '../../../../shared/features/darstellung/paletten.ts';
+import { standardVorlage, vorlagen, type Farbtrio } from '../../../../shared/features/darstellung/paletten.ts';
 import { STIL_INFO, STILE, type Stil } from '../../../../shared/features/darstellung/stile.ts';
 import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { farbAnfang, farbLoslassen, farbUebernehmen, farbZiehen, type FarbZustand } from '../darstellung/ansichtFarbe.ts';
-import { Fehlermeldung, InfoHinweis, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
+import { Fehlermeldung, Knopf, Ladeanzeige } from '../../ui/index.ts';
 import { wendeErscheinung, wendeStilAn } from '../darstellung/stil.ts';
 import { tx } from '../../text.ts';
 import { useEinstellungen } from './rahmen.tsx';
@@ -49,7 +50,7 @@ function StilAuswahl({ wert, werte = STILE, onAendern }: { wert: Stil; werte?: r
             type="button"
             onClick={() => onAendern(stil)}
             aria-pressed={aktiv}
-            className={`rounded-xl border p-2 text-left transition ${aktiv ? 'border-akzent ring-1 ring-akzent' : 'border-rand hover:border-leise/60'}`}
+            className={`rounded-xl border-2 p-2 text-left ${aktiv ? 'border-akzent' : 'border-rand'}`}
           >
             <span
               className="block space-y-1.5 border p-2.5"
@@ -58,11 +59,14 @@ function StilAuswahl({ wert, werte = STILE, onAendern }: { wert: Stil; werte?: r
               <span className="block h-1.5 w-3/4" style={{ borderRadius: form.balken, background: vorlage.primaer }} />
               <span className="block h-1.5 w-1/2" style={{ borderRadius: form.balken, background: vorlage.akzent }} />
             </span>
-            <span
-              className="mt-2 block text-xs font-medium text-balance break-words"
-              style={{ fontFamily: form.schrift, letterSpacing: form.sperrung, textTransform: form.gross }}
-            >
-              {tx(info.label)}
+            <span className="mt-2 flex items-center justify-between gap-1">
+              <span
+                className="min-w-0 text-xs font-medium text-balance break-words"
+                style={{ fontFamily: form.schrift, letterSpacing: form.sperrung, textTransform: form.gross }}
+              >
+                {tx(info.label)}
+              </span>
+              {aktiv ? <Check className="size-4 shrink-0" aria-hidden="true" /> : <span className="size-4 shrink-0" aria-hidden="true" />}
             </span>
           </button>
         );
@@ -148,51 +152,34 @@ function AnsichtWahl({
   return (
     <div className="space-y-8">
       <div id="ansichten" className="space-y-3">
-        <Abschnittskopf titel={tx("Ansichten")} info={tx("Form, Schrift und Kanten.")} leise />
+        <Abschnittskopf titel={tx("Ansicht")} leise />
         <StilAuswahl wert={stil} onAendern={waehleStil} />
       </div>
-      <div id="farben" className="space-y-4">
+      <div id="farben" className="space-y-6">
         <Abschnittskopf titel={tx("Farben")} leise />
         <div className="space-y-3">
-          <Abschnittskopf
-            ebene="h3"
-            titel={tx("Standardfarben")}
-            info={tx("Die Palette dieser Ansicht, danach die anderen.")}
-          />
-          <div className="space-y-3">
-            {palettenNachDesign(stil).map((gruppe) => (
-              <section key={gruppe.stil} aria-label={tx(gruppe.label)} className="space-y-2">
-                <p className="text-xs font-medium text-leise">{tx(gruppe.label)}</p>
-                <div className="flex flex-wrap gap-2">
-                  {gruppe.vorlagen.map((vorlage) => {
-                    const aktiv = gleicheFarben(farben, vorlage);
-                    return (
-                      <button
-                        key={vorlage.name}
-                        type="button"
-                        aria-pressed={aktiv}
-                        onClick={() => sofort({ primaer: vorlage.primaer, akzent: vorlage.akzent, hintergrund: vorlage.hintergrund })}
-                        className={`flex max-w-full items-center gap-2 rounded-full border px-2.5 py-1 text-xs ${aktiv ? 'border-akzent' : 'border-rand'}`}
-                      >
-                        <Farbpunkte farben={vorlage} />
-                        {tx(vorlage.name)}
-                      </button>
-                    );
-                  })}
-                </div>
-              </section>
-            ))}
+          <Abschnittskopf ebene="h3" titel={tx("Farben dieser Ansicht")} leise />
+          <div className="flex flex-wrap gap-2" role="group" aria-label={tx("Farben dieser Ansicht")}>
+            {vorlagen(stil).map((vorlage) => {
+              const aktiv = gleicheFarben(farben, vorlage);
+              return (
+                <button
+                  key={vorlage.name}
+                  type="button"
+                  aria-pressed={aktiv}
+                  onClick={() => sofort({ primaer: vorlage.primaer, akzent: vorlage.akzent, hintergrund: vorlage.hintergrund })}
+                  className={`flex max-w-full items-center gap-2 rounded-full border px-2.5 py-1 text-xs ${aktiv ? 'border-akzent' : 'border-rand'}`}
+                >
+                  <Farbpunkte farben={vorlage} />
+                  {tx(vorlage.name)}
+                </button>
+              );
+            })}
           </div>
         </div>
-        <div className="space-y-3 border-t border-rand pt-5">
-          <Abschnittskopf
-            ebene="h3"
-            titel={tx("Eigene Paletten")}
-            info={tx("Auswählen übernimmt die Farben. Anlegen und Löschen liegt unter Paletten.")}
-          />
-          {paletten.length === 0 ? (
-            <Leer text={tx("Noch keine Palette.")} />
-          ) : (
+        <div className="space-y-3">
+          <Abschnittskopf ebene="h3" titel={tx("Eigene Paletten")} leise />
+          {paletten.length > 0 ? (
             <div className="flex flex-wrap gap-2" role="group" aria-label={tx("Eigene Paletten")}>
               {paletten.map((palette) => {
                 const aktiv = gleicheFarben(farben, palette);
@@ -210,17 +197,13 @@ function AnsichtWahl({
                 );
               })}
             </div>
-          )}
+          ) : null}
           <ZeilenGruppe>
-            <Zeile titel={tx("Paletten")} nach="/mehr/darstellung/paletten" />
+            <Zeile titel={tx("Paletten verwalten")} nach="/mehr/darstellung/paletten" />
           </ZeilenGruppe>
         </div>
-        <div className="space-y-3 border-t border-rand pt-5">
-          <Abschnittskopf
-            ebene="h3"
-            titel={tx("Eigene Farben")}
-            info={tx("Nur für dich gespeichert. Zurücksetzen holt die Palette der Ansicht.")}
-          />
+        <div className="space-y-3">
+          <Abschnittskopf ebene="h3" titel={tx("Eigene Farben")} leise />
           <Farbwahl label={tx("Primär")} wert={farben.primaer} onZiehen={(wert) => ziehe('primaer', wert)} onLoslassen={(wert) => loslassen('primaer', wert)} />
           <Farbwahl label={tx("Akzent")} wert={farben.akzent} onZiehen={(wert) => ziehe('akzent', wert)} onLoslassen={(wert) => loslassen('akzent', wert)} />
           <Farbwahl label={tx("Hintergrund")} wert={farben.hintergrund} onZiehen={(wert) => ziehe('hintergrund', wert)} onLoslassen={(wert) => loslassen('hintergrund', wert)} />
@@ -232,7 +215,7 @@ function AnsichtWahl({
               onStandard();
             }}
           >
-            {tx("Zurücksetzen")}
+            {tx("Auf Palette zurücksetzen")}
           </Knopf>
         </div>
       </div>
@@ -240,23 +223,14 @@ function AnsichtWahl({
   );
 }
 
-function Abschnittskopf({
-  titel,
-  info,
-  ebene = 'h2',
-  leise = false,
-}: {
-  titel: string;
-  info?: string;
-  ebene?: 'h2' | 'h3';
-  leise?: boolean;
-}) {
+function Abschnittskopf({ titel, ebene = 'h2', leise = false }: { titel: string; ebene?: 'h2' | 'h3'; leise?: boolean }) {
   const Tag = ebene;
   return (
-    <div className="flex min-w-0 items-center">
-      <Tag className={`min-w-0 text-sm font-medium text-balance break-words ${leise ? 'text-leise' : ''}`}>{titel}</Tag>
-      {info ? <InfoHinweis text={info} /> : null}
-    </div>
+    <Tag
+      className={`ueberschrift abschnittskopf min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-balance break-words normal-case ${leise ? 'text-leise' : ''}`}
+    >
+      {titel}
+    </Tag>
   );
 }
 

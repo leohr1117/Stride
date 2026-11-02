@@ -131,9 +131,10 @@ while ($true) {
     Start-Server
   }
 
-  if ((Test-PortOffen 3000) -and -not (Test-PidDatei $tunnelPid)) {
-    Start-Tunnel
-  }
+  # Schnelltunnel (trycloudflare) am 02.11.2026 auf Leonardos Wunsch deaktiviert
+  # if ((Test-PortOffen 3000) -and -not (Test-PidDatei $tunnelPid)) {
+  #   Start-Tunnel
+  # }
   if ((Test-PortOffen 3000) -and (Test-Path $domainCfg) -and -not (Test-PidDatei $domainPid)) {
     Start-DomainTunnel
   }

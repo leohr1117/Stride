@@ -30,34 +30,15 @@ test('Einstellungen zeigen Karten auf Heute und Benachrichtigungen vor Daten', a
   const inhalt = page.locator('main');
   await inhalt.locator('a[href="/mehr/uebersicht"]').click();
   await expect(page).toHaveURL(/\/mehr\/uebersicht$/);
-  await expect(inhalt.locator('h1')).toHaveText('Übersicht');
+  await expect(inhalt.locator('h1')).toHaveText('Karten auf Heute');
   await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr');
   await expect(inhalt.getByRole('link', { name: 'Identität', exact: true })).toHaveCount(0);
   await expect(inhalt.getByRole('switch', { name: 'Identität', exact: true })).toBeChecked();
-  await expect(inhalt.getByText('Immer', { exact: true }).first()).toBeVisible();
+  await expect(inhalt.getByText('Immer', { exact: true })).toHaveCount(0);
+  await expect(inhalt.getByRole('button', { name: 'Info' })).toHaveCount(0);
   await expect(inhalt.getByRole('link', { name: /^Bereich für / })).toHaveCount(0);
   await expect(inhalt.getByRole('switch', { name: 'Aktivität', exact: true })).toBeChecked();
   await expect(inhalt.getByRole('link', { name: 'Aktivität', exact: true })).toHaveCount(0);
-
-  const info = inhalt.getByRole('button', { name: 'Info' }).first();
-  await info.click();
-  const hinweis = page.getByRole('tooltip');
-  await expect(hinweis).toBeVisible();
-  await expect(hinweis).toHaveText('Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.');
-  const kasten = await hinweis.boundingBox();
-  const fenster = page.viewportSize();
-  expect(kasten).not.toBeNull();
-  expect(fenster).not.toBeNull();
-  if (kasten && fenster) {
-    expect(kasten.x).toBeGreaterThanOrEqual(0);
-    expect(kasten.y).toBeGreaterThanOrEqual(0);
-    expect(kasten.x + kasten.width).toBeLessThanOrEqual(fenster.width + 1);
-    expect(kasten.y + kasten.height).toBeLessThanOrEqual(fenster.height + 1);
-  }
   await ohneSeitlichenUeberlauf(page);
   await bild('uebersicht-info');
-
-  await page.keyboard.press('Escape');
-  await expect(hinweis).toHaveCount(0);
-  await ohneSeitlichenUeberlauf(page);
 });

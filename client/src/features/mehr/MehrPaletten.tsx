@@ -4,7 +4,7 @@ import type { EigenePalette, PaletteEingabe } from '../../../../shared/features/
 import type { Farbtrio } from '../../../../shared/features/darstellung/paletten.ts';
 import { Dialog } from '../../components/Dialog.tsx';
 import { useSchnellAktion } from '../../components/SchnellAktion.tsx';
-import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
+import { AnlegeZeile, Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { tx } from '../../text.ts';
 import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { Bereich, DARSTELLUNG_ZURUECK, useEinstellungen } from './rahmen.tsx';
@@ -172,34 +172,28 @@ export function PalettenSeite() {
   return (
     <Bereich
       titel={tx("Paletten")}
-      info={tx("Anlegen, Bearbeiten und Löschen. Auswählen bleibt unter Darstellung.")}
       zurueck={DARSTELLUNG_ZURUECK}
       kinder={
         <div className="space-y-4">
-          <Knopf
-            variante="primaer"
-            onClick={() => {
-              speichern.reset();
-              setModus({ art: 'neu' });
-            }}
-          >
-            {tx("Neue Palette")}
-          </Knopf>
           {!modus && speichern.error ? <Fehlermeldung fehler={speichern.error} /> : null}
-          {data.paletten.length === 0 ? (
-            <Leer text={tx("Noch keine Palette.")} />
-          ) : (
-            <ZeilenGruppe>
-              {data.paletten.map((palette) => (
-                <Zeile
-                  key={palette.id}
-                  titel={palette.name}
-                  symbol={<Farbpunkte farben={palette} />}
-                  onKlick={() => setModus({ art: 'lesen', id: palette.id })}
-                />
-              ))}
-            </ZeilenGruppe>
-          )}
+          {data.paletten.length === 0 ? <Leer text={tx("Noch keine Palette.")} /> : null}
+          <ZeilenGruppe>
+            {data.paletten.map((palette) => (
+              <Zeile
+                key={palette.id}
+                titel={palette.name}
+                symbol={<Farbpunkte farben={palette} />}
+                onKlick={() => setModus({ art: 'lesen', id: palette.id })}
+              />
+            ))}
+            <AnlegeZeile
+              text="Palette anlegen"
+              onKlick={() => {
+                speichern.reset();
+                setModus({ art: 'neu' });
+              }}
+            />
+          </ZeilenGruppe>
           {modus?.art === 'neu' ? (
             <PalettenFormular
               key="neu"

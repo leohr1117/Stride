@@ -69,7 +69,7 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
     await page.goto('/mehr/darstellung');
     await expect(page.getByRole('heading', { name: 'Darstellung', exact: true })).toBeVisible();
     await waehleAnsicht(page, 'Standard', 'standard');
-    const zuruecksetzen = page.getByRole('button', { name: 'Zurücksetzen', exact: true });
+    const zuruecksetzen = page.getByRole('button', { name: 'Auf Palette zurücksetzen', exact: true });
     if (await zuruecksetzen.isEnabled()) {
       const zurueckgesetzt = page.waitForResponse(
         (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
@@ -114,13 +114,21 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
     const infoLuecke = await info.evaluate((knopf) => {
       const kasten = knopf.getBoundingClientRect();
       const huelle = knopf.parentElement;
-      const behaelter = huelle?.parentElement;
-      if (!huelle || !behaelter) {
+      if (!huelle) {
+        return -1;
+      }
+      let zeile: Element = huelle;
+      let behaelter = huelle.parentElement;
+      if (behaelter && behaelter.childElementCount === 1 && behaelter.previousElementSibling) {
+        zeile = behaelter;
+        behaelter = behaelter.parentElement;
+      }
+      if (!behaelter) {
         return -1;
       }
       const bereich = document.createRange();
       bereich.setStart(behaelter, 0);
-      bereich.setEndBefore(huelle);
+      bereich.setEndBefore(zeile);
       const iconMitte = kasten.top + kasten.height / 2;
       const rects = [...bereich.getClientRects()].filter((rect) => rect.width > 1 && rect.height > 1 && rect.right <= kasten.left + 2);
       const passend = rects

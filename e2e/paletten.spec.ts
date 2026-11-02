@@ -108,13 +108,13 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     await expect(page.locator('button.rounded-xl').filter({ hasText: 'Standard' })).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
 
-    await page.getByRole('link', { name: 'Paletten', exact: true }).click();
+    await page.getByRole('link', { name: 'Paletten verwalten', exact: true }).click();
     await expect(page).toHaveURL(/\/mehr\/darstellung\/paletten$/);
     await expect(page.getByRole('heading', { name: 'Paletten', exact: true })).toBeVisible();
     if (anfang.paletten.length === 0) {
       await expect(page.getByText('Noch keine Palette.')).toBeVisible();
     }
-    await page.getByRole('button', { name: 'Neue Palette', exact: true }).click();
+    await page.getByRole('button', { name: '+ Palette anlegen', exact: true }).click();
     const formular = page.getByRole('dialog', { name: 'Neue Palette' });
     await expect(formular).toBeVisible();
     const info = formular.getByRole('button', { name: 'Info' });
@@ -157,7 +157,7 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     await ohneSeitlichenUeberlauf(page);
     await bild('paletten');
 
-    await page.getByRole('button', { name: 'Neue Palette', exact: true }).click();
+    await page.getByRole('button', { name: '+ Palette anlegen', exact: true }).click();
     const doppelt = page.getByRole('dialog', { name: 'Neue Palette' });
     await doppelt.getByRole('textbox', { name: 'Name', exact: true }).fill('morgenrot');
     const abgelehnt = page.waitForResponse(
@@ -250,9 +250,10 @@ test('Eigene Paletten wählen die Ansicht, Standard ist die Ausgangsansicht', as
     await expect.poll(() => page.evaluate(() => document.documentElement.dataset.stil ?? '')).toBe('standard');
     const dunkel = await page.evaluate(() => window.matchMedia('(prefers-color-scheme: dark)').matches);
     const soll = standardVorlage('standard', dunkel);
-    await expect.poll(() => variable(page, '--akzent')).toBe(soll.primaer);
+    const gemerkt = (await lese(page)).ansichtFarben.standard;
+    await expect.poll(() => variable(page, '--akzent')).toBe(gemerkt?.primaer ?? soll.primaer);
     await expect.poll(() => variable(page, '--xp')).toBe(soll.akzent);
-    await expect.poll(() => variable(page, '--grund')).toBe(soll.hintergrund);
+    await expect.poll(() => variable(page, '--grund')).toBe(gemerkt?.hintergrund ?? soll.hintergrund);
     await page.goto('/');
     await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
     await ohneSeitlichenUeberlauf(page);

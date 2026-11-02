@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router';
 import { standardVorlage } from '../../../../shared/features/darstellung/paletten.ts';
-import { SPRACH_NAME, SPRACHEN } from '../../../../shared/sprache/kern.ts';
+import { SPRACH_NAME, SPRACHEN, type Sprache } from '../../../../shared/sprache/kern.ts';
+import { Dialog } from '../../components/Dialog.tsx';
 import { LeistenEditor } from '../../components/LeistenEditor.tsx';
-import { Fehlermeldung, InfoHinweis, Ladeanzeige, Optionsliste } from '../../ui/index.ts';
+import { Fehlermeldung, Ladeanzeige, Optionsliste } from '../../ui/index.ts';
 import { Zeile, ZeilenGruppe, ZeileSchalter } from '../../components/Zeile.tsx';
 import { wendeErscheinung } from '../darstellung/stil.ts';
 import { useSprache } from '../../sprache.tsx';
@@ -52,6 +53,37 @@ function LeisteSeite() {
   );
 }
 
+function SprachZeile({ sprache, onWaehlen }: { sprache: Sprache; onWaehlen: (code: Sprache) => void }) {
+  const [offen, setOffen] = useState(false);
+  return (
+    <>
+      <ZeilenGruppe>
+        <Zeile
+          titel={tx('Sprache')}
+          name={`${tx('Sprache')}, ${SPRACH_NAME[sprache]}`}
+          wert={<span lang={sprache}>{SPRACH_NAME[sprache]}</span>}
+          info={tx('Gilt für die Oberfläche. Namen und Einträge bleiben, wie du sie geschrieben hast.')}
+          onKlick={() => setOffen(true)}
+        />
+      </ZeilenGruppe>
+      <Dialog offen={offen} titel={tx('Sprache')} onSchliessen={() => setOffen(false)}>
+        <Optionsliste
+          name={tx('Sprache')}
+          wert={sprache}
+          onAendern={(code) => {
+            setOffen(false);
+            onWaehlen(code);
+          }}
+          optionen={SPRACHEN.map((code) => ({
+            wert: code,
+            label: <span lang={code}>{SPRACH_NAME[code]}</span>,
+          }))}
+        />
+      </Dialog>
+    </>
+  );
+}
+
 function DarstellungListe() {
   const { data, error, isPending, speichern } = useEinstellungen();
   const { sprache, waehle, uebernehme } = useSprache();
@@ -67,29 +99,18 @@ function DarstellungListe() {
       kinder={
         <>
           <div className="space-y-8">
-            <section>
-              <div className="mb-2 flex items-center">
-                <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
-                  {tx('Sprache')}
-                </h2>
-                <InfoHinweis text={tx('Gilt für die Oberfläche. Namen und Einträge bleiben, wie du sie geschrieben hast.')} />
-              </div>
-              <Optionsliste
-                name={tx('Sprache')}
-                wert={sprache}
-                onAendern={(code) => {
-                  waehle(code);
-                  speichern.mutate({ sprache: code }, { onError: () => uebernehme(data.sprache, true) });
-                }}
-                optionen={SPRACHEN.map((code) => ({
-                  wert: code,
-                  label: <span lang={code}>{SPRACH_NAME[code]}</span>,
-                }))}
-              />
-            </section>
+            <SprachZeile
+              sprache={sprache}
+              onWaehlen={(code) => {
+                waehle(code);
+                speichern.mutate({ sprache: code }, { onError: () => uebernehme(data.sprache, true) });
+              }}
+            />
             <AnsichtSteuerung />
             <ZeilenGruppe>
               <Zeile titel={tx("Leiste")} nach="/mehr/darstellung/leiste" />
+            </ZeilenGruppe>
+            <ZeilenGruppe titel="Effekte">
               <ZeileSchalter titel={tx("Sound")} an={data.sound} onAendern={(sound) => speichern.mutate({ sound })} deaktiviert={speichern.isPending} />
               <ZeileSchalter
                 titel={tx("Glühen")}

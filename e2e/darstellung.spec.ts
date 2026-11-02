@@ -219,26 +219,40 @@ test('Darstellung: alle Ansichten, Farben getrennt, Glühen unter Sound', async 
   await expect(page.getByText('Weitere Ansichten')).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Ansicht', exact: true })).toHaveCount(0);
 
-  for (const name of ['Ansichten', 'Farben', 'Standardfarben', 'Eigene Farben']) {
+  for (const name of ['Ansicht', 'Farben', 'Farben dieser Ansicht', 'Eigene Paletten', 'Eigene Farben', 'Effekte']) {
     await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
   }
+  await expect(page.getByRole('heading', { name: 'Ansichten', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Standardfarben', exact: true })).toHaveCount(0);
   for (const name of ['Standard', 'Minimal', 'Jade', 'Hologramm', 'Antik']) {
     await expect(page.locator('button.rounded-xl').filter({ hasText: name })).toBeVisible();
   }
-  await expect(page.getByRole('region').first()).toBeVisible();
-  const regionen = await page.getByRole('region').evaluateAll((liste) => liste.map((element) => element.getAttribute('aria-label')));
-  expect(regionen.every((name) => ['Standard', 'Minimal', 'Jade', 'Hologramm', 'Antik'].includes(name ?? ''))).toBe(true);
+  const gewaehlt = page.locator('button.rounded-xl[aria-pressed="true"]');
+  await expect(gewaehlt).toHaveCount(1);
+  await expect(gewaehlt.locator('svg')).toBeVisible();
+  const rahmen = await gewaehlt.evaluate((element) => getComputedStyle(element).borderTopWidth);
+  expect(rahmen).toBe('2px');
 
+  const sprachzeile = page.locator('[data-zeile]').filter({ has: page.getByRole('button', { name: /^Sprache/ }) });
+  await sprachzeile.getByRole('button', { name: 'Info', exact: true }).click();
+  const hinweis = page.getByRole('tooltip');
+  await expect(hinweis).toBeVisible();
+  await expect(hinweis).toHaveText('Gilt für die Oberfläche. Namen und Einträge bleiben, wie du sie geschrieben hast.');
+  await page.keyboard.press('Escape');
+  await expect(hinweis).toHaveCount(0);
+
+  await expect(page.getByRole('link', { name: 'Leiste', exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Paletten verwalten', exact: true })).toBeVisible();
   const kartenText = await page
     .locator('section')
-    .filter({ has: page.getByRole('switch', { name: 'Glühen', exact: true }) })
-    .locator('a[aria-label], [role="switch"]')
+    .filter({ has: page.getByRole('heading', { name: 'Effekte', exact: true }) })
+    .locator('[role="switch"]')
     .evaluateAll((liste) => liste.map((element) => element.getAttribute('aria-label')));
-  expect(kartenText).toEqual(['Leiste', 'Sound', 'Glühen']);
+  expect(kartenText).toEqual(['Sound', 'Glühen']);
 
-  await expect(page.getByRole('button', { name: 'Zurücksetzen', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Auf Palette zurücksetzen', exact: true })).toBeVisible();
   const abstaende = await missAbstaende(page, 'darstellung');
-  pruefeAbstaende(abstaende, 4);
+  pruefeAbstaende(abstaende, 1);
   await ohneSeitlichenUeberlauf(page);
 });
 
@@ -272,7 +286,7 @@ test('Eigene Farben bleiben gespeichert und lassen sich zurücksetzen', async ({
   const zurueck = page.waitForResponse(
     (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
   );
-  await page.getByRole('button', { name: 'Zurücksetzen', exact: true }).click();
+  await page.getByRole('button', { name: 'Auf Palette zurücksetzen', exact: true }).click();
   await zurueck;
   const nachReset = await leseDarstellung(page);
   expect(nachReset.primaer).toBe(soll.primaer);
@@ -354,7 +368,7 @@ test('Eigene Farben bleiben beim Ansichtswechsel erhalten', async ({ page }, tes
     await expect(akzent).toHaveValue('#00cc88');
     const dunkel = await page.evaluate(() => window.matchMedia('(prefers-color-scheme: dark)').matches);
     const soll = standardVorlage(andere, dunkel);
-    await page.getByRole('button', { name: 'Zurücksetzen', exact: true }).click();
+    await page.getByRole('button', { name: 'Auf Palette zurücksetzen', exact: true }).click();
     await expect.poll(async () => (await leseDarstellung(page)).eigeneFarben).toBe(false);
     await expect(akzent).toHaveValue(soll.akzent);
 

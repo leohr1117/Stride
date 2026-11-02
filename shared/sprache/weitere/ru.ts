@@ -1,5 +1,13 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Sprache steht in einer Zeile und öffnet eine Liste. Die Ansicht wählst du über Vorschaukacheln.": "Язык стоит в строке и открывает список. Вид выбирается плитками предпросмотра.",
+  "Farben dieser Ansicht, eigene Paletten und eigene Farben liegen untereinander. Zurücksetzen holt die Palette.": "Цвета этого вида, свои палитры и свои цвета идут друг под другом. Сброс возвращает палитру.",
+  "Karten auf Heute zeigt nur Schalter. Zeilen ausgeschalteter Bereiche fehlen.": "Карточки на Сегодня показывает только переключатели. Строк выключенных областей нет.",
+  "Farben dieser Ansicht": "Цвета этого вида",
+  "Paletten verwalten": "Управлять палитрами",
+  "Auf Palette zurücksetzen": "Сбросить к палитре",
+  "Effekte": "Эффекты",
+  "Palette anlegen": "Создать палитру",
   "Tätigkeiten zeigt alle Einträge. Die für ein Projekt stehen in einer eigenen Gruppe. Unter dem Namen steht, was sie stärkt.": "Занятия показывают все записи. Те, что для одного проекта, стоят в своей группе. Под именем написано, что они усиливают.",
   "Eine Zeile öffnet die Tätigkeit. Die Reihenfolge liegt im Menü oben.": "Строка открывает занятие. Порядок лежит в меню сверху.",
   "Bereiche sagt unter dem Titel, dass Ausschalten nur ausblendet. Ein gesperrter Schalter nennt den Grund in der Zeile.": "Области под заголовком говорят, что выключение только скрывает. Заблокированный переключатель называет причину в строке.",

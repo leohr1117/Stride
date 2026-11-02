@@ -27,38 +27,17 @@ test('Nutzer wählt die Karten der Übersicht', async ({ page }, testInfo) => {
     await anmelden(page);
     await page.goto('/mehr/uebersicht');
     const inhalt = page.locator('main');
-    await expect(inhalt.locator('h1')).toHaveText('Übersicht');
+    await expect(inhalt.locator('h1')).toHaveText('Karten auf Heute');
     await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr');
     const aktivitaet = inhalt.getByRole('switch', { name: 'Aktivität', exact: true });
     await expect(aktivitaet).toBeChecked();
     await expect(inhalt.getByRole('switch', { name: 'Identität', exact: true })).toBeChecked();
     await expect(inhalt.getByRole('switch')).toHaveCount(6);
-
-    const info = inhalt.locator('h1').locator('xpath=..').getByRole('button', { name: 'Info' });
-    await info.click();
-    const hinweis = page.getByRole('tooltip');
-    await expect(hinweis).toBeVisible();
-    await expect(hinweis).toHaveText('Hier legst du fest, welche Karten die Übersicht zeigt. Den Bereich schaltest du unter App & Verbindungen.');
-    const kasten = await hinweis.boundingBox();
-    const fenster = page.viewportSize();
-    expect(kasten).not.toBeNull();
-    expect(fenster).not.toBeNull();
-    if (kasten && fenster) {
-      expect(kasten.x).toBeGreaterThanOrEqual(0);
-      expect(kasten.y).toBeGreaterThanOrEqual(0);
-      expect(kasten.x + kasten.width).toBeLessThanOrEqual(fenster.width + 1);
-      expect(kasten.y + kasten.height).toBeLessThanOrEqual(fenster.height + 1);
-    }
+    await expect(inhalt.getByRole('button', { name: 'Info' })).toHaveCount(0);
+    await expect(inhalt.getByText('Immer', { exact: true })).toHaveCount(0);
+    await expect(inhalt.getByRole('link', { name: /^Bereich für / })).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);
     await bild('wahl');
-    await page.keyboard.press('Escape');
-    await expect(hinweis).toHaveCount(0);
-
-    const karteInfo = inhalt.locator('#uebersicht-karte-identitaet').getByRole('button', { name: 'Info' });
-    await karteInfo.click();
-    await expect(hinweis).toHaveText('Name, Level, Woche, Streak und Momentum.');
-    await page.keyboard.press('Escape');
-    await expect(inhalt.getByRole('link', { name: /^Bereich für / })).toHaveCount(0);
 
     const vorher = await karten(page);
     geaendert = true;

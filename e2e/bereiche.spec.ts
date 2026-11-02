@@ -114,7 +114,7 @@ test('Bereiche → Toast Öffnen → Fähigkeiten → Zurück = Bereiche', async
 
     await setzeFunktionen(page, { ...vorher.funktionen, basis: false, bossAngriffe: false });
     await page.goto('/mehr/uebersicht');
-    await expect(page.locator('main h1')).toHaveText('Übersicht');
+    await expect(page.locator('main h1')).toHaveText('Karten auf Heute');
     await expect(page.getByRole('switch', { name: 'Basis', exact: true })).toHaveCount(0);
     await expect(page.getByRole('switch', { name: 'Bosse', exact: true })).toHaveCount(0);
     await expect(page.getByRole('switch', { name: 'Identität', exact: true })).toBeVisible();

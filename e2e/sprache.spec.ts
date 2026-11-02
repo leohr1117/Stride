@@ -44,7 +44,7 @@ async function setzeSprache(seite: Page, wert: Sprache): Promise<void> {
       throw new Error(`sprache ${antwort.status}`);
     }
   }, wert);
-  await seite.reload();
+  await seite.goto('/');
   await seite.getByRole('button', { name: zeige('Eintrag loggen', wert) }).waitFor();
 }
 
@@ -85,7 +85,7 @@ test('Englisch bleibt bei 390 und 1440 lesbar', async ({ page }) => {
       const daten = (await antwort.json()) as { charakterName: string };
       return daten.charakterName;
     });
-    await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
+    await expect(page.locator('main').getByText(name, { exact: true }).locator('visible=true')).toHaveCount(1);
     await expect(page.getByRole('link', { name: 'Overview' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Log entry' })).toBeVisible();
     await ohneSeitlichenUeberhang(page);
@@ -104,6 +104,7 @@ test('Englisch bleibt bei 390 und 1440 lesbar', async ({ page }) => {
     }
 
     await expect(page.getByText('Language', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Language' }).click();
     await expect(page.getByRole('radio', { name: 'Deutsch', exact: true })).toBeVisible();
     await expect(page.getByRole('radio', { name: 'English', exact: true })).toBeVisible();
   } finally {
@@ -114,6 +115,7 @@ test('Englisch bleibt bei 390 und 1440 lesbar', async ({ page }) => {
 });
 
 test('jede Sprache bleibt auf 390 px vollständig sichtbar', async ({ page }, info) => {
+  test.setTimeout(180_000);
   test.skip(info.project.name !== 'handy', 'Stichprobe nur auf 390 px');
   await anmelden(page);
   const vorher = await gespeicherteSprache(page);
@@ -133,23 +135,29 @@ test('jede Sprache bleibt auf 390 px vollständig sichtbar', async ({ page }, in
         await expect(page.getByRole('heading', { name: ziel.text, exact: true })).toBeVisible();
         await ohneSeitlichenUeberhang(page);
       }
+      await page.getByRole('button', { name: zeige('Sprache', code) }).click();
+      const liste = page.getByRole('radiogroup', { name: zeige('Sprache', code) });
       for (const name of SPRACHEN) {
-        const knopf = page.getByRole('radio', { name: SPRACH_NAME[name], exact: true });
+        const knopf = liste.getByRole('radio', { name: SPRACH_NAME[name], exact: true });
         await expect(knopf).toBeVisible();
         const kasten = await knopf.boundingBox();
         expect(kasten).not.toBeNull();
         expect(kasten!.x).toBeGreaterThanOrEqual(-1);
         expect(kasten!.x + kasten!.width).toBeLessThanOrEqual(page.viewportSize()?.width ?? 390);
       }
-      const familie = await page.evaluate(() => getComputedStyle(document.body).fontFamily);
+      await page.keyboard.press('Escape');
+      const schrift = await page.evaluate(() => ({
+        familie: getComputedStyle(document.body).fontFamily,
+        stil: document.documentElement.dataset.stil ?? '',
+      }));
       if (code === 'ru') {
-        expect(familie).toContain('Exo 2');
+        expect(schrift.familie).toContain(schrift.stil === 'standard' ? 'Segoe UI' : 'Exo 2');
       }
       if (code === 'zh') {
-        expect(familie).toMatch(/YaHei|PingFang|Noto Sans SC|Hiragino Sans GB/);
+        expect(schrift.familie).toMatch(/YaHei|PingFang|Noto Sans SC|Hiragino Sans GB/);
       }
       if (code === 'ja') {
-        expect(familie).toMatch(/Yu Gothic|Hiragino|Meiryo|Noto Sans JP/);
+        expect(schrift.familie).toMatch(/Yu Gothic|Hiragino|Meiryo|Noto Sans JP/);
       }
     }
   } finally {

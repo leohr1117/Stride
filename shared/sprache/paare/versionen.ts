@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die Sprache steht in einer Zeile und öffnet eine Liste. Die Ansicht wählst du über Vorschaukacheln.', 'Language sits on a row and opens a list. You pick the look from preview tiles.'],
+  ['Farben dieser Ansicht, eigene Paletten und eigene Farben liegen untereinander. Zurücksetzen holt die Palette.', 'Colors of this look, your palettes, and your colors sit one under the other. Reset brings back the palette.'],
+  ['Karten auf Heute zeigt nur Schalter. Zeilen ausgeschalteter Bereiche fehlen.', 'Cards on Today shows only switches. Rows for areas that are off are missing.'],
   ['Tätigkeiten zeigt alle Einträge. Die für ein Projekt stehen in einer eigenen Gruppe. Unter dem Namen steht, was sie stärkt.', 'Activities shows every entry. Ones for a single project sit in their own group. Under the name it says what it trains.'],
   ['Eine Zeile öffnet die Tätigkeit. Die Reihenfolge liegt im Menü oben.', 'A row opens the activity. The order sits in the menu at the top.'],
   ['Bereiche sagt unter dem Titel, dass Ausschalten nur ausblendet. Ein gesperrter Schalter nennt den Grund in der Zeile.', 'Areas says under the title that turning something off only hides it. A locked switch names the reason on the row.'],

@@ -66,10 +66,13 @@ test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInf
     await bild('profil');
 
     await page.goto('/mehr/darstellung');
+    await page.getByRole('button', { name: /^Sprache/ }).click();
     const sprache = page.getByRole('radiogroup', { name: 'Sprache' });
     await expect(sprache.getByRole('radio')).toHaveCount(7);
     await expect(sprache.getByRole('radio', { name: 'Deutsch', exact: true })).toBeChecked();
     await bild('sprache');
+    await page.keyboard.press('Escape');
+    await expect(sprache).toHaveCount(0);
     const gluehen = page.getByRole('switch', { name: 'Glühen', exact: true });
     await expect(gluehen).toBeVisible();
     await gluehen.scrollIntoViewIfNeeded();

@@ -1,5 +1,13 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Sprache steht in einer Zeile und öffnet eine Liste. Die Ansicht wählst du über Vorschaukacheln.": "语言在一行里，点开是列表。外观用预览图块来选。",
+  "Farben dieser Ansicht, eigene Paletten und eigene Farben liegen untereinander. Zurücksetzen holt die Palette.": "此外观的颜色、自己的配色和自己的颜色上下排列。重置会恢复配色。",
+  "Karten auf Heute zeigt nur Schalter. Zeilen ausgeschalteter Bereiche fehlen.": "今天的卡片只显示开关。已关闭领域的行不出现。",
+  "Farben dieser Ansicht": "此外观的颜色",
+  "Paletten verwalten": "管理配色",
+  "Auf Palette zurücksetzen": "重置为配色",
+  "Effekte": "效果",
+  "Palette anlegen": "新建配色",
   "Tätigkeiten zeigt alle Einträge. Die für ein Projekt stehen in einer eigenen Gruppe. Unter dem Namen steht, was sie stärkt.": "活动显示全部条目。仅用于一个项目的排在单独一组。名称下方写着它强化什么。",
   "Eine Zeile öffnet die Tätigkeit. Die Reihenfolge liegt im Menü oben.": "点一行即可打开活动。顺序在上方的菜单里。",
   "Bereiche sagt unter dem Titel, dass Ausschalten nur ausblendet. Ein gesperrter Schalter nennt den Grund in der Zeile.": "领域在标题下说明，关闭只会隐藏。被锁定的开关在行内写出原因。",

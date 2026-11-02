@@ -1,5 +1,13 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Sprache steht in einer Zeile und öffnet eine Liste. Die Ansicht wählst du über Vorschaukacheln.": "言語は一行で、タップすると一覧が開きます。見た目はプレビューで選びます。",
+  "Farben dieser Ansicht, eigene Paletten und eigene Farben liegen untereinander. Zurücksetzen holt die Palette.": "この見た目の色、自分のパレット、自分の色が上下に並びます。リセットでパレットに戻ります。",
+  "Karten auf Heute zeigt nur Schalter. Zeilen ausgeschalteter Bereiche fehlen.": "今日のカードはスイッチだけです。オフの領域の行はありません。",
+  "Farben dieser Ansicht": "この見た目の色",
+  "Paletten verwalten": "パレットを管理",
+  "Auf Palette zurücksetzen": "パレットに戻す",
+  "Effekte": "効果",
+  "Palette anlegen": "パレットを作成",
   "Tätigkeiten zeigt alle Einträge. Die für ein Projekt stehen in einer eigenen Gruppe. Unter dem Namen steht, was sie stärkt.": "活動はすべての項目を表示します。一つのプロジェクトだけのものは専用のグループにあります。名前の下に、何を鍛えるかが出ます。",
   "Eine Zeile öffnet die Tätigkeit. Die Reihenfolge liegt im Menü oben.": "行を開くと活動です。順番は上のメニューにあります。",
   "Bereiche sagt unter dem Titel, dass Ausschalten nur ausblendet. Ein gesperrter Schalter nennt den Grund in der Zeile.": "領域はタイトルの下に、オフは隠すだけと示します。ロックされたスイッチは理由を行に出します。",
