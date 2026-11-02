@@ -197,10 +197,30 @@ body {
   cursor: pointer;
 }
 
-input.feld-eingabe,
-select.feld-eingabe {
+:is(input, select, button).feld-eingabe {
   min-height: 48px;
   font-size: 16px;
+}
+
+select.feld-eingabe {
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding: 0 2.5rem 0 1rem;
+  line-height: 46px;
+  text-align: start;
+  color: var(--haupt);
+  background-color: var(--flaeche);
+  background-image: none;
+  cursor: pointer;
+}
+
+select.feld-eingabe:disabled {
+  cursor: not-allowed;
 }
 
 textarea.feld-eingabe {
@@ -239,13 +259,13 @@ html[data-eingabe='zeiger'] :focus {
 .eintrag-chips {
   min-width: 0;
   max-width: 100%;
-  scrollbar-width: thin;
+  scrollbar-width: none;
   overscroll-behavior-x: contain;
 }
 
 .eintrag-chips::-webkit-scrollbar {
-  display: block;
-  height: 4px;
+  display: none;
+  height: 0;
 }
 
 /* Der Schieber springt. Sonst liest ein Test die Farbe mitten in der Animation. */
@@ -469,11 +489,15 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
 
 .dialog-fenster {
   max-height: min(90dvh, 100%);
+  max-width: 100%;
+  min-width: 0;
   overflow: hidden;
 }
 
 .dialog-blatt {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   border-radius: 12px 12px 0 0;
 }
 
@@ -529,6 +553,8 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
 }
 
 .dialog-koerper:not(:has(> .formular, > .dialog-auswahl, > .blatt-sofort)) {
+  min-width: 0;
+  overflow-x: clip;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -551,6 +577,8 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
 .dialog-auswahl-liste {
   flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
+  overflow-x: clip;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -574,6 +602,8 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
 .blatt-sofort-felder {
   flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
+  overflow-x: clip;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -594,6 +624,8 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
 .dialog-koerper > .formular > .formular-felder {
   flex: 1 1 auto;
   min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -712,6 +744,8 @@ html[data-tastatur='an'] .sicht-mitte {
 .dialog-fenster :is(input, textarea, select) {
   scroll-margin-top: 0.75rem;
   scroll-margin-bottom: 0.75rem;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* Ungewähltes Annehmen bleibt Kontur, damit die Wahl auch in Standard sichtbar ist. */

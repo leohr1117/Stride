@@ -95,7 +95,7 @@ html[data-stil='standard'] body {
   height: 56px;
 }
 
-:root[data-stil='standard'] :is(input, textarea, select):not([type='checkbox']):not([type='radio']):not([type='color']):not([type='range']):not([type='file']) {
+:root[data-stil='standard'] :is(input, textarea, select, button.feld-eingabe):not([type='checkbox']):not([type='radio']):not([type='color']):not([type='range']):not([type='file']) {
   min-height: 48px;
   border-radius: 8px;
   border-color: var(--feldrand);

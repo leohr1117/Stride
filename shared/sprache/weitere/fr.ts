@@ -1,5 +1,13 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.": "Un attribut de l'investissement se retire en appuyant encore. Les zones s'appellent Investi dans et Bonus pour.",
+  "Blätter bleiben am rechten Rand vollständig sichtbar.": "Les feuilles restent entièrement visibles sur le bord droit.",
+  "Knöpfe zum Anlegen zeigen nur ein Plus.": "Les boutons pour créer n'affichent qu'un seul plus.",
+  "Auswahlfelder sehen aus wie die anderen Eingabefelder.": "Les listes déroulantes ressemblent aux autres champs.",
+  "Investiert in": "Investi dans",
+  "Auch für Vision, Projekt oder Attribut.": "Aussi pour une vision, un projet ou un attribut.",
+  "Bonus für": "Bonus pour",
+  "XP dieses Attributs steigt.": "L'XP de cet attribut augmente.",
   "Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.": "Les niveaux s'affichent sans décimales, y compris dans le radar et sous les graphiques.",
   "Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.": "Sur le profil, les deux graphiques radar sont côte à côte. L'indication reste à l'écran.",
   "Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.": "Le point d'exclamation d'un niveau trop bas se place après le nom.",

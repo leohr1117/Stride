@@ -1,4 +1,4 @@
-import { Check, Eye, EyeOff } from 'lucide-react';
+import { Check, ChevronDown, Eye, EyeOff } from 'lucide-react';
 import {
   Children,
   cloneElement,
@@ -171,6 +171,20 @@ function ersteId(knoten: ReactNode): string | undefined {
   return undefined;
 }
 
+function mitPfeil(knoten: ReactNode): ReactNode {
+  return Children.map(knoten, (kind) => {
+    if (!isValidElement(kind) || kind.type !== 'select') {
+      return kind;
+    }
+    return (
+      <span className="relative block w-full min-w-0">
+        {kind}
+        <ChevronDown aria-hidden="true" className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-leise" />
+      </span>
+    );
+  });
+}
+
 export function Feld({
   label,
   hinweis,
@@ -217,7 +231,7 @@ export function Feld({
       ) : (
         <span className="feld-label block text-sm leading-5 font-semibold text-balance break-words">{labelText}</span>
       )}
-      {kinder}
+      {mitPfeil(kinder)}
       {fehler ? (
         <p id={fehlerId} className="feld-fehler text-[13px] leading-[18px] break-words text-gefahr" role="alert">
           <span aria-hidden="true">⚠ </span>
@@ -342,13 +356,13 @@ export function Segmentauswahl<T extends string | number>({
     return <Optionsliste optionen={optionen} wert={wert} onAendern={onAendern} name={name} />;
   }
   return (
-    <div className="flex gap-1 rounded-xl bg-flaeche-2 p-1">
+    <div className="flex w-full min-w-0 gap-1 rounded-xl bg-flaeche-2 p-1">
       {optionen.map((option) => (
         <button
           key={String(option.wert)}
           type="button"
           onClick={() => onAendern(option.wert)}
-          className={`flex min-h-12 flex-1 items-center justify-center rounded-lg py-2 text-sm font-medium transition ${dicht ? 'px-1.5 whitespace-nowrap' : 'px-3'} ${
+          className={`flex min-h-12 min-w-0 flex-1 items-center justify-center rounded-lg py-2 text-sm font-medium transition ${dicht ? 'truncate px-1.5 whitespace-nowrap' : 'px-3'} ${
             option.wert === wert ? 'bg-flaeche text-haupt shadow-sm' : 'text-leise hover:text-haupt'
           }`}
         >

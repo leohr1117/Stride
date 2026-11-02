@@ -1,5 +1,13 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.": "投资里的属性再点一次就会取消。两个区域分别是投入于和加成用于。",
+  "Blätter bleiben am rechten Rand vollständig sichtbar.": "底部面板在右边缘完整可见。",
+  "Knöpfe zum Anlegen zeigen nur ein Plus.": "新建按钮只显示一个加号。",
+  "Auswahlfelder sehen aus wie die anderen Eingabefelder.": "下拉框和其他输入框外观一致。",
+  "Investiert in": "投入于",
+  "Auch für Vision, Projekt oder Attribut.": "也适用于愿景、项目或属性。",
+  "Bonus für": "加成用于",
+  "XP dieses Attributs steigt.": "该属性的经验会增加。",
   "Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.": "等级显示为整数，雷达图里和下方也一样。",
   "Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.": "资料页上的两张雷达图并排显示。提示留在画面内。",
   "Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.": "等级过低时的感叹号紧跟在名称后面。",

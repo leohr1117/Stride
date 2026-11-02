@@ -1,5 +1,13 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.": "投資の属性はもう一度タップすると外れます。区分は投資先とボーナス先です。",
+  "Blätter bleiben am rechten Rand vollständig sichtbar.": "シートは右端まで欠けずに表示されます。",
+  "Knöpfe zum Anlegen zeigen nur ein Plus.": "作成ボタンのプラスは一つだけです。",
+  "Auswahlfelder sehen aus wie die anderen Eingabefelder.": "選択欄は他の入力欄と同じ見た目です。",
+  "Investiert in": "投資先",
+  "Auch für Vision, Projekt oder Attribut.": "ビジョン、プロジェクト、属性にも適用されます。",
+  "Bonus für": "ボーナス先",
+  "XP dieses Attributs steigt.": "この属性のXPが上がります。",
   "Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.": "レベルは小数なしで表示されます。レーダーと図の下も同じです。",
   "Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.": "プロフィールの2つのレーダーは横に並びます。ヒントは画面内に残ります。",
   "Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.": "レベルが低すぎるときの感嘆符は、名前の直後にあります。",

@@ -362,8 +362,8 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
       await projektSegment.click();
     }
     await neu.getByRole('button', { name: ziel.name, exact: true }).click();
-    const ressourcenChip = neu.getByRole('button', { name: 'Ressourcen', exact: true });
-    if (await ressourcenChip.count()) {
+    const ressourcenChip = neu.getByRole('group', { name: 'Bonus für' }).getByRole('button', { name: 'Ressourcen', exact: true });
+    if ((await ressourcenChip.count()) === 1 && (await ressourcenChip.getAttribute('aria-pressed')) !== 'true') {
       await ressourcenChip.click();
     }
     await neu.getByRole('button', { name: 'Speichern' }).click();

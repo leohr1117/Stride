@@ -1,5 +1,9 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.', 'An attribute in an investment can be cleared by tapping it again. The sections are called Invested in and Bonus for.'],
+  ['Blätter bleiben am rechten Rand vollständig sichtbar.', 'Sheets stay fully visible at the right edge.'],
+  ['Knöpfe zum Anlegen zeigen nur ein Plus.', 'Buttons for adding something show only one plus.'],
+  ['Auswahlfelder sehen aus wie die anderen Eingabefelder.', 'Dropdowns look like the other input fields.'],
   ['Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.', 'Levels show without decimal places, including in the radar and under the charts.'],
   ['Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.', 'On the profile, the two radar charts sit side by side. The hint stays on screen.'],
   ['Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.', 'The exclamation mark for a level that is too low sits after the name.'],

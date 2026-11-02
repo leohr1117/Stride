@@ -219,10 +219,10 @@ function ZielWahl({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="w-full min-w-0 space-y-3">
       {optionen.length > 1 ? <Segmentauswahl optionen={optionen} wert={art} onAendern={setSegment} /> : null}
       {art === 'vision' ? (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex w-full min-w-0 max-w-full flex-wrap gap-2">
           {visionen.map((vision) => (
             <Chip
               key={vision.id}
@@ -237,7 +237,7 @@ function ZielWahl({
         </div>
       ) : null}
       {art === 'projekt' ? (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex w-full min-w-0 max-w-full flex-wrap gap-2">
           {projekte.map((eintrag) => (
             <Chip
               key={eintrag.id}
@@ -252,7 +252,7 @@ function ZielWahl({
         </div>
       ) : null}
       {art === 'attribut' ? (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex w-full min-w-0 max-w-full flex-wrap gap-2">
           {attribute.map((eintrag) => (
             <Chip
               key={eintrag.id}
@@ -480,25 +480,32 @@ function InvestitionFormular({
         />
       </Feld>
       <GroessenRegler wert={groesse} onAendern={setGroesse} className="" />
-      <div className="space-y-2">
-        <span className="text-sm font-medium">{tx("Ziel")}</span>
+      <div role="group" aria-labelledby="investition-ziel" className="min-w-0 space-y-2">
+        <div className="min-w-0">
+          <p id="investition-ziel" className="text-sm leading-5 font-semibold">{tx("Investiert in")}</p>
+          <p className="text-[13px] leading-[18px] text-leise">{tx("Auch für Vision, Projekt oder Attribut.")}</p>
+        </div>
         <ZielWahl ziel={ziel} onWaehlen={setZiel} visionen={listen.visionen} projekte={listen.projekte} attribute={listen.attribute} />
       </div>
-      <Feld label={tx("Attribut")}>
-        <div className="flex flex-wrap gap-2">
+      <div role="group" aria-labelledby="investition-bonus" className="min-w-0 space-y-2">
+        <div className="min-w-0">
+          <p id="investition-bonus" className="text-sm leading-5 font-semibold">{tx("Bonus für")}</p>
+          <p className="text-[13px] leading-[18px] text-leise">{tx("XP dieses Attributs steigt.")}</p>
+        </div>
+        <div className="flex w-full min-w-0 max-w-full flex-wrap gap-2">
           {attribute.map((eintrag) => (
             <Chip
               key={eintrag.id}
               aktiv={attributId === eintrag.id}
               farbe={eintrag.farbe}
-              onClick={() => setAttributId(eintrag.id)}
+              onClick={() => setAttributId((aktuell) => (aktuell === eintrag.id ? null : eintrag.id))}
               className="max-w-full min-w-0 overflow-hidden"
             >
               <span className="truncate">{eintrag.name}</span>
             </Chip>
           ))}
         </div>
-      </Feld>
+      </div>
       <Feld label={tx("Symbol")}>
         <IconAuswahl wert={icon} farbe={NEUTRAL_FARBE} onAendern={setIcon} />
       </Feld>

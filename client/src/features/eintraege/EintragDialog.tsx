@@ -324,7 +324,6 @@ export function EintragDialog({
               </Chip>
             ))}
             <Chip hoch aktiv={false} onClick={() => setNeueTaetigkeit(true)}>
-              <Plus className="size-4" />
               {tx("+ Tätigkeit")}
             </Chip>
           </div>

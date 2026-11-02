@@ -1,5 +1,13 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.": "Un atributo de la inversión se puede quitar tocando otra vez. Las zonas se llaman Invertido en y Bonificación para.",
+  "Blätter bleiben am rechten Rand vollständig sichtbar.": "Las hojas se ven completas en el borde derecho.",
+  "Knöpfe zum Anlegen zeigen nur ein Plus.": "Los botones para crear muestran un solo más.",
+  "Auswahlfelder sehen aus wie die anderen Eingabefelder.": "Los desplegables se ven como los demás campos.",
+  "Investiert in": "Invertido en",
+  "Auch für Vision, Projekt oder Attribut.": "También para una visión, un proyecto o un atributo.",
+  "Bonus für": "Bonificación para",
+  "XP dieses Attributs steigt.": "La XP de este atributo sube.",
   "Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.": "Los niveles se muestran sin decimales, también en el radar y bajo los gráficos.",
   "Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.": "En el perfil, los dos gráficos de radar quedan uno al lado del otro. El aviso permanece en la pantalla.",
   "Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.": "El signo de exclamación de un nivel demasiado bajo queda detrás del nombre.",

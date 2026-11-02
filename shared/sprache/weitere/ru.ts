@@ -1,5 +1,13 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.": "Атрибут инвестиции снимается повторным нажатием. Области называются «Куда вложено» и «Бонус для».",
+  "Blätter bleiben am rechten Rand vollständig sichtbar.": "Листы целиком видны у правого края.",
+  "Knöpfe zum Anlegen zeigen nur ein Plus.": "Кнопки создания показывают только один плюс.",
+  "Auswahlfelder sehen aus wie die anderen Eingabefelder.": "Списки выглядят как остальные поля.",
+  "Investiert in": "Куда вложено",
+  "Auch für Vision, Projekt oder Attribut.": "Также для видения, проекта или атрибута.",
+  "Bonus für": "Бонус для",
+  "XP dieses Attributs steigt.": "Опыт этого атрибута растёт.",
   "Level werden ohne Nachkommastellen angezeigt, auch im Radar und unter den Diagrammen.": "Уровни показываются без дробной части, в том числе на радаре и под диаграммами.",
   "Auf dem Profil stehen die zwei Radar-Diagramme nebeneinander. Der Hinweis bleibt im Bild.": "В профиле два радара стоят рядом. Подсказка остаётся на экране.",
   "Das Ausrufezeichen bei zu niedrigem Level steht hinter dem Namen.": "Восклицательный знак при слишком низком уровне стоит за названием.",

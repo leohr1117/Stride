@@ -17,6 +17,22 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.2',
+    seiten: 'Heute, Investitionen, Tätigkeiten, Basis, Verbindungen',
+    behoben: 'Heute, Investitionen, Tätigkeiten, Basis, Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Ein Attribut in der Investition lässt sich durch erneutes Tippen abwählen. Die Bereiche heißen Investiert in und Bonus für.',
+          'Blätter bleiben am rechten Rand vollständig sichtbar.',
+          'Knöpfe zum Anlegen zeigen nur ein Plus.',
+          'Auswahlfelder sehen aus wie die anderen Eingabefelder.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.1',
     seiten: 'Profil, Können, Haben, Fähigkeiten, Heute',
     behoben: 'Profil, Können, Haben, Fähigkeiten, Heute',
