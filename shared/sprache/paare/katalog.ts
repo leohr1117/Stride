@@ -83,7 +83,7 @@ export const PAARE = [
   ['Beim Bearbeiten eines Können-Attributs auf dem Charakter.', 'When editing an ability attribute on the character.'],
   ['Beim Bearbeiten eines Haben-Attributs auf dem Charakter.', 'When editing an asset attribute on the character.'],
   ['Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.', 'A big moment: a goal reached, a new record, or something done for the first time. It grants more XP.'],
-  ['Nur ein Datum. Das Leben bleibt verdeckt. Nach der Deadline geht Disziplin verloren.', 'Just a date. The level stays hidden. After the deadline you lose Discipline.'],
+  ['Nur ein Datum. Nach der Deadline geht Disziplin verloren.', 'Just a date. After the deadline you lose Discipline.'],
   ['Bis zum Datum entsteht er. Danach greift er an.', 'He builds until the date. After that he attacks.'],
   ['Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.', 'An investment of your own, or a finished project, grants more XP for good.'],
   ['Bonus gilt auch für Ressourcen', 'Bonus applies to Resources too'],

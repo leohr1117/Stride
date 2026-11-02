@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Der Hinweis am Streak nennt nur die freie Pause und den angeschlagenen Streak.', 'The note on the streak only names the free day off and the cracked streak.'],
+  ['Bei Bosse steht, dass nur ein Datum gilt und nach der Deadline Disziplin verloren geht.', 'Bosses says that only a date counts and that Discipline is lost after the deadline.'],
+  ['Bei Verfall steht, dass ungenutzte Attribute XP verlieren. Die Stärke stellst du pro Attribut ein.', 'Decay says that unused attributes lose XP. You set the strength on each attribute.'],
   ['Bei jedem Kalender steht, als welche Tätigkeit vergangene Termine zählen.', 'Each calendar shows which activity past events count as.'],
   ['Gehört zu kann leer bleiben. Ohne Projekt zählt eine allgemeine Tätigkeit.', 'Belongs to can stay empty. Without a project, a general activity counts.'],
   ['Hat der Kalender einen Fehler, steht rechts Fehler.', 'If the calendar has an error, Error appears on the right.'],

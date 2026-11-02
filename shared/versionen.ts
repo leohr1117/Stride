@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.53.0',
+    seiten: 'Heute, Bereiche, Tätigkeiten',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Der Hinweis am Streak nennt nur die freie Pause und den angeschlagenen Streak.',
+          'Bei Bosse steht, dass nur ein Datum gilt und nach der Deadline Disziplin verloren geht.',
+          'Bei Verfall steht, dass ungenutzte Attribute XP verlieren. Die Stärke stellst du pro Attribut ein.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.52.0',
     seiten: 'Verbindungen',
     abschnitte: [

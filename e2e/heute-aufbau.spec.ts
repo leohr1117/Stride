@@ -49,7 +49,7 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
 
   const info = page.locator('[data-wochenwert="Streak"]').getByRole('button', { name: 'Info' });
   await info.click();
-  await expect(page.getByRole('tooltip')).toContainText('Ein Tag Pause ist frei');
+  await expect(page.getByRole('tooltip')).toHaveText('Ein Tag Pause ist frei. Danach ist der Streak angeschlagen.');
   await page.keyboard.press('Escape');
   await expect(page.getByRole('tooltip')).toHaveCount(0);
 

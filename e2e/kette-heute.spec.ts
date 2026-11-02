@@ -180,7 +180,9 @@ test('Streak-Info öffnet sich', async ({ page }, testInfo) => {
   const info = page.locator('[data-wochenwert="Streak"]').getByRole('button', { name: 'Info' });
   await info.click();
   const tooltip = page.getByRole('tooltip');
-  await expect(tooltip).toContainText('Ein Tag Pause ist frei');
+  await expect(tooltip).toHaveText('Ein Tag Pause ist frei. Danach ist der Streak angeschlagen.');
+  await expect(tooltip).not.toContainText('Kette');
+  await expect(tooltip).not.toContainText('unter Heute');
   const verdeckt = await page.evaluate(() => {
     const kasten = document.querySelector('[role="tooltip"]')?.getBoundingClientRect();
     const zahlen = ['Streak', 'Momentum'].map((name) =>

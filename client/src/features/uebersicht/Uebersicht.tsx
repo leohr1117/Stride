@@ -87,7 +87,7 @@ export function UebersichtSeite() {
               label={tx("Streak")}
               info={
                 <InfoHinweis
-                  text="Ein Tag Pause ist frei. Danach ist die Kette angeschlagen. Der Schutz ist die eine Zeile unter Heute."
+                  text="Ein Tag Pause ist frei. Danach ist der Streak angeschlagen."
                   abstand={false}
                   amKasten
                 />

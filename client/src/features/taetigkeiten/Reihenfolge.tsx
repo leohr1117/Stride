@@ -172,7 +172,7 @@ export function ReihenfolgeKnopf({ vorlagen }: { vorlagen: Vorlage[] }) {
     <>
       <ReihenfolgeAusloeser onOeffnen={() => setOffen(true)} />
       <Dialog offen={offen} titel={tx('Reihenfolge')} onSchliessen={() => setOffen(false)}>
-        <p className="mb-3 text-sm">{tx('Oben steht zuerst, auch beim Eintragen.')}</p>
+        <p className="mb-3 text-[13px] leading-5 text-leise">{tx('Oben steht zuerst, auch beim Eintragen.')}</p>
         <Fehlermeldung fehler={reihenfolge.error} />
         <div className="divide-y divide-rand">
           {aktiv.map((vorlage, index) => (

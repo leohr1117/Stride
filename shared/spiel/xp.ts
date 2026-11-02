@@ -46,8 +46,7 @@ export const GEGNER_INFO = 'Ein Gegner zahlt weniger als ein Boss.';
 
 export const BOSS_BELOHNUNG_INFO = 'Volle Boss-Belohnung.';
 
-export const BOSS_SCHALTER =
-  'Nur ein Datum. Das Leben bleibt verdeckt. Nach der Deadline geht Disziplin verloren.';
+export const BOSS_SCHALTER = 'Nur ein Datum. Nach der Deadline geht Disziplin verloren.';
 
 export const BOSS_DATUM_INFO = 'Bis zum Datum entsteht er. Danach greift er an.';
 

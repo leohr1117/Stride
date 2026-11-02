@@ -22,11 +22,13 @@ import { bestaetigeAusblenden } from '../../ebenenFrage.ts';
 import { tx } from '../../text.ts';
 import { Bereich, useEinstellungen, useSprungmarke } from './rahmen.tsx';
 
+const VERFALL_INFO = 'Ungenutzte Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.';
+
 const FUNKTION_INFO: Partial<Record<Funktion, string>> = {
   basis: 'Tägliche Aufgaben zum Abhaken.',
   bossAngriffe: BOSS_SCHALTER,
-  verfallKoennen: 'Ungenutzte Können-Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.',
-  verfallHaben: 'Ungenutzte Haben-Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.',
+  verfallKoennen: VERFALL_INFO,
+  verfallHaben: VERFALL_INFO,
 };
 
 const EBENEN_ICON: Record<Ebene, LucideIcon> = {
