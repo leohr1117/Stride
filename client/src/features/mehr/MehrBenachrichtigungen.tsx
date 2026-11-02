@@ -1,15 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRef, useState, type FormEvent } from 'react';
 import type { HinweisStand } from '../../../../shared/api/hinweise.ts';
-import { UHRZEIT_MUSTER } from '../../../../shared/spiel/aufgabe.ts';
+import { UHRZEIT_FORMAT, UHRZEIT_MUSTER } from '../../../../shared/spiel/aufgabe.ts';
+import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import type { HinweisAboKoerper, HinweisWahl } from '../../api/hinweise.ts';
 import { Dialog } from '../../components/Dialog.tsx';
-import { ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
+import { Zeile, ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
+import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
-import { EINGABE_STIL, Fehlermeldung, Feld, Formular, InfoHinweis, Karte, Knopf, Ladeanzeige } from '../../ui/index.ts';
+import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf, Ladeanzeige } from '../../ui/index.ts';
 import { einschaltKlick, iosOhneApp, schluesselBytes, type HinweisBerechtigung, type HinweisGeraet } from './hinweisGeraet.ts';
 import { Bereich } from './rahmen.tsx';
+
+/** Abbrechen geht denselben Weg wie Esc, damit ein geändertes Blatt nachfragt. */
+function schliessenWieEsc(): void {
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+}
 
 function leseGeraet(): HinweisGeraet {
   const nav = navigator as Navigator & { standalone?: boolean };
@@ -61,13 +68,14 @@ export function MehrBenachrichtigungenSeite() {
 
 function Inhalt({ stand }: { stand: HinweisStand }) {
   const queryClient = useQueryClient();
+  const bosseAn = istAn('bossAngriffe', useSichtbarkeit());
   const [geraet, setGeraet] = useState(leseGeraet);
   const [laeuft, setLaeuft] = useState(false);
   const [aktionFehler, setAktionFehler] = useState<unknown>(null);
   const [ruheOffen, setRuheOffen] = useState(false);
   const [von, setVon] = useState(stand.ruheVon);
   const [bis, setBis] = useState(stand.ruheBis);
-  const [formFehler, setFormFehler] = useState(false);
+  const [feldFehler, setFeldFehler] = useState<{ von?: string; bis?: string }>({});
   const eigenes = useRef<string | null>(null);
   const angemeldet = stand.angemeldet;
   const schluessel = stand.oeffentlicherSchluessel;
@@ -106,7 +114,7 @@ function Inhalt({ stand }: { stand: HinweisStand }) {
     mutationFn: (zeiten: { ruheVon: string; ruheBis: string }) => api.hinweisWahl(zeiten),
     onSuccess: (neu) => {
       queryClient.setQueryData(SCHLUESSEL.hinweise, neu);
-      setFormFehler(false);
+      setFeldFehler({});
       setRuheOffen(false);
     },
   });
@@ -165,7 +173,7 @@ function Inhalt({ stand }: { stand: HinweisStand }) {
   function oeffneRuhe(): void {
     setVon(stand.ruheVon);
     setBis(stand.ruheBis);
-    setFormFehler(false);
+    setFeldFehler({});
     ruhe.reset();
     setRuheOffen(true);
   }
@@ -174,15 +182,17 @@ function Inhalt({ stand }: { stand: HinweisStand }) {
     ereignis.preventDefault();
     const ruheVon = uhr(von);
     const ruheBis = uhr(bis);
+    const naechster = {
+      von: ruheVon ? undefined : UHRZEIT_FORMAT,
+      bis: ruheBis ? undefined : UHRZEIT_FORMAT,
+    };
     if (!ruheVon || !ruheBis) {
-      setFormFehler(true);
+      setFeldFehler(naechster);
       return;
     }
-    setFormFehler(false);
+    setFeldFehler({});
     ruhe.mutate({ ruheVon, ruheBis });
   }
-
-  const zuerst = tx('Zuerst einschalten.');
 
   return (
     <Bereich
@@ -190,69 +200,61 @@ function Inhalt({ stand }: { stand: HinweisStand }) {
       kinder={
         <>
           <Fehlermeldung fehler={aktionFehler || wahl.error} />
-          <div>
-            <div data-hinweis-knopf className="flex items-center">
-              <Knopf
-                variante={angemeldet ? 'sekundaer' : 'primaer'}
-                className="min-h-11 max-w-full"
-                disabled={knopfAus || laeuft}
-                onClick={() => void (angemeldet ? ausschalten() : einschalten())}
-              >
-                {angemeldet ? tx('Benachrichtigungen ausschalten') : tx('Benachrichtigungen einschalten')}
-              </Knopf>
+          <ZeilenGruppe>
+            <ZeileSchalter
+              id="hinweis-geraet"
+              titel={tx('Auf diesem Gerät')}
+              an={angemeldet}
+              deaktiviert={knopfAus || laeuft}
+              onAendern={(an) => void (an ? einschalten() : ausschalten())}
+            />
+          </ZeilenGruppe>
+          {iosHinweis || zeile ? (
+            <div className="space-y-1">
               {iosHinweis ? (
-                <InfoHinweis text={tx('Auf dem iPhone nur aus der App auf dem Home-Bildschirm. Im Safari-Tab bleibt der Knopf aus.')} />
+                <p className="text-[13px] leading-[18px] text-leise">
+                  {tx('Auf dem iPhone nur aus der App auf dem Home-Bildschirm.')}
+                </p>
               ) : null}
+              {zeile ? <p className="text-sm break-words text-leise">{zeile}</p> : null}
             </div>
-            {zeile ? <p className="mt-2 text-sm break-words text-leise">{zeile}</p> : null}
-          </div>
+          ) : null}
           <ZeilenGruppe titel={tx('Arten')}>
             <ZeileSchalter
               id="hinweis-streak"
               titel={tx('Streak in Gefahr')}
-              info={angemeldet ? tx('Am angeschlagenen Tag, einmal. Der Text bittet um einen Eintrag.') : zuerst}
               an={stand.streak}
               deaktiviert={!angemeldet || wahl.isPending}
               onAendern={(an) => wahl.mutate({ streak: an })}
             />
-            <ZeileSchalter
-              id="hinweis-boss"
-              titel={tx('Boss-Datum')}
-              info={angemeldet ? tx('Einen Tag vorher, nur wenn Bosse an sind. Der Sieg bleibt in der App.') : zuerst}
-              an={stand.boss}
-              deaktiviert={!angemeldet || wahl.isPending}
-              onAendern={(an) => wahl.mutate({ boss: an })}
-            />
+            {bosseAn ? (
+              <ZeileSchalter
+                id="hinweis-boss"
+                titel={tx('Boss einen Tag vorher')}
+                an={stand.boss}
+                deaktiviert={!angemeldet || wahl.isPending}
+                onAendern={(an) => wahl.mutate({ boss: an })}
+              />
+            ) : null}
             <ZeileSchalter
               id="hinweis-rueckkehr"
-              titel={tx('Rückkehr')}
-              info={angemeldet ? tx('Einmal, wenn die Rückkehr aufgeht.') : zuerst}
+              titel={tx('Rückkehr geht auf')}
               an={stand.rueckkehr}
               deaktiviert={!angemeldet || wahl.isPending}
               onAendern={(an) => wahl.mutate({ rueckkehr: an })}
             />
           </ZeilenGruppe>
-          <section>
-            <div className="mb-2 flex min-w-0 items-center">
-              <h2 className="min-w-0 text-sm font-medium break-words text-leise">{tx('Ruhezeit')}</h2>
-              <InfoHinweis text={tx('In dieser Zeit geht nichts raus. Danach höchstens eine Benachrichtigung, wenn sie noch stimmt.')} />
-            </div>
-            <Karte dicht>
-              <div className={`flex min-h-12 items-center gap-3 px-4 ${angemeldet ? '' : 'opacity-60'}`}>
-                <span className="zahl min-w-0 flex-1 text-sm">
-                  {stand.ruheVon} – {stand.ruheBis}
-                </span>
-                {angemeldet ? (
-                  <button type="button" className="min-h-11 shrink-0 px-1 text-sm text-leise" onClick={oeffneRuhe}>
-                    {tx('Bearbeiten')}
-                  </button>
-                ) : null}
-              </div>
-            </Karte>
-          </section>
+          <ZeilenGruppe>
+            <Zeile
+              titel={tx('Ruhezeit')}
+              wert={`${stand.ruheVon}–${stand.ruheBis}`}
+              onKlick={angemeldet ? oeffneRuhe : undefined}
+              pfeil={angemeldet ? undefined : false}
+            />
+          </ZeilenGruppe>
           <Dialog offen={ruheOffen} titel={tx('Ruhezeit')} onSchliessen={() => setRuheOffen(false)}>
             <Formular onAbsenden={speichereRuhe}>
-              <Feld label={tx('Von')}>
+              <Feld label={tx('Ruhe von')} fehler={feldFehler.von}>
                 <input
                   type="time"
                   name="von"
@@ -260,12 +262,12 @@ function Inhalt({ stand }: { stand: HinweisStand }) {
                   step={60}
                   onChange={(ereignis) => {
                     setVon(ereignis.target.value);
-                    setFormFehler(false);
+                    setFeldFehler((bisher) => ({ ...bisher, von: undefined }));
                   }}
-                  className={`${EINGABE_STIL} min-h-11`}
+                  className={EINGABE_STIL}
                 />
               </Feld>
-              <Feld label={tx('Bis')}>
+              <Feld label={tx('Ruhe bis')} fehler={feldFehler.bis}>
                 <input
                   type="time"
                   name="bis"
@@ -273,15 +275,20 @@ function Inhalt({ stand }: { stand: HinweisStand }) {
                   step={60}
                   onChange={(ereignis) => {
                     setBis(ereignis.target.value);
-                    setFormFehler(false);
+                    setFeldFehler((bisher) => ({ ...bisher, bis: undefined }));
                   }}
-                  className={`${EINGABE_STIL} min-h-11`}
+                  className={EINGABE_STIL}
                 />
               </Feld>
-              <Fehlermeldung fehler={formFehler || ruhe.error} />
-              <Knopf type="submit" variante="primaer" className="w-full" disabled={ruhe.isPending}>
-                {tx('Speichern')}
-              </Knopf>
+              <Fehlermeldung fehler={ruhe.error} />
+              <div className="dialog-aktionen">
+                <Knopf type="button" onClick={schliessenWieEsc}>
+                  {tx('Abbrechen')}
+                </Knopf>
+                <Knopf type="submit" variante="primaer" disabled={ruhe.isPending}>
+                  {tx('Speichern')}
+                </Knopf>
+              </div>
             </Formular>
           </Dialog>
         </>

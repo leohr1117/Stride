@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Download } from 'lucide-react';
 import { useRef, useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { EXPORT_ADRESSE, api, SCHLUESSEL } from '../../api/index.ts';
@@ -105,7 +106,7 @@ function DatenKarte() {
   return (
     <>
       <ZeilenGruppe>
-        <Zeile titel={tx("Exportieren")} href={EXPORT_ADRESSE} download />
+        <Zeile titel={tx("Exportieren")} href={EXPORT_ADRESSE} download pfeil={false} symbol={<Download aria-hidden="true" />} />
         <Zeile
           titel={tx("Importieren")}
           pfeil={false}

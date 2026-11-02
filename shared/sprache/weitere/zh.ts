@@ -1,5 +1,15 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf diesem Gerät ist ein Schalter. Darunter steht, ob Benachrichtigungen an sind.": "在这台设备上是一个开关。下面写着通知是否开启。",
+  "Die Arten heißen Streak in Gefahr, Boss einen Tag vorher und Rückkehr geht auf. Ist das Gerät aus, sind die Schalter gesperrt.": "类型是连续记录有风险、首领提前一天和回归开启。设备关闭时，开关锁定。",
+  "Die Ruhezeit steht in einer Zeile und öffnet die Felder Ruhe von und Ruhe bis.": "安静时间在一行里，打开安静从和安静到。",
+  "Daten zeigt Exportieren mit einem Symbol, Importieren und den roten Eintrag Profil zurücksetzen.": "数据显示带图标的导出、导入，以及红色的重置档案。",
+  "Auf diesem Gerät": "在这台设备上",
+  "Auf dem iPhone nur aus der App auf dem Home-Bildschirm.": "在 iPhone 上只能从主屏幕上的 App 使用。",
+  "Boss einen Tag vorher": "首领提前一天",
+  "Rückkehr geht auf": "回归开启",
+  "Ruhe von": "安静从",
+  "Ruhe bis": "安静到",
   "Die Sprache steht in einer Zeile und öffnet eine Liste. Die Ansicht wählst du über Vorschaukacheln.": "语言在一行里，点开是列表。外观用预览图块来选。",
   "Farben dieser Ansicht, eigene Paletten und eigene Farben liegen untereinander. Zurücksetzen holt die Palette.": "此外观的颜色、自己的配色和自己的颜色上下排列。重置会恢复配色。",
   "Karten auf Heute zeigt nur Schalter. Zeilen ausgeschalteter Bereiche fehlen.": "今天的卡片只显示开关。已关闭领域的行不出现。",

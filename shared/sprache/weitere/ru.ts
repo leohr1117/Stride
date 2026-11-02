@@ -1,5 +1,15 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf diesem Gerät ist ein Schalter. Darunter steht, ob Benachrichtigungen an sind.": "На этом устройстве это переключатель. Под ним видно, включены ли уведомления.",
+  "Die Arten heißen Streak in Gefahr, Boss einen Tag vorher und Rückkehr geht auf. Ist das Gerät aus, sind die Schalter gesperrt.": "Виды называются Серия под угрозой, Босс за день и Возвращение открывается. Если устройство выключено, переключатели заблокированы.",
+  "Die Ruhezeit steht in einer Zeile und öffnet die Felder Ruhe von und Ruhe bis.": "Тихие часы стоят в строке и открывают поля Тишина с и Тишина до.",
+  "Daten zeigt Exportieren mit einem Symbol, Importieren und den roten Eintrag Profil zurücksetzen.": "Данные показывают экспорт со значком, импорт и красную строку Сбросить профиль.",
+  "Auf diesem Gerät": "На этом устройстве",
+  "Auf dem iPhone nur aus der App auf dem Home-Bildschirm.": "На iPhone только из приложения на домашнем экране.",
+  "Boss einen Tag vorher": "Босс за день",
+  "Rückkehr geht auf": "Возвращение открывается",
+  "Ruhe von": "Тишина с",
+  "Ruhe bis": "Тишина до",
   "Die Sprache steht in einer Zeile und öffnet eine Liste. Die Ansicht wählst du über Vorschaukacheln.": "Язык стоит в строке и открывает список. Вид выбирается плитками предпросмотра.",
   "Farben dieser Ansicht, eigene Paletten und eigene Farben liegen untereinander. Zurücksetzen holt die Palette.": "Цвета этого вида, свои палитры и свои цвета идут друг под другом. Сброс возвращает палитру.",
   "Karten auf Heute zeigt nur Schalter. Zeilen ausgeschalteter Bereiche fehlen.": "Карточки на Сегодня показывает только переключатели. Строк выключенных областей нет.",

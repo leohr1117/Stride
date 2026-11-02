@@ -17,6 +17,21 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.46.0',
+    seiten: 'Benachrichtigungen, Daten',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Auf diesem Gerät ist ein Schalter. Darunter steht, ob Benachrichtigungen an sind.',
+          'Die Arten heißen Streak in Gefahr, Boss einen Tag vorher und Rückkehr geht auf. Ist das Gerät aus, sind die Schalter gesperrt.',
+          'Die Ruhezeit steht in einer Zeile und öffnet die Felder Ruhe von und Ruhe bis.',
+          'Daten zeigt Exportieren mit einem Symbol, Importieren und den roten Eintrag Profil zurücksetzen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.45.0',
     seiten: 'Darstellung, Paletten, Karten auf Heute',
     abschnitte: [

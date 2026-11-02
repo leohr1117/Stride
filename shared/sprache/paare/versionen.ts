@@ -1,5 +1,9 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf diesem Gerät ist ein Schalter. Darunter steht, ob Benachrichtigungen an sind.', 'On this device is a switch. Below it says whether notifications are on.'],
+  ['Die Arten heißen Streak in Gefahr, Boss einen Tag vorher und Rückkehr geht auf. Ist das Gerät aus, sind die Schalter gesperrt.', 'The types are called Streak at risk, Boss one day before, and Return opens. When the device is off, the switches are locked.'],
+  ['Die Ruhezeit steht in einer Zeile und öffnet die Felder Ruhe von und Ruhe bis.', 'Quiet hours sits on a row and opens the fields Quiet from and Quiet until.'],
+  ['Daten zeigt Exportieren mit einem Symbol, Importieren und den roten Eintrag Profil zurücksetzen.', 'Data shows Export with an icon, Import, and the red entry Reset profile.'],
   ['Die Sprache steht in einer Zeile und öffnet eine Liste. Die Ansicht wählst du über Vorschaukacheln.', 'Language sits on a row and opens a list. You pick the look from preview tiles.'],
   ['Farben dieser Ansicht, eigene Paletten und eigene Farben liegen untereinander. Zurücksetzen holt die Palette.', 'Colors of this look, your palettes, and your colors sit one under the other. Reset brings back the palette.'],
   ['Karten auf Heute zeigt nur Schalter. Zeilen ausgeschalteter Bereiche fehlen.', 'Cards on Today shows only switches. Rows for areas that are off are missing.'],

@@ -1,5 +1,15 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf diesem Gerät ist ein Schalter. Darunter steht, ob Benachrichtigungen an sind.": "この端末ではスイッチです。下に、通知がオンかどうかが出ます。",
+  "Die Arten heißen Streak in Gefahr, Boss einen Tag vorher und Rückkehr geht auf. Ist das Gerät aus, sind die Schalter gesperrt.": "種類は連続記録が危険、ボスの前日、復帰が開くです。端末がオフのとき、スイッチはロックされます。",
+  "Die Ruhezeit steht in einer Zeile und öffnet die Felder Ruhe von und Ruhe bis.": "静かな時間は一行で、静かな開始と静かな終了を開きます。",
+  "Daten zeigt Exportieren mit einem Symbol, Importieren und den roten Eintrag Profil zurücksetzen.": "データはアイコン付きの書き出し、読み込み、赤いプロフィールのリセットを表示します。",
+  "Auf diesem Gerät": "この端末で",
+  "Auf dem iPhone nur aus der App auf dem Home-Bildschirm.": "iPhone ではホーム画面のアプリからのみです。",
+  "Boss einen Tag vorher": "ボスの前日",
+  "Rückkehr geht auf": "復帰が開く",
+  "Ruhe von": "静かな開始",
+  "Ruhe bis": "静かな終了",
   "Die Sprache steht in einer Zeile und öffnet eine Liste. Die Ansicht wählst du über Vorschaukacheln.": "言語は一行で、タップすると一覧が開きます。見た目はプレビューで選びます。",
   "Farben dieser Ansicht, eigene Paletten und eigene Farben liegen untereinander. Zurücksetzen holt die Palette.": "この見た目の色、自分のパレット、自分の色が上下に並びます。リセットでパレットに戻ります。",
   "Karten auf Heute zeigt nur Schalter. Zeilen ausgeschalteter Bereiche fehlen.": "今日のカードはスイッチだけです。オフの領域の行はありません。",

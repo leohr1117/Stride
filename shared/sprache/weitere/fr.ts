@@ -1,5 +1,15 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf diesem Gerät ist ein Schalter. Darunter steht, ob Benachrichtigungen an sind.": "Sur cet appareil, c'est un interrupteur. En dessous, il est indiqué si les notifications sont activées.",
+  "Die Arten heißen Streak in Gefahr, Boss einen Tag vorher und Rückkehr geht auf. Ist das Gerät aus, sind die Schalter gesperrt.": "Les types s'appellent Série en danger, Boss un jour avant et Le retour s'ouvre. Si l'appareil est éteint, les interrupteurs sont bloqués.",
+  "Die Ruhezeit steht in einer Zeile und öffnet die Felder Ruhe von und Ruhe bis.": "Les heures calmes sont sur une ligne et ouvrent les champs Calme de et Calme à.",
+  "Daten zeigt Exportieren mit einem Symbol, Importieren und den roten Eintrag Profil zurücksetzen.": "Données affiche Exporter avec une icône, Importer et la ligne rouge Réinitialiser le profil.",
+  "Auf diesem Gerät": "Sur cet appareil",
+  "Auf dem iPhone nur aus der App auf dem Home-Bildschirm.": "Sur iPhone, seulement depuis l'app sur l'écran d'accueil.",
+  "Boss einen Tag vorher": "Boss un jour avant",
+  "Rückkehr geht auf": "Le retour s'ouvre",
+  "Ruhe von": "Calme de",
+  "Ruhe bis": "Calme à",
   "Die Sprache steht in einer Zeile und öffnet eine Liste. Die Ansicht wählst du über Vorschaukacheln.": "La langue est sur une ligne et ouvre une liste. La vue se choisit par des aperçus.",
   "Farben dieser Ansicht, eigene Paletten und eigene Farben liegen untereinander. Zurücksetzen holt die Palette.": "Les couleurs de cette vue, les palettes perso et les couleurs perso sont l'une sous l'autre. Réinitialiser ramène la palette.",
   "Karten auf Heute zeigt nur Schalter. Zeilen ausgeschalteter Bereiche fehlen.": "Cartes sur Aujourd'hui n'affiche que des interrupteurs. Les lignes des zones désactivées manquent.",

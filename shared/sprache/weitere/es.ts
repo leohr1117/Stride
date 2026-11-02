@@ -1,5 +1,15 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf diesem Gerät ist ein Schalter. Darunter steht, ob Benachrichtigungen an sind.": "En este dispositivo es un interruptor. Debajo dice si las notificaciones están activas.",
+  "Die Arten heißen Streak in Gefahr, Boss einen Tag vorher und Rückkehr geht auf. Ist das Gerät aus, sind die Schalter gesperrt.": "Los tipos se llaman Racha en peligro, Jefe un día antes y El regreso se abre. Si el dispositivo está apagado, los interruptores están bloqueados.",
+  "Die Ruhezeit steht in einer Zeile und öffnet die Felder Ruhe von und Ruhe bis.": "El horario silencioso está en una fila y abre los campos Silencio desde y Silencio hasta.",
+  "Daten zeigt Exportieren mit einem Symbol, Importieren und den roten Eintrag Profil zurücksetzen.": "Datos muestra Exportar con un símbolo, Importar y la fila roja Restablecer perfil.",
+  "Auf diesem Gerät": "En este dispositivo",
+  "Auf dem iPhone nur aus der App auf dem Home-Bildschirm.": "En el iPhone, solo desde la app en la pantalla de inicio.",
+  "Boss einen Tag vorher": "Jefe un día antes",
+  "Rückkehr geht auf": "El regreso se abre",
+  "Ruhe von": "Silencio desde",
+  "Ruhe bis": "Silencio hasta",
   "Die Sprache steht in einer Zeile und öffnet eine Liste. Die Ansicht wählst du über Vorschaukacheln.": "El idioma está en una fila y abre una lista. La vista se elige con vistas previas.",
   "Farben dieser Ansicht, eigene Paletten und eigene Farben liegen untereinander. Zurücksetzen holt die Palette.": "Los colores de esta vista, las paletas propias y los colores propios van uno bajo el otro. Restablecer recupera la paleta.",
   "Karten auf Heute zeigt nur Schalter. Zeilen ausgeschalteter Bereiche fehlen.": "Tarjetas en Hoy solo muestra interruptores. Faltan las filas de las áreas apagadas.",
