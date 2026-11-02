@@ -19,7 +19,7 @@ import { tageZwischen } from '../../shared/spiel/kette.ts';
 import { BOSS, eintragXp, GEGNER, meilensteinBonus } from '../../shared/spiel/xp.ts';
 
 const TOKEN = 'test-token-1234';
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-todoist-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-todoist-'));
 const offen: string[] = [];
 const server: TodoistAttrappe[] = [];
 let nummer = 0;

@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { migriere } from './db.ts';
 import { MIGRATIONEN } from './migrationen.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-migration-hinweis-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-migration-hinweis-'));
 const offen: DatabaseSync[] = [];
 let nummer = 0;
 

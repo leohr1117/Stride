@@ -22,7 +22,7 @@ import {
 } from './sender.ts';
 
 const wurzel = fileURLToPath(new URL('../../..', import.meta.url));
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-sender-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-sender-'));
 const offen: string[] = [];
 const ENDPUNKT = 'https://push.example/geheim-endpunkt-7f3a';
 const P256 = 'p256dh-geheim-aa';

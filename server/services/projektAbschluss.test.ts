@@ -11,7 +11,7 @@ import { istLoeschbar, loescheProjekt, loescheVorlage } from './loeschen.ts';
 import { aendereProjekt, erstelleProjekt, ladeProjekt } from './struktur.ts';
 import { aendereVorlage, erstelleVorlage } from '../features/taetigkeiten/vorlagen.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-abschluss-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-abschluss-'));
 const offen: string[] = [];
 let nummer = 0;
 
@@ -80,7 +80,7 @@ describe('Projekt abschließen', () => {
       const koerper = attributId('koerper');
       const denken = vorlage('Denken', koerper);
       const liefern = vorlage('Liefern', koerper);
-      const ziel = projekt('Ascend', denken, liefern);
+      const ziel = projekt('Stride', denken, liefern);
       const zeit = new Date(2026, 5, 2, 10, 0, 0);
       erstelleEintrag(
         {
@@ -103,7 +103,7 @@ describe('Projekt abschließen', () => {
       const erstes = aendereProjekt(ziel.id, { geschafft: true }, zeit);
       expect(erstes.belohnung?.meilenstein).toBe(false);
       expect(erstes.belohnung?.boni).toEqual([{ quelle: 'abschluss', label: 'Projekt abgeschlossen', xp: bonus }]);
-      expect(erstes.belohnung?.projekt).toEqual({ name: 'Ascend', xp: bonus });
+      expect(erstes.belohnung?.projekt).toEqual({ name: 'Stride', xp: bonus });
       expect(xpVon('projekt_xp', 'abschluss')).toBe(bonus);
       expect(xpVon('xp_ereignisse', 'abschluss')).toBe(bonus);
       expect(eintraege(ziel.id, liefern)).toBe(1);

@@ -4,7 +4,7 @@ import path from 'node:path';
 import { verweigereEchteDatenbank } from './server/testpfad.ts';
 
 const kennung = process.env.VITEST_WORKER_ID ?? process.env.VITEST_POOL_ID ?? String(process.pid);
-const ordner = path.join(os.tmpdir(), 'ascend-vitest', kennung);
+const ordner = path.join(os.tmpdir(), 'stride-vitest', kennung);
 mkdirSync(ordner, { recursive: true });
 process.env.DB_PFAD = path.join(ordner, 'app.db');
 process.env.ZUGANG_PFAD = path.join(ordner, 'zugang.db');

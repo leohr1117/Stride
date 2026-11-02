@@ -25,7 +25,7 @@ const MITTWOCH = '2026-10-21';
 const DONNERSTAG = '2026-10-22';
 const FREITAG = '2026-10-23';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-kette-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-kette-'));
 const offen: string[] = [];
 let nummer = 0;
 

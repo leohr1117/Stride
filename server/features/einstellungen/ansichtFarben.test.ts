@@ -6,7 +6,7 @@ import { standardVorlage } from '../../../shared/features/darstellung/paletten.t
 import { ausfuehren, mitWelt, schliesseWelt } from '../../db.ts';
 import { aendereEinstellungen, ladeEinstellungen } from './einstellungen.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-ansicht-farben-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-ansicht-farben-'));
 const offen: string[] = [];
 let nummer = 0;
 

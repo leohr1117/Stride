@@ -6,7 +6,7 @@ import { ausfuehren, eine, mitWelt, schliesseWelt } from '../../db.ts';
 import { attributAenderungSchema } from '../../validierung.ts';
 import { aendereAttribut, ladeAttribut } from './attribute.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-attribut-name-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-attribut-name-'));
 const offen: string[] = [];
 let nummer = 0;
 

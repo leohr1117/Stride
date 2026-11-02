@@ -7,7 +7,7 @@ import { ausfuehren, mitWelt, schliesseWelt } from '../../db.ts';
 import { einstellungenAenderungSchema } from '../../validierung.ts';
 import { aendereEinstellungen, ladeEinstellungen } from './einstellungen.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-paletten-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-paletten-'));
 const offen: string[] = [];
 let nummer = 0;
 

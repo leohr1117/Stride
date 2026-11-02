@@ -11,8 +11,7 @@
     "start": "node --disable-warning=ExperimentalWarning server/index.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "beispieldaten": "node --disable-warning=ExperimentalWarning server/beispieldaten.ts",
-    "testprofile": "node --disable-warning=ExperimentalWarning betrieb/testprofile.ts"
+    "beispieldaten": "node --disable-warning=ExperimentalWarning server/beispieldaten.ts"
   },
   "dependencies": {
     "@fastify/static": "^10.1.6",

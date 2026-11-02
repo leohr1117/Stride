@@ -35,7 +35,7 @@ const MONTAG = '2026-10-19';
 const DIENSTAG = '2026-10-20';
 const ENDE = '2026-10-23';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-bewertung-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-bewertung-'));
 const offen: string[] = [];
 let nummer = 0;
 
@@ -107,19 +107,19 @@ function fuelle(vorlageId: number, anzahl: number, tag: string): void {
 }
 
 function mitUmgebung(wert: string | undefined, arbeit: () => void): void {
-  const vorher = process.env.ASCEND_TEST;
+  const vorher = process.env.STRIDE_TEST;
   if (wert === undefined) {
-    delete process.env.ASCEND_TEST;
+    delete process.env.STRIDE_TEST;
   } else {
-    process.env.ASCEND_TEST = wert;
+    process.env.STRIDE_TEST = wert;
   }
   try {
     arbeit();
   } finally {
     if (vorher === undefined) {
-      delete process.env.ASCEND_TEST;
+      delete process.env.STRIDE_TEST;
     } else {
-      process.env.ASCEND_TEST = vorher;
+      process.env.STRIDE_TEST = vorher;
     }
   }
 }
@@ -234,7 +234,7 @@ describe('Bewertung fällig', () => {
     });
   });
 
-  it('bleibt unter ASCEND_TEST aus, bis bewertung_testen gesetzt ist, und die Antwort nennt den Schlüssel nicht', () => {
+  it('bleibt unter STRIDE_TEST aus, bis bewertung_testen gesetzt ist, und die Antwort nennt den Schlüssel nicht', () => {
     mitUmgebung('1', () => {
       mitWelt(welt(), () => {
         const id = tunId();
@@ -351,7 +351,7 @@ describe('Angebot fällig', () => {
     });
   });
 
-  it('braucht unter ASCEND_TEST den eigenen Schlüssel und verliert gegen die Bewertung', () => {
+  it('braucht unter STRIDE_TEST den eigenen Schlüssel und verliert gegen die Bewertung', () => {
     mitUmgebung('1', () => {
       mitWelt(welt(), () => {
         const id = tunId();

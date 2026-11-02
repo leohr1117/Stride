@@ -9,7 +9,7 @@ import { versionHinweisSchema } from '../../validierung.ts';
 import { aendereEinstellungen, ladeEinstellungen } from './einstellungen.ts';
 import { leseVersionsstand, merkeVersionsstand, setzeVersionsstandWennLeer } from './versionHinweis.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-version-hinweis-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-version-hinweis-'));
 const offen: string[] = [];
 let nummer = 0;
 

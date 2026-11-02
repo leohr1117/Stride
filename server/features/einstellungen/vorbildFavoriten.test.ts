@@ -8,7 +8,7 @@ import { setzeProfilZurueck } from '../../services/profilZurueck.ts';
 import { einstellungenAenderungSchema } from '../../validierung.ts';
 import { aendereEinstellungen, ladeEinstellungen } from './einstellungen.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-favoriten-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-favoriten-'));
 const offen: string[] = [];
 let nummer = 0;
 

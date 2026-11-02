@@ -1,3 +1,4 @@
+import { strideVariable } from '../../umgebung.ts';
 import type { BewertungStand } from '../../../shared/api/index.ts';
 import { lokalesDatum } from '../../services/zeit.ts';
 import { eine, inTransaktion } from '../../db.ts';
@@ -61,7 +62,7 @@ export function bewertungFaellig(jetzt = new Date(), profilGeradeAngelegt = fals
   if (profilGeradeAngelegt || leseBewertungNie() || leseBewertungWert() !== null) {
     return false;
   }
-  if (process.env.ASCEND_TEST === '1' && !leseBewertungTesten()) {
+  if (strideVariable('TEST') === '1' && !leseBewertungTesten()) {
     return false;
   }
   if (heuteBlockiert(lokalesDatum(jetzt))) {
@@ -75,7 +76,7 @@ export function angebotFaellig(jetzt = new Date(), profilGeradeAngelegt = false)
   if (profilGeradeAngelegt || leseHinweisAngebotGesehen()) {
     return false;
   }
-  if (process.env.ASCEND_TEST === '1' && !leseHinweisAngebotTesten()) {
+  if (strideVariable('TEST') === '1' && !leseHinweisAngebotTesten()) {
     return false;
   }
   const nichtVor = leseHinweisNichtVor();

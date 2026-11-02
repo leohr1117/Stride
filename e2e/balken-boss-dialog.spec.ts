@@ -238,7 +238,7 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
   }
   await bereich.scrollIntoViewIfNeeded();
   await ohneSeitlichenUeberlauf(seite);
-  await seite.screenshot({ path: `e2e/bilder/${info.project.name}-attribut-balken.png` });
+  await seite.screenshot({ path: `tmp-test/balken-boss-dialog/${info.project.name}-attribut-balken.png` });
 }
 
 async function pruefeChronik(seite: Page, info: TestInfo): Promise<void> {
@@ -289,7 +289,7 @@ async function pruefeChronik(seite: Page, info: TestInfo): Promise<void> {
   await expect(karte).toHaveClass(/text-gefahr|border-gefahr/);
   await karte.scrollIntoViewIfNeeded();
   await ohneSeitlichenUeberlauf(seite);
-  await seite.screenshot({ path: `e2e/bilder/${info.project.name}-chronik-boss.png` });
+  await seite.screenshot({ path: `tmp-test/balken-boss-dialog/${info.project.name}-chronik-boss.png` });
 
   await karte.click();
   const dialog = seite.getByRole('dialog');
@@ -303,7 +303,7 @@ async function pruefeChronik(seite: Page, info: TestInfo): Promise<void> {
   await expect(dialog.getByText('Meilenstein', { exact: true })).toHaveCount(0);
   await expect(dialog.getByText('Beute', { exact: true })).toHaveCount(0);
   await ohneSeitlichenUeberlauf(seite);
-  await seite.screenshot({ path: `e2e/bilder/${info.project.name}-chronik-boss-detail.png` });
+  await seite.screenshot({ path: `tmp-test/balken-boss-dialog/${info.project.name}-chronik-boss-detail.png` });
   await dialog.getByRole('button', { name: 'Schließen' }).click();
   await expect(dialog).toBeHidden();
 }
@@ -339,7 +339,7 @@ async function pruefeTitel(seite: Page, info: TestInfo): Promise<void> {
     }),
   ).toBe(true);
   await ohneSeitlichenUeberlauf(seite);
-  await seite.screenshot({ path: `e2e/bilder/${info.project.name}-titel-dialog.png` });
+  await seite.screenshot({ path: `tmp-test/balken-boss-dialog/${info.project.name}-titel-dialog.png` });
   await seite.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
   await expect(zeile.getByText(ziel.titel, { exact: true })).toBeVisible();

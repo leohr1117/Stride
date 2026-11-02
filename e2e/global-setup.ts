@@ -115,8 +115,8 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
     cwd: WURZEL,
     env: {
       ...process.env,
-      ASCEND_TEST: '1',
-      ASCEND_ADMIN: 'testvoll',
+      STRIDE_TEST: '1',
+      STRIDE_ADMIN: 'testvoll',
       PORT: String(TEST_PORT),
       DB_PFAD: TEST_APP,
       ZUGANG_PFAD: TEST_ZUGANG,

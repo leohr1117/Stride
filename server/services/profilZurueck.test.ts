@@ -10,7 +10,7 @@ import { ladeAttribute } from '../features/attribute/attribute.ts';
 import { aendereEinstellungen, ladeEinstellungen } from '../features/einstellungen/einstellungen.ts';
 import { setzeProfilZurueck } from './profilZurueck.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-zurueck-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-zurueck-'));
 const offen: string[] = [];
 let nummer = 0;
 

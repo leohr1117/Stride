@@ -37,7 +37,7 @@ function palettenModul(): Plugin {
   const konkretNorm = normal(konkret);
   const modulNorm = normal(modulId);
   return {
-    name: 'ascend-paletten-modul',
+    name: 'stride-paletten-modul',
     enforce: 'pre',
     resolveId(source, importer) {
       if (!source.endsWith('paletten.ts')) return null;
@@ -60,7 +60,7 @@ function palettenModul(): Plugin {
 
 function serviceWorker(): Plugin {
   return {
-    name: 'ascend-service-worker',
+    name: 'stride-service-worker',
     apply: 'build',
     // Vite löscht reine CSS-JS-Platzhalter erst am Ende von generateBundle. Die Liste muss danach entstehen, sonst schlägt cache.addAll fehl und push kommt nie an.
     writeBundle(optionen, bundle) {

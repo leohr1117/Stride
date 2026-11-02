@@ -28,7 +28,7 @@ import {
 } from './plaene.ts';
 import { aendereUebung, erstelleUebung, ladeUebungen, loescheUebung } from './uebungen.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-training-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-training-'));
 const offen: string[] = [];
 let nummer = 0;
 const ARCHIV = 'Das ist schon genutzt und kann nur archiviert werden.';

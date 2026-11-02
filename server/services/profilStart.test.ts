@@ -12,7 +12,7 @@ import { ladeAttribute } from '../features/attribute/attribute.ts';
 import { aendereEinstellungen, ladeEinstellungen } from '../features/einstellungen/einstellungen.ts';
 import { wendeFokusAn } from './profilStart.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-profil-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-profil-'));
 const offen: string[] = [];
 let nummer = 0;
 

@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { strideVariable } from './umgebung.ts';
 
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DATA = path.resolve(WURZEL, 'data');
@@ -15,7 +16,7 @@ function ohneNeben(absolut: string): string {
 }
 
 export function istTestlauf(): boolean {
-  return process.env.VITEST === 'true' || process.env.ASCEND_TEST === '1';
+  return process.env.VITEST === 'true' || strideVariable('TEST') === '1';
 }
 
 /** Echte Nutzerdaten: Dateien direkt unter data/ oder data/welten/. */

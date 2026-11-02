@@ -9,7 +9,7 @@ import { aendereProjekt, aendereVision, erstelleProjekt, erstelleVision, ladePro
 import { erstelleVorlage } from '../features/taetigkeiten/vorlagen.ts';
 import { aendereInvestition, erstelleInvestition, ladeBoniJeProjekt, ladeInvestitionen } from '../features/investitionen/ausruestung.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-investition-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-investition-'));
 const offen: string[] = [];
 let nummer = 0;
 const frueh = new Date(2026, 5, 1, 10, 0, 0);

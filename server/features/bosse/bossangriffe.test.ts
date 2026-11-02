@@ -13,7 +13,7 @@ import { erstelleProjekt } from '../../services/struktur.ts';
 import { aendereAufgabe, erledigeAufgabe, erstelleAufgabe, loescheAufgabe } from '../aufgaben/aufgaben.ts';
 import { rechneBossangriffeAb } from './bossangriffe.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-angriff-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-angriff-'));
 const offen: string[] = [];
 let nummer = 0;
 const JETZT = new Date(2026, 9, 23, 15, 0, 0);

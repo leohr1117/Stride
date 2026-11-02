@@ -6,7 +6,7 @@ import { zeige } from '../shared/sprache/index.ts';
 import { meilensteineAus } from './helfer.ts';
 import { TEST_APP, TEST_ZUGANG } from './testdaten.ts';
 
-process.env.ASCEND_TEST = '1';
+process.env.STRIDE_TEST = '1';
 process.env.DB_PFAD ??= TEST_APP;
 process.env.ZUGANG_PFAD ??= TEST_ZUGANG;
 

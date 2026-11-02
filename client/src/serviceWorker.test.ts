@@ -93,7 +93,7 @@ function arbeiter(fenster: Fenster[] = []): Arbeiter {
         cacheNamen.push(name);
         return Promise.resolve(cache);
       },
-      keys: () => Promise.resolve([`ascend-${VERSION}`, 'ascend-alt', 'fremd']),
+      keys: () => Promise.resolve([`stride-${VERSION}`, 'ascend-alt', 'fremd']),
       delete: (name: string) => {
         geloescht.push(name);
         return Promise.resolve(true);
@@ -182,7 +182,7 @@ describe('Service Worker', () => {
     const sw = arbeiter();
     await sw.feuer('install', {});
     await sw.feuer('activate', {});
-    expect(sw.cacheNamen).toEqual([`ascend-${VERSION}`]);
+    expect(sw.cacheNamen).toEqual([`stride-${VERSION}`]);
     expect(sw.vorgeladen).toEqual([{ url: '/index.html', cache: 'reload' }]);
     expect(sw.uebersprungen).toBe(1);
     expect(sw.geloescht).toEqual(['ascend-alt', 'fremd']);

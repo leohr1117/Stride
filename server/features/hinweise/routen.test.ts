@@ -20,7 +20,7 @@ const P256 = 'p256-nur-in-der-tabelle';
 const AUTH = 'auth-nur-in-der-tabelle';
 const VAPID = ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY', 'VAPID_SUBJECT'] as const;
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-hinweis-routen-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-hinweis-routen-'));
 const offen: string[] = [];
 let nummer = 0;
 

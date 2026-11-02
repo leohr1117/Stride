@@ -7,7 +7,7 @@ import { GRENZEN } from '../shared/spiel/begriffe.ts';
 import { migriere } from './db.ts';
 import { MIGRATIONEN } from './migrationen.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-migration-aufgaben-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-migration-aufgaben-'));
 const offen: DatabaseSync[] = [];
 let nummer = 0;
 

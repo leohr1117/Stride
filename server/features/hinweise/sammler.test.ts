@@ -12,7 +12,7 @@ import { leseHinweisNichtVor, schreibeHinweisRuhe, schreibeHinweisSchalter } fro
 import { setzeHinweisNichtVorWennFehlt } from '../einstellungen/hinweisSchluessel.ts';
 import { sammleHinweise, type HinweisSammlung } from './sammler.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-sammler-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-sammler-'));
 const offen: string[] = [];
 let nummer = 0;
 

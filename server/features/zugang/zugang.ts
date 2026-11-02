@@ -6,6 +6,7 @@ import type { Rolle, ZugangStatus } from '../../../shared/api/index.ts';
 import { KONFIG } from '../../config.ts';
 import { ungueltig } from '../../fehler.ts';
 import { sperreEchteDatenbankImTest } from '../../testpfad.ts';
+import { strideVariable } from '../../umgebung.ts';
 import { BENUTZER_MAX, PASSWORT_MAX, PASSWORT_MIN } from '../../validierung.ts';
 
 const SCRYPT = { N: 16384, r: 8, p: 1, maxmem: 32 * 1024 * 1024 } as const;
@@ -267,9 +268,9 @@ function nameNorm(benutzername: string): string {
   return benutzername.trim().toLocaleLowerCase('de-DE');
 }
 
-/** Admin ist der Benutzername aus ASCEND_ADMIN. Keine Rolle, kein Passwort im Code. */
+/** Admin ist der Benutzername aus STRIDE_ADMIN (Ersatz: ASCEND_ADMIN). Keine Rolle, kein Passwort im Code. */
 export function istAdminName(benutzername: string | null | undefined): boolean {
-  const erwartet = (process.env.ASCEND_ADMIN ?? '').trim();
+  const erwartet = (strideVariable('ADMIN') ?? '').trim();
   if (erwartet.length === 0 || !benutzername) {
     return false;
   }

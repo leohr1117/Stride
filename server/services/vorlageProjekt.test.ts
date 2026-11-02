@@ -11,7 +11,7 @@ import { aendereKalender } from '../features/verbindungen/kalender.ts';
 import { ordneTodoistProjektZu } from '../features/verbindungen/todoistZuordnung.ts';
 import { erstelleVorlage } from '../features/taetigkeiten/vorlagen.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-vorlage-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-vorlage-'));
 const offen: string[] = [];
 let nummer = 0;
 

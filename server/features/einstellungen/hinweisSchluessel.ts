@@ -1,3 +1,4 @@
+import { strideVariable } from '../../umgebung.ts';
 import { HINWEIS_SCHLUESSEL, type HinweisSchluessel } from '../../../shared/spiel/hinweis.ts';
 import { ausfuehren, eine } from '../../db.ts';
 
@@ -108,7 +109,7 @@ export function schreibeHinweisAngebotTesten(an: boolean): void {
     loesche(HINWEIS_SCHLUESSEL.angebotTesten);
     return;
   }
-  if (process.env.ASCEND_TEST !== '1') {
+  if (strideVariable('TEST') !== '1') {
     return;
   }
   speichere(HINWEIS_SCHLUESSEL.angebotTesten, true);

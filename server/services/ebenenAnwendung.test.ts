@@ -14,7 +14,7 @@ import { aktuelleWoche, speichereRueckblick } from '../features/rueckblick/rueck
 import { erstelleOrganisation, erstelleProjekt, erstelleVision, ladeZiele } from './struktur.ts';
 import { erstelleVorhaben } from '../features/ziele/vorhaben.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-ebenen-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-ebenen-'));
 const offen: string[] = [];
 let nummer = 0;
 

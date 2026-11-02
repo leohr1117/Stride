@@ -13,7 +13,7 @@ import { starteRegelmaessigenAbgleich } from './abgleich.ts';
 
 const VAPID = ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY', 'VAPID_SUBJECT'] as const;
 const ENDPUNKT = 'https://push.example/takt-geraet';
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-abgleich-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-abgleich-'));
 const offen: string[] = [];
 let nummer = 0;
 

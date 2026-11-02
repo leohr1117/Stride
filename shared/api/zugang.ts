@@ -6,7 +6,7 @@ export interface ZugangStatus {
   modus: ZugangModus;
   benutzername: string | null;
   rolle: Rolle | null;
-  /** Wahr nur, wenn der angemeldete Name ASCEND_ADMIN entspricht. */
+  /** Wahr nur, wenn der angemeldete Name STRIDE_ADMIN entspricht. */
   admin: boolean;
 }
 

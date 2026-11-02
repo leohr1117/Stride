@@ -7,7 +7,7 @@ import { aendereEinstellungen } from '../einstellungen/einstellungen.ts';
 import { erstelleVorlage } from '../taetigkeiten/vorlagen.ts';
 import { erstelleTrainingsplan } from './plaene.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-einheiten-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-einheiten-'));
 const offen: string[] = [];
 let nummer = 0;
 

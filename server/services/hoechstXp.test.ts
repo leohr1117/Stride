@@ -12,7 +12,7 @@ import { erstelleVorlage } from '../features/taetigkeiten/vorlagen.ts';
 import { aendereVorhaben, erstelleVorhaben } from '../features/ziele/vorhaben.ts';
 import { lokalesDatum } from './zeit.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-hoechst-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-hoechst-'));
 const offen: string[] = [];
 let nummer = 0;
 

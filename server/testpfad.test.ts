@@ -16,7 +16,7 @@ describe('echte Datenbanken', () => {
     expect(istEchteDatenbank(':memory:')).toBe(false);
     expect(istEchteDatenbank(path.join(WURZEL, 'tmp-playwright', 'app.db'))).toBe(false);
     expect(istEchteDatenbank(path.join(WURZEL, 'tmp-playwright', 'welten', '3.db'))).toBe(false);
-    expect(istEchteDatenbank(path.join(os.tmpdir(), 'ascend-vitest', 'app.db'))).toBe(false);
+    expect(istEchteDatenbank(path.join(os.tmpdir(), 'stride-vitest', 'app.db'))).toBe(false);
   });
 
   it('bricht bei echten Dateien ab und lässt Kopien durch', () => {

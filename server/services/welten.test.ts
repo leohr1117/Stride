@@ -8,7 +8,7 @@ import { erstelleMitglied, entferneKonto } from '../features/zugang/konten.ts';
 import { aendereEinstellungen, ladeEinstellungen } from '../features/einstellungen/einstellungen.ts';
 import { legeBenutzerAn, listeKonten, schliesseZugang, setzeSperrenZurueck, verwendeZugang } from '../features/zugang/zugang.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-welten-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-welten-'));
 let nummer = 0;
 
 beforeEach(() => {

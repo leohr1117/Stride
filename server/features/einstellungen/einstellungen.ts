@@ -1,3 +1,4 @@
+import { strideVariable } from '../../umgebung.ts';
 import { randomUUID } from 'node:crypto';
 import type { Einstellungen } from '../../../shared/api/index.ts';
 import type { AttributTyp } from '../../../shared/spiel/begriffe.ts';
@@ -483,7 +484,7 @@ export function leseBewertungAm(): string | null {
   return typeof wert === 'string' && TAGES_SCHLUESSEL.test(wert) ? wert : null;
 }
 
-/** Nur unter ASCEND_TEST wirksam. Steht nicht in der Einstellungen-Antwort. */
+/** Nur unter STRIDE_TEST wirksam. Steht nicht in der Einstellungen-Antwort. */
 export function leseBewertungTesten(): boolean {
   return leseRoh(BEWERTUNG_TESTEN) === true;
 }
@@ -682,10 +683,10 @@ export function aendereEinstellungen(
     }
     wendeFavoriten(aenderung);
     wendePaletten(aenderung);
-    if (aenderung.bewertungTesten !== undefined && process.env.ASCEND_TEST === '1') {
+    if (aenderung.bewertungTesten !== undefined && strideVariable('TEST') === '1') {
       schreibeBewertungTesten(aenderung.bewertungTesten);
     }
-    if (aenderung.angebotTesten !== undefined && process.env.ASCEND_TEST === '1') {
+    if (aenderung.angebotTesten !== undefined && strideVariable('TEST') === '1') {
       schreibeHinweisAngebotTesten(aenderung.angebotTesten);
     }
     wendeStartZielAn({

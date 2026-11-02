@@ -7,7 +7,7 @@ import { ausfuehren, eine, mitWelt, schliesseWelt } from '../../db.ts';
 import { erstelleVorlage } from '../taetigkeiten/vorlagen.ts';
 import { ladeChronik } from './eintraege.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-chronik-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-chronik-'));
 const offen: string[] = [];
 let nummer = 0;
 

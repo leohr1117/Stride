@@ -19,7 +19,7 @@ function entferne(pfad: string): void {
 }
 
 export function setzeProfilZurueck(): Einstellungen {
-  const pfad = path.join(os.tmpdir(), `ascend-neustart-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}.db`);
+  const pfad = path.join(os.tmpdir(), `stride-neustart-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}.db`);
   try {
     sperreEchteDatenbankImTest(pfad);
     const frisch = new DatabaseSync(pfad);

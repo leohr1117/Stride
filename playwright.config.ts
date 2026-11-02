@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
 import { TEST_URL, TEST_WELT } from './e2e/testdaten.ts';
 
-process.env.ASCEND_TEST = '1';
+process.env.STRIDE_TEST = '1';
 process.env.PLAYWRIGHT_WELT = TEST_WELT;
 
 export default defineConfig({

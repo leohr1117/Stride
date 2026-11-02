@@ -19,7 +19,7 @@ import {
   type HinweisSchalter,
 } from './hinweisSchluessel.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-hinweis-schluessel-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-hinweis-schluessel-'));
 const offen: string[] = [];
 let nummer = 0;
 
@@ -49,19 +49,19 @@ function roh(schluessel: string): unknown {
 }
 
 function mitUmgebung(wert: string | undefined, arbeit: () => void): void {
-  const vorher = process.env.ASCEND_TEST;
+  const vorher = process.env.STRIDE_TEST;
   if (wert === undefined) {
-    delete process.env.ASCEND_TEST;
+    delete process.env.STRIDE_TEST;
   } else {
-    process.env.ASCEND_TEST = wert;
+    process.env.STRIDE_TEST = wert;
   }
   try {
     arbeit();
   } finally {
     if (vorher === undefined) {
-      delete process.env.ASCEND_TEST;
+      delete process.env.STRIDE_TEST;
     } else {
-      process.env.ASCEND_TEST = vorher;
+      process.env.STRIDE_TEST = vorher;
     }
   }
 }
@@ -118,7 +118,7 @@ describe('Hinweis-Schlüssel', () => {
     });
   });
 
-  it('schreibt den Testschlüssel nur unter ASCEND_TEST', () => {
+  it('schreibt den Testschlüssel nur unter STRIDE_TEST', () => {
     mitWelt(welt(), () => {
       mitUmgebung(undefined, () => {
         schreibeHinweisAngebotTesten(true);

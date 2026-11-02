@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
-const testDaten = path.join(os.tmpdir(), 'ascend-vitest');
+const testDaten = path.join(os.tmpdir(), 'stride-vitest');
 mkdirSync(testDaten, { recursive: true });
 
 export default defineConfig({

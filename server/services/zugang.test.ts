@@ -40,7 +40,7 @@ import {
   ZUGANG,
 } from '../features/zugang/zugang.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-zugang-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-zugang-'));
 const PASSWORT = 'geheimes-passwort';
 let datenbankNummer = 0;
 
@@ -76,6 +76,7 @@ function hatNamensindex(pfad: string): boolean {
 }
 
 beforeEach(() => {
+  delete process.env.STRIDE_ADMIN;
   delete process.env.ASCEND_ADMIN;
   datenbankNummer += 1;
   verwendeZugang(path.join(ordner, `${datenbankNummer}.db`));
@@ -316,7 +317,7 @@ describe('admin', () => {
   });
 
   it('verweigert die Admin-Route ohne Admin und ändert nichts', async () => {
-    process.env.ASCEND_ADMIN = 'Ada';
+    process.env.STRIDE_ADMIN = 'Ada';
     const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
     const bob = legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'welten/2.db' });
     const token = oeffneSitzung(new Date(), bob.id);
@@ -339,7 +340,7 @@ describe('admin', () => {
   });
 
   it('ändert jeden Namen nur als Admin und lässt einen vergebenen Namen stehen', async () => {
-    process.env.ASCEND_ADMIN = 'ADA';
+    process.env.STRIDE_ADMIN = 'ADA';
     const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
     const bob = legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/3.db' });
     const token = oeffneSitzung(new Date(), ada.id);

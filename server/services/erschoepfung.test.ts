@@ -12,7 +12,7 @@ import { erstelleEintrag } from '../features/eintraege/eintraege.ts';
 import { ladeUebersicht } from '../features/uebersicht/uebersicht.ts';
 import { erstelleVorlage } from '../features/taetigkeiten/vorlagen.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-erschoepfung-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-erschoepfung-'));
 const offen: string[] = [];
 let nummer = 0;
 

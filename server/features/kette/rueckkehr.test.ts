@@ -25,7 +25,7 @@ const NACH_FRIST = '2026-10-30';
 const SPAETER = '2026-10-26';
 const BONUS = NEUER_ANLAUF.disziplin + NEUER_ANLAUF.geist;
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-rueckkehr-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-rueckkehr-'));
 const offen: string[] = [];
 let nummer = 0;
 

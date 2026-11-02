@@ -1,5 +1,5 @@
 const VERSION = '__VERSION__';
-const CACHE = `ascend-${VERSION}`;
+const CACHE = `stride-${VERSION}`;
 const DATEIEN = ['__DATEIEN__'];
 const STARTSEITE = '/index.html';
 const API_PRAEFIX = '/api/';

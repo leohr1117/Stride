@@ -10,7 +10,7 @@ import { einstellungenAenderungSchema } from '../../validierung.ts';
 import { alle, eine, mitWelt, schliesseWelt } from '../../db.ts';
 import { aendereEinstellungen, ladeEinstellungen } from './einstellungen.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-onboarding-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-onboarding-'));
 const offen: string[] = [];
 let nummer = 0;
 

@@ -36,7 +36,7 @@ import {
 import { loescheProjekt, loescheVorlage } from '../../services/loeschen.ts';
 import { aendereAufgabe, erledigeAufgabe, erstelleAufgabe, ladeAufgaben, loescheAufgabe } from './aufgaben.ts';
 
-const ordner = mkdtempSync(path.join(tmpdir(), 'ascend-aufgaben-'));
+const ordner = mkdtempSync(path.join(tmpdir(), 'stride-aufgaben-'));
 const offen: string[] = [];
 let nummer = 0;
 const JETZT = new Date(2026, 9, 23, 15, 0, 0);
