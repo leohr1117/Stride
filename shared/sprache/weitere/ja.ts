@@ -1,5 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Minimal, Jade, Hologramm und Antik behalten ihre eigene Form. Streak, Ring, Schalter, Fehler und Erfolg haben in jeder Ansicht dieselben Farben.": "最小、翡翠、ホログラム、古典はそれぞれ独自の形を保ちます。連続、リング、スイッチ、エラー、成功はどの見た目でも同じ色です。",
+  "In der Ansicht Antik hat das Profilbild im Kopf keinen eckigen Rahmen.": "古典の見た目では、ヘッダーのプロフィール画像に四角い枠がありません。",
   "Der Hinweis am Streak nennt nur die freie Pause und den angeschlagenen Streak.": "連続の説明は、無料の休みと傷ついた連続だけを示します。",
   "Beim Anlegen einer Palette steht, wofür Primär, Akzent und Hintergrund da sind. Streak, Ring und Schalter behalten feste Farben.": "パレットを作るとき、主色、強調色、背景が何のためかが書いてあります。連続、リング、スイッチは固定の色のままです。",
   "Profil zurücksetzen nennt Tätigkeiten.": "プロフィールのリセットは活動と書きます。",

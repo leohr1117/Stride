@@ -1,5 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Minimal, Jade, Hologramm und Antik behalten ihre eigene Form. Streak, Ring, Schalter, Fehler und Erfolg haben in jeder Ansicht dieselben Farben.": "Mínimo, Jade, Holograma y Antiguo conservan su propia forma. La racha, el anillo, los interruptores, el error y el éxito tienen los mismos colores en cada vista.",
+  "In der Ansicht Antik hat das Profilbild im Kopf keinen eckigen Rahmen.": "En la vista Antiguo, la imagen de perfil del encabezado no tiene marco cuadrado.",
   "Der Hinweis am Streak nennt nur die freie Pause und den angeschlagenen Streak.": "La nota en la racha solo nombra el día de pausa libre y la racha tocada.",
   "Beim Anlegen einer Palette steht, wofür Primär, Akzent und Hintergrund da sind. Streak, Ring und Schalter behalten feste Farben.": "Al crear una paleta se indica para qué sirven primario, acento y fondo. La racha, el anillo y los interruptores conservan colores fijos.",
   "Profil zurücksetzen nennt Tätigkeiten.": "Restablecer el perfil habla de actividades.",

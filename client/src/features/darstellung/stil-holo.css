@@ -11,7 +11,6 @@
   --akzent: #3ea8ff;
   --akzent-text: #031020;
   --xp: #b38cff;
-  --gefahr: #ff5c7a;
   --diagramm-vorbild: #b38cff;
   --radius-lg: 3px;
   --radius-xl: 4px;
@@ -60,6 +59,10 @@
 :root[data-stil='holo'] .ueberschrift::after {
   content: ' ]';
   opacity: 0.6;
+}
+
+:root[data-stil='holo'] .karte {
+  border-radius: 6px;
 }
 
 :root[data-stil='holo'] :is(.karte, .dialog-fenster, .bg-flaeche.border-rand:not(.seitenleiste)) {

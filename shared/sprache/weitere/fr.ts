@@ -1,5 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Minimal, Jade, Hologramm und Antik behalten ihre eigene Form. Streak, Ring, Schalter, Fehler und Erfolg haben in jeder Ansicht dieselben Farben.": "Minimal, Jade, Hologramme et Antique gardent leur propre forme. La série, l’anneau, les interrupteurs, l’erreur et la réussite ont les mêmes couleurs dans chaque vue.",
+  "In der Ansicht Antik hat das Profilbild im Kopf keinen eckigen Rahmen.": "Dans la vue Antique, l’image de profil de l’en-tête n’a pas de cadre carré.",
   "Der Hinweis am Streak nennt nur die freie Pause und den angeschlagenen Streak.": "La note sur la série ne cite que le jour de pause libre et la série fragilisée.",
   "Beim Anlegen einer Palette steht, wofür Primär, Akzent und Hintergrund da sind. Streak, Ring und Schalter behalten feste Farben.": "Quand tu crées une palette, le texte dit à quoi servent primaire, accent et fond. La série, l’anneau et les interrupteurs gardent des couleurs fixes.",
   "Profil zurücksetzen nennt Tätigkeiten.": "Réinitialiser le profil parle d’activités.",

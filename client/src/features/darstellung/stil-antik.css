@@ -15,7 +15,6 @@
   --akzent: #d6c79c;
   --akzent-text: #15130f;
   --xp: #c9a24d;
-  --gefahr: #c75d43;
   --diagramm-vorbild: #8fa8bf;
   --radius-lg: 1px;
   --radius-xl: 2px;
@@ -65,6 +64,10 @@
 :root[data-stil='antik'] .ueberschrift {
   color: var(--akzent);
   letter-spacing: 0.18em;
+}
+
+:root[data-stil='antik'] .karte {
+  border-radius: 2px;
 }
 
 :root[data-stil='antik'] :is(.karte, .dialog-fenster, .bg-flaeche.border-rand:not(.seitenleiste)) {
@@ -203,4 +206,11 @@ html:is(:lang(fr), :lang(ru))[data-stil='antik'] :is(h1, h2, .dialog-fenster h2)
   background: transparent;
   color: var(--akzent);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--akzent) 55%, transparent);
+}
+
+:root[data-stil='antik'] [data-kopf] .klassenbild {
+  border-radius: 9999px;
+  background: var(--akzent);
+  color: var(--akzent-text);
+  box-shadow: none;
 }

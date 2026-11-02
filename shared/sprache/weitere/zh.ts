@@ -1,5 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Minimal, Jade, Hologramm und Antik behalten ihre eigene Form. Streak, Ring, Schalter, Fehler und Erfolg haben in jeder Ansicht dieselben Farben.": "极简、玉、全息和古典各自保留自己的外形。连续、圆环、开关、错误和成功在每种外观里使用相同的颜色。",
+  "In der Ansicht Antik hat das Profilbild im Kopf keinen eckigen Rahmen.": "在古典外观中，顶部的头像没有方形边框。",
   "Der Hinweis am Streak nennt nur die freie Pause und den angeschlagenen Streak.": "连续记录的说明只写可以休息的一天和受损的连续记录。",
   "Beim Anlegen einer Palette steht, wofür Primär, Akzent und Hintergrund da sind. Streak, Ring und Schalter behalten feste Farben.": "新建调色板时会说明主色、强调色和背景各用于什么。连续、圆环和开关保持固定颜色。",
   "Profil zurücksetzen nennt Tätigkeiten.": "重置个人资料时说的是活动。",

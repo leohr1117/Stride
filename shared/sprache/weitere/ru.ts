@@ -1,5 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Minimal, Jade, Hologramm und Antik behalten ihre eigene Form. Streak, Ring, Schalter, Fehler und Erfolg haben in jeder Ansicht dieselben Farben.": "Минимум, Нефрит, Голограмма и Антик сохраняют свою форму. Серия, кольцо, переключатели, ошибка и успех имеют одни и те же цвета в каждом виде.",
+  "In der Ansicht Antik hat das Profilbild im Kopf keinen eckigen Rahmen.": "В виде Антик у изображения профиля в шапке нет квадратной рамки.",
   "Der Hinweis am Streak nennt nur die freie Pause und den angeschlagenen Streak.": "Подсказка у серии называет только свободный день паузы и надломленную серию.",
   "Beim Anlegen einer Palette steht, wofür Primär, Akzent und Hintergrund da sind. Streak, Ring und Schalter behalten feste Farben.": "При создании палитры написано, для чего нужны основной цвет, акцент и фон. Серия, кольцо и переключатели сохраняют фиксированные цвета.",
   "Profil zurücksetzen nennt Tätigkeiten.": "Сброс профиля говорит о занятиях.",

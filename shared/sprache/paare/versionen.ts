@@ -1,5 +1,7 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Minimal, Jade, Hologramm und Antik behalten ihre eigene Form. Streak, Ring, Schalter, Fehler und Erfolg haben in jeder Ansicht dieselben Farben.', 'Minimal, Jade, Hologram, and Antique keep their own shape. Streak, ring, switches, errors, and success use the same colors in every look.'],
+  ['In der Ansicht Antik hat das Profilbild im Kopf keinen eckigen Rahmen.', 'In the Antique look, the profile picture in the header has no square frame.'],
   ['Ein Hinweis heißt Info zu dem Namen daneben und lässt sich mit der Tastatur öffnen.', 'A hint is called Info about the name beside it and opens from the keyboard.'],
   ['Beim Anlegen einer Palette steht, wofür Primär, Akzent und Hintergrund da sind. Streak, Ring und Schalter behalten feste Farben.', 'When you create a palette, it says what primary, accent, and background are for. Streak, ring, and switches keep fixed colors.'],
   ['Profil zurücksetzen nennt Tätigkeiten.', 'Reset profile says activities.'],

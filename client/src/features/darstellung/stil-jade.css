@@ -9,7 +9,6 @@
   --akzent: #3dd68c;
   --akzent-text: #03140b;
   --xp: #c4b5fd;
-  --gefahr: #ff6b81;
   --diagramm-vorbild: #c4b5fd;
   --radius-xl: 10px;
   --radius-2xl: 14px;
@@ -45,6 +44,10 @@
   border-radius: 9999px;
   background: var(--akzent);
   box-shadow: 0 0 8px color-mix(in srgb, var(--akzent) calc(var(--glimm) * 100%), transparent);
+}
+
+:root[data-stil='jade'] .karte {
+  border-radius: 14px;
 }
 
 :root[data-stil='jade'] :is(.karte, .dialog-fenster, .bg-flaeche.border-rand:not(.seitenleiste)) {

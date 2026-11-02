@@ -17,6 +17,23 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.55.0',
+    seiten: 'Heute, Darstellung',
+    behoben: 'Heute',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Minimal, Jade, Hologramm und Antik behalten ihre eigene Form. Streak, Ring, Schalter, Fehler und Erfolg haben in jeder Ansicht dieselben Farben.',
+        ],
+      },
+      {
+        titel: 'Behoben',
+        punkte: ['In der Ansicht Antik hat das Profilbild im Kopf keinen eckigen Rahmen.'],
+      },
+    ],
+  },
+  {
     version: '3.54.0',
     seiten: 'Paletten, Daten',
     abschnitte: [
