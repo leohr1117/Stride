@@ -2,15 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { ebenenFuerStufe } from './ebenen.ts';
 import { funktionenFuerStufe, standardFunktionen } from './funktionen.ts';
 import {
-  empfehlungSchluessel,
-  empfohleneFunktionen,
-  investitionWegenRessourcen,
-  naechsteEmpfehlung,
   startZielArt,
   willkommensZeilen,
   type PfadStand,
 } from '../features/handbuch/handbuchPfad.ts';
-import { FOKUS_IDS, type FokusId } from './profil.ts';
+
+function naechsterSchritt(wert: PfadStand): string | null {
+  const offen = willkommensZeilen(wert).find((zeile) => !zeile.erledigt);
+  return offen ? `start:${offen.schluessel}` : null;
+}
 
 function stand(teil: Partial<PfadStand> = {}): PfadStand {
   const stufe = teil.stufe ?? 'traeumer';
@@ -28,79 +28,59 @@ function stand(teil: Partial<PfadStand> = {}): PfadStand {
   };
 }
 
-describe('naechsteEmpfehlung', () => {
+describe('offene Willkommenszeile', () => {
   it('führt ohne Tätigkeit zur Tätigkeit, sonst über das Ziel zum Eintrag', () => {
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand()))).toBe('start:ersteTaetigkeit');
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeiten: 1 })))).toBe('start:ziel');
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ eintraege: 1 })))).toBe('start:ersteTaetigkeit');
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeiten: 1, stufe: 'macher', projekte: 1 })))).toBe(
-      'start:eintrag',
+    expect(naechsterSchritt(stand())).toBe('start:ersteTaetigkeit');
+    expect(naechsterSchritt(stand({ taetigkeiten: 1 }))).toBe('start:ziel');
+    expect(naechsterSchritt(stand({ eintraege: 1 }))).toBe('start:ersteTaetigkeit');
+    expect(naechsterSchritt(stand({ taetigkeiten: 1, stufe: 'macher', projekte: 1 }))).toBe('start:eintrag');
+    expect(naechsterSchritt(stand({ taetigkeiten: 1, stufe: 'bodenstaendig', visionen: 4, vorhaben: 1 }))).toBe(
+      'start:ziel',
     );
     expect(
-      empfehlungSchluessel(
-        naechsteEmpfehlung(stand({ taetigkeiten: 1, stufe: 'bodenstaendig', visionen: 4, vorhaben: 1 })),
-      ),
-    ).toBe('start:ziel');
-    expect(
-      empfehlungSchluessel(
-        naechsteEmpfehlung(
-          stand({ taetigkeiten: 1, stufe: 'bodenstaendig', visionen: 4, projekte: 1, vorhaben: 1 }),
-        ),
-      ),
+      naechsterSchritt(stand({ taetigkeiten: 1, stufe: 'bodenstaendig', visionen: 4, projekte: 1, vorhaben: 1 })),
     ).toBe('start:eintrag');
-    expect(naechsteEmpfehlung(stand({ taetigkeiten: 1, visionen: 1, eintraege: 1 }))).toBeNull();
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ visionen: 1, eintraege: 1 })))).toBe(
-      'start:ersteTaetigkeit',
-    );
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeiten: 1, stufe: 'uebung' })))).toBe(
-      'start:faehigkeit',
-    );
-    expect(
-      empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeiten: 1, stufe: 'uebung', faehigkeiten: 1 }))),
-    ).toBe('start:eintrag');
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ taetigkeiten: 1, stufe: 'einfach' })))).toBe('start:eintrag');
-    expect(empfehlungSchluessel(naechsteEmpfehlung(stand({ stufe: 'einfach' })))).toBe('start:ersteTaetigkeit');
+    expect(naechsterSchritt(stand({ taetigkeiten: 1, visionen: 1, eintraege: 1 }))).toBeNull();
+    expect(naechsterSchritt(stand({ visionen: 1, eintraege: 1 }))).toBe('start:ersteTaetigkeit');
+    expect(naechsterSchritt(stand({ taetigkeiten: 1, stufe: 'uebung' }))).toBe('start:faehigkeit');
+    expect(naechsterSchritt(stand({ taetigkeiten: 1, stufe: 'uebung', faehigkeiten: 1 }))).toBe('start:eintrag');
+    expect(naechsterSchritt(stand({ taetigkeiten: 1, stufe: 'einfach' }))).toBe('start:eintrag');
+    expect(naechsterSchritt(stand({ stufe: 'einfach' }))).toBe('start:ersteTaetigkeit');
   });
 
   it('nimmt die aktiven Ziel-Stufen, nicht die gespeicherte Stufe', () => {
     expect(
-      empfehlungSchluessel(
-        naechsteEmpfehlung(
-          stand({
-            taetigkeiten: 1,
-            stufe: 'traeumer',
-            ebenen: ebenenFuerStufe('bodenstaendig'),
-          }),
-        ),
+      naechsterSchritt(
+        stand({
+          taetigkeiten: 1,
+          stufe: 'traeumer',
+          ebenen: ebenenFuerStufe('bodenstaendig'),
+        }),
       ),
     ).toBe('start:ziel');
     expect(
-      empfehlungSchluessel(
-        naechsteEmpfehlung(
-          stand({
-            taetigkeiten: 1,
-            stufe: 'traeumer',
-            ebenen: ebenenFuerStufe('einfach'),
-          }),
-        ),
+      naechsterSchritt(
+        stand({
+          taetigkeiten: 1,
+          stufe: 'traeumer',
+          ebenen: ebenenFuerStufe('einfach'),
+        }),
       ),
     ).toBe('start:eintrag');
     expect(
-      empfehlungSchluessel(
-        naechsteEmpfehlung(
-          stand({
-            taetigkeiten: 1,
-            stufe: 'einfach',
-            ebenen: ebenenFuerStufe('macher'),
-          }),
-        ),
+      naechsterSchritt(
+        stand({
+          taetigkeiten: 1,
+          stufe: 'einfach',
+          ebenen: ebenenFuerStufe('macher'),
+        }),
       ),
     ).toBe('start:ziel');
   });
 
-  it('empfiehlt keine Funktion und keine Ebene, auch wenn fast alles aus ist', () => {
+  it('ist fertig, wenn Tätigkeit, Ziel und Eintrag da sind, auch wenn fast alles aus ist', () => {
     expect(
-      naechsteEmpfehlung(
+      naechsterSchritt(
         stand({
           taetigkeiten: 1,
           visionen: 1,
@@ -145,79 +125,6 @@ describe('willkommensZeilen', () => {
       { schluessel: 'ziel', art: 'vorhaben', erledigt: false },
       { schluessel: 'eintrag', erledigt: false },
     ]);
-  });
-});
-
-function funktionsIds(fokus: readonly FokusId[] = [], quellen: { ressourcen?: boolean } = {}) {
-  return empfohleneFunktionen(fokus, quellen).map((eintrag) => eintrag.funktion);
-}
-
-describe('empfohleneFunktionen', () => {
-  it('empfiehlt ohne Fokus nichts', () => {
-    expect(funktionsIds([])).toEqual([]);
-  });
-
-  it('empfiehlt jedem Fokus eine passende Liste und nennt jede Funktion nur einmal', () => {
-    expect(funktionsIds(['sport'])).toEqual(['faehigkeiten', 'basis', 'statistiken']);
-    expect(funktionsIds(['gesundheit'])).toEqual(['basis']);
-    expect(funktionsIds(['weisheit'])).toEqual(['rueckblick', 'chronik']);
-    expect(funktionsIds(['lernen'])).toEqual(['faehigkeiten', 'rueckblick', 'bossAngriffe']);
-    expect(funktionsIds(['erfolg'])).toEqual(['bossAngriffe', 'statistiken', 'vorbilder']);
-    expect(funktionsIds(['soziales'])).toEqual(['faehigkeiten', 'chronik']);
-    expect(funktionsIds(['geld'])).toEqual(['ausruestung', 'statistiken']);
-    expect(funktionsIds(['kreativitaet'])).toEqual(['faehigkeiten']);
-    expect(funktionsIds(['mut'])).toEqual(['vorbilder', 'chronik']);
-    const lernen = empfohleneFunktionen(['lernen']);
-    expect(lernen.find((eintrag) => eintrag.funktion === 'faehigkeiten')?.info).toBe(
-      'Eintrag verbessert die Fähigkeit. Ein Vorhaben ist dafür nicht nötig.',
-    );
-    expect(funktionsIds(['sport', 'gesundheit'])).toEqual(['faehigkeiten', 'basis', 'statistiken']);
-    expect(funktionsIds(['soziales', 'mut'])).toEqual(['faehigkeiten', 'chronik', 'vorbilder']);
-    expect(funktionsIds(['geld', 'lernen', 'erfolg'])).toEqual([
-      'faehigkeiten',
-      'rueckblick',
-      'bossAngriffe',
-      'statistiken',
-      'vorbilder',
-      'ausruestung',
-    ]);
-    for (const id of FOKUS_IDS) {
-      const liste = funktionsIds([id]);
-      expect(liste.length).toBeGreaterThan(0);
-      expect(new Set(liste).size).toBe(liste.length);
-    }
-    const alle = funktionsIds([...FOKUS_IDS]);
-    expect(new Set(alle).size).toBe(alle.length);
-    expect(alle).toEqual([
-      'faehigkeiten',
-      'basis',
-      'statistiken',
-      'rueckblick',
-      'chronik',
-      'bossAngriffe',
-      'vorbilder',
-      'ausruestung',
-    ]);
-  });
-
-  it('nennt die entfernten Bereiche Aufgaben und Training nicht', () => {
-    const texte = empfohleneFunktionen([...FOKUS_IDS], { ressourcen: true }).map((eintrag) => eintrag.info);
-    expect(texte).toContain('Tägliche Aufgaben zum Abhaken.');
-    const zusammen = texte.join('\n');
-    expect(zusammen).not.toContain('Eigene Aufgaben');
-    expect(zusammen).not.toContain('Eine Einheit ist ein Eintrag');
-    expect(zusammen).not.toContain('Trainingsplan');
-  });
-
-  it('empfiehlt Investitionen, sobald Ressourcen an ist, und nennt sie nur einmal', () => {
-    expect(investitionWegenRessourcen(false, [{ kennung: 'ressourcen', archiviert: false }])).toBe(false);
-    expect(investitionWegenRessourcen(true, [{ kennung: 'ressourcen', archiviert: true }])).toBe(false);
-    expect(investitionWegenRessourcen(true, [])).toBe(false);
-    expect(investitionWegenRessourcen(true, [{ kennung: 'ressourcen', archiviert: false }])).toBe(true);
-    expect(funktionsIds([], { ressourcen: true })).toEqual(['ausruestung']);
-    expect(funktionsIds(['sport'], { ressourcen: true })).toEqual(['faehigkeiten', 'basis', 'statistiken', 'ausruestung']);
-    expect(funktionsIds(['geld'], { ressourcen: true })).toEqual(['ausruestung', 'statistiken']);
-    expect(funktionsIds([...FOKUS_IDS], { ressourcen: true })).toEqual(funktionsIds([...FOKUS_IDS]));
   });
 });
 

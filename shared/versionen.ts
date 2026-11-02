@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.0',
+    seiten: 'Heute, Ziele, Profil, Mehr, Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Können, Haben, Fähigkeiten und Investitionen haben eigene Seiten. Das Profil fasst sie nur zusammen.',
+          'Mehr ist eine Liste. Verbindungen zeigen, als was erledigte Aufgaben und vergangene Termine zählen.',
+          'Das Handbuch erklärt die Regeln auf einer Seite. Empfehlungen und doppelte Schalter sind weg.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.55.0',
     seiten: 'Heute, Darstellung',
     behoben: 'Heute',

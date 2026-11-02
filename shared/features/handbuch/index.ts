@@ -1,15 +1,8 @@
 export {
-  empfehlungSchluessel,
-  empfohleneFunktionen,
-  investitionWegenRessourcen,
-  naechsteEmpfehlung,
   startZielArt,
   willkommensZeilen,
   zielAnzahl,
-  type Empfehlung,
-  type FunktionsEmpfehlung,
   type PfadStand,
-  type StartSchritt,
   type StartZielArt,
   type WillkommenZeile,
 } from './handbuchPfad.ts';

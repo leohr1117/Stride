@@ -143,13 +143,7 @@ function katalogTexte(): string[] {
     RESSOURCEN_SCHALTER,
   );
   texte.push(
-    'Eintrag verbessert die Fähigkeit. Ein Vorhaben ist dafür nicht nötig.',
     'Tägliche Aufgaben zum Abhaken.',
-    'Alle Einträge nach Datum.',
-    'Rückblick einmal pro Woche.',
-    'XP, Tätigkeiten und Zeitverlauf.',
-    'Level bekannter Personen.',
-    'Eine eigene Investition oder ein geschafftes Projekt gibt mehr XP.',
     'Ungenutzte Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.',
     'Speichern ergänzt fehlende Attribute, archiviert andere und legt fehlende Starter-Tätigkeiten an.',
     'Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.',

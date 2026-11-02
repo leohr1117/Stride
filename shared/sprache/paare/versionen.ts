@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Können, Haben, Fähigkeiten und Investitionen haben eigene Seiten. Das Profil fasst sie nur zusammen.', 'Ability, Assets, Skills, and Investments each have their own page. The profile only summarizes them.'],
+  ['Mehr ist eine Liste. Verbindungen zeigen, als was erledigte Aufgaben und vergangene Termine zählen.', 'More is a list. Connections show what completed tasks and past events count as.'],
+  ['Das Handbuch erklärt die Regeln auf einer Seite. Empfehlungen und doppelte Schalter sind weg.', 'The guide explains the rules on one page. Suggestions and duplicate switches are gone.'],
   ['Minimal, Jade, Hologramm und Antik behalten ihre eigene Form. Streak, Ring, Schalter, Fehler und Erfolg haben in jeder Ansicht dieselben Farben.', 'Minimal, Jade, Hologram, and Antique keep their own shape. Streak, ring, switches, errors, and success use the same colors in every look.'],
   ['In der Ansicht Antik hat das Profilbild im Kopf keinen eckigen Rahmen.', 'In the Antique look, the profile picture in the header has no square frame.'],
   ['Ein Hinweis heißt Info zu dem Namen daneben und lässt sich mit der Tastatur öffnen.', 'A hint is called Info about the name beside it and opens from the keyboard.'],

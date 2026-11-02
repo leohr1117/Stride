@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { ICONS } from './begriffe.ts';
-import { empfohleneFunktionen } from '../features/handbuch/handbuchPfad.ts';
 import {
   alterInJahren,
   FOKUS_IDS,
@@ -132,22 +131,5 @@ describe('startTaetigkeiten', () => {
     const namen = startTaetigkeiten(['sport', 'lernen']).map((taetigkeit) => taetigkeit.name);
     expect(namen).toEqual(['Training', 'Laufen', 'Dehnen', 'Lernen', 'Lesen']);
     expect(startTaetigkeiten(['sport', 'sport'])).toHaveLength(3);
-  });
-});
-
-describe('fokus empfiehlt im handbuch', () => {
-  it('gibt jedem Fokus mindestens eine Empfehlung, dieselbe Seite darf mehrfach vorkommen', () => {
-    for (const id of FOKUS_IDS) {
-      expect(empfohleneFunktionen([id]).length).toBeGreaterThan(0);
-    }
-    expect(empfohleneFunktionen(['sport']).length).toBeGreaterThan(2);
-    expect(empfohleneFunktionen(['geld']).map((eintrag) => eintrag.funktion)).toContain('statistiken');
-    expect(empfohleneFunktionen(['soziales']).map((eintrag) => eintrag.funktion)).toContain('chronik');
-    expect(empfohleneFunktionen(['mut']).map((eintrag) => eintrag.funktion)).toContain('chronik');
-    const seiten = new Set(FOKUS_IDS.flatMap((id) => empfohleneFunktionen([id]).map((eintrag) => eintrag.funktion)));
-    expect(seiten.has('chronik')).toBe(true);
-    expect(seiten.has('vorbilder')).toBe(true);
-    expect(seiten.has('statistiken')).toBe(true);
-    expect(seiten.has('basis')).toBe(true);
   });
 });

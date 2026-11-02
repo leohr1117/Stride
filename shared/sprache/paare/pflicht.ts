@@ -215,7 +215,6 @@ export const PAARE = [
   ['Rückgängig', 'Undo'],
   ['ähnlich', 'similar'],
   ['Version', 'Version'],
-  ['Schnellzugriff', 'Shortcuts'],
   ['Accounts', 'Accounts'],
   ['Benutzername', 'Username'],
   ['Passwort', 'Password'],
