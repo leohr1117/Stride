@@ -3,13 +3,17 @@ import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 interface FunktionenStand {
   funktionen: Record<string, boolean>;
+  ebenen: Record<string, boolean>;
+}
+
+async function liesStand(seite: Page): Promise<FunktionenStand> {
+  const antwort = await seite.request.get('/api/einstellungen');
+  expect(antwort.ok()).toBe(true);
+  return (await antwort.json()) as FunktionenStand;
 }
 
 async function liesFunktionen(seite: Page): Promise<Record<string, boolean>> {
-  const antwort = await seite.request.get('/api/einstellungen');
-  expect(antwort.ok()).toBe(true);
-  const daten = (await antwort.json()) as FunktionenStand;
-  return daten.funktionen;
+  return (await liesStand(seite)).funktionen;
 }
 
 async function setzeFunktionen(seite: Page, funktionen: Record<string, boolean>): Promise<void> {
@@ -17,14 +21,23 @@ async function setzeFunktionen(seite: Page, funktionen: Record<string, boolean>)
   expect(antwort.ok()).toBe(true);
 }
 
+async function setzeEbenen(seite: Page, ebenen: Record<string, boolean>): Promise<void> {
+  const antwort = await seite.request.patch('/api/einstellungen', { data: { ebenen } });
+  expect(antwort.ok()).toBe(true);
+}
+
 test('Bereiche → Toast Öffnen → Fähigkeiten → Zurück = Bereiche', async ({ page }, testInfo) => {
   const handy = testInfo.project.name === 'handy';
   const bild = (name: string) => page.screenshot({ path: `tmp-test/bereiche/${testInfo.project.name}-${name}.png`, fullPage: true });
   await anmelden(page);
-  const vorher = await liesFunktionen(page);
+  const vorher = await liesStand(page);
   try {
     await page.goto('/mehr/funktionen');
     await expect(page.locator('main h1')).toHaveText('Bereiche');
+    await expect(page.getByText('Ausschalten blendet aus. Gelöscht wird nichts.')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Funktionen', exact: true })).toHaveCount(0);
+    await expect(page.getByText('großes Ziel', { exact: true })).toHaveCount(0);
+    await expect(page.getByText('Empfohlen bei Ressourcen', { exact: true })).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Seiten', exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Seiten im Profil', exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Auf Ziele', exact: true })).toBeVisible();
@@ -66,13 +79,40 @@ test('Bereiche → Toast Öffnen → Fähigkeiten → Zurück = Bereiche', async
     await ohneSeitlichenUeberlauf(page);
     await bild('zurueck');
 
+    const basisInfo = page.locator('#funktion-basis').getByRole('button', { name: 'Info' });
+    await basisInfo.click();
+    const hinweis = page.getByRole('tooltip');
+    await expect(hinweis).toContainText('Tägliche Aufgaben zum Abhaken.');
+    const kasten = await hinweis.boundingBox();
+    const fenster = page.viewportSize();
+    expect(kasten).not.toBeNull();
+    expect(fenster).not.toBeNull();
+    if (kasten && fenster) {
+      expect(kasten.x).toBeGreaterThanOrEqual(0);
+      expect(kasten.y).toBeGreaterThanOrEqual(0);
+      expect(kasten.x + kasten.width).toBeLessThanOrEqual(fenster.width + 1);
+      expect(kasten.y + kasten.height).toBeLessThanOrEqual(fenster.height + 1);
+    }
+    await page.keyboard.press('Escape');
+    await expect(hinweis).toHaveCount(0);
+
+    await setzeEbenen(page, { ...vorher.ebenen, vorhaben: false });
+    await page.goto('/mehr/funktionen');
+    const bosse = page.locator('#funktion-bossAngriffe');
+    await expect(bosse).toContainText('Erst Vorhaben einschalten.');
+    await expect(bosse.getByRole('button', { name: 'Info' })).toHaveCount(0);
+    await expect(bosse.getByRole('switch', { name: 'Bosse' })).toBeDisabled();
+    await ohneSeitlichenUeberlauf(page);
+    await bild('gesperrt');
+    await setzeEbenen(page, vorher.ebenen);
+
     await page.goto('/mehr');
     await expect(page.locator('[data-seitenliste] a[href="/faehigkeiten"]')).toBeVisible();
     if (!handy) {
       await expect(page.locator('aside.seitenleiste a[href="/faehigkeiten"]')).toBeVisible();
     }
 
-    await setzeFunktionen(page, { basis: false, bossAngriffe: false });
+    await setzeFunktionen(page, { ...vorher.funktionen, basis: false, bossAngriffe: false });
     await page.goto('/mehr/uebersicht');
     await expect(page.locator('main h1')).toHaveText('Übersicht');
     await expect(page.getByRole('switch', { name: 'Basis', exact: true })).toHaveCount(0);
@@ -82,6 +122,7 @@ test('Bereiche → Toast Öffnen → Fähigkeiten → Zurück = Bereiche', async
     await ohneSeitlichenUeberlauf(page);
     await bild('karten');
   } finally {
-    await setzeFunktionen(page, vorher);
+    await setzeEbenen(page, vorher.ebenen);
+    await setzeFunktionen(page, vorher.funktionen);
   }
 });

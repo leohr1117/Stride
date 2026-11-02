@@ -1,14 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
 import { Flag, Landmark, Mountain, Target, type LucideIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { ebenenSperre, funktionsSperre } from '../../../../shared/spiel/abhaengigkeiten.ts';
-import {
-  hinweisAusblenden,
-  setzeEbene,
-  ZIEL_MARKE,
-  type Ebene,
-} from '../../../../shared/spiel/ebenen.ts';
+import { hinweisAusblenden, setzeEbene, type Ebene } from '../../../../shared/spiel/ebenen.ts';
 import {
   BEREICH_GRUPPEN,
   BEREICH_SCHALTER,
@@ -16,14 +10,12 @@ import {
   type BereichEintrag,
   type Funktion,
 } from '../../../../shared/spiel/funktionen.ts';
-import { investitionWegenRessourcen } from '../../../../shared/features/handbuch/handbuchPfad.ts';
 import { toastZielFuer } from '../../../../shared/spiel/navigation.ts';
 import { istAn, type Sichtbarkeit } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { BOSS_SCHALTER } from '../../../../shared/spiel/xp.ts';
-import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { Toast } from '../../components/Toast.tsx';
-import { Fehlermeldung, InfoHinweis, Ladeanzeige } from '../../ui/index.ts';
+import { Fehlermeldung, Ladeanzeige } from '../../ui/index.ts';
 import { ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { FUNKTION_BILD } from '../../funktionsBild.tsx';
 import { bestaetigeAusblenden } from '../../ebenenFrage.ts';
@@ -51,7 +43,6 @@ function zeilenId(eintrag: BereichEintrag): string {
 function zeileFelder(
   eintrag: BereichEintrag,
   einstellungen: Sichtbarkeit,
-  ressourcenAn: boolean,
 ): {
   sperre: string | null;
   Icon: LucideIcon;
@@ -66,8 +57,8 @@ function zeileFelder(
       sperre,
       Icon: FUNKTION_BILD[schalter].icon,
       an: istAn(schalter, einstellungen),
-      untertitel: sperre ? tx(sperre) : schalter === 'ausruestung' && ressourcenAn ? tx('Empfohlen bei Ressourcen') : undefined,
-      info: FUNKTION_INFO[schalter],
+      untertitel: sperre ? tx(sperre) : undefined,
+      info: sperre ? undefined : FUNKTION_INFO[schalter],
     };
   }
   const schalter = eintrag.schalter;
@@ -76,19 +67,13 @@ function zeileFelder(
     sperre,
     Icon: EBENEN_ICON[schalter],
     an: einstellungen.ebenen[schalter],
-    untertitel: sperre ? tx(sperre) : tx(ZIEL_MARKE[schalter].kuerzel),
+    untertitel: sperre ? tx(sperre) : undefined,
     info: undefined,
   };
 }
 
 export function MehrFunktionenSeite() {
   const { data: einstellungen, error, isPending, speichern } = useEinstellungen();
-  const { data: attribute = [] } = useQuery({
-    queryKey: SCHLUESSEL.attribute,
-    queryFn: api.attribute,
-    enabled: Boolean(einstellungen?.funktionen.status),
-  });
-  const ressourcenAn = investitionWegenRessourcen(Boolean(einstellungen?.funktionen.status), attribute);
   const navigiere = useNavigate();
   const bestaetigen = useBestaetigung();
   const [meldung, setMeldung] = useState<{ name: string; ziel: string } | null>(null);
@@ -136,11 +121,8 @@ export function MehrFunktionenSeite() {
     <Bereich
       titel={tx('Bereiche')}
       kinder={
-        <div className="space-y-8">
-          <div className="inline-flex items-center">
-            <h2 className="text-lg font-semibold">{tx('Funktionen')}</h2>
-            <InfoHinweis text="Hier schaltest du Bereiche der App ein und aus. Ausgeblendetes bleibt gespeichert." />
-          </div>
+        <div className="space-y-6">
+          <p className="text-[13px] leading-5 text-leise break-words">{tx('Ausschalten blendet aus. Gelöscht wird nichts.')}</p>
           <div className="space-y-6">
             {BEREICH_GRUPPEN.map((gruppe) => (
               <div
@@ -150,7 +132,7 @@ export function MehrFunktionenSeite() {
               >
                 <ZeilenGruppe titel={gruppe}>
                   {BEREICH_SCHALTER.filter((eintrag) => eintrag.gruppe === gruppe).map((eintrag) => {
-                    const felder = zeileFelder(eintrag, einstellungen, ressourcenAn);
+                    const felder = zeileFelder(eintrag, einstellungen);
                     const Icon = felder.Icon;
                     return (
                       <ZeileSchalter

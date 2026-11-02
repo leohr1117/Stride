@@ -1,5 +1,11 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Tätigkeiten zeigt alle Einträge. Die für ein Projekt stehen in einer eigenen Gruppe. Unter dem Namen steht, was sie stärkt.": "Activités affiche toutes les entrées. Celles d'un projet sont dans un groupe à part. Sous le nom, il est indiqué ce qu'elle entraîne.",
+  "Eine Zeile öffnet die Tätigkeit. Die Reihenfolge liegt im Menü oben.": "Une ligne ouvre l'activité. L'ordre est dans le menu en haut.",
+  "Bereiche sagt unter dem Titel, dass Ausschalten nur ausblendet. Ein gesperrter Schalter nennt den Grund in der Zeile.": "Zones indique sous le titre que désactiver ne fait que masquer. Un interrupteur verrouillé nomme la raison sur la ligne.",
+  "Ausschalten blendet aus. Gelöscht wird nichts.": "Désactiver masque seulement. Rien n'est supprimé.",
+  "Nur für ein Projekt": "Seulement pour un projet",
+  "Stärkt: {liste}": "Entraîne : {liste}",
   "Der Admin ändert einen Benutzernamen im Menü bei Accounts.": "L'administrateur change un nom d'utilisateur dans le menu des comptes.",
   "Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.": "Si le nom est déjà pris, l'erreur s'affiche sur le champ. L'ancien nom reste.",
   "Die Seiten für Benutzernamen führen zu Accounts.": "Les pages des noms d'utilisateur mènent aux comptes.",

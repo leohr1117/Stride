@@ -1,20 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { Pencil } from 'lucide-react';
+import type { ReactNode } from 'react';
 import type { Vorlage } from '../../../../shared/api/index.ts';
 import { anteileInProzent } from '../../../../shared/spiel/anteile.ts';
 import { istTypAktiv } from '../../../../shared/spiel/funktionen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
-import { KurzListe } from '../../components/Ausklappbar.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
-import { AnlegeZeile, Liste } from '../../components/Zeile.tsx';
+import { AnlegeZeile, Liste, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { prozentPunkte } from '../../format.ts';
 import { ReihenfolgeKnopf } from '../taetigkeiten/Reihenfolge.tsx';
-import { Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
+import { Fehlermeldung, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { attributName, tx } from '../../text.ts';
-
-const TAETIGKEITEN_SICHTBAR = 6;
 
 export function VorlagenVerwaltung({ onBearbeiten }: { onBearbeiten: (vorlage: Vorlage | null) => void }) {
   const { data: vorlagen, error, isPending } = useQuery({ queryKey: SCHLUESSEL.vorlagen, queryFn: api.vorlagen });
@@ -28,108 +25,108 @@ export function VorlagenVerwaltung({ onBearbeiten }: { onBearbeiten: (vorlage: V
   const wirksameGewichte = (vorlage: Vorlage) =>
     vorlage.gewichte.filter((gewicht) => gewicht.gewicht > 0 && attributeNachId.has(gewicht.attributId));
 
+  const zeile = (vorlage: Vorlage, neben: string | null) => {
+    const gewichte = wirksameGewichte(vorlage);
+    const prozente = anteileInProzent(gewichte.map((gewicht) => gewicht.gewicht));
+    const staerkt =
+      gewichte.length > 0
+        ? tx('Stärkt: {liste}', {
+            liste: gewichte
+              .map((gewicht, index) => {
+                const attribut = attributeNachId.get(gewicht.attributId);
+                const name = attribut ? attributName(attribut) : '?';
+                return `${name} ${prozentPunkte(prozente[index] ?? 0)}`;
+              })
+              .join(' · '),
+          })
+        : null;
+    const anteile: ReactNode =
+      gewichte.length > 0 ? (
+        <>
+          {neben || !staerkt ? null : (
+            <p data-anteile-text="" className="mt-1 truncate text-[13px] leading-[18px] text-leise">
+              {staerkt}
+            </p>
+          )}
+          <div data-anteile="" className="mt-1 flex h-1.5 overflow-hidden rounded-full bg-flaeche-2">
+            {gewichte.map((gewicht, index) => {
+              const attribut = attributeNachId.get(gewicht.attributId);
+              const farbe = attribut?.farbe;
+              const naechste = attributeNachId.get(gewichte[index + 1]?.attributId ?? -1)?.farbe;
+              return (
+                <span
+                  key={gewicht.attributId}
+                  data-anteil={prozente[index] ?? 0}
+                  data-farbe={farbe ?? ''}
+                  style={{
+                    width: `${prozente[index] ?? 0}%`,
+                    flexGrow: 0,
+                    flexShrink: 0,
+                    minWidth: 0,
+                    backgroundColor: farbe,
+                    // Gleiche Farbe daneben liefe sonst zu einem Stück zusammen.
+                    boxShadow: farbe && farbe === naechste ? 'inset -2px 0 0 var(--flaeche-2)' : undefined,
+                  }}
+                />
+              );
+            })}
+          </div>
+        </>
+      ) : null;
+    return (
+      <SchnellZeile
+        key={vorlage.id}
+        ziel={{
+          art: 'vorlage',
+          id: vorlage.id,
+          name: vorlage.name,
+          archiviert: vorlage.archiviert,
+          loeschbar: vorlage.loeschbar,
+        }}
+      >
+        {(menue) => (
+          <div
+            data-taetigkeit={vorlage.name}
+            className={`relative flex min-h-12 items-center gap-3 px-4 py-3 ${vorlage.archiviert ? 'opacity-50' : ''}`}
+          >
+            <button type="button" aria-label={vorlage.name} onClick={() => onBearbeiten(vorlage)} className="absolute inset-0 z-0" />
+            <Icon name={vorlage.icon} className="pointer-events-none size-5 shrink-0 text-leise" />
+            <span className="pointer-events-none min-w-0 flex-1">
+              <span className="block truncate text-base leading-6">{vorlage.name}</span>
+              {neben ? <span className="block truncate text-[13px] leading-[18px] text-leise">{neben}</span> : null}
+              {anteile}
+            </span>
+            <span className="pointer-events-auto relative z-10">{menue}</span>
+          </div>
+        )}
+      </SchnellZeile>
+    );
+  };
+
+  const allgemein = (vorlagen ?? []).filter((vorlage) => vorlage.projektId === null);
+  const projekt = (vorlagen ?? []).filter((vorlage) => vorlage.projektId !== null);
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-6">
       <ReihenfolgeKnopf vorlagen={vorlagen ?? []} />
-      <Liste>
-        {isPending && (
-          <div className="px-4">
-            <Ladeanzeige />
+      {isPending ? <Ladeanzeige /> : null}
+      {error ? <Fehlermeldung fehler={error} /> : null}
+      {vorlagen?.length === 0 ? <Leer text={tx('Noch keine Tätigkeit.')} /> : null}
+      {vorlagen ? (
+        <>
+          <div data-taetigkeit-gruppe="allgemein">
+            <Liste>
+              {allgemein.map((vorlage) => zeile(vorlage, null))}
+              <AnlegeZeile text="Tätigkeit anlegen" onKlick={() => onBearbeiten(null)} />
+            </Liste>
           </div>
-        )}
-        {error ? (
-          <div className="px-4 py-3">
-            <Fehlermeldung fehler={error} />
-          </div>
-        ) : null}
-        {vorlagen?.length === 0 && <Leer text={tx("Noch keine Tätigkeit.")} />}
-        {vorlagen && vorlagen.length > 0 && (
-        <KurzListe
-          eintraege={vorlagen ?? []}
-          anzahl={TAETIGKEITEN_SICHTBAR}
-          className="divide-y divide-rand"
-          darstellen={(vorlage) => {
-            const gewichte = wirksameGewichte(vorlage);
-            const prozente = anteileInProzent(gewichte.map((gewicht) => gewicht.gewicht));
-            return (
-              <SchnellZeile
-                key={vorlage.id}
-                ziel={{
-                  art: 'vorlage',
-                  id: vorlage.id,
-                  name: vorlage.name,
-                  archiviert: vorlage.archiviert,
-                  loeschbar: vorlage.loeschbar,
-                }}
-              >
-                {(menue) => (
-                  <div
-                    data-taetigkeit={vorlage.name}
-                    className={`flex min-h-12 items-center gap-3 px-4 py-3 ${vorlage.archiviert ? 'opacity-50' : ''}`}
-                  >
-                    <Icon name={vorlage.icon} className="size-5 shrink-0 text-leise" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">{vorlage.name}</p>
-                      {vorlage.projektName ? (
-                        <p className="truncate text-xs text-leise">{tx('Nur für {name}', { name: vorlage.projektName })}</p>
-                      ) : null}
-                      {gewichte.length > 0 ? (
-                        <div data-anteile="" className="mt-1 flex h-1.5 overflow-hidden rounded-full bg-flaeche-2">
-                          {gewichte.map((gewicht, index) => {
-                            const attribut = attributeNachId.get(gewicht.attributId);
-                            const farbe = attribut?.farbe;
-                            const naechste = attributeNachId.get(gewichte[index + 1]?.attributId ?? -1)?.farbe;
-                            return (
-                              <span
-                                key={gewicht.attributId}
-                                data-anteil={prozente[index] ?? 0}
-                                data-farbe={farbe ?? ''}
-                                style={{
-                                  width: `${prozente[index] ?? 0}%`,
-                                  flexGrow: 0,
-                                  flexShrink: 0,
-                                  minWidth: 0,
-                                  backgroundColor: farbe,
-                                  // Gleiche Farbe daneben liefe sonst zu einem Stück zusammen.
-                                  boxShadow: farbe && farbe === naechste ? 'inset -2px 0 0 var(--flaeche-2)' : undefined,
-                                }}
-                              />
-                            );
-                          })}
-                        </div>
-                      ) : null}
-                      {gewichte.length > 0 ? (
-                        <p data-anteile-text="" className="mt-1 truncate text-xs text-leise">
-                          {gewichte
-                            .map((gewicht, index) => {
-                              const attribut = attributeNachId.get(gewicht.attributId);
-                              const name = attribut ? attributName(attribut) : '?';
-                              return `${name} ${prozentPunkte(prozente[index] ?? 0)}`;
-                            })
-                            .join(' · ')}
-                        </p>
-                      ) : null}
-                    </div>
-                    {menue}
-                    {vorlage.archiviert ? null : (
-                      <Knopf
-                        variante="leise"
-                        className="shrink-0 p-2"
-                        aria-label={tx('{name} bearbeiten', { name: vorlage.name })}
-                        onClick={() => onBearbeiten(vorlage)}
-                      >
-                        <Pencil className="size-4" />
-                      </Knopf>
-                    )}
-                  </div>
-                )}
-              </SchnellZeile>
-            );
-          }}
-        />
-        )}
-        {vorlagen && <AnlegeZeile text="Tätigkeit anlegen" onKlick={() => onBearbeiten(null)} />}
-      </Liste>
+          {projekt.length > 0 ? (
+            <ZeilenGruppe titel="Nur für ein Projekt">
+              {projekt.map((vorlage) => zeile(vorlage, vorlage.projektName))}
+            </ZeilenGruppe>
+          ) : null}
+        </>
+      ) : null}
     </div>
   );
 }

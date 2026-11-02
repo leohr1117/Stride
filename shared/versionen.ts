@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.44.0',
+    seiten: 'Tätigkeiten, Bereiche',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Tätigkeiten zeigt alle Einträge. Die für ein Projekt stehen in einer eigenen Gruppe. Unter dem Namen steht, was sie stärkt.',
+          'Eine Zeile öffnet die Tätigkeit. Die Reihenfolge liegt im Menü oben.',
+          'Bereiche sagt unter dem Titel, dass Ausschalten nur ausblendet. Ein gesperrter Schalter nennt den Grund in der Zeile.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.43.0',
     seiten: 'Accounts',
     abschnitte: [

@@ -32,11 +32,17 @@ test('Tätigkeiten lassen sich anordnen, die oberste steht zuerst', async ({ pag
       throw new Error('Zwei Tätigkeiten fehlen.');
     }
 
-    await expect(page.getByRole('button', { name: 'Reihenfolge', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Alle anzeigen/ })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: / bearbeiten$/ })).toHaveCount(0);
+    const projektGruppe = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Nur für ein Projekt', exact: true }) });
+    await expect(projektGruppe.locator('[data-taetigkeit="App-Feinschliff"]')).toContainText('App bauen');
+    await expect(page.locator('[data-taetigkeit-gruppe="allgemein"] [data-taetigkeit="App-Feinschliff"]')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Aktionen', exact: true })).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
-    await bild('liste');
+    await page.screenshot({ path: `tmp-test/taetigkeit-reihenfolge/${testInfo.project.name}-liste.png`, fullPage: true });
 
-    await page.getByRole('button', { name: 'Reihenfolge', exact: true }).click();
+    await page.getByRole('button', { name: 'Aktionen', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Reihenfolge', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Reihenfolge' });
     await expect(dialog).toBeVisible();
     const zeile = (id: number) => dialog.locator(`[data-reihenfolge="${id}"]`);
@@ -75,10 +81,19 @@ test('Tätigkeiten lassen sich anordnen, die oberste steht zuerst', async ({ pag
 
     await dialog.getByRole('button', { name: 'Schließen' }).click();
     await expect(dialog).toBeHidden();
-    const bearbeiten = page.locator('#taetigkeiten').getByRole('button', { name: / bearbeiten$/ });
-    await expect(bearbeiten.first()).toHaveAccessibleName(`${zweite.name} bearbeiten`);
+    const gruppe = page.locator('[data-taetigkeit-gruppe]').filter({ has: page.locator(`[data-taetigkeit="${zweite.name}"]`) });
+    await expect(gruppe.locator('[data-taetigkeit]').first()).toHaveAttribute('data-taetigkeit', zweite.name);
+    await page.locator(`[data-taetigkeit="${zweite.name}"]`).getByRole('button', { name: zweite.name, exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'Tätigkeit bearbeiten' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog', { name: 'Tätigkeit bearbeiten' })).toBeHidden();
     await ohneSeitlichenUeberlauf(page);
 
+    const schmal = (page.viewportSize()?.width ?? 0) < 768;
+    if (schmal) {
+      await page.goto('/');
+      await expect(page.locator('.eintrag-fab')).toBeVisible();
+    }
     await page.getByRole('button', { name: 'Eintrag loggen' }).click();
     const eintrag = page.getByRole('dialog', { name: 'Was hast du getan?' });
     await expect(eintrag).toBeVisible();
@@ -91,6 +106,10 @@ test('Tätigkeiten lassen sich anordnen, die oberste steht zuerst', async ({ pag
     await bild('eintrag');
     await eintrag.getByRole('button', { name: 'Schließen' }).click();
     await expect(eintrag).toBeHidden();
+    if (schmal) {
+      await page.goto('/mehr/inhalte');
+      await expect(page.locator('main h1')).toHaveText('Tätigkeiten');
+    }
 
     if ((page.viewportSize()?.width ?? 0) >= 768) {
       await expect(page.locator('a[data-zurueck]')).toHaveCount(0);

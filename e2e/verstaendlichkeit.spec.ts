@@ -83,10 +83,11 @@ test('Hierarchie, Funktionen und Projekt-Tätigkeit sind erkennbar', async ({ pa
   await bild('mehr');
   await bereiche.click();
   await expect(page).toHaveURL(/\/mehr\/funktionen$/);
-  const funktionen = page.getByRole('heading', { name: 'Funktionen', exact: true }).locator('..');
-  await funktionen.getByRole('button', { name: 'Info' }).click();
+  await expect(page.getByRole('heading', { name: 'Funktionen', exact: true })).toHaveCount(0);
+  await expect(page.getByText('Ausschalten blendet aus. Gelöscht wird nichts.')).toBeVisible();
+  await page.locator('#funktion-basis').getByRole('button', { name: 'Info' }).click();
   const funktionsHinweis = page.getByRole('tooltip');
-  await expect(funktionsHinweis).toContainText('ein und aus');
+  await expect(funktionsHinweis).toContainText('Tägliche Aufgaben zum Abhaken.');
   imBild(await funktionsHinweis.boundingBox(), sicht.width, sicht.height);
   await page.keyboard.press('Escape');
   await page.locator('[data-zurueck]').click();

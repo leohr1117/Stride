@@ -1,5 +1,11 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Tätigkeiten zeigt alle Einträge. Die für ein Projekt stehen in einer eigenen Gruppe. Unter dem Namen steht, was sie stärkt.": "Actividades muestra todas las entradas. Las de un proyecto están en un grupo propio. Bajo el nombre dice qué entrena.",
+  "Eine Zeile öffnet die Tätigkeit. Die Reihenfolge liegt im Menü oben.": "Una fila abre la actividad. El orden está en el menú de arriba.",
+  "Bereiche sagt unter dem Titel, dass Ausschalten nur ausblendet. Ein gesperrter Schalter nennt den Grund in der Zeile.": "Áreas dice bajo el título que apagar solo oculta. Un interruptor bloqueado nombra el motivo en la fila.",
+  "Ausschalten blendet aus. Gelöscht wird nichts.": "Apagar solo oculta. No se borra nada.",
+  "Nur für ein Projekt": "Solo para un proyecto",
+  "Stärkt: {liste}": "Entrena: {liste}",
   "Der Admin ändert einen Benutzernamen im Menü bei Accounts.": "El administrador cambia un usuario en el menú de Cuentas.",
   "Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.": "Si el nombre ya está ocupado, el error queda en el campo. El nombre anterior se queda.",
   "Die Seiten für Benutzernamen führen zu Accounts.": "Las páginas de usuarios llevan a Cuentas.",

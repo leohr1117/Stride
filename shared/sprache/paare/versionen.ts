@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Tätigkeiten zeigt alle Einträge. Die für ein Projekt stehen in einer eigenen Gruppe. Unter dem Namen steht, was sie stärkt.', 'Activities shows every entry. Ones for a single project sit in their own group. Under the name it says what it trains.'],
+  ['Eine Zeile öffnet die Tätigkeit. Die Reihenfolge liegt im Menü oben.', 'A row opens the activity. The order sits in the menu at the top.'],
+  ['Bereiche sagt unter dem Titel, dass Ausschalten nur ausblendet. Ein gesperrter Schalter nennt den Grund in der Zeile.', 'Areas says under the title that turning something off only hides it. A locked switch names the reason on the row.'],
   ['Der Admin ändert einen Benutzernamen im Menü bei Accounts.', 'The admin changes a username from the menu on Accounts.'],
   ['Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.', 'If the name is taken, the error sits on the field. The current name stays.'],
   ['Die Seiten für Benutzernamen führen zu Accounts.', 'The username pages lead to Accounts.'],

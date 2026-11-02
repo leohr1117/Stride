@@ -1,5 +1,11 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Tätigkeiten zeigt alle Einträge. Die für ein Projekt stehen in einer eigenen Gruppe. Unter dem Namen steht, was sie stärkt.": "Занятия показывают все записи. Те, что для одного проекта, стоят в своей группе. Под именем написано, что они усиливают.",
+  "Eine Zeile öffnet die Tätigkeit. Die Reihenfolge liegt im Menü oben.": "Строка открывает занятие. Порядок лежит в меню сверху.",
+  "Bereiche sagt unter dem Titel, dass Ausschalten nur ausblendet. Ein gesperrter Schalter nennt den Grund in der Zeile.": "Области под заголовком говорят, что выключение только скрывает. Заблокированный переключатель называет причину в строке.",
+  "Ausschalten blendet aus. Gelöscht wird nichts.": "Выключение только скрывает. Ничего не удаляется.",
+  "Nur für ein Projekt": "Только для одного проекта",
+  "Stärkt: {liste}": "Усиливает: {liste}",
   "Der Admin ändert einen Benutzernamen im Menü bei Accounts.": "Администратор меняет имя пользователя в меню аккаунтов.",
   "Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.": "Если имя занято, ошибка стоит у поля. Прежнее имя остаётся.",
   "Die Seiten für Benutzernamen führen zu Accounts.": "Страницы имён пользователей ведут к аккаунтам.",

@@ -334,6 +334,7 @@ export const PAARE = [
   ['Standard-Tätigkeit', 'Default activity'],
   ['Erste Werte und Tätigkeiten.', 'First values and activities.'],
   ['Stärkt: {name}', 'Trains: {name}'],
+  ['Stärkt: {liste}', 'Trains: {liste}'],
   ['Streak', 'Streak'],
   ['Tage in Folge', 'Days in a row'],
   ['Tätigkeit bearbeiten', 'Edit activity'],
@@ -641,6 +642,7 @@ export const PAARE = [
   ['Unter Mehr schaltest du Benachrichtigungen für dieses Gerät ein. Höchstens eine am Tag. Eine Benachrichtigung gibt keine XP.', 'Under More, you turn on notifications for this device. At most one a day. A notification grants no XP.'],
   ['Funktionen ein- und ausschalten', 'Turn functions on and off'],
   ['Hier schaltest du Bereiche der App ein und aus. Ausgeblendetes bleibt gespeichert.', 'Here you turn areas of the app on and off. What you hide stays saved.'],
+  ['Ausschalten blendet aus. Gelöscht wird nichts.', 'Turning off only hides. Nothing is deleted.'],
   ['Was die App kann. Einschalten geht unter App & Verbindungen.', 'What the app can do. You turn it on under App & connections.'],
   ['Sie gilt nur für dieses Projekt und erscheint nicht als allgemeine Tätigkeit.', 'It applies only to this project and does not appear as a general activity.'],
   ['Diese Tätigkeiten gelten nur für dieses Projekt.', 'These activities apply only to this project.'],
@@ -653,6 +655,7 @@ export const PAARE = [
   ['Archiv', 'Archive'],
   ['Wieder öffnen', 'Reopen'],
   ['Nur für dieses Projekt', 'Only for this project'],
+  ['Nur für ein Projekt', 'Only for one project'],
   ['Tätigkeit nur für dieses Projekt', 'Activity only for this project'],
   ['Umbenennen', 'Rename'],
 ] as const;

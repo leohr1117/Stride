@@ -1,5 +1,11 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Tätigkeiten zeigt alle Einträge. Die für ein Projekt stehen in einer eigenen Gruppe. Unter dem Namen steht, was sie stärkt.": "活動はすべての項目を表示します。一つのプロジェクトだけのものは専用のグループにあります。名前の下に、何を鍛えるかが出ます。",
+  "Eine Zeile öffnet die Tätigkeit. Die Reihenfolge liegt im Menü oben.": "行を開くと活動です。順番は上のメニューにあります。",
+  "Bereiche sagt unter dem Titel, dass Ausschalten nur ausblendet. Ein gesperrter Schalter nennt den Grund in der Zeile.": "領域はタイトルの下に、オフは隠すだけと示します。ロックされたスイッチは理由を行に出します。",
+  "Ausschalten blendet aus. Gelöscht wird nichts.": "オフにすると隠すだけです。削除はされません。",
+  "Nur für ein Projekt": "一つのプロジェクトだけ",
+  "Stärkt: {liste}": "鍛える：{liste}",
   "Der Admin ändert einen Benutzernamen im Menü bei Accounts.": "管理者がアカウントのメニューでユーザー名を変更します。",
   "Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.": "名前が使われていると、エラーは欄に出ます。これまでの名前はそのままです。",
   "Die Seiten für Benutzernamen führen zu Accounts.": "ユーザー名のページはアカウントへ移ります。",

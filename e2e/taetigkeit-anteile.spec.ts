@@ -39,7 +39,7 @@ async function legeAn(seite: Page): Promise<{ id: number; text: string; farben: 
   const farben = gespeichert.map((gewicht) => nachId.get(gewicht.attributId)?.farbe ?? '');
   return {
     id: vorlage.id,
-    text: namen.map((name, index) => `${name} ${prozente[index]} %`).join(' · '),
+    text: `Stärkt: ${namen.map((name, index) => `${name} ${prozente[index]} %`).join(' · ')}`,
     farben,
   };
 }
@@ -53,9 +53,7 @@ test('Tätigkeiten zeigen Prozent, die 100 ergeben, und gleich breite gleiche Fa
     await page.goto('/mehr/inhalte');
     await expect(page.locator('main h1')).toHaveText('Tätigkeiten');
     const zeile = page.locator(`[data-taetigkeit="${NAME}"]`);
-    if (!(await zeile.count())) {
-      await page.getByRole('button', { name: /Alle anzeigen/ }).click();
-    }
+    await expect(page.getByRole('button', { name: /Alle anzeigen/ })).toHaveCount(0);
     await expect(zeile).toBeVisible();
     await expect(zeile.locator('[data-anteile-text]')).toHaveText(angelegt.text);
     await expect(zeile.locator('[data-anteile-text]')).not.toContainText('50');
@@ -97,7 +95,7 @@ test('Tätigkeiten zeigen Prozent, die 100 ergeben, und gleich breite gleiche Fa
     await page.screenshot({ path: `tmp-test/taetigkeit-anteile/${testInfo.project.name}-liste.png` });
     await zeile.locator('[data-anteile]').screenshot({ path: `tmp-test/taetigkeit-anteile/${testInfo.project.name}-balken.png` });
 
-    await zeile.getByRole('button', { name: `${NAME} bearbeiten` }).click();
+    await zeile.getByRole('button', { name: NAME, exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Tätigkeit bearbeiten' });
     await expect(dialog).toBeVisible();
     const texte = await dialog.locator('span.zahl').allTextContents();

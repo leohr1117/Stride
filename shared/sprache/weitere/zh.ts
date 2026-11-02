@@ -1,5 +1,11 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Tätigkeiten zeigt alle Einträge. Die für ein Projekt stehen in einer eigenen Gruppe. Unter dem Namen steht, was sie stärkt.": "活动显示全部条目。仅用于一个项目的排在单独一组。名称下方写着它强化什么。",
+  "Eine Zeile öffnet die Tätigkeit. Die Reihenfolge liegt im Menü oben.": "点一行即可打开活动。顺序在上方的菜单里。",
+  "Bereiche sagt unter dem Titel, dass Ausschalten nur ausblendet. Ein gesperrter Schalter nennt den Grund in der Zeile.": "领域在标题下说明，关闭只会隐藏。被锁定的开关在行内写出原因。",
+  "Ausschalten blendet aus. Gelöscht wird nichts.": "关闭只会隐藏。不会删除任何内容。",
+  "Nur für ein Projekt": "仅用于一个项目",
+  "Stärkt: {liste}": "强化：{liste}",
   "Der Admin ändert einen Benutzernamen im Menü bei Accounts.": "管理员在账户菜单中更改用户名。",
   "Ist der Name schon vergeben, steht der Fehler am Feld. Der bisherige Name bleibt.": "如果名称已被使用，错误显示在字段上。原名称保持不变。",
   "Die Seiten für Benutzernamen führen zu Accounts.": "用户名页面会转到账户。",
