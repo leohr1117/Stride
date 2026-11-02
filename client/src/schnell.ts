@@ -25,7 +25,8 @@ export type SchnellArt =
   | 'todoist'
   | 'trainingsplan'
   | 'uebung'
-  | 'konto';
+  | 'konto'
+  | 'vorbild';
 
 export interface SchnellZiel {
   art: SchnellArt;
@@ -45,6 +46,8 @@ export interface SchnellPunkt {
   id?: string;
   /** Dieser Punkt ist die Wischaktion, auch wenn Löschen in der Liste steht. */
   wisch?: boolean;
+  /** Stern nur an der Favoriten-Aktion. Andere Punkte bleiben ohne Symbol. */
+  symbol?: 'stern' | 'stern-voll';
 }
 
 export interface Bestaetigungstext {
@@ -67,6 +70,9 @@ const LOESCH_LABEL: Partial<Record<SchnellArt, string>> = {
 };
 
 export function punkteFuer(ziel: Pick<SchnellZiel, 'art' | 'archiviert' | 'loeschbar' | 'gesperrt'>): SchnellPunkt[] {
+  if (ziel.art === 'vorbild') {
+    return [];
+  }
   if (ziel.art === 'eintrag' || ziel.art === 'kalender' || ziel.art === 'todoist') {
     return [{ art: 'loeschen', label: LOESCH_LABEL[ziel.art] ?? 'Löschen' }];
   }

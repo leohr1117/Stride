@@ -1,5 +1,8 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Vorbilder lassen sich als Favorit merken.', 'Role models can be saved as favorites.'],
+  ['Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.', 'Favorites sit at the top of the list and stay visible with every direction filter.'],
+  ['Entfernen gilt sofort. Eine Meldung bietet Rückgängig.', 'Removing applies at once. A message offers Undo.'],
   ['Das Profil fasst Level, Kennzahlen, Erfolge und die Seiten im Profil zusammen.', 'The profile sums up level, figures, achievements, and the pages in the profile.'],
   ['Die Spektren von Können und Haben stehen klein nebeneinander.', 'The spectra of ability and assets sit small, side by side.'],
   ['Der Stift im Profil öffnet das Konto.', 'The pencil on the profile opens the account.'],

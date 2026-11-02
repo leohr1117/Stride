@@ -399,6 +399,9 @@ export const einstellungenAenderungSchema = z.object({
     })
     .optional(),
   paletteLoeschen: z.string().trim().min(1).max(80).optional(),
+  vorbildFavoritDazu: z.string().trim().min(1).max(80).optional(),
+  vorbildFavoritWeg: z.string().trim().min(1).max(80).optional(),
+  vorbildFavoritIndex: z.number().int().min(0).max(500).optional(),
   glimmen: z.boolean().optional(),
   funktionen: z.preprocess(bekannteFunktionen, z.partialRecord(z.enum(FUNKTIONEN), z.boolean())).optional(),
   ebenen: z.partialRecord(z.enum(EBENEN), z.boolean()).optional(),

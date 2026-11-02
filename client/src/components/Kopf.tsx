@@ -256,7 +256,7 @@ export function Kopf() {
           )}
           {angabe?.info ? <InfoHinweis text={angabe.info} /> : null}
         </div>
-        <div ref={slotRef} className="contents" data-kopf-aktion="" />
+        <div ref={slotRef} className="flex shrink-0 items-center empty:contents" data-kopf-aktion="" />
         {!ziel && !profilInLeiste && uebersicht && (
           <Link
             to="/charakter"

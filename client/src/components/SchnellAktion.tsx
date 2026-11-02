@@ -1,6 +1,6 @@
 import { tx } from '../text.ts';
 import { useQueryClient, type QueryKey } from '@tanstack/react-query';
-import { EllipsisVertical } from 'lucide-react';
+import { EllipsisVertical, Star } from 'lucide-react';
 import {
   createContext,
   useCallback,
@@ -77,6 +77,9 @@ export function useSchnellAktion(): SchnellApi {
 }
 
 async function sende(ziel: SchnellZiel, punkt: SchnellPunktArt): Promise<void> {
+  if (ziel.art === 'vorbild') {
+    return;
+  }
   const archiviert = punkt === 'archivieren';
   if (punkt === 'loeschen') {
     if (ziel.art === 'vision') return api.loescheVision(ziel.id);
@@ -366,6 +369,28 @@ export function SchnellProvider({ children }: { children: ReactNode }) {
   );
 }
 
+function menueInhalt(punkt: SchnellPunkt) {
+  const stern = punkt.symbol === 'stern' || punkt.symbol === 'stern-voll';
+  return (
+    <>
+      {stern ? (
+        <Star className="size-4 shrink-0" fill={punkt.symbol === 'stern-voll' ? 'currentColor' : 'none'} aria-hidden="true" />
+      ) : null}
+      {tx(punkt.label)}
+    </>
+  );
+}
+
+function menueKlasse(punkt: SchnellPunkt, gefahr: boolean, trennung: boolean): string {
+  const basis = gefahr
+    ? `block w-full px-3 py-2.5 text-left text-sm text-gefahr hover:bg-flaeche-2${trennung ? ' border-t border-[var(--trenner)]' : ''}`
+    : 'block w-full px-3 py-2.5 text-left text-sm hover:bg-flaeche-2';
+  if (!punkt.symbol) {
+    return basis;
+  }
+  return basis.replace('block w-full', 'flex w-full items-center gap-2');
+}
+
 function Menue({
   punkte,
   anker,
@@ -454,24 +479,24 @@ function Menue({
           key={punkt.id ?? punkt.art}
           type="button"
           role="menuitem"
-          className="block w-full px-3 py-2.5 text-left text-sm hover:bg-flaeche-2"
+          className={menueKlasse(punkt, false, false)}
           onClick={() => onWahl(punkt)}
         >
-          {tx(punkt.label)}
+          {menueInhalt(punkt)}
         </button>
       ))}
       {teile.loeschen && (
         <button
           type="button"
           role="menuitem"
-          className={`block w-full px-3 py-2.5 text-left text-sm text-gefahr hover:bg-flaeche-2 ${teile.oben.length > 0 ? 'border-t border-[var(--trenner)]' : ''}`}
+          className={menueKlasse(teile.loeschen, true, teile.oben.length > 0)}
           onClick={() => {
             if (teile.loeschen) {
               onWahl(teile.loeschen);
             }
           }}
         >
-          {tx(teile.loeschen.label)}
+          {menueInhalt(teile.loeschen)}
         </button>
       )}
     </div>,

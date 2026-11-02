@@ -43,14 +43,20 @@ export interface Einstellungen {
   uebersichtKarten: UebersichtKartenWahl;
   /** Update-Hinweis je Profil. Null, bis die Snackbar erschien bzw. der Changelog offen war. */
   versionHinweis: { benachrichtigt: string | null; gesehen: string | null };
+  /** Vorbild-Schlüssel in der Reihenfolge des Markierens. */
+  vorbildFavoriten: string[];
 }
 
 /** PATCH-Körper. `farbenZuruecksetzen` löscht die eigenen Farben der Zielansicht. */
-export type EinstellungenAenderung = Partial<Omit<Einstellungen, 'paletten'>> & {
+export type EinstellungenAenderung = Partial<Omit<Einstellungen, 'paletten' | 'vorbildFavoriten'>> & {
   farbenZuruecksetzen?: boolean;
   paletteNeu?: PaletteEingabe;
   paletteAendern?: PaletteEingabe & { id: string };
   paletteLoeschen?: string;
+  /** Favorit anlegen. Mit Index setzt Rückgängig an die alte Stelle. */
+  vorbildFavoritDazu?: string;
+  vorbildFavoritWeg?: string;
+  vorbildFavoritIndex?: number;
   /** Erstes Ziel, nur zusammen mit der ersten Profilanlage. */
   startZiel?: { art: 'vision' | 'projekt' | 'faehigkeit'; name: string };
 };

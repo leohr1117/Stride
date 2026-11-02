@@ -17,6 +17,20 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.39.1',
+    seiten: 'Vorbilder',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Vorbilder lassen sich als Favorit merken.',
+          'Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.',
+          'Entfernen gilt sofort. Eine Meldung bietet Rückgängig.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.39.0',
     seiten: 'Profil, Fähigkeit, Vorbilder',
     abschnitte: [

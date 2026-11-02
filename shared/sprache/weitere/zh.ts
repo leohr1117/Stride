@@ -1,5 +1,12 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Vorbilder lassen sich als Favorit merken.": "可以把榜样标为收藏。",
+  "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "收藏在列表顶部，换方向筛选时仍然可见。",
+  "Entfernen gilt sofort. Eine Meldung bietet Rückgängig.": "移除立即生效。提示可以撤销。",
+  "Favoriten": "收藏",
+  "Zu Favoriten": "加入收藏",
+  "Aus Favoriten entfernen": "从收藏中移除",
+  "Aus Favoriten entfernt": "已从收藏中移除",
   "Das Profil fasst Level, Kennzahlen, Erfolge und die Seiten im Profil zusammen.": "档案汇总等级、数字、成就和档案里的页面。",
   "Die Spektren von Können und Haben stehen klein nebeneinander.": "能力和资产的图谱缩小后并排显示。",
   "Der Stift im Profil öffnet das Konto.": "档案上的铅笔打开账户。",

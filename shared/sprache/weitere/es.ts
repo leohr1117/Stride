@@ -1,5 +1,12 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Vorbilder lassen sich als Favorit merken.": "Los referentes se pueden guardar como favoritos.",
+  "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "Los favoritos quedan arriba en la lista y siguen visibles con cada filtro de dirección.",
+  "Entfernen gilt sofort. Eine Meldung bietet Rückgängig.": "Quitar se aplica al momento. Un aviso ofrece Deshacer.",
+  "Favoriten": "Favoritos",
+  "Zu Favoriten": "Añadir a favoritos",
+  "Aus Favoriten entfernen": "Quitar de favoritos",
+  "Aus Favoriten entfernt": "Quitado de favoritos",
   "Das Profil fasst Level, Kennzahlen, Erfolge und die Seiten im Profil zusammen.": "El perfil resume el nivel, las cifras, los logros y las páginas del perfil.",
   "Die Spektren von Können und Haben stehen klein nebeneinander.": "Los espectros de Capacidad y Bienes quedan pequeños, uno al lado del otro.",
   "Der Stift im Profil öffnet das Konto.": "El lápiz del perfil abre la cuenta.",

@@ -2,6 +2,10 @@
 export const PAARE = [
   ['Profil bearbeiten', 'Edit profile'],
   ['Ähnlich', 'Similar'],
+  ['Favoriten', 'Favorites'],
+  ['Zu Favoriten', 'Add to favorites'],
+  ['Aus Favoriten entfernen', 'Remove from favorites'],
+  ['Aus Favoriten entfernt', 'Removed from favorites'],
   ['Stärken', 'Strengths'],
   ['Stride wurde aktualisiert.', 'Stride was updated.'],
   ['Neuigkeiten', "What's new"],

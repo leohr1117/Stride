@@ -1,9 +1,12 @@
 import { klassenText, tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
 import { Check } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, type ReactNode } from 'react';
 import { useSearchParams } from 'react-router';
+import type { SchnellPunkt } from '../../schnell.ts';
+import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { auswahlAus, gespeicherteRichtung, speichereRichtung, type VorbildAuswahl } from './vorbilderAuswahl.ts';
+import { useVorbildFavoriten } from './favoritAktion.ts';
 import {
   aehnlichkeit,
   besteAehnlichkeit,
@@ -64,8 +67,10 @@ export function VorbilderSeite() {
     }
     setParams(naechste, { replace: true });
   }, [auswahl, params, setParams]);
+  const favoritenAktion = useVorbildFavoriten();
   const { data: attribute, error, isPending } = useQuery({ queryKey: SCHLUESSEL.attribute, queryFn: api.attribute });
   const { data: uebersicht } = useQuery({ queryKey: SCHLUESSEL.uebersicht, queryFn: api.uebersicht });
+  const { data: einstellungen } = useQuery({ queryKey: SCHLUESSEL.einstellungen, queryFn: api.einstellungen });
   const profil = useMemo(
     () => eigenesProfil(attribute ?? [], { koennen: funktionen.koennen, status: funktionen.status }),
     [attribute, funktionen.koennen, funktionen.status],
@@ -73,7 +78,11 @@ export function VorbilderSeite() {
   const auswertungen = useMemo(() => auswerten(profil), [profil]);
   const massstab = auswertungen.find((eintrag) => eintrag.vorbild.schluessel === DURCHSCHNITT);
   const personen = auswertungen.filter((eintrag) => eintrag.vorbild.schluessel !== DURCHSCHNITT);
-  const sichtbar = personen.filter((eintrag) => auswahl === ALLE || eintrag.vorbild.richtung === auswahl);
+  const favoritenSchluessel = new Set(einstellungen?.vorbildFavoriten ?? []);
+  const favoriten = personen.filter((eintrag) => favoritenSchluessel.has(eintrag.vorbild.schluessel));
+  const sichtbar = personen.filter(
+    (eintrag) => !favoritenSchluessel.has(eintrag.vorbild.schluessel) && (auswahl === ALLE || eintrag.vorbild.richtung === auswahl),
+  );
 
   if (isPending) {
     return <Ladeanzeige />;
@@ -92,6 +101,25 @@ export function VorbilderSeite() {
             {funktionen.koennen && ` · ${klassenText(uebersicht.klasse)}`}
           </span>
         </p>
+      )}
+      {favoriten.length > 0 && (
+        <section>
+          <div className="mb-2 flex items-center">
+            <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] leading-[18px] font-semibold tracking-normal text-leise normal-case">
+              {tx('Favoriten')}
+            </h2>
+          </div>
+          <Liste>
+            {favoriten.map((auswertung) => (
+              <VorbildZeile
+                key={auswertung.vorbild.schluessel}
+                auswertung={auswertung}
+                favorit
+                onFavorit={() => favoritenAktion.weg(auswertung.vorbild.schluessel)}
+              />
+            ))}
+          </Liste>
+        </section>
       )}
       {massstab && (
         <Liste>
@@ -127,7 +155,11 @@ export function VorbilderSeite() {
         </div>
         <Liste>
           {sichtbar.map((auswertung) => (
-            <VorbildZeile key={auswertung.vorbild.schluessel} auswertung={auswertung} />
+            <VorbildZeile
+              key={auswertung.vorbild.schluessel}
+              auswertung={auswertung}
+              onFavorit={() => favoritenAktion.dazu(auswertung.vorbild.schluessel)}
+            />
           ))}
         </Liste>
       </section>
@@ -155,11 +187,42 @@ function RichtungsChip({
   );
 }
 
-function VorbildZeile({ auswertung }: { auswertung: VorbildAuswertung }) {
+function VorbildZeile({
+  auswertung,
+  favorit = false,
+  onFavorit,
+}: {
+  auswertung: VorbildAuswertung;
+  favorit?: boolean;
+  onFavorit?: () => void;
+}) {
   const name = tx(auswertung.vorbild.name);
   const wert =
     auswertung.aehnlichkeit !== null
       ? tx('{prozent} ähnlich', { prozent: prozentText(auswertung.aehnlichkeit) })
       : undefined;
-  return <Zeile nach={`/vorbilder/${auswertung.vorbild.schluessel}`} titel={name} name={name} wert={wert} />;
+  const zeile = (rechts?: ReactNode) => (
+    <Zeile nach={`/vorbilder/${auswertung.vorbild.schluessel}`} titel={name} name={name} wert={wert} rechts={rechts} />
+  );
+  if (!onFavorit) {
+    return zeile();
+  }
+  const label = favorit ? 'Aus Favoriten entfernen' : 'Zu Favoriten';
+  const punkt: SchnellPunkt = {
+    art: 'archivieren',
+    id: 'favorit',
+    label,
+    wisch: true,
+    symbol: favorit ? 'stern-voll' : 'stern',
+  };
+  return (
+    <SchnellZeile
+      ziel={{ art: 'vorbild', id: 0, name }}
+      hintergrund="bg-flaeche"
+      eintraege={[punkt]}
+      onEintrag={() => onFavorit()}
+    >
+      {(menue) => zeile(menue)}
+    </SchnellZeile>
+  );
 }

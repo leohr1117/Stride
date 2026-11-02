@@ -1,5 +1,12 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Vorbilder lassen sich als Favorit merken.": "お手本をお気に入りにできます。",
+  "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "お気に入りはリストの上にあり、どの方向の絞り込みでも表示されます。",
+  "Entfernen gilt sofort. Eine Meldung bietet Rückgängig.": "外すとそのまま反映されます。メッセージから元に戻せます。",
+  "Favoriten": "お気に入り",
+  "Zu Favoriten": "お気に入りに追加",
+  "Aus Favoriten entfernen": "お気に入りから外す",
+  "Aus Favoriten entfernt": "お気に入りから外しました",
   "Das Profil fasst Level, Kennzahlen, Erfolge und die Seiten im Profil zusammen.": "プロフィールはレベル、数値、成果、プロフィール内のページをまとめます。",
   "Die Spektren von Können und Haben stehen klein nebeneinander.": "能力と資産のスペクトルは小さく横に並びます。",
   "Der Stift im Profil öffnet das Konto.": "プロフィールの鉛筆はアカウントを開きます。",

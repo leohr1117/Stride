@@ -49,6 +49,13 @@ import { istWeltLeer, wendeFokusAn } from '../../services/profilStart.ts';
 import { wendeStartZielAn, type StartZielArt } from '../../services/startAnlage.ts';
 import { istGewichtEinheit, STANDARD_GEWICHT_EINHEIT, type GewichtEinheit } from '../../../shared/spiel/training.ts';
 import { kartenWahl, type UebersichtKartenWahl } from '../../../shared/spiel/uebersichtKarten.ts';
+import {
+  VORBILD_FAVORITEN,
+  bereinigeFavoriten,
+  favoritDazu,
+  favoritWeg,
+  istFavoritenSchluessel,
+} from '../../../shared/features/vorbilder/favoriten.ts';
 import { schreibeHinweisAngebotTesten, setzeHinweisNichtVorWennFehlt } from './hinweisSchluessel.ts';
 import { leseVersionsstand, setzeVersionsstandWennLeer } from './versionHinweis.ts';
 import { AKTUELLE_VERSION } from '../../../shared/versionen.ts';
@@ -296,7 +303,50 @@ export function ladeEinstellungen(): Einstellungen {
     uebersichtKarten: leseUebersichtKarten(gespeichert.get(UEBERSICHT_KARTEN_SCHLUESSEL)),
     paletten: lesePaletten(parse(gespeichert.get(PALETTEN_SCHLUESSEL))),
     versionHinweis: leseVersionsstand(),
+    vorbildFavoriten: leseFavoriten(gespeichert.get(VORBILD_FAVORITEN)),
   };
+}
+
+function leseFavoriten(roh: string | undefined): string[] {
+  if (roh === undefined) {
+    return [];
+  }
+  const wert = parse(roh);
+  const sauber = Array.isArray(wert) ? bereinigeFavoriten(wert) : [];
+  if (!Array.isArray(wert) || JSON.stringify(wert) !== JSON.stringify(sauber)) {
+    speichere(VORBILD_FAVORITEN, sauber);
+  }
+  return sauber;
+}
+
+function pruefeFavorit(schluessel: string): void {
+  if (!istFavoritenSchluessel(schluessel)) {
+    throw ungueltig('Das Vorbild ist unbekannt.');
+  }
+}
+
+function wendeFavoriten(aenderung: {
+  vorbildFavoritDazu?: string;
+  vorbildFavoritWeg?: string;
+  vorbildFavoritIndex?: number;
+}): void {
+  if (aenderung.vorbildFavoritDazu === undefined && aenderung.vorbildFavoritWeg === undefined) {
+    return;
+  }
+  if (aenderung.vorbildFavoritWeg !== undefined) {
+    pruefeFavorit(aenderung.vorbildFavoritWeg);
+  }
+  if (aenderung.vorbildFavoritDazu !== undefined) {
+    pruefeFavorit(aenderung.vorbildFavoritDazu);
+  }
+  let liste = leseFavoriten(eine<{ wert: string }>('SELECT wert FROM einstellungen WHERE schluessel = ?', VORBILD_FAVORITEN)?.wert);
+  if (aenderung.vorbildFavoritWeg !== undefined) {
+    liste = favoritWeg(liste, aenderung.vorbildFavoritWeg);
+  }
+  if (aenderung.vorbildFavoritDazu !== undefined) {
+    liste = favoritDazu(liste, aenderung.vorbildFavoritDazu, aenderung.vorbildFavoritIndex);
+  }
+  speichere(VORBILD_FAVORITEN, liste);
 }
 
 function leseGewichtEinheit(roh: string | undefined): GewichtEinheit {
@@ -510,6 +560,9 @@ export function aendereEinstellungen(
     paletteNeu?: PaletteEingabe;
     paletteAendern?: PaletteEingabe & { id: string };
     paletteLoeschen?: string;
+    vorbildFavoritDazu?: string;
+    vorbildFavoritWeg?: string;
+    vorbildFavoritIndex?: number;
     startZiel?: { art: StartZielArt; name: string };
     bewertungTesten?: boolean;
     angebotTesten?: boolean;
@@ -627,6 +680,7 @@ export function aendereEinstellungen(
         kartenWahl({ ...bisher.uebersichtKarten, ...aenderung.uebersichtKarten }),
       );
     }
+    wendeFavoriten(aenderung);
     wendePaletten(aenderung);
     if (aenderung.bewertungTesten !== undefined && process.env.ASCEND_TEST === '1') {
       schreibeBewertungTesten(aenderung.bewertungTesten);

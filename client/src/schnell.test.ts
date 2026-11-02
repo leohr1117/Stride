@@ -48,6 +48,10 @@ describe('punkteFuer', () => {
     expect(punkteFuer({ art: 'todoist' })).toEqual([{ art: 'loeschen', label: 'Trennen' }]);
   });
 
+  it('gibt einer Vorbildzeile keine Archiv- oder Löschaktion', () => {
+    expect(punkteFuer({ art: 'vorbild' })).toEqual([]);
+  });
+
   it('versteckt den Inhaber und genutzte Knoten oder Vorhaben', () => {
     expect(punkteFuer({ art: 'konto', gesperrt: true })).toEqual([]);
     expect(punkteFuer({ art: 'konto' })).toEqual([{ art: 'loeschen', label: 'Löschen' }]);

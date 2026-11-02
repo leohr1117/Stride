@@ -1,5 +1,12 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Vorbilder lassen sich als Favorit merken.": "Les modèles peuvent être enregistrés comme favoris.",
+  "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "Les favoris restent en haut de la liste et visibles avec chaque filtre de direction.",
+  "Entfernen gilt sofort. Eine Meldung bietet Rückgängig.": "Retirer s'applique tout de suite. Un message propose Annuler.",
+  "Favoriten": "Favoris",
+  "Zu Favoriten": "Ajouter aux favoris",
+  "Aus Favoriten entfernen": "Retirer des favoris",
+  "Aus Favoriten entfernt": "Retiré des favoris",
   "Das Profil fasst Level, Kennzahlen, Erfolge und die Seiten im Profil zusammen.": "Le profil résume le niveau, les chiffres, les succès et les pages du profil.",
   "Die Spektren von Können und Haben stehen klein nebeneinander.": "Les spectres d'Aptitude et de Biens restent petits, côte à côte.",
   "Der Stift im Profil öffnet das Konto.": "Le crayon du profil ouvre le compte.",

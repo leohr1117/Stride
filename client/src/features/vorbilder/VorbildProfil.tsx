@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Star } from 'lucide-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router';
 import { attributVorlage } from '../../../../shared/features/attribute/attributKatalog.ts';
@@ -16,7 +17,7 @@ import {
   type Vorbild,
 } from '../../../../shared/features/vorbilder/index.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
-import { useKopf } from '../../components/Kopf.tsx';
+import { KopfAktion, useKopf } from '../../components/Kopf.tsx';
 import { Zeile } from '../../components/Zeile.tsx';
 import { KlassenBild } from '../../components/KlassenBild.tsx';
 import type { LebenswegPunkt } from '../../components/LebenswegDiagramm.tsx';
@@ -26,6 +27,7 @@ import { prozentText, zahl } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { attributName, klassenText, tx } from '../../text.ts';
 import { eigenesProfil } from '../../pages/eigenesProfil.ts';
+import { useVorbildFavoriten } from './favoritAktion.ts';
 import { Legende, WerteHinweis } from './vorbildTeile.tsx';
 
 const ANZAHL_STAERKEN = 3;
@@ -101,6 +103,7 @@ function VergleichListe({
 
 export function VorbildProfilSeite() {
   const vorbild = findeVorbild(useParams().schluessel ?? '');
+  const favoriten = useVorbildFavoriten();
   const funktionen = useFunktionen();
   const { data: attribute, error, isPending } = useQuery({ queryKey: SCHLUESSEL.attribute, queryFn: api.attribute });
   const { data: uebersicht } = useQuery({ queryKey: SCHLUESSEL.uebersicht, queryFn: api.uebersicht });
@@ -138,8 +141,35 @@ export function VorbildProfilSeite() {
     .map((kennung) => attributName({ kennung, name: name(kennung) }))
     .join(', ');
 
+  const istFavorit = einstellungen?.vorbildFavoriten.includes(vorbild.schluessel) ?? false;
+  const favoritLabel = istFavorit ? 'Aus Favoriten entfernen' : 'Zu Favoriten';
+  const schalteFavorit = () => {
+    if (!einstellungen || vorbild.schluessel === DURCHSCHNITT) {
+      return;
+    }
+    if (istFavorit) {
+      favoriten.weg(vorbild.schluessel);
+      return;
+    }
+    favoriten.dazu(vorbild.schluessel);
+  };
+
   return (
     <div className="space-y-6">
+      {vorbild.schluessel !== DURCHSCHNITT && (
+        <KopfAktion>
+          <button
+            type="button"
+            aria-pressed={istFavorit}
+            aria-label={tx(favoritLabel)}
+            disabled={!einstellungen}
+            onClick={schalteFavorit}
+            className="inline-flex size-12 shrink-0 items-center justify-center rounded-full text-haupt disabled:opacity-60"
+          >
+            <Star className="size-5" fill={istFavorit ? 'currentColor' : 'none'} aria-hidden="true" />
+          </button>
+        </KopfAktion>
+      )}
       <Karte className="space-y-3">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div className="min-w-0 sm:flex-1">

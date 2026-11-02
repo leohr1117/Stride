@@ -1,5 +1,12 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Vorbilder lassen sich als Favorit merken.": "Ориентиры можно сохранять в избранном.",
+  "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "Избранное стоит вверху списка и остаётся видимым при любом фильтре направления.",
+  "Entfernen gilt sofort. Eine Meldung bietet Rückgängig.": "Удаление из избранного действует сразу. Сообщение предлагает отмену.",
+  "Favoriten": "Избранное",
+  "Zu Favoriten": "В избранное",
+  "Aus Favoriten entfernen": "Убрать из избранного",
+  "Aus Favoriten entfernt": "Убрано из избранного",
   "Das Profil fasst Level, Kennzahlen, Erfolge und die Seiten im Profil zusammen.": "Профиль собирает уровень, показатели, успехи и страницы профиля.",
   "Die Spektren von Können und Haben stehen klein nebeneinander.": "Спектры умений и активов стоят рядом и остаются маленькими.",
   "Der Stift im Profil öffnet das Konto.": "Карандаш в профиле открывает аккаунт.",
