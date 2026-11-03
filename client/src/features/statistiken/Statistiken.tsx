@@ -8,7 +8,7 @@ import { useSichtbarkeit } from '../../funktionen.ts';
 import { BalkenListe, type SaeulenWert } from '../../components/DiagrammBasis.tsx';
 import { LinienDiagramm, SaeulenDiagramm } from '../../components/mitDiagramm.tsx';
 import { Icon } from '../../components/Icons.tsx';
-import { Fehlermeldung, Ladeanzeige, Leer, Segmentauswahl, Ueberschrift } from '../../ui/index.ts';
+import { AbschnittKopf, Fehlermeldung, Flaeche, Ladeanzeige, Leer, Segmentauswahl } from '../../ui/index.ts';
 import { ausTagesSchluessel, kalenderwoche, kurzesDatum, monatKurz, stunden, zahl } from '../../format.ts';
 
 const ZEITRAUM_LABEL: Record<Zeitraum, string> = {
@@ -64,81 +64,103 @@ export function StatistikenSeite() {
       {statistiken && statistiken.kennzahlen.eintraege === 0 && <Leer text={tx("Noch keine Einträge.")} />}
 
       {statistiken && statistiken.kennzahlen.eintraege > 0 && (
-        <div className={`space-y-6 transition-opacity ${isPlaceholderData ? 'opacity-60' : ''}`}>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-            <Kennzahl label={tx("Einträge")} wert={zahl(statistiken.kennzahlen.eintraege)} />
-            <Kennzahl label={tx("Stunden")} wert={zahl(Math.round(statistiken.kennzahlen.stunden))} />
-            <Kennzahl label={tx("Aktive Tage")} wert={zahl(statistiken.kennzahlen.aktiveTage)} />
-            <Kennzahl label={tx("Längster Streak")} wert={zahl(statistiken.kennzahlen.laengsterStreak)} />
-            <Kennzahl label={tx("Meilensteine")} wert={zahl(statistiken.kennzahlen.meilensteine)} />
-            {bosseAn && <Kennzahl label={tx("Bosse besiegt")} wert={zahl(statistiken.kennzahlen.bosseBesiegt)} />}
-          </div>
+        <div className={`transition-opacity ${isPlaceholderData ? 'opacity-60' : ''}`}>
+          <Flaeche>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3 px-4 py-3">
+              <Kennzahl label={tx("Einträge")} wert={zahl(statistiken.kennzahlen.eintraege)} />
+              <Kennzahl label={tx("Stunden")} wert={zahl(Math.round(statistiken.kennzahlen.stunden))} />
+              <Kennzahl label={tx("Aktive Tage")} wert={zahl(statistiken.kennzahlen.aktiveTage)} />
+              <Kennzahl label={tx("Längster Streak")} wert={zahl(statistiken.kennzahlen.laengsterStreak)} />
+              <Kennzahl label={tx("Meilensteine")} wert={zahl(statistiken.kennzahlen.meilensteine)} />
+              {bosseAn && <Kennzahl label={tx("Bosse besiegt")} wert={zahl(statistiken.kennzahlen.bosseBesiegt)} />}
+            </div>
+          </Flaeche>
 
           <section>
-            <Ueberschrift titel={statistiken.verlaufEinheit === 'woche' ? tx("XP pro Woche") : tx("XP pro Monat")} />
-            <LinienDiagramm werte={verlaufWerte(statistiken)} einheit="XP" />
+            <AbschnittKopf titel={statistiken.verlaufEinheit === 'woche' ? tx("XP pro Woche") : tx("XP pro Monat")} />
+            <Flaeche>
+              <div className="px-2 py-3">
+                <LinienDiagramm werte={verlaufWerte(statistiken)} einheit="XP" />
+              </div>
+            </Flaeche>
           </section>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid md:grid-cols-2 md:gap-6">
             <section>
-              <Ueberschrift titel={tx("Tätigkeiten")} />
+              <AbschnittKopf titel={tx("Tätigkeiten")} />
               {statistiken.vorlagen.length === 0 ? (
-                <Leer text={tx("Noch keine Einträge.")} />
+                <Flaeche>
+                  <Leer text={tx("Noch keine Einträge.")} />
+                </Flaeche>
               ) : (
-                <BalkenListe
-                  werte={statistiken.vorlagen.map((vorlage) => ({
-                    schluessel: vorlage.id,
-                    label: (
-                      <>
-                        <Icon name={vorlage.icon} className="size-4 shrink-0 text-leise" />
-                        <span className="truncate">{vorlage.name}</span>
-                      </>
-                    ),
-                    wert: vorlage.xp,
-                    text: `${zahl(vorlage.xp)} XP${vorlage.stunden > 0 ? ` · ${stunden(vorlage.stunden)}` : ''}`,
-                  }))}
-                />
+                <Flaeche>
+                  <div className="px-4 py-3">
+                    <BalkenListe
+                      werte={statistiken.vorlagen.map((vorlage) => ({
+                        schluessel: vorlage.id,
+                        label: (
+                          <>
+                            <Icon name={vorlage.icon} className="size-4 shrink-0 text-leise" />
+                            <span className="truncate">{vorlage.name}</span>
+                          </>
+                        ),
+                        wert: vorlage.xp,
+                        text: `${zahl(vorlage.xp)} XP${vorlage.stunden > 0 ? ` · ${stunden(vorlage.stunden)}` : ''}`,
+                      }))}
+                    />
+                  </div>
+                </Flaeche>
               )}
             </section>
             {projekteAn && (
               <section>
-                <Ueberschrift titel={tx("Projekte")} />
+                <AbschnittKopf titel={tx("Projekte")} />
                 {statistiken.projekte.length === 0 ? (
-                  <Leer text={tx("Noch keine Einträge.")} />
+                  <Flaeche>
+                    <Leer text={tx("Noch keine Einträge.")} />
+                  </Flaeche>
                 ) : (
-                  <BalkenListe
-                    werte={statistiken.projekte.map((projekt) => ({
-                      schluessel: projekt.id,
-                      label: (
-                        <>
-                          <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: projekt.farbe }} />
-                          <span className="truncate">{projekt.name}</span>
-                        </>
-                      ),
-                      wert: projekt.xp,
-                      text: `${zahl(projekt.xp)} XP`,
-                      farbe: projekt.farbe,
-                    }))}
-                  />
+                  <Flaeche>
+                    <div className="px-4 py-3">
+                      <BalkenListe
+                        werte={statistiken.projekte.map((projekt) => ({
+                          schluessel: projekt.id,
+                          label: (
+                            <>
+                              <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: projekt.farbe }} />
+                              <span className="truncate">{projekt.name}</span>
+                            </>
+                          ),
+                          wert: projekt.xp,
+                          text: `${zahl(projekt.xp)} XP`,
+                          farbe: projekt.farbe,
+                        }))}
+                      />
+                    </div>
+                  </Flaeche>
                 )}
               </section>
             )}
           </div>
 
           <section>
-            <Ueberschrift titel={tx("Wochentage")} />
-            <SaeulenDiagramm
-              werte={statistiken.wochentage.map((eintrag) => {
-                const kurz = WOCHENTAGE[eintrag.tag];
-                const lang = WOCHENTAGE_LANG[eintrag.tag];
-                return {
-                  label: kurz ? tx(kurz) : '',
-                  titel: lang ? tx(lang) : '',
-                  wert: eintrag.xp,
-                };
-              })}
-              einheit="XP"
-            />
+            <AbschnittKopf titel={tx("Wochentage")} />
+            <Flaeche>
+              <div className="px-2 py-3">
+                <SaeulenDiagramm
+                  werte={statistiken.wochentage.map((eintrag) => {
+                    const kurz = WOCHENTAGE[eintrag.tag];
+                    const lang = WOCHENTAGE_LANG[eintrag.tag];
+                    return {
+                      label: kurz ? tx(kurz) : '',
+                      titel: lang ? tx(lang) : '',
+                      wert: eintrag.xp,
+                    };
+                  })}
+                  einheit="XP"
+                />
+              </div>
+            </Flaeche>
           </section>
         </div>
       )}

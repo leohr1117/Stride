@@ -8,15 +8,13 @@ import type { Einstellungen } from '../../../../shared/api/einstellungen.ts';
 import { AKTUELLE_VERSION, VERSIONEN, type Versionseintrag } from '../../../../shared/versionen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { ProfilBild } from '../../components/ProfilBild.tsx';
-import { Liste, Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
+import { Liste, Zeile } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { sichtbareGruppen, type NavEintrag } from '../../navigation.ts';
-import { Ladeanzeige } from '../../ui/index.ts';
+import { AbschnittKopf, Flaeche, Ladeanzeige } from '../../ui/index.ts';
 import { useNeuMarkierung, verbindeVersionsstand } from '../../updateHinweis.tsx';
 import { kachelText } from './hinweisGeraet.ts';
 import { bereicheAn, kartenStand, verbindungsKurz } from './mehrWerte.ts';
-
-const KOPF = 'ueberschrift abschnittskopf mb-2 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case';
 
 function seitenSymbol(eintrag: NavEintrag, klasse: string | undefined): ReactNode {
   if (eintrag.pfad === '/charakter' && klasse) {
@@ -52,9 +50,9 @@ export function MehrSeite() {
   }
 
   return (
-    <div className="space-y-6">
+    <div>
       <section data-abschnitt="seiten">
-        <h2 className={KOPF}>{tx('Seiten')}</h2>
+        <AbschnittKopf titel={tx('Seiten')} />
         <div className="space-y-2">
           {gruppen.map((gruppe) => (
             <div key={gruppe.eintraege[0]?.pfad} data-seitenliste="">
@@ -72,13 +70,14 @@ export function MehrSeite() {
           ))}
         </div>
       </section>
-      <div data-abschnitt="einstellungen">
-        <ZeilenGruppe titel="Einstellungen">
+      <section data-abschnitt="einstellungen">
+        <AbschnittKopf titel={tx('Einstellungen')} />
+        <Liste>
           {sichtbareMehrBereiche().map((bereich) => (
             <Zeile key={bereich.id} titel={tx(bereich.label)} wert={werte.get(bereich.id)} nach={bereich.pfad} />
           ))}
-        </ZeilenGruppe>
-      </div>
+        </Liste>
+      </section>
       <WasNeuZeile />
     </div>
   );
@@ -87,7 +86,7 @@ export function MehrSeite() {
 function WasNeuZeile() {
   const neu = useNeuMarkierung();
   return (
-    <div data-version="">
+    <div className="mt-6" data-version="">
       <Liste>
         <Zeile
           name={tx('Was ist neu')}
@@ -173,15 +172,19 @@ export function WasNeuSeite() {
   const neuSatz = new Set(neu.map((eintrag) => eintrag.version));
   const rest = VERSIONEN.filter((eintrag) => !neuSatz.has(eintrag.version));
   return (
-    <div data-changelog="" className="space-y-6">
+    <div data-changelog="">
       {neu.length > 0 ? (
         <section data-neu-seit="">
-          <h2 className={KOPF}>{tx('Neu seit deinem letzten Besuch')}</h2>
-          <VersionsListe eintraege={neu} />
+          <AbschnittKopf titel={tx('Neu seit deinem letzten Besuch')} />
+          <Flaeche>
+            <div className="px-4 py-3">
+              <VersionsListe eintraege={neu} />
+            </div>
+          </Flaeche>
         </section>
       ) : null}
       {rest.length > 0 ? (
-        <div data-version-rest="">
+        <div className="mt-6" data-version-rest="">
           <VersionsListe eintraege={rest} />
         </div>
       ) : null}

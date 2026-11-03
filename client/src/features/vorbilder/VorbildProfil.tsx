@@ -22,7 +22,7 @@ import { Zeile } from '../../components/Zeile.tsx';
 import { KlassenBild } from '../../components/KlassenBild.tsx';
 import type { LebenswegPunkt } from '../../components/LebenswegDiagramm.tsx';
 import { LebenswegDiagramm, ProfilRadar } from '../../components/mitDiagramm.tsx';
-import { Fehlermeldung, Fortschrittsbalken, Karte, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
+import { AbschnittKopf, Fehlermeldung, Flaeche, Fortschrittsbalken, Karte, Ladeanzeige } from '../../ui/index.ts';
 import { levelZahl, prozentText } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { attributName, klassenText, tx } from '../../text.ts';
@@ -191,45 +191,46 @@ export function VorbildProfilSeite() {
 
       {staerkeListe ? (
         <section>
-          <Ueberschrift titel={tx('Stärken')} />
-          <p className="text-sm break-words">{staerkeListe}</p>
+          <AbschnittKopf titel={tx('Stärken')} />
+          <Flaeche>
+            <p className="px-4 py-3 text-sm break-words">{staerkeListe}</p>
+          </Flaeche>
         </section>
       ) : null}
 
       {punkte.length > 0 && (
-        <div data-vergleich="" data-achsen-max={maximum}>
-          <Karte className="space-y-3">
-            <div className="mb-2 flex items-center">
-              <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] leading-[18px] font-semibold tracking-normal text-leise normal-case">
-                {tx('Profil im Vergleich')}
-              </h2>
-              <WerteHinweis name="Profil im Vergleich" />
-            </div>
-            {punkte.length >= MIN_RADAR_ACHSEN && (
-              <ProfilRadar
-                person={tx(vorbild.name)}
-                zeilen={punkte.map((punkt) => ({
-                  name: attributName({ kennung: punkt.kennung, name: name(punkt.kennung) }),
-                  du: punkt.du,
-                  vorbild: punkt.vorbild,
-                }))}
-                maximum={maximum}
-                hoehe="h-72"
+        <section data-vergleich="" data-achsen-max={maximum}>
+          <AbschnittKopf titel={tx('Profil im Vergleich')} zusatz={<WerteHinweis name="Profil im Vergleich" />} />
+          <Flaeche>
+            <div className="space-y-3 px-4 py-3">
+              {punkte.length >= MIN_RADAR_ACHSEN && (
+                <ProfilRadar
+                  person={tx(vorbild.name)}
+                  zeilen={punkte.map((punkt) => ({
+                    name: attributName({ kennung: punkt.kennung, name: name(punkt.kennung) }),
+                    du: punkt.du,
+                    vorbild: punkt.vorbild,
+                  }))}
+                  maximum={maximum}
+                  hoehe="h-72"
+                />
+              )}
+              <VergleichListe punkte={punkte} maximum={maximum} namen={name} person={tx(vorbild.name)} />
+              <Legende
+                eintraege={[
+                  { name: tx('Du'), farbe: 'var(--akzent)' },
+                  { name: tx(vorbild.name), farbe: 'var(--diagramm-vorbild)' },
+                ]}
               />
-            )}
-            <VergleichListe punkte={punkte} maximum={maximum} namen={name} person={tx(vorbild.name)} />
-            <Legende
-              eintraege={[
-                { name: tx('Du'), farbe: 'var(--akzent)' },
-                { name: tx(vorbild.name), farbe: 'var(--diagramm-vorbild)' },
-              ]}
-            />
-          </Karte>
-        </div>
+            </div>
+          </Flaeche>
+        </section>
       )}
 
-      <Karte className="space-y-3">
-        <Ueberschrift titel={tx('Lebensweg')} />
+      <section>
+        <AbschnittKopf titel={tx('Lebensweg')} />
+        <Flaeche>
+          <div className="space-y-3 px-4 py-3">
         {einstellungen && einstellungen.geburtsjahr === null ? (
           <Zeile className="-mx-4 border-t border-rand" titel={tx('Geburtsjahr')} wert={tx('Jahr eintragen')} nach="/mehr/profil/jahr" />
         ) : null}
@@ -244,7 +245,9 @@ export function VorbildProfilSeite() {
             </li>
           ))}
         </ul>
-      </Karte>
+          </div>
+        </Flaeche>
+      </section>
     </div>
   );
 }

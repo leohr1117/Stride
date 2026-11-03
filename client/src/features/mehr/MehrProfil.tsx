@@ -5,9 +5,9 @@ import type { ErfolgStufe, Erfolge } from '../../../../shared/api/index.ts';
 import { FOKUS_LISTE, ZIEL_FRAGE, ZIELSTREBIGKEIT_INFO, type FokusId } from '../../../../shared/spiel/profil.ts';
 import { erfolgSichtbar, type Sichtbarkeit } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL, meldeAnmeldungAbgelaufen } from '../../api/index.ts';
-import { Fehlermeldung, Ladeanzeige, Optionsliste } from '../../ui/index.ts';
+import { AbschnittKopf, Fehlermeldung, Ladeanzeige, Optionsliste } from '../../ui/index.ts';
 import { useBestaetigung } from '../../components/Bestaetigung.tsx';
-import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
+import { Liste, Zeile } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
 import { AccountsBereich } from './MehrAccounts.tsx';
@@ -101,39 +101,45 @@ function ProfilListe() {
     <Bereich
       titel={tx("Konto")}
       kinder={
-        <div className="space-y-8">
-          <ZeilenGruppe titel="Profil">
-            <Zeile titel={tx("Profilname")} wert={data.charakterName} nach="/mehr/profil/name" />
-            <Zeile titel={tx("Titel")} wert={titelName(erfolge)} nach="/mehr/profil/titel" />
-            <Zeile
-              titel={tx("Geburtsjahr")}
-              wert={data.geburtsjahr === null ? '—' : String(data.geburtsjahr)}
-              nach="/mehr/profil/jahr"
-            />
-            <Zeile
-              titel={tx(ZIEL_FRAGE)}
-              wert={data.zielstrebigkeit ? tx(ZIELSTREBIGKEIT_INFO[data.zielstrebigkeit].titel) : '—'}
-              nach="/mehr/profil/ziel"
-            />
-            <Zeile titel={tx("Fokus")} wert={fokusText(data.fokus)} nach="/mehr/profil/fokus" />
-          </ZeilenGruppe>
-          <ZeilenGruppe titel="Anmeldung">
-            {zugang?.benutzername ? (
+        <>
+          <section>
+            <AbschnittKopf titel={tx("Profil")} />
+            <Liste>
+              <Zeile titel={tx("Profilname")} wert={data.charakterName} nach="/mehr/profil/name" />
+              <Zeile titel={tx("Titel")} wert={titelName(erfolge)} nach="/mehr/profil/titel" />
               <Zeile
-                id="profil-benutzername"
-                titel={tx("Benutzername")}
-                wert={zugang.benutzername}
-                pfeil={false}
+                titel={tx("Geburtsjahr")}
+                wert={data.geburtsjahr === null ? '—' : String(data.geburtsjahr)}
+                nach="/mehr/profil/jahr"
               />
-            ) : null}
-            <Zeile titel={tx("Passwort")} nach="/mehr/profil/passwort" />
-            {inhaber || admin ? (
-              <Zeile titel={tx("Accounts")} wert={accountZahl === undefined ? undefined : String(accountZahl)} nach="/mehr/profil/accounts" />
-            ) : null}
-            <Zeile titel={tx("Abmelden")} gefahr pfeil={false} onKlick={() => void abmelden()} />
-          </ZeilenGruppe>
+              <Zeile
+                titel={tx(ZIEL_FRAGE)}
+                wert={data.zielstrebigkeit ? tx(ZIELSTREBIGKEIT_INFO[data.zielstrebigkeit].titel) : '—'}
+                nach="/mehr/profil/ziel"
+              />
+              <Zeile titel={tx("Fokus")} wert={fokusText(data.fokus)} nach="/mehr/profil/fokus" />
+            </Liste>
+          </section>
+          <section>
+            <AbschnittKopf titel={tx("Anmeldung")} />
+            <Liste>
+              {zugang?.benutzername ? (
+                <Zeile
+                  id="profil-benutzername"
+                  titel={tx("Benutzername")}
+                  wert={zugang.benutzername}
+                  pfeil={false}
+                />
+              ) : null}
+              <Zeile titel={tx("Passwort")} nach="/mehr/profil/passwort" />
+              {inhaber || admin ? (
+                <Zeile titel={tx("Accounts")} wert={accountZahl === undefined ? undefined : String(accountZahl)} nach="/mehr/profil/accounts" />
+              ) : null}
+              <Zeile titel={tx("Abmelden")} gefahr pfeil={false} onKlick={() => void abmelden()} />
+            </Liste>
+          </section>
           <Fehlermeldung fehler={abmeldeFehler} />
-        </div>
+        </>
       }
     />
   );

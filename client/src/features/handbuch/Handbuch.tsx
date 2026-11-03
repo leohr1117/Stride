@@ -11,7 +11,7 @@ import { RUECKKEHR, SCHUTZ } from '../../../../shared/spiel/schutz.ts';
 import { beispielVorbilder, durchschnittXpProTag } from '../../../../shared/features/vorbilder/vorbilder.ts';
 import { basisXp, visionBeute } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
-import { Chip, Karte, Ladeanzeige } from '../../ui/index.ts';
+import { AbschnittKopf, Chip, FlaecheInnen, Ladeanzeige } from '../../ui/index.ts';
 import { faktorText, zahl, zeitspanne } from '../../format.ts';
 
 const STREAK_BEISPIELE = [7, 30, 100, 365];
@@ -96,16 +96,18 @@ export function HandbuchSeite() {
       </HandbuchAbschnitt>
 
       <HandbuchAbschnitt id="streak" titel="Streak">
-        <ul className="list-none space-y-1 p-0 text-sm leading-5">
+        <ul className="list-none space-y-1 px-4 py-3 text-sm leading-5">
           <li>{tx('Pause: {tage} Tag frei', { tage: zahl(ERLAUBTE_PAUSENTAGE) })}</li>
           <li>{tx('Schutz: alle {tage} Tage, unter Heute einsetzen', { tage: zahl(SCHUTZ.schwelleTage) })}</li>
           <li>{tx('Rückkehr: {frist} Tage, wenn kein Schutz', { frist: zahl(RUECKKEHR.fristTage) })}</li>
           <li>{tx('Schutz und Rückkehr geben keine XP')}</li>
         </ul>
+        <div className="border-t border-rand">
         <Tabelle
           spalten={[tx('Streak'), tx('Faktor')]}
           zeilen={STREAK_BEISPIELE.map((tage) => [tx('{tage} Tage', { tage: zahl(tage) }), faktorText(momentumFuerSerie(tage))])}
         />
+        </div>
       </HandbuchAbschnitt>
 
       <HandbuchAbschnitt id="level" titel="Level">
@@ -204,11 +206,13 @@ function abschnittImBlick(ids: readonly string[], unterkante: number): string {
 
 function HandbuchAbschnitt({ id, titel, children }: { id: string; titel: string; children: ReactNode }) {
   return (
-    <section id={id} className="handbuch-abschnitt min-w-0 space-y-2">
-      <h2 className="ueberschrift abschnittskopf text-[13px] leading-[18px] font-semibold tracking-normal text-leise normal-case">
-        {tx(titel)}
-      </h2>
-      {children}
+    <section id={id} className="handbuch-abschnitt -mx-4 min-w-0 md:mx-0 md:max-w-[720px]">
+      <div className="px-4">
+        <AbschnittKopf titel={tx(titel)} />
+      </div>
+      <FlaecheInnen className="max-w-full overflow-x-auto overscroll-x-contain">
+        <div>{children}</div>
+      </FlaecheInnen>
     </section>
   );
 }
@@ -216,7 +220,6 @@ function HandbuchAbschnitt({ id, titel, children }: { id: string; titel: string;
 function Tabelle({ spalten, zeilen, zahlAb = 1 }: { spalten: string[]; zeilen: ReactNode[][]; zahlAb?: number }) {
   const ausrichtung = (index: number) => (index >= zahlAb ? 'zahl text-right' : 'text-left');
   return (
-    <Karte dicht className="max-w-full overflow-x-auto overscroll-x-contain">
       <table className="w-max min-w-full text-sm">
         <thead>
           <tr className="border-b border-rand">
@@ -242,6 +245,5 @@ function Tabelle({ spalten, zeilen, zahlAb = 1 }: { spalten: string[]; zeilen: R
           ))}
         </tbody>
       </table>
-    </Karte>
   );
 }

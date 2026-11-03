@@ -32,9 +32,9 @@ import {
   Farbauswahl,
   Feld,
   Fehlermeldung,
+  Flaeche,
   Formular,
   Fortschrittsbalken,
-  Karte,
   Knopf,
   Schalter,
   VorschlagFeld,
@@ -66,9 +66,11 @@ export function AttributBereich({
     <div className="space-y-4">
       {bild.allgemein !== null ? <AllgemeinerXpAbzug prozent={bild.allgemein} /> : null}
       {werte.length >= MIN_RADAR_ACHSEN ? (
-        <Karte>
-          <AttributRadar typ={typ} werte={werte} />
-        </Karte>
+        <Flaeche>
+          <div className="px-2 py-3">
+            <AttributRadar typ={typ} werte={werte} />
+          </div>
+        </Flaeche>
       ) : null}
       <Liste>
         {werte.map((attribut) => {

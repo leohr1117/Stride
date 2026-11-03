@@ -3,9 +3,20 @@ import { expect, test, type Page } from '@playwright/test';
 import { anmelden } from './helfer.ts';
 
 const SEITEN = [
-  ['/chronik', 'verlauf'],
-  ['/vorbilder', 'vorbilder'],
-  ['/mehr/inhalte/verbindungen', 'verbindungen'],
+  ['/chronik', 'verlauf', true],
+  ['/vorbilder', 'vorbilder', true],
+  ['/vorbilder/ronaldo', 'vorbild', true],
+  ['/mehr/inhalte/verbindungen', 'verbindungen', true],
+  ['/rueckblick', 'rueckblick', true],
+  ['/statistiken', 'statistik', true],
+  ['/basis', 'basis', true],
+  ['/handbuch', 'handbuch', true],
+  ['/mehr', 'mehr', true],
+  ['/mehr/profil', 'konto', true],
+  ['/ziele', 'ziele', false],
+  ['/koennen', 'koennen', false],
+  ['/haben', 'haben', false],
+  ['/mehr/profil/accounts', 'accounts', false],
 ] as const;
 
 interface Bericht {
@@ -14,7 +25,7 @@ interface Bericht {
   probleme: string[];
 }
 
-function pruefeSeite(): Bericht {
+function pruefeSeite(kopfPflicht: boolean): Bericht {
   const probleme: string[] = [];
   const merke = (text: string) => {
     if (!probleme.includes(text) && probleme.length < 12) probleme.push(text);
@@ -28,7 +39,7 @@ function pruefeSeite(): Bericht {
   probe.remove();
 
   const koepfe = [...document.querySelectorAll('main .abschnitt-kopf')];
-  if (koepfe.length === 0) merke('kein AbschnittKopf');
+  if (koepfe.length === 0 && kopfPflicht) merke('kein AbschnittKopf');
   for (const kopf of koepfe) {
     const stil = getComputedStyle(kopf);
     const name = kopf.querySelector('h2')?.textContent?.trim() ?? '?';
@@ -81,7 +92,10 @@ function pruefeSeite(): Bericht {
     const flaeche = [...vorher.querySelectorAll('[data-flaeche]')].at(-1);
     const kopf = aktuell.querySelector('.abschnitt-kopf');
     if (!flaeche || !kopf) continue;
-    const abstand = Math.round(kopf.getBoundingClientRect().top - flaeche.getBoundingClientRect().bottom);
+    const kopfKasten = kopf.getBoundingClientRect();
+    const flaecheKasten = flaeche.getBoundingClientRect();
+    if (kopfKasten.top < flaecheKasten.top) continue;
+    const abstand = Math.round(kopfKasten.top - flaecheKasten.bottom);
     if (abstand !== 24) {
       const name = kopf.querySelector('h2')?.textContent?.trim() ?? '?';
       merke(`${name}: ${abstand} px nach der vorigen Fläche`);
@@ -91,21 +105,27 @@ function pruefeSeite(): Bericht {
   return { koepfe: koepfe.length, flaechen: flaechen.length, probleme };
 }
 
-async function pruefe(seite: Page, name: string): Promise<void> {
-  await seite.locator('main .abschnitt-kopf').first().waitFor();
+async function pruefe(seite: Page, name: string, kopfPflicht: boolean): Promise<void> {
+  if (kopfPflicht) {
+    await seite.locator('main .abschnitt-kopf').first().waitFor();
+  } else {
+    await seite.locator('main [data-flaeche]').first().waitFor();
+  }
   await seite.screenshot({ path: `tmp-test/abschnitte/${name}.png`, fullPage: true });
-  const bericht = await seite.evaluate(pruefeSeite);
-  expect(bericht.koepfe, name).toBeGreaterThan(0);
+  const bericht = await seite.evaluate(pruefeSeite, kopfPflicht);
+  if (kopfPflicht) {
+    expect(bericht.koepfe, name).toBeGreaterThan(0);
+  }
   expect(bericht.flaechen, name).toBeGreaterThan(0);
   expect(bericht.probleme, name).toEqual([]);
 }
 
-test('Abschnitte auf Verlauf, Verbindungen und Vorbilder', async ({ page }, info) => {
-  test.setTimeout(90_000);
+test('Abschnitte und Flächen auf den Seiten', async ({ page }, info) => {
+  test.setTimeout(180_000);
   fs.mkdirSync('tmp-test/abschnitte', { recursive: true });
   await anmelden(page);
-  for (const [pfad, name] of SEITEN) {
+  for (const [pfad, name, kopfPflicht] of SEITEN) {
     await page.goto(pfad);
-    await pruefe(page, `${info.project.name}-${name}`);
+    await pruefe(page, `${info.project.name}-${name}`, kopfPflicht);
   }
 });

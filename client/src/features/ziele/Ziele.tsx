@@ -15,7 +15,7 @@ import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { Liste, Zeile } from '../../components/Zeile.tsx';
 import { Abschnitt } from '../../components/Ausklappbar.tsx';
-import { Farbpunkt, Fehlermeldung, Knopf, Ladeanzeige, Leer, Ueberschrift } from '../../ui/index.ts';
+import { AbschnittKopf, Farbpunkt, Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { ZielDialog, type ZielBearbeitung } from './ZielDialoge.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { kurzesDatum, zahl } from '../../format.ts';
@@ -179,7 +179,7 @@ export function ZieleSeite() {
 
       {ebenen.visionen && gliederung.lose.length > 0 && (
         <section>
-          <Ueberschrift titel={tx('Ohne {name}', { name: tx(ZIEL_MARKE.visionen.name) })} />
+          <AbschnittKopf titel={tx('Ohne {name}', { name: tx(ZIEL_MARKE.visionen.name) })} />
           <Liste>
             {gliederung.lose.map((projekt) => (
               <ProjektZeile key={projekt.id} projekt={projekt} />
@@ -190,7 +190,7 @@ export function ZieleSeite() {
 
       {ebenen.visionen && ebenen.organisationen && gliederung.freieOrganisationen.length > 0 && (
         <section>
-          <Ueberschrift
+          <AbschnittKopf
             titel={tx('{mehrzahl} ohne {name}', {
               mehrzahl: tx(ZIEL_MARKE.organisationen.mehrzahl),
               name: tx(ZIEL_MARKE.visionen.name),
@@ -625,8 +625,8 @@ function VorhabenBereich({ vorhaben }: { vorhaben: VorhabenMitProjekt[] }) {
     return null;
   }
   return (
-    <section className="space-y-3">
-      <Ueberschrift titel={tx(zielTitel('vorhaben'))} />
+    <section>
+      <AbschnittKopf titel={tx(zielTitel('vorhaben'))} />
       {offene.length > 0 && (
         <Liste>
           {offene.map((eintrag) => (
@@ -666,8 +666,8 @@ function VorhabenBereich({ vorhaben }: { vorhaben: VorhabenMitProjekt[] }) {
 function FreieVorhaben({ vorhaben }: { vorhaben: VorhabenMitProjekt[] }) {
   const eintragOeffnen = useEintragOeffnen();
   return (
-    <section className="space-y-2">
-      <Ueberschrift titel={tx('Ohne Projekt')} />
+    <section>
+      <AbschnittKopf titel={tx('Ohne Projekt')} />
       <Liste>
         {vorhaben.map((eintrag) => (
           <SchnellZeile

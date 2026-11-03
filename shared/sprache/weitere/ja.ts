@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.": "ほかのページも同じ節の見出しです。スマホでは、一覧、表、グラフが幅いっぱいの面に並びます。",
   "Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.": "履歴、つながり、お手本の節の見出しが同じ見た目です。スマホでは、リストが幅いっぱいに並びます。",
   "Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.": "今日、履歴、統計は、バー、その他、ページ見出しで同じ名前です。",
   "Auf dem Handy reicht der Inhalt bis an den rechten Rand.": "スマホでは、内容が右端まで届きます。",

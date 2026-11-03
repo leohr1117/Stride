@@ -72,7 +72,7 @@ test('Handbuch ist eine offene Scrollseite', async ({ page }, testInfo) => {
   const ziffern = await xp.evaluate((element) => getComputedStyle(element).fontVariantNumeric);
   expect(ziffern).toContain('tabular-nums');
 
-  const kaesten = page.locator('main section.karte').filter({ has: page.locator('table') });
+  const kaesten = page.locator('main [data-flaeche]').filter({ has: page.locator('table') });
   const masse = await kaesten.evaluateAll((liste) =>
     liste.map((element) => ({
       overflow: getComputedStyle(element).overflowX,

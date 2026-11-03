@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.": "Las demás páginas usan el mismo título de sección. En el teléfono, las listas, las tablas y los gráficos están en una superficie a todo el ancho.",
   "Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.": "En Historial, Conexiones y Referentes, los títulos de sección se ven igual. En el teléfono, las listas ocupan todo el ancho.",
   "Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.": "Hoy, Historial y Estadística tienen el mismo nombre en la barra, en Más y en el encabezado.",
   "Auf dem Handy reicht der Inhalt bis an den rechten Rand.": "En el teléfono, el contenido llega hasta el borde derecho.",

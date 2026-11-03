@@ -354,8 +354,12 @@ html[data-eingabe='zeiger'] :focus {
 }
 
 .handbuch-abschnitt,
-.handbuch-abschnitt > h2 {
+.handbuch-abschnitt h2 {
   scroll-margin-top: var(--handbuch-leiste, 0px);
+}
+
+.handbuch-abschnitt [data-flaeche] {
+  overflow-x: auto;
 }
 
 /* Der Schieber springt. Sonst liest ein Test die Farbe mitten in der Animation. */

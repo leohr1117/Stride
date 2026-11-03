@@ -10,7 +10,7 @@ import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { AnlegeZeile, Liste } from '../../components/Zeile.tsx';
 import { dauerText, zahl } from '../../format.ts';
 import { useEbenen } from '../../funktionen.ts';
-import { Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
+import { AbschnittKopf, Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 
 type Bearbeitung = { aufgabe: BasisAufgabe | null } | null;
 
@@ -140,9 +140,7 @@ export function BasisSeite() {
         <>
           {gruppen.map((gruppe) => (
             <section key={gruppe.schluessel}>
-              <h2 className="ueberschrift abschnittskopf mb-2 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
-                {gruppe.projektName}
-              </h2>
+              <AbschnittKopf titel={gruppe.projektName} />
               <Liste>{gruppe.aufgaben.map((aufgabe) => zeile(aufgabe, false))}</Liste>
             </section>
           ))}

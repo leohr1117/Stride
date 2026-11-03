@@ -12,7 +12,7 @@ import { useSichtbarkeit } from '../../funktionen.ts';
 import { KurzListe } from '../../components/Ausklappbar.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { BalkenListe } from '../../components/DiagrammBasis.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
+import { AbschnittKopf, EINGABE_STIL, Feld, Fehlermeldung, Flaeche, Formular, Knopf, Ladeanzeige } from '../../ui/index.ts';
 import {
   ausTagesSchluessel,
   datumLang,
@@ -66,7 +66,7 @@ export function RueckblickSeite() {
       <Fehlermeldung fehler={error} />
 
       {rueckblick && (
-        <div className={`space-y-6 transition-opacity ${isPlaceholderData ? 'opacity-60' : ''}`}>
+        <div className={`transition-opacity ${isPlaceholderData ? 'opacity-60' : ''}`}>
           <div className="flex items-center justify-between gap-3">
             <Knopf
               variante="leise"
@@ -90,7 +90,9 @@ export function RueckblickSeite() {
 
           {(rueckblick.meilensteine.length > 0 || rueckblick.erfolge.length > 0) && (
             <section>
-              <Ueberschrift titel={tx("Höhepunkte")} />
+              <AbschnittKopf titel={tx("Höhepunkte")} />
+              <Flaeche>
+              <div className="px-4 py-3">
               <KurzListe
                 eintraege={[
                   ...rueckblick.meilensteine.map((meilenstein, index) => ({
@@ -111,12 +113,16 @@ export function RueckblickSeite() {
                   </div>
                 )}
               />
+              </div>
+              </Flaeche>
             </section>
           )}
 
           {rueckblick.attribute.length > 0 && (
             <section>
-              <Ueberschrift titel={tx("Gewachsen")} />
+              <AbschnittKopf titel={tx("Gewachsen")} />
+              <Flaeche>
+                <div className="px-4 py-3">
               <BalkenListe
                 werte={rueckblick.attribute.map((attribut) => ({
                   schluessel: attribut.attributId,
@@ -131,6 +137,8 @@ export function RueckblickSeite() {
                   farbe: attribut.farbe,
                 }))}
               />
+                </div>
+              </Flaeche>
             </section>
           )}
 
@@ -147,8 +155,9 @@ function WochenZahlen({ rueckblick }: { rueckblick: Rueckblick }) {
   const trend = rueckblick.aktuelleWoche ? null : veraenderung(rueckblick.xp, rueckblick.xpVorwoche);
   return (
     <section>
-      <Ueberschrift titel={tx("Zahlen")} />
-      <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4">
+      <AbschnittKopf titel={tx("Zahlen")} />
+      <Flaeche>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-3 px-4 py-3 sm:grid-cols-4">
         <div>
           <p className="text-xl font-bold text-xp">+{zahl(rueckblick.xp)}</p>
           <p className="text-xs text-leise">XP{trend && ` · ${trend}`}</p>
@@ -172,6 +181,7 @@ function WochenZahlen({ rueckblick }: { rueckblick: Rueckblick }) {
           </p>
         </div>
       </div>
+      </Flaeche>
     </section>
   );
 }
@@ -201,8 +211,9 @@ function RueckblickFormular({ rueckblick }: { rueckblick: Rueckblick }) {
 
   return (
     <section>
-      <Ueberschrift titel={tx("Reflexion")} />
-      <Formular onAbsenden={absenden}>
+      <AbschnittKopf titel={tx("Reflexion")} />
+      <Flaeche>
+      <Formular className="p-4" onAbsenden={absenden}>
         {FRAGEN.map(({ feld, frage }) => (
           <Feld key={feld} label={frage}>
             <textarea
@@ -223,6 +234,7 @@ function RueckblickFormular({ rueckblick }: { rueckblick: Rueckblick }) {
             : tx('Speichern')}
         </Knopf>
       </Formular>
+      </Flaeche>
     </section>
   );
 }

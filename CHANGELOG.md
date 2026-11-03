@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.21
+
+### Geändert
+
+- Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.
+
 ## 3.56.20
 
 ### Geändert

@@ -5,7 +5,7 @@ import type { Rolle } from '../../../../shared/api/zugang.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
+import { AbschnittKopf, EINGABE_STIL, Feld, Fehlermeldung, Flaeche, Formular, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
 import { BenutzernameDialog, type BenutzernameZiel } from './MehrBenutzerAdmin.tsx';
 import { Bereich, PROFIL_ZURUECK } from './rahmen.tsx';
@@ -86,7 +86,7 @@ export function AccountsBereich() {
       titel={tx('Accounts')}
       zurueck={PROFIL_ZURUECK}
       kinder={
-        <div className="space-y-8">
+        <>
           <ZeilenGruppe>
             {konten.map((konto) => (
               <SchnellZeile
@@ -113,10 +113,9 @@ export function AccountsBereich() {
           </ZeilenGruppe>
           {inhaber ? (
             <section>
-              <h2 className="ueberschrift abschnittskopf mb-2 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
-                {tx('Neuer Account')}
-              </h2>
-              <Karte>
+              <AbschnittKopf titel={tx('Neuer Account')} />
+              <Flaeche>
+                <div className="p-4">
                 <Formular
                   onAbsenden={(ereignis) => {
                     ereignis.preventDefault();
@@ -162,11 +161,12 @@ export function AccountsBereich() {
                   </Knopf>
                 </Formular>
                 <Fehlermeldung fehler={fehler ?? anlegen.error} />
-              </Karte>
+                </div>
+              </Flaeche>
             </section>
           ) : null}
           <BenutzernameDialog konto={ziel} onSchliessen={() => setZiel(null)} />
-        </div>
+        </>
       }
     />
   );
