@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.": "В разделах «Ещё», «Аккаунт», «Ориентиры» и «Аккаунты» строки одной высоты. Значения выровнены по правому краю.",
   "Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.": "На остальных страницах один и тот же заголовок раздела. На телефоне списки, таблицы и диаграммы лежат на области во всю ширину.",
   "Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.": "В разделах «История», «Связи» и «Ориентиры» заголовки разделов выглядят одинаково. На телефоне списки занимают всю ширину.",
   "Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.": "Сегодня, История и Статистика называются одинаково в панели, в разделе «Ещё» и в заголовке страницы.",

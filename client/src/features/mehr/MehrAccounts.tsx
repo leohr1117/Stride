@@ -4,7 +4,7 @@ import { Navigate } from 'react-router';
 import type { Rolle } from '../../../../shared/api/zugang.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
-import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
+import { DichteZeilen, Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { AbschnittKopf, EINGABE_STIL, Feld, Fehlermeldung, Flaeche, Formular, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
 import { tx } from '../../text.ts';
 import { BenutzernameDialog, type BenutzernameZiel } from './MehrBenutzerAdmin.tsx';
@@ -86,6 +86,7 @@ export function AccountsBereich() {
       titel={tx('Accounts')}
       zurueck={PROFIL_ZURUECK}
       kinder={
+        <DichteZeilen>
         <>
           <ZeilenGruppe>
             {konten.map((konto) => (
@@ -105,7 +106,7 @@ export function AccountsBereich() {
                     titel={konto.benutzername}
                     neben={nebenzeile(konto)}
                     pfeil={false}
-                    rechts={menue}
+                    menue={menue}
                   />
                 )}
               </SchnellZeile>
@@ -167,6 +168,7 @@ export function AccountsBereich() {
           ) : null}
           <BenutzernameDialog konto={ziel} onSchliessen={() => setZiel(null)} />
         </>
+        </DichteZeilen>
       }
     />
   );

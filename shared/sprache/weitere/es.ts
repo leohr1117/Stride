@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.": "En Más, en Cuenta, en Referentes y en Cuentas, las filas tienen la misma altura. Los valores se alinean a la derecha.",
   "Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.": "Las demás páginas usan el mismo título de sección. En el teléfono, las listas, las tablas y los gráficos están en una superficie a todo el ancho.",
   "Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.": "En Historial, Conexiones y Referentes, los títulos de sección se ven igual. En el teléfono, las listas ocupan todo el ancho.",
   "Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.": "Hoy, Historial y Estadística tienen el mismo nombre en la barra, en Más y en el encabezado.",

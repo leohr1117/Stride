@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.22
+
+### Geändert
+
+- Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.
+
 ## 3.56.21
 
 ### Geändert

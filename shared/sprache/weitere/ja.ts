@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.": "「その他」「アカウント」「お手本」「アカウント一覧」の行は高さが揃います。値は右端で揃います。",
   "Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.": "ほかのページも同じ節の見出しです。スマホでは、一覧、表、グラフが幅いっぱいの面に並びます。",
   "Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.": "履歴、つながり、お手本の節の見出しが同じ見た目です。スマホでは、リストが幅いっぱいに並びます。",
   "Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.": "今日、履歴、統計は、バー、その他、ページ見出しで同じ名前です。",

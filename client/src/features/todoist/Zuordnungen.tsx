@@ -9,6 +9,7 @@ import { Dialog } from '../../components/Dialog.tsx';
 import { Zeile } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
+import { FLAECHEN_RAHMEN } from '../../ui/Flaeche.tsx';
 import { Fehlermeldung, FlaecheInnen, FlaechenRahmen, Knopf, Schalter } from '../../ui/index.ts';
 import { merkeStatus, useTodoistBlick } from './gemeinsam.ts';
 import { ZuordnungBlatt } from './ZuordnungBlatt.tsx';
@@ -30,6 +31,8 @@ import {
 } from './zuordnung.ts';
 
 export const INFO_LABELS = 'Ein Label geht vor dem Projekt. Hat eine Aufgabe mehrere, gilt das oberste.';
+
+const LABEL_FLAECHE = `${FLAECHEN_RAHMEN} bg-transparent px-4 md:overflow-hidden md:rounded-lg md:border md:border-rand md:bg-flaeche md:px-0`;
 
 type Wahl =
   | { art: 'standard' }
@@ -221,6 +224,7 @@ export function TodoistZuordnungen({ status }: { status: TodoistStatus }) {
         </div>
       </FlaechenRahmen>
       <div className="mt-6">
+        <div data-flaeche="" className={LABEL_FLAECHE}>
         <Abschnitt titel="Labels" kennung="todoist-labels" info={INFO_LABELS} anfangEingeklappt>
         <FlaechenRahmen>
           <Spaltenkopf links="Mit Label" />
@@ -262,6 +266,7 @@ export function TodoistZuordnungen({ status }: { status: TodoistStatus }) {
           </button>
         ) : null}
         </Abschnitt>
+        </div>
       </div>
       <ZuordnungBlatt
         key={wahl ? (wahl.art === 'standard' ? 'standard' : `${wahl.art}-${wahl.id}`) : 'zu'}

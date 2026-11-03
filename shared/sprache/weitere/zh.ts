@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.": "在「更多」「账户」「榜样」和「账号」里，各行一样高。数值在右侧对齐。",
   "Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.": "其余页面使用同一种小节标题。在手机上，列表、表格和图表铺在占满整行的底面上。",
   "Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.": "历程、关联和榜样的小节标题看起来一样。在手机上，列表铺满整行宽度。",
   "Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.": "今天、历程和统计在栏、更多和页眉里使用同一个名称。",

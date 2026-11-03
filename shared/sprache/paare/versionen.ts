@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.', 'On More, Account, Role models, and Accounts, the rows share one height. Values line up on the right.'],
   ['Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.', 'The other pages use the same section heading. On a phone, lists, tables, and charts sit on a surface across the full width.'],
   ['Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.', 'On History, Connections, and Role models, the section headings look the same. On a phone, the lists span the full width.'],
   ['Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.', 'Today, History, and Statistics use the same name in the bar, under More, and in the page header.'],

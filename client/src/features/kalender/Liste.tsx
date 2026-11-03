@@ -15,9 +15,9 @@ function zeitpunktText(iso: string | null): string | null {
   return iso ? `${kurzesDatum(iso)}, ${uhrzeit(iso)}` : null;
 }
 
-function Spaltenkopf() {
+function Spaltenkopf({ className = '' }: { className?: string }) {
   return (
-    <div className="flex justify-between px-4 pt-2 pb-1 text-[13px] leading-[18px] text-leise">
+    <div className={`flex justify-between px-4 pt-2 pb-1 text-[13px] leading-[18px] text-leise ${className}`}>
       <span>{tx('Termine in')}</span>
       <span className="pe-7">{tx('zählen als')}</span>
     </div>
@@ -59,29 +59,33 @@ export function KalenderAbschnitt({ kalender }: { kalender: Kalender[] }) {
       <FlaechenRahmen>
         {kalender.length > 0 ? (
           <>
-            <Spaltenkopf />
             <FlaecheInnen>
-              {kalender.map((eintrag) => {
-                const projekt = projekte.find((kandidat) => kandidat.id === eintrag.projektId);
-                const anzeige = kalenderAnzeige({
-                  vorlageId: eintrag.vorlageId,
-                  vorlageName: nameVon(eintrag.vorlageId),
-                  projektId: eintrag.projektId,
-                  standardName: nameVon(projekt?.standardVorlageId ?? null),
-                });
-                const fehler = eintrag.fehler !== null;
-                const archiviert = zeigeProjektArchiviert(eintrag.projektId, projekt ? projekt.aktiv : null);
-                return (
-                  <Zeile
-                    key={eintrag.id}
-                    titel={eintrag.name}
-                    name={satz(eintrag.name, anzeige.text, fehler)}
-                    neben={archiviert ? tx('Projekt archiviert') : fehler ? anzeige.text : undefined}
-                    wert={wertKnoten(anzeige, fehler)}
-                    onKlick={() => setDialog({ kalender: eintrag })}
-                  />
-                );
-              })}
+              <div>
+                <Spaltenkopf className="bg-grund md:bg-transparent" />
+                <div className="liste">
+                  {kalender.map((eintrag) => {
+                    const projekt = projekte.find((kandidat) => kandidat.id === eintrag.projektId);
+                    const anzeige = kalenderAnzeige({
+                      vorlageId: eintrag.vorlageId,
+                      vorlageName: nameVon(eintrag.vorlageId),
+                      projektId: eintrag.projektId,
+                      standardName: nameVon(projekt?.standardVorlageId ?? null),
+                    });
+                    const fehler = eintrag.fehler !== null;
+                    const archiviert = zeigeProjektArchiviert(eintrag.projektId, projekt ? projekt.aktiv : null);
+                    return (
+                      <Zeile
+                        key={eintrag.id}
+                        titel={eintrag.name}
+                        name={satz(eintrag.name, anzeige.text, fehler)}
+                        neben={archiviert ? tx('Projekt archiviert') : fehler ? anzeige.text : undefined}
+                        wert={wertKnoten(anzeige, fehler)}
+                        onKlick={() => setDialog({ kalender: eintrag })}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
             </FlaecheInnen>
             <p className="flex items-center px-4 pt-3 text-[13px] leading-[18px] text-leise">
               <span className="min-w-0">{zeit ? tx('Zuletzt abgeglichen {zeit}', { zeit }) : tx('Noch nicht abgeglichen')}</span>

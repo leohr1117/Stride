@@ -7,7 +7,7 @@ import { erfolgSichtbar, type Sichtbarkeit } from '../../../../shared/spiel/sich
 import { api, SCHLUESSEL, meldeAnmeldungAbgelaufen } from '../../api/index.ts';
 import { AbschnittKopf, Fehlermeldung, Ladeanzeige, Optionsliste } from '../../ui/index.ts';
 import { useBestaetigung } from '../../components/Bestaetigung.tsx';
-import { Liste, Zeile } from '../../components/Zeile.tsx';
+import { DichteZeilen, Liste, Zeile } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
 import { AccountsBereich } from './MehrAccounts.tsx';
@@ -101,6 +101,7 @@ function ProfilListe() {
     <Bereich
       titel={tx("Konto")}
       kinder={
+        <DichteZeilen>
         <>
           <section>
             <AbschnittKopf titel={tx("Profil")} />
@@ -140,6 +141,7 @@ function ProfilListe() {
           </section>
           <Fehlermeldung fehler={abmeldeFehler} />
         </>
+        </DichteZeilen>
       }
     />
   );

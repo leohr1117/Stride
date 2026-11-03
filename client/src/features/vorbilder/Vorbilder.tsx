@@ -17,7 +17,7 @@ import {
 } from '../../../../shared/features/vorbilder/index.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { KlassenBild } from '../../components/KlassenBild.tsx';
-import { Liste, Zeile } from '../../components/Zeile.tsx';
+import { DichteZeilen, Liste, Zeile } from '../../components/Zeile.tsx';
 import { AbschnittKopf, Chip, Fehlermeldung, Ladeanzeige } from '../../ui/index.ts';
 import { prozentText, zahl } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
@@ -92,6 +92,7 @@ export function VorbilderSeite() {
   }
 
   return (
+    <DichteZeilen>
     <div>
       {uebersicht && (
         <p className="flex w-fit min-w-0 items-center gap-1.5 text-sm text-leise">
@@ -155,6 +156,7 @@ export function VorbilderSeite() {
         </Liste>
       </section>
     </div>
+    </DichteZeilen>
   );
 }
 
@@ -192,8 +194,8 @@ function VorbildZeile({
     auswertung.aehnlichkeit !== null
       ? tx('{prozent} ähnlich', { prozent: prozentText(auswertung.aehnlichkeit) })
       : undefined;
-  const zeile = (rechts?: ReactNode) => (
-    <Zeile nach={`/vorbilder/${auswertung.vorbild.schluessel}`} titel={name} name={name} wert={wert} rechts={rechts} />
+  const zeile = (menue?: ReactNode) => (
+    <Zeile nach={`/vorbilder/${auswertung.vorbild.schluessel}`} titel={name} name={name} wert={wert} menue={menue} />
   );
   if (!onFavorit) {
     return zeile();

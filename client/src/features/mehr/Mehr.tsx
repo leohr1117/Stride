@@ -8,7 +8,7 @@ import type { Einstellungen } from '../../../../shared/api/einstellungen.ts';
 import { AKTUELLE_VERSION, VERSIONEN, type Versionseintrag } from '../../../../shared/versionen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { ProfilBild } from '../../components/ProfilBild.tsx';
-import { Liste, Zeile } from '../../components/Zeile.tsx';
+import { DichteZeilen, Liste, Zeile } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { sichtbareGruppen, type NavEintrag } from '../../navigation.ts';
 import { AbschnittKopf, Flaeche, Ladeanzeige } from '../../ui/index.ts';
@@ -50,6 +50,7 @@ export function MehrSeite() {
   }
 
   return (
+    <DichteZeilen>
     <div>
       <section data-abschnitt="seiten">
         <AbschnittKopf titel={tx('Seiten')} />
@@ -80,6 +81,7 @@ export function MehrSeite() {
       </section>
       <WasNeuZeile />
     </div>
+    </DichteZeilen>
   );
 }
 
