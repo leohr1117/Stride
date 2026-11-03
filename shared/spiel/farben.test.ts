@@ -34,6 +34,12 @@ describe('farben', () => {
     bleibtLesbar('#000000', DUNKEL);
   });
 
+  it('hält die Schrift auf dem Hauptknopf über 4,5 und das ausgegraute Grau darunter', () => {
+    expect(kontrast('#f2f2f2', '#141414')).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
+    expect(kontrast('#141414', '#f2f2f2')).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
+    expect(kontrast('#828282', '#ffffff')).toBeLessThan(MINDEST_KONTRAST);
+  });
+
   it('wählt die Schrift nach dem besseren Kontrast', () => {
     expect(kontrast(lesbareSchrift(['#ffffff']), '#ffffff')).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
     expect(kontrast(lesbareSchrift(['#0e0e12']), '#0e0e12')).toBeGreaterThanOrEqual(MINDEST_KONTRAST);

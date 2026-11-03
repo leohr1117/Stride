@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.25',
+    seiten: 'Rückblick, Verbindungen',
+    behoben: 'Rückblick, Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.24',
     seiten: 'Eintrag, Einführung',
     abschnitte: [

@@ -104,6 +104,7 @@ export const PAARE = [
   ['Das Level muss mindestens 1 sein.', 'The level must be at least 1.'],
   ['Nur Aus, Leicht, Mittel oder Stark.', 'Only Off, Light, Medium or Strong.'],
   ['Eine Tätigkeit braucht mindestens ein Attribut.', 'An activity needs at least one attribute.'],
+  ['Schreib zuerst eine Antwort.', 'Write an answer first.'],
   ['Eine Tätigkeit darf höchstens {max} Attribute haben.', 'An activity can have at most {max} attributes.'],
   ['Eine Tätigkeit darf höchstens 6 Attribute haben.', 'An activity can have at most 6 attributes.'],
   ['Jedes Attribut darf nur einmal vorkommen.', 'Each attribute can only appear once.'],

@@ -6,7 +6,7 @@ import { api, SCHLUESSEL } from '../../api/index.ts';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { DichteZeilen, Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { AbschnittKopf, EINGABE_STIL, Feld, Fehlermeldung, Flaeche, Formular, Knopf, Ladeanzeige, PasswortFeld } from '../../ui/index.ts';
-import { tx } from '../../text.ts';
+import { feldLeer, tx } from '../../text.ts';
 import { BenutzernameDialog, type BenutzernameZiel } from './MehrBenutzerAdmin.tsx';
 import { Bereich, PROFIL_ZURUECK } from './rahmen.tsx';
 
@@ -40,6 +40,8 @@ export function AccountsBereich() {
   const [kontoProfil, setKontoProfil] = useState('');
   const [profilGeaendert, setProfilGeaendert] = useState(false);
   const [fehler, setFehler] = useState<unknown>(null);
+  const [nameFeld, setNameFeld] = useState<string | null>(null);
+  const [passwortFeld, setPasswortFeld] = useState<string | null>(null);
   const anlegen = useMutation({
     mutationFn: () =>
       api.erstelleKonto({
@@ -120,11 +122,18 @@ export function AccountsBereich() {
                 <Formular
                   onAbsenden={(ereignis) => {
                     ereignis.preventDefault();
+                    const nameLeer = kontoName.trim() === '';
+                    const passwortLeer = kontoPasswort === '';
+                    setNameFeld(nameLeer ? 'Der Benutzername fehlt.' : null);
+                    setPasswortFeld(passwortLeer ? feldLeer('Passwort') : null);
+                    if (nameLeer || passwortLeer || anlegen.isPending) {
+                      return;
+                    }
                     anlegen.mutate();
                   }}
                   abstand="space-y-3"
                 >
-                  <Feld label={tx('Benutzername')}>
+                  <Feld label={tx('Benutzername')} fehler={nameFeld}>
                     <input
                       className={EINGABE_STIL}
                       autoCapitalize="none"
@@ -134,6 +143,7 @@ export function AccountsBereich() {
                       onChange={(ereignis) => {
                         const wert = ereignis.target.value;
                         setKontoName(wert);
+                        setNameFeld(null);
                         if (!profilGeaendert) {
                           setKontoProfil(wert);
                         }
@@ -155,9 +165,13 @@ export function AccountsBereich() {
                     hinweis={tx('Mindestens 10 Zeichen.')}
                     autoComplete="new-password"
                     value={kontoPasswort}
-                    onChange={(ereignis) => setKontoPasswort(ereignis.target.value)}
+                    fehler={passwortFeld}
+                    onChange={(ereignis) => {
+                      setKontoPasswort(ereignis.target.value);
+                      setPasswortFeld(null);
+                    }}
                   />
-                  <Knopf type="submit" variante="primaer" className="w-full" disabled={anlegen.isPending || kontoName.trim() === '' || kontoPasswort === ''}>
+                  <Knopf type="submit" variante="primaer" className="w-full" aria-busy={anlegen.isPending || undefined}>
                     {tx('Account anlegen')}
                   </Knopf>
                 </Formular>

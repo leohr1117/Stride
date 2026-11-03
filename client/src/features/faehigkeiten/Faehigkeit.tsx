@@ -353,6 +353,7 @@ function KnotenFormular({
   const queryClient = useQueryClient();
   const [titel, setTitel] = useState(bearbeitung.knoten?.titel ?? '');
   const [beschreibung, setBeschreibung] = useState(bearbeitung.knoten?.beschreibung ?? '');
+  const [titelFehler, setTitelFehler] = useState<string | null>(null);
 
   const speichern = useMutation({
     mutationFn: () =>
@@ -367,17 +368,28 @@ function KnotenFormular({
 
   const absenden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
+    if (titel.trim() === '') {
+      setTitelFehler('Der Name darf nicht leer sein.');
+      return;
+    }
+    if (speichern.isPending) {
+      return;
+    }
+    setTitelFehler(null);
     speichern.mutate();
   };
 
   return (
     <Formular onAbsenden={absenden}>
-      <Feld label={tx("Titel")}>
+      <Feld label={tx("Titel")} fehler={titelFehler}>
         <input
           className={EINGABE_STIL}
           value={titel}
           maxLength={GRENZEN.nameMax}
-          onChange={(ereignis) => setTitel(ereignis.target.value)}
+          onChange={(ereignis) => {
+            setTitel(ereignis.target.value);
+            setTitelFehler(null);
+          }}
           autoFocus
         />
       </Feld>
@@ -390,7 +402,7 @@ function KnotenFormular({
         />
       </Feld>
       <Fehlermeldung fehler={speichern.error} />
-      <Knopf type="submit" variante="primaer" className="w-full" disabled={!titel.trim() || speichern.isPending}>
+      <Knopf type="submit" variante="primaer" className="w-full" aria-busy={speichern.isPending || undefined}>
         {tx("Speichern")}
       </Knopf>
     </Formular>

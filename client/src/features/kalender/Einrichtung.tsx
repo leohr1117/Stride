@@ -8,7 +8,7 @@ import { AuswahlBlatt } from '../../components/AuswahlBlatt.tsx';
 import { HierarchieWahl } from '../../components/HierarchieWahl.tsx';
 import { gliedereProjekte, wahlBaum } from '../../projektHierarchie.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
-import { tx } from '../../text.ts';
+import { feldLeer, tx } from '../../text.ts';
 import { EINGABE_STIL, Fehlermeldung, Feld, Formular, InfoHinweis, Knopf } from '../../ui/index.ts';
 import { ANBIETER, KalenderAnleitung, type KalenderAnbieter } from './anleitung.tsx';
 import {
@@ -84,6 +84,9 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
   const [projektId, setProjektId] = useState<number | null>(kalender?.projektId ?? null);
   const [vorlageId, setVorlageId] = useState<number | null>(kalender?.vorlageId ?? null);
   const [filter, setFilter] = useState(kalender?.filter ?? '');
+  const [adresseFehler, setAdresseFehler] = useState<string | null>(null);
+  const [nameFehler, setNameFehler] = useState<string | null>(null);
+  const [zuordnungFehler, setZuordnungFehler] = useState<string | null>(null);
   const gewaehltesProjekt = projekteAn ? projektId : (kalender?.projektId ?? null);
   const projektName = projekte.find((projekt) => projekt.id === gewaehltesProjekt)?.name ?? null;
   const wirksameVorlageId = passendeVorlage(taetigkeiten, vorlageId, gewaehltesProjekt);
@@ -100,10 +103,12 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
     onFertig();
   };
   const setzeVorlage = (id: number | null) => {
+    setZuordnungFehler(null);
     setVorlageId(id);
     spurSetzen(vorlageFeld, id === null ? '' : String(id));
   };
   const setzeProjekt = (id: number | null) => {
+    setZuordnungFehler(null);
     const naechste = passendeVorlage(taetigkeiten, vorlageId, id);
     setProjektId(id);
     setVorlageId(naechste);
@@ -130,22 +135,27 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
     },
     onSuccess: fertig,
   });
-  const kannSpeichern =
-    name.trim() !== '' &&
-    (gewaehltesProjekt !== null || wirksameVorlageId !== null) &&
-    (kalender !== null || (vorschau !== null && adresse.trim() !== '')) &&
-    !speichern.isPending;
   const absenden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
     if (kalender === null && vorschau === null) {
-      if (adresse.trim() !== '' && !pruefen.isPending) {
+      if (adresse.trim() === '') {
+        setAdresseFehler(feldLeer('iCal-Adresse'));
+        return;
+      }
+      if (!pruefen.isPending) {
+        setAdresseFehler(null);
         pruefen.mutate();
       }
       return;
     }
-    if (kannSpeichern) {
-      speichern.mutate();
+    const nameLeer = name.trim() === '';
+    const ohneZuordnung = gewaehltesProjekt === null && wirksameVorlageId === null;
+    setNameFehler(nameLeer ? 'Der Name darf nicht leer sein.' : null);
+    setZuordnungFehler(ohneZuordnung ? 'Wähle eine Tätigkeit.' : null);
+    if (nameLeer || ohneZuordnung || speichern.isPending) {
+      return;
     }
+    speichern.mutate();
   };
   const zuordnung = (
     <>
@@ -156,6 +166,7 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
             <InfoHinweis name="Zählt als" text="Die XP richtet sich nach der Dauer des Termins." />
           </span>
         }
+        fehler={zuordnungFehler}
       >
         <AuswahlBlatt
           modus="einzeln"
@@ -206,13 +217,16 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
     </>
   );
   const nameFeld = (fokus: boolean) => (
-    <Feld label="Name">
+    <Feld label="Name" fehler={nameFehler}>
       <input
         className={EINGABE_STIL}
         value={name}
         maxLength={GRENZEN.nameMax}
         autoFocus={fokus}
-        onChange={(ereignis) => setName(ereignis.target.value)}
+        onChange={(ereignis) => {
+          setName(ereignis.target.value);
+          setNameFehler(null);
+        }}
       />
     </Feld>
   );
@@ -232,7 +246,7 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
           {anbieter ? <KalenderAnleitung anbieter={anbieter} /> : null}
           {anbieter ? (
             <>
-              <Feld label="iCal-Adresse">
+              <Feld label="iCal-Adresse" fehler={adresseFehler}>
                 <input
                   className={EINGABE_STIL}
                   type="url"
@@ -240,6 +254,7 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
                   value={adresse}
                   onChange={(ereignis) => {
                     setAdresse(ereignis.target.value);
+                    setAdresseFehler(null);
                     setVorschau(null);
                   }}
                 />
@@ -249,8 +264,18 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
                 type="button"
                 variante="primaer"
                 className="w-full"
-                disabled={adresse.trim() === '' || pruefen.isPending}
-                onClick={() => pruefen.mutate()}
+                aria-busy={pruefen.isPending || undefined}
+                onClick={() => {
+                  if (adresse.trim() === '') {
+                    setAdresseFehler(feldLeer('iCal-Adresse'));
+                    return;
+                  }
+                  if (pruefen.isPending) {
+                    return;
+                  }
+                  setAdresseFehler(null);
+                  pruefen.mutate();
+                }}
               >
                 {pruefen.isPending ? tx('Prüfe …') : tx('Prüfen')}
               </Knopf>
@@ -267,7 +292,7 @@ export function KalenderFormular({ kalender, onFertig }: { kalender: Kalender | 
       )}
       <Fehlermeldung fehler={speichern.error} />
       {(kalender || vorschau) && (
-        <Knopf type="submit" variante="primaer" className="w-full" disabled={!kannSpeichern}>
+        <Knopf type="submit" variante="primaer" className="w-full" aria-busy={speichern.isPending || undefined}>
           {speichern.isPending ? tx('Prüfe …') : tx('Speichern')}
         </Knopf>
       )}

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.25
+
+### Behoben
+
+- Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.
+
 ## 3.56.24
 
 ### Geändert

@@ -1,5 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "Enregistrer et Connecter restent bien lisibles. S'il manque une saisie, l'erreur s'affiche sur le champ.",
+  "Schreib zuerst eine Antwort.": "Écris d'abord une réponse.",
   "Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.": "Quand tu enregistres, l'activité, l'objectif et la compétence tiennent chacun sur une ligne. Les champs des feuilles ont la même hauteur, et dans l'introduction Continuer se place juste en dessous.",
   "Im Verlauf und bei den Zielen sind die Zeilen gleich hoch. Die XP-Werte im Verlauf stehen rechts bündig.": "Dans Historique et dans Objectifs, les lignes ont la même hauteur. Les valeurs d'XP dans Historique s'alignent à droite.",
   "Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.": "Dans Plus, dans Compte, dans Modèles et dans Comptes, les lignes ont la même hauteur. Les valeurs s'alignent à droite.",

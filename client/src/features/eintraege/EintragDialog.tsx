@@ -536,7 +536,7 @@ export function EintragDialog({
 
         <Fehlermeldung fehler={eintragen.error} />
 
-        <Knopf type="submit" variante="primaer" className="w-full py-3 text-base" disabled={eintragen.isPending}>
+        <Knopf type="submit" variante="primaer" className="w-full py-3 text-base" aria-busy={eintragen.isPending || undefined}>
           {eintragen.isPending ? tx("Wird eingetragen …") : eintragAktion(nachtragen, zahl(basisXp(formular.stunden)), istMeilenstein)}
         </Knopf>
       </FormularKasten>

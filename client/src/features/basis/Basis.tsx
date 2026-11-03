@@ -247,6 +247,9 @@ export function BasisFormular({
   const [projektId, setProjektId] = useState<number | null>(aufgabe?.projektId ?? projektVorgabe);
   const [vorlageId, setVorlageId] = useState<number | null>(aufgabe?.vorlageId ?? null);
   const [dauerText, setDauerText] = useState(aufgabe?.stunden == null ? '' : String(aufgabe.stunden));
+  const [nameFehler, setNameFehler] = useState<string | null>(null);
+  const [taetigkeitFehler, setTaetigkeitFehler] = useState<string | null>(null);
+  const [dauerErzwungen, setDauerErzwungen] = useState(false);
   const dauer = dauerTextZuZahl(dauerText);
   const stunden = dauer.stunden;
   const wirksameProjektId = ebenen.projekte ? projektId : null;
@@ -280,18 +283,32 @@ export function BasisFormular({
 
   const absenden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
+    const nameLeer = name.trim() === '';
+    const ohneZuordnung = wirksameProjektId === null && wirksameVorlageId === null;
+    setNameFehler(nameLeer ? 'Der Name darf nicht leer sein.' : null);
+    setTaetigkeitFehler(ohneZuordnung ? 'Wähle eine Tätigkeit.' : null);
+    setDauerErzwungen(dauer.unfertig);
+    if (nameLeer || ohneZuordnung || dauer.fehler !== null || dauer.unfertig || speichern.isPending) {
+      if (!nameLeer && (dauer.fehler !== null || dauer.unfertig)) {
+        ereignis.currentTarget.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      }
+      return;
+    }
     speichern.mutate();
   };
   const zuordnungHinweis = fehlendeZuordnung({ ebene: 'vorhaben', ebenen, projektId: wirksameProjektId });
 
   return (
     <Formular onAbsenden={absenden}>
-      <Feld label={tx("Name")}>
+      <Feld label={tx("Name")} fehler={nameFehler}>
         <input
           className={EINGABE_STIL}
           value={name}
           maxLength={GRENZEN.nameMax}
-          onChange={(ereignis) => setName(ereignis.target.value)}
+          onChange={(ereignis) => {
+            setName(ereignis.target.value);
+            setNameFehler(null);
+          }}
           autoFocus
         />
       </Feld>
@@ -327,11 +344,14 @@ export function BasisFormular({
             {zuordnungHinweis && <p className="text-xs text-leise">{zuordnungHinweis}</p>}
           </Feld>
       )}
-      <Feld label={tx("Tätigkeit")}>
+      <Feld label={tx("Tätigkeit")} fehler={taetigkeitFehler}>
           <select
             className={EINGABE_STIL}
             value={wirksameVorlageId ?? ''}
-            onChange={(ereignis) => setVorlageId(ereignis.target.value ? Number(ereignis.target.value) : null)}
+            onChange={(ereignis) => {
+              setTaetigkeitFehler(null);
+              setVorlageId(ereignis.target.value ? Number(ereignis.target.value) : null);
+            }}
           >
             {wirksameProjektId !== null ? (
               <option value="">{tx("Standard des Projekts")}</option>
@@ -350,7 +370,10 @@ export function BasisFormular({
       <VorschlagFeld
         label="Dauer"
         text={dauerText}
-        onText={setDauerText}
+        onText={(wert) => {
+          setDauerErzwungen(false);
+          setDauerText(wert);
+        }}
         eigenLabel="Eigene"
         einheit={tx('Std')}
         eingabeModus="decimal"
@@ -363,7 +386,7 @@ export function BasisFormular({
             name: tx(option.label),
           })),
         ]}
-        fehler={dauer.fehler}
+        fehler={dauer.fehler ?? (dauerErzwungen && dauer.unfertig ? tx('Die Dauer muss mindestens {min} Stunden sein.', { min: String(GRENZEN.stundenMin) }) : null)}
         bereinige={bereinigeDauer}
       />
       <Fehlermeldung fehler={speichern.error} />
@@ -371,7 +394,7 @@ export function BasisFormular({
         type="submit"
         variante="primaer"
         className="w-full"
-        disabled={!name.trim() || (wirksameProjektId === null && wirksameVorlageId === null) || dauer.fehler !== null || dauer.unfertig || speichern.isPending}
+        aria-busy={speichern.isPending || undefined}
       >
         {tx("Speichern")}
       </Knopf>

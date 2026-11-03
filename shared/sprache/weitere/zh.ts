@@ -1,5 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "「保存」和「连接」保持清晰可读。缺少输入时，错误显示在字段旁。",
+  "Schreib zuerst eine Antwort.": "请先写一条回答。",
   "Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.": "记录时，活动、目标和技能各自占一行。表单里的字段一样高，引导里的「继续」紧挨在下面。",
   "Im Verlauf und bei den Zielen sind die Zeilen gleich hoch. Die XP-Werte im Verlauf stehen rechts bündig.": "在「历程」和「目标」里，各行一样高。「历程」里的 XP 数值在右侧对齐。",
   "Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.": "在「更多」「账户」「榜样」和「账号」里，各行一样高。数值在右侧对齐。",

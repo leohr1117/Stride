@@ -33,6 +33,7 @@ test('Speichern steht unter dem letzten Feld', async ({ page }, info) => {
   const speichern = page.getByRole('button', { name: /^Speichern/ });
   await feld.scrollIntoViewIfNeeded();
   await expect(speichern).toBeVisible();
+  await expect(speichern).toBeEnabled();
   const knopf = await speichern.boundingBox();
   const kasten = await feld.boundingBox();
   expect(knopf && kasten).toBeTruthy();

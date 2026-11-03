@@ -30,9 +30,14 @@ export function FokusSeite() {
   const geaendert = Boolean(data) && !gleicheFokus(fokus, data?.fokus ?? []) && fokus.length > 0;
   const senden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
-    if (geaendert) {
-      speichern.mutate({ fokus: [...fokus] });
+    if (fokus.length === 0) {
+      ereignis.currentTarget.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      return;
     }
+    if (!geaendert || speichern.isPending) {
+      return;
+    }
+    speichern.mutate({ fokus: [...fokus] });
   };
   const leer = fokus.length === 0;
   if (isPending) {
@@ -55,7 +60,7 @@ export function FokusSeite() {
             </p>
           ) : null}
           <FokusVorschau fokus={fokus} />
-          <Knopf type="submit" variante="primaer" className="w-full" disabled={!geaendert || speichern.isPending}>
+          <Knopf type="submit" variante="primaer" className="w-full" aria-busy={speichern.isPending || undefined}>
             {tx("Speichern")}
           </Knopf>
           <p className="text-[13px] leading-[18px] text-leise">{tx(FOKUS_KURZ)}</p>
@@ -133,10 +138,16 @@ export function PasswortSeite() {
     if (neu !== wiederholung) {
       naechstes.wiederholung = PASSWORT_ABWEICHUNG;
     }
-    if (naechstes.neu || naechstes.wiederholung) {
+    if (bisher === '') {
+      naechstes.bisher = PASSWORT_FEHLT;
+    }
+    if (naechstes.bisher || naechstes.neu || naechstes.wiederholung) {
       setGespeichert(false);
       setFeldFehler(naechstes);
       setFehler(null);
+      return;
+    }
+    if (aendern.isPending) {
       return;
     }
     setFeldFehler({ bisher: null, neu: null, wiederholung: null });
@@ -190,7 +201,7 @@ export function PasswortSeite() {
               setFeldFehler((stand) => ({ ...stand, wiederholung: null }));
             }}
           />
-          <Knopf type="submit" variante="primaer" className="w-full" disabled={bisher === '' || neu === '' || aendern.isPending}>
+          <Knopf type="submit" variante="primaer" className="w-full" aria-busy={aendern.isPending || undefined}>
             {tx("Passwort ändern")}
           </Knopf>
           {gespeichert && <p className="text-sm text-leise">{tx("Passwort gespeichert.")}</p>}

@@ -114,8 +114,11 @@ export function HeuteKarte() {
               <Knopf
                 variante="primaer"
                 className="min-h-11 shrink-0 whitespace-nowrap px-3"
-                disabled={einsetzen.isPending}
-                onClick={() => einsetzen.mutate()}
+                aria-busy={einsetzen.isPending || undefined}
+                onClick={() => {
+                  if (einsetzen.isPending) return;
+                  einsetzen.mutate();
+                }}
               >
                 {tx("Einsetzen")}
               </Knopf>

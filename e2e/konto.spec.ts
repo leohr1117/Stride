@@ -147,7 +147,9 @@ test('Konto gruppiert Profil und Anmeldung', async ({ page }, testInfo) => {
     await expect(page.getByRole('radio', { name: /In etwas besser werden/ })).toBeVisible();
     await expect(page.getByRole('radio', { name: /Einfach festhalten/ })).toBeVisible();
     await expect(page.getByRole('radio')).toHaveCount(4);
-    await expect(page.getByRole('button', { name: 'Speichern' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Speichern' })).toBeEnabled();
+    await page.getByRole('button', { name: 'Speichern' }).click();
+    await expect(page.getByRole('heading', { name: 'Was willst du erreichen?', level: 1 })).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
     await bild('ziel');
     await page.locator('a[data-zurueck]').click();
@@ -164,7 +166,10 @@ test('Konto gruppiert Profil und Anmeldung', async ({ page }, testInfo) => {
     await expect(pflicht).toContainText('Wähle mindestens einen Fokus.');
     await expect(gruppe).toHaveAttribute('aria-invalid', 'true');
     await expect(gruppe).toHaveAttribute('aria-describedby', 'fokus-pflicht');
-    await expect(page.getByRole('button', { name: 'Speichern' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Speichern' })).toBeEnabled();
+    await page.getByRole('button', { name: 'Speichern' }).click();
+    await expect(pflicht).toContainText('Wähle mindestens einen Fokus.');
+    await expect(gruppe).toBeFocused();
     await ohneSeitlichenUeberlauf(page);
     await bild('fokus');
     await page.locator('a[data-zurueck]').click();

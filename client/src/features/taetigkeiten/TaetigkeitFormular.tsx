@@ -42,6 +42,8 @@ export function TaetigkeitFormular({
   const giltRef = useRef<HTMLInputElement>(null);
   const { data: attribute = [] } = useQuery({ queryKey: SCHLUESSEL.attribute, queryFn: api.attribute });
   const [name, setName] = useState(vorlage?.name ?? '');
+  const [nameFehler, setNameFehler] = useState<string | null>(null);
+  const [attributFehler, setAttributFehler] = useState(false);
   const [icon, setIcon] = useState<IconName>((vorlage?.icon as IconName | undefined) ?? 'sparkles');
   const [gewichte, setGewichte] = useState<Map<number, number>>(
     () => new Map((vorlage?.gewichte ?? []).map((gewicht) => [gewicht.attributId, gewicht.gewicht])),
@@ -91,6 +93,7 @@ export function TaetigkeitFormular({
   });
 
   const setzeGewicht = (attributId: number, wert: number) => {
+    setAttributFehler(false);
     setGewichte((aktuell) => new Map(aktuell).set(attributId, wert));
   };
 
@@ -104,17 +107,27 @@ export function TaetigkeitFormular({
 
   const absenden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
+    const nameLeer = name.trim() === '';
+    const ohneAttribut = gewaehlt.length === 0;
+    setNameFehler(nameLeer ? 'Der Name darf nicht leer sein.' : null);
+    setAttributFehler(ohneAttribut);
+    if (nameLeer || ohneAttribut || zuViele || speichern.isPending) {
+      return;
+    }
     speichern.mutate();
   };
 
   return (
     <Formular onAbsenden={absenden}>
-      <Feld label={tx("Name")}>
+      <Feld label={tx("Name")} fehler={nameFehler}>
         <input
           className={EINGABE_STIL}
           value={name}
           maxLength={GRENZEN.nameMax}
-          onChange={(ereignis) => setName(ereignis.target.value)}
+          onChange={(ereignis) => {
+            setName(ereignis.target.value);
+            setNameFehler(null);
+          }}
           autoFocus
         />
       </Feld>
@@ -159,18 +172,18 @@ export function TaetigkeitFormular({
         ))}
       </div>
 
-      {zuViele && (
+      {zuViele || attributFehler ? (
         <p className="feld-fehler text-[13px] leading-[18px] break-words text-gefahr" role="alert">
           <span aria-hidden="true">⚠ </span>
-          {tx('Höchstens {max} Attribute pro Tätigkeit.', { max: GRENZEN.vorlageAttributeMax })}
+          {tx(zuViele ? 'Höchstens {max} Attribute pro Tätigkeit.' : 'Eine Tätigkeit braucht mindestens ein Attribut.', { max: GRENZEN.vorlageAttributeMax })}
         </p>
-      )}
+      ) : null}
       <Fehlermeldung fehler={speichern.error} />
       <Knopf
         type="submit"
         variante="primaer"
         className="w-full"
-        disabled={!name.trim() || gewaehlt.length === 0 || zuViele || speichern.isPending}
+        aria-busy={speichern.isPending || undefined}
       >
         {tx("Speichern")}
       </Knopf>

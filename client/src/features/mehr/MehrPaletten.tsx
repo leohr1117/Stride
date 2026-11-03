@@ -137,7 +137,7 @@ function PalettenFormular({
           <span className="min-w-0 break-words text-sm">{name.trim() || tx('Palette')}</span>
         </div>
         <Fehlermeldung fehler={fehler} />
-        <Knopf type="submit" variante="primaer" disabled={speichert}>
+        <Knopf type="submit" variante="primaer" aria-busy={speichert || undefined}>
           {tx("Speichern")}
         </Knopf>
       </Formular>

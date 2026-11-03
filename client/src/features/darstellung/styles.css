@@ -410,6 +410,7 @@ html[data-eingabe='zeiger'] :focus {
   .seite-einblenden,
   .dialog-fenster,
   .knopf,
+  .knopf .animate-spin,
   .bossring-bogen {
     animation: none;
     transition: none;

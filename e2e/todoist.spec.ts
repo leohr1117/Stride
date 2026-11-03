@@ -47,6 +47,22 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
   await expect(page.getByRole('link', { name: 'Token in Todoist öffnen' })).toHaveAttribute('href', TOKEN_SEITE);
   await page.screenshot({ path: `tmp-test/todoist/todoist-token-${info.project.name}.png`, fullPage: true });
 
+  const token = page.getByRole('textbox', { name: 'API-Token' });
+  const verbinden = page.getByRole('button', { name: 'Verbinden', exact: true });
+  await expect(verbinden).toBeEnabled();
+  await expect(verbinden).toHaveCSS('opacity', '1');
+  await verbinden.click();
+  await expect(token).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.getByRole('alert')).toContainText('darf nicht leer sein');
+  await expect(token).toBeFocused();
+  const knopfKasten = await verbinden.boundingBox();
+  const feldKasten = await token.boundingBox();
+  expect(knopfKasten && feldKasten).toBeTruthy();
+  if (knopfKasten && feldKasten) {
+    expect(knopfKasten.height).toBeGreaterThanOrEqual(48);
+    expect(Math.abs(knopfKasten.width - feldKasten.width)).toBeLessThanOrEqual(2);
+  }
+
   const vorschauAufrufe: string[] = [];
   page.on('request', (anfrage) => {
     if (anfrage.url().includes('/todoist/vorschau')) {

@@ -65,6 +65,7 @@ export function FokusWahl({
       aria-label={tx('Fokus')}
       aria-invalid={ungueltig || undefined}
       aria-describedby={fehlerId}
+      tabIndex={ungueltig ? -1 : undefined}
       className="space-y-2"
     >
       {FOKUS_LISTE.map((info) => {

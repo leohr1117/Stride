@@ -13,6 +13,11 @@ export function tx(text: string, werte?: Record<string, string | number>): strin
   return zeige(text, aktiveSprache(), werte);
 }
 
+/** Leeres Pflichtfeld. `feld` ist der deutsche Name und wird mitübersetzt. */
+export function feldLeer(feld: string): string {
+  return tx('{feld} darf nicht leer sein.', { feld: tx(feld) });
+}
+
 /** Katalogname eines Attributs. Eigene Namen bleiben. */
 export function attributName(eintrag: { kennung?: string | null; name: string }): string {
   return zeigeAttributName(eintrag, aktiveSprache());

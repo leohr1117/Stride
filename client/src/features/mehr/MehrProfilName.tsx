@@ -11,6 +11,7 @@ import { FormularSeite, PROFIL_ZURUECK, useEinstellungen } from './rahmen.tsx';
 export function NameSeite() {
   const { data, error, isPending, speichern } = useEinstellungen();
   const [profilname, setProfilname] = useState('');
+  const [nameFehler, setNameFehler] = useState<string | null>(null);
   useEffect(() => {
     if (data) {
       setProfilname(data.charakterName);
@@ -19,9 +20,15 @@ export function NameSeite() {
   const senden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
     const name = profilname.trim();
-    if (name !== '' && name !== data?.charakterName) {
-      speichern.mutate({ charakterName: name });
+    if (name === '') {
+      setNameFehler('Der Name darf nicht leer sein.');
+      return;
     }
+    setNameFehler(null);
+    if (speichern.isPending || name === data?.charakterName) {
+      return;
+    }
+    speichern.mutate({ charakterName: name });
   };
   if (isPending) {
     return <FormularSeite titel={tx("Profilname")} zurueck={PROFIL_ZURUECK} kinder={<Ladeanzeige />} />;
@@ -35,20 +42,18 @@ export function NameSeite() {
       zurueck={PROFIL_ZURUECK}
       kinder={
         <Formular onAbsenden={senden}>
-          <Feld label={tx("Profilname")}>
+          <Feld label={tx("Profilname")} fehler={nameFehler}>
             <input
               className={EINGABE_STIL}
               value={profilname}
               maxLength={PROFILNAME_MAX}
-              onChange={(ereignis) => setProfilname(ereignis.target.value)}
+              onChange={(ereignis) => {
+                setProfilname(ereignis.target.value);
+                setNameFehler(null);
+              }}
             />
           </Feld>
-          <Knopf
-            type="submit"
-            variante="primaer"
-            className="w-full"
-            disabled={speichern.isPending || profilname.trim() === '' || profilname.trim() === data.charakterName}
-          >
+          <Knopf type="submit" variante="primaer" className="w-full" aria-busy={speichern.isPending || undefined}>
             {tx("Speichern")}
           </Knopf>
           <Fehlermeldung fehler={speichern.error} />
@@ -82,9 +87,14 @@ export function JahrSeite() {
   const geaendert = Boolean(data) && jahrOk && jahr !== data?.geburtsjahr;
   const senden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
-    if (geaendert) {
-      speichern.mutate({ geburtsjahr: jahr });
+    if (!jahrOk) {
+      ereignis.currentTarget.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      return;
     }
+    if (!geaendert || speichern.isPending) {
+      return;
+    }
+    speichern.mutate({ geburtsjahr: jahr });
   };
   if (isPending) {
     return <FormularSeite titel={tx("Geburtsjahr")} zurueck={PROFIL_ZURUECK} kinder={<Ladeanzeige />} />;
@@ -113,7 +123,7 @@ export function JahrSeite() {
               onChange={(ereignis) => setJahrText(ereignis.target.value)}
             />
           </Feld>
-          <Knopf type="submit" variante="primaer" className="w-full" disabled={!geaendert || speichern.isPending}>
+          <Knopf type="submit" variante="primaer" className="w-full" aria-busy={speichern.isPending || undefined}>
             {tx("Speichern")}
           </Knopf>
           <Fehlermeldung fehler={speichern.error} />
@@ -135,7 +145,7 @@ export function ZielSeite() {
   const geaendert = ziel !== null && ziel !== data?.zielstrebigkeit;
   const senden = async (ereignis: FormEvent) => {
     ereignis.preventDefault();
-    if (!geaendert || !data || !ziel) {
+    if (speichern.isPending || !geaendert || !data || !ziel) {
       return;
     }
     const hinweis = hinweisAusblenden(data.ebenen, ebenenFuerStufe(ziel), data.ebenenZahlen);
@@ -157,7 +167,7 @@ export function ZielSeite() {
       kinder={
         <Formular onAbsenden={(ereignis) => void senden(ereignis)}>
           <ZielWahl wert={ziel} onAendern={setZiel} />
-          <Knopf type="submit" variante="primaer" className="w-full" disabled={!geaendert || speichern.isPending}>
+          <Knopf type="submit" variante="primaer" className="w-full" aria-busy={speichern.isPending || undefined}>
             {tx("Speichern")}
           </Knopf>
           <Fehlermeldung fehler={speichern.error} />

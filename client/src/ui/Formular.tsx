@@ -1,4 +1,4 @@
-import { Check, ChevronDown, Eye, EyeOff } from 'lucide-react';
+import { Check, ChevronDown, Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import {
   Children,
   cloneElement,
@@ -85,14 +85,22 @@ export function Formular({
 export function Knopf({
   variante = 'sekundaer',
   className = '',
+  children,
+  disabled,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variante?: KnopfVariante }) {
+  const primaer = variante === 'primaer';
+  const beschaeftigt = primaer && (props['aria-busy'] === true || props['aria-busy'] === 'true');
   return (
     <button
       type="button"
-      className={`knopf knopf-${variante} inline-flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${KNOPF_STIL[variante]} ${className}`}
+      disabled={beschaeftigt || (!primaer && disabled)}
+      className={`knopf knopf-${variante} inline-flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition ${primaer ? '' : 'disabled:cursor-not-allowed disabled:opacity-50'} ${KNOPF_STIL[variante]} ${className}`}
       {...props}
-    />
+    >
+      {beschaeftigt ? <LoaderCircle className="size-4 shrink-0 animate-spin" aria-hidden="true" /> : null}
+      {children}
+    </button>
   );
 }
 

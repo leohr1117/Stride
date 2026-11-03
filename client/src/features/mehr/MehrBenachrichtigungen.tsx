@@ -285,7 +285,7 @@ function Inhalt({ stand }: { stand: HinweisStand }) {
                 <Knopf type="button" onClick={schliessenWieEsc}>
                   {tx('Abbrechen')}
                 </Knopf>
-                <Knopf type="submit" variante="primaer" disabled={ruhe.isPending}>
+                <Knopf type="submit" variante="primaer" aria-busy={ruhe.isPending || undefined}>
                   {tx('Speichern')}
                 </Knopf>
               </div>

@@ -19,6 +19,7 @@ export function FaehigkeitFormular({
   const [beschreibung, setBeschreibung] = useState(faehigkeit?.beschreibung ?? '');
   const [farbe, setFarbe] = useState(faehigkeit?.farbe ?? FARBEN[1]);
   const [icon, setIcon] = useState<IconName>((faehigkeit?.icon as IconName | undefined) ?? 'code');
+  const [nameFehler, setNameFehler] = useState<string | null>(null);
 
   const speichern = useMutation({
     mutationFn: () => {
@@ -36,17 +37,28 @@ export function FaehigkeitFormular({
 
   const absenden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
+    if (name.trim() === '') {
+      setNameFehler('Der Name darf nicht leer sein.');
+      return;
+    }
+    if (speichern.isPending) {
+      return;
+    }
+    setNameFehler(null);
     speichern.mutate();
   };
 
   return (
     <Formular onAbsenden={absenden}>
-      <Feld label={tx("Titel")}>
+      <Feld label={tx("Titel")} fehler={nameFehler}>
         <input
           className={EINGABE_STIL}
           value={name}
           maxLength={GRENZEN.nameMax}
-          onChange={(ereignis) => setName(ereignis.target.value)}
+          onChange={(ereignis) => {
+            setName(ereignis.target.value);
+            setNameFehler(null);
+          }}
           autoFocus
         />
       </Feld>
@@ -65,7 +77,7 @@ export function FaehigkeitFormular({
         <Farbauswahl wert={farbe} onAendern={setFarbe} />
       </Feld>
       <Fehlermeldung fehler={speichern.error} />
-      <Knopf type="submit" variante="primaer" className="w-full" disabled={!name.trim() || speichern.isPending}>
+      <Knopf type="submit" variante="primaer" className="w-full" aria-busy={speichern.isPending || undefined}>
         {tx("Speichern")}
       </Knopf>
     </Formular>

@@ -1,5 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "「保存」と「つなぐ」は読みやすいままです。入力がないとき、エラーは欄に出ます。",
+  "Schreib zuerst eine Antwort.": "先に答えを書いてください。",
   "Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.": "記録するとき、活動・目標・スキルはそれぞれ1行に並びます。シートの欄は高さが揃い、導入の「次へ」はすぐ下に来ます。",
   "Im Verlauf und bei den Zielen sind die Zeilen gleich hoch. Die XP-Werte im Verlauf stehen rechts bündig.": "「履歴」と「目標」の行は高さが揃います。「履歴」の XP の値は右端で揃います。",
   "Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.": "「その他」「アカウント」「お手本」「アカウント一覧」の行は高さが揃います。値は右端で揃います。",

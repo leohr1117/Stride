@@ -182,6 +182,13 @@ export function AttributFormular({
 
   const absenden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
+    if (!verfallOk) {
+      ereignis.currentTarget.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      return;
+    }
+    if (speichern.isPending) {
+      return;
+    }
     speichern.mutate();
   };
 
@@ -249,7 +256,7 @@ export function AttributFormular({
         )}
       </div>
       <Fehlermeldung fehler={speichern.error} />
-      <Knopf type="submit" variante="primaer" className="w-full" disabled={!verfallOk || speichern.isPending}>
+      <Knopf type="submit" variante="primaer" className="w-full" aria-busy={speichern.isPending || undefined}>
         {tx("Speichern")}
       </Knopf>
     </Formular>

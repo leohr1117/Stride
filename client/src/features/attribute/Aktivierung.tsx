@@ -1,6 +1,6 @@
 import { tx } from '../../text.ts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import type { AktivierungsModus, Attribut } from '../../../../shared/api/index.ts';
 import type { AttributVorlage } from '../../../../shared/features/attribute/attributKatalog.ts';
 import { GRENZEN } from '../../../../shared/spiel/begriffe.ts';
@@ -35,10 +35,18 @@ export function Aktivierung({
   onFertig: () => void;
 }) {
   const queryClient = useQueryClient();
+  const wurzel = useRef<HTMLDivElement>(null);
   const [modus, setModus] = useState<AktivierungsModus>('behalten');
   const [level, setLevel] = useState('');
+  const [levelGezeigt, setLevelGezeigt] = useState(false);
   const levelZahl = /^\d+$/.test(level) ? Number(level) : Number.NaN;
   const levelGueltig = Number.isInteger(levelZahl) && levelZahl >= 1 && levelZahl <= GRENZEN.visionLevelMax;
+  useLayoutEffect(() => {
+    if (!levelGezeigt || levelGueltig) {
+      return;
+    }
+    wurzel.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+  }, [levelGezeigt, levelGueltig]);
   const schaetzung = LEVEL_SCHAETZUNG.map((stufe) => ({
     id: String(stufe),
     wert: String(stufe),
@@ -72,7 +80,7 @@ export function Aktivierung({
   });
 
   return (
-    <div className="space-y-3 border-t border-rand pt-3">
+    <div ref={wurzel} className="space-y-3 border-t border-rand pt-3">
       <div className="space-y-1.5">
         {optionen.map((option) => (
           <label key={option.wert} className="flex cursor-pointer items-center gap-2 text-sm">
@@ -95,9 +103,9 @@ export function Aktivierung({
           optionen={schaetzung}
           fokus
           fehler={
-            level === '' || levelGueltig
+            !levelGezeigt || levelGueltig
               ? null
-              : levelZahl < 1 || !Number.isInteger(levelZahl)
+              : level === '' || levelZahl < 1 || !Number.isInteger(levelZahl)
                 ? tx('Das Level muss mindestens 1 sein.')
                 : tx('Das Level darf höchstens {max} sein.', { max: zahl(GRENZEN.visionLevelMax) })
           }
@@ -108,8 +116,17 @@ export function Aktivierung({
       <Knopf
         variante="primaer"
         className="w-full"
-        onClick={() => aktivieren.mutate()}
-        disabled={aktivieren.isPending || (modus === 'level' && !levelGueltig)}
+        aria-busy={aktivieren.isPending || undefined}
+        onClick={() => {
+          if (aktivieren.isPending) {
+            return;
+          }
+          if (modus === 'level' && !levelGueltig) {
+            setLevelGezeigt(true);
+            return;
+          }
+          aktivieren.mutate();
+        }}
       >
         {archiviert ? tx("Wiederherstellen") : tx("Hinzufügen")}
       </Knopf>

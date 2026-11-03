@@ -1,4 +1,4 @@
-import { tx } from '../../text.ts';
+import { feldLeer, tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useRef, useState, type ReactNode, type RefObject } from 'react';
@@ -166,10 +166,10 @@ function useSpeichern<T>(speichern: () => Promise<T>, onFertig: () => void) {
   });
 }
 
-function Aktionen({ kannSpeichern, laeuft }: { kannSpeichern: boolean; laeuft: boolean }) {
+function Aktionen({ laeuft }: { laeuft: boolean }) {
   return (
     <div className="flex gap-2">
-      <Knopf type="submit" variante="primaer" className="flex-1" disabled={!kannSpeichern || laeuft}>
+      <Knopf type="submit" variante="primaer" className="flex-1" aria-busy={laeuft || undefined}>
         {tx("Speichern")}
       </Knopf>
     </div>
@@ -178,12 +178,12 @@ function Aktionen({ kannSpeichern, laeuft }: { kannSpeichern: boolean; laeuft: b
 
 (Aktionen as typeof Aktionen & { fuss: boolean }).fuss = true;
 
-function Formular({ onAbsenden, children }: { onAbsenden: () => void; children: ReactNode }) {
+function Formular({ onAbsenden, children }: { onAbsenden: (form: HTMLFormElement) => void; children: ReactNode }) {
   return (
     <FormularKasten
       onAbsenden={(ereignis) => {
         ereignis.preventDefault();
-        onAbsenden();
+        onAbsenden(ereignis.currentTarget);
       }}
     >
       {children}
@@ -213,6 +213,7 @@ function VisionFormular({ vision, onFertig }: { vision: Vision | null; onFertig:
   const [woopHindernis, setWoopHindernis] = useState(vision?.woopHindernis ?? '');
   const [woopPlan, setWoopPlan] = useState(vision?.woopPlan ?? '');
   const [level, setLevel] = useState(String(vision?.level ?? VISION.standardLevel));
+  const [titelFehler, setTitelFehler] = useState<string | null>(null);
   const levelWert = /^\d+$/.test(level) ? Number(level) : Number.NaN;
   const levelGueltig = Number.isInteger(levelWert) && levelWert >= VISION.minLevel && levelWert <= GRENZEN.visionLevelMax;
   const visionStufen = VISION_STUFEN.map((beispiel) => ({
@@ -232,13 +233,26 @@ function VisionFormular({ vision, onFertig }: { vision: Vision | null; onFertig:
   }, onFertig);
 
   return (
-    <Formular onAbsenden={() => speichern.mutate()}>
-      <Feld label={tx("Wunsch")}>
+    <Formular onAbsenden={(form) => {
+      const nameLeer = titel.trim() === '';
+      setTitelFehler(nameLeer ? feldLeer('Wunsch') : null);
+      if (!levelGueltig) {
+        form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      }
+      if (nameLeer || !levelGueltig || speichern.isPending) {
+        return;
+      }
+      speichern.mutate();
+    }}>
+      <Feld label={tx("Wunsch")} fehler={titelFehler}>
         <input
           className={EINGABE_STIL}
           value={titel}
           maxLength={GRENZEN.nameMax}
-          onChange={(ereignis) => setTitel(ereignis.target.value)}
+          onChange={(ereignis) => {
+            setTitel(ereignis.target.value);
+            setTitelFehler(null);
+          }}
           autoFocus
         />
       </Feld>
@@ -273,7 +287,7 @@ function VisionFormular({ vision, onFertig }: { vision: Vision | null; onFertig:
         <Farbauswahl wert={farbe} onAendern={setFarbe} />
       </Feld>
       <Fehlermeldung fehler={speichern.error} />
-      <Aktionen kannSpeichern={titel.trim() !== '' && levelGueltig} laeuft={speichern.isPending} />
+      <Aktionen laeuft={speichern.isPending} />
     </Formular>
   );
 }
@@ -286,6 +300,7 @@ function OrganisationFormular({ organisation, onFertig }: { organisation: Organi
   const [beschreibung, setBeschreibung] = useState(organisation?.beschreibung ?? '');
   const [farbe, setFarbe] = useState(organisation?.farbe ?? FARBEN[5]);
   const [visionId, setVisionId] = useState<number | null>(organisation?.visionId ?? null);
+  const [nameFehler, setNameFehler] = useState<string | null>(null);
   const visionen = ziele?.visionen.filter((vision) => !vision.archiviert || vision.id === visionId) ?? [];
 
   const speichern = useSpeichern(() => {
@@ -304,13 +319,26 @@ function OrganisationFormular({ organisation, onFertig }: { organisation: Organi
   }, onFertig);
 
   return (
-    <Formular onAbsenden={() => speichern.mutate()}>
-      <Feld label={tx("Name")}>
+    <Formular onAbsenden={() => {
+      if (name.trim() === '') {
+        setNameFehler('Der Name darf nicht leer sein.');
+        return;
+      }
+      if (speichern.isPending) {
+        return;
+      }
+      setNameFehler(null);
+      speichern.mutate();
+    }}>
+      <Feld label={tx("Name")} fehler={nameFehler}>
         <input
           className={EINGABE_STIL}
           value={name}
           maxLength={GRENZEN.nameMax}
-          onChange={(ereignis) => setName(ereignis.target.value)}
+          onChange={(ereignis) => {
+            setName(ereignis.target.value);
+            setNameFehler(null);
+          }}
           autoFocus
         />
       </Feld>
@@ -343,7 +371,7 @@ function OrganisationFormular({ organisation, onFertig }: { organisation: Organi
         <Farbauswahl wert={farbe} onAendern={setFarbe} />
       </Feld>
       <Fehlermeldung fehler={speichern.error} />
-      <Aktionen kannSpeichern={name.trim() !== ''} laeuft={speichern.isPending} />
+      <Aktionen laeuft={speichern.isPending} />
     </Formular>
   );
 }
@@ -395,6 +423,8 @@ function ProjektFormular({
   const [vorlageId, setVorlageId] = useState<number | null>(projekt?.standardVorlageId ?? null);
   const [abschlussId, setAbschlussId] = useState<number | null>(projekt?.abschlussVorlageId ?? null);
   const [neueTaetigkeit, setNeueTaetigkeit] = useState(false);
+  const [nameFehler, setNameFehler] = useState<string | null>(null);
+  const [vorlageFehler, setVorlageFehler] = useState<string | null>(null);
 
   const zielProjektId = projekt?.id ?? null;
   const aktiveVorlagen = taetigkeitenFuerProjekt(vorlagen, zielProjektId, vorlageId);
@@ -466,13 +496,25 @@ function ProjektFormular({
 
   return (
     <>
-      <Formular onAbsenden={() => speichern.mutate()}>
-        <Feld label={tx("Name")}>
+      <Formular onAbsenden={() => {
+        const nameLeer = name.trim() === '';
+        const ohneVorlage = gewaehlteVorlage === null;
+        setNameFehler(nameLeer ? 'Der Name darf nicht leer sein.' : null);
+        setVorlageFehler(ohneVorlage ? 'Für ein Projekt braucht es eine Tätigkeit.' : null);
+        if (nameLeer || ohneVorlage || speichern.isPending) {
+          return;
+        }
+        speichern.mutate();
+      }}>
+        <Feld label={tx("Name")} fehler={nameFehler}>
           <input
             className={EINGABE_STIL}
             value={name}
             maxLength={GRENZEN.nameMax}
-            onChange={(ereignis) => setName(ereignis.target.value)}
+            onChange={(ereignis) => {
+              setName(ereignis.target.value);
+              setNameFehler(null);
+            }}
             autoFocus
           />
         </Feld>
@@ -491,7 +533,7 @@ function ProjektFormular({
             {zuordnungHinweis && <p className="text-xs text-leise">{zuordnungHinweis}</p>}
           </Feld>
         )}
-        <Feld label="Vorauswahl beim Eintragen">
+        <Feld label="Vorauswahl beim Eintragen" fehler={vorlageFehler}>
           {aktiveVorlagen.length === 0 ? (
             <Knopf className="w-full" onClick={() => setNeueTaetigkeit(true)}>
               <Plus className="size-4" />
@@ -506,7 +548,10 @@ function ProjektFormular({
                   modus="einzeln"
                   wert={gewaehlteVorlage === null ? '' : String(gewaehlteVorlage)}
                   optionen={standardOptionen}
-                  onAendern={(wert) => spurSetzen(vorlageFeld, wert, (neu) => setVorlageId(Number(neu)))}
+                  onAendern={(wert) => {
+                    setVorlageFehler(null);
+                    spurSetzen(vorlageFeld, wert, (neu) => setVorlageId(Number(neu)));
+                  }}
                 />
               </div>
               <Knopf className="shrink-0 px-3" aria-label={tx("Tätigkeit anlegen")} onClick={() => setNeueTaetigkeit(true)}>
@@ -536,14 +581,17 @@ function ProjektFormular({
           />
         </Feld>
         <Fehlermeldung fehler={speichern.error} />
-        <Aktionen kannSpeichern={name.trim() !== '' && gewaehlteVorlage !== null} laeuft={speichern.isPending} />
+        <Aktionen laeuft={speichern.isPending} />
       </Formular>
       <NeueTaetigkeit
         offen={neueTaetigkeit}
         projektId={projekt?.id ?? null}
         projektName={projekt?.name ?? null}
         onSchliessen={() => setNeueTaetigkeit(false)}
-        onAngelegt={(gespeichert) => setVorlageId(gespeichert.id)}
+        onAngelegt={(gespeichert) => {
+          setVorlageFehler(null);
+          setVorlageId(gespeichert.id);
+        }}
       />
     </>
   );

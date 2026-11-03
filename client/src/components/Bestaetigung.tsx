@@ -84,18 +84,27 @@ export function BestaetigungProvider({ children }: { children: ReactNode }) {
             <Knopf autoFocus={zerstoerend} onClick={abbrechen}>
               {tx('Abbrechen')}
             </Knopf>
-            <Knopf
-              variante={zerstoerend ? 'warnung' : 'primaer'}
-              disabled={!eingabeOk}
-              autoFocus={!zerstoerend && anfrage !== null}
-              onClick={() => {
-                if (eingabeOk) {
-                  antworten(true);
-                }
-              }}
-            >
-              {anfrage ? tx(anfrage.knopf) : ''}
-            </Knopf>
+            {zerstoerend ? (
+              <Knopf
+                variante="warnung"
+                disabled={!eingabeOk}
+                onClick={() => {
+                  if (eingabeOk) {
+                    antworten(true);
+                  }
+                }}
+              >
+                {anfrage ? tx(anfrage.knopf) : ''}
+              </Knopf>
+            ) : (
+              <Knopf
+                variante="primaer"
+                autoFocus={anfrage !== null}
+                onClick={() => antworten(true)}
+              >
+                {anfrage ? tx(anfrage.knopf) : ''}
+              </Knopf>
+            )}
           </div>
         </div>
       </Dialog>

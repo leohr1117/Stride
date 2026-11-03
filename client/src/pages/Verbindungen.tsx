@@ -1,4 +1,4 @@
-import { tx } from '../text.ts';
+import { feldLeer, tx } from '../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { RefreshCw } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
@@ -73,16 +73,26 @@ function TodoistBereich({
 }) {
   const queryClient = useQueryClient();
   const [token, setToken] = useState('');
+  const [tokenFehler, setTokenFehler] = useState<string | null>(null);
   const aktualisieren = () => void queryClient.invalidateQueries({ queryKey: SCHLUESSEL.verbindungen });
   const verbinden = useMutation({
     mutationFn: () => api.verbindeTodoist(token.trim()),
     onSuccess: () => {
       setToken('');
+      setTokenFehler(null);
       aktualisieren();
     },
   });
   const absenden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
+    if (token.trim() === '') {
+      setTokenFehler(feldLeer('API-Token'));
+      return;
+    }
+    if (verbinden.isPending) {
+      return;
+    }
+    setTokenFehler(null);
     verbinden.mutate();
   };
   const zeit = zeitpunktText(status.letzterAbgleich);
@@ -136,13 +146,15 @@ function TodoistBereich({
                 label={tx('API-Token')}
                 autoComplete="off"
                 value={token}
-                onChange={(ereignis) => setToken(ereignis.target.value)}
+                fehler={tokenFehler}
+                onChange={(ereignis) => {
+                  setToken(ereignis.target.value);
+                  setTokenFehler(null);
+                }}
               />
-              <div className="flex justify-end">
-                <Knopf type="submit" variante="primaer" disabled={token.trim() === '' || verbinden.isPending}>
-                  {verbinden.isPending ? tx('Prüfe …') : tx('Verbinden')}
-                </Knopf>
-              </div>
+              <Knopf type="submit" variante="primaer" className="w-full" aria-busy={verbinden.isPending || undefined}>
+                {verbinden.isPending ? tx('Prüfe …') : tx('Verbinden')}
+              </Knopf>
             </div>
           </Flaeche>
           <Fehlermeldung fehler={verbinden.error} />

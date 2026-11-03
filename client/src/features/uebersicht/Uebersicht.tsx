@@ -261,7 +261,7 @@ function Comebacks({ comebacks, projekteAn }: { comebacks: VorhabenMitProjekt[];
               )}
             </div>
             <div className="flex flex-wrap gap-2">
-              <Knopf variante="primaer" onClick={() => anlauf.mutate(vorhaben.id)} disabled={anlauf.isPending}>
+              <Knopf variante="primaer" onClick={() => anlauf.mutate(vorhaben.id)} aria-busy={anlauf.isPending || undefined}>
                 <RotateCcw className="size-4" />
                 {tx('Neuer Anlauf · +{xp}', { xp: NEUER_ANLAUF.disziplin + NEUER_ANLAUF.geist })}
               </Knopf>

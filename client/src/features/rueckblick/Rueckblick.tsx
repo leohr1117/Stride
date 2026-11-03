@@ -190,6 +190,7 @@ function RueckblickFormular({ rueckblick }: { rueckblick: Rueckblick }) {
   const queryClient = useQueryClient();
   const feiern = useFeiern();
   const [antworten, setAntworten] = useState<RueckblickAntworten>(rueckblick.antworten);
+  const [leer, setLeer] = useState(false);
   const speichern = useMutation({
     mutationFn: () => api.speichereRueckblick(rueckblick.woche, antworten),
     onSuccess: (ergebnis) => {
@@ -204,8 +205,19 @@ function RueckblickFormular({ rueckblick }: { rueckblick: Rueckblick }) {
     antworten.lernen !== rueckblick.antworten.lernen ||
     antworten.fokus !== rueckblick.antworten.fokus;
 
+  const hatText =
+    antworten.gut.trim() !== '' || antworten.lernen.trim() !== '' || antworten.fokus.trim() !== '';
+
   const absenden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
+    if (!hatText && !geaendert) {
+      setLeer(true);
+      return;
+    }
+    if (speichern.isPending) {
+      return;
+    }
+    setLeer(false);
     speichern.mutate();
   };
 
@@ -215,17 +227,20 @@ function RueckblickFormular({ rueckblick }: { rueckblick: Rueckblick }) {
       <Flaeche>
       <Formular className="p-4" onAbsenden={absenden}>
         {FRAGEN.map(({ feld, frage }) => (
-          <Feld key={feld} label={frage}>
+          <Feld key={feld} label={frage} fehler={leer && feld === 'gut' ? 'Schreib zuerst eine Antwort.' : null}>
             <textarea
               className={`${EINGABE_STIL} min-h-20 resize-y`}
               maxLength={GRENZEN.notizMax}
               value={antworten[feld]}
-              onChange={(ereignis) => setAntworten({ ...antworten, [feld]: ereignis.target.value })}
+              onChange={(ereignis) => {
+                setLeer(false);
+                setAntworten({ ...antworten, [feld]: ereignis.target.value });
+              }}
             />
           </Feld>
         ))}
         <Fehlermeldung fehler={speichern.error} />
-        <Knopf type="submit" variante="primaer" className="w-full" disabled={!geaendert || speichern.isPending}>
+        <Knopf type="submit" variante="primaer" className="w-full" aria-busy={speichern.isPending || undefined}>
           {rueckblick.bonusMoeglich
             ? tx('Speichern · +{xp} {name}', {
                 xp: zahl(RUECKBLICK.geistXp),

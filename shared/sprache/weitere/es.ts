@@ -1,5 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "Guardar y Conectar siguen siendo fáciles de leer. Si falta un dato, el error aparece en el campo.",
+  "Schreib zuerst eine Antwort.": "Escribe primero una respuesta.",
   "Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.": "Al registrar, la actividad, la meta y la habilidad van cada una en una fila. Los campos de las hojas tienen la misma altura, y en la introducción Continuar queda justo debajo.",
   "Im Verlauf und bei den Zielen sind die Zeilen gleich hoch. Die XP-Werte im Verlauf stehen rechts bündig.": "En Historial y en Metas, las filas tienen la misma altura. Los valores de XP en Historial se alinean a la derecha.",
   "Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.": "En Más, en Cuenta, en Referentes y en Cuentas, las filas tienen la misma altura. Los valores se alinean a la derecha.",

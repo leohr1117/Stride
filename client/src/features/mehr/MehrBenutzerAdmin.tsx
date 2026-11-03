@@ -127,7 +127,7 @@ export function BenutzernameDialog({
           <Knopf type="button" onClick={schliessenWieEsc}>
             {tx('Abbrechen')}
           </Knopf>
-          <Knopf type="submit" variante="primaer" disabled={speichern.isPending}>
+          <Knopf type="submit" variante="primaer" aria-busy={speichern.isPending || undefined}>
             {tx('Speichern')}
           </Knopf>
         </div>

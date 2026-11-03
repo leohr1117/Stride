@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 import type { EinstellungenAenderung } from '../../../shared/api/index.ts';
 import { SPRACH_NAME, SPRACHEN, type Sprache } from '../../../shared/sprache/kern.ts';
 import {
+  FOKUS_PFLICHT,
   PROFILNAME_MAX,
   PROFILNAME_PLATZHALTER,
   ZIELSTREBIGKEIT_INFO,
@@ -111,6 +112,9 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
   const [fokus, setFokus] = useState<FokusId[]>([]);
   const [ziel, setZiel] = useState<ZielAuswahl>('macher');
   const [zielName, setZielName] = useState('');
+  const [nameFehler, setNameFehler] = useState<string | null>(null);
+  const [fokusFehler, setFokusFehler] = useState(false);
+  const [zielFehler, setZielFehler] = useState<string | null>(null);
   const [fehler, setFehler] = useState<unknown>(null);
   const [speichert, setSpeichert] = useState(false);
 
@@ -124,6 +128,13 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
       setName(vorbelegt);
     }
   }, [zugang.data, nameBeruehrt, name]);
+
+  useLayoutEffect(() => {
+    if (!fokusFehler) {
+      return;
+    }
+    document.getElementById('einfuehrung-fokus')?.focus();
+  }, [fokusFehler]);
 
   useLayoutEffect(() => {
     schreibeSchritt('sprache', true);
@@ -231,15 +242,19 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
     }
     if (schritt === 'profilname') {
       if (!name.trim()) {
+        setNameFehler('Der Name darf nicht leer sein.');
         return;
       }
+      setNameFehler(null);
       vor('fokus');
       return;
     }
     if (schritt === 'fokus') {
       if (fokus.length === 0) {
+        setFokusFehler(true);
         return;
       }
+      setFokusFehler(false);
       vor('ziel');
       return;
     }
@@ -253,9 +268,14 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
     }
     if (schritt === 'erstesZiel') {
       if (!zielName.trim()) {
+        setZielFehler('Der Name darf nicht leer sein.');
         return;
       }
+      setZielFehler(null);
       speichern(true);
+      return;
+    }
+    if (!abschlussBereit) {
       return;
     }
     onLos();
@@ -283,7 +303,6 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
   let untertitel = '';
   let inhalt: ReactNode = null;
   let knopf = 'Weiter';
-  let knopfAus = speichert;
 
   if (schritt === 'sprache') {
     titel = 'Sprache';
@@ -311,10 +330,9 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
   } else if (schritt === 'profilname') {
     titel = 'Wie heißt du in Stride?';
     untertitel = 'Halte fest, was du tust. Daraus werden Level und Streak.';
-    knopfAus = speichert || name.trim().length === 0;
     inhalt = (
       <div data-schritt-inhalt="">
-      <Feld label="Profilname">
+      <Feld label="Profilname" fehler={nameFehler}>
         <input
           name="nickname"
           autoComplete="nickname"
@@ -323,6 +341,7 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
           onChange={(ereignis) => {
             setNameBeruehrt(true);
             setName(ereignis.target.value);
+            setNameFehler(null);
           }}
           className={EINGABE_STIL}
         />
@@ -332,12 +351,27 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
   } else if (schritt === 'fokus') {
     titel = 'Worin willst du wachsen?';
     untertitel = 'Wähle eins oder mehrere.';
-    knopfAus = speichert || fokus.length === 0;
     inhalt = (
       <div className="space-y-3">
         <FokusVorschau fokus={fokus} />
         <div data-schritt-inhalt="">
-          <FokusWahl wert={fokus} onAendern={setFokus} />
+          <div id="einfuehrung-fokus" tabIndex={-1}>
+            <FokusWahl
+              wert={fokus}
+              onAendern={(wert) => {
+                setFokusFehler(false);
+                setFokus(wert);
+              }}
+              ungueltig={fokusFehler}
+              fehlerId={fokusFehler ? 'einfuehrung-fokus-fehler' : undefined}
+            />
+          </div>
+          {fokusFehler ? (
+            <p id="einfuehrung-fokus-fehler" className="feld-fehler text-[13px] leading-[18px] break-words text-gefahr" role="alert">
+              <span aria-hidden="true">⚠ </span>
+              {tx(FOKUS_PFLICHT)}
+            </p>
+          ) : null}
         </div>
       </div>
     );
@@ -352,16 +386,18 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
   } else if (schritt === 'erstesZiel' && erstes) {
     titel = erstes.titel;
     knopf = fehler ? 'Erneut versuchen' : 'Jetzt anlegen';
-    knopfAus = speichert || zielName.trim().length === 0;
     inhalt = (
       <div data-schritt-inhalt="">
-        <Feld label={erstes.label}>
+        <Feld label={erstes.label} fehler={zielFehler}>
           <input
             name="zielname"
             maxLength={80}
             value={zielName}
             placeholder={tx(erstes.platz)}
-            onChange={(ereignis) => setZielName(ereignis.target.value)}
+            onChange={(ereignis) => {
+              setZielName(ereignis.target.value);
+              setZielFehler(null);
+            }}
             className={EINGABE_STIL}
           />
         </Feld>
@@ -370,7 +406,6 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
   } else if (schritt === 'abschluss') {
     titel = 'Eingerichtet';
     knopf = abschlussFehler ? 'Erneut versuchen' : 'Fertig';
-    knopfAus = !abschlussBereit && !abschlussFehler;
     const daten = stand.data;
     const aktiveVorlagen = (vorlagen.data ?? []).filter((eintrag) => !eintrag.archiviert);
     const aktiveAttribute = (attribute.data ?? []).filter((eintrag) => !eintrag.archiviert);
@@ -457,7 +492,12 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
         {untertitel ? <p className="text-[13px] leading-5 text-leise break-words">{tx(untertitel)}</p> : null}
         {inhalt}
         <Fehlermeldung fehler={schritt === 'abschluss' ? abschlussFehler : fehler} />
-        <Knopf type="submit" variante="primaer" className="w-full" disabled={knopfAus}>
+        <Knopf
+          type="submit"
+          variante="primaer"
+          className="w-full"
+          aria-busy={speichert || (schritt === 'abschluss' && !abschlussBereit && !abschlussFehler) || undefined}
+        >
           {tx(knopf)}
         </Knopf>
       </Formular>

@@ -1,4 +1,4 @@
-import { tx } from '../../text.ts';
+import { feldLeer, tx } from '../../text.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import type { ZugangModus, ZugangStatus } from '../../../../shared/api/index.ts';
@@ -14,12 +14,28 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
   const [wiederholung, setWiederholung] = useState('');
   const [fehler, setFehler] = useState<unknown>(null);
   const [abweichung, setAbweichung] = useState<string | null>(null);
+  const [nameFehler, setNameFehler] = useState<string | null>(null);
+  const [passwortFehler, setPasswortFehler] = useState<string | null>(null);
   const [laeuft, setLaeuft] = useState(false);
   const neu = modus === 'einrichten';
   const mitName = modus !== 'passwort';
 
   const senden = async (ereignis: FormEvent) => {
     ereignis.preventDefault();
+    if (laeuft) {
+      return;
+    }
+    const nameLeer = mitName && benutzername.trim() === '';
+    const passwortLeer = passwort === '';
+    if (nameLeer || passwortLeer) {
+      setNameFehler(nameLeer ? 'Der Benutzername fehlt.' : null);
+      setPasswortFehler(passwortLeer ? feldLeer('Passwort') : null);
+      setAbweichung(null);
+      setFehler(null);
+      return;
+    }
+    setNameFehler(null);
+    setPasswortFehler(null);
     if (neu && passwort !== wiederholung) {
       setAbweichung('Die Passwörter stimmen nicht überein.');
       setFehler(null);
@@ -49,7 +65,7 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
           Stride
         </div>
         {mitName && (
-          <Feld label={tx("Benutzername")}>
+          <Feld label={tx("Benutzername")} fehler={nameFehler}>
             <input
               id="username"
               className={EINGABE_STIL}
@@ -59,9 +75,11 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
               autoCorrect="off"
               spellCheck={false}
               autoFocus
-              required
               value={benutzername}
-              onChange={(ereignis) => setBenutzername(ereignis.target.value)}
+              onChange={(ereignis) => {
+                setBenutzername(ereignis.target.value);
+                setNameFehler(null);
+              }}
             />
           </Feld>
         )}
@@ -72,9 +90,12 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
           autoComplete={neu ? 'new-password' : 'current-password'}
           maxLength={PASSWORT_MAX}
           autoFocus={!mitName}
-          required
+          fehler={passwortFehler}
           value={passwort}
-          onChange={(ereignis) => setPasswort(ereignis.target.value)}
+          onChange={(ereignis) => {
+            setPasswort(ereignis.target.value);
+            setPasswortFehler(null);
+          }}
         />
         {neu && (
           <PasswortFeld
@@ -84,7 +105,6 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
             name="password-repeat"
             autoComplete="new-password"
             maxLength={PASSWORT_MAX}
-            required
             value={wiederholung}
             onChange={(ereignis) => {
               setWiederholung(ereignis.target.value);
@@ -93,7 +113,7 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
           />
         )}
         <Fehlermeldung fehler={fehler} />
-        <Knopf type="submit" variante="primaer" className="w-full" disabled={laeuft || passwort === '' || (mitName && benutzername.trim() === '')}>
+        <Knopf type="submit" variante="primaer" className="w-full" aria-busy={laeuft || undefined}>
           {neu ? tx("Festlegen") : tx("Anmelden")}
         </Knopf>
       </Formular>
@@ -104,10 +124,20 @@ function Anmeldung({ modus, onErfolg }: { modus: Exclude<ZugangModus, 'bereit' |
 function BenutzernameFestlegen({ onErfolg }: { onErfolg: (status: ZugangStatus) => void }) {
   const [benutzername, setBenutzername] = useState('');
   const [fehler, setFehler] = useState<unknown>(null);
+  const [nameFehler, setNameFehler] = useState<string | null>(null);
   const [laeuft, setLaeuft] = useState(false);
 
   const senden = async (ereignis: FormEvent) => {
     ereignis.preventDefault();
+    if (laeuft) {
+      return;
+    }
+    if (benutzername.trim() === '') {
+      setNameFehler('Der Benutzername fehlt.');
+      setFehler(null);
+      return;
+    }
+    setNameFehler(null);
     setLaeuft(true);
     setFehler(null);
     try {
@@ -126,7 +156,7 @@ function BenutzernameFestlegen({ onErfolg }: { onErfolg: (status: ZugangStatus) 
           <img src="/logo-v2.svg" alt="" className="size-7" />
           Stride
         </div>
-        <Feld label={tx("Benutzername")}>
+        <Feld label={tx("Benutzername")} fehler={nameFehler}>
           <input
             className={EINGABE_STIL}
             name="username"
@@ -135,13 +165,15 @@ function BenutzernameFestlegen({ onErfolg }: { onErfolg: (status: ZugangStatus) 
             autoCorrect="off"
             spellCheck={false}
             autoFocus
-            required
             value={benutzername}
-            onChange={(ereignis) => setBenutzername(ereignis.target.value)}
+            onChange={(ereignis) => {
+              setBenutzername(ereignis.target.value);
+              setNameFehler(null);
+            }}
           />
         </Feld>
         <Fehlermeldung fehler={fehler} />
-        <Knopf type="submit" variante="primaer" className="w-full" disabled={laeuft || benutzername.trim() === ''}>
+        <Knopf type="submit" variante="primaer" className="w-full" aria-busy={laeuft || undefined}>
           {tx("Festlegen")}
         </Knopf>
       </Formular>

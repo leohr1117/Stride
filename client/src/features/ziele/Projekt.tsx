@@ -1,4 +1,4 @@
-import { tx } from '../../text.ts';
+import { feldLeer, tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CircleCheck, CircleX, Pencil, RotateCcw, Swords, Wind, Wrench } from 'lucide-react';
 import { useState, type FormEvent, type ReactNode } from 'react';
@@ -25,6 +25,7 @@ import { BossRing } from '../bosse/BossRing.tsx';
 import {
   EINGABE_STIL,
   Fehlermeldung,
+  Feld,
   Formular,
   InfoHinweis,
   Knopf,
@@ -217,6 +218,9 @@ function useProjektAbschluss(projekt: Projekt): { knopf: ReactNode; fehler: Reac
   });
 
   const beimAbschliessen = async () => {
+    if (!projekt.aktiv || abschliessen.isPending) {
+      return;
+    }
     if (
       await bestaetigen({
         titel: tx('"{name}" abschließen?', { name: projekt.name }),
@@ -249,8 +253,8 @@ function useProjektAbschluss(projekt: Projekt): { knopf: ReactNode; fehler: Reac
     <Knopf
       variante="primaer"
       className="shrink-0 px-3 py-1.5"
-      onClick={beimAbschliessen}
-      disabled={abschliessen.isPending || !projekt.aktiv}
+      onClick={() => void beimAbschliessen()}
+      aria-busy={abschliessen.isPending || undefined}
     >
       {tx("Abschließen")}
     </Knopf>
@@ -456,6 +460,7 @@ function OffenesVorhaben({
   const boss = bosseAn ? vorhaben.boss : null;
   const [titelOffen, setTitelOffen] = useState(false);
   const [titelText, setTitelText] = useState(vorhaben.titel);
+  const [titelFehler, setTitelFehler] = useState<string | null>(null);
   const eintraege: SchnellPunkt[] = [{ art: 'archivieren', id: 'umbenennen', label: 'Umbenennen' }];
   if (bosseAn) {
     eintraege.push({
@@ -468,8 +473,16 @@ function OffenesVorhaben({
 
   const speichereTitel = () => {
     const wert = titelText.trim();
+    if (wert === '') {
+      setTitelFehler('Der Name darf nicht leer sein.');
+      return;
+    }
+    if (umbenennen.isPending) {
+      return;
+    }
+    setTitelFehler(null);
     setTitelOffen(false);
-    if (wert && wert !== vorhaben.titel) {
+    if (wert !== vorhaben.titel) {
       umbenennen.mutate(wert);
     }
   };
@@ -536,18 +549,19 @@ function OffenesVorhaben({
             speichereTitel();
           }}
         >
-          <label className="block space-y-1.5">
-            <span className="text-sm font-medium">{tx('Titel')}</span>
+          <Feld label={tx('Titel')} fehler={titelFehler}>
             <input
               className={EINGABE_STIL}
               value={titelText}
               maxLength={GRENZEN.nameMax}
-              aria-label={tx('Titel')}
               autoFocus
-              onChange={(ereignis) => setTitelText(ereignis.target.value)}
+              onChange={(ereignis) => {
+                setTitelText(ereignis.target.value);
+                setTitelFehler(null);
+              }}
             />
-          </label>
-          <Knopf type="submit" variante="primaer" disabled={!titelText.trim() || umbenennen.isPending}>
+          </Feld>
+          <Knopf type="submit" variante="primaer" className="w-full" aria-busy={umbenennen.isPending || undefined}>
             {tx('Speichern')}
           </Knopf>
         </Formular>
@@ -560,6 +574,7 @@ function BossFormular({ vorhaben, onFertig }: { vorhaben: Vorhaben; onFertig: ()
   const queryClient = useQueryClient();
   const heute = lokalesDatum(new Date());
   const [deadline, setDeadline] = useState(vorhaben.boss?.deadline ?? '');
+  const [datumFehler, setDatumFehler] = useState<string | null>(null);
   const deadlineGueltig = /^\d{4}-\d{2}-\d{2}$/.test(deadline);
   const minDatum = deadlineGueltig && deadline < heute ? deadline : heute;
 
@@ -576,29 +591,41 @@ function BossFormular({ vorhaben, onFertig }: { vorhaben: Vorhaben; onFertig: ()
 
   const absenden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
-    if (deadlineGueltig) {
-      speichern.mutate(false);
+    if (!deadlineGueltig) {
+      setDatumFehler(feldLeer('Deadline'));
+      return;
     }
+    if (speichern.isPending) {
+      return;
+    }
+    setDatumFehler(null);
+    speichern.mutate(false);
   };
 
   return (
     <Formular onAbsenden={absenden}>
       <p className="font-medium">{vorhaben.titel}</p>
-      <div className="space-y-1.5">
-        <span className="flex items-center text-sm font-medium">
-          {tx("Deadline")}
-          <InfoHinweis name="Deadline" text={BOSS_DATUM_INFO} />
-        </span>
+      <Feld
+        label={
+          <span className="inline-flex items-center">
+            {tx("Deadline")}
+            <InfoHinweis name="Deadline" text={BOSS_DATUM_INFO} />
+          </span>
+        }
+        fehler={datumFehler}
+      >
         <input
           type="date"
-          required
           min={minDatum}
           className={EINGABE_STIL}
           value={deadline}
-          onChange={(ereignis) => setDeadline(ereignis.target.value)}
+          onChange={(ereignis) => {
+            setDeadline(ereignis.target.value);
+            setDatumFehler(null);
+          }}
           autoFocus
         />
-      </div>
+      </Feld>
       <Fehlermeldung fehler={speichern.error} />
       <div className="flex gap-2">
         {vorhaben.boss && (
@@ -606,7 +633,7 @@ function BossFormular({ vorhaben, onFertig }: { vorhaben: Vorhaben; onFertig: ()
             {tx("Kein Boss mehr")}
           </Knopf>
         )}
-        <Knopf type="submit" variante="primaer" className="flex-1" disabled={!deadlineGueltig || speichern.isPending}>
+        <Knopf type="submit" variante="primaer" className="flex-1" aria-busy={speichern.isPending || undefined}>
           {tx("Speichern")}
         </Knopf>
       </div>
