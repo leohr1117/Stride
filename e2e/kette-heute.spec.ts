@@ -240,7 +240,7 @@ async function loescheStill(seite: Page, id: number): Promise<void> {
 
 async function dialogBleibtZeile(seite: Page, zeile: string): Promise<void> {
   const karte = seite.locator(`[data-kette="${zeile}"]`);
-  await karte.getByRole('button', { name: 'Eintrag' }).click();
+  await karte.getByRole('button', { name: '+ Eintrag', exact: true }).click();
   await expect(seite.getByRole('dialog', { name: 'Was hast du getan?' })).toBeVisible();
   await seite.keyboard.press('Escape');
   await expect(seite.getByRole('dialog')).toHaveCount(0);
@@ -390,7 +390,7 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
       angelegt.push(await legeEintrag(page, vorlage, tag));
     }
     await page.goto('/');
-    await expect(page.locator('[data-kette="streak"]')).toContainText('Pause aufgebraucht');
+    await expect(page.locator('[data-kette="streak"]')).toContainText('Gestern war dein freier Tag.');
     await expect(page.locator('[data-kette="rueckkehr"]')).toHaveCount(0);
     await expect(page.locator('[data-kette="schutz"]')).toHaveCount(0);
     await dialogBleibtZeile(page, 'streak');
@@ -399,7 +399,7 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
     angelegt.push(await legeEintrag(page, vorlage, bruchTag));
     await loescheStill(page, streakId);
     await page.goto('/');
-    await expect(page.locator('[data-kette="rueckkehr"]')).toBeVisible();
+    await expect(page.locator('[data-kette="rueckkehr"]')).toContainText('Streak unterbrochen');
     await expect(page.locator('[data-kette="schutz"]')).toContainText('Hält die');
     await expect(page.locator('[data-kette="streak"]')).toHaveCount(0);
     await expect(page.locator('[data-wochenwert="Streak"] .text-streak')).toHaveCount(0);
@@ -415,6 +415,7 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
     await page.locator('[data-kette="schutz"]').getByRole('button', { name: 'Einsetzen' }).click();
     await expect(page.locator('[data-kette="schutz"]')).toHaveCount(0);
     await expect(page.locator('[data-kette="rueckkehr"]')).toHaveCount(0);
+    await expect(page.locator('[data-kette="offen"]')).toContainText('Trag heute etwas ein, damit der Streak bleibt.');
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(page.getByText('Rückkehr +')).toHaveCount(0);
     await expect(page.locator('[data-wochenwert="Streak"] .text-streak')).toBeVisible();

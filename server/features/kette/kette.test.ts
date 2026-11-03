@@ -141,12 +141,16 @@ describe('Kette heute', () => {
         schutzLaenge: null,
         rueckkehr: null,
         angeschlagen: null,
+        heuteErfasst: false,
+        serie: { laenge: 5, angeknackst: false },
       });
       expect(ladeKetteHeute(mittag(MITTWOCH))).toEqual({
         schutz: false,
         schutzLaenge: null,
         rueckkehr: null,
         angeschlagen: { laenge: 5 },
+        heuteErfasst: false,
+        serie: { laenge: 5, angeknackst: true },
       });
       expect(leseSchutzVorrat()).toBe(1);
       expect(bruecken()).toEqual([]);
@@ -172,6 +176,8 @@ describe('Kette heute', () => {
         schutzLaenge: 5,
         rueckkehr: null,
         angeschlagen: null,
+        heuteErfasst: false,
+        serie: { laenge: 0, angeknackst: false },
       });
       expect(leseSchutzSchwelle()).toBeNull();
       expect(protokolle('schutz_verdient')).toEqual([]);
@@ -220,6 +226,8 @@ describe('Schutz einsetzen', () => {
         schutzLaenge: null,
         rueckkehr: null,
         angeschlagen: null,
+        heuteErfasst: false,
+        serie: { laenge: 0, angeknackst: false },
       });
       expect(momentumFuerTag(FREITAG)).toBe(1.05);
     });
@@ -288,7 +296,14 @@ describe('Schutz einsetzen', () => {
         expect(leer.json()).toEqual({ serie: { laenge: 5, angeknackst: false }, schutz: false });
         const stand = await app.inject({ method: 'GET', url: '/api/kette/heute' });
         expect(stand.statusCode).toBe(200);
-        expect(stand.json()).toEqual({ schutz: false, schutzLaenge: null, rueckkehr: null, angeschlagen: null });
+        expect(stand.json()).toEqual({
+          schutz: false,
+          schutzLaenge: null,
+          rueckkehr: null,
+          angeschlagen: null,
+          heuteErfasst: false,
+          serie: { laenge: 5, angeknackst: false },
+        });
         const voll = await app.inject({ method: 'POST', url: '/api/kette/schutz', payload: { extra: true } });
         expect(voll.statusCode).toBe(400);
         expect(bruecken()).toEqual([tagPlus(heute, -1)]);

@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.8',
+    seiten: 'Heute',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.7',
     seiten: 'Handbuch',
     behoben: 'Handbuch',

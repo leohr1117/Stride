@@ -1,6 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} を数える",
+  "Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.": "今日の連続カードは、状態を一文で説明します。ボタン「+ 記録」はプラスボタンと同じ記録を開きます。",
   "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "ガイドではバーが上に残り、各節へ移動できます。見えている節は強調されます。",
   "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "プロフィール画像はヘッダー、その他、プロフィールで円形です。ホログラムと古典でも同じです。ヘッダーのフォーカスも円に沿います。",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "バージョン番号だけです。見た目と動作はそのままです。",
@@ -327,6 +328,12 @@ export const TEXTE: Record<string, string> = {
   "Bis {datum}": "{datum}まで",
   "Schutz einsetzen": "保護を使う",
   "Hält die {n} Tage": "{n}日を守る",
+  "+ Eintrag": "+ 記録",
+  "{n} Tage in Folge.": "{n}日連続。",
+  "Trag heute etwas ein, damit der Streak bleibt.": "今日なにかを記録すると、連続が続きます。",
+  "Gestern war dein freier Tag.": "昨日は自由な日でした。",
+  "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "連続が途切れました。{datum}までに記録すると戻れます。",
+  "Neuer Streak beginnt mit dem nächsten Eintrag.": "次の記録から新しい連続が始まります。",
   "Einsetzen": "使う",
   "{n} Tage · Pause aufgebraucht": "{n}日 · 休みを使い切り",
   "Schutz verdient": "保護を獲得",

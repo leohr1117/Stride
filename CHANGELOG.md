@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.8
+
+### Geändert
+
+- Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.
+
 ## 3.56.7
 
 ### Behoben

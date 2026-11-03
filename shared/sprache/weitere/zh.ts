@@ -1,6 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} 计入",
+  "Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.": "「今天」上的连续记录卡片用一句话说明状态。按钮 + 记录打开的内容和加号按钮相同。",
   "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "指南里有一条栏固定在上方，可跳到各节。当前可见的节会高亮。",
   "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "头像在顶栏、更多和资料页都是圆形，全息和古典也一样。顶栏里的焦点沿着圆形。",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "只改版本号。外观和行为保持不变。",
@@ -327,6 +328,12 @@ export const TEXTE: Record<string, string> = {
   "Bis {datum}": "到 {datum}",
   "Schutz einsetzen": "使用保护",
   "Hält die {n} Tage": "保住 {n} 天",
+  "+ Eintrag": "+ 记录",
+  "{n} Tage in Folge.": "连续 {n} 天。",
+  "Trag heute etwas ein, damit der Streak bleibt.": "今天记一笔，连续记录才不断。",
+  "Gestern war dein freier Tag.": "昨天是你的休息日。",
+  "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "连续记录中断了。在 {datum} 之前记一笔即可回来。",
+  "Neuer Streak beginnt mit dem nächsten Eintrag.": "下一次记录开始新的连续。",
   "Einsetzen": "使用",
   "{n} Tage · Pause aufgebraucht": "{n} 天 · 休息已用完",
   "Schutz verdient": "获得保护",

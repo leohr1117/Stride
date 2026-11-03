@@ -1,6 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} учитывается",
+  "Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.": "Карточка серии на «Сегодня» объясняет состояние одним предложением. Кнопка + Запись открывает ту же запись, что и кнопка плюс.",
   "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "В справке полоса остаётся сверху и ведёт к разделам. Видимый раздел выделен.",
   "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "Изображение профиля в шапке, в Ещё и в профиле круглое, в том числе в видах Голограмма и Антик. Фокус в шапке повторяет круг.",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "Только номер версии. Внешний вид и поведение остаются прежними.",
@@ -327,6 +328,12 @@ export const TEXTE: Record<string, string> = {
   "Bis {datum}": "До {datum}",
   "Schutz einsetzen": "Использовать защиту",
   "Hält die {n} Tage": "Сохраняет {n} дн.",
+  "+ Eintrag": "+ Запись",
+  "{n} Tage in Folge.": "{n} дн. подряд.",
+  "Trag heute etwas ein, damit der Streak bleibt.": "Запиши сегодня что-нибудь, чтобы серия сохранилась.",
+  "Gestern war dein freier Tag.": "Вчера был твой свободный день.",
+  "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "Серия прервана. Запиши что-нибудь до {datum}, чтобы вернуться.",
+  "Neuer Streak beginnt mit dem nächsten Eintrag.": "Новая серия начинается со следующей записи.",
   "Einsetzen": "Применить",
   "{n} Tage · Pause aufgebraucht": "{n} дн. · пауза исчерпана",
   "Schutz verdient": "Защита заработана",

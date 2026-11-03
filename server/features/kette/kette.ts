@@ -44,6 +44,8 @@ export function ladeKetteHeute(jetzt = leseJetzt()): KetteHeute {
     schutzLaenge: schutz && letzter !== null ? kettenLaenge(tage, letzter, bruecken) : null,
     rueckkehr: offen ? { fristAm: offen.fristAm } : null,
     angeschlagen: serie.angeknackst && serie.laenge >= 2 ? { laenge: serie.laenge } : null,
+    serie,
+    heuteErfasst: letzter === heute,
   };
 }
 

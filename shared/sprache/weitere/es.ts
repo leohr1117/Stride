@@ -1,6 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} cuenta",
+  "Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.": "La tarjeta de racha en Hoy explica el estado en una frase. El botón + Entrada abre la misma entrada que el botón más.",
   "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "En la guía, una barra permanece arriba y lleva a las secciones. La sección visible está resaltada.",
   "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "La imagen de perfil en la cabecera, en Más y en el perfil es redonda, también en Holograma y Antiguo. El foco de la cabecera sigue el círculo.",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "Solo el número de versión. El aspecto y el comportamiento siguen igual.",
@@ -327,6 +328,12 @@ export const TEXTE: Record<string, string> = {
   "Bis {datum}": "Hasta el {datum}",
   "Schutz einsetzen": "Usar la protección",
   "Hält die {n} Tage": "Mantiene los {n} días",
+  "+ Eintrag": "+ Entrada",
+  "{n} Tage in Folge.": "{n} días seguidos.",
+  "Trag heute etwas ein, damit der Streak bleibt.": "Apunta algo hoy para que la racha siga.",
+  "Gestern war dein freier Tag.": "Ayer fue tu día libre.",
+  "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "Racha interrumpida. Apunta algo hasta el {datum} para volver.",
+  "Neuer Streak beginnt mit dem nächsten Eintrag.": "Una racha nueva empieza con la siguiente entrada.",
   "Einsetzen": "Usar",
   "{n} Tage · Pause aufgebraucht": "{n} días · pausa agotada",
   "Schutz verdient": "Protección ganada",

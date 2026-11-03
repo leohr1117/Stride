@@ -1,6 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} compte",
+  "Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.": "La carte de série sur Aujourd'hui explique l'état en une phrase. Le bouton + Entrée ouvre la même entrée que le bouton plus.",
   "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "Dans le guide, une barre reste en haut et mène aux sections. La section visible est mise en évidence.",
   "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "La photo de profil dans l’en-tête, dans Plus et sur le profil est ronde, y compris en Hologramme et Antique. Le focus de l’en-tête suit le cercle.",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "Seul le numéro de version. L'apparence et le comportement restent les mêmes.",
@@ -327,6 +328,12 @@ export const TEXTE: Record<string, string> = {
   "Bis {datum}": "Jusqu'au {datum}",
   "Schutz einsetzen": "Utiliser la protection",
   "Hält die {n} Tage": "Garde les {n} jours",
+  "+ Eintrag": "+ Entrée",
+  "{n} Tage in Folge.": "{n} jours d'affilée.",
+  "Trag heute etwas ein, damit der Streak bleibt.": "Note quelque chose aujourd'hui pour que la série tienne.",
+  "Gestern war dein freier Tag.": "Hier était ton jour libre.",
+  "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "Série interrompue. Note quelque chose jusqu'au {datum} pour revenir.",
+  "Neuer Streak beginnt mit dem nächsten Eintrag.": "Une nouvelle série commence avec la prochaine entrée.",
   "Einsetzen": "Utiliser",
   "{n} Tage · Pause aufgebraucht": "{n} jours · pause épuisée",
   "Schutz verdient": "Protection gagnée",
