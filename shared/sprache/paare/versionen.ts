@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.', 'On History, Connections, and Role models, the section headings look the same. On a phone, the lists span the full width.'],
   ['Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.', 'Today, History, and Statistics use the same name in the bar, under More, and in the page header.'],
   ['Auf dem Handy reicht der Inhalt bis an den rechten Rand.', 'On a phone, the content reaches the right edge.'],
   ['Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.', 'Progress bars end with a short gradient, a narrow tip, and a soft glow.'],

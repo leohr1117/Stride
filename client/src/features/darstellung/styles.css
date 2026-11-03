@@ -492,6 +492,11 @@ html[data-eingabe='zeiger'] :focus {
   pointer-events: none;
 }
 
+.abschnitt-kopf {
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
 .aufgaben-kreis,
 .aufgaben-haken {
   transition:

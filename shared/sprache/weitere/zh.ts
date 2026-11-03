@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.": "历程、关联和榜样的小节标题看起来一样。在手机上，列表铺满整行宽度。",
   "Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.": "今天、历程和统计在栏、更多和页眉里使用同一个名称。",
   "Auf dem Handy reicht der Inhalt bis an den rechten Rand.": "在手机上，内容延伸到右边缘。",
   "Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.": "进度条的末端有一小段渐变、一道窄亮边和轻微的光晕。",

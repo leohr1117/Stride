@@ -9,7 +9,7 @@ import { Dialog } from '../../components/Dialog.tsx';
 import { Zeile } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
-import { Fehlermeldung, Knopf, Schalter } from '../../ui/index.ts';
+import { Fehlermeldung, FlaecheInnen, FlaechenRahmen, Knopf, Schalter } from '../../ui/index.ts';
 import { merkeStatus, useTodoistBlick } from './gemeinsam.ts';
 import { ZuordnungBlatt } from './ZuordnungBlatt.tsx';
 import {
@@ -60,14 +60,6 @@ function Spaltenkopf({ links }: { links: string }) {
 
 function ZaehlSchalter({ name, an, onAendern }: { name: string; an: boolean; onAendern: (an: boolean) => void }) {
   return <Schalter kompakt an={an} label={tx('{name} zählt mit', { name })} onAendern={onAendern} />;
-}
-
-function Zeilen({ children }: { children: ReactNode }) {
-  return <div className="liste bg-flaeche md:overflow-hidden md:rounded-lg md:border md:border-rand">{children}</div>;
-}
-
-function Rahmen({ children }: { children: ReactNode }) {
-  return <div className="-mx-4 md:mx-0 md:max-w-[720px]">{children}</div>;
 }
 
 function leererStand(vorlageId: number | null): ZuordnungsStand {
@@ -178,13 +170,13 @@ export function TodoistZuordnungen({ status }: { status: TodoistStatus }) {
   const blattStand = wahl ? standFuer(wahl) : leererStand(null);
 
   return (
-    <div className="space-y-4">
-      <Rahmen>
+    <div className="mt-4">
+      <FlaechenRahmen>
         <Spaltenkopf links="Erledigt in" />
         {status.projekte.length === 0 ? (
           <p className="px-4 text-sm text-leise">{tx('Keine Projekte in Todoist.')}</p>
         ) : (
-          <Zeilen>
+          <FlaecheInnen>
             {status.projekte.map((zuordnung) => {
               const anzeige = projektSchalterAnzeige(
                 zuordnung.aktiv,
@@ -215,26 +207,27 @@ export function TodoistZuordnungen({ status }: { status: TodoistStatus }) {
                 />
               );
             })}
-          </Zeilen>
+          </FlaecheInnen>
         )}
         <div className="mt-2">
-          <Zeilen>
+          <FlaecheInnen>
             <Zeile
               titel={standardName}
               name={spaltenSatz('Erledigt in', standardName, standard.text)}
               wert={wertKnoten(standard)}
               onKlick={() => setWahl({ art: 'standard' })}
             />
-          </Zeilen>
+          </FlaecheInnen>
         </div>
-      </Rahmen>
-      <Abschnitt titel="Labels" kennung="todoist-labels" info={INFO_LABELS} anfangEingeklappt>
-        <Rahmen>
+      </FlaechenRahmen>
+      <div className="mt-6">
+        <Abschnitt titel="Labels" kennung="todoist-labels" info={INFO_LABELS} anfangEingeklappt>
+        <FlaechenRahmen>
           <Spaltenkopf links="Mit Label" />
           {status.labels.length === 0 ? (
             <p className="px-4 text-sm text-leise">{tx('Keine Labels in Todoist.')}</p>
           ) : (
-            <Zeilen>
+            <FlaecheInnen>
               {status.labels.map((label) => {
                 const anzeige = labelAnzeige(label.aktiv, label.vorlageId, vorlageName(taetigkeiten, label.vorlageId));
                 return (
@@ -260,15 +253,16 @@ export function TodoistZuordnungen({ status }: { status: TodoistStatus }) {
                   />
                 );
               })}
-            </Zeilen>
+            </FlaecheInnen>
           )}
-        </Rahmen>
+        </FlaechenRahmen>
         {wirkung.length >= 2 ? (
           <button type="button" className="min-h-12 text-haupt" onClick={() => setReihenfolgeOffen(true)}>
             {tx('Reihenfolge')}
           </button>
         ) : null}
-      </Abschnitt>
+        </Abschnitt>
+      </div>
       <ZuordnungBlatt
         key={wahl ? (wahl.art === 'standard' ? 'standard' : `${wahl.art}-${wahl.id}`) : 'zu'}
         offen={wahl !== null}

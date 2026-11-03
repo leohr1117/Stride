@@ -96,7 +96,7 @@ export function ChronikSeite() {
   };
 
   return (
-    <div className="space-y-6">
+    <div>
       <KopfAktion>
         <button
           type="button"

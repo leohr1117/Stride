@@ -18,7 +18,7 @@ import {
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { KlassenBild } from '../../components/KlassenBild.tsx';
 import { Liste, Zeile } from '../../components/Zeile.tsx';
-import { Chip, Fehlermeldung, Ladeanzeige } from '../../ui/index.ts';
+import { AbschnittKopf, Chip, Fehlermeldung, Ladeanzeige } from '../../ui/index.ts';
 import { prozentText, zahl } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { eigenesProfil, type EigenesProfil } from '../../pages/eigenesProfil.ts';
@@ -92,9 +92,9 @@ export function VorbilderSeite() {
   }
 
   return (
-    <div className="space-y-4">
+    <div>
       {uebersicht && (
-        <p className="inline-flex min-w-0 items-center gap-1.5 text-sm text-leise">
+        <p className="flex w-fit min-w-0 items-center gap-1.5 text-sm text-leise">
           {funktionen.koennen && <KlassenBild klasse={uebersicht.klasse} groesse="size-4" rahmen={false} />}
           <span className="zahl min-w-0 break-words">
             {tx('Du · Level {level}', { level: zahl(uebersicht.level.level) })}
@@ -104,11 +104,7 @@ export function VorbilderSeite() {
       )}
       {favoriten.length > 0 && (
         <section>
-          <div className="mb-2 flex items-center">
-            <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] leading-[18px] font-semibold tracking-normal text-leise normal-case">
-              {tx('Favoriten')}
-            </h2>
-          </div>
+          <AbschnittKopf titel={tx('Favoriten')} />
           <Liste>
             {favoriten.map((auswertung) => (
               <VorbildZeile
@@ -122,11 +118,11 @@ export function VorbilderSeite() {
         </section>
       )}
       {massstab && (
-        <Liste>
+        <Liste className="mt-6">
           <VorbildZeile auswertung={massstab} />
         </Liste>
       )}
-      <div className="flex w-full min-w-0 max-w-full gap-2 overflow-x-auto overscroll-x-contain pb-1">
+      <div className="mt-4 flex w-full min-w-0 max-w-full gap-2 overflow-x-auto overscroll-x-contain pb-1">
         <RichtungsChip
           label="Alle"
           aktiv={auswahl === ALLE}
@@ -147,12 +143,7 @@ export function VorbilderSeite() {
         })}
       </div>
       <section>
-        <div className="mb-2 flex items-center">
-          <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] leading-[18px] font-semibold tracking-normal text-leise normal-case">
-            {tx("Ähnlich")}
-          </h2>
-          <WerteHinweis name="Ähnlich" />
-        </div>
+        <AbschnittKopf titel={tx('Ähnlich')} zusatz={<WerteHinweis name="Ähnlich" />} />
         <Liste>
           {sichtbar.map((auswertung) => (
             <VorbildZeile

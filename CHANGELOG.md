@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.20
+
+### Geändert
+
+- Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.
+
 ## 3.56.19
 
 ### Geändert

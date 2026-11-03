@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.": "Dans Historique, Connexions et Modèles, les titres de section ont la même forme. Sur le téléphone, les listes occupent toute la largeur.",
   "Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.": "Aujourd'hui, Historique et Statistique ont le même nom dans la barre, dans Plus et dans l'en-tête.",
   "Auf dem Handy reicht der Inhalt bis an den rechten Rand.": "Sur le téléphone, le contenu va jusqu'au bord droit.",
   "Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.": "Les barres de progression se terminent par un court dégradé, une pointe étroite et une légère lueur.",

@@ -13,7 +13,7 @@ import { Liste } from '../../components/Zeile.tsx';
 import { dauerText, lokalesDatum, tagesUeberschrift, zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { attributName, tx } from '../../text.ts';
-import { Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
+import { AbschnittKopf, Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { InvestitionFormular } from '../investitionen/InvestitionBlatt.tsx';
 import { loeschHinweis } from '../investitionen/zahlungAnzeige.ts';
 
@@ -289,24 +289,24 @@ export function EintragListe({
   const investition = investitionen.data?.find((eintrag) => eintrag.id === blatt) ?? null;
 
   return (
-    <div className="space-y-6">
+    <div>
       <Fehlermeldung fehler={abfrage.error ?? investitionen.error ?? attribute.error} />
 
       {tage.length === 0 ? (
-        <Leer
-          text={leerText}
-          aktion={
-            onZuruecksetzen ? (
-              <Knopf onClick={onZuruecksetzen}>{tx('Filter zurücksetzen')}</Knopf>
-            ) : undefined
-          }
-        />
+        <div className="mt-6">
+          <Leer
+            text={leerText}
+            aktion={
+              onZuruecksetzen ? (
+                <Knopf onClick={onZuruecksetzen}>{tx('Filter zurücksetzen')}</Knopf>
+              ) : undefined
+            }
+          />
+        </div>
       ) : (
         tage.map((tag) => (
           <section key={tag.schluessel}>
-            <h2 className="ueberschrift abschnittskopf mb-2 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
-              {tagesUeberschrift(tag.schluessel)}
-            </h2>
+            <AbschnittKopf titel={tagesUeberschrift(tag.schluessel)} />
             <Liste>
               {tag.eintraege.map((eintrag) => (
                 <ChronikZeile
@@ -329,9 +329,11 @@ export function EintragListe({
       )}
 
       {abfrage.hasNextPage && (
-        <Knopf className="w-full" onClick={() => void abfrage.fetchNextPage()} disabled={abfrage.isFetchingNextPage}>
-          {abfrage.isFetchingNextPage ? tx("Lädt …") : tx("Ältere Einträge laden")}
-        </Knopf>
+        <div className="mt-6">
+          <Knopf className="w-full" onClick={() => void abfrage.fetchNextPage()} disabled={abfrage.isFetchingNextPage}>
+            {abfrage.isFetchingNextPage ? tx("Lädt …") : tx("Ältere Einträge laden")}
+          </Knopf>
+        </div>
       )}
 
       <Dialog

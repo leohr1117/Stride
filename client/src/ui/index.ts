@@ -1,3 +1,5 @@
+export { AbschnittKopf } from './AbschnittKopf.tsx';
+export { Flaeche, FlaecheInnen, FlaechenRahmen } from './Flaeche.tsx';
 export { Chip, Schalter, SchalterBahn } from './Schalter.tsx';
 export { InfoHinweis, ZuNiedrigHinweis } from './Info.tsx';
 export { EINGABE_STIL, Farbauswahl, Feld, Formular, Knopf, Optionsliste, PasswortFeld, Segmentauswahl } from './Formular.tsx';

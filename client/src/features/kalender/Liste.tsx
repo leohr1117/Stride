@@ -7,20 +7,12 @@ import { SchnellMenueKnopf } from '../../components/SchnellAktion.tsx';
 import { AnlegeZeile, Zeile } from '../../components/Zeile.tsx';
 import { kurzesDatum, uhrzeit } from '../../format.ts';
 import { tx } from '../../text.ts';
-import { InfoHinweis } from '../../ui/index.ts';
+import { AbschnittKopf, FlaecheInnen, FlaechenRahmen, InfoHinweis } from '../../ui/index.ts';
 import { KalenderFormular } from './Einrichtung.tsx';
 import { kalenderAnzeige, letzterAbgleich, zeigeProjektArchiviert, type KalenderAnzeige } from './stand.ts';
 
 function zeitpunktText(iso: string | null): string | null {
   return iso ? `${kurzesDatum(iso)}, ${uhrzeit(iso)}` : null;
-}
-
-function Rahmen({ children }: { children: ReactNode }) {
-  return <div className="-mx-4 md:mx-0 md:max-w-[720px]">{children}</div>;
-}
-
-function Zeilen({ children }: { children: ReactNode }) {
-  return <div className="liste bg-flaeche md:overflow-hidden md:rounded-lg md:border md:border-rand">{children}</div>;
 }
 
 function Spaltenkopf() {
@@ -62,16 +54,13 @@ export function KalenderAbschnitt({ kalender }: { kalender: Kalender[] }) {
   const nameVon = (id: number | null) => (id === null ? null : (vorlagen.find((eintrag) => eintrag.id === id)?.name ?? null));
 
   return (
-    <section id="kalender" className="space-y-4">
-      <div>
-        <h2 className="text-base font-semibold leading-6">{tx('Kalender')}</h2>
-        <p className="mt-1 text-sm text-leise">{tx('Jeder vergangene Termin wird ein Eintrag mit XP.')}</p>
-      </div>
-      <Rahmen>
+    <section id="kalender">
+      <AbschnittKopf titel={tx('Kalender')} hinweis={tx('Jeder vergangene Termin wird ein Eintrag mit XP.')} />
+      <FlaechenRahmen>
         {kalender.length > 0 ? (
           <>
             <Spaltenkopf />
-            <Zeilen>
+            <FlaecheInnen>
               {kalender.map((eintrag) => {
                 const projekt = projekte.find((kandidat) => kandidat.id === eintrag.projektId);
                 const anzeige = kalenderAnzeige({
@@ -93,7 +82,7 @@ export function KalenderAbschnitt({ kalender }: { kalender: Kalender[] }) {
                   />
                 );
               })}
-            </Zeilen>
+            </FlaecheInnen>
             <p className="flex items-center px-4 pt-3 text-[13px] leading-[18px] text-leise">
               <span className="min-w-0">{zeit ? tx('Zuletzt abgeglichen {zeit}', { zeit }) : tx('Noch nicht abgeglichen')}</span>
               <InfoHinweis name="Zuletzt abgeglichen" text="Beim Öffnen und alle 15 Minuten." />
@@ -101,11 +90,11 @@ export function KalenderAbschnitt({ kalender }: { kalender: Kalender[] }) {
           </>
         ) : null}
         <div className={kalender.length > 0 ? 'mt-2' : undefined}>
-          <Zeilen>
+          <FlaecheInnen>
             <AnlegeZeile text="Kalender verbinden" onKlick={() => setDialog({ kalender: null })} />
-          </Zeilen>
+          </FlaecheInnen>
         </div>
-      </Rahmen>
+      </FlaechenRahmen>
       <Dialog
         offen={dialog !== null}
         titel={dialog?.kalender ? dialog.kalender.name : tx('Kalender verbinden')}

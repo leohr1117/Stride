@@ -2,6 +2,7 @@ import { ChevronRight } from 'lucide-react';
 import type { CSSProperties, ReactNode } from 'react';
 import { Link } from 'react-router';
 import { tx } from '../text.ts';
+import { Flaeche } from '../ui/Flaeche.tsx';
 import { InfoHinweis, SchalterBahn } from '../ui/index.ts';
 
 const INFO_IN_ZEILE = 'inline-flex size-4 items-center justify-center rounded-full text-leise hover:text-haupt';
@@ -42,11 +43,7 @@ function artVon(eingabe: {
 }
 
 export function Liste({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return (
-    <div className={`liste -mx-4 bg-flaeche md:mx-0 md:max-w-[720px] md:overflow-hidden md:rounded-lg md:border md:border-rand ${className}`}>
-      {children}
-    </div>
-  );
+  return <Flaeche className={className}>{children}</Flaeche>;
 }
 
 export function ZeilenGruppe({

@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.": "En Historial, Conexiones y Referentes, los títulos de sección se ven igual. En el teléfono, las listas ocupan todo el ancho.",
   "Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.": "Hoy, Historial y Estadística tienen el mismo nombre en la barra, en Más y en el encabezado.",
   "Auf dem Handy reicht der Inhalt bis an den rechten Rand.": "En el teléfono, el contenido llega hasta el borde derecho.",
   "Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.": "Las barras de progreso terminan con un degradado corto, una punta estrecha y un leve resplandor.",
