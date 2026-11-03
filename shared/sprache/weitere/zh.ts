@@ -1,6 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} 计入",
+  "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "头像在顶栏、更多和资料页都是圆形，全息和古典也一样。顶栏里的焦点沿着圆形。",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "只改版本号。外观和行为保持不变。",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "每种外观都能选择全部预设配色。自己创建的配色留在创建它的外观里。",
   "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "配色来自另一种外观时，文字和边框仍然清楚。等级环和错误保持原有颜色。",
@@ -467,6 +468,7 @@ export const TEXTE: Record<string, string> = {
   "Statistiken": "统计",
   "Charakter": "角色",
   "Profil": "资料",
+  "Profilbild": "头像",
   "Darstellung": "外观",
   "Funktionen": "功能",
   "Inhalte": "内容",

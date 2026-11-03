@@ -1,6 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} cuenta",
+  "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "La imagen de perfil en la cabecera, en Más y en el perfil es redonda, también en Holograma y Antiguo. El foco de la cabecera sigue el círculo.",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "Solo el número de versión. El aspecto y el comportamiento siguen igual.",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "En cada vista se pueden elegir todas las paletas incluidas. Las que creas se quedan en su vista.",
   "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "El texto y los bordes siguen siendo legibles cuando la paleta viene de otra vista. El anillo de nivel y los errores conservan su color.",
@@ -467,6 +468,7 @@ export const TEXTE: Record<string, string> = {
   "Statistiken": "Estadísticas",
   "Charakter": "Personaje",
   "Profil": "Perfil",
+  "Profilbild": "Imagen de perfil",
   "Darstellung": "Apariencia",
   "Funktionen": "Funciones",
   "Inhalte": "Contenido",

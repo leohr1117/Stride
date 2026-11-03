@@ -28,6 +28,7 @@ export const PAARE = [
   ['Statistiken', 'Statistics'],
   ['Charakter', 'Character'],
   ['Profil', 'Profile'],
+  ['Profilbild', 'Profile picture'],
   ['Darstellung', 'Appearance'],
   ['Funktionen', 'Features'],
   ['Inhalte', 'Content'],

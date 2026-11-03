@@ -103,10 +103,12 @@ export function KlassenBild({
   klasse,
   groesse = 'size-8',
   rahmen = true,
+  profil = false,
 }: {
   klasse: string;
   groesse?: string;
   rahmen?: boolean;
+  profil?: boolean;
 }) {
   const bild = ZEICHEN[klassenZeichen(klasse)];
   if (!rahmen) {
@@ -114,7 +116,8 @@ export function KlassenBild({
   }
   return (
     <span
-      className={`klassenbild inline-flex shrink-0 items-center justify-center rounded-full bg-akzent text-akzent-text ${groesse}`}
+      className={`klassenbild${profil ? ' profilbild' : ''} inline-flex shrink-0 items-center justify-center rounded-full bg-akzent text-akzent-text ${groesse}`}
+      data-profilbild={profil ? '' : undefined}
       aria-hidden="true"
     >
       <span className="size-[62%]">{bild}</span>

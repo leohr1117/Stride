@@ -7,7 +7,7 @@ import { neuereVersionen } from '../../../../shared/spiel/updateHinweis.ts';
 import type { Einstellungen } from '../../../../shared/api/einstellungen.ts';
 import { AKTUELLE_VERSION, VERSIONEN, type Versionseintrag } from '../../../../shared/versionen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
-import { KlassenBild } from '../../components/KlassenBild.tsx';
+import { ProfilBild } from '../../components/ProfilBild.tsx';
 import { Liste, Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { sichtbareGruppen, type NavEintrag } from '../../navigation.ts';
@@ -20,7 +20,7 @@ const KOPF = 'ueberschrift abschnittskopf mb-2 text-[13px] font-semibold leading
 
 function seitenSymbol(eintrag: NavEintrag, klasse: string | undefined): ReactNode {
   if (eintrag.pfad === '/charakter' && klasse) {
-    return <KlassenBild klasse={klasse} groesse="size-5" />;
+    return <ProfilBild klasse={klasse} groesse="size-5" />;
   }
   const Icon = eintrag.icon;
   return <Icon aria-hidden />;

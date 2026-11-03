@@ -190,7 +190,17 @@ function ringSchrift(groesse: number, basis: number): number | undefined {
   return Math.max(1, Math.round((basis * groesse) / RING_SCHRIFT_AB));
 }
 
-export function LevelRing({ level, anteil, groesse = 96 }: { level: number; anteil: number; groesse?: number }) {
+export function LevelRing({
+  level,
+  anteil,
+  groesse = 96,
+  mitte,
+}: {
+  level: number;
+  anteil: number;
+  groesse?: number;
+  mitte?: ReactNode;
+}) {
   const schein = ringId(useId());
   const begrenzt = Math.min(1, Math.max(0, anteil));
   const voll = begrenzt >= 0.999;
@@ -204,9 +214,24 @@ export function LevelRing({ level, anteil, groesse = 96 }: { level: number; ante
   const maske = 'radial-gradient(farthest-side, transparent 75.2%, #000 76.4%, #000 91.6%, transparent 92.8%)';
   const labelGroesse = ringSchrift(groesse, 10);
   const zahlGroesse = ringSchrift(groesse, 24);
-
-  return (
-    <div className="levelring relative shrink-0" data-levelring="" style={{ width: groesse, height: groesse }}>
+  const zeile = (
+    <>
+      <span
+        className="max-w-full px-1 text-center text-[10px] leading-none font-medium tracking-wider text-leise uppercase"
+        style={labelGroesse ? { fontSize: labelGroesse, lineHeight: 1.1 } : undefined}
+      >
+        {tx("Level")}
+      </span>
+      <span
+        className="zahl text-2xl leading-none font-bold"
+        style={zahlGroesse ? { fontSize: zahlGroesse, lineHeight: 1 } : undefined}
+      >
+        {level}
+      </span>
+    </>
+  );
+  const grafik = (
+    <>
       <svg viewBox="0 0 100 100" className="absolute inset-0 overflow-visible" aria-hidden="true">
         <circle cx={RING_MITTE} cy={RING_MITTE} r={RING_RADIUS} fill="none" stroke="var(--flaeche-2)" strokeWidth={RING_STRICH} />
         {voll && (
@@ -247,20 +272,29 @@ export function LevelRing({ level, anteil, groesse = 96 }: { level: number; ante
           <circle data-ringlicht="" cx={spitze.cx} cy={spitze.cy} r="1.25" fill="white" fillOpacity={0.55 + begrenzt * 0.4} />
         </svg>
       )}
-      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-        <span
-          className="max-w-full px-1 text-center text-[10px] leading-none font-medium tracking-wider text-leise uppercase"
-          style={labelGroesse ? { fontSize: labelGroesse, lineHeight: 1.1 } : undefined}
-        >
-          {tx("Level")}
-        </span>
-        <span
-          className="zahl text-2xl leading-none font-bold"
-          style={zahlGroesse ? { fontSize: zahlGroesse, lineHeight: 1 } : undefined}
-        >
-          {level}
-        </span>
+    </>
+  );
+
+  if (mitte) {
+    return (
+      <div
+        className="levelring relative flex shrink-0 flex-col items-center"
+        data-levelring=""
+        style={{ width: groesse, minWidth: groesse, maxWidth: groesse }}
+      >
+        <div className="relative" style={{ width: groesse, height: groesse }}>
+          {grafik}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">{mitte}</div>
+        </div>
+        <div className="mt-1 flex w-full flex-col items-center">{zeile}</div>
       </div>
+    );
+  }
+
+  return (
+    <div className="levelring relative shrink-0" data-levelring="" style={{ width: groesse, height: groesse }}>
+      {grafik}
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">{zeile}</div>
     </div>
   );
 }

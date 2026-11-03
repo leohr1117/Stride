@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.', 'The profile picture in the header, on More, and on the profile is round, including in Hologram and Antique. The focus in the header follows the circle.'],
   ['Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.', 'Only the version number. Look and behavior stay the same.'],
   ['In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.', 'Every look offers all built-in palettes. Palettes you create stay in their look.'],
   ['Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.', 'Text and borders stay readable when the palette comes from another look. The level ring and errors keep their color.'],

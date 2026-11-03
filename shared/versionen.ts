@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.6',
+    seiten: 'Heute, Mehr, Profil',
+    behoben: 'Profilbild',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.5',
     seiten: 'Was ist neu',
     abschnitte: [

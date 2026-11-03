@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.6
+
+### Behoben
+
+- Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.
+
 ## 3.56.5
 
 ### Geändert

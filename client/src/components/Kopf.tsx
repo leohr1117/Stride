@@ -21,7 +21,7 @@ import { useEbenen, useFunktionen } from '../funktionen.ts';
 import { geheZurueck, useZurueck } from '../herkunft.tsx';
 import { tx } from '../text.ts';
 import { InfoHinweis } from '../ui/index.ts';
-import { KlassenBild } from './KlassenBild.tsx';
+import { ProfilBild } from './ProfilBild.tsx';
 
 export interface KopfAngabe {
   /** Deutscher Schlüssel, außer `roh`. */
@@ -257,9 +257,9 @@ export function Kopf() {
           <Link
             to="/charakter"
             aria-label={tx('Profil, Level {level}', { level: uebersicht.level.level })}
-            className="inline-flex size-12 shrink-0 items-center justify-center rounded-full"
+            className="profilziel inline-flex size-12 shrink-0 items-center justify-center"
           >
-            <DuennRing anteil={uebersicht.level.fortschritt} kinder={<KlassenBild klasse={uebersicht.klasse} groesse="size-8" />} />
+            <DuennRing anteil={uebersicht.level.fortschritt} kinder={<ProfilBild klasse={uebersicht.klasse} groesse="size-8" />} />
           </Link>
         )}
       </div>

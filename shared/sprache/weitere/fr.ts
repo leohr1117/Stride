@@ -1,6 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} compte",
+  "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "La photo de profil dans l’en-tête, dans Plus et sur le profil est ronde, y compris en Hologramme et Antique. Le focus de l’en-tête suit le cercle.",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "Seul le numéro de version. L'apparence et le comportement restent les mêmes.",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "Chaque apparence propose toutes les palettes fournies. Celles que vous créez restent dans leur apparence.",
   "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "Le texte et les bordures restent lisibles quand la palette vient d'une autre apparence. L'anneau de niveau et les erreurs gardent leur couleur.",
@@ -467,6 +468,7 @@ export const TEXTE: Record<string, string> = {
   "Statistiken": "Statistiques",
   "Charakter": "Personnage",
   "Profil": "Profil",
+  "Profilbild": "Photo de profil",
   "Darstellung": "Apparence",
   "Funktionen": "Fonctions",
   "Inhalte": "Contenu",

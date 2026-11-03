@@ -1,6 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} を数える",
+  "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "プロフィール画像はヘッダー、その他、プロフィールで円形です。ホログラムと古典でも同じです。ヘッダーのフォーカスも円に沿います。",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "バージョン番号だけです。見た目と動作はそのままです。",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "どの表示でも、用意された配色をすべて選べます。自分で作った配色は、作った表示に残ります。",
   "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "別の表示の配色でも、文字と枠は読めるままです。レベルリングとエラーの色は変わりません。",
@@ -467,6 +468,7 @@ export const TEXTE: Record<string, string> = {
   "Statistiken": "統計",
   "Charakter": "キャラクター",
   "Profil": "プロフィール",
+  "Profilbild": "プロフィール画像",
   "Darstellung": "表示",
   "Funktionen": "機能",
   "Inhalte": "内容",

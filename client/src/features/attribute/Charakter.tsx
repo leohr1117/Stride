@@ -10,6 +10,7 @@ import { SEITEN } from '../../../../shared/spiel/navigation.ts';
 import { MIN_RADAR_ACHSEN } from '../../../../shared/spiel/radar.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { Dialog } from '../../components/Dialog.tsx';
+import { ProfilBild } from '../../components/ProfilBild.tsx';
 import { KopfAktion } from '../../components/Kopf.tsx';
 import { Liste, Zeile } from '../../components/Zeile.tsx';
 import { KlassenUndTitel } from '../../components/KlassenTitel.tsx';
@@ -49,8 +50,13 @@ export function CharakterSeite() {
           <Pencil className="size-5" aria-hidden="true" />
         </Link>
       </KopfAktion>
-      <div className="flex items-center gap-5">
-        <LevelRing level={charakter.level.level} anteil={charakter.level.fortschritt} groesse={104} />
+      <div className="flex items-start gap-5">
+        <LevelRing
+          level={charakter.level.level}
+          anteil={charakter.level.fortschritt}
+          groesse={104}
+          mitte={<ProfilBild klasse={charakter.klasse} groesse="size-16" />}
+        />
         <div className="min-w-0 flex-1">
           <p className="kopfblock-name truncate text-2xl font-bold tracking-tight">{charakter.name}</p>
           <Identitaet klasse={charakter.klasse} titel={charakter.titel} />
