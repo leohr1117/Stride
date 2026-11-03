@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "Лист инвестиции больше не обрезается справа. Название и сумма остаются целиком на виду.",
   "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "Своя сумма стоит в одной строке с подсказками.",
   "Eigener Betrag": "Своя сумма",
   "Dir fehlen {xp} XP": "Тебе не хватает {xp} XP",

@@ -504,6 +504,11 @@ button.chip.prio-chip[data-prio='4'][aria-pressed='true'] .prio-punkt {
   height: var(--sicht-hoehe);
 }
 
+/* Stabiler Scrollbar-Gutter lässt rechts einen leeren Streifen, den feste Blätter nicht füllen. */
+html:has(.dialog-lage) {
+  scrollbar-gutter: auto;
+}
+
 .dialog-scrim {
   background: rgb(0 0 0 / 0.4);
 }

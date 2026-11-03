@@ -17,6 +17,17 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.16',
+    seiten: 'Investitionen',
+    behoben: 'Investitionen',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.'],
+      },
+    ],
+  },
+  {
     version: '3.56.15',
     seiten: 'Investitionen',
     abschnitte: [

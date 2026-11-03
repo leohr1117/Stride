@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "投資のシートは右側で切れなくなりました。名前と金額はすべて見えたままです。",
   "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "自分の金額は、提案と同じ行に並びます。",
   "Eigener Betrag": "自分の金額",
   "Dir fehlen {xp} XP": "あと {xp} XP足りません",

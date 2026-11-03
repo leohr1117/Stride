@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.16
+
+### Behoben
+
+- Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.
+
 ## 3.56.15
 
 ### Verbessert

@@ -331,7 +331,7 @@ function DialogSchicht({
   const rolle = art === 'warnung' ? 'alertdialog' : 'dialog';
 
   return (
-    <div className={`fixed inset-0 z-[90] ${eingabe ? '' : 'pointer-events-none'}`}>
+    <div className={`dialog-lage fixed inset-0 z-[90] ${eingabe ? '' : 'pointer-events-none'}`}>
       <div
         className={`dialog-scrim absolute inset-0 transition-opacity duration-150 ${anwesend ? 'opacity-100' : 'opacity-0'}`}
         onPointerDown={(ereignis) => {
@@ -386,7 +386,7 @@ function DialogSchicht({
               onPointerCancel={beiZugEnde}
             >
               <div className="dialog-griff md:hidden" aria-hidden="true" />
-              <header className="dialog-kopf flex h-14 shrink-0 items-center gap-2 ps-5 pe-1">
+              <header className="dialog-kopf flex h-14 shrink-0 items-center gap-2 ps-4 pe-1">
                 <h2 className="min-w-0 flex-1 truncate text-[17px] font-semibold">
                   {vorTitel}
                   <span>{titel}</span>
@@ -414,7 +414,7 @@ function DialogSchicht({
               {info ? <InfoHinweis text={info} name={titel} /> : null}
             </header>
           )}
-          <div className="dialog-koerper min-h-0 px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">{children}</div>
+          <div className={`dialog-koerper min-h-0 pb-[max(1.25rem,env(safe-area-inset-bottom))] ${art === 'blatt' ? 'px-4' : 'px-5'}`}>{children}</div>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "La feuille d'un investissement n'est plus coupée à droite. Le nom et le montant restent entièrement visibles.",
   "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "Le montant personnel est sur la même ligne que les propositions.",
   "Eigener Betrag": "Montant personnel",
   "Dir fehlen {xp} XP": "Il te manque {xp} XP",
