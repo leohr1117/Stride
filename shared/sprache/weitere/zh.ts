@@ -1,5 +1,9 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Investition kann XP eines Attributs kosten, und das Level kann dabei sinken. Reicht das XP nicht, wird nichts gespeichert. Löschen gibt das XP zurück, Archivieren lässt es abgezogen.": "一项投入可以花费某个属性的 XP，等级可能因此下降。XP 不够时不会保存。删除会退回 XP。归档则保持扣除。",
+  "Dafür ist nicht genug XP da.": "为此没有足够的 XP。",
+  "Eine Bezahlung braucht ein Attribut.": "付款需要一个属性。",
+  "Der Betrag muss eine ganze Zahl ab 0 sein.": "金额必须是从 0 起的整数。",
   "{name} zählt mit": "{name} 计入",
   "Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.": "「今天」上的连续记录卡片用一句话说明状态。按钮 + 记录打开的内容和加号按钮相同。",
   "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "指南里有一条栏固定在上方，可跳到各节。当前可见的节会高亮。",

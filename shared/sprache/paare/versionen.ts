@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Eine Investition kann XP eines Attributs kosten, und das Level kann dabei sinken. Reicht das XP nicht, wird nichts gespeichert. Löschen gibt das XP zurück, Archivieren lässt es abgezogen.', 'An investment can cost XP from an attribute, and the level can drop. If there isn’t enough XP, nothing is saved. Deleting returns the XP. Archiving leaves it spent.'],
   ['Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.', 'The streak card on Today explains the state in one sentence. The + Entry button opens the same entry as the plus button.'],
   ['Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.', 'In the guide, a bar stays at the top and leads to the sections. The section in view is highlighted.'],
   ['Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.', 'The profile picture in the header, on More, and on the profile is round, including in Hologram and Antique. The focus in the header follows the circle.'],

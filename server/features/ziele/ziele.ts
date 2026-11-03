@@ -10,14 +10,8 @@ import {
   ladeProjektDetail,
   ladeZiele,
 } from '../../services/struktur.ts';
-import { aendereInvestition, erstelleInvestition, ladeInvestitionen } from '../investitionen/ausruestung.ts';
-import {
-  loescheInvestition,
-  loescheOrganisation,
-  loescheProjekt,
-  loescheVision,
-  loescheVorhaben,
-} from '../../services/loeschen.ts';
+import { aendereInvestition, erstelleInvestition, ladeInvestitionen, loescheInvestition } from '../investitionen/ausruestung.ts';
+import { loescheOrganisation, loescheProjekt, loescheVision, loescheVorhaben } from '../../services/loeschen.ts';
 import { pruefeFunktion } from '../einstellungen/einstellungen.ts';
 import { erreicheVision, nimmVisionZurueck } from './visionen.ts';
 import {

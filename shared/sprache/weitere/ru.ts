@@ -1,5 +1,9 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Investition kann XP eines Attributs kosten, und das Level kann dabei sinken. Reicht das XP nicht, wird nichts gespeichert. Löschen gibt das XP zurück, Archivieren lässt es abgezogen.": "Вложение может стоить XP атрибута, и уровень может снизиться. Если XP не хватает, ничего не сохраняется. Удаление возвращает XP. Архив оставляет его списанным.",
+  "Dafür ist nicht genug XP da.": "Для этого не хватает XP.",
+  "Eine Bezahlung braucht ein Attribut.": "Для оплаты нужен атрибут.",
+  "Der Betrag muss eine ganze Zahl ab 0 sein.": "Сумма должна быть целым числом от 0.",
   "{name} zählt mit": "{name} учитывается",
   "Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.": "Карточка серии на «Сегодня» объясняет состояние одним предложением. Кнопка + Запись открывает ту же запись, что и кнопка плюс.",
   "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "В справке полоса остаётся сверху и ведёт к разделам. Видимый раздел выделен.",

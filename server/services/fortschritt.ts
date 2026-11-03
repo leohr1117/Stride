@@ -17,6 +17,7 @@ export interface AttributBuchung {
   ausruestungId?: number;
   visionId?: number;
   aufgabeId?: number | null;
+  investitionId?: number | null;
 }
 
 export interface ProjektBuchung {
@@ -29,8 +30,8 @@ export interface ProjektBuchung {
 
 export function bucheAttributXp(buchung: AttributBuchung, zeitpunkt: string): AttributBuchung {
   ausfuehren(
-    `INSERT INTO xp_ereignisse (quelle, attribut_id, eintrag_id, vorhaben_id, ausruestung_id, vision_id, aufgabe_id, xp, erstellt_am)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO xp_ereignisse (quelle, attribut_id, eintrag_id, vorhaben_id, ausruestung_id, vision_id, aufgabe_id, investition_id, xp, erstellt_am)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     buchung.quelle,
     buchung.attributId,
     buchung.eintragId,
@@ -38,6 +39,7 @@ export function bucheAttributXp(buchung: AttributBuchung, zeitpunkt: string): At
     buchung.ausruestungId ?? null,
     buchung.visionId ?? null,
     buchung.aufgabeId ?? null,
+    buchung.investitionId ?? null,
     buchung.xp,
     zeitpunkt,
   );

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.9
+
+### Hinzugefügt
+
+- Eine Investition kann XP eines Attributs kosten, und das Level kann dabei sinken. Reicht das XP nicht, wird nichts gespeichert. Löschen gibt das XP zurück, Archivieren lässt es abgezogen.
+
 ## 3.56.8
 
 ### Geändert

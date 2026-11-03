@@ -3,14 +3,13 @@ import path from 'node:path';
 import { afterAll, afterEach, describe, expect, it } from 'vitest';
 import type { EintragDaten } from '../../shared/api/index.ts';
 import { ausfuehren, eine, mitWelt, schliesseWelt } from '../db.ts';
-import { erstelleInvestition } from '../features/investitionen/ausruestung.ts';
+import { erstelleInvestition, loescheInvestition } from '../features/investitionen/ausruestung.ts';
 import { aendereEinstellungen } from '../features/einstellungen/einstellungen.ts';
 import { erstelleEintrag } from '../features/eintraege/eintraege.ts';
 import { erstelleFaehigkeit, erstelleKnoten, loescheKnoten, schalteSkillFrei } from '../features/faehigkeiten/faehigkeiten.ts';
 import {
   istLoeschbar,
   loescheAttribut,
-  loescheInvestition,
   loescheProjekt,
   loescheVision,
   loescheVorhaben,

@@ -1,5 +1,9 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Investition kann XP eines Attributs kosten, und das Level kann dabei sinken. Reicht das XP nicht, wird nichts gespeichert. Löschen gibt das XP zurück, Archivieren lässt es abgezogen.": "Una inversión puede costar XP de un atributo, y el nivel puede bajar. Si no hay suficiente XP, no se guarda nada. Borrar devuelve el XP. Archivar lo deja descontado.",
+  "Dafür ist nicht genug XP da.": "No hay suficiente XP para eso.",
+  "Eine Bezahlung braucht ein Attribut.": "Un pago necesita un atributo.",
+  "Der Betrag muss eine ganze Zahl ab 0 sein.": "El importe tiene que ser un número entero desde 0.",
   "{name} zählt mit": "{name} cuenta",
   "Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.": "La tarjeta de racha en Hoy explica el estado en una frase. El botón + Entrada abre la misma entrada que el botón más.",
   "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "En la guía, una barra permanece arriba y lleva a las secciones. La sección visible está resaltada.",

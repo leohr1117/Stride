@@ -154,6 +154,8 @@ export const investitionSchema = z.object({
   groesse: investitionsGroesse,
   attributId: z.number().int().positive(),
   ziel: investitionsZielSchema.nullable().optional(),
+  bezahltAttributId: z.number().int().positive().nullable().optional(),
+  betrag: z.number().int().min(0).optional(),
 });
 
 export const investitionAenderungSchema = investitionSchema.partial().extend(archiviert);

@@ -2,12 +2,13 @@ import type { Investition, InvestitionAenderung, InvestitionDaten, InvestitionsA
 import type { AttributTyp } from '../../../shared/spiel/begriffe.ts';
 import { istTypAktiv } from '../../../shared/spiel/funktionen.ts';
 import { ausruestungsBonus, investitionsBonus } from '../../../shared/spiel/xp.ts';
-import { aktualisiere, alle, alsZahl, ausfuehren, eine } from '../../db.ts';
+import { aktualisiere, alle, alsZahl, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { istLoeschbar } from '../../services/loeschen.ts';
 import { aktivesAttribut } from '../attribute/attribute.ts';
 import { funktionAktiv, ladeEinstellungen, pruefeEbene } from '../einstellungen/einstellungen.ts';
 import { KONTEXT_JOINS, PROJEKT_AKTIV } from '../ziele/kontext.ts';
+import { bucheZahlungsDifferenz, KEINE_ZAHLUNG, loeseZahlung } from './zahlung.ts';
 
 const AKTIV = `i.investition = 1 AND i.archiviert = 0 AND i.geschafft_am IS NOT NULL AND i.geschafft_am <= ?`;
 
@@ -185,6 +186,8 @@ interface InvestitionZeile {
   zielName: string | null;
   attributId: number;
   attributName: string;
+  bezahltAttributId: number | null;
+  betrag: number;
   archiviert: number;
   erstelltAm: string;
 }
@@ -192,7 +195,8 @@ interface InvestitionZeile {
 const INVESTITION_ABFRAGE = `
   SELECT n.id, n.name, n.icon, n.groesse, n.bonus,
          n.ziel_art AS zielArt, n.ziel_id AS zielId, n.attribut_id AS attributId,
-         a.name AS attributName, n.archiviert, n.erstellt_am AS erstelltAm,
+         a.name AS attributName, n.bezahlt_attribut_id AS bezahltAttributId, n.betrag,
+         n.archiviert, n.erstellt_am AS erstelltAm,
          CASE n.ziel_art
            WHEN 'vision' THEN (SELECT titel FROM visionen WHERE id = n.ziel_id)
            WHEN 'projekt' THEN (SELECT name FROM projekte WHERE id = n.ziel_id)
@@ -215,6 +219,8 @@ function zuInvestition(zeile: InvestitionZeile): Investition {
     zielName: zeile.zielName,
     attributId: zeile.attributId,
     attributName: zeile.attributName,
+    bezahltAttributId: zeile.bezahltAttributId,
+    betrag: zeile.betrag,
     archiviert: zeile.archiviert === 1,
     loeschbar: istLoeschbar('investition', zeile.id),
     erstelltAm: zeile.erstelltAm,
@@ -237,49 +243,89 @@ function groesseVon(groesse: number): number {
   return Math.min(3, Math.max(0, Math.round(groesse)));
 }
 
+function pruefeZahlung(zahlung: { bezahltAttributId: number | null; betrag: number }, bisher: { bezahltAttributId: number | null; betrag: number } | null): void {
+  if (zahlung.bezahltAttributId === null) {
+    return;
+  }
+  const wechsel = bisher === null || zahlung.bezahltAttributId !== bisher.bezahltAttributId;
+  if (wechsel || zahlung.betrag > (bisher?.betrag ?? 0)) {
+    pruefeAttributZiel(zahlung.bezahltAttributId);
+  }
+}
+
 export function erstelleInvestition(daten: InvestitionDaten): Investition {
   pruefeAttributZiel(daten.attributId);
   if (daten.ziel) {
     pruefeZiel(daten.ziel);
   }
+  const zahlung = loeseZahlung(null, daten);
+  pruefeZahlung(zahlung, null);
   const groesse = groesseVon(daten.groesse);
-  const { id } = ausfuehren(
-    `INSERT INTO investitionen (name, icon, groesse, bonus, ziel_art, ziel_id, attribut_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    daten.name,
-    daten.icon,
-    groesse,
-    investitionsBonus(groesse),
-    daten.ziel?.art ?? null,
-    daten.ziel?.id ?? null,
-    daten.attributId,
-  );
-  return ladeInvestition(Number(id));
+  return inTransaktion(() => {
+    const { id } = ausfuehren(
+      `INSERT INTO investitionen (name, icon, groesse, bonus, ziel_art, ziel_id, attribut_id, bezahlt_attribut_id, betrag)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      daten.name,
+      daten.icon,
+      groesse,
+      investitionsBonus(groesse),
+      daten.ziel?.art ?? null,
+      daten.ziel?.id ?? null,
+      daten.attributId,
+      zahlung.bezahltAttributId,
+      zahlung.betrag,
+    );
+    const investitionId = Number(id);
+    bucheZahlungsDifferenz(investitionId, KEINE_ZAHLUNG, zahlung, new Date().toISOString());
+    return ladeInvestition(investitionId);
+  });
 }
 
 export function aendereInvestition(id: number, aenderung: InvestitionAenderung): Investition {
-  ladeInvestition(id);
+  const bisher = ladeInvestition(id);
   if (aenderung.attributId !== undefined) {
     pruefeAttributZiel(aenderung.attributId);
   }
   if (aenderung.ziel) {
     pruefeZiel(aenderung.ziel);
   }
+  const zahlung = loeseZahlung(bisher, aenderung);
+  pruefeZahlung(zahlung, bisher);
+  const zahlungNeu = zahlung.bezahltAttributId !== bisher.bezahltAttributId || zahlung.betrag !== bisher.betrag;
   const groesse = aenderung.groesse === undefined ? undefined : groesseVon(aenderung.groesse);
-  aktualisiere('investitionen', id, {
-    name: aenderung.name,
-    icon: aenderung.icon,
-    groesse,
-    bonus: groesse === undefined ? undefined : investitionsBonus(groesse),
-    attribut_id: aenderung.attributId,
-    archiviert: alsZahl(aenderung.archiviert),
+  return inTransaktion(() => {
+    aktualisiere('investitionen', id, {
+      name: aenderung.name,
+      icon: aenderung.icon,
+      groesse,
+      bonus: groesse === undefined ? undefined : investitionsBonus(groesse),
+      attribut_id: aenderung.attributId,
+      archiviert: alsZahl(aenderung.archiviert),
+      bezahlt_attribut_id: zahlungNeu ? zahlung.bezahltAttributId : undefined,
+      betrag: zahlungNeu ? zahlung.betrag : undefined,
+    });
+    if (aenderung.ziel !== undefined) {
+      ausfuehren(
+        'UPDATE investitionen SET ziel_art = ?, ziel_id = ? WHERE id = ?',
+        aenderung.ziel?.art ?? null,
+        aenderung.ziel?.id ?? null,
+        id,
+      );
+    }
+    if (zahlungNeu) {
+      bucheZahlungsDifferenz(id, bisher, zahlung, new Date().toISOString());
+    }
+    return ladeInvestition(id);
   });
-  if (aenderung.ziel !== undefined) {
-    ausfuehren(
-      'UPDATE investitionen SET ziel_art = ?, ziel_id = ? WHERE id = ?',
-      aenderung.ziel?.art ?? null,
-      aenderung.ziel?.id ?? null,
-      id,
-    );
-  }
-  return ladeInvestition(id);
+}
+
+export function loescheInvestition(id: number): void {
+  inTransaktion(() => {
+    const bisher = ladeInvestition(id);
+    if (!istLoeschbar('investition', id)) {
+      throw ungueltig('Das ist schon genutzt und kann nur archiviert werden.');
+    }
+    bucheZahlungsDifferenz(id, bisher, KEINE_ZAHLUNG, new Date().toISOString());
+    ausfuehren('DELETE FROM investitionen WHERE id = ?', id);
+  });
 }

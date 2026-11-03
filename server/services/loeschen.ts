@@ -79,7 +79,9 @@ const MENGE: Record<LoeschArt, string> = {
       AND NOT EXISTS (SELECT 1 FROM vorlage_gewichte g WHERE g.attribut_id = a.id)
       AND NOT EXISTS (
         SELECT 1 FROM investitionen n
-        WHERE n.attribut_id = a.id OR (n.ziel_art = 'attribut' AND n.ziel_id = a.id)
+        WHERE n.attribut_id = a.id
+          OR n.bezahlt_attribut_id = a.id
+          OR (n.ziel_art = 'attribut' AND n.ziel_id = a.id)
       )
       AND NOT EXISTS (SELECT 1 FROM projekte p WHERE p.investition_ziel_art = 'attribut' AND p.investition_ziel_id = a.id)
       AND NOT EXISTS (SELECT 1 FROM attribute z WHERE z.erschoepfung_ziel = a.id AND z.id <> a.id)`,
@@ -270,12 +272,6 @@ export function loescheFaehigkeit(id: number): void {
   vorhanden('faehigkeiten', id, 'Die Fähigkeit');
   pruefe('faehigkeit', id, false);
   ausfuehren('DELETE FROM faehigkeiten WHERE id = ?', id);
-}
-
-export function loescheInvestition(id: number): void {
-  vorhanden('investitionen', id, 'Die Investition');
-  pruefe('investition', id, false);
-  ausfuehren('DELETE FROM investitionen WHERE id = ?', id);
 }
 
 export function loescheBasisAufgabe(id: number): void {

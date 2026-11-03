@@ -16,6 +16,8 @@ export interface Investition {
   zielName: string | null;
   attributId: number;
   attributName: string;
+  bezahltAttributId: number | null;
+  betrag: number;
   archiviert: boolean;
   loeschbar: boolean;
   erstelltAm: string;
@@ -27,6 +29,8 @@ export interface InvestitionDaten {
   groesse: number;
   attributId: number;
   ziel?: InvestitionsZiel | null;
+  bezahltAttributId?: number | null;
+  betrag?: number;
 }
 
 export interface InvestitionAenderung {
@@ -35,5 +39,7 @@ export interface InvestitionAenderung {
   groesse?: number;
   attributId?: number;
   ziel?: InvestitionsZiel | null;
+  bezahltAttributId?: number | null;
+  betrag?: number;
   archiviert?: boolean;
 }

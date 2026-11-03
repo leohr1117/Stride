@@ -1,5 +1,9 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Investition kann XP eines Attributs kosten, und das Level kann dabei sinken. Reicht das XP nicht, wird nichts gespeichert. Löschen gibt das XP zurück, Archivieren lässt es abgezogen.": "Un investissement peut coûter de l'XP d'un attribut, et le niveau peut baisser. S'il n'y a pas assez d'XP, rien n'est enregistré. Supprimer rend l'XP. Archiver le laisse déduit.",
+  "Dafür ist nicht genug XP da.": "Il n'y a pas assez d'XP pour cela.",
+  "Eine Bezahlung braucht ein Attribut.": "Un paiement a besoin d'un attribut.",
+  "Der Betrag muss eine ganze Zahl ab 0 sein.": "Le montant doit être un nombre entier à partir de 0.",
   "{name} zählt mit": "{name} compte",
   "Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.": "La carte de série sur Aujourd'hui explique l'état en une phrase. Le bouton + Entrée ouvre la même entrée que le bouton plus.",
   "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "Dans le guide, une barre reste en haut et mène aux sections. La section visible est mise en évidence.",

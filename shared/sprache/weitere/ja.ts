@@ -1,5 +1,9 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Investition kann XP eines Attributs kosten, und das Level kann dabei sinken. Reicht das XP nicht, wird nichts gespeichert. Löschen gibt das XP zurück, Archivieren lässt es abgezogen.": "投資は属性の XP を使えます。そのときレベルは下がることがあります。XP が足りなければ何も保存されません。削除すると XP は戻ります。アーカイブしても差し引かれたままです。",
+  "Dafür ist nicht genug XP da.": "そのための XP が足りません。",
+  "Eine Bezahlung braucht ein Attribut.": "支払いには属性が必要です。",
+  "Der Betrag muss eine ganze Zahl ab 0 sein.": "金額は 0 以上の整数です。",
   "{name} zählt mit": "{name} を数える",
   "Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.": "今日の連続カードは、状態を一文で説明します。ボタン「+ 記録」はプラスボタンと同じ記録を開きます。",
   "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "ガイドではバーが上に残り、各節へ移動できます。見えている節は強調されます。",
