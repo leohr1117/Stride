@@ -108,6 +108,19 @@ describe('bestaetigungFuer', () => {
     });
     expect(bestaetigungFuer({ art: 'konto', id: 3, name: 'mia' })?.text).toBe('Die Welt dieses Accounts wird mitgelöscht.');
     expect(bestaetigungFuer({ art: 'knoten', id: 4, name: 'Wurzel' })?.text).toBe('Alle Skills darunter werden ebenfalls gelöscht.');
+    expect(bestaetigungFuer({ art: 'investition', id: 8, name: 'Lager' })).toBeNull();
+    expect(
+      bestaetigungFuer({
+        art: 'investition',
+        id: 8,
+        name: 'Lager',
+        hinweis: 'Die 200 XP gehen zurück an Ressourcen.',
+      }),
+    ).toEqual({
+      titel: 'Lager löschen?',
+      text: 'Die 200 XP gehen zurück an Ressourcen.',
+      knopf: 'Löschen',
+    });
   });
 });
 

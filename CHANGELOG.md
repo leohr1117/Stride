@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.10
+
+### Hinzugefügt
+
+- Beim Anlegen einer Investition wählst du Kosten und Wirkung. Zu wenig XP speichert nichts. Löschen gibt gezahltes XP zurück.
+
 ## 3.56.9
 
 ### Hinzugefügt

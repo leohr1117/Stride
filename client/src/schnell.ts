@@ -126,6 +126,9 @@ export function bestaetigungFuer(ziel: SchnellZiel): Bestaetigungstext | null {
       knopf: 'Löschen',
     };
   }
+  if (ziel.art === 'investition' && ziel.hinweis) {
+    return { titel: `${ziel.name} löschen?`, text: ziel.hinweis, knopf: 'Löschen' };
+  }
   return null;
 }
 

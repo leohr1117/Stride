@@ -357,15 +357,15 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     }
     await page.keyboard.press('ArrowRight');
     await expect(neu.getByText('+10 %')).toBeVisible();
-    const projektSegment = neu.getByRole('button', { name: 'Projekt', exact: true });
-    if (await projektSegment.isVisible()) {
-      await projektSegment.click();
-    }
-    await neu.getByRole('button', { name: ziel.name, exact: true }).click();
-    const ressourcenChip = neu.getByRole('group', { name: 'Bonus für' }).getByRole('button', { name: 'Ressourcen', exact: true });
-    if ((await ressourcenChip.count()) === 1 && (await ressourcenChip.getAttribute('aria-pressed')) !== 'true') {
-      await ressourcenChip.click();
-    }
+    await neu.getByRole('button', { name: 'Bezahlt mit · Ressourcen' }).click();
+    const zahlWahl = page.getByRole('dialog', { name: 'Bezahlt mit' });
+    await zahlWahl.getByRole('option', { name: 'Nichts', exact: true }).click();
+    await expect(zahlWahl).toBeHidden();
+    await neu.getByRole('button', { name: 'Auch für · Keins' }).click();
+    const zielWahl = page.getByRole('dialog', { name: 'Auch für' });
+    await zielWahl.getByRole('option', { name: ziel.name, exact: true }).click();
+    await expect(zielWahl).toBeHidden();
+    await expect(neu.getByRole('button', { name: 'Bonus für · Ressourcen' })).toBeVisible();
     await neu.getByRole('button', { name: 'Speichern' }).click();
     await expect(neu).toBeHidden();
     await expect(listeBereich.getByRole('button', { name, exact: true })).toBeVisible();

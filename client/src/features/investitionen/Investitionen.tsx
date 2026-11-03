@@ -1,11 +1,10 @@
-import { tx } from '../../text.ts';
-import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
-import type { Attribut, Investition, InvestitionAenderung, InvestitionDaten, InvestitionsArt, InvestitionsZiel, Projekt, ProjektAenderung, ProjektDetail, Vision, Ziele } from '../../../../shared/api/index.ts';
-import type { Sichtbarkeit } from '../../../../shared/spiel/sichtbarkeit.ts';
-import { ICONS, GRENZEN, NEUTRAL_FARBE, type IconName } from '../../../../shared/spiel/begriffe.ts';
+import { attributName, tx } from '../../text.ts';
+import { useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
+import { useRef, useState } from 'react';
+import type { Attribut, Investition, InvestitionsArt, InvestitionsZiel, Projekt, ProjektAenderung, ProjektDetail, Vision, Ziele } from '../../../../shared/api/index.ts';
+import { NEUTRAL_FARBE } from '../../../../shared/spiel/begriffe.ts';
 import { istTypAktiv } from '../../../../shared/spiel/funktionen.ts';
-import { INVESTITION_GROESSEN, INVESTITION_INFO, RESSOURCEN_SCHALTER, investitionsBonus } from '../../../../shared/spiel/xp.ts';
+import { INVESTITION_INFO, RESSOURCEN_SCHALTER, investitionsBonus } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { bonusProzent } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
@@ -14,9 +13,11 @@ import { useKopf } from '../../components/Kopf.tsx';
 import { ArchivListe } from '../../components/ArchivListe.tsx';
 import { SchnellMenueKnopf, SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
-import { IconAuswahl } from '../../components/IconAuswahl.tsx';
 import { AnlegeZeile, Liste, Zeile, ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
-import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Ladeanzeige, Leer, Regler, Segmentauswahl } from '../../ui/index.ts';
+import { Chip, Fehlermeldung, Knopf, Ladeanzeige, Leer, Segmentauswahl } from '../../ui/index.ts';
+import { GroessenRegler } from './groesse.tsx';
+import { InvestitionFormular, listenFuerZiel } from './InvestitionBlatt.tsx';
+import { loeschHinweis } from './zahlungAnzeige.ts';
 
 function zielText(ziel: InvestitionsZiel | null, visionen: Vision[], projekte: Projekt[], attribute: Attribut[]): string | null {
   if (!ziel) {
@@ -29,150 +30,6 @@ function zielText(ziel: InvestitionsZiel | null, visionen: Vision[], projekte: P
     return projekte.find((projekt) => projekt.id === ziel.id)?.name ?? null;
   }
   return attribute.find((attribut) => attribut.id === ziel.id)?.name ?? null;
-}
-
-function gueltigesIcon(icon: string): IconName {
-  return (ICONS as readonly string[]).includes(icon) ? (icon as IconName) : 'gem';
-}
-
-function stufeVon(roh: number): number {
-  if (!Number.isFinite(roh)) {
-    return 0;
-  }
-  return Math.min(INVESTITION_GROESSEN.length - 1, Math.max(0, Math.round(roh)));
-}
-
-function GroessenRegler({
-  wert,
-  onAendern,
-  className = 'px-4 py-3',
-}: {
-  wert: number;
-  onAendern: (groesse: number) => void;
-  className?: string;
-}) {
-  const [lokal, setLokal] = useState(() => stufeVon(wert));
-  const lokalRef = useRef(stufeVon(wert));
-  const zieht = useRef(false);
-  const onAendernRef = useRef(onAendern);
-  const endeRef = useRef<(() => void) | null>(null);
-  onAendernRef.current = onAendern;
-
-  useEffect(() => {
-    if (zieht.current) {
-      return;
-    }
-    const naechstes = stufeVon(wert);
-    lokalRef.current = naechstes;
-    setLokal(naechstes);
-  }, [wert]);
-
-  useEffect(() => () => endeRef.current?.(), []);
-
-  const setze = (roh: number) => {
-    const naechstes = stufeVon(roh);
-    lokalRef.current = naechstes;
-    setLokal(naechstes);
-    return naechstes;
-  };
-
-  const uebernehmen = () => {
-    if (!zieht.current) {
-      return;
-    }
-    zieht.current = false;
-    endeRef.current = null;
-    onAendernRef.current(lokalRef.current);
-  };
-
-  const beginne = () => {
-    endeRef.current?.();
-    zieht.current = true;
-    const ende = () => {
-      window.removeEventListener('pointerup', ende);
-      window.removeEventListener('pointercancel', ende);
-      uebernehmen();
-    };
-    endeRef.current = () => {
-      window.removeEventListener('pointerup', ende);
-      window.removeEventListener('pointercancel', ende);
-    };
-    window.addEventListener('pointerup', ende);
-    window.addEventListener('pointercancel', ende);
-  };
-
-  const prozent = bonusProzent(investitionsBonus(lokal));
-  return (
-    <div className={`space-y-1 ${className}`}>
-      <div className="flex items-center justify-between gap-3 text-sm">
-        <span className="text-leise">{tx("Größe")}</span>
-        <span className="zahl font-medium">{prozent}</span>
-      </div>
-      <div className="touch-none">
-        <Regler
-          min={0}
-          max={3}
-          step={1}
-          value={lokal}
-          aria-label={tx("Größe")}
-          aria-valuetext={prozent}
-          onPointerDown={beginne}
-          onChange={(ereignis) => {
-            const naechstes = setze(Number(ereignis.target.value));
-            if (!zieht.current) {
-              onAendernRef.current(naechstes);
-            }
-          }}
-          className="groesse-regler"
-        />
-        <div className="flex justify-between px-1" aria-hidden="true">
-          {INVESTITION_GROESSEN.map((anteil, index) => (
-            <span key={anteil} className={`size-1.5 rounded-full ${index <= lokal ? 'bg-akzent' : 'bg-flaeche-2'}`} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function waehlbareAttribute(attribute: Attribut[], funktionen: ReturnType<typeof useSichtbarkeit>['funktionen'], aktuell?: number) {
-  return attribute
-    .filter((eintrag) => {
-      const gewaehlt = eintrag.id === aktuell;
-      return gewaehlt || (!eintrag.archiviert && istTypAktiv(funktionen, eintrag.typ));
-    })
-    .sort((a, b) => {
-      if (a.kennung === 'ressourcen') {
-        return -1;
-      }
-      if (b.kennung === 'ressourcen') {
-        return 1;
-      }
-      return a.name.localeCompare(b.name, 'de');
-    });
-}
-
-function listenFuerZiel(
-  ziel: InvestitionsZiel | null,
-  sichtbarkeit: Sichtbarkeit,
-  visionen: Vision[],
-  projekte: Projekt[],
-  attribute: Attribut[],
-): { visionen: Vision[]; projekte: Projekt[]; attribute: Attribut[] } {
-  return {
-    visionen: visionen.filter((vision) => {
-      const istZiel = ziel?.art === 'vision' && ziel.id === vision.id;
-      return istZiel || (sichtbarkeit.ebenen.visionen && !vision.archiviert);
-    }),
-    projekte: projekte.filter((eintrag) => {
-      const istZiel = ziel?.art === 'projekt' && ziel.id === eintrag.id;
-      return istZiel || (sichtbarkeit.ebenen.projekte && eintrag.aktiv);
-    }),
-    attribute: attribute.filter((eintrag) => {
-      const istZiel = ziel?.art === 'attribut' && ziel.id === eintrag.id;
-      return istZiel || (!eintrag.archiviert && istTypAktiv(sichtbarkeit.funktionen, eintrag.typ));
-    }),
-  };
 }
 
 function gewaehlteArt(
@@ -324,9 +181,19 @@ function schreibeProjekt(client: QueryClient, projekt: Projekt): void {
   });
 }
 
+function zahlungsHinweis(eintrag: Investition, attribute: Attribut[]): string | undefined {
+  if (eintrag.bezahltAttributId === null) {
+    return undefined;
+  }
+  const ziel = attribute.find((attribut) => attribut.id === eintrag.bezahltAttributId);
+  if (!ziel) {
+    return undefined;
+  }
+  return loeschHinweis(eintrag.betrag, attributName(ziel)) ?? undefined;
+}
+
 export function InvestitionenSeite() {
   useKopf({ titel: 'Investitionen', info: INVESTITION_INFO });
-  const sichtbarkeit = useSichtbarkeit();
   const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
   const { data: attribute = [] } = useQuery({ queryKey: SCHLUESSEL.attribute, queryFn: api.attribute });
   const { data: investitionen, error, isPending } = useQuery({ queryKey: SCHLUESSEL.investitionen, queryFn: api.investitionen });
@@ -336,7 +203,6 @@ export function InvestitionenSeite() {
   const archiv = liste.filter((eintrag) => eintrag.archiviert);
   const visionen = ziele?.visionen ?? [];
   const alleProjekte = ziele?.projekte ?? [];
-  const attributeWahl = waehlbareAttribute(attribute, sichtbarkeit.funktionen);
 
   if (isPending) {
     return <Ladeanzeige />;
@@ -361,6 +227,7 @@ export function InvestitionenSeite() {
                   name: investition.name,
                   archiviert: investition.archiviert,
                   loeschbar: investition.loeschbar,
+                  hinweis: zahlungsHinweis(investition, attribute),
                 }}
               >
                 {(menue) => (
@@ -392,6 +259,7 @@ export function InvestitionenSeite() {
             name: eintrag.name,
             archiviert: true,
             loeschbar: eintrag.loeschbar,
+            hinweis: zahlungsHinweis(eintrag, attribute),
           },
         }))}
       />
@@ -407,6 +275,7 @@ export function InvestitionenSeite() {
                 name: dialog.name,
                 archiviert: dialog.archiviert,
                 loeschbar: dialog.loeschbar,
+                hinweis: zahlungsHinweis(dialog, attribute),
               }}
               onErledigt={() => setDialog(null)}
             />
@@ -417,108 +286,12 @@ export function InvestitionenSeite() {
         {dialog !== null && (
           <InvestitionFormular
             investition={dialog === 'neu' ? null : dialog}
-            attribute={attributeWahl}
+            attribute={attribute}
             onFertig={() => setDialog(null)}
           />
         )}
       </Dialog>
     </div>
-  );
-}
-
-function InvestitionFormular({
-  investition,
-  attribute,
-  onFertig,
-}: {
-  investition: Investition | null;
-  attribute: Attribut[];
-  onFertig: () => void;
-}) {
-  const queryClient = useQueryClient();
-  const ressourcen = attribute.find((eintrag) => eintrag.kennung === 'ressourcen' && !eintrag.archiviert);
-  const sichtbarkeit = useSichtbarkeit();
-  const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
-  const [name, setName] = useState(investition?.name ?? '');
-  const [icon, setIcon] = useState<IconName>(gueltigesIcon(investition?.icon ?? 'gem'));
-  const [groesse, setGroesse] = useState(investition?.groesse ?? 1);
-  const [attributId, setAttributId] = useState<number | null>(investition?.attributId ?? ressourcen?.id ?? attribute[0]?.id ?? null);
-  const [ziel, setZiel] = useState<InvestitionsZiel | null>(investition?.ziel ?? null);
-  const [fehler, setFehler] = useState<unknown>(null);
-  const listen = listenFuerZiel(ziel, sichtbarkeit, ziele?.visionen ?? [], ziele?.projekte ?? [], attribute);
-  const speichern = useMutation({
-    mutationFn: async () => {
-      if (attributId === null) {
-        throw new Error(tx("Wähle ein Attribut."));
-      }
-      const daten: InvestitionDaten = { name: name.trim(), icon, groesse, attributId, ziel };
-      if (investition) {
-        const aenderung: InvestitionAenderung = daten;
-        return api.aendereInvestition(investition.id, aenderung);
-      }
-      return api.erstelleInvestition(daten);
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries();
-      onFertig();
-    },
-    onError: (grund) => setFehler(grund),
-  });
-  const senden = (ereignis: FormEvent) => {
-    ereignis.preventDefault();
-    speichern.mutate();
-  };
-
-  return (
-    <Formular onAbsenden={senden}>
-      <Feld label={tx("Name")}>
-        <input
-          className={EINGABE_STIL}
-          value={name}
-          maxLength={GRENZEN.nameMax}
-          onChange={(ereignis) => setName(ereignis.target.value)}
-        />
-      </Feld>
-      <GroessenRegler wert={groesse} onAendern={setGroesse} className="" />
-      <div role="group" aria-labelledby="investition-ziel" className="min-w-0 space-y-2">
-        <div className="min-w-0">
-          <p id="investition-ziel" className="text-sm leading-5 font-semibold">{tx("Investiert in")}</p>
-          <p className="text-[13px] leading-[18px] text-leise">{tx("Auch für Vision, Projekt oder Attribut.")}</p>
-        </div>
-        <ZielWahl ziel={ziel} onWaehlen={setZiel} visionen={listen.visionen} projekte={listen.projekte} attribute={listen.attribute} />
-      </div>
-      <div role="group" aria-labelledby="investition-bonus" className="min-w-0 space-y-2">
-        <div className="min-w-0">
-          <p id="investition-bonus" className="text-sm leading-5 font-semibold">{tx("Bonus für")}</p>
-          <p className="text-[13px] leading-[18px] text-leise">{tx("XP dieses Attributs steigt.")}</p>
-        </div>
-        <div className="flex w-full min-w-0 max-w-full flex-wrap gap-2">
-          {attribute.map((eintrag) => (
-            <Chip
-              key={eintrag.id}
-              aktiv={attributId === eintrag.id}
-              farbe={eintrag.farbe}
-              onClick={() => setAttributId((aktuell) => (aktuell === eintrag.id ? null : eintrag.id))}
-              className="max-w-full min-w-0 overflow-hidden"
-            >
-              <span className="truncate">{eintrag.name}</span>
-            </Chip>
-          ))}
-        </div>
-      </div>
-      <Feld label={tx("Symbol")}>
-        <IconAuswahl wert={icon} farbe={NEUTRAL_FARBE} onAendern={setIcon} />
-      </Feld>
-      <Fehlermeldung fehler={fehler} />
-      <Knopf
-        type="submit"
-        variante="primaer"
-        className="w-full"
-        disabled={!name.trim() || attributId === null || speichern.isPending}
-      >
-        {tx("Speichern")}
-      </Knopf>
-    </Formular>
   );
 }
 

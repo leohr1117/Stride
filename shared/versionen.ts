@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.10',
+    seiten: 'Investitionen',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Beim Anlegen einer Investition wählst du Kosten und Wirkung. Zu wenig XP speichert nichts. Löschen gibt gezahltes XP zurück.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.9',
     seiten: 'Investitionen',
     abschnitte: [

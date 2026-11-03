@@ -92,41 +92,35 @@ test.beforeEach(async ({ page }) => {
   await anmelden(page);
 });
 
-test('Investition unterscheidet die Bereiche und lässt Attribute abwählen', async ({ page }, testInfo) => {
+test('Investition trennt Kosten und Wirkung', async ({ page }, testInfo) => {
   fs.mkdirSync('tmp-test/formular-felder', { recursive: true });
   await page.goto('/investitionen');
   await page.getByRole('button', { name: /Investition anlegen/ }).click();
   const dialog = page.getByRole('dialog', { name: 'Investition', exact: true });
-  await expect(dialog.getByText('Investiert in', { exact: true })).toBeVisible();
-  await expect(dialog.getByText('Bonus für', { exact: true })).toBeVisible();
-  await zeile(dialog.getByText('Auch für Vision, Projekt oder Attribut.', { exact: true }));
-  await zeile(dialog.getByText('XP dieses Attributs steigt.', { exact: true }));
+  await expect(dialog.getByRole('heading', { name: 'Kosten' })).toBeVisible();
+  await expect(dialog.getByRole('heading', { name: 'Wirkung' })).toBeVisible();
+  await expect(dialog.getByText('Investiert in', { exact: true })).toHaveCount(0);
+  await zeile(dialog.getByRole('heading', { name: 'Kosten' }));
+  await zeile(dialog.getByRole('heading', { name: 'Wirkung' }));
+  await expect(dialog.getByRole('button', { name: 'Bezahlt mit · Ressourcen' })).toBeVisible();
+  await expect(dialog.getByRole('textbox', { name: 'Betrag' })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Bonus für · Ressourcen' })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Auch für · Keins' })).toBeVisible();
+  const speichern = dialog.getByRole('button', { name: 'Speichern' });
+  await expect(speichern).toBeEnabled();
 
-  const bonus = dialog.getByRole('group', { name: 'Bonus für' });
-  const gewaehlt = bonus.getByRole('button', { pressed: true });
-  await expect(gewaehlt).toHaveCount(1);
-  await gewaehlt.click();
-  await expect(bonus.getByRole('button', { pressed: true })).toHaveCount(0);
-  await expect(dialog.getByRole('button', { name: 'Speichern' })).toBeDisabled();
-  await bonus.getByRole('button').first().click();
-  await expect(bonus.getByRole('button', { pressed: true })).toHaveCount(1);
-
-  const ziel = dialog.getByRole('group', { name: 'Investiert in' });
-  const attribut = ziel.getByRole('button', { name: 'Attribut', exact: true });
-  if (await attribut.isVisible()) {
-    await attribut.click();
-  }
-  const chip = ziel.locator('.chip').first();
-  await expect(chip).toBeVisible();
-  await chip.click();
-  await expect(chip).toHaveAttribute('aria-pressed', 'true');
-  await chip.click();
-  await expect(chip).toHaveAttribute('aria-pressed', 'false');
+  await dialog.getByRole('button', { name: 'Bezahlt mit · Ressourcen' }).click();
+  const wahl = page.getByRole('dialog', { name: 'Bezahlt mit' });
+  await wahl.getByRole('option', { name: 'Nichts', exact: true }).click();
+  await expect(wahl).toBeHidden();
+  await expect(dialog.getByRole('textbox', { name: 'Betrag' })).toHaveCount(0);
+  await expect(dialog.getByText('Kostenlos · Bonus für Ressourcen')).toBeVisible();
+  await expect(speichern).toBeEnabled();
 
   await blattImBild(dialog);
   await keinDoppelPlus(dialog);
   await ohneSeitlichenUeberlauf(page);
-  await bonus.scrollIntoViewIfNeeded();
+  await dialog.getByRole('heading', { name: 'Wirkung' }).scrollIntoViewIfNeeded();
   await page.screenshot({ path: `tmp-test/formular-felder/${testInfo.project.name}-investition.png` });
 });
 
