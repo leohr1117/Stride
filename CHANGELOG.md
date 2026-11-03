@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.23
+
+### Geändert
+
+- Im Verlauf und bei den Zielen sind die Zeilen gleich hoch. Die XP-Werte im Verlauf stehen rechts bündig.
+
 ## 3.56.22
 
 ### Geändert

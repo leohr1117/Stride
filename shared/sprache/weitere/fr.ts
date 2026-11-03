@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Verlauf und bei den Zielen sind die Zeilen gleich hoch. Die XP-Werte im Verlauf stehen rechts bündig.": "Dans Historique et dans Objectifs, les lignes ont la même hauteur. Les valeurs d'XP dans Historique s'alignent à droite.",
   "Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.": "Dans Plus, dans Compte, dans Modèles et dans Comptes, les lignes ont la même hauteur. Les valeurs s'alignent à droite.",
   "Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.": "Les autres pages utilisent le même titre de section. Sur le téléphone, les listes, les tableaux et les graphiques occupent une surface sur toute la largeur.",
   "Auf Verlauf, Verbindungen und Vorbilder sehen die Abschnittsüberschriften gleich aus. Auf dem Handy reichen die Listen über die ganze Breite.": "Dans Historique, Connexions et Modèles, les titres de section ont la même forme. Sur le téléphone, les listes occupent toute la largeur.",

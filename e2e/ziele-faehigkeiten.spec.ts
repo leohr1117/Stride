@@ -150,7 +150,7 @@ test('Abgeschlossen bleibt in der Kopfzeile', async ({ page }, testInfo) => {
     await page.screenshot({ path: `tmp-test/ziele-faehigkeiten/${testInfo.project.name}-kopf.png`, fullPage: false });
 
     await page.goto('/ziele');
-    const link = page.locator(`a[href="/projekte/${ziel.id}"]`);
+    const link = page.locator('[data-zeile]').filter({ has: page.locator(`a[href="/projekte/${ziel.id}"]`) });
     const name = link.getByText(ziel.name, { exact: true });
     const wort = link.getByText('abgeschlossen', { exact: true });
     await expect(wort).toBeVisible();

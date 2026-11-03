@@ -100,17 +100,25 @@ test('Verlauf zeigt die Zahlung und die Rückbuchung', async ({ page }, testInfo
     const farben = await zeile.evaluate((element) => {
       const titel = element.querySelector('.text-base');
       const betrag = element.querySelector('.zahl');
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--leise)';
+      document.body.append(probe);
+      const leise = getComputedStyle(probe).color;
+      probe.remove();
       if (!titel || !betrag) {
         return null;
       }
+      const stil = getComputedStyle(betrag);
       return {
-        titel: getComputedStyle(titel).color,
-        betrag: getComputedStyle(betrag).color,
+        betrag: stil.color,
+        leise,
         xp: betrag.classList.contains('text-xp'),
+        zahlen: stil.fontVariantNumeric.includes('tabular-nums'),
       };
     });
     expect(farben?.xp).toBe(false);
-    expect(farben?.betrag).toBe(farben?.titel);
+    expect(farben?.betrag).toBe(farben?.leise);
+    expect(farben?.zahlen).toBe(true);
     const loeschbar = await zeile.evaluate((element) => element.closest('[data-schnell]') !== null);
     expect(loeschbar).toBe(false);
     await expect(page.getByRole('button', { name: `Aktionen für ${NAME}` })).toHaveCount(0);

@@ -531,6 +531,7 @@ html[data-eingabe='zeiger'] :focus {
   pointer-events: none;
 }
 
+.liste.menue-spalte .zeile-menue,
 .zeile[data-hat-menue] .zeile-menue,
 .liste:has([data-hat-menue]) .zeile-menue {
   display: flex;

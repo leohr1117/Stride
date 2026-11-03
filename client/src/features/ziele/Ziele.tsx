@@ -2,7 +2,7 @@ import { tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { createPortal } from 'react-dom';
 import type { Organisation, Projekt, Vision, VorhabenMitProjekt } from '../../../../shared/api/index.ts';
 import { ZIEL_MARKE, zielTitel } from '../../../../shared/spiel/ebenen.ts';
@@ -13,7 +13,7 @@ import { KopfAktion } from '../../components/Kopf.tsx';
 import { SchnellMenueKnopf, SchnellZeile, useSchnellAktion } from '../../components/SchnellAktion.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
-import { Liste, Zeile } from '../../components/Zeile.tsx';
+import { DichteZeilen, Liste, Zeile } from '../../components/Zeile.tsx';
 import { Abschnitt } from '../../components/Ausklappbar.tsx';
 import { AbschnittKopf, Farbpunkt, Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { ZielDialog, type ZielBearbeitung } from './ZielDialoge.tsx';
@@ -107,6 +107,7 @@ export function ZieleSeite() {
   const detail = detailId === null ? null : (ziele.visionen.find((vision) => vision.id === detailId) ?? null);
 
   return (
+    <DichteZeilen>
     <div className="space-y-6">
       {neuPunkte.length > 0 && (
         <KopfAktion>
@@ -294,6 +295,7 @@ export function ZieleSeite() {
         />
       )}
     </div>
+    </DichteZeilen>
   );
 }
 
@@ -373,19 +375,34 @@ function NeuMenue({
   );
 }
 
+function visionTitel(vision: Vision, onOeffnen: () => void) {
+  return (
+    <button type="button" onClick={onOeffnen} className="pointer-events-auto block w-full min-w-0 text-left">
+      <h2 className="pointer-events-auto flex min-w-0 items-center text-base font-semibold leading-[22px]">
+        <Farbpunkt farbe={vision.farbe} className="me-2" />
+        <span className="min-w-0 truncate break-words">{vision.titel}</span>
+      </h2>
+    </button>
+  );
+}
+
+function organisationsTitel(organisation: Organisation) {
+  return (
+    <h3 className="flex min-w-0 items-center text-[13px] font-semibold leading-[18px] text-leise">
+      <Farbpunkt farbe={organisation.farbe} className="me-2" />
+      <span className="min-w-0 truncate">{organisation.name}</span>
+    </h3>
+  );
+}
+
 function VisionKopf({ vision, onOeffnen }: { vision: Vision; onOeffnen: () => void }) {
   return (
-    <div className="flex min-h-12 items-center gap-3 px-4 py-3">
-      <button type="button" onClick={onOeffnen} className="flex min-w-0 flex-1 items-center text-left">
-        <h2 className="min-w-0 flex-1 text-base leading-6 font-semibold">
-          <Farbpunkt farbe={vision.farbe} className="me-2" />
-          <span className="break-words">{vision.titel}</span>
-        </h2>
-      </button>
-      {vision.level !== null ? (
-        <span className="zahl shrink-0 text-sm font-semibold text-leise">{tx('Lvl {level}', { level: vision.level })}</span>
-      ) : null}
-    </div>
+    <Zeile
+      typ="lesen"
+      name={vision.titel}
+      titel={visionTitel(vision, onOeffnen)}
+      wert={vision.level !== null ? tx('Lvl {level}', { level: vision.level }) : undefined}
+    />
   );
 }
 
@@ -404,13 +421,13 @@ function OrganisationsKopf({ organisation, onBearbeiten }: { organisation: Organ
       }}
     >
       {(menue) => (
-        <div className={`flex min-h-12 items-center gap-3 px-4 py-3 ${organisation.archiviert ? 'opacity-50' : ''}`}>
-          <h3 className="min-w-0 flex-1 text-[13px] leading-[18px] font-semibold text-leise">
-            <Farbpunkt farbe={organisation.farbe} className="me-2" />
-            <span className="break-words align-middle">{organisation.name}</span>
-          </h3>
-          {menue}
-        </div>
+        <Zeile
+          typ="lesen"
+          className={organisation.archiviert ? 'opacity-50' : ''}
+          name={organisation.name}
+          titel={organisationsTitel(organisation)}
+          menue={menue}
+        />
       )}
     </SchnellZeile>
   );
@@ -424,24 +441,32 @@ function ProjektZeile({ projekt }: { projekt: Projekt }) {
       ziel={{ art: 'projekt', id: projekt.id, name: projekt.name, archiviert: projekt.archiviert, loeschbar: projekt.loeschbar }}
     >
       {(menue) => (
-        <div className={`flex min-h-12 items-center ${projekt.archiviert ? 'opacity-50' : ''}`}>
-          <Link to={`/projekte/${projekt.id}`} className="flex min-w-0 flex-1 items-center gap-3 px-4 py-3">
-            <span className="min-w-0 flex-1">
-              <span className="flex min-w-0 items-center gap-2 text-base leading-6">
-                <span className="min-w-0 truncate">{projekt.name}</span>
-                {projekt.geschafftAm ? (
-                  <span className="shrink-0 text-xs font-normal whitespace-nowrap text-leise">{tx('abgeschlossen')}</span>
-                ) : null}
+        <Zeile
+          typ="lesen"
+          nach={`/projekte/${projekt.id}`}
+          name={projekt.name}
+          className={projekt.archiviert ? 'opacity-50' : ''}
+          neben={neben}
+          menue={menue}
+          titel={
+            <span className="flex min-w-0 items-center gap-2">
+              <span className="min-w-0 truncate">{projekt.name}</span>
+              {projekt.geschafftAm ? (
+                <span className="shrink-0 text-xs font-normal whitespace-nowrap text-leise">{tx('abgeschlossen')}</span>
+              ) : null}
+            </span>
+          }
+          rechts={
+            <span className="flex min-w-0 items-center gap-3">
+              {projekt.kette.laenge >= 2 ? (
+                <KettenAnzeige kette={projekt.kette} className="max-w-full min-w-0 shrink truncate" />
+              ) : null}
+              <span data-zeile-wert="" className="zeile-wert zahl shrink-0">
+                {tx('Lvl {level}', { level: projekt.level.level })}
               </span>
-              <span className="block truncate text-[13px] leading-[18px] text-leise">{neben}</span>
             </span>
-            <KettenAnzeige kette={projekt.kette} className="max-w-full min-w-0 shrink truncate" />
-            <span className="zahl shrink-0 whitespace-nowrap text-sm font-semibold">
-              {tx('Lvl {level}', { level: projekt.level.level })}
-            </span>
-          </Link>
-          {menue}
-        </div>
+          }
+        />
       )}
     </SchnellZeile>
   );
@@ -636,13 +661,16 @@ function VorhabenBereich({ vorhaben }: { vorhaben: VorhabenMitProjekt[] }) {
               ziel={{ art: 'vorhaben', id: eintrag.id, name: eintrag.titel, loeschbar: eintrag.loeschbar }}
             >
               {(menue) => (
-                <div className="flex min-h-12 items-center gap-3 px-4 py-3">
-                  <span className="min-w-0 flex-1 truncate text-base leading-6">{eintrag.titel}</span>
-                  {menue}
-                  <Knopf data-schnell-frei="" onClick={() => eintragOeffnen({ vorhabenId: eintrag.id })}>
-                    {tx('Weiter')}
-                  </Knopf>
-                </div>
+                <Zeile
+                  typ="lesen"
+                  titel={eintrag.titel}
+                  menue={menue}
+                  rechts={
+                    <Knopf data-schnell-frei="" onClick={() => eintragOeffnen({ vorhabenId: eintrag.id })}>
+                      {tx('Weiter')}
+                    </Knopf>
+                  }
+                />
               )}
             </SchnellZeile>
           ))}
@@ -652,9 +680,7 @@ function VorhabenBereich({ vorhaben }: { vorhaben: VorhabenMitProjekt[] }) {
         <Abschnitt titel="Abgeschlossen" zusatz={`(${zahl(fertig.length)})`} kennung="ziele-vorhaben-fertig" anfangEingeklappt>
           <Liste>
             {fertig.map((eintrag) => (
-              <div key={eintrag.id} className="px-4 py-3 text-sm text-leise">
-                {eintrag.titel}
-              </div>
+              <Zeile key={eintrag.id} typ="lesen" className="text-leise" titel={eintrag.titel} />
             ))}
           </Liste>
         </Abschnitt>
@@ -676,13 +702,16 @@ function FreieVorhaben({ vorhaben }: { vorhaben: VorhabenMitProjekt[] }) {
             ziel={{ art: 'vorhaben', id: eintrag.id, name: eintrag.titel, loeschbar: eintrag.loeschbar }}
           >
             {(menue) => (
-              <div className="flex min-h-12 items-center gap-3 px-4 py-3">
-                <span className="min-w-0 flex-1 truncate text-base leading-6">{eintrag.titel}</span>
-                {menue}
-                <Knopf data-schnell-frei="" onClick={() => eintragOeffnen({ vorhabenId: eintrag.id })}>
-                  {tx('Weiter')}
-                </Knopf>
-              </div>
+              <Zeile
+                typ="lesen"
+                titel={eintrag.titel}
+                menue={menue}
+                rechts={
+                  <Knopf data-schnell-frei="" onClick={() => eintragOeffnen({ vorhabenId: eintrag.id })}>
+                    {tx('Weiter')}
+                  </Knopf>
+                }
+              />
             )}
           </SchnellZeile>
         ))}
@@ -708,15 +737,7 @@ function ArchivVision({
       ziel={{ art: 'vision', id: vision.id, name: vision.titel, archiviert: true, loeschbar: vision.loeschbar }}
     >
       {(menue) => (
-        <div className="flex min-h-12 items-center opacity-50">
-          <button type="button" onClick={onOeffnen} className="flex min-w-0 flex-1 items-center px-4 py-3 text-left">
-            <span className="min-w-0 flex-1 text-base leading-6">
-              <Farbpunkt farbe={vision.farbe} className="me-2" />
-              <span className="break-words">{vision.titel}</span>
-            </span>
-          </button>
-          {menue}
-        </div>
+        <Zeile typ="lesen" className="opacity-50" name={vision.titel} titel={visionTitel(vision, onOeffnen)} menue={menue} />
       )}
     </SchnellZeile>
   );
@@ -737,13 +758,13 @@ function ArchivOrganisation({ organisation, onBearbeiten }: { organisation: Orga
       }}
     >
       {(menue) => (
-        <div className="flex min-h-12 items-center gap-3 px-4 py-3 opacity-50">
-          <span className="min-w-0 flex-1 text-[13px] leading-[18px] font-semibold text-leise">
-            <Farbpunkt farbe={organisation.farbe} className="me-2" />
-            <span className="break-words align-middle">{organisation.name}</span>
-          </span>
-          {menue}
-        </div>
+        <Zeile
+          typ="lesen"
+          className="opacity-50"
+          name={organisation.name}
+          titel={organisationsTitel(organisation)}
+          menue={menue}
+        />
       )}
     </SchnellZeile>
   );

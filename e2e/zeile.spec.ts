@@ -7,6 +7,8 @@ const SEITEN = [
   { pfad: '/mehr/profil', name: 'konto' },
   { pfad: '/vorbilder', name: 'vorbilder' },
   { pfad: '/mehr/profil/accounts', name: 'accounts' },
+  { pfad: '/chronik', name: 'verlauf' },
+  { pfad: '/ziele', name: 'ziele' },
 ] as const;
 
 function nah(wert: number, ziel: number): boolean {
@@ -22,7 +24,7 @@ async function zeilenMasse(page: Page): Promise<{ zeilen: string | null; hoehe: 
   );
 }
 
-test('Zeilen auf Mehr, Konto, Vorbilder und Accounts sind 48 oder 64 px', async ({ page }, testInfo) => {
+test('Zeilen auf Mehr, Konto, Vorbilder, Accounts, Verlauf und Ziele sind 48 oder 64 px', async ({ page }, testInfo) => {
   test.setTimeout(120_000);
   fs.mkdirSync('tmp-test/zeile', { recursive: true });
   const bild = (name: string) =>
@@ -66,6 +68,9 @@ test('Zeilen auf Mehr, Konto, Vorbilder und Accounts sind 48 oder 64 px', async 
   for (const seite of SEITEN) {
     await page.goto(seite.pfad);
     await expect(page.locator('main [data-zeile]').first()).toBeVisible();
+    if (seite.name === 'verlauf') {
+      await expect(page.locator('main [data-zeile-wert]').first()).toBeVisible({ timeout: 20_000 });
+    }
     const zeilen = await zeilenMasse(page);
     expect(zeilen.length).toBeGreaterThan(0);
     for (const zeile of zeilen) {
@@ -92,6 +97,30 @@ test('Zeilen auf Mehr, Konto, Vorbilder und Accounts sind 48 oder 64 px', async 
       expect(kanten.length).toBeGreaterThan(1);
       expect(new Set(kanten.map((eintrag) => eintrag.rechts)).size).toBe(1);
       for (const eintrag of kanten) {
+        expect(eintrag.leise).toBe(true);
+        expect(eintrag.zahlen).toBe(true);
+      }
+    }
+    if (seite.name === 'verlauf') {
+      const xp = await page.locator('main [data-zeile-wert]').evaluateAll((knoten) => {
+        const probe = document.createElement('span');
+        probe.style.color = 'var(--leise)';
+        document.body.append(probe);
+        const leise = getComputedStyle(probe).color;
+        probe.remove();
+        return knoten.map((knoten) => {
+          const stil = getComputedStyle(knoten);
+          return {
+            rechts: Math.round(knoten.getBoundingClientRect().right),
+            leise: stil.color === leise,
+            zahlen: stil.fontVariantNumeric.includes('tabular-nums'),
+          };
+        });
+      });
+      expect(xp.length).toBeGreaterThan(1);
+      const kante = xp[0]?.rechts ?? 0;
+      for (const eintrag of xp) {
+        expect(Math.abs(eintrag.rechts - kante)).toBeLessThanOrEqual(1);
         expect(eintrag.leise).toBe(true);
         expect(eintrag.zahlen).toBe(true);
       }

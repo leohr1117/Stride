@@ -9,7 +9,7 @@ import { EintragDetail, eintragSchnellZiel } from '../../components/EintragKarte
 import { Icon } from '../../components/Icons.tsx';
 import { SchnellMenueKnopf, SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { SkillDetail } from '../../components/SkillKarte.tsx';
-import { Liste } from '../../components/Zeile.tsx';
+import { DichteZeilen, Liste, Zeile } from '../../components/Zeile.tsx';
 import { dauerText, lokalesDatum, tagesUeberschrift, zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { attributName, tx } from '../../text.ts';
@@ -112,38 +112,30 @@ function InvestitionZeile({ buchung, onOeffnen }: { buchung: InvestitionsBuchung
   if (buchung.investitionId === null || buchung.name === null) {
     if (buchung.xp > 0) {
       return (
-        <div data-buchung-art="geloescht" className="zeile flex min-h-12 items-center px-4 py-3">
-          <span className="min-w-0 flex-1 truncate text-base">
-            {tx('+{xp} XP · Investition gelöscht', { xp: zahl(buchung.xp) })}
-          </span>
+        <div data-buchung-art="geloescht">
+          <Zeile typ="lesen" titel={tx('+{xp} XP · Investition gelöscht', { xp: zahl(buchung.xp) })} />
         </div>
       );
     }
     return (
-      <div data-buchung-art="zahlung" className="zeile flex min-h-12 items-center gap-3 px-4 py-3">
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-base">{tx('Investition')}</span>
-          <span className="block truncate text-[13px] leading-[18px] text-leise">{ausAttribut(buchung)}</span>
-        </span>
-        <span className="zahl shrink-0 text-[15px] leading-5 font-medium">{xpBetrag(buchung.xp)}</span>
+      <div data-buchung-art="zahlung">
+        <Zeile typ="lesen" titel={tx('Investition')} neben={ausAttribut(buchung)} wert={xpBetrag(buchung.xp)} />
       </div>
     );
   }
   const titel = tx('Investition · {name}', { name: buchung.name });
   return (
-    <button
-      type="button"
-      data-buchung-art={buchung.xp < 0 ? 'zahlung' : 'aenderung'}
-      onClick={onOeffnen ?? undefined}
-      className="flex min-h-12 w-full items-center gap-3 px-4 py-3 text-left"
-    >
-      <Icon name={buchung.icon ?? 'gem'} className="size-5 shrink-0 text-leise" />
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-base">{titel}</span>
-        <span className="block truncate text-[13px] leading-[18px] text-leise">{ausAttribut(buchung)}</span>
-      </span>
-      <span className="zahl shrink-0 text-[15px] leading-5 font-medium">{xpBetrag(buchung.xp)}</span>
-    </button>
+    <div data-buchung-art={buchung.xp < 0 ? 'zahlung' : 'aenderung'}>
+      <Zeile
+        typ="lesen"
+        name={titel}
+        titel={titel}
+        neben={ausAttribut(buchung)}
+        wert={xpBetrag(buchung.xp)}
+        symbol={<Icon name={buchung.icon ?? 'gem'} />}
+        onKlick={onOeffnen ?? undefined}
+      />
+    </div>
   );
 }
 
@@ -166,9 +158,8 @@ function nebenzeile(eintrag: Eintrag): string | null {
 function ProtokollAnsicht({ protokoll }: { protokoll: ProtokollZeile }) {
   const Symbol = protokollIcon(protokoll.art);
   return (
-    <div data-protokoll={protokoll.art} className="zeile flex min-h-12 items-center gap-3 px-4 py-3 text-leise">
-      <Symbol className="size-5 shrink-0" aria-hidden="true" />
-      <span className="min-w-0 flex-1 truncate text-base">{protokollText(protokoll.art)}</span>
+    <div data-protokoll={protokoll.art}>
+      <Zeile typ="lesen" className="text-leise" titel={protokollText(protokoll.art)} symbol={<Symbol aria-hidden />} />
     </div>
   );
 }
@@ -185,22 +176,16 @@ function EintragZeile({ eintrag, onOeffnen }: { eintrag: Eintrag; onOeffnen: () 
       hintergrund={bossSieg ? 'bg-gefahr/5' : 'bg-transparent'}
     >
       {(menue) => (
-        <div className="flex min-h-12 items-center">
-          <button
-            type="button"
-            onClick={onOeffnen}
-            aria-label={eintrag.vorlageName}
-            className="flex min-h-12 min-w-0 flex-1 items-center gap-3 py-3 pr-1 pl-4 text-left"
-          >
-            <Icon name={eintrag.vorlageIcon} className="size-5 shrink-0 text-leise" />
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-base">{eintrag.vorlageName}</span>
-              {neben ? <span className="block truncate text-[13px] leading-[18px] text-leise">{neben}</span> : null}
-            </span>
-            <span className="zahl shrink-0 text-[15px] leading-5 font-medium text-xp">+{zahl(eintrag.xp)} XP</span>
-          </button>
-          <span className="relative z-10 shrink-0">{menue}</span>
-        </div>
+        <Zeile
+          typ="lesen"
+          name={eintrag.vorlageName}
+          titel={eintrag.vorlageName}
+          neben={neben ?? undefined}
+          wert={`+${zahl(eintrag.xp)} XP`}
+          symbol={<Icon name={eintrag.vorlageIcon} />}
+          menue={menue}
+          onKlick={onOeffnen}
+        />
       )}
     </SchnellZeile>
   );
@@ -208,14 +193,15 @@ function EintragZeile({ eintrag, onOeffnen }: { eintrag: Eintrag; onOeffnen: () 
 
 function SkillZeile({ skill, onOeffnen }: { skill: SkillEreignis; onOeffnen: () => void }) {
   return (
-    <button type="button" onClick={onOeffnen} className="flex min-h-12 w-full items-center gap-3 px-4 py-3 text-left">
-      <Sparkles className="size-5 shrink-0 text-xp" aria-hidden="true" />
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-base">{skill.titel}</span>
-        <span className="block truncate text-[13px] leading-[18px] text-leise">{skill.faehigkeitName}</span>
-      </span>
-      <span className="zahl shrink-0 text-[15px] leading-5 font-medium text-xp">+{zahl(skill.xp)} XP</span>
-    </button>
+    <Zeile
+      typ="lesen"
+      name={skill.titel}
+      titel={skill.titel}
+      neben={skill.faehigkeitName}
+      wert={`+${zahl(skill.xp)} XP`}
+      symbol={<Sparkles aria-hidden />}
+      onKlick={onOeffnen}
+    />
   );
 }
 
@@ -289,6 +275,7 @@ export function EintragListe({
   const investition = investitionen.data?.find((eintrag) => eintrag.id === blatt) ?? null;
 
   return (
+    <DichteZeilen>
     <div>
       <Fehlermeldung fehler={abfrage.error ?? investitionen.error ?? attribute.error} />
 
@@ -307,7 +294,7 @@ export function EintragListe({
         tage.map((tag) => (
           <section key={tag.schluessel}>
             <AbschnittKopf titel={tagesUeberschrift(tag.schluessel)} />
-            <Liste>
+            <Liste className="menue-spalte">
               {tag.eintraege.map((eintrag) => (
                 <ChronikZeile
                   key={schluesselVon(eintrag)}
@@ -377,5 +364,6 @@ export function EintragListe({
         )}
       </Dialog>
     </div>
+    </DichteZeilen>
   );
 }

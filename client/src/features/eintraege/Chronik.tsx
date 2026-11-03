@@ -11,7 +11,7 @@ import { AuswahlBlatt, type AuswahlOption } from '../../components/AuswahlBlatt.
 import { Icon } from '../../components/Icons.tsx';
 import { KopfAktion } from '../../components/Kopf.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
-import { Liste, Zeile } from '../../components/Zeile.tsx';
+import { DichteZeilen, Liste, Zeile } from '../../components/Zeile.tsx';
 import { Chip, Knopf, Schalter } from '../../ui/index.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 
@@ -111,10 +111,12 @@ export function ChronikSeite() {
       </KopfAktion>
 
       {(rueckblickAn || statistikAn) && (
-        <Liste>
-          {rueckblickAn ? <Zeile titel={tx('Rückblick')} nach="/rueckblick" /> : null}
-          {statistikAn ? <Zeile titel={tx('Statistik')} nach="/statistiken" /> : null}
-        </Liste>
+        <DichteZeilen>
+          <Liste>
+            {rueckblickAn ? <Zeile titel={tx('Rückblick')} nach="/rueckblick" /> : null}
+            {statistikAn ? <Zeile titel={tx('Statistik')} nach="/statistiken" /> : null}
+          </Liste>
+        </DichteZeilen>
       )}
 
       <EintragListe
