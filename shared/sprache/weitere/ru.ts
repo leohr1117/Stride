@@ -1,5 +1,8 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "Уровень видения, спад, длительность базовой задачи и оценка уровня получают подсказки. Своё значение можно ввести.",
+  "Eigene": "Своя",
+  "Nur Aus, Leicht, Mittel oder Stark.": "Только Нет, Лёгкая, Средняя или Сильная.",
   "Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.": "У суммы вложения есть предложения на неделю, месяц и три месяца. Сумму и ступень бонуса можно сочетать свободно.",
   "Eigener": "Свой",
   "Bonus": "Бонус",

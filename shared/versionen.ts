@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.13',
+    seiten: 'Ziele, Können, Haben, Basis',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.12',
     seiten: 'Investitionen',
     abschnitte: [

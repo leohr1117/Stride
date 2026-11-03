@@ -1,5 +1,8 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "愿景等级、衰退、基础事项的时长和估计的等级会给出建议。仍可填写自己的值。",
+  "Eigene": "自定义",
+  "Nur Aus, Leicht, Mittel oder Stark.": "只能是无、轻、中或重。",
   "Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.": "投入的金额会给出一周、一个月和三个月的建议。金额和加成档可以自由组合。",
   "Eigener": "自定义",
   "Bonus": "加成",

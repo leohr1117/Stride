@@ -4,7 +4,7 @@ import { Plus } from 'lucide-react';
 import { useRef, useState, type ReactNode, type RefObject } from 'react';
 import type { Organisation, Projekt, Vision, Vorlage } from '../../../../shared/api/index.ts';
 import { FARBEN, GRENZEN } from '../../../../shared/spiel/begriffe.ts';
-import { VISION_BEISPIELE } from '../../../../shared/spiel/orientierung.ts';
+import { VISION_STUFEN } from '../../../../shared/spiel/orientierung.ts';
 import { fehlendeZuordnung, ZIEL_MARKE, zielTitel } from '../../../../shared/spiel/ebenen.ts';
 import { taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
 import { VISION, visionBeute } from '../../../../shared/spiel/xp.ts';
@@ -14,9 +14,8 @@ import { useEbenen } from '../../funktionen.ts';
 import { AuswahlBlatt, type AuswahlOption } from '../../components/AuswahlBlatt.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { SchnellMenueKnopf } from '../../components/SchnellAktion.tsx';
-import { LevelBeispiele } from '../../components/Orientierung.tsx';
 import { NeueTaetigkeit } from '../taetigkeiten/TaetigkeitFormular.tsx';
-import { EINGABE_STIL, Farbauswahl, Feld, Fehlermeldung, Formular as FormularKasten, Knopf } from '../../ui/index.ts';
+import { EINGABE_STIL, Farbauswahl, Feld, Fehlermeldung, Formular as FormularKasten, Knopf, VorschlagFeld } from '../../ui/index.ts';
 
 export type ZielBearbeitung =
   | { art: 'vision'; vision: Vision | null }
@@ -214,11 +213,18 @@ function VisionFormular({ vision, onFertig }: { vision: Vision | null; onFertig:
   const [woopHindernis, setWoopHindernis] = useState(vision?.woopHindernis ?? '');
   const [woopPlan, setWoopPlan] = useState(vision?.woopPlan ?? '');
   const [level, setLevel] = useState(String(vision?.level ?? VISION.standardLevel));
-  const levelZahl = Number(level);
-  const levelGueltig = Number.isInteger(levelZahl) && levelZahl >= VISION.minLevel && levelZahl <= GRENZEN.visionLevelMax;
+  const levelWert = /^\d+$/.test(level) ? Number(level) : Number.NaN;
+  const levelGueltig = Number.isInteger(levelWert) && levelWert >= VISION.minLevel && levelWert <= GRENZEN.visionLevelMax;
+  const visionStufen = VISION_STUFEN.map((beispiel) => ({
+    id: String(beispiel.level),
+    wert: String(beispiel.level),
+    zeile: zahl(beispiel.level),
+    neben: tx(beispiel.titel),
+    name: `${tx(beispiel.titel)}, ${zahl(beispiel.level)}`,
+  }));
 
   const speichern = useSpeichern(() => {
-    const daten = { titel, beschreibung, farbe, woopErgebnis, woopHindernis, woopPlan, level: levelZahl };
+    const daten = { titel, beschreibung, farbe, woopErgebnis, woopHindernis, woopPlan, level: levelWert };
     if (!vision) {
       return api.erstelleVision(daten);
     }
@@ -244,21 +250,22 @@ function VisionFormular({ vision, onFertig }: { vision: Vision | null; onFertig:
           onChange={(ereignis) => setBeschreibung(ereignis.target.value)}
         />
       </Feld>
-      <Feld label="Level">
-        <input
-          className={EINGABE_STIL}
-          type="number"
-          inputMode="numeric"
-          min={VISION.minLevel}
-          max={GRENZEN.visionLevelMax}
-          value={level}
-          onChange={(ereignis) => setLevel(ereignis.target.value)}
-        />
-      </Feld>
-      <p className="zahl text-sm text-leise">
-        {tx('XP beim Erreichen: {xp}', { xp: zahl(visionBeute(levelGueltig ? levelZahl : null)) })}
-      </p>
-      <LevelBeispiele beispiele={VISION_BEISPIELE} empfohlenAb={VISION.empfohlenAb} onWaehlen={(wert) => setLevel(String(wert))} />
+      <VorschlagFeld
+        label="Level"
+        text={level}
+        onText={setLevel}
+        optionen={visionStufen}
+        hinweis={tx('XP beim Erreichen: {xp}', { xp: zahl(visionBeute(levelGueltig ? levelWert : null)) })}
+        hinweisSchnitt={false}
+        fehler={
+          levelGueltig
+            ? null
+            : levelWert < VISION.minLevel || !Number.isInteger(levelWert)
+              ? tx('Eine Vision braucht mindestens Level {level}.', { level: zahl(VISION.minLevel) })
+              : tx('Das Level darf höchstens {max} sein.', { max: zahl(GRENZEN.visionLevelMax) })
+        }
+        bereinige={(roh) => roh.replace(/\D/g, '').slice(0, 5)}
+      />
       <TextFeld label={tx("Ergebnis")} wert={woopErgebnis} onAendern={setWoopErgebnis} />
       <TextFeld label={tx("Hindernis")} wert={woopHindernis} onAendern={setWoopHindernis} />
       <TextFeld label={tx('Wenn-dann-Plan')} wert={woopPlan} onAendern={setWoopPlan} />

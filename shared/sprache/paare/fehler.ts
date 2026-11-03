@@ -102,6 +102,7 @@ export const PAARE = [
   ['Mindestens ein gewähltes Attribut existiert nicht oder ist archiviert.', 'At least one selected attribute doesn’t exist or is archived.'],
   ['{name} ist in den Einstellungen ausgeschaltet.', '{name} is turned off in Settings.'],
   ['Das Level muss mindestens 1 sein.', 'The level must be at least 1.'],
+  ['Nur Aus, Leicht, Mittel oder Stark.', 'Only Off, Light, Medium or Strong.'],
   ['Eine Tätigkeit braucht mindestens ein Attribut.', 'An activity needs at least one attribute.'],
   ['Eine Tätigkeit darf höchstens {max} Attribute haben.', 'An activity can have at most {max} attributes.'],
   ['Eine Tätigkeit darf höchstens 6 Attribute haben.', 'An activity can have at most 6 attributes.'],

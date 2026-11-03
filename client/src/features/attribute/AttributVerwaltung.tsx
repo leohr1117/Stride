@@ -1,16 +1,25 @@
 import { attributName, tx } from '../../text.ts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, type CSSProperties, type FormEvent } from 'react';
-import type { AktivierungsModus, Attribut, Erschoepfung } from '../../../../shared/api/index.ts';
-import { ATTRIBUT_KATALOG, type AttributVorlage } from '../../../../shared/features/attribute/attributKatalog.ts';
+import type { Attribut, Erschoepfung } from '../../../../shared/api/index.ts';
+import { ATTRIBUT_KATALOG } from '../../../../shared/features/attribute/attributKatalog.ts';
 import { GRENZEN, type AttributKennung, type AttributTyp, type IconName } from '../../../../shared/spiel/begriffe.ts';
-import { ERSCHOEPFUNG_SCHALTER, VERFALL_STUFE_LABEL, VERFALL_STUFEN, abzugNebenNamen, erschoepfungsBild, type VerfallStufe } from '../../../../shared/spiel/belastung.ts';
+import {
+  ERSCHOEPFUNG_SCHALTER,
+  VERFALL_STUFE_LABEL,
+  VERFALL_STUFEN,
+  abzugNebenNamen,
+  erschoepfungsBild,
+  verfallAlsText,
+  verfallAusText,
+  verfallProzent,
+  type VerfallArt,
+} from '../../../../shared/spiel/belastung.ts';
 import { verfallFunktion } from '../../../../shared/spiel/funktionen.ts';
-import { berechneLevel, LEVEL_KURVEN, verlustBalken } from '../../../../shared/spiel/level.ts';
+import { LEVEL_KURVEN, verlustBalken } from '../../../../shared/spiel/level.ts';
 import { MIN_RADAR_ACHSEN } from '../../../../shared/spiel/radar.ts';
-import { zielXpNachAnteil } from '../../../../shared/spiel/umverteilung.ts';
 import { api } from '../../api/index.ts';
-import { zahl } from '../../format.ts';
+import { prozentPunkte } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { AnlegeZeile, Liste, Zeile } from '../../components/Zeile.tsx';
@@ -28,10 +37,12 @@ import {
   Karte,
   Knopf,
   Schalter,
-  Segmentauswahl,
+  VorschlagFeld,
   XpAbzug,
+  type VorschlagOption,
   ZuNiedrigHinweis,
 } from '../../ui/index.ts';
+import { Aktivierung, ziffern } from './Aktivierung.tsx';
 
 const EINZUG = { '--liste-einzug': '48px' } as CSSProperties;
 
@@ -113,6 +124,20 @@ export function AttributBereich({
 
 const ABSCHNITT = 'ueberschrift abschnittskopf text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case';
 
+function verfallOptionen(art: VerfallArt): VorschlagOption[] {
+  return VERFALL_STUFEN.map((stufe) => {
+    const name = tx(VERFALL_STUFE_LABEL[stufe]);
+    const prozent = stufe === 'aus' ? '' : prozentPunkte(verfallProzent(art, stufe));
+    return {
+      id: `${art}-${stufe}`,
+      wert: verfallAlsText(art, stufe),
+      zeile: name,
+      neben: prozent || undefined,
+      name: prozent ? `${name}, ${prozent}` : name,
+    };
+  });
+}
+
 export function AttributFormular({
   attribut,
   andere,
@@ -127,11 +152,14 @@ export function AttributFormular({
   const [beschreibung, setBeschreibung] = useState(attribut.beschreibung);
   const [farbe, setFarbe] = useState(attribut.farbe);
   const [icon, setIcon] = useState<IconName>(attribut.icon as IconName);
-  const [verfallBelastung, setVerfallBelastung] = useState<VerfallStufe>(attribut.verfallBelastung);
-  const [verfallZeit, setVerfallZeit] = useState<VerfallStufe>(attribut.verfallZeit);
+  const [belastungText, setBelastungText] = useState(verfallAlsText('belastung', attribut.verfallBelastung));
+  const [zeitText, setZeitText] = useState(verfallAlsText('zeit', attribut.verfallZeit));
   const [erschoepfung, setErschoepfung] = useState(attribut.erschoepfung);
   const [erschoepfungZiel, setErschoepfungZiel] = useState<number | null>(attribut.erschoepfungZiel);
-  const stufen = VERFALL_STUFEN.map((stufe) => ({ wert: stufe, label: tx(VERFALL_STUFE_LABEL[stufe]) }));
+  const verfallAn = Boolean(funktionen[verfallFunktion(attribut.typ)]);
+  const belastungStufe = verfallAusText('belastung', belastungText);
+  const zeitStufe = verfallAusText('zeit', zeitText);
+  const verfallOk = !verfallAn || (belastungStufe !== null && zeitStufe !== null);
 
   const speichern = useMutation({
     mutationFn: () =>
@@ -139,8 +167,8 @@ export function AttributFormular({
         beschreibung,
         farbe,
         icon,
-        verfallBelastung,
-        verfallZeit,
+        verfallBelastung: belastungStufe ?? attribut.verfallBelastung,
+        verfallZeit: zeitStufe ?? attribut.verfallZeit,
         erschoepfung,
         erschoepfungZiel,
       }),
@@ -174,15 +202,29 @@ export function AttributFormular({
       <Feld label={tx("Farbe")}>
         <Farbauswahl wert={farbe} onAendern={setFarbe} />
       </Feld>
-      {funktionen[verfallFunktion(attribut.typ)] && (
+      {verfallAn && (
         <section className="space-y-4">
           <h3 className={ABSCHNITT}>{tx('Verfall')}</h3>
-          <Feld label={tx("Verlust bei Nichtnutzung")}>
-            <Segmentauswahl<VerfallStufe> optionen={stufen} wert={verfallBelastung} onAendern={setVerfallBelastung} />
-          </Feld>
-          <Feld label={tx("Verlust über Zeit")}>
-            <Segmentauswahl<VerfallStufe> optionen={stufen} wert={verfallZeit} onAendern={setVerfallZeit} />
-          </Feld>
+          <VorschlagFeld
+            label="Verlust bei Nichtnutzung"
+            text={belastungText}
+            onText={setBelastungText}
+            optionen={verfallOptionen('belastung')}
+            eigenName={`${tx('Verlust bei Nichtnutzung')}, ${tx('Eigener')}`}
+            einheit="%"
+            fehler={belastungStufe === null ? tx('Nur Aus, Leicht, Mittel oder Stark.') : null}
+            bereinige={ziffern(3)}
+          />
+          <VorschlagFeld
+            label="Verlust über Zeit"
+            text={zeitText}
+            onText={setZeitText}
+            optionen={verfallOptionen('zeit')}
+            eigenName={`${tx('Verlust über Zeit')}, ${tx('Eigener')}`}
+            einheit="%"
+            fehler={zeitStufe === null ? tx('Nur Aus, Leicht, Mittel oder Stark.') : null}
+            bereinige={ziffern(3)}
+          />
         </section>
       )}
       <div className="space-y-3 rounded-xl bg-flaeche-2 p-3">
@@ -205,101 +247,10 @@ export function AttributFormular({
         )}
       </div>
       <Fehlermeldung fehler={speichern.error} />
-      <Knopf type="submit" variante="primaer" className="w-full" disabled={speichern.isPending}>
+      <Knopf type="submit" variante="primaer" className="w-full" disabled={!verfallOk || speichern.isPending}>
         {tx("Speichern")}
       </Knopf>
     </Formular>
-  );
-}
-
-function gesamtXp(attribute: Attribut[]): number {
-  let summe = 0;
-  for (const attribut of attribute) {
-    summe += attribut.level.xpGesamt;
-  }
-  return summe;
-}
-
-function Aktivierung({
-  vorlage,
-  archiviert,
-  attribute,
-  onFertig,
-}: {
-  vorlage: AttributVorlage;
-  archiviert: Attribut | undefined;
-  attribute: Attribut[];
-  onFertig: () => void;
-}) {
-  const queryClient = useQueryClient();
-  const [modus, setModus] = useState<AktivierungsModus>('behalten');
-  const [level, setLevel] = useState('');
-  const levelZahl = Number(level);
-  const levelGueltig = Number.isInteger(levelZahl) && levelZahl >= 1 && levelZahl <= GRENZEN.visionLevelMax;
-  const anteilLevel =
-    archiviert?.archivAnteil != null
-      ? berechneLevel(zielXpNachAnteil(archiviert.archivAnteil, gesamtXp(attribute)), LEVEL_KURVEN[vorlage.typ]).level
-      : null;
-
-  const optionen: { wert: AktivierungsModus; label: string }[] = archiviert
-    ? [
-        { wert: 'behalten', label: tx('Level {level} behalten', { level: zahl(archiviert.level.level) }) },
-        ...(anteilLevel !== null
-          ? [{ wert: 'anteil' as const, label: tx('Neu berechnen · Level {level}', { level: zahl(anteilLevel) }) }]
-          : []),
-        { wert: 'level', label: tx("Selbst schätzen") },
-      ]
-    : [
-        { wert: 'behalten', label: tx("Bei Level 1 starten") },
-        { wert: 'level', label: tx("Selbst schätzen") },
-      ];
-
-  const aktivieren = useMutation({
-    mutationFn: () => api.aktiviereAttribut(vorlage.kennung, modus, modus === 'level' ? levelZahl : null),
-    onSuccess: () => {
-      void queryClient.invalidateQueries();
-      onFertig();
-    },
-  });
-
-  return (
-    <div className="space-y-3 border-t border-rand pt-3">
-      <div className="space-y-1.5">
-        {optionen.map((option) => (
-          <label key={option.wert} className="flex cursor-pointer items-center gap-2 text-sm">
-            <input
-              type="radio"
-              name={`modus-${vorlage.kennung}`}
-              checked={modus === option.wert}
-              onChange={() => setModus(option.wert)}
-              className="accent-[var(--akzent)]"
-            />
-            {option.label}
-          </label>
-        ))}
-      </div>
-      {modus === 'level' && (
-        <input
-          className={EINGABE_STIL}
-          type="number"
-          inputMode="numeric"
-          min={1}
-          value={level}
-          onChange={(ereignis) => setLevel(ereignis.target.value)}
-          aria-label={tx("Level")}
-          autoFocus
-        />
-      )}
-      <Fehlermeldung fehler={aktivieren.error} />
-      <Knopf
-        variante="primaer"
-        className="w-full"
-        onClick={() => aktivieren.mutate()}
-        disabled={aktivieren.isPending || (modus === 'level' && !levelGueltig)}
-      >
-        {archiviert ? tx("Wiederherstellen") : tx("Hinzufügen")}
-      </Knopf>
-    </div>
   );
 }
 

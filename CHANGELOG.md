@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.13
+
+### Hinzugefügt
+
+- Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.
+
 ## 3.56.12
 
 ### Hinzugefügt

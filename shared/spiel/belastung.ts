@@ -22,6 +22,42 @@ export const ZEITVERFALL_ANTEIL: Record<VerfallStufe, number> = {
   stark: 0.25,
 };
 
+export type VerfallArt = 'belastung' | 'zeit';
+
+export function verfallAnteil(art: VerfallArt, stufe: VerfallStufe): number {
+  return art === 'belastung' ? BELASTUNG_ANTEIL[stufe] : ZEITVERFALL_ANTEIL[stufe];
+}
+
+/** Ganze Prozentpunkte der heutigen Voreinstellung. Aus ist 0. */
+export function verfallProzent(art: VerfallArt, stufe: VerfallStufe): number {
+  return Math.round(verfallAnteil(art, stufe) * 100);
+}
+
+export function verfallAlsText(art: VerfallArt, stufe: VerfallStufe): string {
+  return String(verfallProzent(art, stufe));
+}
+
+/** Leerer Text und 0 sind Aus. Eine Zahl ohne Stufe ist null. */
+export function verfallAusText(art: VerfallArt, text: string): VerfallStufe | null {
+  const roh = text.trim().replace(',', '.');
+  if (roh === '') {
+    return 'aus';
+  }
+  if (!/^\d+$/.test(roh)) {
+    return null;
+  }
+  const prozent = Number(roh);
+  if (prozent === 0) {
+    return 'aus';
+  }
+  for (const stufe of VERFALL_STUFEN) {
+    if (stufe !== 'aus' && verfallProzent(art, stufe) === prozent) {
+      return stufe;
+    }
+  }
+  return null;
+}
+
 export const ERSCHOEPFUNG = {
   abVerhaeltnis: 0.5,
   maxAbzug: 0.15,

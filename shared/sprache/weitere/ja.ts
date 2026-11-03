@@ -1,5 +1,8 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "ビジョンのレベル、減衰、基本タスクの時間、見積もったレベルに候補が出ます。自分の値も入力できます。",
+  "Eigene": "自分で",
+  "Nur Aus, Leicht, Mittel oder Stark.": "なし、軽い、中、強いだけです。",
   "Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.": "投資の金額には、1週間、1か月、3か月の提案が出ます。金額とボーナスの段階は自由に組み合わせられます。",
   "Eigener": "自分で",
   "Bonus": "ボーナス",

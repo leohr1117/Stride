@@ -18,10 +18,41 @@ import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
-import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf } from '../../ui/index.ts';
+import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf, VorschlagFeld } from '../../ui/index.ts';
 import { HierarchieWahl } from '../../components/HierarchieWahl.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { gliedereProjekte, wahlBaum } from '../../projektHierarchie.ts';
+
+function dauerTextZuZahl(text: string): { stunden: number | null; fehler: string | null; unfertig: boolean } {
+  const roh = text.trim();
+  if (roh === '') {
+    return { stunden: null, fehler: null, unfertig: false };
+  }
+  if (roh === '.' || /^\d+\.$/.test(roh)) {
+    return { stunden: null, fehler: null, unfertig: true };
+  }
+  if (!/^\d+(\.\d+)?$/.test(roh)) {
+    return { stunden: null, fehler: tx('Die Dauer muss mindestens {min} Stunden sein.', { min: String(GRENZEN.stundenMin) }), unfertig: false };
+  }
+  const wert = Number(roh);
+  if (wert < GRENZEN.stundenMin) {
+    return { stunden: null, fehler: tx('Die Dauer muss mindestens {min} Stunden sein.', { min: String(GRENZEN.stundenMin) }), unfertig: false };
+  }
+  if (wert > GRENZEN.stundenMax) {
+    return { stunden: null, fehler: tx('Die Dauer darf höchstens {max} Stunden sein.', { max: String(GRENZEN.stundenMax) }), unfertig: false };
+  }
+  return { stunden: wert, fehler: null, unfertig: false };
+}
+
+function bereinigeDauer(roh: string): string {
+  const erlaubt = roh.replace(',', '.').replace(/[^\d.]/g, '');
+  const [ganz, ...rest] = erlaubt.split('.');
+  const kopf = (ganz ?? '').slice(0, 2);
+  if (rest.length === 0) {
+    return kopf;
+  }
+  return `${kopf}.${rest.join('').slice(0, 2)}`;
+}
 
 export function useBasisAufgaben() {
   return useQuery({ queryKey: SCHLUESSEL.basis, queryFn: api.basis });
@@ -215,7 +246,9 @@ export function BasisFormular({
   const [icon, setIcon] = useState<IconName>((aufgabe?.icon as IconName | undefined) ?? 'sparkles');
   const [projektId, setProjektId] = useState<number | null>(aufgabe?.projektId ?? projektVorgabe);
   const [vorlageId, setVorlageId] = useState<number | null>(aufgabe?.vorlageId ?? null);
-  const [stunden, setStunden] = useState<number | null>(aufgabe?.stunden ?? null);
+  const [dauerText, setDauerText] = useState(aufgabe?.stunden == null ? '' : String(aufgabe.stunden));
+  const dauer = dauerTextZuZahl(dauerText);
+  const stunden = dauer.stunden;
   const wirksameProjektId = ebenen.projekte ? projektId : null;
   const vorlagePasst = vorlagen.some(
     (vorlage) => vorlage.id === vorlageId && taetigkeitPasst(vorlage.projektId, wirksameProjektId),
@@ -314,24 +347,31 @@ export function BasisFormular({
             ))}
           </select>
         </Feld>
-      <Feld label={tx("Dauer")}>
-        <div className="chip-reihe -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
-          <Chip aktiv={stunden === null} onClick={() => setStunden(null)}>
-            {tx("Keine Angabe")}
-          </Chip>
-          {DAUER_OPTIONEN.map((option) => (
-            <Chip key={option.stunden} aktiv={stunden === option.stunden} onClick={() => setStunden(option.stunden)}>
-              {tx(option.label)}
-            </Chip>
-          ))}
-        </div>
-      </Feld>
+      <VorschlagFeld
+        label="Dauer"
+        text={dauerText}
+        onText={setDauerText}
+        eigenLabel="Eigene"
+        einheit={tx('Std')}
+        eingabeModus="decimal"
+        optionen={[
+          { id: 'keine', wert: '', zeile: tx('Keine Angabe'), name: tx('Keine Angabe') },
+          ...DAUER_OPTIONEN.map((option) => ({
+            id: String(option.stunden),
+            wert: String(option.stunden),
+            zeile: tx(option.label),
+            name: tx(option.label),
+          })),
+        ]}
+        fehler={dauer.fehler}
+        bereinige={bereinigeDauer}
+      />
       <Fehlermeldung fehler={speichern.error} />
       <Knopf
         type="submit"
         variante="primaer"
         className="w-full"
-        disabled={!name.trim() || (wirksameProjektId === null && wirksameVorlageId === null) || speichern.isPending}
+        disabled={!name.trim() || (wirksameProjektId === null && wirksameVorlageId === null) || dauer.fehler !== null || dauer.unfertig || speichern.isPending}
       >
         {tx("Speichern")}
       </Knopf>

@@ -59,6 +59,7 @@ export const PAARE = [
   ['Nichts', 'Nothing'],
   ['Betrag', 'Amount'],
   ['Eigener', 'Custom'],
+  ['Eigene', 'Custom'],
   ['Bonus', 'Bonus'],
   ['1 Woche', '1 week'],
   ['1 Monat', '1 month'],
