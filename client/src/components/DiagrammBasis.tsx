@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
+import { Fortschrittsbalken } from '../ui/index.ts';
 import { KurzListe } from './Ausklappbar.tsx';
 
 export const DIAGRAMM_ANIMATION_MS = 450;
@@ -112,14 +113,11 @@ export function BalkenListe({ werte, farbe = 'var(--akzent)' }: { werte: BalkenW
             <span className="flex min-w-0 items-center gap-2">{eintrag.label}</span>
             <span className={`zahl shrink-0 text-xs ${eintrag.wert < 0 ? 'text-gefahr' : 'text-leise'}`}>{eintrag.text}</span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-flaeche-2">
-            {eintrag.wert > 0 && maximum > 0 && (
-              <div
-                className="h-full rounded-full"
-                style={{ width: `${(eintrag.wert / maximum) * 100}%`, backgroundColor: eintrag.farbe ?? farbe }}
-              />
-            )}
-          </div>
+          <Fortschrittsbalken
+            anteil={eintrag.wert > 0 && maximum > 0 ? eintrag.wert / maximum : 0}
+            farbe={eintrag.farbe ?? farbe}
+            bewegt={false}
+          />
         </div>
       )}
     />

@@ -136,14 +136,24 @@ export function Fortschrittsbalken({
   verlustBis,
   farbe = 'var(--fortschritt)',
   hoehe = 'h-2',
+  bewegt = true,
 }: {
   anteil: number;
   /** Ende des abgeschwächten Verlusts. Ohne Angabe zeigt der Balken nur den Stand. */
   verlustBis?: number;
   farbe?: string;
   hoehe?: string;
+  bewegt?: boolean;
 }) {
   const stand = Math.min(1, Math.max(0, anteil));
+  if (!bewegt) {
+    const breite = stand * 100;
+    return (
+      <div className={`${hoehe} overflow-hidden rounded-full bg-flaeche-2`}>
+        {breite > 0 && <div className="h-full rounded-full" style={{ width: `${breite}%`, backgroundColor: farbe }} />}
+      </div>
+    );
+  }
   const verlust = Math.min(1, Math.max(stand, verlustBis ?? stand));
   const zeigtVerlust = verlust - stand > 0.005;
   return (

@@ -22,7 +22,7 @@ import { Zeile } from '../../components/Zeile.tsx';
 import { KlassenBild } from '../../components/KlassenBild.tsx';
 import type { LebenswegPunkt } from '../../components/LebenswegDiagramm.tsx';
 import { LebenswegDiagramm, ProfilRadar } from '../../components/mitDiagramm.tsx';
-import { Fehlermeldung, Karte, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
+import { Fehlermeldung, Fortschrittsbalken, Karte, Ladeanzeige, Ueberschrift } from '../../ui/index.ts';
 import { levelZahl, prozentText } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { attributName, klassenText, tx } from '../../text.ts';
@@ -60,15 +60,6 @@ function lebensweg(vorbild: Vorbild, durchschnitt: Vorbild | undefined, du: Lebe
   return [...punkte.values()].sort((a, b) => a.alter - b.alter);
 }
 
-function Balken({ anteil, farbe }: { anteil: number; farbe: string }) {
-  const breite = Math.min(1, Math.max(0, anteil)) * 100;
-  return (
-    <div className="h-1.5 overflow-hidden rounded-full bg-flaeche-2">
-      {breite > 0 && <div className="h-full rounded-full" style={{ width: `${breite}%`, backgroundColor: farbe }} />}
-    </div>
-  );
-}
-
 function VergleichListe({
   punkte,
   maximum,
@@ -88,8 +79,8 @@ function VergleichListe({
             <span className="min-w-0 break-words">{attributName({ kennung: punkt.kennung, name: namen(punkt.kennung) })}</span>
             <span className="zahl shrink-0 font-medium">{prozentText(punkt.anteil)}</span>
           </div>
-          <Balken anteil={punkt.du / maximum} farbe="var(--akzent)" />
-          <Balken anteil={punkt.vorbild / maximum} farbe="var(--diagramm-vorbild)" />
+          <Fortschrittsbalken anteil={punkt.du / maximum} farbe="var(--akzent)" hoehe="h-1.5" bewegt={false} />
+          <Fortschrittsbalken anteil={punkt.vorbild / maximum} farbe="var(--diagramm-vorbild)" hoehe="h-1.5" bewegt={false} />
           <p className="text-xs text-leise break-words">
             {tx('Du')} {tx('Lvl {level}', { level: levelZahl(punkt.du) })}
             {' · '}
