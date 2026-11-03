@@ -34,7 +34,7 @@ export type SeitenSchalter = Funktion | 'ziele' | 'laufend';
 
 export interface Seite {
   pfad: string;
-  /** Sichtbarer Name, wie Leiste und Seitenleiste ihn heute zeigen. */
+  /** Ein Name für Leiste, Seitenleiste, Mehr, Kopf und Herkunft. */
   name: string;
   symbol: SeitenSymbol;
   /** null nur bei Mehr: fest unten, nicht in den vier Blöcken. */
@@ -53,14 +53,14 @@ export interface Seite {
  * Mehr steht hinter dem Verzeichnis, weil es in keinen Block gehört.
  */
 export const SEITEN: readonly Seite[] = [
-  { pfad: '/', name: 'Übersicht', symbol: 'haus', block: 1, schalter: null, profilzeile: false, toastZiel: '/' },
+  { pfad: '/', name: 'Heute', symbol: 'haus', block: 1, schalter: null, profilzeile: false, toastZiel: '/' },
   { pfad: '/ziele', name: 'Ziele', symbol: 'kompass', block: 1, schalter: 'ziele', profilzeile: false, toastZiel: '/ziele' },
   { pfad: '/laufend', name: 'Laufend', symbol: 'laufend', block: 1, schalter: 'laufend', profilzeile: false, toastZiel: '/laufend' },
   { pfad: '/basis', name: 'Basis', symbol: 'schichten', block: 1, schalter: 'basis', profilzeile: false, toastZiel: '/basis' },
   { pfad: '/mehr/inhalte', name: 'Tätigkeiten', symbol: 'liste', block: 1, schalter: null, profilzeile: false, toastZiel: '/mehr/inhalte' },
-  { pfad: '/chronik', name: 'Chronik', symbol: 'weg', block: 2, schalter: 'chronik', profilzeile: false, toastZiel: '/chronik' },
+  { pfad: '/chronik', name: 'Verlauf', symbol: 'weg', block: 2, schalter: 'chronik', profilzeile: false, toastZiel: '/chronik' },
   { pfad: '/rueckblick', name: 'Rückblick', symbol: 'kalender', block: 2, schalter: 'rueckblick', profilzeile: false, toastZiel: '/rueckblick' },
-  { pfad: '/statistiken', name: 'Statistiken', symbol: 'diagramm', block: 2, schalter: 'statistiken', profilzeile: false, toastZiel: '/statistiken' },
+  { pfad: '/statistiken', name: 'Statistik', symbol: 'diagramm', block: 2, schalter: 'statistiken', profilzeile: false, toastZiel: '/statistiken' },
   {
     pfad: '/vorbilder',
     name: 'Vorbilder',
@@ -119,6 +119,11 @@ export function toastZielFuer(schalter: Funktion | Ebene): string {
 }
 
 const NACH_PFAD = new Map(SEITEN.map((seite) => [seite.pfad, seite]));
+
+/** Name aus der Tabelle, nur bei genau diesem Pfad. Unterpfade zählen nicht. */
+export function nameDerSeite(pfad: string): string | null {
+  return NACH_PFAD.get(pfadKern(pfad))?.name ?? null;
+}
 
 export function pfadKern(pfad: string): string {
   const ohneSuche = pfad.split('?')[0] ?? pfad;

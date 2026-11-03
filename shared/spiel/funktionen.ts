@@ -54,9 +54,9 @@ export function istFunktion(wert: string): wert is Funktion {
 
 const FUNKTION_LABEL: Record<Funktion, string> = {
   basis: 'Basis',
-  chronik: 'Chronik',
+  chronik: 'Verlauf',
   rueckblick: 'Rückblick',
-  statistiken: 'Statistiken',
+  statistiken: 'Statistik',
   vorbilder: 'Vorbilder',
   handbuch: 'Handbuch',
   koennen: 'Können',

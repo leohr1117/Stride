@@ -35,9 +35,9 @@ test('Untere Leiste: gespeicherte Plätze, Standard, Mehr fest, Profil wählbar'
 
   if (handy) {
     const leiste = page.locator('nav.mobilleiste');
-    await expect(leiste.getByRole('link', { name: 'Übersicht' })).toBeVisible();
+    await expect(leiste.getByRole('link', { name: 'Heute', exact: true })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Laufend' })).toBeVisible();
-    await expect(leiste.getByRole('link', { name: 'Chronik' })).toBeVisible();
+    await expect(leiste.getByRole('link', { name: 'Verlauf', exact: true })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Mehr' })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Profil', exact: true })).toHaveCount(0);
     await expect(leiste.getByRole('link', { name: 'Tätigkeiten', exact: true })).toHaveCount(0);
@@ -110,9 +110,9 @@ test('Untere Leiste: gespeicherte Plätze, Standard, Mehr fest, Profil wählbar'
   if (handy) {
     await page.goto('/');
     const leiste = page.locator('nav.mobilleiste');
-    await expect(leiste.getByRole('link', { name: 'Übersicht' })).toBeVisible();
+    await expect(leiste.getByRole('link', { name: 'Heute', exact: true })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Ziele' })).toBeVisible();
-    await expect(leiste.getByRole('link', { name: 'Chronik' })).toBeVisible();
+    await expect(leiste.getByRole('link', { name: 'Verlauf', exact: true })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Mehr' })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Laufend' })).toHaveCount(0);
     await bild('standard');

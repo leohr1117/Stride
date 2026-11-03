@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.19
+
+### Geändert
+
+- Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.
+
 ## 3.56.18
 
 ### Behoben

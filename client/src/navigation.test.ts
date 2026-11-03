@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { standardEbenen } from '../../shared/spiel/ebenen.ts';
 import { standardFunktionen, type Funktionen } from '../../shared/spiel/funktionen.ts';
+import { herkunftsLabel } from '../../shared/spiel/herkunft.ts';
+import { LEISTEN_SEITEN } from '../../shared/spiel/leiste.ts';
 import { SEITEN } from '../../shared/spiel/navigation.ts';
-import { seitenleistenPfade, sichtbareGruppen } from './navigation.ts';
+import { standardTitel } from './seitentitel.ts';
+import { EINSTELLUNGEN, navAusLeiste, seitenleistenPfade, sichtbareGruppen } from './navigation.ts';
 
 function alleAn(): Funktionen {
   const funktionen = standardFunktionen();
@@ -92,6 +95,24 @@ describe('Seitenleiste aus der Tabelle', () => {
         gruppe.eintraege.map((eintrag) => eintrag.pfad),
       );
       expect(ohne).not.toContain(seite.pfad);
+    }
+  });
+});
+
+describe('ein Name pro Seite', () => {
+  it('nennt Leiste, Mehr, Seitenleiste und Kopf gleich', () => {
+    const gruppen = sichtbareGruppen(alleAn(), standardEbenen());
+    const verzeichnis = new Map(gruppen.flatMap((gruppe) => gruppe.eintraege.map((eintrag) => [eintrag.pfad, eintrag] as const)));
+    verzeichnis.set(EINSTELLUNGEN.pfad, EINSTELLUNGEN);
+    for (const seite of SEITEN) {
+      const leiste = navAusLeiste(seite.pfad);
+      const zeile = verzeichnis.get(seite.pfad);
+      expect(LEISTEN_SEITEN.find((eintrag) => eintrag.pfad === seite.pfad)?.label).toBe(seite.name);
+      expect(leiste?.label).toBe(seite.name);
+      expect(zeile?.label).toBe(seite.name);
+      expect(leiste?.icon).toBe(zeile?.icon);
+      expect(standardTitel(seite.pfad)).toBe(seite.name);
+      expect(herkunftsLabel(seite.pfad)).toBe(seite.name);
     }
   });
 });

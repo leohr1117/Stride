@@ -13,12 +13,11 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router';
-import { pfadname } from '../../../shared/spiel/herkunft.ts';
 import { LEISTE_STANDARD, sichtbareLeiste } from '../../../shared/spiel/leiste.ts';
-import { ZIEL_FRAGE } from '../../../shared/spiel/profil.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useEbenen, useFunktionen } from '../funktionen.ts';
 import { geheZurueck, useZurueck } from '../herkunft.tsx';
+import { standardTitel } from '../seitentitel.ts';
 import { tx } from '../text.ts';
 import { InfoHinweis } from '../ui/index.ts';
 import { ProfilBild } from './ProfilBild.tsx';
@@ -35,61 +34,6 @@ const KopfSetzen = createContext<(wert: KopfAngabe | null) => void>(() => {});
 const KopfLesen = createContext<KopfAngabe | null>(null);
 const KopfSlotSetzen = createContext<(knoten: HTMLElement | null) => void>(() => {});
 const KopfSlotLesen = createContext<HTMLElement | null>(null);
-
-const SEITENTITEL: Record<string, string> = {
-  '/': 'Heute',
-  '/ziele': 'Ziele',
-  '/laufend': 'Laufend',
-  '/chronik': 'Verlauf',
-  '/rueckblick': 'Rückblick',
-  '/statistiken': 'Statistik',
-  '/basis': 'Basis',
-  '/vorbilder': 'Vorbilder',
-  '/handbuch': 'Handbuch',
-  '/mehr': 'Mehr',
-  '/mehr/neu': 'Was ist neu',
-  '/charakter': 'Profil',
-  '/koennen': 'Können',
-  '/haben': 'Haben',
-  '/faehigkeiten': 'Fähigkeiten',
-  '/investitionen': 'Investitionen',
-  '/mehr/profil': 'Konto',
-  '/mehr/profil/name': 'Profilname',
-  '/mehr/profil/titel': 'Titel',
-  '/mehr/profil/jahr': 'Geburtsjahr',
-  '/mehr/profil/ziel': ZIEL_FRAGE,
-  '/mehr/profil/fokus': 'Fokus',
-  '/mehr/profil/passwort': 'Passwort',
-  '/mehr/profil/accounts': 'Accounts',
-  '/mehr/profil/stufen': 'Ziel-Stufen',
-  '/mehr/inhalte': 'Tätigkeiten',
-  '/mehr/inhalte/verbindungen': 'Verbindungen',
-  '/mehr/darstellung': 'Darstellung',
-  '/mehr/darstellung/leiste': 'Leiste',
-  '/mehr/darstellung/paletten': 'Paletten',
-  '/mehr/uebersicht': 'Karten auf Heute',
-  '/mehr/funktionen': 'Bereiche',
-  '/mehr/benachrichtigungen': 'Benachrichtigungen',
-  '/mehr/daten': 'Daten',
-};
-
-function standardTitel(pfad: string): string {
-  const rein = pfadname(pfad);
-  const fest = SEITENTITEL[rein];
-  if (fest) {
-    return fest;
-  }
-  if (/^\/projekte\/[^/]+$/.test(rein)) {
-    return 'Projekt';
-  }
-  if (/^\/faehigkeiten\/[^/]+$/.test(rein)) {
-    return 'Fähigkeit';
-  }
-  if (/^\/vorbilder\/[^/]+$/.test(rein)) {
-    return 'Vorbild';
-  }
-  return '';
-}
 
 function gleicheAngabe(links: KopfAngabe | null, rechts: KopfAngabe | null): boolean {
   if (links === rechts) {

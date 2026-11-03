@@ -1,4 +1,5 @@
 import { LEISTEN_SEITEN } from './leiste.ts';
+import { nameDerSeite } from './navigation.ts';
 import { ZIEL_FRAGE } from './profil.ts';
 
 export const HERKUNFT_MAX = 20;
@@ -22,14 +23,9 @@ const UMLENKUNGEN = new Set([
 
 const HAUPTSEITEN = new Set(LEISTEN_SEITEN.map((seite) => seite.pfad));
 
+/** Unterseiten, die nicht in der Seitentabelle stehen. */
 const FEST = new Map<string, string>([
-  ...LEISTEN_SEITEN.map((seite) => [seite.pfad, seite.label] as const),
-  ['/', 'Heute'],
-  ['/chronik', 'Verlauf'],
-  ['/statistiken', 'Statistik'],
-  ['/charakter', 'Profil'],
   ['/mehr/profil', 'Konto'],
-  ['/mehr/inhalte', 'Tätigkeiten'],
   ['/mehr/inhalte/verbindungen', 'Verbindungen'],
   ['/mehr/darstellung', 'Darstellung'],
   ['/mehr/darstellung/leiste', 'Leiste'],
@@ -39,10 +35,6 @@ const FEST = new Map<string, string>([
   ['/mehr/benachrichtigungen', 'Benachrichtigungen'],
   ['/mehr/daten', 'Daten'],
   ['/mehr/neu', 'Was ist neu'],
-  ['/faehigkeiten', 'Fähigkeiten'],
-  ['/koennen', 'Können'],
-  ['/haben', 'Haben'],
-  ['/investitionen', 'Investitionen'],
 ]);
 
 const PROFIL_TEIL: Record<string, string> = {
@@ -117,7 +109,11 @@ export function istLeistenplatz(pfad: string, leiste: readonly string[], seitenl
   return leiste.includes(rein) || seitenleiste.includes(rein);
 }
 
-function ziel(pfad: string, label: string): ZurueckZiel {
+function ziel(pfad: string): ZurueckZiel {
+  const label = herkunftsLabel(pfad);
+  if (!label) {
+    throw new Error(`Seite ohne Namen: ${pfad}`);
+  }
   return { pfad, label };
 }
 
@@ -129,61 +125,61 @@ export function elternZiel(pfad: string, lage: NavLage = { leiste: [], verlaufAn
   }
   const inDerLeiste = lage.leiste.includes(rein);
   if (rein === '/mehr') {
-    return inDerLeiste ? null : ziel('/', 'Heute');
+    return inDerLeiste ? null : ziel('/');
   }
   if (rein === '/ziele') {
-    return inDerLeiste ? null : ziel('/mehr', 'Mehr');
+    return inDerLeiste ? null : ziel('/mehr');
   }
   if (rein === '/charakter') {
-    return inDerLeiste ? null : ziel('/', 'Heute');
+    return inDerLeiste ? null : ziel('/');
   }
   if (rein === '/laufend') {
-    return inDerLeiste ? null : ziel('/ziele', 'Ziele');
+    return inDerLeiste ? null : ziel('/ziele');
   }
   if (rein === '/rueckblick' || rein === '/statistiken') {
     if (inDerLeiste) {
       return null;
     }
-    return lage.verlaufAn === false ? ziel('/mehr', 'Mehr') : ziel('/chronik', 'Verlauf');
+    return lage.verlaufAn === false ? ziel('/mehr') : ziel('/chronik');
   }
   if (ORT_MIT_ELTERN.has(rein)) {
-    return inDerLeiste ? null : ziel('/mehr', 'Mehr');
+    return inDerLeiste ? null : ziel('/mehr');
   }
   if (inDerLeiste && istHauptseite(rein)) {
     return null;
   }
   if (/^\/projekte\/[^/]+$/.test(rein)) {
-    return ziel('/ziele', 'Ziele');
+    return ziel('/ziele');
   }
   if (rein === '/faehigkeiten' || rein === '/koennen' || rein === '/haben' || rein === '/investitionen') {
-    return inDerLeiste ? null : ziel('/charakter', 'Profil');
+    return inDerLeiste ? null : ziel('/charakter');
   }
   if (/^\/faehigkeiten\/[^/]+$/.test(rein)) {
-    return ziel('/faehigkeiten', 'Fähigkeiten');
+    return ziel('/faehigkeiten');
   }
   if (/^\/vorbilder\/[^/]+$/.test(rein)) {
-    return ziel('/vorbilder', 'Vorbilder');
+    return ziel('/vorbilder');
   }
   if (rein === '/mehr/profil') {
-    return ziel('/mehr', 'Mehr');
+    return ziel('/mehr');
   }
   if (rein.startsWith('/mehr/profil/')) {
-    return ziel('/mehr/profil', 'Konto');
+    return ziel('/mehr/profil');
   }
   if (rein === '/mehr/inhalte') {
-    return inDerLeiste ? null : ziel('/mehr', 'Mehr');
+    return inDerLeiste ? null : ziel('/mehr');
   }
   if (rein === '/mehr/inhalte/verbindungen') {
-    return ziel('/mehr', 'Mehr');
+    return ziel('/mehr');
   }
   if (rein.startsWith('/mehr/inhalte/')) {
-    return ziel('/mehr/inhalte', 'Tätigkeiten');
+    return ziel('/mehr/inhalte');
   }
   if (rein === '/mehr/darstellung') {
-    return ziel('/mehr', 'Mehr');
+    return ziel('/mehr');
   }
   if (rein.startsWith('/mehr/darstellung/')) {
-    return ziel('/mehr/darstellung', 'Darstellung');
+    return ziel('/mehr/darstellung');
   }
   if (
     rein === '/mehr/uebersicht' ||
@@ -192,13 +188,17 @@ export function elternZiel(pfad: string, lage: NavLage = { leiste: [], verlaufAn
     rein === '/mehr/daten' ||
     rein === '/mehr/neu'
   ) {
-    return ziel('/mehr', 'Mehr');
+    return ziel('/mehr');
   }
   return null;
 }
 
 export function herkunftsLabel(pfad: string): string | null {
   const rein = pfadname(pfad);
+  const ausTabelle = nameDerSeite(rein);
+  if (ausTabelle) {
+    return ausTabelle;
+  }
   const fest = FEST.get(rein);
   if (fest) {
     return fest;

@@ -8,14 +8,14 @@ import { pfadAktiv } from './sichtbarkeit.ts';
 import { karteSichtbar, UEBERSICHT_KARTEN } from './uebersichtKarten.ts';
 
 const VERZEICHNIS = [
-  ['/', 'Übersicht', 'haus', 1],
+  ['/', 'Heute', 'haus', 1],
   ['/ziele', 'Ziele', 'kompass', 1],
   ['/laufend', 'Laufend', 'laufend', 1],
   ['/basis', 'Basis', 'schichten', 1],
   ['/mehr/inhalte', 'Tätigkeiten', 'liste', 1],
-  ['/chronik', 'Chronik', 'weg', 2],
+  ['/chronik', 'Verlauf', 'weg', 2],
   ['/rueckblick', 'Rückblick', 'kalender', 2],
-  ['/statistiken', 'Statistiken', 'diagramm', 2],
+  ['/statistiken', 'Statistik', 'diagramm', 2],
   ['/vorbilder', 'Vorbilder', 'stern', 2],
   ['/charakter', 'Profil', 'person', 3],
   ['/koennen', 'Können', 'hirn', 3],
@@ -49,6 +49,11 @@ describe('Seitentabelle', () => {
       expect(seite.toastZiel).toBe(seite.pfad);
       expect(seite.profilzeile).toBe(PROFILZEILE.has(seite.pfad));
       expect(hatSchluessel(seite.name)).toBe(true);
+      if (seite.schalter === null || seite.schalter === 'ziele' || seite.schalter === 'laufend') {
+        continue;
+      }
+      const schalter = BEREICH_SCHALTER.find((eintrag) => eintrag.schalter === seite.schalter);
+      expect(schalter?.label).toBe(seite.name);
     }
   });
 

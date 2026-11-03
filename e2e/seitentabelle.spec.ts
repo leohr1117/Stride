@@ -15,16 +15,16 @@ test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ pag
 
   if (handy) {
     const leiste = page.locator('nav.mobilleiste');
-    await expect(leiste.getByRole('link', { name: 'Übersicht' })).toBeVisible();
+    await expect(leiste.getByRole('link', { name: 'Heute', exact: true })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Laufend' })).toBeVisible();
-    await expect(leiste.getByRole('link', { name: 'Chronik' })).toBeVisible();
+    await expect(leiste.getByRole('link', { name: 'Verlauf', exact: true })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Mehr' })).toBeVisible();
     await expect(leiste.getByRole('link', { name: 'Profil', exact: true })).toHaveCount(0);
     await expect(leiste.getByRole('link', { name: 'Tätigkeiten', exact: true })).toHaveCount(0);
     await expect(leiste.getByRole('link', { name: 'Können', exact: true })).toHaveCount(0);
     await bild('uebersicht');
 
-    await leiste.getByRole('link', { name: 'Chronik' }).click();
+    await leiste.getByRole('link', { name: 'Verlauf', exact: true }).click();
     await expect(page.locator('main h1')).toHaveText('Verlauf');
     await ohneSeitlichenUeberlauf(page);
     await bild('chronik');
@@ -32,6 +32,10 @@ test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ pag
     await leiste.getByRole('link', { name: 'Mehr' }).click();
     await expect(page.locator('main h1')).toHaveText('Mehr');
     await expect(page.getByRole('link', { name: 'Tätigkeiten' })).toBeVisible();
+    const liste = page.locator('[data-seitenliste]');
+    await expect(liste.getByRole('link', { name: 'Heute', exact: true })).toBeVisible();
+    await expect(liste.getByRole('link', { name: 'Verlauf', exact: true })).toBeVisible();
+    await expect(liste.getByRole('link', { name: 'Statistik', exact: true })).toBeVisible();
     const ziele = page.getByRole('link', { name: 'Ziele', exact: true });
     await expect(ziele).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
@@ -44,7 +48,7 @@ test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ pag
   }
 
   const seite = page.locator('aside.seitenleiste');
-  for (const name of ['Übersicht', 'Ziele', 'Laufend', 'Basis', 'Tätigkeiten', 'Chronik', 'Rückblick', 'Statistiken', 'Vorbilder', 'Profil', 'Können', 'Haben', 'Fähigkeiten', 'Investitionen', 'Handbuch', 'Mehr']) {
+  for (const name of ['Heute', 'Ziele', 'Laufend', 'Basis', 'Tätigkeiten', 'Verlauf', 'Rückblick', 'Statistik', 'Vorbilder', 'Profil', 'Können', 'Haben', 'Fähigkeiten', 'Investitionen', 'Handbuch', 'Mehr']) {
     await expect(seite.getByRole('link', { name, exact: true })).toBeVisible();
   }
   await expect(seite.getByText('Reise', { exact: true })).toHaveCount(0);
@@ -55,14 +59,21 @@ test('Leiste, Seitenleiste und Mehr bleiben bei der Seitentabelle', async ({ pag
   await ohneSeitlichenUeberlauf(page);
   await bild('ziele');
 
-  await seite.getByRole('link', { name: 'Chronik', exact: true }).click();
+  await seite.getByRole('link', { name: 'Verlauf', exact: true }).click();
   await expect(page.locator('main h1')).toHaveText('Verlauf');
+  await seite.getByRole('link', { name: 'Statistik', exact: true }).click();
+  await expect(page.locator('main h1')).toHaveText('Statistik');
+  await seite.getByRole('link', { name: 'Heute', exact: true }).click();
+  await expect(page.locator('main h1')).toHaveText('Heute');
   await ohneSeitlichenUeberlauf(page);
   await bild('chronik');
 
   await seite.getByRole('link', { name: 'Mehr', exact: true }).click();
   await expect(page.locator('main h1')).toHaveText('Mehr');
   await expect(page.locator('main').getByRole('link', { name: 'Tätigkeiten' })).toBeVisible();
+  await expect(page.locator('main').getByRole('link', { name: 'Heute', exact: true })).toBeVisible();
+  await expect(page.locator('main').getByRole('link', { name: 'Verlauf', exact: true })).toBeVisible();
+  await expect(page.locator('main').getByRole('link', { name: 'Statistik', exact: true })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
   await bild('mehr');
 });

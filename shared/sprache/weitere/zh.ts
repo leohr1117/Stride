@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.": "今天、历程和统计在栏、更多和页眉里使用同一个名称。",
   "Auf dem Handy reicht der Inhalt bis an den rechten Rand.": "在手机上，内容延伸到右边缘。",
   "Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.": "进度条的末端有一小段渐变、一道窄亮边和轻微的光晕。",
   "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "投资面板的右侧不再被裁掉。名称和金额保持完整可见。",

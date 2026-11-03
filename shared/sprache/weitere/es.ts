@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.": "Hoy, Historial y Estadística tienen el mismo nombre en la barra, en Más y en el encabezado.",
   "Auf dem Handy reicht der Inhalt bis an den rechten Rand.": "En el teléfono, el contenido llega hasta el borde derecho.",
   "Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.": "Las barras de progreso terminan con un degradado corto, una punta estrecha y un leve resplandor.",
   "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "La hoja de inversión ya no se corta por la derecha. El nombre y el importe siguen visibles por completo.",

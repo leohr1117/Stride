@@ -86,7 +86,7 @@ test('Englisch bleibt bei 390 und 1440 lesbar', async ({ page }) => {
       return daten.charakterName;
     });
     await expect(page.locator('main').getByText(name, { exact: true }).locator('visible=true')).toHaveCount(1);
-    await expect(page.getByRole('link', { name: 'Overview' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Today', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Log entry' })).toBeVisible();
     await ohneSeitlichenUeberhang(page);
 
@@ -122,7 +122,7 @@ test('jede Sprache bleibt auf 390 px vollständig sichtbar', async ({ page }, in
   try {
     for (const code of SPRACHEN) {
       await setzeSprache(page, code);
-      await expect(page.getByRole('link', { name: zeige('Übersicht', code) })).toBeVisible();
+      await expect(page.getByRole('link', { name: zeige('Heute', code), exact: true })).toBeVisible();
       await expect(page.getByRole('button', { name: zeige('Eintrag loggen', code) })).toBeVisible();
       await ohneSeitlichenUeberhang(page);
       for (const ziel of [

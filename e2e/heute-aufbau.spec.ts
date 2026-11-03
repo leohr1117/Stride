@@ -124,9 +124,9 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await bild(page, `${projekt}-heute`);
 
   if (projekt === 'handy') {
-    await expect(page.locator('nav.mobilleiste').getByRole('link', { name: 'Übersicht' })).toBeVisible();
+    await expect(page.locator('nav.mobilleiste').getByRole('link', { name: 'Heute', exact: true })).toBeVisible();
   } else {
-    await expect(page.locator('aside.seitenleiste').getByRole('link', { name: 'Übersicht', exact: true })).toBeVisible();
+    await expect(page.locator('aside.seitenleiste').getByRole('link', { name: 'Heute', exact: true })).toBeVisible();
   }
 
   await page.goto('/charakter');

@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Heute, Verlauf und Statistik heißen in der Leiste, unter Mehr und im Seitenkopf gleich.": "Сегодня, История и Статистика называются одинаково в панели, в разделе «Ещё» и в заголовке страницы.",
   "Auf dem Handy reicht der Inhalt bis an den rechten Rand.": "На телефоне содержимое доходит до правого края.",
   "Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.": "Полосы прогресса заканчиваются коротким переходом, узким кончиком и лёгким свечением.",
   "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "Лист инвестиции больше не обрезается справа. Название и сумма остаются целиком на виду.",
