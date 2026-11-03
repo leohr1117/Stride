@@ -350,13 +350,8 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     await listeBereich.getByRole('button', { name: /Investition anlegen/ }).click();
     const neu = page.getByRole('dialog', { name: 'Investition', exact: true });
     await neu.getByRole('textbox', { name: 'Name' }).fill(name);
-    const eigenRegler = neu.getByRole('slider', { name: 'Größe' });
-    await eigenRegler.focus();
-    for (let schritt = 0; schritt < 4; schritt += 1) {
-      await page.keyboard.press('ArrowLeft');
-    }
-    await page.keyboard.press('ArrowRight');
-    await expect(neu.getByText('+10 %')).toBeVisible();
+    await neu.getByRole('radio', { name: '+10 %' }).click();
+    await expect(neu.getByRole('radio', { name: '+10 %' })).toBeChecked();
     await neu.getByRole('button', { name: 'Bezahlt mit · Ressourcen' }).click();
     const zahlWahl = page.getByRole('dialog', { name: 'Bezahlt mit' });
     await zahlWahl.getByRole('option', { name: 'Nichts', exact: true }).click();

@@ -1,5 +1,11 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.": "У суммы вложения есть предложения на неделю, месяц и три месяца. Сумму и ступень бонуса можно сочетать свободно.",
+  "Eigener": "Свой",
+  "Bonus": "Бонус",
+  "1 Woche": "1 неделя",
+  "1 Monat": "1 месяц",
+  "fehlen {xp} XP": "не хватает {xp} XP",
   "Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.": "Оплаченное вложение стоит в истории в день оплаты. Удаление появляется там отдельной строкой.",
   "Investition · {name}": "Вложение · {name}",
   "aus {name}": "из {name}",

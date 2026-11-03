@@ -11,6 +11,7 @@ import {
   ladeZiele,
 } from '../../services/struktur.ts';
 import { aendereInvestition, erstelleInvestition, ladeInvestitionen, loescheInvestition } from '../investitionen/ausruestung.ts';
+import { ladeInvestitionsRhythmus } from '../investitionen/rhythmus.ts';
 import { loescheOrganisation, loescheProjekt, loescheVision, loescheVorhaben } from '../../services/loeschen.ts';
 import { pruefeFunktion } from '../einstellungen/einstellungen.ts';
 import { erreicheVision, nimmVisionZurueck } from './visionen.ts';
@@ -110,6 +111,11 @@ export async function zielRouten(app: FastifyInstance): Promise<void> {
     const { id } = idParameter.parse(anfrage.params);
     loescheProjekt(id);
     return antwort.status(204).send();
+  });
+
+  app.get('/investitionen/rhythmus', async () => {
+    pruefeFunktion('ausruestung');
+    return ladeInvestitionsRhythmus();
   });
 
   app.get('/investitionen', async () => {

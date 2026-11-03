@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.12
+
+### Hinzugefügt
+
+- Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.
+
 ## 3.56.11
 
 ### Hinzugefügt

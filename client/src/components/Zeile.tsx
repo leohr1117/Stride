@@ -49,7 +49,17 @@ export function Liste({ children, className = '' }: { children: ReactNode; class
   );
 }
 
-export function ZeilenGruppe({ titel, aktion, children }: { titel?: string; aktion?: ReactNode; children: ReactNode }) {
+export function ZeilenGruppe({
+  titel,
+  aktion,
+  zwischen,
+  children,
+}: {
+  titel?: string;
+  aktion?: ReactNode;
+  zwischen?: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <section>
       {titel ? (
@@ -58,6 +68,7 @@ export function ZeilenGruppe({ titel, aktion, children }: { titel?: string; akti
           {aktion ? <div className="mb-2 shrink-0">{aktion}</div> : null}
         </div>
       ) : null}
+      {zwischen}
       <Liste>{children}</Liste>
     </section>
   );

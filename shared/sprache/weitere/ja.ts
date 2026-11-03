@@ -1,5 +1,11 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.": "投資の金額には、1週間、1か月、3か月の提案が出ます。金額とボーナスの段階は自由に組み合わせられます。",
+  "Eigener": "自分で",
+  "Bonus": "ボーナス",
+  "1 Woche": "1週間",
+  "1 Monat": "1か月",
+  "fehlen {xp} XP": "{xp} XP不足",
   "Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.": "支払った投資は、支払った日の履歴に表示されます。削除すると、そこに別の行として出ます。",
   "Investition · {name}": "投資 · {name}",
   "aus {name}": "{name} から",

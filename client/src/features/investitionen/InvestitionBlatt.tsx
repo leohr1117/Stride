@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { useId, useRef, useState, type FormEvent } from 'react';
+import { useId, useMemo, useRef, useState, type FormEvent } from 'react';
 import type { Attribut, Investition, InvestitionAenderung, InvestitionDaten, InvestitionsZiel, Projekt, Vision } from '../../../../shared/api/index.ts';
 import { ICONS, GRENZEN, NEUTRAL_FARBE, type IconName } from '../../../../shared/spiel/begriffe.ts';
 import { istTypAktiv, type Funktionen } from '../../../../shared/spiel/funktionen.ts';
@@ -10,9 +10,10 @@ import { ZeilenGruppe } from '../../components/Zeile.tsx';
 import { levelZahl, zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { attributName, tx } from '../../text.ts';
+import { betragVorschlaege } from '../../../../shared/spiel/betragVorschlag.ts';
 import { EINGABE_STIL, Fehlermeldung, Knopf } from '../../ui/index.ts';
+import { BetragFeld, BonusSegment } from './betragFeld.tsx';
 import { EinzelWahl, type WahlOption } from './EinzelWahl.tsx';
-import { GroessenRegler } from './groesse.tsx';
 import {
   betragAusText,
   betragProblem,
@@ -21,7 +22,6 @@ import {
   levelDanach,
   verfuegbaresXp,
   zahlungVon,
-  type BetragProblem,
 } from './zahlungAnzeige.ts';
 
 export function waehlbareAttribute(attribute: Attribut[], funktionen: Funktionen, aktuell?: number): Attribut[] {
@@ -93,13 +93,6 @@ function nameVonAttribut(id: number | null, attribute: Attribut[], leer: string)
   return eintrag ? attributName(eintrag) : leer;
 }
 
-function fehlerSatz(problem: BetragProblem, verfuegbar: number): string {
-  if (problem === 'leer') {
-    return tx('Betrag eingeben oder „Nichts“ wählen');
-  }
-  return tx('Nur {xp} XP verfügbar', { xp: zahl(verfuegbar) });
-}
-
 export function InvestitionFormular({
   investition,
   attribute,
@@ -112,6 +105,7 @@ export function InvestitionFormular({
   const queryClient = useQueryClient();
   const sichtbarkeit = useSichtbarkeit();
   const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
+  const { data: rhythmus } = useQuery({ queryKey: SCHLUESSEL.investitionsRhythmus, queryFn: api.investitionsRhythmus });
   const ressourcen = attribute.find((eintrag) => eintrag.kennung === 'ressourcen' && !eintrag.archiviert);
   const [name, setName] = useState(investition?.name ?? '');
   const [icon, setIcon] = useState<IconName>(gueltigesIcon(investition?.icon ?? 'gem'));
@@ -133,15 +127,17 @@ export function InvestitionFormular({
   const zurueck = bisherigerBetrag(investition?.bezahltAttributId ?? null, investition?.betrag ?? 0, bezahltId);
   const verfuegbar = zahlAttribut ? verfuegbaresXp(zahlAttribut.level.xpGesamt, zurueck) : 0;
   const problem = betragProblem(bezahltId !== null, betragText, verfuegbar);
-  const zeigeFehler = betragGeprueft && problem !== null;
   const betragZahl = betragAusText(betragText);
+  const vorschlaege = useMemo(
+    () => (rhythmus ? betragVorschlaege(rhythmus.posten, attributId, ziel, rhythmus.wochenMitEintraegen) : []),
+    [rhythmus, attributId, ziel],
+  );
   const bonusText = bonusAttribut ? attributName(bonusAttribut) : tx('Wähle ein Attribut.');
   const zahlText = nameVonAttribut(bezahltId, attribute, tx('Nichts'));
   const zielText = zielName(ziel, listen.visionen, listen.projekte, listen.attribute);
   const feldId = `${basisId}-betrag`;
   const fehlerId = `${basisId}-fehler`;
   const hinweisId = `${basisId}-hinweis`;
-  const beschrieben = [zeigeFehler ? fehlerId : '', hinweisId].filter(Boolean).join(' ');
 
   const merkeWahl = (bezahlt: number | null, bonus: number | null, naechstesZiel: InvestitionsZiel | null) => {
     const feld = wahlRef.current;
@@ -238,7 +234,6 @@ export function InvestitionFormular({
             onChange={(ereignis) => setName(ereignis.target.value)}
           />
         </div>
-        <GroessenRegler wert={groesse} onAendern={setGroesse} className="" />
         <ZeilenGruppe titel="Kosten">
           <EinzelWahl
             feld="Bezahlt mit"
@@ -256,39 +251,21 @@ export function InvestitionFormular({
           />
         </ZeilenGruppe>
         {bezahltId !== null ? (
-          <div className="feld block min-w-0 space-y-2" data-feld-fehler={zeigeFehler ? '' : undefined}>
-            <label htmlFor={feldId} className="feld-label block text-sm leading-5 font-semibold">
-              {tx('Betrag')}
-            </label>
-            <div className="relative min-w-0">
-              <input
-                ref={betragRef}
-                id={feldId}
-                className={`${EINGABE_STIL} pr-14 tabular-nums`}
-                inputMode="numeric"
-                autoComplete="off"
-                value={betragText}
-                aria-invalid={zeigeFehler || undefined}
-                aria-describedby={beschrieben}
-                onChange={(ereignis) => setBetragText(ereignis.target.value.replace(/\D/g, '').slice(0, 15))}
-                onBlur={() => setBetragGeprueft(true)}
-              />
-              <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-leise">
-                {tx('XP')}
-              </span>
-            </div>
-            {zeigeFehler && problem ? (
-              <p id={fehlerId} className="feld-fehler text-[13px] leading-[18px] break-words text-gefahr" role="alert">
-                <span aria-hidden="true">⚠ </span>
-                {fehlerSatz(problem, verfuegbar)}
-              </p>
-            ) : null}
-            <p id={hinweisId} className="feld-hilfe truncate text-[13px] leading-[18px] text-leise">
-              {tx('Verfügbar: {xp} XP', { xp: zahl(verfuegbar) })}
-            </p>
-          </div>
+          <BetragFeld
+            text={betragText}
+            onText={setBetragText}
+            geprueft={betragGeprueft}
+            onGeprueft={setBetragGeprueft}
+            problem={problem}
+            verfuegbar={verfuegbar}
+            vorschlaege={vorschlaege}
+            eingabeRef={betragRef}
+            feldId={feldId}
+            fehlerId={fehlerId}
+            hinweisId={hinweisId}
+          />
         ) : null}
-        <ZeilenGruppe titel="Wirkung">
+        <ZeilenGruppe titel="Wirkung" zwischen={<BonusSegment wert={groesse} onAendern={setGroesse} />}>
           <EinzelWahl
             feld="Bonus für"
             wertName={bonusText}

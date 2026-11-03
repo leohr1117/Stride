@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.12',
+    seiten: 'Investitionen',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.11',
     seiten: 'Verlauf, Investitionen',
     abschnitte: [

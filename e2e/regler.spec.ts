@@ -127,37 +127,10 @@ test('Regler lässt das Textfeld los', async ({ page }, testInfo) => {
   await page.getByRole('button', { name: /Investition anlegen/ }).click();
   const investition = page.getByRole('dialog', { name: 'Investition', exact: true });
   await expect(investition).toBeVisible();
-  const investitionName = investition.getByRole('textbox', { name: 'Name' });
-  const groesse = investition.getByRole('slider', { name: 'Größe' });
-  await expect(groesse).toHaveAttribute('inputmode', 'none');
-  await investitionName.click();
-  await expect(investitionName).toBeFocused();
-  await groesse.dispatchEvent('pointerdown', { bubbles: true, cancelable: true, pointerType: 'touch', pointerId: 1 });
-  await expect(investitionName).not.toBeFocused();
-  await page.evaluate(() => {
-    window.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerType: 'touch', pointerId: 1 }));
-  });
-  await investitionName.click();
-  const kasten = await groesse.boundingBox();
-  if (!kasten) {
-    throw new Error('Größenregler ohne Fläche');
-  }
-  const hoehe = kasten.y + kasten.height / 2;
-  await page.mouse.move(kasten.x + 8, hoehe);
-  await page.mouse.down();
-  await page.mouse.move(kasten.x + kasten.width - 8, hoehe, { steps: 8 });
-  await expect(investitionName).not.toBeFocused();
-  await expect(groesse).toHaveValue('3');
-  await page.mouse.up();
-  if (testInfo.project.name === 'handy') {
-    await investitionName.click();
-    const nochmal = await groesse.boundingBox();
-    if (!nochmal) {
-      throw new Error('Größenregler ohne Fläche');
-    }
-    await page.touchscreen.tap(nochmal.x + 10, nochmal.y + nochmal.height / 2);
-    await expect(investitionName).not.toBeFocused();
-  }
+  await expect(investition.getByRole('slider', { name: 'Größe' })).toHaveCount(0);
+  const bonus = investition.getByRole('radiogroup', { name: 'Bonus' });
+  await expect(bonus.getByRole('radio')).toHaveCount(4);
+  await expect(bonus.getByRole('radio', { name: '+10 %' })).toBeChecked();
   await page.screenshot({ path: `${bild}-investition.png` });
   await ohneSeitlichenUeberlauf(page);
 });

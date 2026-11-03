@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.', 'An investment amount offers suggestions for one week, one month, and three months. The amount and the bonus step stay freely combinable.'],
   ['Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.', 'A paid investment appears in History on the day you pay. Deleting it shows up there as its own line.'],
   ['Beim Anlegen einer Investition wählst du Kosten und Wirkung. Zu wenig XP speichert nichts. Löschen gibt gezahltes XP zurück.', 'When you add an investment, you choose the cost and the effect. Too little XP saves nothing. Deleting returns the XP you paid.'],
   ['Eine Investition kann XP eines Attributs kosten, und das Level kann dabei sinken. Reicht das XP nicht, wird nichts gespeichert. Löschen gibt das XP zurück, Archivieren lässt es abgezogen.', 'An investment can cost XP from an attribute, and the level can drop. If there isn’t enough XP, nothing is saved. Deleting returns the XP. Archiving leaves it spent.'],
