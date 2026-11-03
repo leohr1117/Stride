@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf dem Handy reicht der Inhalt bis an den rechten Rand.": "スマホでは、内容が右端まで届きます。",
   "Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.": "進捗バーの端に、短いグラデーションと細い先端、わずかな輝きが付きます。",
   "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "投資のシートは右側で切れなくなりました。名前と金額はすべて見えたままです。",
   "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "自分の金額は、提案と同じ行に並びます。",

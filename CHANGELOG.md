@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.18
+
+### Behoben
+
+- Auf dem Handy reicht der Inhalt bis an den rechten Rand.
+
 ## 3.56.17
 
 ### Verbessert

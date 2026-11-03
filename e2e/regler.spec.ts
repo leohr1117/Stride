@@ -104,9 +104,14 @@ test('Regler lässt das Textfeld los', async ({ page }, testInfo) => {
     throw new Error('Regler ohne Fläche');
   }
   const mitte = flaeche.y + flaeche.height / 2;
-  await page.mouse.move(flaeche.x + 6, mitte);
-  await page.mouse.down();
-  await page.mouse.move(flaeche.x + flaeche.width - 6, mitte, { steps: 8 });
+  const rechts = flaeche.x + flaeche.width * 0.8;
+  if (testInfo.project.name === 'handy') {
+    await gewicht.tap({ position: { x: flaeche.width * 0.8, y: flaeche.height / 2 } });
+  } else {
+    await page.mouse.move(flaeche.x + 6, mitte);
+    await page.mouse.down();
+    await page.mouse.move(rechts, mitte, { steps: 8 });
+  }
   await expect(name).not.toBeFocused();
   await expect(gewicht).not.toHaveValue('0');
   const art = await page.evaluate(() => {
@@ -114,7 +119,9 @@ test('Regler lässt das Textfeld los', async ({ page }, testInfo) => {
     return aktiv instanceof HTMLInputElement ? aktiv.type : aktiv?.tagName ?? '';
   });
   expect(art).not.toBe('text');
-  await page.mouse.up();
+  if (testInfo.project.name !== 'handy') {
+    await page.mouse.up();
+  }
   await gewicht.focus();
   const vorher = await gewicht.inputValue();
   await page.keyboard.press('ArrowLeft');

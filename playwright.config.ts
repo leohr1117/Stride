@@ -1,5 +1,7 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 import { TEST_URL, TEST_WELT } from './e2e/testdaten.ts';
+
+const iphone = devices['iPhone 13'];
 
 process.env.STRIDE_TEST = '1';
 process.env.PLAYWRIGHT_WELT = TEST_WELT;
@@ -18,7 +20,16 @@ export default defineConfig({
     locale: 'de-DE',
   },
   projects: [
-    { name: 'handy', use: { viewport: { width: 390, height: 844 }, hasTouch: true } },
-    { name: 'desktop', use: { viewport: { width: 1440, height: 900 } } },
+    {
+      name: 'handy',
+      use: {
+        browserName: 'chromium',
+        viewport: iphone.viewport,
+        deviceScaleFactor: iphone.deviceScaleFactor,
+        isMobile: iphone.isMobile,
+        hasTouch: iphone.hasTouch,
+      },
+    },
+    { name: 'desktop', use: { browserName: 'chromium', viewport: { width: 1440, height: 900 } } },
   ],
 });

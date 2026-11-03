@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf dem Handy reicht der Inhalt bis an den rechten Rand.', 'On a phone, the content reaches the right edge.'],
   ['Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.', 'Progress bars end with a short gradient, a narrow tip, and a soft glow.'],
   ['Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.', 'The investment sheet is no longer cut off on the right. The name and the amount stay fully visible.'],
   ['Der eigene Betrag steht in derselben Zeile wie die Vorschläge.', 'The custom amount sits on the same line as the suggestions.'],

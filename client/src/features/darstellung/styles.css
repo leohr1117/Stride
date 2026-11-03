@@ -741,6 +741,7 @@ html[data-fab='an'] {
 @media (max-width: 767px) {
   html {
     scroll-padding-top: var(--mobilkopf-hoehe, 0px);
+    scrollbar-gutter: auto;
   }
 
   html[data-fab='an'] main {
