@@ -1,6 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} cuenta",
+  "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "En la guía, una barra permanece arriba y lleva a las secciones. La sección visible está resaltada.",
   "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "La imagen de perfil en la cabecera, en Más y en el perfil es redonda, también en Holograma y Antiguo. El foco de la cabecera sigue el círculo.",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "Solo el número de versión. El aspecto y el comportamiento siguen igual.",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "En cada vista se pueden elegir todas las paletas incluidas. Las que creas se quedan en su vista.",

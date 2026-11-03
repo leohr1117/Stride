@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.7',
+    seiten: 'Handbuch',
+    behoben: 'Handbuch',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.6',
     seiten: 'Heute, Mehr, Profil',
     behoben: 'Profilbild',

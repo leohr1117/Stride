@@ -1,6 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} 计入",
+  "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "指南里有一条栏固定在上方，可跳到各节。当前可见的节会高亮。",
   "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "头像在顶栏、更多和资料页都是圆形，全息和古典也一样。顶栏里的焦点沿着圆形。",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "只改版本号。外观和行为保持不变。",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "每种外观都能选择全部预设配色。自己创建的配色留在创建它的外观里。",

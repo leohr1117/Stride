@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.7
+
+### Behoben
+
+- Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.
+
 ## 3.56.6
 
 ### Behoben

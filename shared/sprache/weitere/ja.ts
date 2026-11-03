@@ -1,6 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} を数える",
+  "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "ガイドではバーが上に残り、各節へ移動できます。見えている節は強調されます。",
   "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "プロフィール画像はヘッダー、その他、プロフィールで円形です。ホログラムと古典でも同じです。ヘッダーのフォーカスも円に沿います。",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "バージョン番号だけです。見た目と動作はそのままです。",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "どの表示でも、用意された配色をすべて選べます。自分で作った配色は、作った表示に残ります。",

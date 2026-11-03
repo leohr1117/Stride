@@ -1,6 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} учитывается",
+  "Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.": "В справке полоса остаётся сверху и ведёт к разделам. Видимый раздел выделен.",
   "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "Изображение профиля в шапке, в Ещё и в профиле круглое, в том числе в видах Голограмма и Антик. Фокус в шапке повторяет круг.",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "Только номер версии. Внешний вид и поведение остаются прежними.",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "В каждом виде доступны все готовые палитры. Созданные вами остаются в своём виде.",

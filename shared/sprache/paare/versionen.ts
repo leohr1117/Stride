@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Im Handbuch bleibt eine Leiste oben und führt zu den Abschnitten. Der sichtbare Abschnitt ist hervorgehoben.', 'In the guide, a bar stays at the top and leads to the sections. The section in view is highlighted.'],
   ['Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.', 'The profile picture in the header, on More, and on the profile is round, including in Hologram and Antique. The focus in the header follows the circle.'],
   ['Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.', 'Only the version number. Look and behavior stay the same.'],
   ['In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.', 'Every look offers all built-in palettes. Palettes you create stay in their look.'],

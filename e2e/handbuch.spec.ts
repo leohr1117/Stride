@@ -32,11 +32,22 @@ test('Handbuch ist eine offene Scrollseite', async ({ page }, testInfo) => {
   }
 
   const sprung = page.locator('main nav');
+  await expect(sprung).not.toContainText('·');
   await expect(sprung.getByRole('link', { name: 'Einträge', exact: true })).toBeVisible();
   await expect(sprung.getByRole('link', { name: 'Streak', exact: true })).toBeVisible();
   await expect(sprung.getByRole('link', { name: 'Level', exact: true })).toBeVisible();
   await expect(sprung.getByRole('link', { name: 'Visionen', exact: true })).toHaveCount(stand.visionen ? 1 : 0);
   await expect(sprung.getByRole('link', { name: 'Vorbilder', exact: true })).toHaveCount(stand.vorbilder ? 1 : 0);
+
+  expect(await sprung.evaluate((element) => getComputedStyle(element).position)).toBe('sticky');
+  const reiheUeberlauf = await sprung.locator('> div').evaluate((element) => getComputedStyle(element).overflowX);
+  expect(reiheUeberlauf === 'auto' || reiheUeberlauf === 'scroll').toBe(true);
+  const eintraege = sprung.getByRole('link', { name: 'Einträge', exact: true });
+  expect(await eintraege.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(48);
+  await expect(eintraege).toHaveAttribute('aria-current', 'true');
+  await expect(sprung.locator('[aria-current="true"]')).toHaveCount(1);
+  const fuellung = await eintraege.evaluate((element) => getComputedStyle(element).backgroundColor);
+  expect(fuellung).not.toBe('rgba(0, 0, 0, 0)');
 
   await expect(page.getByRole('heading', { name: 'Einträge', level: 2 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Streak', level: 2 })).toBeVisible();
@@ -83,16 +94,27 @@ test('Handbuch ist eine offene Scrollseite', async ({ page }, testInfo) => {
 
   await sprung.getByRole('link', { name: 'Level', exact: true }).click();
   await expect(page).toHaveURL(/#level$/);
+  await expect(sprung.getByRole('link', { name: 'Level', exact: true })).toHaveAttribute('aria-current', 'true');
+  await expect(sprung.getByRole('link', { name: 'Einträge', exact: true })).not.toHaveAttribute('aria-current', /.+/);
   const lage = await page.evaluate(() => {
     const titel = document.querySelector('#level h2');
     const kopf = document.querySelector('[data-kopf]');
-    if (!titel || !kopf) {
+    const bar = document.querySelector('.handbuch-leiste');
+    if (!titel || !kopf || !bar) {
       return null;
     }
-    return { oben: titel.getBoundingClientRect().top, kopf: kopf.getBoundingClientRect().bottom };
+    return {
+      oben: titel.getBoundingClientRect().top,
+      kopf: kopf.getBoundingClientRect().bottom,
+      leiste: bar.getBoundingClientRect().bottom,
+      rand: Number.parseFloat(getComputedStyle(titel).scrollMarginTop),
+      hoehe: bar.getBoundingClientRect().height,
+    };
   });
   expect(lage).not.toBeNull();
   expect(lage?.oben ?? 0).toBeGreaterThanOrEqual((lage?.kopf ?? 0) - 2);
+  expect(lage?.oben ?? 0).toBeGreaterThanOrEqual((lage?.leiste ?? 0) - 2);
+  expect(Math.abs((lage?.rand ?? 0) - (lage?.hoehe ?? 0))).toBeLessThanOrEqual(1);
   await ohneSeitlichenUeberlauf(page);
   await bild(page, `${projekt}-offen`);
 

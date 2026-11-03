@@ -1,6 +1,16 @@
 import { type ReactNode } from 'react';
 import { tx } from '../text.ts';
 
+type ChipFelder = {
+  aktiv: boolean;
+  children: ReactNode;
+  farbe?: string;
+  className?: string;
+  umbruch?: boolean;
+  /** 48 px, für Ziele im Dialog. */
+  hoch?: boolean;
+};
+
 export function Chip({
   aktiv,
   onClick,
@@ -9,28 +19,23 @@ export function Chip({
   className = '',
   umbruch = false,
   hoch = false,
-}: {
-  aktiv: boolean;
-  onClick: () => void;
-  children: ReactNode;
-  farbe?: string;
-  className?: string;
-  umbruch?: boolean;
-  /** 48 px, für Ziele im Dialog. */
-  hoch?: boolean;
-}) {
+  href,
+}: ChipFelder & ({ href?: undefined; onClick: () => void } | { href: string; onClick?: () => void })) {
+  const klasse = `chip ${hoch ? 'min-h-12' : 'min-h-9'} rounded-full border px-3 py-1.5 text-sm transition ${
+    umbruch ? 'inline-block max-w-full text-left whitespace-normal' : 'flex shrink-0 items-center gap-1.5'
+  } ${
+    aktiv ? 'chip-aktiv border-transparent text-haupt' : 'border-rand text-leise hover:text-haupt'
+  } ${aktiv && !farbe ? 'bg-akzent/15' : ''} ${className}`;
+  const stil = aktiv && farbe ? { backgroundColor: `color-mix(in srgb, ${farbe} 18%, transparent)` } : undefined;
+  if (href) {
+    return (
+      <a href={href} aria-current={aktiv ? 'true' : undefined} onClick={onClick} className={`${klasse} no-underline`} style={stil}>
+        {children}
+      </a>
+    );
+  }
   return (
-    <button
-      type="button"
-      aria-pressed={aktiv}
-      onClick={onClick}
-      className={`chip ${hoch ? 'min-h-12' : 'min-h-9'} rounded-full border px-3 py-1.5 text-sm transition ${
-        umbruch ? 'inline-block max-w-full text-left whitespace-normal' : 'flex shrink-0 items-center gap-1.5'
-      } ${
-        aktiv ? 'chip-aktiv border-transparent text-haupt' : 'border-rand text-leise hover:text-haupt'
-      } ${aktiv && !farbe ? 'bg-akzent/15' : ''} ${className}`}
-      style={aktiv && farbe ? { backgroundColor: `color-mix(in srgb, ${farbe} 18%, transparent)` } : undefined}
-    >
+    <button type="button" aria-pressed={aktiv} onClick={onClick} className={klasse} style={stil}>
       {children}
     </button>
   );
