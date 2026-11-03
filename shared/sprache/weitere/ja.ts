@@ -1,13 +1,12 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "投資の金額には、異なる三つの XP 額が出ます。提案に週や月は出ません。",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "ビジョンのレベル、減衰、基本タスクの時間、見積もったレベルに候補が出ます。自分の値も入力できます。",
   "Eigene": "自分で",
   "Nur Aus, Leicht, Mittel oder Stark.": "なし、軽い、中、強いだけです。",
   "Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.": "投資の金額には、1週間、1か月、3か月の提案が出ます。金額とボーナスの段階は自由に組み合わせられます。",
   "Eigener": "自分で",
   "Bonus": "ボーナス",
-  "1 Woche": "1週間",
-  "1 Monat": "1か月",
   "fehlen {xp} XP": "{xp} XP不足",
   "Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.": "支払った投資は、支払った日の履歴に表示されます。削除すると、そこに別の行として出ます。",
   "Investition · {name}": "投資 · {name}",

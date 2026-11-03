@@ -1,11 +1,33 @@
 import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { TEST_KOPIE } from './testdaten.ts';
 
 const NAME = 'Betrag Vorschlag';
+
+function vorschlagChips(dialog: Locator): Locator {
+  return dialog.getByRole('group', { name: 'Betrag' }).getByRole('button');
+}
+
+async function xpWerte(dialog: Locator): Promise<number[]> {
+  const chips = vorschlagChips(dialog);
+  await expect(chips).toHaveCount(3);
+  const namen = await chips.evaluateAll((knoten) => knoten.map((knoten) => knoten.getAttribute('aria-label') ?? ''));
+  for (const name of namen) {
+    expect(name).not.toMatch(/Woche|Monat/);
+  }
+  return namen.map((name) => Number(name.match(/^([\d.]+)/)?.[1]?.replaceAll('.', '')));
+}
+
+function erwarteSteigend(werte: number[]): void {
+  expect(werte).toHaveLength(3);
+  expect(werte.every((wert) => Number.isInteger(wert) && wert > 0)).toBe(true);
+  expect(new Set(werte).size).toBe(3);
+  expect(werte[0]).toBeLessThan(werte[1]!);
+  expect(werte[1]!).toBeLessThan(werte[2]!);
+}
 
 function weltDatei(): string {
   const datei = process.env.PLAYWRIGHT_WELT;
@@ -75,6 +97,7 @@ test('Ein Vorschlag setzt den Betrag, ein eigener Wert und 100 XP mit 30 % bleib
     await page.getByRole('button', { name: /Investition anlegen/ }).click();
     const gesperrt = page.getByRole('dialog', { name: 'Investition', exact: true });
     const feldLeer = gesperrt.getByRole('textbox', { name: 'Eigener' });
+    erwarteSteigend(await xpWerte(gesperrt));
     const teuer = gesperrt.locator('button[aria-disabled="true"]');
     await expect(teuer).toHaveCount(3);
     await teuer.first().click({ force: true });
@@ -92,31 +115,34 @@ test('Ein Vorschlag setzt den Betrag, ein eigener Wert und 100 XP mit 30 % bleib
     expect(nachher.xp).toBeGreaterThanOrEqual(20_000);
     await page.getByRole('button', { name: /Investition anlegen/ }).click();
     const dialog = page.getByRole('dialog', { name: 'Investition', exact: true });
-    const woche = dialog.getByRole('button', { name: /1 Woche/ });
-    const monat = dialog.getByRole('button', { name: /1 Monat/ });
-    const quartal = dialog.getByRole('button', { name: /3 Monate/ });
-    await expect(woche).toBeVisible();
-    await expect(monat).toBeVisible();
-    await expect(quartal).toBeVisible();
-    const flaeche = await woche.boundingBox();
-    const pille = await woche.locator('span').first().boundingBox();
+    await expect(dialog.getByText('1 Woche')).toHaveCount(0);
+    await expect(dialog.getByText('1 Monat')).toHaveCount(0);
+    await expect(dialog.getByText('3 Monate')).toHaveCount(0);
+    const werte = await xpWerte(dialog);
+    erwarteSteigend(werte);
+    const chips = vorschlagChips(dialog);
+    const erster = chips.nth(0);
+    const zweiter = chips.nth(1);
+    const flaeche = await erster.boundingBox();
+    const pille = await erster.locator('span').first().boundingBox();
     expect(flaeche?.height).toBeGreaterThanOrEqual(48);
     expect(pille?.height).toBeGreaterThanOrEqual(36);
     expect(pille?.height).toBeLessThanOrEqual(36);
-    const wocheKasten = await woche.boundingBox();
-    const monatKasten = await monat.boundingBox();
-    const abstand = monatKasten && wocheKasten ? monatKasten.x - (wocheKasten.x + wocheKasten.width) : null;
+    const ersterKasten = await erster.boundingBox();
+    const zweiterKasten = await zweiter.boundingBox();
+    const abstand = zweiterKasten && ersterKasten ? zweiterKasten.x - (ersterKasten.x + ersterKasten.width) : null;
     expect(abstand).toBeGreaterThanOrEqual(8);
     expect(abstand).toBeLessThanOrEqual(8);
+    await expect(erster.locator('span span')).toHaveCount(1);
 
-    await woche.click();
+    const index = werte.findIndex((wert) => wert !== 100);
+    const gewaehlt = chips.nth(index);
+    await gewaehlt.click();
     const feld = dialog.getByRole('textbox', { name: 'Eigener' });
-    const roh = (await woche.getAttribute('aria-label'))?.match(/^([\d.]+)/)?.[1]?.replace(/\./g, '');
-    expect(roh).toBeTruthy();
-    await expect(feld).toHaveValue(roh!);
-    await expect(woche).toHaveAttribute('aria-pressed', 'true');
+    await expect(feld).toHaveValue(String(werte[index]));
+    await expect(gewaehlt).toHaveAttribute('aria-pressed', 'true');
     await feld.fill('100');
-    await expect(woche).toHaveAttribute('aria-pressed', 'false');
+    await expect(gewaehlt).toHaveAttribute('aria-pressed', 'false');
     await dialog.getByRole('radio', { name: '+30 %' }).click();
     await expect(dialog.getByRole('radio', { name: '+30 %' })).toBeChecked();
     await dialog.getByText('Betrag', { exact: true }).scrollIntoViewIfNeeded();
@@ -186,7 +212,8 @@ test('Ohne Verlauf bleiben die festen Beträge', async ({ page }, testInfo) => {
     await expect(dialog.getByRole('button', { name: '100 XP', exact: true })).toBeVisible();
     await expect(dialog.getByRole('button', { name: '300 XP', exact: true })).toBeVisible();
     await expect(dialog.getByRole('button', { name: '800 XP', exact: true })).toBeVisible();
-    await expect(dialog.getByRole('button', { name: /1 Woche/ })).toHaveCount(0);
+    erwarteSteigend(await xpWerte(dialog));
+    await expect(dialog.getByRole('button', { name: /1 Woche|1 Monat|3 Monate/ })).toHaveCount(0);
     await dialog.getByText('Betrag', { exact: true }).scrollIntoViewIfNeeded();
     if (testInfo.project.name === 'handy') {
       await page.screenshot({ path: 'tmp-test/investition-betrag/handy-ohne-verlauf.png' });

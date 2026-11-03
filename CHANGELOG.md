@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.14
+
+### Behoben
+
+- Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.
+
 ## 3.56.13
 
 ### Hinzugefügt

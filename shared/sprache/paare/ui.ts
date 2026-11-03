@@ -61,8 +61,6 @@ export const PAARE = [
   ['Eigener', 'Custom'],
   ['Eigene', 'Custom'],
   ['Bonus', 'Bonus'],
-  ['1 Woche', '1 week'],
-  ['1 Monat', '1 month'],
   ['fehlen {xp} XP', '{xp} XP short'],
   ['Auch für', 'Also for'],
   ['Verfügbar: {xp} XP', 'Available: {xp} XP'],

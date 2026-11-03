@@ -73,12 +73,8 @@ describe('Rhythmus der Investition', () => {
       expect(rhythmus.wochenMitEintraegen).toBeGreaterThanOrEqual(2);
       expect(rhythmus.posten.find((eintrag) => eintrag.art === 'attribut' && eintrag.id === koerper)?.xp).toBe(240);
       expect(rhythmus.posten.find((eintrag) => eintrag.art === 'projekt' && eintrag.id === projekt)?.xp).toBe(520);
-      expect(betragVorschlaege(rhythmus.posten, koerper, null, rhythmus.wochenMitEintraegen)).toEqual([
-        { xp: 50, zeitraum: 'woche' },
-        { xp: 250, zeitraum: 'monat' },
-        { xp: 800, zeitraum: 'quartal' },
-      ]);
-      expect(betragVorschlaege(rhythmus.posten, koerper, { art: 'projekt', id: projekt }, rhythmus.wochenMitEintraegen)[0]?.xp).toBe(200);
+      expect(betragVorschlaege(rhythmus.posten, koerper, null, rhythmus.wochenMitEintraegen)).toEqual([50, 250, 800]);
+      expect(betragVorschlaege(rhythmus.posten, koerper, { art: 'projekt', id: projekt }, rhythmus.wochenMitEintraegen)[0]).toBe(200);
     });
   });
 
@@ -86,11 +82,7 @@ describe('Rhythmus der Investition', () => {
     mitWelt(welt(), () => {
       const rhythmus = ladeInvestitionsRhythmus(new Date(2026, 5, 17, 12, 0, 0));
       expect(rhythmus.wochenMitEintraegen).toBe(0);
-      expect(betragVorschlaege(rhythmus.posten, 1, null, rhythmus.wochenMitEintraegen)).toEqual([
-        { xp: 100, zeitraum: null },
-        { xp: 300, zeitraum: null },
-        { xp: 800, zeitraum: null },
-      ]);
+      expect(betragVorschlaege(rhythmus.posten, 1, null, rhythmus.wochenMitEintraegen)).toEqual([100, 300, 800]);
     });
   });
 });

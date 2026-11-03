@@ -1,13 +1,12 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "El importe de una inversión ofrece tres cantidades de XP distintas. Las propuestas ya no nombran semanas ni meses.",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "El nivel de una visión, el decaimiento, la duración de una tarea base y un nivel estimado ofrecen propuestas. Un valor propio sigue siendo posible.",
   "Eigene": "Propia",
   "Nur Aus, Leicht, Mittel oder Stark.": "Solo Apagado, Leve, Medio o Fuerte.",
   "Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.": "En el importe de una inversión hay propuestas para una semana, un mes y tres meses. El importe y el nivel de bonificación se combinan con libertad.",
   "Eigener": "Propio",
   "Bonus": "Bonificación",
-  "1 Woche": "1 semana",
-  "1 Monat": "1 mes",
   "fehlen {xp} XP": "faltan {xp} XP",
   "Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.": "Una inversión pagada aparece en el historial el día del pago. Borrarla aparece allí como una línea propia.",
   "Investition · {name}": "Inversión · {name}",

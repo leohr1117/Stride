@@ -1,13 +1,12 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "У суммы вложения три разных числа XP. Подсказки больше не называют недели или месяцы.",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "Уровень видения, спад, длительность базовой задачи и оценка уровня получают подсказки. Своё значение можно ввести.",
   "Eigene": "Своя",
   "Nur Aus, Leicht, Mittel oder Stark.": "Только Нет, Лёгкая, Средняя или Сильная.",
   "Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.": "У суммы вложения есть предложения на неделю, месяц и три месяца. Сумму и ступень бонуса можно сочетать свободно.",
   "Eigener": "Свой",
   "Bonus": "Бонус",
-  "1 Woche": "1 неделя",
-  "1 Monat": "1 месяц",
   "fehlen {xp} XP": "не хватает {xp} XP",
   "Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.": "Оплаченное вложение стоит в истории в день оплаты. Удаление появляется там отдельной строкой.",
   "Investition · {name}": "Вложение · {name}",

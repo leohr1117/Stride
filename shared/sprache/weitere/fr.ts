@@ -1,13 +1,12 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "Le montant d'un investissement propose trois sommes d'XP différentes. Les propositions ne citent plus de semaines ni de mois.",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "Le niveau d'une vision, le déclin, la durée d'une tâche de base et un niveau estimé proposent des paliers. Une valeur personnelle reste possible.",
   "Eigene": "Personnelle",
   "Nur Aus, Leicht, Mittel oder Stark.": "Seulement Aucun, Léger, Moyen ou Fort.",
   "Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.": "Le montant d'un investissement propose une semaine, un mois et trois mois. Le montant et le palier de bonus restent libres à combiner.",
   "Eigener": "Personnel",
   "Bonus": "Bonus",
-  "1 Woche": "1 semaine",
-  "1 Monat": "1 mois",
   "fehlen {xp} XP": "manque {xp} XP",
   "Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.": "Un investissement payé apparaît dans l'historique le jour du paiement. Le supprimer apparaît là comme une ligne à part.",
   "Investition · {name}": "Investissement · {name}",

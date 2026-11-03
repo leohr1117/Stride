@@ -1,13 +1,12 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "投入的金额给出三个不同的 XP 数额。建议不再写周或月。",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "愿景等级、衰退、基础事项的时长和估计的等级会给出建议。仍可填写自己的值。",
   "Eigene": "自定义",
   "Nur Aus, Leicht, Mittel oder Stark.": "只能是无、轻、中或重。",
   "Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.": "投入的金额会给出一周、一个月和三个月的建议。金额和加成档可以自由组合。",
   "Eigener": "自定义",
   "Bonus": "加成",
-  "1 Woche": "1 周",
-  "1 Monat": "1 个月",
   "fehlen {xp} XP": "还差 {xp} XP",
   "Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.": "已支付的投入会在付款当天出现在历程中。删除会在那里单独成行。",
   "Investition · {name}": "投入 · {name}",

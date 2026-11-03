@@ -1,6 +1,5 @@
 import { useId } from 'react';
 import { INVESTITION_GROESSEN, investitionsBonus } from '../../../../shared/spiel/xp.ts';
-import type { BetragVorschlag, BetragZeitraum } from '../../../../shared/spiel/betragVorschlag.ts';
 import { bonusProzent, zahl } from '../../format.ts';
 import { tx } from '../../text.ts';
 import { VorschlagFeld, type VorschlagOption } from '../../ui/index.ts';
@@ -12,12 +11,6 @@ function fehlerSatz(problem: BetragProblem, verfuegbar: number): string {
   }
   return tx('Nur {xp} XP verfügbar', { xp: zahl(verfuegbar) });
 }
-
-const ZEITRAUM: Record<BetragZeitraum, string> = {
-  woche: '1 Woche',
-  monat: '1 Monat',
-  quartal: '3 Monate',
-};
 
 export function BonusSegment({ wert, onAendern }: { wert: number; onAendern: (groesse: number) => void }) {
   const id = useId();
@@ -68,21 +61,17 @@ export function BonusSegment({ wert, onAendern }: { wert: number; onAendern: (gr
   );
 }
 
-function optionenVon(vorschlaege: readonly BetragVorschlag[], verfuegbar: number): VorschlagOption[] {
-  return vorschlaege.map((vorschlag) => {
-    const zuTeuer = vorschlag.xp > verfuegbar;
-    const neben = zuTeuer
-      ? tx('fehlen {xp} XP', { xp: zahl(vorschlag.xp - verfuegbar) })
-      : vorschlag.zeitraum
-        ? tx(ZEITRAUM[vorschlag.zeitraum])
-        : '';
-    const xpText = tx('{xp} XP', { xp: zahl(vorschlag.xp) });
+function optionenVon(betraege: readonly number[], verfuegbar: number): VorschlagOption[] {
+  return betraege.map((xp) => {
+    const zuTeuer = xp > verfuegbar;
+    const fehlen = zuTeuer ? tx('fehlen {xp} XP', { xp: zahl(xp - verfuegbar) }) : '';
+    const xpText = tx('{xp} XP', { xp: zahl(xp) });
     return {
-      id: vorschlag.zeitraum ?? `fest-${vorschlag.xp}`,
-      wert: String(vorschlag.xp),
+      id: String(xp),
+      wert: String(xp),
       zeile: xpText,
-      neben,
-      name: neben ? `${xpText}, ${neben}` : xpText,
+      neben: fehlen || undefined,
+      name: fehlen ? `${xpText}, ${fehlen}` : xpText,
       gesperrt: zuTeuer,
     };
   });
@@ -107,7 +96,7 @@ export function BetragFeld({
   onGeprueft: (an: boolean) => void;
   problem: BetragProblem | null;
   verfuegbar: number;
-  vorschlaege: readonly BetragVorschlag[];
+  vorschlaege: readonly number[];
   eingabeRef: { current: HTMLInputElement | null };
   feldId: string;
   fehlerId: string;
