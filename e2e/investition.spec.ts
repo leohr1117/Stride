@@ -175,7 +175,7 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     await expect(page.getByRole('slider', { name: 'Größe' })).toHaveCount(0);
     await zeile.getByRole('button', { name: /^Info/ }).click();
     const hinweis = page.getByRole('tooltip');
-    await expect(hinweis).toContainText('Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.');
+    await expect(hinweis).toContainText('Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.');
     const kasten = await hinweis.boundingBox();
     const fenster = page.viewportSize();
     expect(kasten).toBeTruthy();

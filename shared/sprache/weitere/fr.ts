@@ -1,5 +1,9 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.": "Un investissement payé apparaît dans l'historique le jour du paiement. Le supprimer apparaît là comme une ligne à part.",
+  "Investition · {name}": "Investissement · {name}",
+  "aus {name}": "de {name}",
+  "+{xp} XP · Investition gelöscht": "+{xp} XP · Investissement supprimé",
   "Beim Anlegen einer Investition wählst du Kosten und Wirkung. Zu wenig XP speichert nichts. Löschen gibt gezahltes XP zurück.": "Quand tu crées un investissement, tu choisis le coût et l'effet. S'il n'y a pas assez d'XP, rien n'est enregistré. Supprimer rend l'XP payé.",
   "Die {xp} XP gehen zurück an {name}.": "Les {xp} XP retournent à {name}.",
   "{name} fällt auf Level {level}": "{name} descend au niveau {level}",
@@ -813,7 +817,7 @@ export const TEXTE: Record<string, string> = {
   "Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.": "Un grand moment : un objectif atteint, un nouveau record, ou quelque chose fait pour la première fois. Ça donne plus d'XP.",
   "Nur ein Datum. Nach der Deadline geht Disziplin verloren.": "Juste une date. Après la date limite, tu perds de la Discipline.",
   "Bis zum Datum entsteht er. Danach greift er an.": "Il se forme jusqu'à la date. Ensuite il attaque.",
-  "Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "Un investissement à toi, ou un projet terminé, donne plus d'XP pour de bon.",
+  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "Un investissement peut coûter des XP d'un attribut. Un investissement à toi, ou un projet terminé, donne plus d'XP pour de bon.",
   "Bonus gilt auch für Ressourcen": "Le bonus vaut aussi pour Ressources",
   "Ressourcen werden mit investiert und bekommen denselben Bonus.": "Ressources est aussi investi et reçoit le même bonus.",
   "Tägliche Aufgaben zum Abhaken.": "Tâches quotidiennes à cocher.",

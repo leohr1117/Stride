@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.11',
+    seiten: 'Verlauf, Investitionen',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.10',
     seiten: 'Investitionen',
     abschnitte: [

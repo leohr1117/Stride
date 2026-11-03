@@ -1,5 +1,9 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.": "Una inversión pagada aparece en el historial el día del pago. Borrarla aparece allí como una línea propia.",
+  "Investition · {name}": "Inversión · {name}",
+  "aus {name}": "de {name}",
+  "+{xp} XP · Investition gelöscht": "+{xp} XP · Inversión eliminada",
   "Beim Anlegen einer Investition wählst du Kosten und Wirkung. Zu wenig XP speichert nichts. Löschen gibt gezahltes XP zurück.": "Al crear una inversión eliges el coste y el efecto. Si no hay suficiente XP, no se guarda nada. Borrar devuelve el XP pagado.",
   "Die {xp} XP gehen zurück an {name}.": "Los {xp} XP vuelven a {name}.",
   "{name} fällt auf Level {level}": "{name} baja al nivel {level}",
@@ -813,7 +817,7 @@ export const TEXTE: Record<string, string> = {
   "Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.": "Un gran momento: una meta alcanzada, un récord nuevo o algo hecho por primera vez. Da más XP.",
   "Nur ein Datum. Nach der Deadline geht Disziplin verloren.": "Solo una fecha. Tras la fecha límite se pierde Disciplina.",
   "Bis zum Datum entsteht er. Danach greift er an.": "Hasta la fecha se forma. Después ataca.",
-  "Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "Una inversión propia, o un proyecto terminado, da más XP de forma permanente.",
+  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "Una inversión puede costar XP de un atributo. Una inversión propia, o un proyecto terminado, da más XP de forma permanente.",
   "Bonus gilt auch für Ressourcen": "El bonus también vale para Recursos",
   "Ressourcen werden mit investiert und bekommen denselben Bonus.": "Recursos también se invierte y recibe el mismo bonus.",
   "Tägliche Aufgaben zum Abhaken.": "Tareas diarias para marcar.",

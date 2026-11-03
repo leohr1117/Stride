@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.11
+
+### Hinzugefügt
+
+- Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.
+
 ## 3.56.10
 
 ### Hinzugefügt

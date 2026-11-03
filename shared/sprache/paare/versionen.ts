@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.', 'A paid investment appears in History on the day you pay. Deleting it shows up there as its own line.'],
   ['Beim Anlegen einer Investition wählst du Kosten und Wirkung. Zu wenig XP speichert nichts. Löschen gibt gezahltes XP zurück.', 'When you add an investment, you choose the cost and the effect. Too little XP saves nothing. Deleting returns the XP you paid.'],
   ['Eine Investition kann XP eines Attributs kosten, und das Level kann dabei sinken. Reicht das XP nicht, wird nichts gespeichert. Löschen gibt das XP zurück, Archivieren lässt es abgezogen.', 'An investment can cost XP from an attribute, and the level can drop. If there isn’t enough XP, nothing is saved. Deleting returns the XP. Archiving leaves it spent.'],
   ['Die Streak-Karte auf Heute erklärt den Stand in einem Satz. Der Knopf + Eintrag öffnet denselben Eintrag wie der Plus-Knopf.', 'The streak card on Today explains the state in one sentence. The + Entry button opens the same entry as the plus button.'],

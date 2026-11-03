@@ -1,19 +1,21 @@
-import { tx } from '../../text.ts';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { RotateCcw, Shield, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import type { ChronikEintrag, Eintrag, EintragFilter, ProtokollArt, ProtokollZeile, SkillEreignis } from '../../../../shared/api/index.ts';
+import type { Attribut, ChronikEintrag, Eintrag, EintragFilter, Investition, InvestitionsBuchung, ProtokollArt, ProtokollZeile, SkillEreignis } from '../../../../shared/api/index.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
-import { dauerText, lokalesDatum, tagesUeberschrift, zahl } from '../../format.ts';
-import { useSichtbarkeit } from '../../funktionen.ts';
 import { Dialog } from '../../components/Dialog.tsx';
 import { EintragDetail, eintragSchnellZiel } from '../../components/EintragKarte.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { SchnellMenueKnopf, SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { SkillDetail } from '../../components/SkillKarte.tsx';
 import { Liste } from '../../components/Zeile.tsx';
+import { dauerText, lokalesDatum, tagesUeberschrift, zahl } from '../../format.ts';
+import { useSichtbarkeit } from '../../funktionen.ts';
+import { attributName, tx } from '../../text.ts';
 import { Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
+import { InvestitionFormular } from '../investitionen/InvestitionBlatt.tsx';
+import { loeschHinweis } from '../investitionen/zahlungAnzeige.ts';
 
 interface Tag {
   schluessel: string;
@@ -55,6 +57,8 @@ function tagVon(eintrag: ChronikEintrag): string {
       return lokalesDatum(new Date(eintrag.skill.erstelltAm));
     case 'protokoll':
       return eintrag.protokoll.tag;
+    case 'investition':
+      return lokalesDatum(new Date(eintrag.buchung.erstelltAm));
   }
 }
 
@@ -66,6 +70,8 @@ function schluesselVon(eintrag: ChronikEintrag): string {
       return `s-${eintrag.skill.knotenId}`;
     case 'protokoll':
       return `p-${eintrag.protokoll.id}`;
+    case 'investition':
+      return `b-${eintrag.buchung.id}`;
   }
 }
 
@@ -77,7 +83,68 @@ function titelVon(eintrag: ChronikEintrag): string {
       return eintrag.skill.titel;
     case 'protokoll':
       return protokollText(eintrag.protokoll.art);
+    case 'investition':
+      return tx('Investition');
   }
+}
+
+function xpBetrag(xp: number): string {
+  const menge = zahl(Math.abs(xp));
+  return `${xp < 0 ? '−' : '+'}${menge} XP`;
+}
+
+function ausAttribut(buchung: InvestitionsBuchung): string {
+  return tx('aus {name}', { name: attributName({ kennung: buchung.attributKennung, name: buchung.attributName }) });
+}
+
+function hinweisFuer(eintrag: Investition, attribute: Attribut[]): string | undefined {
+  if (eintrag.bezahltAttributId === null) {
+    return undefined;
+  }
+  const ziel = attribute.find((attribut) => attribut.id === eintrag.bezahltAttributId);
+  if (!ziel) {
+    return undefined;
+  }
+  return loeschHinweis(eintrag.betrag, attributName(ziel)) ?? undefined;
+}
+
+function InvestitionZeile({ buchung, onOeffnen }: { buchung: InvestitionsBuchung; onOeffnen: (() => void) | null }) {
+  if (buchung.investitionId === null || buchung.name === null) {
+    if (buchung.xp > 0) {
+      return (
+        <div data-buchung-art="geloescht" className="zeile flex min-h-12 items-center px-4 py-3">
+          <span className="min-w-0 flex-1 truncate text-base">
+            {tx('+{xp} XP · Investition gelöscht', { xp: zahl(buchung.xp) })}
+          </span>
+        </div>
+      );
+    }
+    return (
+      <div data-buchung-art="zahlung" className="zeile flex min-h-12 items-center gap-3 px-4 py-3">
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-base">{tx('Investition')}</span>
+          <span className="block truncate text-[13px] leading-[18px] text-leise">{ausAttribut(buchung)}</span>
+        </span>
+        <span className="zahl shrink-0 text-[15px] leading-5 font-medium">{xpBetrag(buchung.xp)}</span>
+      </div>
+    );
+  }
+  const titel = tx('Investition · {name}', { name: buchung.name });
+  return (
+    <button
+      type="button"
+      data-buchung-art={buchung.xp < 0 ? 'zahlung' : 'aenderung'}
+      onClick={onOeffnen ?? undefined}
+      className="flex min-h-12 w-full items-center gap-3 px-4 py-3 text-left"
+    >
+      <Icon name={buchung.icon ?? 'gem'} className="size-5 shrink-0 text-leise" />
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-base">{titel}</span>
+        <span className="block truncate text-[13px] leading-[18px] text-leise">{ausAttribut(buchung)}</span>
+      </span>
+      <span className="zahl shrink-0 text-[15px] leading-5 font-medium">{xpBetrag(buchung.xp)}</span>
+    </button>
+  );
 }
 
 function nebenzeile(eintrag: Eintrag): string | null {
@@ -160,6 +227,13 @@ function ChronikZeile({ eintrag, onOeffnen }: { eintrag: ChronikEintrag; onOeffn
       return <SkillZeile skill={eintrag.skill} onOeffnen={onOeffnen} />;
     case 'protokoll':
       return <ProtokollAnsicht protokoll={eintrag.protokoll} />;
+    case 'investition':
+      return (
+        <InvestitionZeile
+          buchung={eintrag.buchung}
+          onOeffnen={eintrag.buchung.investitionId === null ? null : onOeffnen}
+        />
+      );
   }
 }
 
@@ -187,11 +261,22 @@ export function EintragListe({
   onZuruecksetzen?: () => void;
 }) {
   const [auswahl, setAuswahl] = useState<string | null>(null);
+  const [blatt, setBlatt] = useState<number | null>(null);
   const abfrage = useInfiniteQuery({
     queryKey: SCHLUESSEL.eintraege(filter),
     queryFn: ({ pageParam }) => api.eintraege(filter, pageParam),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (seite) => seite.naechsterCursor ?? undefined,
+  });
+  const investitionen = useQuery({
+    queryKey: SCHLUESSEL.investitionen,
+    queryFn: api.investitionen,
+    enabled: blatt !== null,
+  });
+  const attribute = useQuery({
+    queryKey: SCHLUESSEL.attribute,
+    queryFn: api.attribute,
+    enabled: blatt !== null,
   });
 
   if (abfrage.isPending) {
@@ -201,10 +286,11 @@ export function EintragListe({
   const eintraege = abfrage.data?.pages.flatMap((seite) => seite.eintraege) ?? [];
   const tage = gruppiereNachTag(eintraege);
   const gewaehlt = eintraege.find((eintrag) => schluesselVon(eintrag) === auswahl) ?? null;
+  const investition = investitionen.data?.find((eintrag) => eintrag.id === blatt) ?? null;
 
   return (
     <div className="space-y-6">
-      <Fehlermeldung fehler={abfrage.error} />
+      <Fehlermeldung fehler={abfrage.error ?? investitionen.error ?? attribute.error} />
 
       {tage.length === 0 ? (
         <Leer
@@ -226,7 +312,15 @@ export function EintragListe({
                 <ChronikZeile
                   key={schluesselVon(eintrag)}
                   eintrag={eintrag}
-                  onOeffnen={() => setAuswahl(schluesselVon(eintrag))}
+                  onOeffnen={() => {
+                    if (eintrag.typ === 'investition') {
+                      if (eintrag.buchung.investitionId !== null) {
+                        setBlatt(eintrag.buchung.investitionId);
+                      }
+                      return;
+                    }
+                    setAuswahl(schluesselVon(eintrag));
+                  }}
                 />
               ))}
             </Liste>
@@ -252,6 +346,33 @@ export function EintragListe({
       >
         {gewaehlt?.typ === 'eintrag' ? <EintragDetail eintrag={gewaehlt.eintrag} /> : null}
         {gewaehlt?.typ === 'skill' ? <SkillDetail skill={gewaehlt.skill} /> : null}
+      </Dialog>
+
+      <Dialog
+        offen={investition !== null}
+        titel={tx('Investition')}
+        menu={
+          investition ? (
+            <SchnellMenueKnopf
+              ziel={{
+                art: 'investition',
+                id: investition.id,
+                name: investition.name,
+                archiviert: investition.archiviert,
+                loeschbar: investition.loeschbar,
+                hinweis: hinweisFuer(investition, attribute.data ?? []),
+              }}
+              onErledigt={() => setBlatt(null)}
+            />
+          ) : undefined
+        }
+        onSchliessen={() => setBlatt(null)}
+      >
+        {investition && attribute.data ? (
+          <InvestitionFormular investition={investition} attribute={attribute.data} onFertig={() => setBlatt(null)} />
+        ) : (
+          <Ladeanzeige />
+        )}
       </Dialog>
     </div>
   );

@@ -1,5 +1,9 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.": "Оплаченное вложение стоит в истории в день оплаты. Удаление появляется там отдельной строкой.",
+  "Investition · {name}": "Вложение · {name}",
+  "aus {name}": "из {name}",
+  "+{xp} XP · Investition gelöscht": "+{xp} XP · Вложение удалено",
   "Beim Anlegen einer Investition wählst du Kosten und Wirkung. Zu wenig XP speichert nichts. Löschen gibt gezahltes XP zurück.": "При создании вложения ты выбираешь затраты и действие. Если XP не хватает, ничего не сохраняется. Удаление возвращает уплаченное XP.",
   "Die {xp} XP gehen zurück an {name}.": "{xp} XP возвращаются к {name}.",
   "{name} fällt auf Level {level}": "{name} падает до уровня {level}",
@@ -813,7 +817,7 @@ export const TEXTE: Record<string, string> = {
   "Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.": "Крупное событие: цель достигнута, новый рекорд или что-то сделано впервые. За это больше XP.",
   "Nur ein Datum. Nach der Deadline geht Disziplin verloren.": "Только дата. После срока теряется дисциплина.",
   "Bis zum Datum entsteht er. Danach greift er an.": "До даты он копится. Потом атакует.",
-  "Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "Своё вложение или завершённый проект даёт больше XP навсегда.",
+  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "Вложение может стоить XP атрибута. Своё вложение или завершённый проект даёт больше XP навсегда.",
   "Bonus gilt auch für Ressourcen": "Бонус действует и для ресурсов",
   "Ressourcen werden mit investiert und bekommen denselben Bonus.": "Ресурсы тоже вкладываются и получают тот же бонус.",
   "Tägliche Aufgaben zum Abhaken.": "Ежедневные задачи, которые можно отметить.",

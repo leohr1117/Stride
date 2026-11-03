@@ -1,5 +1,9 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.": "已支付的投入会在付款当天出现在历程中。删除会在那里单独成行。",
+  "Investition · {name}": "投入 · {name}",
+  "aus {name}": "来自 {name}",
+  "+{xp} XP · Investition gelöscht": "+{xp} XP · 投入已删除",
   "Beim Anlegen einer Investition wählst du Kosten und Wirkung. Zu wenig XP speichert nichts. Löschen gibt gezahltes XP zurück.": "创建投入时，你选择花费和效果。XP 不够时不会保存。删除会退回已付的 XP。",
   "Die {xp} XP gehen zurück an {name}.": "{xp} XP 会退回给 {name}。",
   "{name} fällt auf Level {level}": "{name} 降至 {level} 级",
@@ -813,7 +817,7 @@ export const TEXTE: Record<string, string> = {
   "Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.": "大事：达成目标、新纪录，或第一次做成。会给更多 XP。",
   "Nur ein Datum. Nach der Deadline geht Disziplin verloren.": "只有日期。过了期限会失去自律。",
   "Bis zum Datum entsteht er. Danach greift er an.": "到期前他在成形。之后他会进攻。",
-  "Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "自己的投入或完成的项目会永久给更多 XP。",
+  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "投入可以花费一项属性的 XP。自己的投入或完成的项目会永久给更多 XP。",
   "Bonus gilt auch für Ressourcen": "加成也适用于资源",
   "Ressourcen werden mit investiert und bekommen denselben Bonus.": "资源一并投入，并得到同样的加成。",
   "Tägliche Aufgaben zum Abhaken.": "每天可勾选的任务。",

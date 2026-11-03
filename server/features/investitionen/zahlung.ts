@@ -1,3 +1,4 @@
+import { eine } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
 import { bucheAttributXp } from '../../services/fortschritt.ts';
 import { ladeAttributXp } from '../attribute/attribute.ts';
@@ -22,6 +23,14 @@ export function loeseZahlung(bisher: Zahlung | null, angabe: { bezahltAttributId
     return KEINE_ZAHLUNG;
   }
   return { bezahltAttributId: attributId, betrag };
+}
+
+function zeitAbAnlage(investitionId: number, zeitpunkt: string): string {
+  const anlage = eine<{ erstelltAm: string }>('SELECT erstellt_am AS erstelltAm FROM investitionen WHERE id = ?', investitionId);
+  if (anlage && zeitpunkt < anlage.erstelltAm) {
+    return anlage.erstelltAm;
+  }
+  return zeitpunkt;
 }
 
 export function bucheZahlungsDifferenz(investitionId: number, bisher: Zahlung, neu: Zahlung, zeitpunkt: string): void {
@@ -53,7 +62,7 @@ export function bucheZahlungsDifferenz(investitionId: number, bisher: Zahlung, n
         vorhabenId: null,
         investitionId,
       },
-      zeitpunkt,
+      zeitAbAnlage(investitionId, zeitpunkt),
     );
   }
 }

@@ -1,5 +1,8 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Investition · {name}', 'Investment · {name}'],
+  ['aus {name}', 'from {name}'],
+  ['+{xp} XP · Investition gelöscht', '+{xp} XP · Investment deleted'],
   ['{name} zählt mit', '{name} counts'],
   ['Jeder vergangene Termin wird ein Eintrag mit XP.', 'Each past event becomes an entry with XP.'],
   ['Termine in', 'Events in'],

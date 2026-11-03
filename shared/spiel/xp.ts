@@ -69,7 +69,7 @@ export function investitionsBonus(groesse: number): number {
 }
 
 export const INVESTITION_INFO =
-  'Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.';
+  'Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.';
 
 export const RESSOURCEN_SCHALTER = 'Bonus gilt auch für Ressourcen';
 

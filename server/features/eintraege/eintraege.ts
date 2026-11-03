@@ -33,6 +33,7 @@ import {
   type XpAnteil,
 } from '../../../shared/spiel/xp.ts';
 import { alle, ausfuehren, eine, inTransaktion, platzhalter, type Parameter } from '../../db.ts';
+import { ladeInvestitionsBuchungen } from './buchungen.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { bonusAufAttribut, bonusAufProjekt } from '../investitionen/ausruestung.ts';
 import {
@@ -244,10 +245,16 @@ export function ladeEintrag(id: number): Eintrag {
 
 type ChronikTyp = ChronikEintrag['typ'];
 
+const CHRONIK_TYPEN = ['eintrag', 'skill', 'protokoll', 'investition'] as const;
+
 interface ChronikPosition {
   zeit: string;
   typ: ChronikTyp;
   id: number;
+}
+
+function istChronikTyp(typ: string): typ is ChronikTyp {
+  return (CHRONIK_TYPEN as readonly string[]).includes(typ);
 }
 
 function leseCursor(cursor: string): ChronikPosition {
@@ -255,7 +262,7 @@ function leseCursor(cursor: string): ChronikPosition {
   const typTrenner = cursor.lastIndexOf(CURSOR_TRENNER, idTrenner - 1);
   const id = Number(cursor.slice(idTrenner + 1));
   const typ = cursor.slice(typTrenner + 1, idTrenner);
-  if (typTrenner <= 0 || !Number.isInteger(id) || (typ !== 'eintrag' && typ !== 'skill' && typ !== 'protokoll')) {
+  if (typTrenner <= 0 || !Number.isInteger(id) || !istChronikTyp(typ)) {
     throw ungueltig('Ungültiger Cursor.');
   }
   return { zeit: cursor.slice(0, typTrenner), typ, id };
@@ -369,6 +376,11 @@ export function ladeChronik(filter: EintragFilter, cursor: string | undefined, l
        WHERE tag IS NOT NULL AND art IN (${platzhalter(PROTOKOLL_ARTEN.length)})`,
     );
     parameter.push(...PROTOKOLL_ARTEN);
+    quellen.push(
+      `SELECT 'investition' AS typ, id AS id, erstellt_am AS zeit
+       FROM xp_ereignisse
+       WHERE quelle = 'investition'`,
+    );
   }
 
   let cursorBedingung = '';
@@ -397,6 +409,7 @@ export function ladeChronik(filter: EintragFilter, cursor: string | undefined, l
   );
   const skills = ladeSkillEreignisse(seite.filter((position) => position.typ === 'skill').map((position) => position.id));
   const protokolle = ladeProtokollZeilen(seite.filter((position) => position.typ === 'protokoll').map((position) => position.id));
+  const buchungen = ladeInvestitionsBuchungen(seite.filter((position) => position.typ === 'investition').map((position) => position.id));
 
   const ergebnis: ChronikEintrag[] = [];
   for (const position of seite) {
@@ -411,6 +424,13 @@ export function ladeChronik(filter: EintragFilter, cursor: string | undefined, l
       const skill = skills.get(position.id);
       if (skill) {
         ergebnis.push({ typ: 'skill', skill });
+      }
+      continue;
+    }
+    if (position.typ === 'investition') {
+      const buchung = buchungen.get(position.id);
+      if (buchung) {
+        ergebnis.push({ typ: 'investition', buchung });
       }
       continue;
     }

@@ -1,5 +1,9 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine bezahlte Investition steht im Verlauf am Tag der Zahlung. Löschen erscheint dort als eigene Zeile.": "支払った投資は、支払った日の履歴に表示されます。削除すると、そこに別の行として出ます。",
+  "Investition · {name}": "投資 · {name}",
+  "aus {name}": "{name} から",
+  "+{xp} XP · Investition gelöscht": "+{xp} XP · 投資を削除しました",
   "Beim Anlegen einer Investition wählst du Kosten und Wirkung. Zu wenig XP speichert nichts. Löschen gibt gezahltes XP zurück.": "投資を作るとき、費用と効果を選びます。XP が足りなければ何も保存されません。削除すると支払った XP は戻ります。",
   "Die {xp} XP gehen zurück an {name}.": "{xp} XP は {name} に戻ります。",
   "{name} fällt auf Level {level}": "{name} はレベル {level} に下がる",
@@ -813,7 +817,7 @@ export const TEXTE: Record<string, string> = {
   "Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.": "大きな出来事。目標達成、新記録、初めてできたこと。XPが増えます。",
   "Nur ein Datum. Nach der Deadline geht Disziplin verloren.": "日付だけです。期限を過ぎると規律を失います。",
   "Bis zum Datum entsteht er. Danach greift er an.": "日付まで育ちます。そのあと攻撃します。",
-  "Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "自分の投資か、達成したプロジェクトは、ずっと多くのXPを与えます。",
+  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "投資は属性のXPを支払うことがあります。自分の投資か、達成したプロジェクトは、ずっと多くのXPを与えます。",
   "Bonus gilt auch für Ressourcen": "ボーナスは資源にも適用されます",
   "Ressourcen werden mit investiert und bekommen denselben Bonus.": "資源も一緒に投資され、同じボーナスを受けます。",
   "Tägliche Aufgaben zum Abhaken.": "毎日チェックする課題。",

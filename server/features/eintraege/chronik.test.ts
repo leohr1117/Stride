@@ -2,8 +2,10 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import type { ChronikEintrag } from '../../../shared/api/index.ts';
+import type { ChronikEintrag, InvestitionsBuchung } from '../../../shared/api/index.ts';
 import { ausfuehren, eine, mitWelt, schliesseWelt } from '../../db.ts';
+import { bucheAttributXp } from '../../services/fortschritt.ts';
+import { aendereInvestition, erstelleInvestition, loescheInvestition } from '../investitionen/ausruestung.ts';
 import { erstelleVorlage } from '../taetigkeiten/vorlagen.ts';
 import { ladeChronik } from './eintraege.ts';
 
@@ -48,6 +50,21 @@ function arten(eintraege: ChronikEintrag[]): string[] {
   return eintraege.map((zeile) => (zeile.typ === 'protokoll' ? zeile.protokoll.art : zeile.typ));
 }
 
+function attributId(kennung: string): number {
+  const id = eine<{ id: number }>('SELECT id FROM attribute WHERE kennung = ?', kennung)?.id;
+  if (id === undefined) {
+    throw new Error(`${kennung} fehlt.`);
+  }
+  return id;
+}
+
+function buchungVon(zeile: ChronikEintrag): InvestitionsBuchung {
+  if (zeile.typ !== 'investition') {
+    throw new Error('Investition fehlt.');
+  }
+  return zeile.buchung;
+}
+
 describe('Chronik Protokoll', () => {
   it('zeigt die sichtbaren Zeilen auch bei Meilensteinen und blendet sie bei Filtern aus', () => {
     mitWelt(welt(), () => {
@@ -88,6 +105,70 @@ describe('Chronik Protokoll', () => {
       expect(erste.naechsterCursor).toMatch(/_protokoll_\d+$/);
       const zweite = ladeChronik({}, erste.naechsterCursor ?? undefined, 1);
       expect(zweite.eintraege[0]?.typ).toBe('eintrag');
+    });
+  });
+
+  it('zeigt Zahlung und Rückbuchung und blendet sie bei Bereich und Tätigkeit aus', () => {
+    mitWelt(welt(), () => {
+      const ressourcen = attributId('ressourcen');
+      const koerper = attributId('koerper');
+      bucheAttributXp(
+        { quelle: 'eintrag', attributId: ressourcen, xp: 100, eintragId: null, vorhabenId: null },
+        '2026-06-01T08:00:00.000Z',
+      );
+      const angelegt = erstelleInvestition({
+        name: 'Lager',
+        icon: 'gem',
+        groesse: 1,
+        attributId: koerper,
+        bezahltAttributId: ressourcen,
+        betrag: 40,
+      });
+
+      const offen = ladeChronik({}, undefined, 20);
+      expect(arten(offen.eintraege)).toEqual(['investition']);
+      const zahlung = buchungVon(offen.eintraege[0]);
+      expect(zahlung.xp).toBe(-40);
+      expect(zahlung.name).toBe('Lager');
+      expect(zahlung.icon).toBe('gem');
+      expect(zahlung.investitionId).toBe(angelegt.id);
+      expect(zahlung.attributKennung).toBe('ressourcen');
+
+      const weniger = aendereInvestition(angelegt.id, { betrag: 20 });
+      const angepasst = ladeChronik({}, undefined, 20).eintraege.map(buchungVon);
+      expect(angepasst.map((zeile) => zeile.xp)).toEqual([20, -40]);
+      expect(angepasst.every((zeile) => zeile.name === 'Lager' && zeile.investitionId === weniger.id)).toBe(true);
+
+      const erste = ladeChronik({}, undefined, 1);
+      expect(buchungVon(erste.eintraege[0]).xp).toBe(20);
+      expect(erste.naechsterCursor).toMatch(/_investition_\d+$/);
+      const zweite = ladeChronik({}, erste.naechsterCursor ?? undefined, 1);
+      expect(buchungVon(zweite.eintraege[0]).xp).toBe(-40);
+
+      expect(arten(ladeChronik({ nurMeilensteine: true }, undefined, 20).eintraege)).toEqual(['investition', 'investition']);
+      const vorlage = vorlageId();
+      expect(arten(ladeChronik({ vorlageId: vorlage }, undefined, 20).eintraege)).toEqual([]);
+      expect(arten(ladeChronik({ visionId: 1 }, undefined, 20).eintraege)).toEqual([]);
+      expect(arten(ladeChronik({ faehigkeitId: 1 }, undefined, 20).eintraege)).toEqual([]);
+
+      loescheInvestition(angelegt.id);
+      const danach = ladeChronik({}, undefined, 20).eintraege.map(buchungVon);
+      expect(danach.map((zeile) => zeile.xp)).toEqual([20, 20, -40]);
+      expect(danach.every((zeile) => zeile.name === null && zeile.investitionId === null)).toBe(true);
+      expect(danach.every((zeile) => zeile.attributKennung === 'ressourcen')).toBe(true);
+
+      const neu = erstelleInvestition({
+        name: 'Regal',
+        icon: 'gem',
+        groesse: 1,
+        attributId: koerper,
+        bezahltAttributId: ressourcen,
+        betrag: 10,
+      });
+      const wieder = ladeChronik({}, undefined, 20).eintraege.map(buchungVon);
+      expect(wieder.filter((zeile) => zeile.name === 'Regal').map((zeile) => zeile.xp)).toEqual([-10]);
+      expect(wieder.filter((zeile) => zeile.investitionId === neu.id)).toHaveLength(1);
+      expect(wieder.filter((zeile) => zeile.name === null)).toHaveLength(3);
     });
   });
 });

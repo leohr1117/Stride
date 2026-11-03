@@ -86,10 +86,24 @@ export interface ProtokollZeile {
   erstelltAm: string;
 }
 
+/** Eine XP-Bewegung einer Investition. Negatives XP ist die Zahlung. */
+export interface InvestitionsBuchung {
+  id: number;
+  xp: number;
+  erstelltAm: string;
+  /** Gesetzt, solange die Investition noch existiert und D11 geöffnet werden kann. */
+  investitionId: number | null;
+  name: string | null;
+  icon: string | null;
+  attributName: string;
+  attributKennung: string | null;
+}
+
 export type ChronikEintrag =
   | { typ: 'eintrag'; eintrag: Eintrag }
   | { typ: 'skill'; skill: SkillEreignis }
-  | { typ: 'protokoll'; protokoll: ProtokollZeile };
+  | { typ: 'protokoll'; protokoll: ProtokollZeile }
+  | { typ: 'investition'; buchung: InvestitionsBuchung };
 
 export interface ChronikSeite {
   eintraege: ChronikEintrag[];
