@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.": "Quand tu enregistres, l'activité, l'objectif et la compétence tiennent chacun sur une ligne. Les champs des feuilles ont la même hauteur, et dans l'introduction Continuer se place juste en dessous.",
   "Im Verlauf und bei den Zielen sind die Zeilen gleich hoch. Die XP-Werte im Verlauf stehen rechts bündig.": "Dans Historique et dans Objectifs, les lignes ont la même hauteur. Les valeurs d'XP dans Historique s'alignent à droite.",
   "Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.": "Dans Plus, dans Compte, dans Modèles et dans Comptes, les lignes ont la même hauteur. Les valeurs s'alignent à droite.",
   "Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.": "Les autres pages utilisent le même titre de section. Sur le téléphone, les listes, les tableaux et les graphiques occupent une surface sur toute la largeur.",

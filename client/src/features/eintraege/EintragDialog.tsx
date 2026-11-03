@@ -46,7 +46,11 @@ interface VorhabenChip {
   anlauf: number;
   boss: boolean;
   projektId: number | null;
+  benutzt: string;
 }
+
+const CHIP_ZEILE = 'chip-reihe flex min-w-0 max-w-full flex-nowrap gap-2 overflow-x-auto pe-4 pb-1';
+const GRUPPE = 'mb-2 text-[13px] leading-[18px] font-semibold text-leise';
 
 function DatumZeile({ wert, heute, onAendern }: { wert: string; heute: string; onAendern: (wert: string) => void }) {
   const abweichend = wert !== '' && wert !== heute;
@@ -112,6 +116,7 @@ function chipAusVorhaben(vorhaben: VorhabenMitProjekt): VorhabenChip {
     anlauf: vorhaben.anlauf,
     boss: vorhaben.boss !== null,
     projektId: vorhaben.projektId,
+    benutzt: vorhaben.letzteAktivitaet ?? vorhaben.erstelltAm,
   };
 }
 
@@ -258,7 +263,8 @@ export function EintragDialog({
 
   const vorhabenChips: VorhabenChip[] = offeneZiele
     .filter((eintrag) => vorgabe.projektId === undefined || eintrag.projektId === vorgabe.projektId)
-    .map(chipAusVorhaben);
+    .map(chipAusVorhaben)
+    .sort((a, b) => b.benutzt.localeCompare(a.benutzt) || b.id - a.id);
   const zeigtVorhaben = ebenen.vorhaben;
   const zeigtFaehigkeit = funktionen.faehigkeiten && aktiveFaehigkeiten.length > 0;
   const zeigtWofuer = zeigtVorhaben || zeigtFaehigkeit;
@@ -306,37 +312,44 @@ export function EintragDialog({
   return (
     <>
     <Dialog offen={offen} titel={tx("Was hast du getan?")} onSchliessen={onSchliessen}>
-      <FormularKasten onAbsenden={absenden} abstand="space-y-6" className="min-w-0">
-        <Feld label={tx("Tätigkeit")} fehler={taetigkeitFehler}>
-          <div ref={chipReihe} className="chip-reihe eintrag-chips flex min-w-0 max-w-full gap-2 overflow-x-auto pe-6 pb-1">
+      <FormularKasten onAbsenden={absenden} abstand="space-y-4" className="min-w-0">
+        <div data-gruppe="taetigkeit" data-feld-fehler={taetigkeitFehler ? '' : undefined}>
+          <p className={GRUPPE}>{tx("Tätigkeit")}</p>
+          <div ref={chipReihe} className={`${CHIP_ZEILE} eintrag-chips`}>
             {aktiveVorlagen.map((eintrag) => (
               <Chip
                 key={eintrag.id}
-                hoch
                 aktiv={eintrag.id === formular.vorlageId}
+                name={eintrag.name}
                 onClick={() => {
                   setTaetigkeitFehler(null);
                   aendern({ vorlageId: eintrag.id });
                 }}
               >
-                <Icon name={eintrag.icon} className="size-4" />
+                <Icon name={eintrag.icon} className="size-4 shrink-0" aria-hidden="true" />
                 {eintrag.name}
               </Chip>
             ))}
-            <Chip hoch aktiv={false} onClick={() => setNeueTaetigkeit(true)}>
+            <Chip aktiv={false} onClick={() => setNeueTaetigkeit(true)}>
               {tx("+ Tätigkeit")}
             </Chip>
           </div>
-        </Feld>
+          {taetigkeitFehler ? (
+            <p className="mt-2 text-[13px] leading-[18px] text-gefahr" role="alert">
+              <span aria-hidden="true">⚠ </span>
+              {tx(taetigkeitFehler)}
+            </p>
+          ) : null}
+        </div>
 
         {zeigtWofuer && (
           <section data-eintrag="wofuer" className="min-w-0 space-y-4">
-            <p className="text-[13px] leading-[18px] font-semibold text-leise">{tx("Wofür?")}</p>
             {zeigtVorhaben && (
-              <div className="space-y-2">
-                <div className="flex flex-wrap gap-2">
+              <div data-gruppe="wofuer" className="min-w-0 space-y-4">
+                <div>
+                  <p className={GRUPPE}>{tx("Wofür?")}</p>
+                  <div className={CHIP_ZEILE}>
                   <Chip
-                    hoch
                     aktiv={formular.vorhabenId === null && ausstehenderTitel === ''}
                     onClick={() => {
                       setNeuesVorhaben('');
@@ -353,8 +366,8 @@ export function EintragDialog({
                   {vorhabenChips.map((eintrag) => (
                     <Chip
                       key={eintrag.id}
-                      hoch
                       aktiv={formular.vorhabenId === eintrag.id}
+                      name={eintrag.anlauf > 1 ? `${eintrag.titel} ${tx('{anlauf}. Anlauf', { anlauf: eintrag.anlauf })}` : eintrag.titel}
                       onClick={() => {
                         setNeuesVorhaben('');
                         const naechstesProjekt = ebenen.projekte ? eintrag.projektId : null;
@@ -366,13 +379,14 @@ export function EintragDialog({
                         });
                       }}
                     >
-                      {bosseAn && eintrag.boss && <Swords className="size-3.5 text-gefahr" />}
+                      {bosseAn && eintrag.boss && <Swords className="size-4 shrink-0 text-gefahr" aria-hidden="true" />}
                       {eintrag.titel}
                       {eintrag.anlauf > 1 && (
-                        <span className="text-xs text-leise">{tx('{anlauf}. Anlauf', { anlauf: eintrag.anlauf })}</span>
+                        <span className="shrink-0 text-xs text-leise">{tx('{anlauf}. Anlauf', { anlauf: eintrag.anlauf })}</span>
                       )}
                     </Chip>
                   ))}
+                  </div>
                 </div>
                 {geerbteProjektId !== null && (
                   <div className="flex min-w-0 gap-2">
@@ -414,21 +428,21 @@ export function EintragDialog({
               </div>
             )}
             {zeigtFaehigkeit && (
-              <div className="space-y-2">
-                {zeigtVorhaben ? <p className="text-[13px] leading-[18px] font-semibold text-leise">{tx("Fähigkeit")}</p> : null}
-                <div className="flex flex-wrap gap-2">
-                  <Chip hoch aktiv={formular.faehigkeitId === null} onClick={() => aendern({ faehigkeitId: null })}>
+              <div data-gruppe="faehigkeit" className="min-w-0">
+                <p className={GRUPPE}>{tx(zeigtVorhaben ? "Fähigkeit" : "Wofür?")}</p>
+                <div className={CHIP_ZEILE}>
+                  <Chip aktiv={formular.faehigkeitId === null} onClick={() => aendern({ faehigkeitId: null })}>
                     {tx("Keine")}
                   </Chip>
                   {aktiveFaehigkeiten.map((eintrag) => (
                     <Chip
                       key={eintrag.id}
-                      hoch
                       aktiv={formular.faehigkeitId === eintrag.id}
                       farbe={eintrag.farbe}
+                      name={eintrag.name}
                       onClick={() => aendern({ faehigkeitId: eintrag.id })}
                     >
-                      <Icon name={eintrag.icon} className="size-3.5" style={{ color: eintrag.farbe }} />
+                      <Icon name={eintrag.icon} className="size-4 shrink-0" style={{ color: eintrag.farbe }} aria-hidden="true" />
                       {eintrag.name}
                     </Chip>
                   ))}
@@ -493,14 +507,13 @@ export function EintragDialog({
         )}
 
         <Feld label={tx("Dauer")}>
-          <div className="flex flex-wrap gap-2">
-            <Chip hoch aktiv={formular.stunden === null} onClick={() => aendern({ stunden: null })}>
+          <div className={CHIP_ZEILE}>
+            <Chip aktiv={formular.stunden === null} onClick={() => aendern({ stunden: null })}>
               {tx("Keine Angabe")}
             </Chip>
             {DAUER_OPTIONEN.map((option) => (
               <Chip
                 key={option.stunden}
-                hoch
                 aktiv={formular.stunden === option.stunden}
                 onClick={() => aendern({ stunden: option.stunden })}
               >

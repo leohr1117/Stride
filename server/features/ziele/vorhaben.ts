@@ -106,6 +106,7 @@ function zuVorhaben(zeile: VorhabenZeile, jetzt: Date): VorhabenMitProjekt {
     stunden: zeile.stunden,
     xp: zeile.xp,
     erstelltAm: zeile.erstelltAm,
+    letzteAktivitaet: zeile.letzteAktivitaet,
     abgeschlossenAm: zeile.abgeschlossenAm,
     weitermachenOffen: zeile.status === 'gescheitert' && zeile.eingeloest === 0 && innerhalbFrist,
     loeschbar: istLoeschbar('vorhaben', zeile.id),

@@ -1,6 +1,6 @@
 import { klassenText, tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
-import { Check } from 'lucide-react';
+
 import { useEffect, useMemo, type ReactNode } from 'react';
 import { useSearchParams } from 'react-router';
 import type { SchnellPunkt } from '../../schnell.ts';
@@ -173,7 +173,6 @@ function RichtungsChip({
 }) {
   return (
     <Chip aktiv={aktiv} onClick={onClick} className="whitespace-nowrap">
-      {aktiv ? <Check className="size-3.5 shrink-0" aria-hidden="true" /> : null}
       {tx(label)}
       {prozent !== null && <span className="zahl whitespace-nowrap"> {prozentText(prozent)}</span>}
     </Chip>

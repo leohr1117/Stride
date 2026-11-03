@@ -78,7 +78,7 @@ export function HandbuchSeite() {
       <nav ref={leiste} aria-label={tx('Handbuch')} className="handbuch-leiste -mx-4 md:-mx-8">
         <div ref={reihe} className="chip-reihe eintrag-chips flex min-w-0 gap-2 overflow-x-auto py-2 ps-4 pe-6 md:ps-8 md:pe-8">
           {sprung.map((eintrag) => (
-            <Chip key={eintrag.id} hoch href={`#${eintrag.id}`} aktiv={aktiv === eintrag.id}>
+            <Chip key={eintrag.id} href={`#${eintrag.id}`} aktiv={aktiv === eintrag.id}>
               {tx(eintrag.name)}
             </Chip>
           ))}

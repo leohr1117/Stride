@@ -151,18 +151,18 @@ export function ChronikSeite() {
             />
             <div className="space-y-2">
               <p className="text-sm font-semibold">{tx('Tätigkeiten')}</p>
-              <div className="chip-reihe -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
-                <Chip hoch aktiv={entwurf.vorlageId === undefined} onClick={() => setEntwurf({ ...entwurf, vorlageId: undefined })}>
+              <div className="chip-reihe flex gap-2 overflow-x-auto pe-4 pb-1">
+                <Chip aktiv={entwurf.vorlageId === undefined} onClick={() => setEntwurf({ ...entwurf, vorlageId: undefined })}>
                   {tx('Alle')}
                 </Chip>
                 {chipVorlagen.map((vorlage) => (
                   <Chip
                     key={vorlage.id}
-                    hoch
                     aktiv={entwurf.vorlageId === vorlage.id}
+                    name={vorlage.name}
                     onClick={() => setEntwurf({ ...entwurf, vorlageId: vorlage.id })}
                   >
-                    <Icon name={vorlage.icon} className="size-3.5" />
+                    <Icon name={vorlage.icon} className="size-4 shrink-0" aria-hidden="true" />
                     {vorlage.name}
                   </Chip>
                 ))}

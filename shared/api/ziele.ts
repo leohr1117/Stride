@@ -155,6 +155,8 @@ export interface Vorhaben {
   stunden: number;
   xp: number;
   erstelltAm: string;
+  /** Letzter Eintrag, sonst der Zeitpunkt des Anlegens. */
+  letzteAktivitaet?: string;
   abgeschlossenAm: string | null;
   weitermachenOffen: boolean;
   boss: BossInfo | null;

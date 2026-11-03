@@ -273,6 +273,11 @@ body {
   font-size: 16px;
 }
 
+:is(input, select).feld-eingabe {
+  height: 48px;
+  box-sizing: border-box;
+}
+
 select.feld-eingabe {
   appearance: none;
   -webkit-appearance: none;
@@ -317,9 +322,21 @@ html[data-eingabe='zeiger'] :focus {
   transform: scale(0.98);
 }
 
+.dialog-kopf {
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
+}
+
+.chip-flaeche svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
 .chip-reihe {
   scrollbar-width: none;
-  mask-image: linear-gradient(to right, black calc(100% - 1.5rem), transparent);
+  mask-image: linear-gradient(to right, black calc(100% - 16px), transparent);
 }
 
 .chip-reihe::-webkit-scrollbar {

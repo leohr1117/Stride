@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.": "При записи занятие, цель и навык стоят каждое в одной строке. Поля в листах одной высоты, а во введении «Далее» стоит сразу под списком.",
   "Im Verlauf und bei den Zielen sind die Zeilen gleich hoch. Die XP-Werte im Verlauf stehen rechts bündig.": "В разделах «История» и «Цели» строки одной высоты. Значения XP в «Истории» выровнены по правому краю.",
   "Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.": "В разделах «Ещё», «Аккаунт», «Ориентиры» и «Аккаунты» строки одной высоты. Значения выровнены по правому краю.",
   "Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.": "На остальных страницах один и тот же заголовок раздела. На телефоне списки, таблицы и диаграммы лежат на области во всю ширину.",

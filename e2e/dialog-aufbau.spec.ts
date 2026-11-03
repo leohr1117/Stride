@@ -14,7 +14,7 @@ test('Dialoge stehen in fester Reihenfolge', async ({ page }, testInfo) => {
   await neu.getByRole('button', { name: 'Schließen' }).click();
 
   await page.goto('/chronik');
-  await page.locator('section button').filter({ hasText: 'XP' }).first().click();
+  await page.locator('section').filter({ hasText: 'XP' }).getByRole('button').first().click();
   const detail = page.getByRole('dialog', { name: 'Eintrag', exact: true });
   await expect(detail.getByText('Tätigkeit', { exact: true })).toBeVisible();
   await expect(detail.getByText('Datum', { exact: true })).toBeVisible();

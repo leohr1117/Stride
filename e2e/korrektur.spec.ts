@@ -155,7 +155,7 @@ test('Chronik, Vision und Version', async ({ page }, testInfo) => {
   await expect(page.getByRole('heading', { name: 'Verlauf' })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
   await bild('chronik');
-  const eintrag = page.locator('section button').filter({ hasText: 'XP' }).first();
+  const eintrag = page.locator('section').filter({ hasText: 'XP' }).getByRole('button').first();
   await eintrag.click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();

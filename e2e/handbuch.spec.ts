@@ -46,7 +46,7 @@ test('Handbuch ist eine offene Scrollseite', async ({ page }, testInfo) => {
   expect(await eintraege.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(48);
   await expect(eintraege).toHaveAttribute('aria-current', 'true');
   await expect(sprung.locator('[aria-current="true"]')).toHaveCount(1);
-  const fuellung = await eintraege.evaluate((element) => getComputedStyle(element).backgroundColor);
+  const fuellung = await eintraege.locator('.chip-flaeche').evaluate((element) => getComputedStyle(element).backgroundColor);
   expect(fuellung).not.toBe('rgba(0, 0, 0, 0)');
 
   await expect(page.getByRole('heading', { name: 'Einträge', level: 2 })).toBeVisible();

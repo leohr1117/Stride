@@ -8,7 +8,7 @@ import { useSichtbarkeit } from '../../funktionen.ts';
 import { BalkenListe, type SaeulenWert } from '../../components/DiagrammBasis.tsx';
 import { LinienDiagramm, SaeulenDiagramm } from '../../components/mitDiagramm.tsx';
 import { Icon } from '../../components/Icons.tsx';
-import { AbschnittKopf, Fehlermeldung, Flaeche, Ladeanzeige, Leer, Segmentauswahl } from '../../ui/index.ts';
+import { AbschnittKopf, Chip, Fehlermeldung, Flaeche, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { ausTagesSchluessel, kalenderwoche, kurzesDatum, monatKurz, stunden, zahl } from '../../format.ts';
 
 const ZEITRAUM_LABEL: Record<Zeitraum, string> = {
@@ -50,12 +50,12 @@ export function StatistikenSeite() {
 
   return (
     <div className="space-y-6">
-      <div className="max-w-sm">
-        <Segmentauswahl<Zeitraum>
-          optionen={(Object.keys(ZEITRAUM_LABEL) as Zeitraum[]).map((wert) => ({ wert, label: ZEITRAUM_LABEL[wert] }))}
-          wert={zeitraum}
-          onAendern={setZeitraum}
-        />
+      <div className="chip-reihe flex gap-2 overflow-x-auto pe-4">
+        {(Object.keys(ZEITRAUM_LABEL) as Zeitraum[]).map((wert) => (
+          <Chip key={wert} aktiv={zeitraum === wert} onClick={() => setZeitraum(wert)}>
+            {tx(ZEITRAUM_LABEL[wert])}
+          </Chip>
+        ))}
       </div>
 
       {isPending && <Ladeanzeige />}

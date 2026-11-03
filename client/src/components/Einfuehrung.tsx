@@ -289,7 +289,7 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
     titel = 'Sprache';
     knopf = fehler ? 'Erneut versuchen' : 'Weiter';
     inhalt = (
-      <div role="radiogroup" aria-label={tx('Sprache')} className="space-y-2">
+      <div data-schritt-inhalt="" role="radiogroup" aria-label={tx('Sprache')} className="space-y-2">
         {SPRACHEN.map((code) => {
           const aktiv = sprache === code;
           return (
@@ -313,6 +313,7 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
     untertitel = 'Halte fest, was du tust. Daraus werden Level und Streak.';
     knopfAus = speichert || name.trim().length === 0;
     inhalt = (
+      <div data-schritt-inhalt="">
       <Feld label="Profilname">
         <input
           name="nickname"
@@ -326,6 +327,7 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
           className={EINGABE_STIL}
         />
       </Feld>
+      </div>
     );
   } else if (schritt === 'fokus') {
     titel = 'Worin willst du wachsen?';
@@ -333,29 +335,37 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
     knopfAus = speichert || fokus.length === 0;
     inhalt = (
       <div className="space-y-3">
-        <FokusWahl wert={fokus} onAendern={setFokus} />
         <FokusVorschau fokus={fokus} />
+        <div data-schritt-inhalt="">
+          <FokusWahl wert={fokus} onAendern={setFokus} />
+        </div>
       </div>
     );
   } else if (schritt === 'ziel') {
     titel = 'Was willst du erreichen?';
     knopf = fehler ? 'Erneut versuchen' : 'Weiter';
-    inhalt = <ZielWahl wert={ziel} onAendern={setZiel} />;
+    inhalt = (
+      <div data-schritt-inhalt="">
+        <ZielWahl wert={ziel} onAendern={setZiel} />
+      </div>
+    );
   } else if (schritt === 'erstesZiel' && erstes) {
     titel = erstes.titel;
     knopf = fehler ? 'Erneut versuchen' : 'Jetzt anlegen';
     knopfAus = speichert || zielName.trim().length === 0;
     inhalt = (
-      <Feld label={erstes.label}>
-        <input
-          name="zielname"
-          maxLength={80}
-          value={zielName}
-          placeholder={tx(erstes.platz)}
-          onChange={(ereignis) => setZielName(ereignis.target.value)}
-          className={EINGABE_STIL}
-        />
-      </Feld>
+      <div data-schritt-inhalt="">
+        <Feld label={erstes.label}>
+          <input
+            name="zielname"
+            maxLength={80}
+            value={zielName}
+            placeholder={tx(erstes.platz)}
+            onChange={(ereignis) => setZielName(ereignis.target.value)}
+            className={EINGABE_STIL}
+          />
+        </Feld>
+      </div>
     );
   } else if (schritt === 'abschluss') {
     titel = 'Eingerichtet';
@@ -382,19 +392,21 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
     inhalt = abschlussFehler ? null : !abschlussBereit || !daten ? (
       <Ladeanzeige />
     ) : (
-      <div>
-        <AbschlussZeile titel={tx('Profilname')} wert={daten.charakterName} />
-        <AbschlussZeile titel={tx('Sprache')} wert={spracheName} />
-        <AbschlussZeile titel={tx('Tätigkeiten')} wert={aktiveVorlagen.length > 0 ? aktiveVorlagen.map((eintrag) => eintrag.name).join(', ') : '—'} />
-        {daten.funktionen.koennen && koennen.length > 0 ? (
-          <AbschlussZeile titel={tx('Können')} wert={koennen.map((eintrag) => eintrag.name).join(', ')} />
-        ) : null}
-        {daten.funktionen.status && haben.length > 0 ? (
-          <AbschlussZeile titel={tx('Haben')} wert={haben.map((eintrag) => eintrag.name).join(', ')} />
-        ) : null}
-        <AbschlussZeile titel={tx('Bereiche')} wert={bereiche} />
-        {angelegt ? <AbschlussZeile titel={angelegt.art} wert={angelegt.name} /> : null}
-        <p className="pt-3 text-[13px] text-leise break-words">{tx('Alles änderst du unter Mehr.')}</p>
+      <div className="space-y-3">
+        <p className="text-[13px] text-leise break-words">{tx('Alles änderst du unter Mehr.')}</p>
+        <div data-schritt-inhalt="">
+          <AbschlussZeile titel={tx('Profilname')} wert={daten.charakterName} />
+          <AbschlussZeile titel={tx('Sprache')} wert={spracheName} />
+          <AbschlussZeile titel={tx('Tätigkeiten')} wert={aktiveVorlagen.length > 0 ? aktiveVorlagen.map((eintrag) => eintrag.name).join(', ') : '—'} />
+          {daten.funktionen.koennen && koennen.length > 0 ? (
+            <AbschlussZeile titel={tx('Können')} wert={koennen.map((eintrag) => eintrag.name).join(', ')} />
+          ) : null}
+          {daten.funktionen.status && haben.length > 0 ? (
+            <AbschlussZeile titel={tx('Haben')} wert={haben.map((eintrag) => eintrag.name).join(', ')} />
+          ) : null}
+          <AbschlussZeile titel={tx('Bereiche')} wert={bereiche} />
+          {angelegt ? <AbschlussZeile titel={angelegt.art} wert={angelegt.name} /> : null}
+        </div>
       </div>
     );
   }
@@ -433,7 +445,7 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
       )}
       <Formular
         onAbsenden={schritt === 'abschluss' && abschlussFehler ? (ereignis) => { ereignis.preventDefault(); wiederholen(); } : absenden}
-        className="flex min-h-0 flex-1 flex-col [&_.formular-felder]:flex [&_.formular-felder]:min-h-0 [&_.formular-felder]:flex-1 [&_.formular-felder]:flex-col [&_.formular-felder]:overflow-y-auto"
+        className="flex min-h-0 flex-1 flex-col md:flex-none max-md:[&_.formular-felder]:flex max-md:[&_.formular-felder]:min-h-0 max-md:[&_.formular-felder]:flex-1 max-md:[&_.formular-felder]:flex-col max-md:[&_.formular-felder]:overflow-y-auto"
       >
         {schritt === 'sprache' ? (
           <div className="flex items-center gap-2 text-lg font-semibold tracking-tight">

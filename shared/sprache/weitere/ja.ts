@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.": "記録するとき、活動・目標・スキルはそれぞれ1行に並びます。シートの欄は高さが揃い、導入の「次へ」はすぐ下に来ます。",
   "Im Verlauf und bei den Zielen sind die Zeilen gleich hoch. Die XP-Werte im Verlauf stehen rechts bündig.": "「履歴」と「目標」の行は高さが揃います。「履歴」の XP の値は右端で揃います。",
   "Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.": "「その他」「アカウント」「お手本」「アカウント一覧」の行は高さが揃います。値は右端で揃います。",
   "Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.": "ほかのページも同じ節の見出しです。スマホでは、一覧、表、グラフが幅いっぱいの面に並びます。",

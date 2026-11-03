@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type Ref } from 'react';
 import { tx } from '../text.ts';
 import { EINGABE_STIL } from './Formular.tsx';
+import { Chip } from './Schalter.tsx';
 
 export interface VorschlagOption {
   id: string;
@@ -167,28 +168,21 @@ export function VorschlagFeld({
               const aktiv = gewaehlt === index;
               const name = option.name ?? (option.neben ? `${option.zeile}, ${option.neben}` : option.zeile);
               return (
-                <button
+                <Chip
                   key={option.id}
-                  type="button"
-                  aria-pressed={aktiv}
-                  aria-disabled={option.gesperrt || undefined}
-                  aria-label={name}
+                  aktiv={aktiv}
+                  gesperrt={option.gesperrt}
+                  haken={false}
+                  einzeilig={false}
+                  name={name}
                   onClick={() => waehle(index)}
-                  className="flex min-h-12 w-full min-w-0 items-center justify-center"
+                  className="w-full"
                 >
-                  <span
-                    className={`flex h-9 w-full min-w-0 flex-col items-center justify-center overflow-hidden rounded-full border px-2 ${
-                      option.gesperrt
-                        ? 'border-rand text-leise opacity-40'
-                        : aktiv
-                          ? 'border-transparent bg-akzent/15 text-haupt'
-                          : 'border-rand text-leise'
-                    }`}
-                  >
+                  <span className="flex w-full min-w-0 flex-col items-center justify-center overflow-hidden">
                     <span className="max-w-full truncate text-[12px] leading-[14px]">{option.zeile}</span>
                     {option.neben ? <span className="max-w-full truncate text-[11px] leading-3 text-leise">{option.neben}</span> : null}
                   </span>
-                </button>
+                </Chip>
               );
             })}
           </div>

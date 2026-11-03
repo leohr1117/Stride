@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.', 'When you log an entry, activity, goal, and skill each sit on one row. Fields in the sheets share one height, and in the introduction Next sits directly below.'],
   ['Im Verlauf und bei den Zielen sind die Zeilen gleich hoch. Die XP-Werte im Verlauf stehen rechts bündig.', 'In History and on Goals, the rows share one height. The XP values in History line up on the right.'],
   ['Unter Mehr, beim Konto, bei Vorbildern und bei Accounts sind die Zeilen gleich hoch. Werte stehen rechts bündig.', 'On More, Account, Role models, and Accounts, the rows share one height. Values line up on the right.'],
   ['Die übrigen Seiten nutzen dieselbe Abschnittsüberschrift. Auf dem Handy stehen Listen, Tabellen und Diagramme auf einer Fläche in voller Breite.', 'The other pages use the same section heading. On a phone, lists, tables, and charts sit on a surface across the full width.'],
