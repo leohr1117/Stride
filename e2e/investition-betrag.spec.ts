@@ -29,6 +29,106 @@ function erwarteSteigend(werte: number[]): void {
   expect(werte[1]!).toBeLessThan(werte[2]!);
 }
 
+function betragFeld(dialog: Locator): Locator {
+  return dialog.getByRole('textbox', { name: 'Eigener Betrag', exact: true });
+}
+
+async function betragZeile(dialog: Locator, eng: boolean): Promise<void> {
+  const gruppe = dialog.getByRole('group', { name: 'Betrag' });
+  const chips = vorschlagChips(dialog);
+  const feld = betragFeld(dialog);
+  await expect(feld).toHaveAttribute('placeholder', 'Eigener');
+  await expect(dialog.getByText('Eigener', { exact: true })).toHaveCount(0);
+  const kaesten = [];
+  for (const ziel of [chips.nth(0), chips.nth(1), chips.nth(2), feld]) {
+    const kasten = await ziel.boundingBox();
+    expect(kasten).not.toBeNull();
+    kaesten.push(kasten!);
+  }
+  const oben = kaesten.map((kasten) => kasten.y);
+  expect(Math.max(...oben) - Math.min(...oben)).toBeLessThanOrEqual(1);
+  const breiten = kaesten.map((kasten) => kasten.width);
+  expect(Math.max(...breiten) - Math.min(...breiten)).toBeLessThanOrEqual(1);
+  for (const kasten of kaesten) {
+    expect(kasten.height).toBeGreaterThanOrEqual(47);
+    expect(kasten.height).toBeLessThanOrEqual(49);
+  }
+  if (eng) {
+    for (const breite of breiten) {
+      expect(breite).toBeGreaterThanOrEqual(70);
+      expect(breite).toBeLessThanOrEqual(96);
+    }
+  }
+  for (let index = 0; index < kaesten.length - 1; index += 1) {
+    const links = kaesten[index]!;
+    const rechts = kaesten[index + 1]!;
+    const abstand = rechts.x - (links.x + links.width);
+    expect(Math.abs(abstand - 8)).toBeLessThanOrEqual(1);
+  }
+  const dialogKasten = await dialog.boundingBox();
+  const gruppenKasten = await gruppe.boundingBox();
+  expect(dialogKasten).not.toBeNull();
+  expect(gruppenKasten).not.toBeNull();
+  expect(gruppenKasten!.x).toBeGreaterThanOrEqual(dialogKasten!.x - 1);
+  expect(gruppenKasten!.x + gruppenKasten!.width).toBeLessThanOrEqual(dialogKasten!.x + dialogKasten!.width + 1);
+  const lesbar = await gruppe.evaluate((el) => {
+    if (el.scrollWidth > el.clientWidth + 1) {
+      return 'zeile';
+    }
+    const knoepfe = [...el.querySelectorAll('button')];
+    for (const knopf of knoepfe) {
+      const menge = [...knopf.querySelectorAll('span')].filter((span) => !span.classList.contains('sr-only'));
+      if (menge.length !== 1 || menge[0]?.textContent?.trim() !== knopf.getAttribute('aria-label')) {
+        return 'chip';
+      }
+      const text = menge[0];
+      if (!(text instanceof HTMLElement)) {
+        return 'chip';
+      }
+      const aussen = knopf.getBoundingClientRect();
+      const innen = text.getBoundingClientRect();
+      if (innen.width <= 0 || innen.left < aussen.left - 1 || innen.right > aussen.right + 1) {
+        return 'chip';
+      }
+      const versteckt = knopf.querySelector('.sr-only');
+      if (versteckt instanceof HTMLElement) {
+        const kasten = versteckt.getBoundingClientRect();
+        if (kasten.width > 2 || kasten.height > 2) {
+          return 'hinweis';
+        }
+      }
+    }
+    const feld = el.querySelector('input');
+    if (!(feld instanceof HTMLInputElement)) {
+      return 'feld';
+    }
+    const stil = getComputedStyle(feld);
+    const probe = document.createElement('span');
+    const leer = feld.value === '';
+    probe.textContent = leer ? feld.placeholder : feld.value;
+    probe.style.position = 'absolute';
+    probe.style.whiteSpace = 'nowrap';
+    probe.style.visibility = 'hidden';
+    const schrift = leer ? getComputedStyle(feld, '::placeholder') : stil;
+    probe.style.font = schrift.font;
+    document.body.appendChild(probe);
+    const breite = probe.getBoundingClientRect().width;
+    probe.remove();
+    const ende = feld.parentElement?.querySelector('span[aria-hidden="true"]');
+    const endeKasten = ende?.getBoundingClientRect();
+    const feldKasten = feld.getBoundingClientRect();
+    const textRechts = feldKasten.left + parseFloat(stil.paddingLeft) + breite;
+    if (!endeKasten || endeKasten.right > feldKasten.right + 1 || endeKasten.left < feldKasten.left) {
+      return 'ende';
+    }
+    if (textRechts > endeKasten.left + 1) {
+      return 'schnitt';
+    }
+    return 'ok';
+  });
+  expect(lesbar).toBe('ok');
+}
+
 function weltDatei(): string {
   const datei = process.env.PLAYWRIGHT_WELT;
   if (!datei) {
@@ -96,12 +196,24 @@ test('Ein Vorschlag setzt den Betrag, ein eigener Wert und 100 XP mit 30 % bleib
     await page.goto('/investitionen');
     await page.getByRole('button', { name: /Investition anlegen/ }).click();
     const gesperrt = page.getByRole('dialog', { name: 'Investition', exact: true });
-    const feldLeer = gesperrt.getByRole('textbox', { name: 'Eigener' });
+    const feldLeer = betragFeld(gesperrt);
     erwarteSteigend(await xpWerte(gesperrt));
     const teuer = gesperrt.locator('button[aria-disabled="true"]');
     await expect(teuer).toHaveCount(3);
-    await teuer.first().click({ force: true });
+    const ersterTeuer = teuer.first();
+    await expect(ersterTeuer).toHaveAttribute('aria-disabled', 'true');
+    expect(await ersterTeuer.getAttribute('disabled')).toBeNull();
+    await ersterTeuer.focus();
+    await expect(ersterTeuer).toBeFocused();
+    const beschreibungId = await ersterTeuer.getAttribute('aria-describedby');
+    expect(beschreibungId).toBeTruthy();
+    await expect(gesperrt.locator(`[id="${beschreibungId}"]`)).toHaveText(/^fehlen .+ XP$/);
+    const menge = (await ersterTeuer.getAttribute('aria-label'))?.match(/^([\d.]+)/)?.[1];
+    expect(menge).toBeTruthy();
+    await ersterTeuer.click({ force: true });
     await expect(feldLeer).toHaveValue('');
+    await expect(gesperrt.getByText(`Dir fehlen ${menge} XP`)).toBeVisible();
+    await betragZeile(gesperrt, testInfo.project.name === 'handy');
   } finally {
     if (xpId !== null) {
       streicheXp(xpId);
@@ -121,25 +233,15 @@ test('Ein Vorschlag setzt den Betrag, ein eigener Wert und 100 XP mit 30 % bleib
     const werte = await xpWerte(dialog);
     erwarteSteigend(werte);
     const chips = vorschlagChips(dialog);
-    const erster = chips.nth(0);
-    const zweiter = chips.nth(1);
-    const flaeche = await erster.boundingBox();
-    const pille = await erster.locator('span').first().boundingBox();
-    expect(flaeche?.height).toBeGreaterThanOrEqual(48);
-    expect(pille?.height).toBeGreaterThanOrEqual(36);
-    expect(pille?.height).toBeLessThanOrEqual(36);
-    const ersterKasten = await erster.boundingBox();
-    const zweiterKasten = await zweiter.boundingBox();
-    const abstand = zweiterKasten && ersterKasten ? zweiterKasten.x - (ersterKasten.x + ersterKasten.width) : null;
-    expect(abstand).toBeGreaterThanOrEqual(8);
-    expect(abstand).toBeLessThanOrEqual(8);
-    await expect(erster.locator('span span')).toHaveCount(1);
+    await betragZeile(dialog, testInfo.project.name === 'handy');
 
     const index = werte.findIndex((wert) => wert !== 100);
     const gewaehlt = chips.nth(index);
     await gewaehlt.click();
-    const feld = dialog.getByRole('textbox', { name: 'Eigener' });
+    const feld = betragFeld(dialog);
     await expect(feld).toHaveValue(String(werte[index]));
+    await expect(dialog.getByText(/^Dir fehlen .+ XP$/)).toHaveCount(0);
+    await betragZeile(dialog, testInfo.project.name === 'handy');
     await expect(gewaehlt).toHaveAttribute('aria-pressed', 'true');
     await feld.fill('100');
     await expect(gewaehlt).toHaveAttribute('aria-pressed', 'false');
@@ -214,6 +316,7 @@ test('Ohne Verlauf bleiben die festen Beträge', async ({ page }, testInfo) => {
     await expect(dialog.getByRole('button', { name: '800 XP', exact: true })).toBeVisible();
     erwarteSteigend(await xpWerte(dialog));
     await expect(dialog.getByRole('button', { name: /1 Woche|1 Monat|3 Monate/ })).toHaveCount(0);
+    await betragZeile(dialog, testInfo.project.name === 'handy');
     await dialog.getByText('Betrag', { exact: true }).scrollIntoViewIfNeeded();
     if (testInfo.project.name === 'handy') {
       await page.screenshot({ path: 'tmp-test/investition-betrag/handy-ohne-verlauf.png' });

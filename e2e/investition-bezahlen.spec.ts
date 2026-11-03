@@ -92,7 +92,7 @@ test('Speichern bei leerem Betrag und bei zu wenig XP ändert nichts', async ({ 
     await expect(speichern).toBeEnabled();
     await speichern.click();
 
-    const betrag = dialog.getByRole('textbox', { name: 'Eigener' });
+    const betrag = dialog.getByRole('textbox', { name: 'Eigener Betrag', exact: true });
     const leer = dialog.getByRole('alert');
     await expect(leer).toContainText('Betrag eingeben oder „Nichts“ wählen');
     await expect(betrag).toBeFocused();

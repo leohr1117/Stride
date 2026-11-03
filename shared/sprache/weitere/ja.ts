@@ -1,5 +1,8 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "自分の金額は、提案と同じ行に並びます。",
+  "Eigener Betrag": "自分の金額",
+  "Dir fehlen {xp} XP": "あと {xp} XP足りません",
   "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "投資の金額には、異なる三つの XP 額が出ます。提案に週や月は出ません。",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "ビジョンのレベル、減衰、基本タスクの時間、見積もったレベルに候補が出ます。自分の値も入力できます。",
   "Eigene": "自分で",

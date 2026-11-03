@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useState, useId } from 'react';
 import { INVESTITION_GROESSEN, investitionsBonus } from '../../../../shared/spiel/xp.ts';
 import { bonusProzent, zahl } from '../../format.ts';
 import { tx } from '../../text.ts';
@@ -103,21 +103,36 @@ export function BetragFeld({
   hinweisId: string;
 }) {
   const zeigeFehler = geprueft && problem !== null;
+  const [gesperrtWert, setGesperrtWert] = useState<number | null>(null);
+  const fehlend = gesperrtWert !== null && gesperrtWert > verfuegbar ? gesperrtWert - verfuegbar : null;
   return (
     <VorschlagFeld
       label="Betrag"
+      anordnung="reihe"
       text={text}
-      onText={onText}
+      onText={(wert) => {
+        setGesperrtWert(null);
+        onText(wert);
+      }}
       optionen={optionenVon(vorschlaege, verfuegbar)}
       einheit={tx('XP')}
+      platzhalter={tx('Eigener')}
+      eigenName={tx('Eigener Betrag')}
       feldId={feldId}
       eingabeRef={eingabeRef}
       fehler={zeigeFehler && problem ? fehlerSatz(problem, verfuegbar) : null}
       fehlerId={fehlerId}
       hinweis={tx('Verfügbar: {xp} XP', { xp: zahl(verfuegbar) })}
       hinweisId={hinweisId}
+      unterZeile={fehlend === null ? null : tx('Dir fehlen {xp} XP', { xp: zahl(fehlend) })}
       onUnscharf={() => onGeprueft(true)}
       onWahl={() => onGeprueft(false)}
+      onGesperrt={(option) => {
+        const wert = Number(option.wert);
+        if (Number.isSafeInteger(wert)) {
+          setGesperrtWert(wert);
+        }
+      }}
       bereinige={(roh) => roh.replace(/\D/g, '').slice(0, 15)}
     />
   );

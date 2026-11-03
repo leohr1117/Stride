@@ -1,5 +1,8 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "Le montant personnel est sur la même ligne que les propositions.",
+  "Eigener Betrag": "Montant personnel",
+  "Dir fehlen {xp} XP": "Il te manque {xp} XP",
   "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "Le montant d'un investissement propose trois sommes d'XP différentes. Les propositions ne citent plus de semaines ni de mois.",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "Le niveau d'une vision, le déclin, la durée d'une tâche de base et un niveau estimé proposent des paliers. Une valeur personnelle reste possible.",
   "Eigene": "Personnelle",

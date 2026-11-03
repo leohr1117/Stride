@@ -103,7 +103,7 @@ test('Investition trennt Kosten und Wirkung', async ({ page }, testInfo) => {
   await zeile(dialog.getByRole('heading', { name: 'Kosten' }));
   await zeile(dialog.getByRole('heading', { name: 'Wirkung' }));
   await expect(dialog.getByRole('button', { name: 'Bezahlt mit · Ressourcen' })).toBeVisible();
-  await expect(dialog.getByRole('textbox', { name: 'Eigener' })).toBeVisible();
+  await expect(dialog.getByRole('textbox', { name: 'Eigener Betrag', exact: true })).toBeVisible();
   await expect(dialog.getByRole('button', { name: 'Bonus für · Ressourcen' })).toBeVisible();
   await expect(dialog.getByRole('button', { name: 'Auch für · Keins' })).toBeVisible();
   const speichern = dialog.getByRole('button', { name: 'Speichern' });
@@ -113,7 +113,7 @@ test('Investition trennt Kosten und Wirkung', async ({ page }, testInfo) => {
   const wahl = page.getByRole('dialog', { name: 'Bezahlt mit' });
   await wahl.getByRole('option', { name: 'Nichts', exact: true }).click();
   await expect(wahl).toBeHidden();
-  await expect(dialog.getByRole('textbox', { name: 'Eigener' })).toHaveCount(0);
+  await expect(dialog.getByRole('textbox', { name: 'Eigener Betrag', exact: true })).toHaveCount(0);
   await expect(dialog.getByText('Kostenlos · Bonus für Ressourcen')).toBeVisible();
   await expect(speichern).toBeEnabled();
 

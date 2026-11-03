@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Der eigene Betrag steht in derselben Zeile wie die Vorschläge.', 'The custom amount sits on the same line as the suggestions.'],
   ['Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.', 'An investment amount offers three different XP amounts. The suggestions no longer name weeks or months.'],
   ['Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.', 'A vision level, decay, the duration of a basics task, and an estimated level offer suggestions. A custom value stays possible.'],
   ['Beim Betrag einer Investition stehen Vorschläge für eine Woche, einen Monat und drei Monate. Betrag und Bonus-Stufe bleiben frei kombinierbar.', 'An investment amount offers suggestions for one week, one month, and three months. The amount and the bonus step stay freely combinable.'],

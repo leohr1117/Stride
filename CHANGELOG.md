@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.15
+
+### Verbessert
+
+- Der eigene Betrag steht in derselben Zeile wie die Vorschläge.
+
 ## 3.56.14
 
 ### Behoben

@@ -1,5 +1,8 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "Своя сумма стоит в одной строке с подсказками.",
+  "Eigener Betrag": "Своя сумма",
+  "Dir fehlen {xp} XP": "Тебе не хватает {xp} XP",
   "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "У суммы вложения три разных числа XP. Подсказки больше не называют недели или месяцы.",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "Уровень видения, спад, длительность базовой задачи и оценка уровня получают подсказки. Своё значение можно ввести.",
   "Eigene": "Своя",

@@ -1,5 +1,8 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "自定金额和建议金额在同一行。",
+  "Eigener Betrag": "自定金额",
+  "Dir fehlen {xp} XP": "你还差 {xp} XP",
   "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "投入的金额给出三个不同的 XP 数额。建议不再写周或月。",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "愿景等级、衰退、基础事项的时长和估计的等级会给出建议。仍可填写自己的值。",
   "Eigene": "自定义",

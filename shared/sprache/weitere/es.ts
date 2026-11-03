@@ -1,5 +1,8 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "El importe propio está en la misma línea que las propuestas.",
+  "Eigener Betrag": "Importe propio",
+  "Dir fehlen {xp} XP": "Te faltan {xp} XP",
   "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "El importe de una inversión ofrece tres cantidades de XP distintas. Las propuestas ya no nombran semanas ni meses.",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "El nivel de una visión, el decaimiento, la duración de una tarea base y un nivel estimado ofrecen propuestas. Un valor propio sigue siendo posible.",
   "Eigene": "Propia",
