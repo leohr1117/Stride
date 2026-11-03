@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.17',
+    seiten: 'Heute, Können, Haben, Fähigkeiten, Ziele, Profil',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: ['Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.'],
+      },
+    ],
+  },
+  {
     version: '3.56.16',
     seiten: 'Investitionen',
     behoben: 'Investitionen',

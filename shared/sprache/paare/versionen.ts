@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.', 'Progress bars end with a short gradient, a narrow tip, and a soft glow.'],
   ['Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.', 'The investment sheet is no longer cut off on the right. The name and the amount stay fully visible.'],
   ['Der eigene Betrag steht in derselben Zeile wie die Vorschläge.', 'The custom amount sits on the same line as the suggestions.'],
   ['Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.', 'An investment amount offers three different XP amounts. The suggestions no longer name weeks or months.'],

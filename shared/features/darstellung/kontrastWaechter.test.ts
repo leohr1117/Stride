@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { kontrast, MINDEST_KONTRAST } from '../../spiel/farben.ts';
+import { helligkeit, kontrast, MINDEST_KONTRAST } from '../../spiel/farben.ts';
+import { fuellToene, FUELL_KONTRAST, spitzeTon } from './balkenAbschluss.ts';
 import { bedeutungsfarben } from './bedeutung.ts';
 import { wacheKontrast, type GewachteFarben } from './kontrastWaechter.ts';
 import { erscheinungAus, vorlagen, type Erscheinung } from './paletten.ts';
@@ -125,5 +126,36 @@ describe('Kontrastwächter', () => {
     expect(bunt(wache.streak)).toBe(true);
     expect(tonAbstand(wache.fortschritt, fest.fortschritt)).toBeLessThanOrEqual(20);
     expect(bunt(wache.fortschritt)).toBe(true);
+  });
+
+  it('hält hellsten und dunkelsten Füllton gegen den Track, in hellen Ansichten auch die Spitze', () => {
+    const bilder: Erscheinung[] = [];
+    for (const stil of STILE) {
+      for (const vorlage of vorlagen(stil)) {
+        bilder.push(erscheinungAus(vorlage));
+      }
+    }
+    bilder.push(erscheinungAus({ primaer: '#3355ff', akzent: '#cc8800', hintergrund: '#f7f4ee' }));
+    bilder.push(erscheinungAus({ primaer: '#141414', akzent: '#f8f8f8', hintergrund: '#10141c' }));
+    expect(bilder.length).toBeGreaterThanOrEqual(17);
+    for (const bild of bilder) {
+      const schema = bild.flaechen.schema;
+      const track = bild.flaechen.flaeche2;
+      const fest = bedeutungsfarben(schema);
+      const wache = wacheKontrast(bild, fest);
+      for (const farbe of [wache.fortschritt, wache.gefahr]) {
+        const toene = fuellToene(farbe);
+        const ort = `${schema} ${farbe} auf ${track}`;
+        expect(kontrast(toene.hell, track), `hell ${ort}`).toBeGreaterThanOrEqual(FUELL_KONTRAST);
+        expect(kontrast(toene.dunkel, track), `dunkel ${ort}`).toBeGreaterThanOrEqual(FUELL_KONTRAST);
+        if (schema === 'light') {
+          expect(kontrast(spitzeTon(farbe, schema), track), `spitze ${ort}`).toBeGreaterThanOrEqual(FUELL_KONTRAST);
+          expect(helligkeit(spitzeTon(farbe, schema)), ort).toBeLessThan(helligkeit(farbe));
+        } else {
+          expect(helligkeit(spitzeTon(farbe, schema)), ort).toBeGreaterThan(helligkeit(farbe));
+        }
+        expect(helligkeit(toene.hell), ort).toBeGreaterThan(helligkeit(toene.dunkel));
+      }
+    }
   });
 });

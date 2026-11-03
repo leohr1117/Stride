@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.17
+
+### Verbessert
+
+- Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.
+
 ## 3.56.16
 
 ### Behoben

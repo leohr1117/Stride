@@ -113,6 +113,10 @@ html:is(:lang(fr), :lang(ru))[data-stil='holo'] :is(h1, h2, .dialog-fenster h2, 
   box-shadow: 0 0 10px var(--holo-leuchten);
 }
 
+:root[data-stil='holo'] .balken-fuellung > .balken-mass {
+  display: none;
+}
+
 :root[data-stil='holo'] .seitenleiste {
   border-right-color: var(--kante);
   background: linear-gradient(180deg, color-mix(in srgb, var(--flaeche) 97%, transparent), color-mix(in srgb, var(--grund) 97%, transparent));

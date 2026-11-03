@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.": "Las barras de progreso terminan con un degradado corto, una punta estrecha y un leve resplandor.",
   "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "La hoja de inversión ya no se corta por la derecha. El nombre y el importe siguen visibles por completo.",
   "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "El importe propio está en la misma línea que las propuestas.",
   "Eigener Betrag": "Importe propio",

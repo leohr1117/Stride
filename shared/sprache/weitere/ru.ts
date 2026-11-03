@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Fortschrittsbalken enden mit einem kurzen Verlauf, einer schmalen Spitze und einem leichten Glühen.": "Полосы прогресса заканчиваются коротким переходом, узким кончиком и лёгким свечением.",
   "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "Лист инвестиции больше не обрезается справа. Название и сумма остаются целиком на виду.",
   "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "Своя сумма стоит в одной строке с подсказками.",
   "Eigener Betrag": "Своя сумма",

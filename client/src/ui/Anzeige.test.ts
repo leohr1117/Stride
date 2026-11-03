@@ -1,7 +1,12 @@
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { Fortschrittsbalken } from './Anzeige.tsx';
+
+const DARSTELLUNG = join(dirname(fileURLToPath(import.meta.url)), '../features/darstellung');
 
 describe('Fortschrittsbalken', () => {
   it('zeichnet Vergleich und Diagramm als stehende Füllung ohne Ansichtsklasse', () => {
@@ -32,7 +37,38 @@ describe('Fortschrittsbalken', () => {
     expect(html).toContain('class="balken relative w-full overflow-hidden rounded-full bg-flaeche-2 h-1.5"');
     expect(html).toContain('balken-verlust');
     expect(html).toContain('balken-fuellung');
+    expect(html).toContain('balken-verlauf');
+    expect(html).toContain('balken-spitze');
+    expect(html).toContain('--balken-farbe:red');
+    expect(html).not.toContain('box-shadow');
+    expect(html).not.toContain('background-image');
     expect(html).toContain('width:80%');
     expect(html).toContain('width:40%');
+  });
+
+  it('lässt bei 0 % Spitze und Verlauf weg', () => {
+    const html = renderToStaticMarkup(createElement(Fortschrittsbalken, { anteil: 0, farbe: '#c62828' }));
+    expect(html).toContain('data-leer');
+    expect(html).toContain('balken-fuellung');
+    expect(html).not.toContain('balken-spitze');
+    expect(html).not.toContain('balken-verlauf');
+    expect(html).not.toContain('box-shadow');
+  });
+
+  it('setzt den Abschluss nur über die eine Füllung, Hologramm bleibt der alte Verlauf', () => {
+    const stil = readFileSync(join(DARSTELLUNG, 'styles.css'), 'utf8');
+    expect(stil).toContain('calc(100% - 24px)');
+    expect(stil).toContain('white 25%');
+    expect(stil).toContain('white 40%');
+    expect(stil).toContain('black 18%');
+    expect(stil).toContain('0 0 6px');
+    expect(stil).toContain('0 0 4px');
+    expect(stil).toContain('forced-colors: active');
+    const holo = readFileSync(join(DARSTELLUNG, 'stil-holo.css'), 'utf8');
+    expect(holo).toContain('background-image: linear-gradient(90deg, transparent 40%, rgba(255, 255, 255, 0.35));');
+    expect(holo).toContain('box-shadow: 0 0 10px var(--holo-leuchten);');
+    expect(readFileSync(join(DARSTELLUNG, 'stil-jade.css'), 'utf8')).not.toContain('.balken-fuellung');
+    expect(readFileSync(join(DARSTELLUNG, 'stil-antik.css'), 'utf8')).not.toContain('.balken-fuellung');
+    expect(readFileSync(join(DARSTELLUNG, 'stil-minimal.css'), 'utf8')).not.toContain('.balken-fuellung');
   });
 });

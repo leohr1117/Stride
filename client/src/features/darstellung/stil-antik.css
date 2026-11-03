@@ -154,10 +154,6 @@ html:is(:lang(fr), :lang(ru))[data-stil='antik'] :is(h1, h2, .dialog-fenster h2)
   border-color: var(--akzent);
 }
 
-:root[data-stil='antik'] .balken-fuellung {
-  box-shadow: 0 0 8px var(--antik-glanz);
-}
-
 :root[data-stil='antik'] .seitenleiste {
   border-right-color: var(--kante);
   background: linear-gradient(180deg, var(--flaeche), color-mix(in srgb, var(--grund) 82%, black));

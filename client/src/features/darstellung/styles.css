@@ -185,6 +185,75 @@ body {
   filter: grayscale(0.45) brightness(0.75);
 }
 
+.balken-fuellung {
+  overflow: hidden;
+  --balken-verlauf: linear-gradient(90deg, transparent calc(100% - 24px), color-mix(in srgb, white 25%, var(--balken-farbe)));
+  --balken-spitze: color-mix(in srgb, black 18%, var(--balken-farbe));
+  --balken-gluehen: 0 0 4px color-mix(in srgb, hsl(from var(--balken-farbe) h calc(s * 1.35) l) calc(var(--glimm) * 25%), transparent);
+  box-shadow: var(--balken-gluehen);
+}
+
+:root[data-schema='dark'] .balken-fuellung {
+  --balken-spitze: color-mix(in srgb, white 40%, var(--balken-farbe));
+  --balken-gluehen: 0 0 6px color-mix(in srgb, var(--balken-farbe) calc(var(--glimm) * 35%), transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-schema='light']) .balken-fuellung {
+    --balken-spitze: color-mix(in srgb, white 40%, var(--balken-farbe));
+    --balken-gluehen: 0 0 6px color-mix(in srgb, var(--balken-farbe) calc(var(--glimm) * 35%), transparent);
+  }
+}
+
+.balken-fuellung > .balken-mass {
+  position: absolute;
+  inset: 0;
+  container-type: inline-size;
+  container-name: balkenfuellung;
+  pointer-events: none;
+}
+
+.balken-mass > .balken-verlauf {
+  position: absolute;
+  inset: 0;
+  background-image: var(--balken-verlauf);
+}
+
+.balken-mass > .balken-spitze {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--balken-spitze);
+}
+
+@container balkenfuellung (max-width: 23.99px) {
+  .balken-mass > .balken-verlauf {
+    display: none;
+  }
+}
+
+:root[data-stil] .balken > .balken-fuellung[data-leer] {
+  background-image: none;
+  box-shadow: none;
+}
+
+:root[data-stil] .balken > .balken-fuellung[data-leer] > .balken-mass {
+  display: none;
+}
+
+@media (forced-colors: active) {
+  :root[data-stil] .balken > .balken-fuellung {
+    background-image: none;
+    box-shadow: none;
+  }
+
+  .balken > .balken-fuellung > .balken-mass {
+    display: none;
+  }
+}
+
 .regler,
 .groesse-regler {
   min-height: 48px;

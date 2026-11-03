@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useId, type ReactNode } from 'react';
+import { useId, type CSSProperties, type ReactNode } from 'react';
 import { prozentPunkte } from '../format.ts';
 import { attributName, tx } from '../text.ts';
 import { ZuNiedrigHinweis } from './Info.tsx';
@@ -156,6 +156,8 @@ export function Fortschrittsbalken({
   }
   const verlust = Math.min(1, Math.max(stand, verlustBis ?? stand));
   const zeigtVerlust = verlust - stand > 0.005;
+  const leer = stand <= 0;
+  const fuellung = { backgroundColor: farbe, '--balken-farbe': farbe } as CSSProperties;
   return (
     <div className={`balken relative w-full overflow-hidden rounded-full bg-flaeche-2 ${hoehe}`}>
       {zeigtVerlust && (
@@ -166,11 +168,19 @@ export function Fortschrittsbalken({
       )}
       <motion.div
         className="balken-fuellung relative h-full rounded-full"
-        style={{ backgroundColor: farbe }}
+        data-leer={leer ? '' : undefined}
+        style={fuellung}
         initial={false}
         animate={{ width: `${stand * 100}%` }}
         transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-      />
+      >
+        {leer ? null : (
+          <span className="balken-mass">
+            <span className="balken-verlauf" />
+            <span className="balken-spitze" />
+          </span>
+        )}
+      </motion.div>
     </div>
   );
 }
