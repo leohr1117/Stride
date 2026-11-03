@@ -1,6 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} compte",
+  "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "Seul le numéro de version. L'apparence et le comportement restent les mêmes.",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "Chaque apparence propose toutes les palettes fournies. Celles que vous créez restent dans leur apparence.",
   "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "Le texte et les bordures restent lisibles quand la palette vient d'une autre apparence. L'anneau de niveau et les erreurs gardent leur couleur.",
   "Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.": "Base sur Aujourd'hui se replie hors de la carte. Dans la carte, une flèche ouvre la page.",

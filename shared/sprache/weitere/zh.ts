@@ -1,6 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} 计入",
+  "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "只改版本号。外观和行为保持不变。",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "每种外观都能选择全部预设配色。自己创建的配色留在创建它的外观里。",
   "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "配色来自另一种外观时，文字和边框仍然清楚。等级环和错误保持原有颜色。",
   "Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.": "今天上的基础从卡片外折叠。卡片里有一个箭头打开页面。",

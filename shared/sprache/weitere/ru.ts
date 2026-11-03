@@ -1,6 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} учитывается",
+  "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "Только номер версии. Внешний вид и поведение остаются прежними.",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "В каждом виде доступны все готовые палитры. Созданные вами остаются в своём виде.",
   "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "Текст и рамки остаются читаемыми, если палитра из другого вида. Кольцо уровня и ошибки сохраняют свой цвет.",
   "Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.": "База на Сегодня сворачивается снаружи карточки. Внутри карточки одна стрелка открывает страницу.",

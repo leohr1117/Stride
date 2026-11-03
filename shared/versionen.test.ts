@@ -1,10 +1,18 @@
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { changelogMarkdown } from './changelog.ts';
 import { ABSCHNITTE, AKTUELLE_VERSION, VERSIONEN, type AbschnittTitel } from './versionen.ts';
+
+const WURZEL = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 describe('versionen', () => {
   it('ist absteigend nach Semantic Versioning und nennt Änderungen', () => {
+    const paket = JSON.parse(readFileSync(join(WURZEL, 'package.json'), 'utf8')) as { version: string };
     expect(VERSIONEN.length).toBeGreaterThan(0);
-    expect(AKTUELLE_VERSION).toBe('3.56.4');
+    expect(AKTUELLE_VERSION).toBe('3.56.5');
+    expect(AKTUELLE_VERSION).toBe(paket.version);
     expect(AKTUELLE_VERSION).toBe(VERSIONEN[0].version);
     const gesehen = new Set<string>();
     let vorher: number[] | null = null;
@@ -42,5 +50,11 @@ describe('versionen', () => {
       }
       vorher = teile;
     }
+  });
+
+  it('schreibt das deutsche Änderungsprotokoll aus den Einträgen', () => {
+    const datei = readFileSync(join(WURZEL, 'CHANGELOG.md'), 'utf8');
+    expect(datei).toBe(changelogMarkdown(VERSIONEN));
+    expect(datei).not.toMatch(/\b[A-Z]\d+[a-z]?\b/);
   });
 });

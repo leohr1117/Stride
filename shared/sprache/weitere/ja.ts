@@ -1,6 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "{name} zählt mit": "{name} を数える",
+  "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "バージョン番号だけです。見た目と動作はそのままです。",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "どの表示でも、用意された配色をすべて選べます。自分で作った配色は、作った表示に残ります。",
   "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "別の表示の配色でも、文字と枠は読めるままです。レベルリングとエラーの色は変わりません。",
   "Basis auf Heute klappt außen auf. In der Karte führt ein Pfeil zur Seite.": "今日のベーシスはカードの外で折りたたみます。カード内の矢印がページを開きます。",

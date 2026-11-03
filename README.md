@@ -19,6 +19,8 @@ Stride ist eine Web-App, die den eigenen Alltag wie ein Rollenspiel führt: Du t
 - **Anpassen:** Bereiche lassen sich einzeln abschalten. Ansichten, Farbpaletten und eigene Farben.
 - **Sonstiges:** Installierbar als PWA, sieben Sprachen (Deutsch, Englisch, Spanisch, Französisch, Japanisch, Russisch, Chinesisch), Export und Import der Daten, mehrere Konten, Anmeldung mit Passwortmanagern, Handbuch in der App.
 
+Änderungen je Version stehen in [CHANGELOG.md](CHANGELOG.md).
+
 ## Technik
 
 - TypeScript, React 19, React Router, TanStack Query, Tailwind CSS 4, Framer Motion, Recharts, Vite
