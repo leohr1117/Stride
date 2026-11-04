@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.": "Les symboles des boss et les déductions d'XP en pourcentage sont rouges. Quand un attribut est trop bas, le signe d'avertissement, le texte et le niveau sont rouges.",
   "Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.": "Pour les attributs, l'état se place derrière le nom et le niveau reste à droite. Si la place manque, seul le signe d'avertissement reste, et un appui affiche le texte.",
   "Der Levelring schließt mit einem kurzen Verlauf, einer Spitze und einem leichten Glühen ab.": "L'anneau de niveau se termine par un court dégradé, une pointe et une légère lueur.",
   "Die Schwerter der Bosse bleiben im Ring.": "Les épées des boss restent dans l'anneau.",

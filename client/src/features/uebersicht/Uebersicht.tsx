@@ -359,7 +359,7 @@ function Werte({
                       prozent={prozent}
                       zuNiedrig={ursache}
                     />
-                    <span className="zahl shrink-0 whitespace-nowrap text-right text-xs text-leise">
+                    <span className={`zahl shrink-0 whitespace-nowrap text-right text-xs ${ursache ? 'text-gefahr' : 'text-leise'}`}>
                       {tx('Lvl {level}', { level: attribut.level.level })}
                     </span>
                   </div>

@@ -109,7 +109,11 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   expect(await bossZeile.locator('svg').first().evaluate((element) => Math.round(element.getBoundingClientRect().width))).toBe(20);
   await expect(bossZeile).toContainText(/seit /);
   await expect(bossZeile).not.toContainText('Erwacht');
-  await expect(bossZeile.locator('.text-gefahr')).toContainText('Disziplin');
+  await expect(bossZeile.locator('.text-gefahr', { hasText: 'Disziplin' })).toBeVisible();
+  const klinge = bossZeile.locator('.lucide-swords');
+  if ((await klinge.count()) > 0) {
+    await expect(klinge).toHaveClass(/text-gefahr/);
+  }
   const bossLinien = await angriff.locator('[data-flaeche]').evaluate((flaeche) => {
     const kinder = [...flaeche.children].filter((kind) => kind instanceof HTMLElement && kind.getBoundingClientRect().height > 0);
     return kinder.map((kind, index) => {

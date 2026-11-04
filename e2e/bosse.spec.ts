@@ -138,9 +138,12 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
   await expect(angriff).not.toContainText('Erwacht');
   await expect(angriff).toContainText('Disziplin');
   await expect(angriff).not.toHaveClass(/gefahr/);
-  await expect(angriff.locator('.text-gefahr')).toHaveCount(1);
-  await expect(angriff.locator('.text-gefahr')).toContainText('Disziplin');
-  const gefahrStimmt = await angriff.locator('.text-gefahr').evaluate((element) => {
+  const disziplin = angriff.locator('.text-gefahr', { hasText: 'Disziplin' });
+  await expect(disziplin).toHaveCount(1);
+  await expect(angriff.locator('.lucide-swords')).toHaveCount(1);
+  await expect(angriff.locator('.lucide-swords')).toHaveClass(/text-gefahr/);
+  await expect(angriff.locator('.text-gefahr')).toHaveCount(2);
+  const gefahrStimmt = await disziplin.evaluate((element) => {
     const probe = document.createElement('span');
     probe.style.color = 'var(--gefahr)';
     document.body.append(probe);

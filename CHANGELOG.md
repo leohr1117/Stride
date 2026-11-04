@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.46
+
+### Geändert
+
+- Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.
+
 ## 3.56.45
 
 ### Geändert

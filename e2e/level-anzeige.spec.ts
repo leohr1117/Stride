@@ -17,14 +17,16 @@ async function zustandszeile(zeile: Locator, hinweis: Locator, tippen: boolean):
   await expect(hinweis).toBeVisible();
   const zeichen = hinweis.locator('span[aria-hidden="true"]');
   await expect(zeichen).toHaveText('⚠');
-  await expect(zeichen).toHaveClass(/text-haupt/);
-  await expect(zeichen).not.toHaveClass(/text-gefahr|bg-gefahr/);
+  await expect(zeichen).toHaveClass(/text-gefahr/);
+  await expect(zeichen).not.toHaveClass(/text-haupt|bg-gefahr/);
   expect(await zeichen.evaluate((element) => getComputedStyle(element).fontSize)).toBe('16px');
   expect(await hinweis.evaluate((element) => getComputedStyle(element).fontSize)).toBe('13px');
   const name = zeile.locator('[data-attribut-name]').first();
   const nameKasten = await name.boundingBox();
   const hinweisKasten = await hinweis.boundingBox();
   const stufe = zeile.getByText(/^Lvl \d+$/).last();
+  await expect(stufe).toHaveClass(/text-gefahr/);
+  await expect(stufe).not.toHaveClass(/text-leise/);
   const stufeKasten = await stufe.boundingBox();
   expect(nameKasten && hinweisKasten && stufeKasten).toBeTruthy();
   if (!nameKasten || !hinweisKasten || !stufeKasten) {
@@ -36,6 +38,7 @@ async function zustandszeile(zeile: Locator, hinweis: Locator, tippen: boolean):
   expect(hinweisKasten.height).toBeLessThanOrEqual(24);
   const text = (await hinweis.innerText()).replace(/\s+/g, ' ').trim();
   if (text.includes('Lvl zu niedrig')) {
+    await expect(hinweis.getByText('Lvl zu niedrig', { exact: true })).toHaveClass(/text-gefahr/);
     await expect(hinweis.getByRole('button')).toHaveCount(0);
     return;
   }

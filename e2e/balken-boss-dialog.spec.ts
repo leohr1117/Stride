@@ -281,16 +281,23 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
       .getByText(ursache.name, { exact: true })
       .locator('xpath=ancestor::div[contains(@class,"space-y-1.5")][1]');
     const stufe = ursacheZeile.getByText(`Lvl ${ursache.level.level}`, { exact: true });
-    await expect(stufe).toHaveClass(/text-leise/);
-    await expect(stufe).not.toHaveClass(/text-gefahr/);
-    expect(await farbeWie(stufe, '--leise')).toBe(true);
-    expect(await farbeWie(stufe, '--gefahr')).toBe(false);
+    await expect(stufe).toHaveClass(/text-gefahr/);
+    await expect(stufe).not.toHaveClass(/text-leise/);
+    expect(await farbeWie(stufe, '--gefahr')).toBe(true);
+    expect(await farbeWie(stufe, '--leise')).toBe(false);
     const zustand = ursacheZeile.locator('[data-zustand="zu-niedrig"]');
     const zeichen = zustand.locator('span[aria-hidden="true"]');
     await expect(zeichen).toHaveText('⚠');
-    await expect(zeichen).not.toHaveClass(/bg-gefahr|text-gefahr/);
-    expect(await farbeWie(zeichen, '--haupt')).toBe(true);
+    await expect(zeichen).toHaveClass(/text-gefahr/);
+    await expect(zeichen).not.toHaveClass(/bg-gefahr|text-haupt/);
+    expect(await farbeWie(zeichen, '--gefahr')).toBe(true);
+    expect(await farbeWie(zeichen, '--haupt')).toBe(false);
     expect(await flaecheWie(zeichen, '--gefahr')).toBe(false);
+    const label = zustand.getByText('Lvl zu niedrig', { exact: true });
+    if ((await label.count()) > 0) {
+      await expect(label).toHaveClass(/text-gefahr/);
+      expect(await farbeWie(label, '--gefahr')).toBe(true);
+    }
     const nameKasten = await ursacheZeile.getByText(ursache.name, { exact: true }).boundingBox();
     const hinweisKasten = await zustand.boundingBox();
     const balkenKasten = await ursacheZeile.locator('.balken').boundingBox();
@@ -307,10 +314,20 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
   if (bild.allgemein !== null || bild.jeZiel.some((eintrag) => ids.has(eintrag.zielId))) {
     const abzug = bereich.locator('[data-abzug="ziel"]').first();
     await expect(abzug).toBeVisible();
-    await expect(abzug).toHaveClass(/text-haupt/);
-    await expect(abzug).not.toHaveClass(/text-gefahr/);
-    expect(await farbeWie(abzug, '--haupt')).toBe(true);
-    expect(await farbeWie(abzug, '--gefahr')).toBe(false);
+    await expect(abzug).toHaveClass(/text-gefahr/);
+    await expect(abzug).not.toHaveClass(/text-haupt/);
+    expect(await farbeWie(abzug, '--gefahr')).toBe(true);
+    expect(await farbeWie(abzug, '--haupt')).toBe(false);
+  }
+  const ruhig = werte.find((attribut) => !bild.ursachen.includes(attribut.id));
+  if (ruhig) {
+    const ruhigeZeile = bereich
+      .getByText(ruhig.name, { exact: true })
+      .locator('xpath=ancestor::div[contains(@class,"space-y-1.5")][1]');
+    const ruhigeStufe = ruhigeZeile.getByText(`Lvl ${ruhig.level.level}`, { exact: true });
+    await expect(ruhigeStufe).toHaveClass(/text-leise/);
+    await expect(ruhigeStufe).not.toHaveClass(/text-gefahr/);
+    await expect(ruhigeZeile.locator('.balken')).not.toHaveClass(/text-gefahr|bg-gefahr|border-gefahr/);
   }
 
   let einLevel = 0;
@@ -409,7 +426,8 @@ async function pruefeChronik(seite: Page, info: TestInfo): Promise<void> {
 
   await karte.click();
   const dialog = seite.getByRole('dialog');
-  await expect(dialog.locator('[class*="gefahr"]')).toHaveCount(0);
+  await expect(dialog.locator('[class*="gefahr"]')).toHaveCount(1);
+  await expect(dialog.locator('.lucide-swords')).toHaveClass(/text-gefahr/);
   await expect(dialog.getByText(/Level \d/)).toBeVisible();
   await expect(dialog.getByText(/Kampf-XP/)).toBeVisible();
   if (boss && boss.beute > 0) {
@@ -478,20 +496,36 @@ test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
     } else {
       await expect(hinweis.getByRole('button', { name: 'Lvl zu niedrig' })).toBeVisible();
     }
-    await expect(koennen.locator('.text-gefahr', { hasText: /^Lvl / })).toHaveCount(0);
+    const hinweisZahl = await koennen.locator('[data-zustand="zu-niedrig"]').count();
+    const roteStufen = koennen
+      .locator('.attributzeile')
+      .filter({ has: page.locator('[data-zustand="zu-niedrig"]') })
+      .locator('span.text-gefahr', { hasText: /^Lvl \d/ });
+    await expect(roteStufen).toHaveCount(hinweisZahl);
     const zeile = hinweis.locator('xpath=ancestor::div[contains(@class,"attributzeile")][1]');
-    const stufe = zeile.locator('span', { hasText: /^Lvl / }).last();
-    await expect(stufe).toHaveClass(/text-leise/);
-    await expect(stufe).not.toHaveClass(/text-gefahr/);
-    expect(await farbeWie(stufe, '--leise')).toBe(true);
+    const stufe = zeile.locator('span', { hasText: /^Lvl \d/ }).last();
+    await expect(stufe).toHaveClass(/text-gefahr/);
+    await expect(stufe).not.toHaveClass(/text-leise/);
+    expect(await farbeWie(stufe, '--gefahr')).toBe(true);
     const zeichen = hinweis.locator('span[aria-hidden="true"]');
-    await expect(zeichen).toHaveClass(/text-haupt/);
-    await expect(zeichen).not.toHaveClass(/bg-gefahr|text-gefahr/);
+    await expect(zeichen).toHaveClass(/text-gefahr/);
+    await expect(zeichen).not.toHaveClass(/bg-gefahr|text-haupt/);
+    expect(await farbeWie(zeichen, '--gefahr')).toBe(true);
     expect(await flaecheWie(zeichen, '--gefahr')).toBe(false);
+    if (hinweisText.includes('Lvl zu niedrig')) {
+      await expect(hinweis.getByText('Lvl zu niedrig', { exact: true })).toHaveClass(/text-gefahr/);
+    }
     const abzug = zeile.locator('[data-abzug="ziel"]');
     if ((await abzug.count()) > 0) {
-      await expect(abzug).toHaveClass(/text-haupt/);
-      await expect(abzug).not.toHaveClass(/text-gefahr/);
+      await expect(abzug).toHaveClass(/text-gefahr/);
+      await expect(abzug).not.toHaveClass(/text-haupt/);
+    }
+    const normal = koennen.locator('.attributzeile').filter({ hasNot: page.locator('[data-zustand="zu-niedrig"]') });
+    if ((await normal.count()) > 0) {
+      const normaleStufe = normal.first().locator('span', { hasText: /^Lvl \d/ }).last();
+      await expect(normaleStufe).toHaveClass(/text-leise/);
+      await expect(normaleStufe).not.toHaveClass(/text-gefahr/);
+      await expect(normal.first().locator('.balken')).not.toHaveClass(/text-gefahr|bg-gefahr|border-gefahr/);
     }
     await zeile.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `tmp-test/balken-boss-dialog/${testInfo.project.name}-koennen-stufe.png` });

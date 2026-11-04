@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.": "首领符号和按百分比扣除的经验为红色。属性过低时，警告符号、文字和等级为红色。",
   "Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.": "属性的状态紧跟在名称后面，等级仍在右侧。空间不够时只保留警告符号，点按后显示文字。",
   "Der Levelring schließt mit einem kurzen Verlauf, einer Spitze und einem leichten Glühen ab.": "等级环的末端有短渐变、尖端和轻微发光。",
   "Die Schwerter der Bosse bleiben im Ring.": "首领的剑留在圆环里。",

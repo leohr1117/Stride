@@ -185,7 +185,7 @@ export function EintragDetail({ eintrag }: { eintrag: Eintrag }) {
       {boss && (
         <div className="mt-2 rounded-2xl border border-rand p-3">
           <div className="flex items-center gap-2">
-            <Swords className="size-4 shrink-0 text-haupt" aria-hidden="true" />
+            <Swords className="size-4 shrink-0 text-gefahr" aria-hidden="true" />
             <p className="min-w-0 truncate font-medium">{eintrag.vorhaben?.titel}</p>
           </div>
           <div className="mt-2 flex flex-wrap gap-1.5">

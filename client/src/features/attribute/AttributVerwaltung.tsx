@@ -110,7 +110,7 @@ export function AttributBereich({
                         />
                       </span>
                     }
-                    wert={<span className="text-leise">{stufe}</span>}
+                    wert={<span className={ursache ? 'text-gefahr' : 'text-leise'}>{stufe}</span>}
                     rechts={menue}
                   />
                 )}

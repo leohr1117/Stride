@@ -32,8 +32,11 @@ describe('bedeutungsfarben', () => {
     expect(kontrast(dunkel.schalterAn, '#202020')).toBeGreaterThanOrEqual(3);
     expect(kontrast(hell.fortschritt, '#ebebeb')).toBeGreaterThanOrEqual(3);
     expect(kontrast(dunkel.fortschritt, '#2a2a2a')).toBeGreaterThanOrEqual(3);
+    expect(hell.gefahr).not.toBe('#f87171');
     expect(kontrast(hell.gefahrText, hell.gefahr)).toBeGreaterThanOrEqual(4.5);
     expect(kontrast(dunkel.gefahrText, dunkel.gefahr)).toBeGreaterThanOrEqual(4.5);
+    expect(kontrast(hell.gefahr, '#ffffff')).toBeGreaterThanOrEqual(3);
+    expect(kontrast(dunkel.gefahr, '#141414')).toBeGreaterThanOrEqual(3);
     for (const flaeche of HELL_FLAECHEN) {
       expect(kontrast(hell.streak, flaeche)).toBeGreaterThanOrEqual(4.5);
       expect(kontrast(hell.gefahr, flaeche)).toBeGreaterThanOrEqual(4.5);

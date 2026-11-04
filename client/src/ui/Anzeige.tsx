@@ -6,7 +6,7 @@ import { RING_HEUTE, RING_MITTE, RING_RADIUS, RING_SCHRIFT_AB, RING_UMFANG, ring
 
 export function XpAbzug({ prozent, schrift = 'text-xs' }: { prozent: number; schrift?: string }) {
   return (
-    <span data-abzug="ziel" className={`zahl shrink-0 font-medium whitespace-nowrap text-haupt ${schrift}`}>
+    <span data-abzug="ziel" className={`zahl shrink-0 font-medium whitespace-nowrap text-gefahr ${schrift}`}>
       −{prozentPunkte(prozent)} XP
     </span>
   );

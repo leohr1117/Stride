@@ -31,7 +31,7 @@ export function BossRing({
   const offset = UMFANG * (1 - anteil);
   const mitte = GROESSE / 2;
   const strich = ton === 'haupt' ? 'var(--haupt)' : 'var(--gefahr)';
-  const klinge = ton === 'haupt' ? 'text-haupt' : 'text-gefahr';
+  const klinge = 'text-gefahr';
   const kasten = klein ? 'size-5' : 'size-9';
   const klingeKlasse = klein ? 'absolute' : 'absolute size-3.5';
   const klingeStil: CSSProperties | undefined = klein

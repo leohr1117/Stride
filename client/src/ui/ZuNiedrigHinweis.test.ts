@@ -9,7 +9,8 @@ describe('ZuNiedrigHinweis', () => {
     expect(html).toContain('data-zustand="zu-niedrig"');
     expect(html).toContain('⚠');
     expect(html).toContain('Lvl zu niedrig');
-    expect(html).toContain('text-haupt');
+    expect(html).toContain('text-gefahr');
+    expect(html).not.toContain('text-haupt');
     expect(html).toContain('text-[13px]');
     expect(html).toContain('text-[16px]');
     expect(html).not.toContain('<button');

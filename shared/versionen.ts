@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.46',
+    seiten: 'Heute, Können, Haben, Verlauf',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.'],
+      },
+    ],
+  },
+  {
     version: '3.56.45',
     seiten: 'Heute, Können, Haben',
     abschnitte: [

@@ -161,7 +161,7 @@ export function zustandNurZeichen(eingabe: {
 
 function zustandZeichen() {
   return (
-    <span aria-hidden="true" className={`shrink-0 text-haupt ${ZEICHEN_SCHRIFT}`}>
+    <span aria-hidden="true" className={`shrink-0 text-gefahr ${ZEICHEN_SCHRIFT}`}>
       ⚠
     </span>
   );
@@ -170,7 +170,7 @@ function zustandZeichen() {
 export function ZuNiedrigHinweis({ nurZeichen = false }: { nurZeichen?: boolean }) {
   if (nurZeichen) {
     return (
-      <span data-zustand="zu-niedrig" className={`inline-flex shrink-0 items-center whitespace-nowrap text-leise ${HINWEIS_SCHRIFT}`}>
+      <span data-zustand="zu-niedrig" className={`inline-flex shrink-0 items-center whitespace-nowrap text-gefahr ${HINWEIS_SCHRIFT}`}>
         <InfoHinweis
           text="Lvl zu niedrig"
           label="Lvl zu niedrig"
@@ -183,9 +183,9 @@ export function ZuNiedrigHinweis({ nurZeichen = false }: { nurZeichen?: boolean 
     );
   }
   return (
-    <span data-zustand="zu-niedrig" className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-leise ${HINWEIS_SCHRIFT}`}>
+    <span data-zustand="zu-niedrig" className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-gefahr ${HINWEIS_SCHRIFT}`}>
       {zustandZeichen()}
-      <span>{tx(HINWEIS)}</span>
+      <span className="text-gefahr">{tx(HINWEIS)}</span>
     </span>
   );
 }
