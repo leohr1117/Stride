@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "En Repaso, la sección se llama Cambio. Las cifras son uniformes, las flechas de la semana son más grandes y los campos ya no se pueden arrastrar.",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "En Historial, el botón para cargar registros anteriores tiene un borde en lugar de un fondo gris.",
   "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "En Metas, las organizaciones son más bajas. Los proyectos debajo están sangrados. Terminado aparece en la segunda línea.",
   "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "En Hoy, las secciones ocupan todo el ancho. Los jefes están en una lista. Base, Valores y Actividad se pliegan igual.",
@@ -1567,7 +1568,7 @@ export const TEXTE: Record<string, string> = {
   "Gescheitert:": "Fracasado:",
   "Gestern ausgesetzt": "Ayer en pausa",
   "Gewicht {name}": "Peso {name}",
-  "Gewachsen": "Creció",
+  "Veränderung": "Cambio",
   "Größe": "Tamaño",
   "Haben hinzufügen": "Añadir un bien",
   "Herkunft · {name}": "Origen · {name}",

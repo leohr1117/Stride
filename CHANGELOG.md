@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.33
+
+### Geändert
+
+- Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.
+
 ## 3.56.32
 
 ### Geändert

@@ -97,7 +97,15 @@ export interface BalkenWert {
 
 const BALKEN_SICHTBAR = 6;
 
-export function BalkenListe({ werte, farbe = 'var(--akzent)' }: { werte: BalkenWert[]; farbe?: string }) {
+export function BalkenListe({
+  werte,
+  farbe = 'var(--akzent)',
+  vorzeichenHaupt = false,
+}: {
+  werte: BalkenWert[];
+  farbe?: string;
+  vorzeichenHaupt?: boolean;
+}) {
   let maximum = 0;
   for (const eintrag of werte) {
     maximum = Math.max(maximum, eintrag.wert);
@@ -111,7 +119,9 @@ export function BalkenListe({ werte, farbe = 'var(--akzent)' }: { werte: BalkenW
         <div key={eintrag.schluessel} className="space-y-1">
           <div className="flex items-center justify-between gap-3 text-sm">
             <span className="flex min-w-0 items-center gap-2">{eintrag.label}</span>
-            <span className={`zahl shrink-0 text-xs ${eintrag.wert < 0 ? 'text-haupt' : 'text-leise'}`}>{eintrag.text}</span>
+            <span className={`zahl shrink-0 text-xs ${vorzeichenHaupt || eintrag.wert < 0 ? 'text-haupt' : 'text-leise'}`}>
+              {eintrag.text}
+            </span>
           </div>
           <Fortschrittsbalken
             anteil={eintrag.wert > 0 && maximum > 0 ? eintrag.wert / maximum : 0}

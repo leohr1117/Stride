@@ -68,7 +68,7 @@ async function farbeWie(ziel: Locator, variable: '--gefahr' | '--haupt' | '--lei
   }, variable);
 }
 
-async function flaecheWie(ziel: Locator, variable: '--gefahr' | '--flaeche-2'): Promise<boolean> {
+async function flaecheWie(ziel: Locator, variable: '--gefahr' | '--flaeche-2' | '--fortschritt'): Promise<boolean> {
   return ziel.evaluate((element, name) => {
     const probe = document.createElement('span');
     probe.style.backgroundColor = `var(${name})`;
@@ -600,8 +600,8 @@ test('Rückblick zeigt verlorenes XP in der Hauptfarbe', async ({ page }, testIn
     expect(schritte).toBe(0);
     const titel = page.locator('main p.zahl').first();
     await expect(titel).toBeVisible();
-    const bereich = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Gewachsen', exact: true }) });
-    await expect(bereich.getByRole('heading', { name: 'Gewachsen', exact: true })).toBeVisible();
+    const bereich = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Veränderung', exact: true }) });
+    await expect(bereich.getByRole('heading', { name: 'Veränderung', exact: true })).toBeVisible();
     await alleAnzeigen(bereich);
     const verlust = bereich.locator('span.zahl', { hasText: /^\u2212/ });
     await expect(verlust.first()).toBeVisible();
@@ -609,6 +609,11 @@ test('Rückblick zeigt verlorenes XP in der Hauptfarbe', async ({ page }, testIn
     await expect(verlust.first()).not.toHaveClass(/text-gefahr/);
     expect(await farbeWie(verlust.first(), '--haupt')).toBe(true);
     expect(await farbeWie(verlust.first(), '--gefahr')).toBe(false);
+    const plus = bereich.locator('span.zahl', { hasText: /^\+/ }).first();
+    await expect(plus).toHaveClass(/text-haupt/);
+    const fuellung = bereich.locator('.h-2 > div').first();
+    await expect(fuellung).toBeVisible();
+    expect(await flaecheWie(fuellung, '--fortschritt')).toBe(true);
     await expect(bereich.locator('.text-gefahr')).toHaveCount(0);
     await verlust.first().scrollIntoViewIfNeeded();
     await ohneSeitlichenUeberlauf(page);

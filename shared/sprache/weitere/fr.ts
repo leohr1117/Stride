@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "Dans Bilan, la section s'appelle Changement. Les chiffres sont uniformes, les flèches de semaine sont plus grandes et les champs ne se laissent plus étirer.",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "Dans Historique, le bouton pour charger les entrées plus anciennes a un cadre à la place d'un fond gris.",
   "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "Dans Objectifs, les organisations sont plus basses. Les projets en dessous sont en retrait. Terminé apparaît sur la deuxième ligne.",
   "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "Sur Aujourd'hui, les sections occupent toute la largeur. Les boss sont dans une liste. Base, Valeurs et Activité se replient de la même façon.",
@@ -1567,7 +1568,7 @@ export const TEXTE: Record<string, string> = {
   "Gescheitert:": "Raté :",
   "Gestern ausgesetzt": "En pause hier",
   "Gewicht {name}": "Poids {name}",
-  "Gewachsen": "A grandi",
+  "Veränderung": "Changement",
   "Größe": "Taille",
   "Haben hinzufügen": "Ajouter un bien",
   "Herkunft · {name}": "Origine · {name}",

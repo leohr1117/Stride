@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "振り返りでは、この欄は変化という名前です。指標の見た目は揃い、週の矢印は大きくなり、欄はもう引き伸ばせません。",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "履歴では、古い記録を読み込むボタンが灰色の面ではなく枠になりました。",
   "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "目標では組織が低くなり、その下のプロジェクトは字下げされます。完了は2行目に出ます。",
   "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "今日では各欄が幅いっぱいに並びます。ボスは一覧です。基本、値、活動は同じように折りたたみます。",
@@ -1567,7 +1568,7 @@ export const TEXTE: Record<string, string> = {
   "Gescheitert:": "失敗：",
   "Gestern ausgesetzt": "昨日は休んだ",
   "Gewicht {name}": "重み {name}",
-  "Gewachsen": "成長",
+  "Veränderung": "変化",
   "Größe": "大きさ",
   "Haben hinzufügen": "資産を追加",
   "Herkunft · {name}": "由来 · {name}",

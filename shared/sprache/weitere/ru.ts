@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "В «Итогах» раздел называется «Изменение». Показатели выглядят одинаково, стрелки недель крупнее, а поля больше нельзя растягивать.",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "В «Истории» у кнопки загрузки старых записей рамка вместо серой заливки.",
   "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "В «Целях» организации ниже. Проекты под ними сдвинуты вправо. «Завершено» стоит во второй строке.",
   "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "На странице «Сегодня» разделы занимают всю ширину. Боссы стоят списком. База, Значения и Активность сворачиваются одинаково.",
@@ -1567,7 +1568,7 @@ export const TEXTE: Record<string, string> = {
   "Gescheitert:": "Провал:",
   "Gestern ausgesetzt": "Вчера пропуск",
   "Gewicht {name}": "Вес {name}",
-  "Gewachsen": "Вырос",
+  "Veränderung": "Изменение",
   "Größe": "Размер",
   "Haben hinzufügen": "Добавить актив",
   "Herkunft · {name}": "Источник · {name}",

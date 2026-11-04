@@ -307,6 +307,40 @@ textarea.feld-eingabe {
   font-size: 16px;
 }
 
+:root[data-stil] .rueckblick-reflexion .feld-label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+:root[data-stil] textarea.feld-eingabe.rueckblick-feld {
+  box-sizing: border-box;
+  resize: none;
+  field-sizing: content;
+  padding: 12px;
+  font-size: 16px;
+  line-height: 24px;
+  min-height: calc(24px + 24px + 2px);
+  max-height: calc(6 * 24px + 24px + 2px);
+  overflow-y: auto;
+}
+
+:root[data-stil] button.knopf[data-wochen-pfeil] {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0;
+  flex: none;
+  color: var(--haupt);
+}
+
+:root[data-stil] button.knopf[data-wochen-pfeil][aria-disabled='true'] {
+  color: var(--leise);
+  opacity: 1;
+  cursor: default;
+}
+
 :focus:not(:focus-visible) {
   outline: none;
 }

@@ -1,6 +1,56 @@
 import fs from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+
+function kanal(wert: number): number {
+  const anteil = wert / 255;
+  return anteil <= 0.04045 ? anteil / 12.92 : ((anteil + 0.055) / 1.055) ** 2.4;
+}
+
+function rgb(text: string): [number, number, number, number] {
+  const teile = text.match(/[\d.]+/g)?.map(Number) ?? [];
+  return [teile[0] ?? 0, teile[1] ?? 0, teile[2] ?? 0, teile[3] ?? 1];
+}
+
+function kontrast(farbe: string, grund: string, deckkraft: number): number {
+  const [vr, vg, vb, va] = rgb(farbe);
+  const [gr, gg, gb] = rgb(grund);
+  const deckung = va * deckkraft;
+  const rot = vr * deckung + gr * (1 - deckung);
+  const gruen = vg * deckung + gg * (1 - deckung);
+  const blau = vb * deckung + gb * (1 - deckung);
+  const vorn = 0.2126 * kanal(rot) + 0.7152 * kanal(gruen) + 0.0722 * kanal(blau);
+  const hinten = 0.2126 * kanal(gr) + 0.7152 * kanal(gg) + 0.0722 * kanal(gb);
+  const hell = Math.max(vorn, hinten);
+  const dunkel = Math.min(vorn, hinten);
+  return (hell + 0.05) / (dunkel + 0.05);
+}
+
+async function pfeil(knopf: Locator) {
+  return knopf.evaluate((element) => {
+    const kasten = element.getBoundingClientRect();
+    const stil = getComputedStyle(element);
+    let hintergrund = 'rgba(0, 0, 0, 0)';
+    let knoten: Element | null = element;
+    while (knoten) {
+      const grund = getComputedStyle(knoten).backgroundColor;
+      if (grund && grund !== 'rgba(0, 0, 0, 0)' && grund !== 'transparent') {
+        hintergrund = grund;
+        break;
+      }
+      knoten = knoten.parentElement;
+    }
+    return {
+      breite: Math.round(kasten.width),
+      hoehe: Math.round(kasten.height),
+      opacity: Number(stil.opacity),
+      farbe: stil.color,
+      hintergrund,
+      gesperrt: element.getAttribute('aria-disabled'),
+      disabled: element instanceof HTMLButtonElement ? element.disabled : false,
+    };
+  });
+}
 
 async function funktionen(seite: Page, werte: Record<string, boolean>): Promise<void> {
   const antwort = await seite.request.patch('/api/einstellungen', { data: { funktionen: werte } });
@@ -70,25 +120,84 @@ test('Verlauf, Rückblick, Statistik und Basis', async ({ page }, testInfo) => {
 
     await page.goto('/rueckblick');
     await expect(page.locator('main h1')).toHaveText('Rückblick');
-    await expect(page.getByRole('button', { name: 'Vorherige Woche' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Nächste Woche' })).toBeVisible();
+    const zurueck = page.getByRole('button', { name: 'Vorherige Woche' });
+    const weiter = page.getByRole('button', { name: 'Nächste Woche' });
+    await expect(zurueck).toBeVisible();
+    await expect(weiter).toBeVisible();
     const woche = page.locator('main p.zahl').first();
     const titel = await woche.innerText();
-    await page.getByRole('button', { name: 'Vorherige Woche' }).click();
+    const gesperrt = await pfeil(weiter);
+    expect(gesperrt.breite).toBe(48);
+    expect(gesperrt.hoehe).toBe(48);
+    expect(gesperrt.disabled).toBe(false);
+    expect(gesperrt.gesperrt).toBe('true');
+    expect(gesperrt.opacity).toBe(1);
+    expect(kontrast(gesperrt.farbe, gesperrt.hintergrund, gesperrt.opacity)).toBeGreaterThanOrEqual(3);
+    const offen = await pfeil(zurueck);
+    expect(offen.breite).toBe(48);
+    expect(offen.hoehe).toBe(48);
+    expect(offen.gesperrt).toBeNull();
+    await weiter.click({ force: true });
+    await expect(woche).toHaveText(titel);
+    await zurueck.click();
     await expect(woche).not.toHaveText(titel);
-    await page.getByRole('button', { name: 'Nächste Woche' }).click();
+    await weiter.click();
     await expect(woche).toHaveText(titel);
     const abschnitte = (await page.locator('main h2').allInnerTexts()).map((text) => text.trim());
     const zahlen = abschnitte.indexOf('Zahlen');
     const reflexion = abschnitte.indexOf('Reflexion');
     expect(zahlen).toBeGreaterThanOrEqual(0);
     expect(reflexion).toBeGreaterThan(zahlen);
-    for (const name of ['Höhepunkte', 'Gewachsen']) {
+    for (const name of ['Höhepunkte', 'Veränderung']) {
       const index = abschnitte.indexOf(name);
       if (index >= 0) {
         expect(index).toBeLessThan(zahlen);
       }
     }
+    const label = page.getByText('Was lief gut?', { exact: true });
+    await expect(label).toBeVisible();
+    const labelStil = await label.evaluate((element) => {
+      const stil = getComputedStyle(element);
+      return { groesse: stil.fontSize, gewicht: Number(stil.fontWeight) };
+    });
+    expect(labelStil.groesse).toBe('14px');
+    expect(labelStil.gewicht).toBeGreaterThanOrEqual(600);
+    const feld = page.getByRole('textbox', { name: 'Was lief gut?' });
+    const feldStil = await feld.evaluate((element) => {
+      const stil = getComputedStyle(element);
+      return {
+        resize: stil.resize,
+        schrift: stil.fontSize,
+        abstand: stil.paddingTop,
+        waechst: stil.getPropertyValue('field-sizing'),
+      };
+    });
+    expect(feldStil.resize).toBe('none');
+    expect(feldStil.schrift).toBe('16px');
+    expect(feldStil.abstand).toBe('12px');
+    expect(feldStil.waechst).toBe('content');
+    const wochenzahlen = page.locator('[data-wochenzahl]');
+    await expect(wochenzahlen).toHaveCount(4);
+    const kennzahl = await wochenzahlen.first().evaluate((element) => {
+      const stil = getComputedStyle(element);
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--haupt)';
+      document.body.append(probe);
+      const haupt = getComputedStyle(probe).color;
+      probe.remove();
+      return {
+        groesse: stil.fontSize,
+        zeile: stil.lineHeight,
+        gewicht: Number(stil.fontWeight),
+        haupt: stil.color === haupt,
+      };
+    });
+    expect(kennzahl.groesse).toBe('20px');
+    expect(kennzahl.zeile).toBe('24px');
+    expect(kennzahl.gewicht).toBe(600);
+    expect(kennzahl.haupt).toBe(true);
+    const spalten = await page.locator('[data-wochenraster]').evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length);
+    expect(spalten).toBe(2);
     await expect(page.getByText('Was lief gut?')).toBeVisible();
     await expect(page.getByText('Was nehme ich mit?')).toBeVisible();
     await expect(page.getByText('Worauf konzentriere ich mich nächste Woche?')).toBeVisible();

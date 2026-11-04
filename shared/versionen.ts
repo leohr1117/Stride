@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.33',
+    seiten: 'Rückblick',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.32',
     seiten: 'Verlauf',
     abschnitte: [

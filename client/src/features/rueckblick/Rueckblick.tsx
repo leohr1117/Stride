@@ -26,6 +26,7 @@ import {
 } from '../../format.ts';
 
 const HOEHEPUNKTE_SICHTBAR = 6;
+const KENNZAHL = 'zahl text-[20px] leading-6 font-semibold text-haupt';
 
 const FRAGEN: { feld: keyof RueckblickAntworten; frage: string }[] = [
   { feld: 'gut', frage: 'Was lief gut?' },
@@ -70,21 +71,26 @@ export function RueckblickSeite() {
           <div className="flex items-center justify-between gap-3">
             <Knopf
               variante="leise"
-              className="size-12 p-0"
+              data-wochen-pfeil=""
               aria-label={tx("Vorherige Woche")}
               onClick={() => setWoche(verschiebeTag(woche, -TAGE_PRO_WOCHE))}
             >
-              <ChevronLeft className="size-5" />
+              <ChevronLeft className="size-5" aria-hidden="true" />
             </Knopf>
             <p className="zahl text-center text-sm font-medium">{wochenTitel(rueckblick)}</p>
             <Knopf
               variante="leise"
-              className="size-12 p-0"
+              data-wochen-pfeil=""
               aria-label={tx("Nächste Woche")}
-              disabled={rueckblick.aktuelleWoche}
-              onClick={() => setWoche(verschiebeTag(woche, TAGE_PRO_WOCHE))}
+              aria-disabled={rueckblick.aktuelleWoche || undefined}
+              onClick={() => {
+                if (rueckblick.aktuelleWoche) {
+                  return;
+                }
+                setWoche(verschiebeTag(woche, TAGE_PRO_WOCHE));
+              }}
             >
-              <ChevronRight className="size-5" />
+              <ChevronRight className="size-5" aria-hidden="true" />
             </Knopf>
           </div>
 
@@ -120,10 +126,12 @@ export function RueckblickSeite() {
 
           {rueckblick.attribute.length > 0 && (
             <section>
-              <AbschnittKopf titel={tx("Gewachsen")} />
+              <AbschnittKopf titel={tx("Veränderung")} />
               <Flaeche>
                 <div className="px-4 py-3">
               <BalkenListe
+                farbe="var(--fortschritt)"
+                vorzeichenHaupt
                 werte={rueckblick.attribute.map((attribut) => ({
                   schluessel: attribut.attributId,
                   label: (
@@ -134,7 +142,6 @@ export function RueckblickSeite() {
                   ),
                   wert: attribut.xp,
                   text: `${mitVorzeichen(attribut.xp)} XP`,
-                  farbe: attribut.farbe,
                 }))}
               />
                 </div>
@@ -157,23 +164,23 @@ function WochenZahlen({ rueckblick }: { rueckblick: Rueckblick }) {
     <section>
       <AbschnittKopf titel={tx("Zahlen")} />
       <Flaeche>
-      <div className="grid grid-cols-2 gap-x-4 gap-y-3 px-4 py-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-3 px-4 py-3" data-wochenraster="">
         <div>
-          <p className="text-xl font-bold text-xp">+{zahl(rueckblick.xp)}</p>
+          <p className={KENNZAHL} data-wochenzahl="">{mitVorzeichen(rueckblick.xp)}</p>
           <p className="text-xs text-leise">XP{trend && ` · ${trend}`}</p>
         </div>
         <div>
-          <p className="text-xl font-bold">{zahl(rueckblick.eintraege)}</p>
+          <p className={KENNZAHL} data-wochenzahl="">{zahl(rueckblick.eintraege)}</p>
           <p className="text-xs text-leise">{tx("Einträge")}</p>
         </div>
         <div>
-          <p className="text-xl font-bold">
+          <p className={KENNZAHL} data-wochenzahl="">
             {rueckblick.aktiveTage}/{TAGE_PRO_WOCHE}
           </p>
           <p className="text-xs text-leise">{tx("Aktive Tage")}</p>
         </div>
         <div>
-          <p className="text-xl font-bold">{rueckblick.besterTag ? zahl(rueckblick.besterTag.xp) : '–'}</p>
+          <p className={KENNZAHL} data-wochenzahl="">{rueckblick.besterTag ? zahl(rueckblick.besterTag.xp) : '–'}</p>
           <p className="truncate text-xs text-leise">
             {rueckblick.besterTag
               ? tx('Bester Tag · {datum}', { datum: datumLang(rueckblick.besterTag.datum) })
@@ -225,11 +232,11 @@ function RueckblickFormular({ rueckblick }: { rueckblick: Rueckblick }) {
     <section>
       <AbschnittKopf titel={tx("Reflexion")} />
       <Flaeche>
-      <Formular className="p-4" onAbsenden={absenden}>
+      <Formular className="rueckblick-reflexion p-4" onAbsenden={absenden}>
         {FRAGEN.map(({ feld, frage }) => (
           <Feld key={feld} label={frage} fehler={leer && feld === 'gut' ? 'Schreib zuerst eine Antwort.' : null}>
             <textarea
-              className={`${EINGABE_STIL} min-h-20 resize-y`}
+              className={`${EINGABE_STIL} rueckblick-feld`}
               maxLength={GRENZEN.notizMax}
               value={antworten[feld]}
               onChange={(ereignis) => {

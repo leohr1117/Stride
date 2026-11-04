@@ -303,7 +303,7 @@ export const PAARE = [
   ['Gescheitert:', 'Failed:'],
   ['Gestern ausgesetzt', 'Skipped yesterday'],
   ['Gewicht {name}', 'Weight {name}'],
-  ['Gewachsen', 'Grew'],
+  ['Veränderung', 'Change'],
   ['Größe', 'Size'],
   ['Haben hinzufügen', 'Add an asset'],
   ['Herkunft · {name}', 'From · {name}'],
