@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "В «Истории» у кнопки загрузки старых записей рамка вместо серой заливки.",
   "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "В «Целях» организации ниже. Проекты под ними сдвинуты вправо. «Завершено» стоит во второй строке.",
   "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "На странице «Сегодня» разделы занимают всю ширину. Боссы стоят списком. База, Значения и Активность сворачиваются одинаково.",
   "seit {datum}": "с {datum}",

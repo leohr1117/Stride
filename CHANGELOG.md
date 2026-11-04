@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.32
+
+### Geändert
+
+- Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.
+
 ## 3.56.31
 
 ### Geändert

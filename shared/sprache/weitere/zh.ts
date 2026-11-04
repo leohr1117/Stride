@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "在历程中，加载更早记录的按钮改为边框，不再是灰色底。",
   "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "在目标中，组织更矮。其下的项目向内缩进。已完成显示在第二行。",
   "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "在今天，各区域占满整行宽度。首领以列表显示。基础、数值和活动以同样的方式折叠。",
   "seit {datum}": "自 {datum}",

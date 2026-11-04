@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "履歴では、古い記録を読み込むボタンが灰色の面ではなく枠になりました。",
   "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "目標では組織が低くなり、その下のプロジェクトは字下げされます。完了は2行目に出ます。",
   "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "今日では各欄が幅いっぱいに並びます。ボスは一覧です。基本、値、活動は同じように折りたたみます。",
   "seit {datum}": "{datum}から",

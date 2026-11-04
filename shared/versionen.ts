@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.32',
+    seiten: 'Verlauf',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.31',
     seiten: 'Ziele',
     abschnitte: [

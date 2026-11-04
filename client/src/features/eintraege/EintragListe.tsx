@@ -317,7 +317,12 @@ export function EintragListe({
 
       {abfrage.hasNextPage && (
         <div className="mt-6">
-          <Knopf className="w-full" onClick={() => void abfrage.fetchNextPage()} disabled={abfrage.isFetchingNextPage}>
+          <Knopf
+            variante="sekundaer"
+            className="knopf-zweit w-full"
+            onClick={() => void abfrage.fetchNextPage()}
+            disabled={abfrage.isFetchingNextPage}
+          >
             {abfrage.isFetchingNextPage ? tx("Lädt …") : tx("Ältere Einträge laden")}
           </Knopf>
         </div>

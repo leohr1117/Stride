@@ -325,6 +325,15 @@ html[data-eingabe='zeiger'] :focus {
   transform: scale(0.98);
 }
 
+:root .knopf.knopf-sekundaer.knopf-zweit {
+  width: 100%;
+  min-height: 48px;
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid var(--feldrand);
+  box-shadow: none;
+}
+
 .dialog-kopf {
   height: 56px;
   min-height: 56px;
