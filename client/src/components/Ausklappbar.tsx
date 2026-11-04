@@ -52,18 +52,18 @@ export function EinklappKopf({
           )}
         </Tag>
         {info ? (
-          <span className="pointer-events-auto relative z-10 inline-flex shrink-0 self-center">
+          <span className="kopf-info pointer-events-auto relative z-10 inline-flex shrink-0 self-center">
             <InfoHinweis text={info} name={titel} />
           </span>
         ) : null}
         {zusatz ? <span className="ms-2 shrink-0">{zusatz}</span> : null}
       </span>
       {aktion ? (
-        <div className="relative z-10 col-start-2 row-start-1" onClickCapture={() => !offen && beimOeffnen?.()}>
+        <div className="abschnitt-textaktion relative z-10 col-start-2 row-start-1" onClickCapture={() => !offen && beimOeffnen?.()}>
           {aktion}
         </div>
       ) : null}
-      <span aria-hidden="true" className={`pointer-events-none ${pfeilSpalte} row-start-1 flex size-12 items-center justify-center justify-self-end`}>
+      <span aria-hidden="true" className={`kopf-pfeil pointer-events-none ${pfeilSpalte} row-start-1 flex size-12 items-center justify-center justify-self-end`}>
         <ChevronRight className={`size-5 text-leise transition ${offen ? 'rotate-90' : ''}`} />
       </span>
     </div>
@@ -120,7 +120,7 @@ export function Abschnitt({
         info={info}
         aktion={aktion}
         beimOeffnen={() => setze(false)}
-        className={kopfKlasse}
+        className={kopfKlasse || 'abschnitt-kopf'}
       />
       {bleibend}
       {!eingeklappt && children}

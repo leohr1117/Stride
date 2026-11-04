@@ -1,6 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "Sur Aujourd'hui, le nombre de la série reste visible. La section en dessous n'apparaît que lorsqu'il y a quelque chose à faire.",
+  "Die Abstände über und unter den Abschnittsüberschriften sind überall gleich.": "L'espace au-dessus et en dessous des titres de section est le même partout.",
   "Bei 1 steht die Einzahl, in jeder Sprache.": "Pour 1, c'est le singulier, dans chaque langue.",
   "Schutz: alle {tage} Tag, unter Heute einsetzen": "Protection : chaque {tage} jour, à utiliser sous Aujourd'hui",
   "Rückkehr: {frist} Tag, wenn kein Schutz": "Retour : {frist} jour sans protection",

@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die Abstände über und unter den Abschnittsüberschriften sind überall gleich.', 'The space above and below section headings is the same everywhere.'],
   ['Bei 1 steht die Einzahl, in jeder Sprache.', 'A count of 1 uses the singular, in every language.'],
   ['Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.', 'On Today, the streak number stays visible. The section below appears only when there is something to do.'],
   ['Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.', 'On Today, Basics appears only in the heading. The last row opens all basics tasks.'],

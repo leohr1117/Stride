@@ -253,6 +253,72 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await expect(aktivBereich.locator('[data-flaeche]')).toBeVisible();
   await expect(aktivBereich.locator('section.karte')).toHaveCount(0);
   await expect(aktivBereich.getByText('Weniger', { exact: true })).toBeVisible();
+  const zu = page.locator('main .abschnitt-kopf > button[aria-expanded="false"]');
+  for (let index = 0; index < 6 && (await zu.count()) > 0; index += 1) {
+    await zu.first().click();
+  }
+  const dichte = await page.evaluate(() => {
+    const probleme: string[] = [];
+    const trifft = (kopf: Element, ziel: Element | null) =>
+      ziel instanceof Element && (ziel === kopf || kopf.contains(ziel));
+    for (const kopf of document.querySelectorAll('main .abschnitt-kopf')) {
+      kopf.scrollIntoView({ block: 'center' });
+      const name = kopf.querySelector('h2')?.textContent?.trim() ?? '?';
+      const kasten = kopf.getBoundingClientRect();
+      const links = Math.round(kasten.left + 16);
+      const oben = document.elementFromPoint(links, kasten.top - 21);
+      const unten = document.elementFromPoint(links, kasten.bottom + 7);
+      if (!trifft(kopf, oben) || !trifft(kopf, unten)) {
+        probleme.push(`${name}: Treffer oben ${oben?.tagName ?? 'leer'}, unten ${unten?.tagName ?? 'leer'}`);
+      }
+      const knopf = kopf.querySelector(':scope > button[aria-expanded]');
+      if (knopf instanceof HTMLElement) {
+        const taste = knopf.getBoundingClientRect();
+        if (taste.height < 48 || taste.width < 48) {
+          probleme.push(`${name}: Schalter ${Math.round(taste.width)} mal ${Math.round(taste.height)}`);
+        }
+        const schalterOben = document.elementFromPoint(links, taste.top + 1);
+        const schalterUnten = document.elementFromPoint(links, taste.bottom - 1);
+        if (schalterOben !== knopf || schalterUnten !== knopf) {
+          probleme.push(`${name}: Schalter nicht an der Kante`);
+        }
+      }
+      const aktion = kopf.querySelector('.abschnitt-textaktion a, .abschnitt-textaktion button');
+      if (aktion instanceof HTMLElement) {
+        const taste = aktion.getBoundingClientRect();
+        const mitte = taste.left + taste.width / 2;
+        const aktionOben = document.elementFromPoint(mitte, taste.top - 21);
+        const aktionUnten = document.elementFromPoint(mitte, taste.bottom + 7);
+        if (aktionOben !== aktion || aktionUnten !== aktion) {
+          probleme.push(`${name}: Textaktion nicht 48 px hoch`);
+        }
+        if (taste.width < 48) {
+          const seitlich = document.elementFromPoint(mitte - 23, taste.top + taste.height / 2);
+          if (seitlich !== aktion) probleme.push(`${name}: Textaktion schmaler als 48 px`);
+        }
+      }
+    }
+    const flaechen = [...document.querySelectorAll('main [data-flaeche]')].filter((element) => {
+      const kasten = element.getBoundingClientRect();
+      return kasten.width > 0 && kasten.height > 0;
+    });
+    const abstaende: string[] = [];
+    for (let index = 1; index < flaechen.length; index += 1) {
+      const vorher = flaechen[index - 1];
+      const aktuell = flaechen[index];
+      if (!vorher || !aktuell || vorher.contains(aktuell) || aktuell.contains(vorher)) continue;
+      const a = vorher.getBoundingClientRect();
+      const b = aktuell.getBoundingClientRect();
+      if (b.top < a.bottom - 1) continue;
+      const px = Math.round(b.top - a.bottom);
+      const von = vorher.closest('section')?.querySelector('h2')?.textContent?.trim() ?? 'Identität';
+      const nach = aktuell.closest('section')?.querySelector('h2')?.textContent?.trim() ?? '?';
+      if (Math.abs(px - 50) > 2) abstaende.push(`${von} → ${nach}: ${px}`);
+    }
+    return { probleme, abstaende };
+  });
+  expect(dichte.probleme).toEqual([]);
+  expect(dichte.abstaende).toEqual([]);
   const ordnung = await page.evaluate(() => {
     const namen = ['Bosse greifen an', 'Zurück aufstehen', 'Basis', 'Werte', 'Aktivität'];
     return namen.flatMap((name) => {

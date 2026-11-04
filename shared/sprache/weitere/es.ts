@@ -1,6 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "En Hoy, el número de la racha sigue visible. La sección de abajo aparece solo cuando hay algo que hacer.",
+  "Die Abstände über und unter den Abschnittsüberschriften sind überall gleich.": "El espacio encima y debajo de los títulos de sección es el mismo en todas partes.",
   "Bei 1 steht die Einzahl, in jeder Sprache.": "Con 1 va el singular, en cada idioma.",
   "Schutz: alle {tage} Tag, unter Heute einsetzen": "Protección: cada {tage} día, usarla en Hoy",
   "Rückkehr: {frist} Tag, wenn kein Schutz": "Regreso: {frist} día si no hay protección",

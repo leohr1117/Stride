@@ -58,9 +58,16 @@ function pruefeSeite(kopfPflicht: boolean): Bericht {
     if (sperrung !== 'normal' && parseFloat(sperrung) !== 0) merke(`${name}: Sperrung ${sperrung}`);
     if (schrift.color !== leise) merke(`${name}: Farbe weicht ab`);
     if (/\buppercase\b|\btracking-wide\b/.test(h2.className)) merke(`${name}: Versalien in der Klasse`);
+    const hinweis = [...kopf.children].find((kind) => kind.tagName === 'P');
+    const textUnten = hinweis instanceof HTMLElement ? hinweis.getBoundingClientRect().bottom : h2.getBoundingClientRect().bottom;
+    const textOben = h2.getBoundingClientRect().top;
+    const kopfHoehe = Math.round(kopf.getBoundingClientRect().height);
+    const textHoehe = Math.round(textUnten - textOben);
+    if (Math.abs(kopfHoehe - textHoehe) > 1) merke(`${name}: Kopf ${kopfHoehe} px, Text ${textHoehe} px`);
     const flaeche = kopf.closest('section')?.querySelector('[data-flaeche]');
     if (!flaeche) {
-      merke(`${name}: ohne Fläche`);
+      const zu = kopf.querySelector(':scope > button[aria-expanded="false"]');
+      if (!zu) merke(`${name}: ohne Fläche`);
       continue;
     }
     const abstand = Math.round(flaeche.getBoundingClientRect().top - kopf.getBoundingClientRect().bottom);

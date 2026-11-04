@@ -22,7 +22,7 @@ export function AbschnittKopf({
           <h2 className={TITEL}>{titel}</h2>
           {zusatz ? <span className="shrink-0">{zusatz}</span> : null}
         </div>
-        {aktion ? <div className="shrink-0">{aktion}</div> : null}
+        {aktion ? <div className="abschnitt-textaktion shrink-0">{aktion}</div> : null}
       </div>
       {hinweis ? <p className="mt-1 text-[13px] leading-[18px] break-words text-leise">{hinweis}</p> : null}
     </div>

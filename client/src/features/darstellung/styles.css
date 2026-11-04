@@ -640,8 +640,75 @@ html[data-eingabe='zeiger'] :focus {
 }
 
 .abschnitt-kopf {
+  position: relative;
+  z-index: 0;
   margin-top: 24px;
   margin-bottom: 8px;
+}
+
+.abschnitt-kopf::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -22px;
+  right: 0;
+  bottom: -8px;
+  left: 0;
+}
+
+.abschnitt-kopf.grid {
+  min-height: 18px;
+}
+
+.abschnitt-kopf.grid > span.flex {
+  line-height: 18px;
+}
+
+.abschnitt-kopf > button[aria-expanded] {
+  top: -22px;
+  bottom: -8px;
+}
+
+.abschnitt-kopf .kopf-pfeil {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 48px;
+  height: 48px;
+  min-height: 0;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.abschnitt-kopf .kopf-info button {
+  margin-top: calc((18px - 2.75rem) / 2);
+  margin-bottom: calc((18px - 2.75rem) / 2);
+}
+
+.abschnitt-kopf .abschnitt-textaktion {
+  display: flex;
+  height: 18px;
+  align-items: center;
+}
+
+.abschnitt-kopf .abschnitt-textaktion :is(a, button) {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  line-height: 18px;
+}
+
+.abschnitt-kopf .abschnitt-textaktion :is(a, button)::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -22px;
+  bottom: -8px;
+  left: 50%;
+  width: max(100%, 48px);
+  transform: translateX(-50%);
 }
 
 .aufgaben-kreis,

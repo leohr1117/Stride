@@ -1,6 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "今日では、連続の数字は表示されたままです。下の節は、することがあるときだけ出ます。",
+  "Die Abstände über und unter den Abschnittsüberschriften sind überall gleich.": "節の見出しの上下の間隔は、どこも同じです。",
   "Bei 1 steht die Einzahl, in jeder Sprache.": "数が 1 のときは単数です。どの言語でも同じです。",
   "Schutz: alle {tage} Tag, unter Heute einsetzen": "保護：{tage}日ごと、今日で使う",
   "Rückkehr: {frist} Tag, wenn kein Schutz": "復帰：保護がないときは{frist}日",

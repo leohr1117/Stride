@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.37
+
+### Geändert
+
+- Die Abstände über und unter den Abschnittsüberschriften sind überall gleich.
+
 ## 3.56.36
 
 ### Behoben

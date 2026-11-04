@@ -1,6 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
   "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "在今天，连续天数仍然可见。下方区块只在有事可做时出现。",
+  "Die Abstände über und unter den Abschnittsüberschriften sind überall gleich.": "各节标题上下的间距处处相同。",
   "Bei 1 steht die Einzahl, in jeder Sprache.": "数量为 1 时用单数，每种语言都如此。",
   "Schutz: alle {tage} Tag, unter Heute einsetzen": "保护：每 {tage} 天一次，在今天使用",
   "Rückkehr: {frist} Tag, wenn kein Schutz": "回归：没有保护时为 {frist} 天",
