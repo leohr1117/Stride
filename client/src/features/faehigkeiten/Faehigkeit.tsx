@@ -1,4 +1,4 @@
-import { tx } from '../../text.ts';
+import { tx, txMenge } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Plus, Sparkles } from 'lucide-react';
@@ -104,7 +104,7 @@ export function FaehigkeitSeite() {
           <SkillRing frei={frei} gesamt={gesamt} farbe={faehigkeit.farbe} icon={faehigkeit.icon} />
           <div className="min-w-0 flex-1">
             <p className="zahl text-sm text-leise break-words">
-              {tx('Level {level} · {anzahl} Einträge', {
+              {txMenge(faehigkeit.anzahlEintraege, 'Level {level} · {anzahl} Einträge', {
                 level: faehigkeit.level.level,
                 anzahl: zahl(faehigkeit.anzahlEintraege),
               })}

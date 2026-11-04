@@ -1,4 +1,4 @@
-import { tx } from '../../text.ts';
+import { tx, txMenge } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { DAUER_OPTIONEN } from '../../../../shared/spiel/begriffe.ts';
@@ -98,14 +98,14 @@ export function HandbuchSeite() {
       <HandbuchAbschnitt id="streak" titel="Streak">
         <ul className="list-none space-y-1 px-4 py-3 text-sm leading-5">
           <li>{tx('Pause: {tage} Tag frei', { tage: zahl(ERLAUBTE_PAUSENTAGE) })}</li>
-          <li>{tx('Schutz: alle {tage} Tage, unter Heute einsetzen', { tage: zahl(SCHUTZ.schwelleTage) })}</li>
-          <li>{tx('Rückkehr: {frist} Tage, wenn kein Schutz', { frist: zahl(RUECKKEHR.fristTage) })}</li>
+          <li>{txMenge(SCHUTZ.schwelleTage, 'Schutz: alle {tage} Tage, unter Heute einsetzen', { tage: zahl(SCHUTZ.schwelleTage) })}</li>
+          <li>{txMenge(RUECKKEHR.fristTage, 'Rückkehr: {frist} Tage, wenn kein Schutz', { frist: zahl(RUECKKEHR.fristTage) })}</li>
           <li>{tx('Schutz und Rückkehr geben keine XP')}</li>
         </ul>
         <div className="border-t border-rand">
         <Tabelle
           spalten={[tx('Streak'), tx('Faktor')]}
-          zeilen={STREAK_BEISPIELE.map((tage) => [tx('{tage} Tage', { tage: zahl(tage) }), faktorText(momentumFuerSerie(tage))])}
+          zeilen={STREAK_BEISPIELE.map((tage) => [txMenge(tage, '{tage} Tage', { tage: zahl(tage) }), faktorText(momentumFuerSerie(tage))])}
         />
         </div>
       </HandbuchAbschnitt>

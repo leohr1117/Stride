@@ -1,4 +1,4 @@
-import { tx } from '../../text.ts';
+import { tx, txMenge } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
 import { AbhakKreis } from './AbhakKreis.tsx';
@@ -33,14 +33,14 @@ function dauerTextZuZahl(text: string): { stunden: number | null; fehler: string
     return { stunden: null, fehler: null, unfertig: true };
   }
   if (!/^\d+(\.\d+)?$/.test(roh)) {
-    return { stunden: null, fehler: tx('Die Dauer muss mindestens {min} Stunden sein.', { min: String(GRENZEN.stundenMin) }), unfertig: false };
+    return { stunden: null, fehler: txMenge(GRENZEN.stundenMin, 'Die Dauer muss mindestens {min} Stunden sein.', { min: String(GRENZEN.stundenMin) }), unfertig: false };
   }
   const wert = Number(roh);
   if (wert < GRENZEN.stundenMin) {
-    return { stunden: null, fehler: tx('Die Dauer muss mindestens {min} Stunden sein.', { min: String(GRENZEN.stundenMin) }), unfertig: false };
+    return { stunden: null, fehler: txMenge(GRENZEN.stundenMin, 'Die Dauer muss mindestens {min} Stunden sein.', { min: String(GRENZEN.stundenMin) }), unfertig: false };
   }
   if (wert > GRENZEN.stundenMax) {
-    return { stunden: null, fehler: tx('Die Dauer darf höchstens {max} Stunden sein.', { max: String(GRENZEN.stundenMax) }), unfertig: false };
+    return { stunden: null, fehler: txMenge(GRENZEN.stundenMax, 'Die Dauer darf höchstens {max} Stunden sein.', { max: String(GRENZEN.stundenMax) }), unfertig: false };
   }
   return { stunden: wert, fehler: null, unfertig: false };
 }
@@ -377,7 +377,7 @@ export function BasisFormular({
             name: tx(option.label),
           })),
         ]}
-        fehler={dauer.fehler ?? (dauerErzwungen && dauer.unfertig ? tx('Die Dauer muss mindestens {min} Stunden sein.', { min: String(GRENZEN.stundenMin) }) : null)}
+        fehler={dauer.fehler ?? (dauerErzwungen && dauer.unfertig ? txMenge(GRENZEN.stundenMin, 'Die Dauer muss mindestens {min} Stunden sein.', { min: String(GRENZEN.stundenMin) }) : null)}
         bereinige={bereinigeDauer}
       />
       <Fehlermeldung fehler={speichern.error} />

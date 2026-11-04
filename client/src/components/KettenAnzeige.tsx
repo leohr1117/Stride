@@ -1,4 +1,4 @@
-import { tx } from '../text.ts';
+import { tx, txMenge } from '../text.ts';
 import { Flame } from 'lucide-react';
 import type { Projekt } from '../../../shared/api/index.ts';
 
@@ -12,7 +12,7 @@ export function KettenAnzeige({ kette, className = '' }: { kette: Projekt['kette
       title={kette.angeknackst ? tx("Gestern ausgesetzt") : tx("Tage in Folge")}
     >
       <Flame className="size-3.5" />
-      {tx('{tage} Tage', { tage: kette.laenge })}
+      {txMenge(kette.laenge, '{tage} Tage', { tage: kette.laenge })}
       {kette.angeknackst ? ` · ${tx('angeknackst')}` : ''}
     </span>
   );

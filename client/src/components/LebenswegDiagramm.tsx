@@ -1,4 +1,4 @@
-import { tx } from '../text.ts';
+import { tx, txMenge } from '../text.ts';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ALTERS_MARKEN } from '../../../shared/features/vorbilder/vorbilder.ts';
 import { kompakt, levelZahl } from '../format.ts';
@@ -51,7 +51,7 @@ export function LebenswegDiagramm({ daten, name }: { daten: LebenswegPunkt[]; na
               ];
               return (
                 <DiagrammTooltip
-                  titel={tx('Mit {alter} Jahren', { alter: punkt.alter })}
+                  titel={txMenge(punkt.alter, 'Mit {alter} Jahren', { alter: punkt.alter })}
                   untertitel={punkt.ereignis ? tx(punkt.ereignis) : undefined}
                   zeilen={zeilen}
                 />

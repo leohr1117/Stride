@@ -1,4 +1,4 @@
-import { tx } from '../../text.ts';
+import { tx, txMenge } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
@@ -434,7 +434,7 @@ function OrganisationsKopf({ organisation, onBearbeiten }: { organisation: Organ
 }
 
 function ProjektZeile({ projekt }: { projekt: Projekt }) {
-  const zaehlung = `${tx('{anzahl} Einträge', { anzahl: zahl(projekt.anzahlEintraege) })} · ${tx('{anzahl} Vorhaben offen', { anzahl: zahl(projekt.offeneVorhaben) })}`;
+  const zaehlung = `${txMenge(projekt.anzahlEintraege, '{anzahl} Einträge', { anzahl: zahl(projekt.anzahlEintraege) })} · ${txMenge(projekt.offeneVorhaben, '{anzahl} Vorhaben offen', { anzahl: zahl(projekt.offeneVorhaben) })}`;
   const neben = projekt.geschafftAm ? `${tx('Abgeschlossen')} · ${zaehlung}` : zaehlung;
   return (
     <SchnellZeile

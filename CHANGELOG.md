@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.36
+
+### Behoben
+
+- Bei 1 steht die Einzahl, in jeder Sprache.
+
 ## 3.56.35
 
 ### Geändert

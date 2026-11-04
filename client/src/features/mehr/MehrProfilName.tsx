@@ -5,7 +5,7 @@ import { GEBURTSJAHR_MIN, PROFILNAME_MAX, ZIEL_FRAGE, alterInJahren, geburtsjahr
 import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { ZielWahl } from '../../components/ProfilErstellung.tsx';
 import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Knopf, Ladeanzeige } from '../../ui/index.ts';
-import { tx } from '../../text.ts';
+import { tx, txMenge } from '../../text.ts';
 import { FormularSeite, PROFIL_ZURUECK, useEinstellungen } from './rahmen.tsx';
 
 export function NameSeite() {
@@ -71,7 +71,7 @@ function altersHinweis(jahr: number): string {
   if (alter === 1) {
     return tx('Das entspricht ungefähr einem Jahr.');
   }
-  return tx('Das entspricht ungefähr {alter} Jahren.', { alter });
+  return txMenge(alter, 'Das entspricht ungefähr {alter} Jahren.', { alter });
 }
 
 export function JahrSeite() {

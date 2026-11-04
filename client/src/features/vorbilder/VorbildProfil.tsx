@@ -25,7 +25,7 @@ import { LebenswegDiagramm, ProfilRadar } from '../../components/mitDiagramm.tsx
 import { AbschnittKopf, Fehlermeldung, Flaeche, Fortschrittsbalken, Karte, Ladeanzeige } from '../../ui/index.ts';
 import { levelZahl, prozentText } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
-import { attributName, klassenText, tx } from '../../text.ts';
+import { attributName, klassenText, tx, txMenge } from '../../text.ts';
 import { eigenesProfil } from '../../pages/eigenesProfil.ts';
 import { useVorbildFavoriten } from './favoritAktion.ts';
 import { Legende, WerteHinweis } from './vorbildTeile.tsx';
@@ -239,7 +239,7 @@ export function VorbildProfilSeite() {
         <ul className="divide-y divide-rand border-t border-rand text-sm">
           {vorbild.verlauf.map((station) => (
             <li key={station.alter} className="flex items-baseline gap-3 py-2">
-              <span className="zahl w-14 shrink-0 text-xs text-leise">{tx('{alter} Jahre', { alter: station.alter })}</span>
+              <span className="zahl w-14 shrink-0 text-xs text-leise">{txMenge(station.alter, '{alter} Jahre', { alter: station.alter })}</span>
               <span className="min-w-0 flex-1 break-words">{tx(station.ereignis)}</span>
               <span className="zahl shrink-0 whitespace-nowrap text-xs text-leise">{tx('Lvl {level}', { level: levelZahl(station.level) })}</span>
             </li>

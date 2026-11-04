@@ -1,4 +1,4 @@
-import { tx } from '../../text.ts';
+import { tx, txMenge } from '../../text.ts';
 
 export type HinweisBerechtigung = NotificationPermission | 'fehlt';
 
@@ -47,7 +47,7 @@ export function kachelText(geraete: number): string {
   if (geraete === 1) {
     return tx('An');
   }
-  return tx('{n} Geräte', { n: geraete });
+  return txMenge(geraete, '{n} Geräte', { n: geraete });
 }
 
 /** Öffentlicher VAPID-Schlüssel, base64url, als Bytes für pushManager.subscribe. */

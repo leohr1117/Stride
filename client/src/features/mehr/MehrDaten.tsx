@@ -7,7 +7,7 @@ import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { Fehlermeldung } from '../../ui/index.ts';
 import { Zeile, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { zahl } from '../../format.ts';
-import { tx } from '../../text.ts';
+import { tx, txMenge } from '../../text.ts';
 import { Bereich } from './rahmen.tsx';
 
 export function MehrDatenSeite() {
@@ -125,7 +125,7 @@ function DatenKarte() {
         onChange={(ereignis) => void dateiGewaehlt(ereignis)}
       />
       {importieren.isSuccess && (
-        <p className="mt-3 text-sm break-words text-leise">{tx('{anzahl} Datensätze importiert.', { anzahl: zahl(importieren.data.zeilen) })}</p>
+        <p className="mt-3 text-sm break-words text-leise">{txMenge(importieren.data.zeilen, '{anzahl} Datensätze importiert.', { anzahl: zahl(importieren.data.zeilen) })}</p>
       )}
       <div className="mt-3">
         <Fehlermeldung fehler={lesefehler ?? importieren.error} />

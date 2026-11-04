@@ -1,5 +1,6 @@
 import { localeFuer, type Sprache } from '../../../shared/sprache/kern.ts';
 import { zeige } from '../../../shared/sprache/index.ts';
+import { zeigeMenge } from '../../../shared/sprache/menge.ts';
 import { datumInZone } from '../../../shared/spiel/datum.ts';
 import type { HinweisAnlass } from '../../../shared/spiel/hinweis.ts';
 import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
@@ -82,7 +83,10 @@ function kurzesDatum(tag: string, sprache: Sprache): string {
 
 function textFuer(anlass: HinweisAnlass, sprache: Sprache): string {
   if (anlass.art === 'streak') {
-    return zeige('{laenge} Tage sind angeschlagen. Ein Eintrag heute hält sie.', sprache, { laenge: anlass.name });
+    const laenge = Number(anlass.name);
+    return zeigeMenge(sprache, Number.isFinite(laenge) ? laenge : 0, '{laenge} Tage sind angeschlagen. Ein Eintrag heute hält sie.', {
+      laenge: anlass.name,
+    });
   }
   if (anlass.art === 'rueckkehr') {
     return zeige('Die Rückkehr ist offen bis {datum}.', sprache, { datum: kurzesDatum(anlass.name, sprache) });

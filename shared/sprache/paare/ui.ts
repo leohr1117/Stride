@@ -1,5 +1,26 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Schutz: alle {tage} Tag, unter Heute einsetzen', 'Protection: every {tage} day, use it under Today'],
+  ['Rückkehr: {frist} Tag, wenn kein Schutz', 'Return: {frist} day if there is no protection'],
+  [
+    'Ein Tag Pause ist frei. Danach ist der Streak angeschlagen. Alle {tage} Tag Streak liegt ein Schutz bereit. Unter Heute setzt du ihn ein. Er hält die bisherigen Tage. Am selben Tag brauchst du einen Eintrag. Der Schutz gibt keine XP.',
+    'One day off is free. After that the streak is cracked. Every {tage} day of streak, one protection is ready. You use it under Today. It keeps the days so far. You need an entry the same day. Protection grants no XP.',
+  ],
+  [
+    'Setzt du ihn nicht ein, öffnet die Rückkehr für {frist} Tag. Ein Eintrag in der Frist schließt sie. Disziplin und Geist bekommen XP, wenn sie an sind. Nach der Frist ist die Rückkehr vorbei, ohne XP. Die nächste kommt erst {abstand} Tag nach dem Ende der letzten.',
+    'If you do not use it, Return opens for {frist} day. An entry within the deadline closes it. Discipline and Mind gain XP when they are on. After the deadline, Return is over, with no XP. The next one comes only {abstand} day after the last one ended.',
+  ],
+  ['Hält den {n} Tag', 'Keeps the {n} day'],
+  ['{n} Tag · Pause aufgebraucht', '{n} day · pause used up'],
+  ['{tage} Tag', '{tage} day'],
+  ['{anzahl} Eintrag', '{anzahl} entry'],
+  ['Level {level} · {anzahl} Eintrag', 'Level {level} · {anzahl} entry'],
+  ['{laenge} Tag ist angeschlagen. Ein Eintrag heute hält ihn.', '{laenge} day is cracked. An entry today keeps it.'],
+  ['{anzahl} Bereich', '{anzahl} section'],
+  ['{n} Gerät', '{n} device'],
+  ['{anzahl} Datensatz importiert.', '{anzahl} record imported.'],
+  ['{zahl} neuer Eintrag übernommen.', '{zahl} new entry imported.'],
+  ['Das entspricht ungefähr {alter} Jahr.', 'That is about {alter} year.'],
   ['Investition · {name}', 'Investment · {name}'],
   ['aus {name}', 'from {name}'],
   ['+{xp} XP · Investition gelöscht', '+{xp} XP · Investment deleted'],

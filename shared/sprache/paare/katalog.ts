@@ -114,6 +114,7 @@ export const PAARE = [
   ['{alter} Jahre', '{alter} years'],
   ['{alter} Jahr', '{alter} year'],
   ['Mit {alter} Jahren', 'At age {alter}'],
+  ['Mit {alter} Jahr', 'At age {alter}'],
   ['Du', 'You'],
   ['Alle', 'All'],
   ['Durchschnitt', 'Average'],

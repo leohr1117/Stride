@@ -7,10 +7,15 @@ import {
   zeigeErfolg,
   zeigeKatalogname,
 } from '../../shared/sprache/index.ts';
+import { zeigeMenge } from '../../shared/sprache/menge.ts';
 
 /** Oberfläche übersetzen. Nutzernamen und Einträge nicht hier durchreichen. */
 export function tx(text: string, werte?: Record<string, string | number>): string {
   return zeige(text, aktiveSprache(), werte);
+}
+
+export function txMenge(n: number, mehrzahl: string, werte?: Record<string, string | number>): string {
+  return zeigeMenge(aktiveSprache(), n, mehrzahl, werte);
 }
 
 /** Leeres Pflichtfeld. `feld` ist der deutsche Name und wird mitübersetzt. */

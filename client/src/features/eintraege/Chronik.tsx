@@ -1,4 +1,4 @@
-import { tx } from '../../text.ts';
+import { tx, txMenge } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
 import { ListFilter } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -137,7 +137,7 @@ export function ChronikSeite() {
                   wert={entwurf.bereiche}
                   optionen={optionen}
                   alleText={tx('Alle Bereiche')}
-                  zahlText={(anzahl) => tx('{anzahl} Bereiche', { anzahl })}
+                  zahlText={(anzahl) => txMenge(anzahl, '{anzahl} Bereiche', { anzahl })}
                   leerText={tx('Noch keine Bereiche.')}
                   leerAktion={{ label: tx('Bereich anlegen'), href: '/ziele' }}
                   onAendern={(wert) => setEntwurf({ ...entwurf, bereiche: wert })}

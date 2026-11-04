@@ -1,5 +1,5 @@
 import type { Verbindungen } from '../../../../shared/api/index.ts';
-import { tx } from '../../text.ts';
+import { tx, txMenge } from '../../text.ts';
 
 export function fehlerAnzeige(fehler: string): string {
   return fehler
@@ -33,7 +33,7 @@ export function verbindungsStand(daten: Verbindungen): { text: string; fehler: b
   if (daten.kalender.length === 1) {
     teile.push(daten.kalender[0].name);
   } else if (daten.kalender.length > 1) {
-    teile.push(tx('{anzahl} Kalender', { anzahl: daten.kalender.length }));
+    teile.push(txMenge(daten.kalender.length, '{anzahl} Kalender', { anzahl: daten.kalender.length }));
   }
   return teile.length > 0 ? { text: teile.join(' · '), fehler: false } : null;
 }

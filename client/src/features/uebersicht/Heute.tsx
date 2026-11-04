@@ -1,4 +1,4 @@
-import { tx } from '../../text.ts';
+import { tx, txMenge } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import type { KetteHeute } from '../../../../shared/api/kette.ts';
@@ -106,7 +106,7 @@ export function HeuteKarte() {
             {schutzLaenge !== null && (
               <Zeile
                 kennung="schutz"
-                text={tx('Hält die {n} Tage', { n: zahl(schutzLaenge) })}
+                text={txMenge(schutzLaenge, 'Hält die {n} Tage', { n: zahl(schutzLaenge) })}
                 aktion={
                   <Knopf
                     variante="leise"

@@ -2,6 +2,7 @@ import { DAUER_OPTIONEN } from '../../shared/spiel/begriffe.ts';
 import { ausTagesSchluessel, lokalesDatum, MS_PRO_TAG, TAGE_PRO_WOCHE, wochenbeginn } from '../../shared/spiel/datum.ts';
 import type { Multiplikator, MultiplikatorArt } from '../../shared/spiel/xp.ts';
 import { localeFuer } from '../../shared/sprache/kern.ts';
+import { mengenKategorie } from '../../shared/sprache/menge.ts';
 import { aktiveSprache, zeige } from '../../shared/sprache/index.ts';
 
 export { ausTagesSchluessel, lokalesDatum, wochenbeginn };
@@ -167,38 +168,20 @@ type MengeArt = 'tag' | 'monat' | 'jahr';
 
 const EINZAHL: Record<MengeArt, string> = { tag: 'Tag', monat: 'Monat', jahr: 'Jahr' };
 const MEHRZAHL: Record<MengeArt, string> = { tag: 'Tage', monat: 'Monate', jahr: 'Jahre' };
-
-/** Russisch: 2–4. Die übrigen Formen kommen aus den Sprachdateien. */
 const RU_PAUCAL: Record<MengeArt, string> = { tag: 'дня', monat: 'месяца', jahr: 'года' };
 
-function russischeMenge(anzahl: number, art: MengeArt): string {
-  const n = Math.abs(anzahl);
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) {
-    return zeige(EINZAHL[art]);
-  }
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) {
-    return RU_PAUCAL[art];
-  }
-  return zeige(MEHRZAHL[art]);
-}
+export type MengeEinheit = MengeArt;
 
-function einheit(anzahl: number, art: MengeArt): string {
-  const sprache = aktiveSprache();
-  if (sprache === 'ru') {
-    return russischeMenge(anzahl, art);
-  }
-  if (sprache === 'de') {
-    return zeige(MEHRZAHL[art]);
-  }
-  return zeige(Math.abs(anzahl) === 1 ? EINZAHL[art] : MEHRZAHL[art]);
+export function menge(n: number, einheit: MengeEinheit): string {
+  const kat = mengenKategorie(aktiveSprache(), n);
+  if (kat === 'wenige') return RU_PAUCAL[einheit];
+  return zeige(kat === 'einzahl' ? EINZAHL[einheit] : MEHRZAHL[einheit]);
 }
 
 function zeitText(anzahl: number, art: MengeArt): string {
   const sprache = aktiveSprache();
   const abstand = sprache === 'zh' || sprache === 'ja' ? '' : ' ';
-  return `${zahl(anzahl)}${abstand}${einheit(anzahl, art)}`;
+  return `${zahl(anzahl)}${abstand}${menge(anzahl, art)}`;
 }
 
 export function zeitspanne(tage: number): string {

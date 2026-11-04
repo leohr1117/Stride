@@ -1,4 +1,4 @@
-import { feldLeer, tx } from '../../text.ts';
+import { feldLeer, tx, txMenge } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CircleCheck, CircleX, Pencil, RotateCcw, Swords, Wind, Wrench } from 'lucide-react';
 import { useState, type FormEvent, type ReactNode } from 'react';
@@ -280,7 +280,7 @@ function ProjektAbschluss({ projekt }: { projekt: Projekt }) {
           <span className="min-w-0 break-words">
             {tx('{von} bis {bis}', { von: kurzesDatum(stand.von), bis: kurzesDatum(stand.bis) })}
           </span>
-          <span>{tx('{anzahl} Einträge', { anzahl: zahl(stand.eintraege) })}</span>
+          <span>{txMenge(stand.eintraege, '{anzahl} Einträge', { anzahl: zahl(stand.eintraege) })}</span>
           <span className="zahl">{stundenText(stand.stunden)}</span>
         </p>
       )}

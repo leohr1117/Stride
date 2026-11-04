@@ -33,6 +33,7 @@ import {
 } from '../spiel/xp.ts';
 import { ABSCHNITTE, VERSIONEN } from '../versionen.ts';
 import { localeFuer, platzhalter, SPRACH_NAME, spracheAusBrowser, spracheAusKopf, ZIEL_SPRACHEN } from './kern.ts';
+import { MENGEN_PAARE } from './menge.ts';
 import {
   allePaare,
   gleicherKatalogtext,
@@ -366,5 +367,19 @@ describe('sprachen', () => {
     expect(zeige('Gesamt', 'en')).toBe('All');
     expect(zeige('Di', 'en')).toBe('Tue');
     expect(zeige('Sonntag', 'ja')).toBe('日曜日');
+  });
+
+  it('verlangt zu jeder Mengen-Mehrzahl eine Einzahl', () => {
+    const muster = /\{[a-zA-Z0-9]+\} (Tage|Monate|Jahre|Einträge|Stunden)\b/;
+    const paare = new Map(MENGEN_PAARE.map((paar) => [paar.mehrzahl, paar.einzahl]));
+    const ohne: string[] = [];
+    for (const [schluessel] of allePaare()) {
+      if (!muster.test(schluessel)) continue;
+      const einzahl = paare.get(schluessel);
+      if (!einzahl || einzahl === schluessel || !hatSchluessel(einzahl) || muster.test(einzahl)) {
+        ohne.push(schluessel);
+      }
+    }
+    expect(ohne).toEqual([]);
   });
 });

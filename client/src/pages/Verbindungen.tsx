@@ -1,4 +1,4 @@
-import { feldLeer, tx } from '../text.ts';
+import { feldLeer, tx, txMenge } from '../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { RefreshCw } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
@@ -26,7 +26,7 @@ export function VerbindungenBereich() {
       const text =
         ergebnis.neu === 0
           ? tx('Keine neuen Einträge.')
-          : tx('{zahl} neue Einträge übernommen.', { zahl: zahl(ergebnis.neu) });
+          : txMenge(ergebnis.neu, '{zahl} neue Einträge übernommen.', { zahl: zahl(ergebnis.neu) });
       schnell.melde(text);
       void queryClient.invalidateQueries();
     },
