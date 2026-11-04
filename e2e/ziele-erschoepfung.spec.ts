@@ -224,11 +224,11 @@ test('Erschöpfung steht neben dem Namen', async ({ page }, testInfo) => {
   const bereich = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Werte', exact: true }) });
   await alleAnzeigen(bereich);
   const listen = [
-    { titel: 'Können', werte: daten.attribute },
-    { titel: 'Haben', werte: daten.status },
+    { titel: 'Können', kennung: 'koennen', werte: daten.attribute },
+    { titel: 'Haben', kennung: 'haben', werte: daten.status },
   ];
   for (const liste of listen) {
-    const karte = bereich.locator('section.karte').filter({ has: page.getByRole('heading', { name: liste.titel, exact: true }) });
+    const karte = bereich.locator(`[data-werte="${liste.kennung}"]`);
     await expect(karte.locator('[data-abzug="allgemein"]')).toHaveCount(bild.allgemein !== null ? 1 : 0);
     if (bild.allgemein !== null) {
       const abzug = karte.locator('[data-abzug="allgemein"]');

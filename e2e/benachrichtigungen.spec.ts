@@ -517,7 +517,7 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
     await expect(karte.getByRole('button', { name: /^Info/ })).toHaveCount(0);
     await expect(karte.getByRole('link', { name: 'Ansehen', exact: true })).toBeVisible();
     await expect(karte.getByRole('button', { name: 'Nicht jetzt', exact: true })).toBeVisible();
-    const ident = page.locator('section.karte').filter({ has: page.getByText('Start', { exact: true }) }).first();
+    const ident = page.locator('[data-flaeche]').filter({ has: page.locator('[data-levelring]') }).first();
     const oben = await ident.boundingBox();
     const kasten = await karte.boundingBox();
     expect(oben).not.toBeNull();

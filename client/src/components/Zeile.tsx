@@ -109,6 +109,7 @@ export function Zeile({
   pfeil,
   gefahr = false,
   symbol,
+  symbolKlasse,
   neben,
   typ,
   id,
@@ -127,6 +128,7 @@ export function Zeile({
   pfeil?: boolean;
   gefahr?: boolean;
   symbol?: ReactNode;
+  symbolKlasse?: string;
   neben?: ReactNode;
   typ?: ZeilenArt;
   id?: string;
@@ -156,7 +158,13 @@ export function Zeile({
         <button type="button" onClick={onKlick} aria-label={bezeichnung} className="absolute inset-0 z-0" />
       ) : null}
       {symbol ? (
-        <span className="pointer-events-none flex size-5 shrink-0 items-center justify-center text-leise [&_svg]:size-5">{symbol}</span>
+        <span
+          className={
+            symbolKlasse ?? 'pointer-events-none flex size-5 shrink-0 items-center justify-center text-leise [&_svg]:size-5'
+          }
+        >
+          {symbol}
+        </span>
       ) : null}
       <span className="pointer-events-none flex min-w-0 flex-1 flex-col justify-center">
         <span className="flex min-w-0 items-center">

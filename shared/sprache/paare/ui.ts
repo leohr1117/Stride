@@ -284,6 +284,7 @@ export const PAARE = [
   ['Vorhaben „{name}"', 'Task "{name}"'],
   ['Fähigkeit „{name}"', 'Skill "{name}"'],
   ['Erwacht · seit {datum}', 'Awakened · since {datum}'],
+  ['seit {datum}', 'since {datum}'],
   ['Eingabe', 'Input'],
   ['Exportieren', 'Export'],
   ['Fähigkeit · {name}', 'Skill · {name}'],

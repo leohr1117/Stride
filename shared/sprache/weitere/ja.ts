@@ -1,5 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "今日では各欄が幅いっぱいに並びます。ボスは一覧です。基本、値、活動は同じように折りたたみます。",
+  "seit {datum}": "{datum}から",
   "Offene Aufgaben zeigen einen leeren Kreis, erledigte einen gefüllten Kreis mit Haken. Ein zu niedriges Attribut steht als Zeile mit Warnzeichen.": "未完了の課題は空の円、完了したものはチェック付きの塗りつぶしです。低すぎる能力は警告記号のある行で表示します。",
   "Der Levelring ist einfarbig und auf Heute kleiner. Die XP-Zeile passt in eine Zeile. Bei Können und Haben zeigt das Radar die Werte als Fläche.": "レベルリングは単色で、今日ではより小さくなりました。XPの行は1行に収まります。能力と資産では、レーダーが値を面で示します。",
   "Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.": "今日、能力、資産では、レベル、ヒント、XPの減少が赤ではなくなりました。振り返りでは、失ったXPは通常の文字色です。",

@@ -122,9 +122,14 @@ test('Jede Ansicht hat eine eigene Form und feste Bedeutungsfarben', async ({ pa
       await expect(page.locator('html')).toHaveAttribute('data-stil', ansicht.stil);
       const daten = await lese(page);
       await pruefeBedeutungen(page, { primaer: daten.primaer, akzent: daten.akzent, hintergrund: daten.hintergrund });
-      const radius = await page.locator('.karte').first().evaluate((element) => getComputedStyle(element).borderTopLeftRadius);
+      await page.goto('/vorbilder/ronaldo');
+      const stilKarte = page.locator('main .karte').first();
+      await expect(stilKarte).toBeVisible();
+      const radius = await stilKarte.evaluate((element) => getComputedStyle(element).borderTopLeftRadius);
       expect(radius).toBe(ansicht.radius);
       radien.add(radius);
+      await page.goto('/');
+      await expect(page.getByRole('heading', { name: 'Heute', exact: true })).toBeVisible();
       const schrift = await page.locator('body').evaluate((element) => getComputedStyle(element).fontFamily.toLowerCase());
       const titel = await page.locator('.mobilkopf h1').evaluate((element) => getComputedStyle(element).textTransform);
       if (ansicht.stil === 'holo') {

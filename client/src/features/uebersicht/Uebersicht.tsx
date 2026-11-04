@@ -4,43 +4,44 @@ import { ChevronRight, Flame, RotateCcw } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { WillkommenKarte } from './Willkommen.tsx';
-import type { Attribut, Erschoepfung, HeatmapTag, VorhabenMitProjekt } from '../../../../shared/api/index.ts';
+import { Heatmap } from './Heatmap.tsx';
+import type { Attribut, Erschoepfung, VorhabenMitProjekt } from '../../../../shared/api/index.ts';
 import { abzugNebenNamen, erschoepfungsBild } from '../../../../shared/spiel/belastung.ts';
-import { TAGE_PRO_WOCHE } from '../../../../shared/spiel/datum.ts';
 import { LEVEL_KURVEN, verlustBalken } from '../../../../shared/spiel/level.ts';
 import { NEUER_ANLAUF, WEITERMACHEN } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { BossRing } from '../bosse/BossRing.tsx';
-import { bossZeile } from '../../components/VorhabenInfo.tsx';
+import { bossSeit } from '../../components/VorhabenInfo.tsx';
 import { Abschnitt, KurzListe } from '../../components/Ausklappbar.tsx';
+import { DichteZeilen, Zeile } from '../../components/Zeile.tsx';
 import { BasisKarte } from '../basis/Basis.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import {
+  AbschnittKopf,
   AllgemeinerXpAbzug,
   AttributBezeichnung,
   Fehlermeldung,
+  Flaeche,
   Fortschrittsbalken,
   InfoHinweis,
-  Karte,
-  ZuNiedrigHinweis,
   Knopf,
   Ladeanzeige,
   LevelRing,
-  Ueberschrift,
+  ZuNiedrigHinweis,
 } from '../../ui/index.ts';
 import { BewertungKarte } from './Bewertung.tsx';
 import { HeuteKarte } from './Heute.tsx';
 import { HinweisAngebot } from './HinweisAngebot.tsx';
 
-import { ausTagesSchluessel, faktorText, kurzesDatum, monatKurz, zahl } from '../../format.ts';
+import { faktorText, kurzesDatum, zahl } from '../../format.ts';
 import { useSichtbarkeit, useUebersichtKarten } from '../../funktionen.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { karteGewaehlt } from '../../../../shared/spiel/uebersichtKarten.ts';
 
-const HEATMAP_STUFEN = [0.25, 0.5, 0.75, 1];
-const WOCHENTAG_LABEL = ['Mo', '', 'Mi', '', 'Fr', '', ''];
+const WERTE_SICHTBAR = 5;
+const SYMBOL_FREI = 'pointer-events-none flex size-5 shrink-0 items-center justify-center';
 
 export function UebersichtSeite() {
   const { data: uebersicht, error, isPending } = useQuery({ queryKey: SCHLUESSEL.uebersicht, queryFn: api.uebersicht });
@@ -64,55 +65,54 @@ export function UebersichtSeite() {
   });
 
   return (
-    <div className="space-y-6">
-      <WillkommenKarte xp={uebersicht.level.xpGesamt} />
+    <div>
+      <div className="space-y-6">
+        <WillkommenKarte xp={uebersicht.level.xpGesamt} />
 
-      {karteGewaehlt('identitaet', karten) && (
-      <Karte className="flex flex-col gap-5 sm:flex-row sm:items-center">
-        <div className="flex items-center gap-5">
-          <LevelRing level={uebersicht.level.level} anteil={uebersicht.level.fortschritt} />
-          <div className="min-w-0 flex-1 sm:hidden">
-            <p className="kopfblock-name truncate text-2xl font-bold tracking-tight">{uebersicht.name}</p>
-            <p className="text-sm font-medium break-words text-akzent">{identitaet}</p>
-            <p className="zahl text-sm text-leise break-words">{levelZeile}</p>
-          </div>
-        </div>
-        <div className="min-w-0 flex-1 space-y-3">
-          <div className="hidden min-w-0 sm:block">
-            <p className="kopfblock-name truncate text-2xl font-bold tracking-tight">{uebersicht.name}</p>
-            <p className="text-sm font-medium break-words text-akzent">{identitaet}</p>
-            <p className="zahl text-sm text-leise">{levelZeile}</p>
-          </div>
-          <div className="grid grid-cols-3 text-center">
-            <Wochenwert label={tx("XP diese Woche")} wert={`+${zahl(uebersicht.wocheXp)}`} hervorheben="fortschritt" />
-            <Wochenwert
-              label={tx("Streak")}
-              info={
-                <InfoHinweis
-                  name="Streak"
-                  text="Ein Tag Pause ist frei. Danach ist der Streak angeschlagen."
-                  abstand={false}
-                  amKasten
+        {karteGewaehlt('identitaet', karten) && (
+          <Flaeche className="identitaets-flaeche p-4">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-5">
+                <LevelRing level={uebersicht.level.level} anteil={uebersicht.level.fortschritt} />
+                <div className="min-w-0 flex-1">
+                  <p className="kopfblock-name truncate text-2xl font-bold tracking-tight">{uebersicht.name}</p>
+                  <p className="text-[13px] leading-[18px] break-words text-leise">{identitaet}</p>
+                  <p className="zahl text-[13px] leading-[18px] break-words text-leise" data-xp-zeile="">
+                    {levelZeile}
+                  </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 text-center">
+                <Wochenwert label={tx('XP diese Woche')} wert={`+${zahl(uebersicht.wocheXp)}`} hervorheben="fortschritt" />
+                <Wochenwert
+                  label={tx('Streak')}
+                  info={
+                    <InfoHinweis
+                      name="Streak"
+                      text="Ein Tag Pause ist frei. Danach ist der Streak angeschlagen."
+                      abstand={false}
+                      amKasten
+                    />
+                  }
+                  wert={
+                    <span
+                      className={`flex items-center justify-center gap-1 ${kette.data?.rueckkehr || uebersicht.serie.angeknackst ? 'text-leise' : uebersicht.serie.laenge > 0 ? 'text-streak' : ''}`}
+                      title={uebersicht.serie.angeknackst ? tx('Gestern ausgesetzt') : undefined}
+                    >
+                      <Flame className="size-4" />
+                      {uebersicht.serie.laenge}
+                    </span>
+                  }
                 />
-              }
-              wert={
-                <span
-                  className={`flex items-center justify-center gap-1 ${kette.data?.rueckkehr || uebersicht.serie.angeknackst ? 'text-leise' : uebersicht.serie.laenge > 0 ? 'text-streak' : ''}`}
-                  title={uebersicht.serie.angeknackst ? tx("Gestern ausgesetzt") : undefined}
-                >
-                  <Flame className="size-4" />
-                  {uebersicht.serie.laenge}
-                </span>
-              }
-            />
-            <Wochenwert label={tx("Momentum")} wert={faktorText(uebersicht.momentum)} />
-          </div>
-        </div>
-      </Karte>
-      )}
+                <Wochenwert label={tx('Momentum')} wert={faktorText(uebersicht.momentum)} />
+              </div>
+            </div>
+          </Flaeche>
+        )}
 
-      <BewertungKarte />
-      <HinweisAngebot />
+        <BewertungKarte />
+        <HinweisAngebot />
+      </div>
 
       <HeuteKarte />
 
@@ -131,24 +131,43 @@ export function UebersichtSeite() {
       {karteGewaehlt('basis', karten) && funktionen.basis && <BasisKarte />}
 
       {karteGewaehlt('werte', karten) && (funktionen.koennen || funktionen.status) && (
-        <Abschnitt titel={tx("Werte")} kennung="uebersicht-werte" anfangEingeklappt>
-          <div className="grid gap-4 md:grid-cols-2">
-            {funktionen.koennen && (
-              <Werte titel={tx("Können")} pfad="/koennen" werte={uebersicht.attribute} erschoepfungen={uebersicht.erschoepfungen} />
-            )}
-            {funktionen.status && (
-              <Werte titel={tx("Haben")} pfad="/haben" werte={uebersicht.status} erschoepfungen={uebersicht.erschoepfungen} />
-            )}
-          </div>
-        </Abschnitt>
+        <div className="md:max-w-[720px]">
+          <Abschnitt titel={tx('Werte')} kennung="uebersicht-werte" anfangEingeklappt kopfKlasse="abschnitt-kopf">
+            <Flaeche>
+              <div className="grid md:grid-cols-2">
+                {funktionen.koennen && (
+                  <Werte
+                    kennung="koennen"
+                    titel={tx('Können')}
+                    pfad="/koennen"
+                    werte={uebersicht.attribute}
+                    erschoepfungen={uebersicht.erschoepfungen}
+                  />
+                )}
+                {funktionen.status && (
+                  <Werte
+                    kennung="haben"
+                    titel={tx('Haben')}
+                    pfad="/haben"
+                    trennung={funktionen.koennen}
+                    werte={uebersicht.status}
+                    erschoepfungen={uebersicht.erschoepfungen}
+                  />
+                )}
+              </div>
+            </Flaeche>
+          </Abschnitt>
+        </div>
       )}
 
       {karteGewaehlt('aktivitaet', karten) && (
-      <Abschnitt titel={tx("Aktivität")} kennung="uebersicht-aktivitaet" anfangEingeklappt>
-        <Karte>
-          <Heatmap tage={uebersicht.heatmap} />
-        </Karte>
-      </Abschnitt>
+        <div className="md:max-w-[720px]">
+          <Abschnitt titel={tx('Aktivität')} kennung="uebersicht-aktivitaet" anfangEingeklappt kopfKlasse="abschnitt-kopf">
+            <Flaeche className="p-4">
+              <Heatmap tage={uebersicht.heatmap} />
+            </Flaeche>
+          </Abschnitt>
+        </div>
       )}
     </div>
   );
@@ -184,45 +203,48 @@ function Angriffe({
   laufendAn: boolean;
 }) {
   return (
-    <section>
-      <Ueberschrift
-        titel={tx("Bosse greifen an")}
+    <section className="md:max-w-[720px]">
+      <AbschnittKopf
+        titel={tx('Bosse greifen an')}
         aktion={
           laufendAn ? (
             <Link to="/laufend" className="inline-flex items-center text-[13px] font-semibold leading-[18px]">
-              {tx("Laufend")}
+              {tx('Laufend')}
               <ChevronRight className="size-4 shrink-0" aria-hidden />
             </Link>
           ) : undefined
         }
       />
-      <div className="space-y-2">
-        {bosse.map((vorhaben) => {
-          const klasse =
-            'flex items-center gap-3 rounded-2xl border border-rand bg-flaeche px-4 py-3 transition hover:bg-flaeche-2';
-          const boss = vorhaben.boss;
-          const inhalt = (
-            <>
-              {boss && <BossRing ring={boss.ring} erwacht ton="haupt" />}
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{vorhaben.titel}</p>
-                {projekteAn && vorhaben.projektName && <p className="truncate text-xs text-leise">{vorhaben.projektName}</p>}
-                {boss && <p className="text-xs break-words text-leise">{bossZeile(boss)}</p>}
-              </div>
-              <span className="zahl shrink-0 text-sm font-semibold text-gefahr">−{zahl(boss?.angriffXp ?? 0)} {tx('Disziplin')}</span>
-            </>
-          );
-          return projekteAn && vorhaben.projektId !== null ? (
-            <Link key={vorhaben.id} to={`/projekte/${vorhaben.projektId}`} className={klasse}>
-              {inhalt}
-            </Link>
-          ) : (
-            <div key={vorhaben.id} className={klasse}>
-              {inhalt}
-            </div>
-          );
-        })}
-      </div>
+      <Flaeche>
+        <DichteZeilen>
+          {bosse.map((vorhaben) => {
+            const boss = vorhaben.boss;
+            const projekt = projekteAn ? vorhaben.projektName : null;
+            const neben = [projekt, boss ? bossSeit(boss) : null].filter((teil) => teil).join(' · ');
+            const ziel = projekteAn && vorhaben.projektId !== null ? `/projekte/${vorhaben.projektId}` : undefined;
+            return (
+              <Zeile
+                key={vorhaben.id}
+                titel={vorhaben.titel}
+                neben={neben || undefined}
+                pfeil={false}
+                nach={ziel}
+                symbol={
+                  boss ? (
+                    <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} ton="haupt" klein />
+                  ) : undefined
+                }
+                symbolKlasse={SYMBOL_FREI}
+                wert={
+                  <span className="font-semibold text-gefahr">
+                    −{zahl(boss?.angriffXp ?? 0)} {tx('Disziplin')}
+                  </span>
+                }
+              />
+            );
+          })}
+        </DichteZeilen>
+      </Flaeche>
     </section>
   );
 }
@@ -240,11 +262,11 @@ function Comebacks({ comebacks, projekteAn }: { comebacks: VorhabenMitProjekt[];
   });
 
   return (
-    <section>
-      <Ueberschrift titel={tx("Zurück aufstehen")} />
-      <div className="space-y-2">
+    <section className="md:max-w-[720px]">
+      <AbschnittKopf titel={tx('Zurück aufstehen')} />
+      <Flaeche>
         {comebacks.map((vorhaben) => (
-          <Karte key={vorhaben.id} className="space-y-3">
+          <div key={vorhaben.id} className="space-y-3 px-4 py-3">
             <div>
               <p className="font-medium">{vorhaben.titel}</p>
               {((projekteAn && vorhaben.projektName) || vorhaben.abgeschlossenAm) && (
@@ -269,41 +291,42 @@ function Comebacks({ comebacks, projekteAn }: { comebacks: VorhabenMitProjekt[];
               {vorhaben.weitermachenOffen && (
                 <Knopf
                   onClick={() =>
-                    eintragOeffnen(
-                      projekteAn && vorhaben.projektId !== null ? { projektId: vorhaben.projektId } : undefined,
-                    )
+                    eintragOeffnen(projekteAn && vorhaben.projektId !== null ? { projektId: vorhaben.projektId } : undefined)
                   }
                 >
                   {tx('Weitermachen · +{xp}', { xp: WEITERMACHEN.disziplin + WEITERMACHEN.geist })}
                 </Knopf>
               )}
             </div>
-          </Karte>
+          </div>
         ))}
-      </div>
+      </Flaeche>
       <Fehlermeldung fehler={anlauf.error} />
     </section>
   );
 }
 
-const WERTE_SICHTBAR = 5;
-
 function Werte({
+  kennung,
   titel,
   pfad,
   werte,
   erschoepfungen,
+  trennung = false,
 }: {
+  kennung: 'koennen' | 'haben';
   titel: string;
   pfad: string;
   werte: Attribut[];
   erschoepfungen: Erschoepfung[];
+  trennung?: boolean;
 }) {
   const bild = erschoepfungsBild(
     erschoepfungen.map((eintrag) => ({ quelleId: eintrag.attributId, zielId: eintrag.zielId, faktor: eintrag.faktor })),
   );
+  const rand = trennung ? 'border-t border-rand md:border-s md:border-t-0' : '';
   return (
-    <Karte>
+    <div data-werte={kennung} className={`min-w-0 p-4 ${rand}`}>
       <div className="mb-2 flex items-center justify-between gap-3">
         <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
           <Link to={pfad} className="inline-flex items-center">
@@ -341,116 +364,6 @@ function Werte({
           );
         }}
       />
-    </Karte>
-  );
-}
-
-function heatmapStufe(xp: number, maximum: number): number {
-  if (xp <= 0 || maximum === 0) {
-    return 0;
-  }
-  const anteil = xp / maximum;
-  return HEATMAP_STUFEN.find((grenze) => grenze >= anteil) ?? 1;
-}
-
-function heatmapFarbe(stufe: number): string {
-  return stufe === 0
-    ? 'var(--flaeche-2)'
-    : `color-mix(in srgb, var(--akzent) ${Math.round(stufe * 100)}%, var(--flaeche-2))`;
-}
-
-function inWochen(tage: HeatmapTag[]): (HeatmapTag | null)[][] {
-  const erster = tage[0];
-  const versatz = erster ? (ausTagesSchluessel(erster.datum).getDay() + TAGE_PRO_WOCHE - 1) % TAGE_PRO_WOCHE : 0;
-  const zellen: (HeatmapTag | null)[] = [...new Array<null>(versatz).fill(null), ...tage];
-  const wochen: (HeatmapTag | null)[][] = [];
-  for (let index = 0; index < zellen.length; index += TAGE_PRO_WOCHE) {
-    wochen.push(zellen.slice(index, index + TAGE_PRO_WOCHE));
-  }
-  return wochen;
-}
-
-function monatsBeschriftungen(wochen: (HeatmapTag | null)[][]): string[] {
-  let letzterMonat = -1;
-  return wochen.map((woche) => {
-    const tag = woche.find((zelle) => zelle !== null);
-    if (!tag) {
-      return '';
-    }
-    const datum = ausTagesSchluessel(tag.datum);
-    if (datum.getMonth() === letzterMonat) {
-      return '';
-    }
-    letzterMonat = datum.getMonth();
-    return monatKurz(datum);
-  });
-}
-
-function Heatmap({ tage }: { tage: HeatmapTag[] }) {
-  let maximum = 0;
-  for (const tag of tage) {
-    maximum = Math.max(maximum, tag.xp);
-  }
-  const wochen = inWochen(tage);
-  const monate = monatsBeschriftungen(wochen);
-
-  return (
-    <div className="overflow-x-auto">
-      <div className="inline-flex flex-col gap-2">
-        <div
-          className="inline-grid gap-[2px] text-[10px] leading-none text-leise"
-          style={{ gridTemplateColumns: `auto repeat(${wochen.length}, minmax(0.75rem, 1.25rem))` }}
-        >
-          <span />
-          {monate.map((monat, index) => (
-            <span key={`monat-${index}`} className="h-3 w-0 overflow-visible whitespace-nowrap">
-              {monat}
-            </span>
-          ))}
-          {WOCHENTAG_LABEL.map((label, zeile) => (
-            <HeatmapZeile key={zeile} label={label ? tx(label) : ''} wochen={wochen} zeile={zeile} maximum={maximum} />
-          ))}
-        </div>
-        <div className="flex items-center justify-end gap-[2px] text-[10px] text-leise">
-          <span className="mr-1">{tx("Weniger")}</span>
-          {[0, ...HEATMAP_STUFEN].map((stufe) => (
-            <span key={stufe} className="size-2.5 rounded-[3px]" style={{ backgroundColor: heatmapFarbe(stufe) }} />
-          ))}
-          <span className="ml-1">{tx("Mehr")}</span>
-        </div>
-      </div>
     </div>
-  );
-}
-
-function HeatmapZeile({
-  label,
-  wochen,
-  zeile,
-  maximum,
-}: {
-  label: string;
-  wochen: (HeatmapTag | null)[][];
-  zeile: number;
-  maximum: number;
-}) {
-  return (
-    <>
-      <span className="flex items-center pr-1.5">{label}</span>
-      {wochen.map((woche, spalte) => {
-        const tag = woche[zeile] ?? null;
-        if (tag === null) {
-          return <span key={`leer-${spalte}`} />;
-        }
-        return (
-          <span
-            key={tag.datum}
-            title={`${kurzesDatum(`${tag.datum}T12:00:00`)}: ${zahl(tag.xp)} XP`}
-            className="aspect-square rounded-[3px]"
-            style={{ backgroundColor: heatmapFarbe(heatmapStufe(tag.xp, maximum)) }}
-          />
-        );
-      })}
-    </>
   );
 }

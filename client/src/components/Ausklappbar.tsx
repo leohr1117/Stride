@@ -91,6 +91,7 @@ export function Abschnitt({
   bleibend,
   children,
   anfangEingeklappt = false,
+  kopfKlasse = '',
 }: {
   titel: string;
   kennung: string;
@@ -100,6 +101,7 @@ export function Abschnitt({
   bleibend?: ReactNode;
   children: ReactNode;
   anfangEingeklappt?: boolean;
+  kopfKlasse?: string;
 }) {
   const schluessel = `${SPEICHER_PRAEFIX}${kennung}`;
   const [eingeklappt, setEingeklappt] = useState(() => startEingeklappt(schluessel, anfangEingeklappt));
@@ -118,6 +120,7 @@ export function Abschnitt({
         info={info}
         aktion={aktion}
         beimOeffnen={() => setze(false)}
+        className={kopfKlasse}
       />
       {bleibend}
       {!eingeklappt && children}

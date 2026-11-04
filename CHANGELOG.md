@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.30
+
+### Geändert
+
+- Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.
+
 ## 3.56.29
 
 ### Geändert

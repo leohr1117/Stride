@@ -28,7 +28,7 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
     return { groesse: stil.fontSize, gewicht: stil.fontWeight, hoehe: stil.lineHeight };
   });
   expect(zahlSchrift).toEqual({ groesse: '20px', gewicht: '600', hoehe: '24px' });
-  const xpZeile = page.locator('main p.zahl.text-sm.text-leise').locator('visible=true');
+  const xpZeile = page.locator('main [data-xp-zeile]');
   await expect(xpZeile).toBeVisible();
   const xpZeilen = await xpZeile.evaluate((element) => {
     const bereich = document.createRange();
@@ -46,10 +46,49 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
     expect(schrift).toBeGreaterThan(20);
   }
 
-  const karte = page.locator('main section.karte').first();
-  await expect(karte).toHaveClass(/\bp-4\b/);
-  const polster = await karte.evaluate((element) => getComputedStyle(element).paddingTop);
+  const flaeche = page.locator('main [data-flaeche]').filter({ has: page.locator('[data-levelring]') });
+  await expect(flaeche).toHaveClass(/\bp-4\b/);
+  const polster = await flaeche.evaluate((element) => getComputedStyle(element).paddingTop);
   expect(polster).toBe('16px');
+  const masse = await flaeche.evaluate((element) => {
+    const kasten = element.getBoundingClientRect();
+    const stil = getComputedStyle(element);
+    return {
+      x: Math.round(kasten.x),
+      rechts: Math.round(kasten.right),
+      breite: document.documentElement.clientWidth,
+      radius: Number.parseFloat(stil.borderTopLeftRadius),
+      rand: Number.parseFloat(stil.borderTopWidth),
+      flaechenBreite: Math.round(kasten.width),
+    };
+  });
+  if (projekt === 'handy') {
+    expect(masse.x).toBeLessThanOrEqual(1);
+    expect(masse.rechts).toBeGreaterThanOrEqual(masse.breite - 1);
+    expect(masse.radius).toBe(0);
+    expect(masse.rand).toBe(0);
+  } else {
+    expect(masse.radius).toBe(8);
+    expect(masse.rand).toBe(1);
+    expect(masse.flaechenBreite).toBeLessThanOrEqual(720);
+  }
+  for (const name of ['Streak', 'Bosse greifen an', 'Basis']) {
+    const schrift = await page.getByRole('heading', { name, exact: true }).evaluate((element) => {
+      const stil = getComputedStyle(element);
+      return { groesse: stil.fontSize, gewicht: stil.fontWeight, transform: stil.textTransform };
+    });
+    expect(schrift).toEqual({ groesse: '13px', gewicht: '600', transform: 'none' });
+  }
+  await expect(page.locator('[data-heute] .knopf-primaer')).toHaveCount(0);
+  const angriff = page.locator('section', { has: page.getByRole('heading', { name: 'Bosse greifen an', exact: true }) });
+  await expect(angriff.locator('.rounded-2xl, section.karte')).toHaveCount(0);
+  const bossZeile = angriff.locator('.zeile[data-zeilen="2"]').first();
+  await expect(bossZeile).toBeVisible();
+  expect(await bossZeile.evaluate((element) => Math.round(element.getBoundingClientRect().height))).toBe(64);
+  expect(await bossZeile.locator('svg').first().evaluate((element) => Math.round(element.getBoundingClientRect().width))).toBe(20);
+  await expect(bossZeile).toContainText(/seit /);
+  await expect(bossZeile).not.toContainText('Erwacht');
+  await expect(bossZeile.locator('.text-gefahr')).toContainText('Disziplin');
 
   const zeile = await page.locator('[data-wochenwert]').evaluateAll((knoten) =>
     knoten.map((knoten) => {
@@ -117,7 +156,21 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
     if (!(basisKopf instanceof HTMLElement) || !(link instanceof HTMLElement)) {
       return false;
     }
-    return basisKopf.closest('section.karte') === null && link.closest('section.karte') !== null;
+    const kopfFrei = (name: string) => {
+      const knopf = knoepfe.find((element) => {
+        const id = element.getAttribute('aria-labelledby');
+        return id !== null && document.getElementById(id)?.textContent === name;
+      });
+      const zeile = knopf?.parentElement;
+      return zeile instanceof HTMLElement && zeile.querySelectorAll('svg').length === 1 && zeile.querySelectorAll('a').length === 0;
+    };
+    return (
+      basisKopf.closest('[data-flaeche]') === null &&
+      link.closest('[data-flaeche]') !== null &&
+      kopfFrei('Basis') &&
+      kopfFrei('Werte') &&
+      kopfFrei('Aktivität')
+    );
   });
   expect(pfeileGetrennt).toBe(true);
   await basis.click();
@@ -137,6 +190,27 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await expect(page).toHaveURL(/\/projekte\/\d+$/);
   await page.goto('/');
   await expect(page.locator('[data-wochenwert]')).toHaveCount(3);
+  const aktivitaet = page.getByRole('button', { name: 'Aktivität', exact: true });
+  if ((await aktivitaet.getAttribute('aria-expanded')) !== 'true') {
+    await aktivitaet.click();
+  }
+  const aktivBereich = page.locator('#uebersicht-aktivitaet');
+  await expect(aktivBereich.locator('[data-flaeche]')).toBeVisible();
+  await expect(aktivBereich.locator('section.karte')).toHaveCount(0);
+  await expect(aktivBereich.getByText('Weniger', { exact: true })).toBeVisible();
+  const ordnung = await page.evaluate(() => {
+    const namen = ['Streak', 'Bosse greifen an', 'Zurück aufstehen', 'Basis', 'Werte', 'Aktivität'];
+    return namen.flatMap((name) => {
+      const kopf = [...document.querySelectorAll('h2')].find((element) => element.textContent?.trim() === name);
+      return kopf ? [Math.round(kopf.getBoundingClientRect().top)] : [];
+    });
+  });
+  expect(ordnung.length).toBeGreaterThanOrEqual(5);
+  for (let index = 1; index < ordnung.length; index += 1) {
+    expect(ordnung[index]).toBeGreaterThan(ordnung[index - 1] ?? 0);
+  }
+  const identitaetOben = await page.locator('[data-xp-zeile]').evaluate((element) => Math.round(element.getBoundingClientRect().top));
+  expect(identitaetOben).toBeLessThan(ordnung[0] ?? 0);
   await ohneSeitlichenUeberlauf(page);
   await bild(page, `${projekt}-oben`, false);
   await bild(page, `${projekt}-heute`);

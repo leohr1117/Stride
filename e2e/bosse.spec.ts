@@ -133,19 +133,33 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
 
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Bosse greifen an' })).toBeVisible();
-  const angriff = page.locator('a.rounded-2xl, div.rounded-2xl').filter({ hasText: erwachtTitel });
-  await expect(angriff).toContainText(/Erwacht · seit \d+\. [A-Za-zäöüÄÖÜ]+\./);
+  const angriff = page.locator('.zeile', { hasText: erwachtTitel });
+  await expect(angriff).toContainText(/seit \d+\. [A-Za-zäöüÄÖÜ]+\./);
+  await expect(angriff).not.toContainText('Erwacht');
   await expect(angriff).toContainText('Disziplin');
   await expect(angriff).not.toHaveClass(/gefahr/);
   await expect(angriff.locator('.text-gefahr')).toHaveCount(1);
   await expect(angriff.locator('.text-gefahr')).toContainText('Disziplin');
+  const gefahrStimmt = await angriff.locator('.text-gefahr').evaluate((element) => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--gefahr)';
+    document.body.append(probe);
+    const soll = getComputedStyle(probe).color;
+    probe.remove();
+    return getComputedStyle(element).color === soll;
+  });
+  expect(gefahrStimmt).toBe(true);
   const striche = await angriff.locator('svg circle').evaluateAll((kreise) => kreise.map((kreis) => kreis.getAttribute('stroke')));
   expect(striche.length).toBeGreaterThan(0);
   for (const strich of striche) {
     expect(strich).toBe('var(--haupt)');
   }
-  const datumSichtbar = await angriff.locator('p', { hasText: 'Erwacht' }).evaluate((element) => element.scrollWidth <= element.clientWidth + 1);
-  expect(datumSichtbar).toBe(true);
+  const nebenZeilen = await angriff.locator('.zeile-neben').evaluate((element) => {
+    const bereich = document.createRange();
+    bereich.selectNodeContents(element);
+    return bereich.getClientRects().length;
+  });
+  expect(nebenZeilen).toBe(1);
   await expect(page.getByText('Kreuzheben 100 Kilo')).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
   await bild('angriff');

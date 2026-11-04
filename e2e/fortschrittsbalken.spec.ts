@@ -47,7 +47,7 @@ async function speichereDarstellung(seite: Page, daten: Darstellung): Promise<vo
 }
 
 function koennenKarte(seite: Page) {
-  return seite.locator('section.karte').filter({ has: seite.locator('a[href="/koennen"]') });
+  return seite.locator('[data-werte="koennen"]');
 }
 
 async function stelleAnsicht(seite: Page, stil: string): Promise<void> {

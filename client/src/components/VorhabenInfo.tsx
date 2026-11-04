@@ -19,6 +19,10 @@ function tagDanach(tag: string): Date {
   return datum;
 }
 
+export function bossSeit(boss: Pick<BossInfo, 'deadline'>): string {
+  return tx('seit {datum}', { datum: kurzesDatum(tagDanach(boss.deadline).toISOString()) });
+}
+
 export function bossZeile(boss: Pick<BossInfo, 'phase' | 'deadline'>): string {
   if (boss.phase === 'erwacht') {
     return tx('Erwacht · seit {datum}', { datum: kurzesDatum(tagDanach(boss.deadline).toISOString()) });

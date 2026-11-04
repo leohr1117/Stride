@@ -19,7 +19,7 @@ import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
-import { EINGABE_STIL, Feld, Fehlermeldung, Formular, Karte, Knopf, VorschlagFeld } from '../../ui/index.ts';
+import { EINGABE_STIL, Feld, Fehlermeldung, Flaeche, Formular, Knopf, VorschlagFeld } from '../../ui/index.ts';
 import { HierarchieWahl } from '../../components/HierarchieWahl.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { gliedereProjekte, wahlBaum } from '../../projektHierarchie.ts';
@@ -189,11 +189,12 @@ export function BasisKarte() {
   };
 
   return (
-    <section className="space-y-2">
+    <section className="md:max-w-[720px]">
       <EinklappKopf
         titel={tx("Basis")}
         offen={!eingeklappt}
         onToggle={umschalten}
+        className="abschnitt-kopf"
         zusatz={
           <span className="zahl text-xs text-leise">
             {erledigt}/{aktive.length}
@@ -201,15 +202,17 @@ export function BasisKarte() {
         }
       />
       {!eingeklappt && (
-        <Karte>
-          <div className="ueberschrift abschnittskopf mb-2 min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
-            <Link to="/basis" className="inline-flex items-center">
-              {tx("Basis")}
-              <ChevronRight className="size-4 shrink-0" aria-hidden />
-            </Link>
+        <Flaeche className="p-4">
+          <div>
+            <div className="ueberschrift abschnittskopf mb-2 min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
+              <Link to="/basis" className="inline-flex items-center">
+                {tx("Basis")}
+                <ChevronRight className="size-4 shrink-0" aria-hidden />
+              </Link>
+            </div>
+            <BasisListe aufgaben={aktive} mitProjekt={ebenen.projekte} />
           </div>
-          <BasisListe aufgaben={aktive} mitProjekt={ebenen.projekte} />
-        </Karte>
+        </Flaeche>
       )}
     </section>
   );

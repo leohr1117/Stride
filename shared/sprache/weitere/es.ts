@@ -1,5 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "En Hoy, las secciones ocupan todo el ancho. Los jefes están en una lista. Base, Valores y Actividad se pliegan igual.",
+  "seit {datum}": "desde {datum}",
   "Offene Aufgaben zeigen einen leeren Kreis, erledigte einen gefüllten Kreis mit Haken. Ein zu niedriges Attribut steht als Zeile mit Warnzeichen.": "Las tareas abiertas muestran un círculo vacío y las hechas un círculo relleno con una marca. Un atributo demasiado bajo aparece como una línea con un signo de advertencia.",
   "Der Levelring ist einfarbig und auf Heute kleiner. Die XP-Zeile passt in eine Zeile. Bei Können und Haben zeigt das Radar die Werte als Fläche.": "El anillo de nivel es de un solo color y más pequeño en Hoy. La línea de XP cabe en una línea. En Capacidad y Bienes, el radar muestra los valores como un área.",
   "Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.": "En Hoy, Capacidad y Bienes, el nivel, el aviso y la deducción de XP ya no están en rojo. En Repaso, el XP perdido usa el color de texto normal.",

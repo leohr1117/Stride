@@ -513,6 +513,14 @@ html[data-eingabe='zeiger'] :focus {
   pointer-events: none;
 }
 
+@media (min-width: 768px) {
+  [data-flaeche].identitaets-flaeche {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 8px;
+  }
+}
+
 .zeile[data-zeilen='1'] {
   height: 48px;
   min-height: 48px;

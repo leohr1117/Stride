@@ -1,5 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "На странице «Сегодня» разделы занимают всю ширину. Боссы стоят списком. База, Значения и Активность сворачиваются одинаково.",
+  "seit {datum}": "с {datum}",
   "Offene Aufgaben zeigen einen leeren Kreis, erledigte einen gefüllten Kreis mit Haken. Ein zu niedriges Attribut steht als Zeile mit Warnzeichen.": "Открытые задачи показывают пустой круг, выполненные — залитый круг с галочкой. Слишком низкий атрибут стоит отдельной строкой со знаком предупреждения.",
   "Der Levelring ist einfarbig und auf Heute kleiner. Die XP-Zeile passt in eine Zeile. Bei Können und Haben zeigt das Radar die Werte als Fläche.": "Кольцо уровня одноцветное и на «Сегодня» меньше. Строка XP помещается в одну строку. В «Умениях» и «Активах» радар показывает значения как область.",
   "Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.": "На «Сегодня», в «Умениях» и «Активах» уровень, подсказка и списание XP больше не красные. В «Итогах» потерянное XP обычного цвета.",

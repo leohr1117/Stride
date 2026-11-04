@@ -1,5 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "在今天，各区域占满整行宽度。首领以列表显示。基础、数值和活动以同样的方式折叠。",
+  "seit {datum}": "自 {datum}",
   "Offene Aufgaben zeigen einen leeren Kreis, erledigte einen gefüllten Kreis mit Haken. Ein zu niedriges Attribut steht als Zeile mit Warnzeichen.": "未完成的任务显示空心圆，已完成的显示带勾的实心圆。过低的属性显示为带警告符的一行。",
   "Der Levelring ist einfarbig und auf Heute kleiner. Die XP-Zeile passt in eine Zeile. Bei Können und Haben zeigt das Radar die Werte als Fläche.": "等级环为单色，在今天更小。XP 行排成一行。在能力和资产中，雷达将数值显示为面积。",
   "Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.": "在今天、能力和资产中，等级、提示和 XP 扣减不再显示为红色。在回顾中，损失的 XP 使用正常文字颜色。",

@@ -10,20 +10,23 @@ export function BossRing({
   ring,
   erwacht,
   ton = 'gefahr',
+  klein = false,
 }: {
   ring: number;
   erwacht: boolean;
   ton?: 'gefahr' | 'haupt';
+  klein?: boolean;
 }) {
   const anteil = Math.min(1, Math.max(0, ring));
   const offset = UMFANG * (1 - anteil);
   const mitte = GROESSE / 2;
   const strich = ton === 'haupt' ? 'var(--haupt)' : 'var(--gefahr)';
   const klinge = ton === 'haupt' ? 'text-haupt' : 'text-gefahr';
+  const kasten = klein ? 'size-5' : 'size-9';
 
   return (
-    <span className="relative inline-flex size-9 shrink-0 items-center justify-center">
-      <svg viewBox={`0 0 ${GROESSE} ${GROESSE}`} className="size-9 -rotate-90" aria-hidden>
+    <span className={`relative inline-flex ${kasten} shrink-0 items-center justify-center`}>
+      <svg viewBox={`0 0 ${GROESSE} ${GROESSE}`} className={`${kasten} -rotate-90`} aria-hidden>
         <circle cx={mitte} cy={mitte} r={RADIUS} fill="none" stroke={strich} strokeOpacity={0.25} strokeWidth={STROKE} />
         <circle
           cx={mitte}
@@ -37,7 +40,7 @@ export function BossRing({
           className="bossring-bogen"
         />
       </svg>
-      {erwacht && <Swords className={`absolute size-3.5 ${klinge}`} aria-hidden />}
+      {erwacht && <Swords className={`absolute ${klein ? 'size-2' : 'size-3.5'} ${klinge}`} aria-hidden />}
     </span>
   );
 }
