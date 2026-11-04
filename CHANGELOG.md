@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.38
+
+### Geändert
+
+- Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.
+
 ## 3.56.37
 
 ### Geändert

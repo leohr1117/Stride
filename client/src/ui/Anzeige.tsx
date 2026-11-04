@@ -86,9 +86,9 @@ export function Karte({
   );
 }
 
-export function Ueberschrift({ titel, aktion }: { titel: string; aktion?: ReactNode }) {
+export function Ueberschrift({ titel, aktion, className = '' }: { titel: string; aktion?: ReactNode; className?: string }) {
   return (
-    <div className="mb-2 flex items-center justify-between gap-3">
+    <div className={`mb-2 flex items-center justify-between gap-3 ${className}`}>
       <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">{titel}</h2>
       {aktion ? <div className="shrink-0">{aktion}</div> : null}
     </div>

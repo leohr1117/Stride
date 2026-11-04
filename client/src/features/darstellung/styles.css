@@ -552,7 +552,7 @@ html[data-eingabe='zeiger'] :focus {
   top: 0;
   inset-inline-start: var(--liste-einzug, 16px);
   inset-inline-end: 0;
-  border-top: 1px solid var(--trenner, var(--rand));
+  border-top: 1px solid var(--rand);
   pointer-events: none;
 }
 
@@ -678,6 +678,22 @@ html[data-eingabe='zeiger'] :focus {
   min-height: 0;
   transform: translateY(-50%);
   pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  [data-flaeche] {
+    border-width: 0;
+    border-radius: 12px;
+  }
+
+  .abschnitt-kopf,
+  .gruppen-kopf {
+    padding-inline: 16px;
+  }
+
+  .abschnitt-kopf .kopf-pfeil {
+    right: 16px;
+  }
 }
 
 .abschnitt-kopf .kopf-info button {

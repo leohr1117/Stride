@@ -123,7 +123,7 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
     expect(werte.schrift).toContain('Segoe UI');
     expect(werte.groesse).toBe('16px');
     expect(await page.locator('.mobilkopf h1').evaluate((element) => getComputedStyle(element).textTransform)).toBe('none');
-    expect(await eckenRadius(page, '.liste')).toBe(projekt === 'handy' ? '0px' : '8px');
+    expect(await eckenRadius(page, '.liste')).toBe(projekt === 'handy' ? '12px' : '8px');
     expect(await eckenRadius(page, '[data-zurueck]')).toBe('8px');
     expect(await page.locator('.knopf').first().evaluate((element) => getComputedStyle(element).minHeight)).toBe('48px');
     const info = page.getByRole('button', { name: /^Info/ }).first();
@@ -167,7 +167,7 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
 
     await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('data-stil', 'standard');
-    expect(await eckenRadius(page, '[data-flaeche]')).toBe(projekt === 'handy' ? '0px' : '8px');
+    expect(await eckenRadius(page, '[data-flaeche]')).toBe(projekt === 'handy' ? '12px' : '8px');
     expect(await kartenEcke(page)).toBe('8px');
     await ohneSeitlichenUeberlauf(page);
     await page.screenshot({ path: `tmp-test/standard-stil/${projekt}-heute.png`, fullPage: true });

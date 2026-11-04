@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "На телефоне каждый раздел — группа с отступом. Строки внутри разделяет линия.",
   "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "На странице «Сегодня» число серии остаётся на виду. Раздел ниже появляется только тогда, когда есть что сделать.",
   "Die Abstände über und unter den Abschnittsüberschriften sind überall gleich.": "Отступы над заголовками разделов и под ними везде одинаковые.",
   "Bei 1 steht die Einzahl, in jeder Sprache.": "При 1 используется единственное число, на каждом языке.",

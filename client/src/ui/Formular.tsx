@@ -16,6 +16,7 @@ import {
 import { FARBEN } from '../../../shared/spiel/begriffe.ts';
 import { tx } from '../text.ts';
 import { Fehlermeldung } from './Anzeige.tsx';
+import { FLAECHE_KLASSE } from './Flaeche.tsx';
 
 type KnopfVariante = 'primaer' | 'sekundaer' | 'leise' | 'gefahr' | 'warnung';
 
@@ -325,7 +326,7 @@ export function Optionsliste<T extends string | number>({
   name?: string;
 }) {
   return (
-    <div className="liste -mx-4 bg-flaeche md:mx-0 md:max-w-[720px] md:overflow-hidden md:rounded-lg md:border md:border-rand" role="radiogroup" aria-label={name}>
+    <div data-flaeche="" className={FLAECHE_KLASSE} role="radiogroup" aria-label={name}>
       {optionen.map((option) => {
         const label = typeof option.label === 'string' ? tx(option.label) : option.label;
         const gewaehlt = option.wert === wert;

@@ -63,9 +63,10 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
     };
   });
   if (projekt === 'handy') {
-    expect(masse.x).toBeLessThanOrEqual(1);
-    expect(masse.rechts).toBeGreaterThanOrEqual(masse.breite - 1);
-    expect(masse.radius).toBe(0);
+    expect(masse.x).toBeGreaterThanOrEqual(15);
+    expect(masse.x).toBeLessThanOrEqual(17);
+    expect(Math.abs(masse.rechts - (masse.breite - 16))).toBeLessThanOrEqual(1);
+    expect(masse.radius).toBe(12);
     expect(masse.rand).toBe(0);
   } else {
     expect(masse.radius).toBe(8);
@@ -109,6 +110,30 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await expect(bossZeile).toContainText(/seit /);
   await expect(bossZeile).not.toContainText('Erwacht');
   await expect(bossZeile.locator('.text-gefahr')).toContainText('Disziplin');
+  const bossLinien = await angriff.locator('[data-flaeche]').evaluate((flaeche) => {
+    const kinder = [...flaeche.children].filter((kind) => kind instanceof HTMLElement && kind.getBoundingClientRect().height > 0);
+    return kinder.map((kind, index) => {
+      const linie = getComputedStyle(kind, '::before');
+      const einzug = parseFloat(linie.insetInlineStart);
+      return {
+        index,
+        dicke: parseFloat(linie.borderTopWidth) || 0,
+        einzug: Number.isNaN(einzug) ? parseFloat(linie.left) : einzug,
+        soll: parseFloat(getComputedStyle(kind).getPropertyValue('--liste-einzug')) || 16,
+        unten: parseFloat(getComputedStyle(kind).borderBottomWidth) || 0,
+      };
+    });
+  });
+  expect(bossLinien.length).toBeGreaterThan(0);
+  expect(bossLinien[0]?.dicke).toBe(0);
+  expect(bossLinien[bossLinien.length - 1]?.unten).toBe(0);
+  for (const linie of bossLinien) {
+    expect(linie.soll).toBe(48);
+  }
+  for (const linie of bossLinien.slice(1)) {
+    expect(linie.dicke).toBe(1);
+    expect(linie.einzug).toBe(48);
+  }
 
   const zeile = await page.locator('[data-wochenwert]').evaluateAll((knoten) =>
     knoten.map((knoten) => {

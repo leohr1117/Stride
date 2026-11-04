@@ -32,7 +32,7 @@ import {
 
 export const INFO_LABELS = 'Ein Label geht vor dem Projekt. Hat eine Aufgabe mehrere, gilt das oberste.';
 
-const LABEL_FLAECHE = `${FLAECHEN_RAHMEN} bg-transparent px-4 md:overflow-hidden md:rounded-lg md:border md:border-rand md:bg-flaeche md:px-0`;
+const LABEL_FLAECHE = `${FLAECHEN_RAHMEN} bg-transparent md:overflow-hidden md:rounded-lg md:border md:border-rand md:bg-flaeche`;
 
 type Wahl =
   | { art: 'standard' }

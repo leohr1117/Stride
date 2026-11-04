@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "En el teléfono, cada sección es un grupo con margen. Una línea separa las filas.",
   "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "En Hoy, el número de la racha sigue visible. La sección de abajo aparece solo cuando hay algo que hacer.",
   "Die Abstände über und unter den Abschnittsüberschriften sind überall gleich.": "El espacio encima y debajo de los títulos de sección es el mismo en todas partes.",
   "Bei 1 steht die Einzahl, in jeder Sprache.": "Con 1 va el singular, en cada idioma.",

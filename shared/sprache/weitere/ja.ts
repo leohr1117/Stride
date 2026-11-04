@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "スマホでは、各セクションが内側に寄せたグループになります。中の行は線で区切ります。",
   "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "今日では、連続の数字は表示されたままです。下の節は、することがあるときだけ出ます。",
   "Die Abstände über und unter den Abschnittsüberschriften sind überall gleich.": "節の見出しの上下の間隔は、どこも同じです。",
   "Bei 1 steht die Einzahl, in jeder Sprache.": "数が 1 のときは単数です。どの言語でも同じです。",

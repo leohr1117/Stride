@@ -50,11 +50,11 @@ test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInf
     const breite = page.viewportSize()?.width ?? 0;
     expect(kasten).not.toBeNull();
     if (kasten && breite < 768) {
-      expect(kasten.x).toBeLessThanOrEqual(1);
-      expect(kasten.x + kasten.width).toBeGreaterThanOrEqual(breite - 20);
+      expect(Math.abs(kasten.x - 16)).toBeLessThanOrEqual(1);
+      expect(Math.abs(kasten.x + kasten.width - (breite - 16))).toBeLessThanOrEqual(1);
     }
     const radius = await liste.evaluate((element) => getComputedStyle(element).borderTopLeftRadius);
-    expect(parseFloat(radius)).toBe(breite < 768 ? 0 : 8);
+    expect(parseFloat(radius)).toBe(breite < 768 ? 12 : 8);
     if (breite >= 768 && kasten) {
       expect(kasten.width).toBeLessThanOrEqual(720);
     }

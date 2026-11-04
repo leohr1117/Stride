@@ -206,8 +206,8 @@ function abschnittImBlick(ids: readonly string[], unterkante: number): string {
 
 function HandbuchAbschnitt({ id, titel, children }: { id: string; titel: string; children: ReactNode }) {
   return (
-    <section id={id} className="handbuch-abschnitt -mx-4 min-w-0 md:mx-0 md:max-w-[720px]">
-      <div className="px-4">
+    <section id={id} className="handbuch-abschnitt min-w-0 md:max-w-[720px]">
+      <div className="md:px-4">
         <AbschnittKopf titel={tx(titel)} />
       </div>
       <FlaecheInnen className="max-w-full overflow-x-auto overscroll-x-contain">

@@ -57,6 +57,9 @@ function pruefeSeite(kopfPflicht: boolean): Bericht {
     const sperrung = schrift.letterSpacing;
     if (sperrung !== 'normal' && parseFloat(sperrung) !== 0) merke(`${name}: Sperrung ${sperrung}`);
     if (schrift.color !== leise) merke(`${name}: Farbe weicht ab`);
+    if (mobil && Math.abs(h2.getBoundingClientRect().x - 32) > 1) {
+      merke(`${name}: Text bei ${Math.round(h2.getBoundingClientRect().x)}`);
+    }
     if (/\buppercase\b|\btracking-wide\b/.test(h2.className)) merke(`${name}: Versalien in der Klasse`);
     const hinweis = [...kopf.children].find((kind) => kind.tagName === 'P');
     const textUnten = hinweis instanceof HTMLElement ? hinweis.getBoundingClientRect().bottom : h2.getBoundingClientRect().bottom;
@@ -82,10 +85,11 @@ function pruefeSeite(kopfPflicht: boolean): Bericht {
     const radius = parseFloat(stil.borderTopLeftRadius);
     const rand = parseFloat(stil.borderTopWidth);
     if (mobil) {
-      if (radius !== 0) merke(`Radius auf dem Handy ${radius}`);
+      if (Math.abs(radius - 12) > 0.5) merke(`Radius auf dem Handy ${radius}`);
       if (rand !== 0) merke(`Rand auf dem Handy ${rand}`);
-      if (kasten.x > 1) merke(`Fläche beginnt bei ${Math.round(kasten.x)}`);
-      if (kasten.right < breite - 1) merke(`Fläche endet bei ${Math.round(kasten.right)} von ${breite}`);
+      if (Math.abs(kasten.x - 16) > 1) merke(`Fläche beginnt bei ${Math.round(kasten.x)}`);
+      const zielRechts = breite - 16;
+      if (Math.abs(kasten.right - zielRechts) > 1) merke(`Fläche endet bei ${Math.round(kasten.right)} von ${breite}`);
     } else if (radius !== 8 || rand !== 1 || kasten.width > 720) {
       merke(`Fläche am PC: Radius ${radius}, Rand ${rand}, Breite ${Math.round(kasten.width)}`);
     }
@@ -106,6 +110,41 @@ function pruefeSeite(kopfPflicht: boolean): Bericht {
     if (abstand !== 24) {
       const name = kopf.querySelector('h2')?.textContent?.trim() ?? '?';
       merke(`${name}: ${abstand} px nach der vorigen Fläche`);
+    }
+  }
+
+  const farbProbe = document.createElement('span');
+  farbProbe.style.borderTop = '1px solid var(--rand)';
+  document.body.append(farbProbe);
+  const randFarbe = getComputedStyle(farbProbe).borderTopColor;
+  farbProbe.remove();
+  const listen = [...document.querySelectorAll('main .liste')].filter((liste) => liste.closest('[data-flaeche]'));
+  for (const liste of listen) {
+    const kinder = [...liste.children].filter((kind) => kind instanceof HTMLElement && kind.getBoundingClientRect().height > 0);
+    if (kinder.length === 0) continue;
+    const letzte = kinder[kinder.length - 1];
+    if (!letzte) continue;
+    const unten = parseFloat(getComputedStyle(letzte).borderBottomWidth) || 0;
+    if (unten > 0) merke('Letzte Zeile hat eine Linie');
+    for (let index = 0; index < kinder.length; index += 1) {
+      const kind = kinder[index];
+      if (!(kind instanceof HTMLElement)) continue;
+      const linie = getComputedStyle(kind, '::before');
+      const dicke = parseFloat(linie.borderTopWidth) || 0;
+      if (index === 0) {
+        if (dicke > 0) merke('Erste Zeile hat eine Linie');
+        continue;
+      }
+      if (dicke !== 1) {
+        merke('Trennlinie fehlt');
+        continue;
+      }
+      const soll = parseFloat(getComputedStyle(kind).getPropertyValue('--liste-einzug')) || 16;
+      const ist = parseFloat(linie.insetInlineStart);
+      const links = parseFloat(linie.left);
+      const gemessen = Number.isNaN(ist) ? links : ist;
+      if (Number.isNaN(gemessen) || Math.abs(gemessen - soll) > 1) merke(`Trennlinie bei ${linie.insetInlineStart} statt ${soll}`);
+      if (linie.borderTopColor !== randFarbe) merke('Trennlinie nicht in der Randfarbe');
     }
   }
 

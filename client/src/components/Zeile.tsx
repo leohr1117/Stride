@@ -79,7 +79,7 @@ export function ZeilenGruppe({
   return (
     <section>
       {titel ? (
-        <div className="flex items-center justify-between gap-3">
+        <div className="gruppen-kopf flex items-center justify-between gap-3">
           <h2 className={`min-w-0 text-balance break-words ${ABSCHNITT}`}>{tx(titel)}</h2>
           {aktion ? <div className="mb-2 shrink-0">{aktion}</div> : null}
         </div>

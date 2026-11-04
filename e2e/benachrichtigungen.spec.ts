@@ -362,17 +362,18 @@ async function profilZurueck(seite: Page): Promise<void> {
   });
 }
 
-async function vorbereitenTeil(seite: Page): Promise<void> {
+async function vorbereitenTeil(seite: Page): Promise<string> {
   await seite.goto('/');
   await seite.locator('input[name="username"]').fill('testteil');
   await seite.locator('input[name="password"]').fill(await passwortTeil());
   await seite.locator('button[type="submit"]').click();
   await seite.waitForFunction(async () => (await fetch('/api/einstellungen')).ok);
-  await seite.evaluate(async () => {
+  const vorher = await seite.evaluate(async () => {
     const reset = await fetch('/api/profil/zuruecksetzen', { method: 'POST' });
     if (!reset.ok) {
       throw new Error(`zuruecksetzen ${reset.status}`);
     }
+    const stand = (await fetch('/api/einstellungen').then((antwort) => antwort.json())) as { stil?: string };
     const stil = await fetch('/api/einstellungen', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -383,9 +384,11 @@ async function vorbereitenTeil(seite: Page): Promise<void> {
     }
     localStorage.removeItem('ascend-sprache');
     sessionStorage.clear();
+    return typeof stand.stil === 'string' ? stand.stil : 'standard';
   });
   await seite.goto('/');
   await expect(seite.locator('html')).toHaveAttribute('data-stil', 'antik');
+  return vorher;
 }
 
 async function zumStartTeil(seite: Page): Promise<void> {
@@ -499,8 +502,9 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
   });
   fs.mkdirSync('tmp-test/benachrichtigungen', { recursive: true });
   const bild = (name: string) => page.screenshot({ path: `tmp-test/benachrichtigungen/${testInfo.project.name}-${name}.png`, fullPage: true });
+  let stilVorher = 'standard';
   try {
-    await vorbereitenTeil(page);
+    stilVorher = await vorbereitenTeil(page);
     await zumStartTeil(page);
     setzeNichtVor('2000-01-01T00:00:00.000Z');
     await page.goto('/');
@@ -567,21 +571,30 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
     await expect(karte).toHaveCount(0);
     expect(await erlaubnisZaehler(page)).toBe(0);
   } finally {
+    await page.evaluate(async (stil) => {
+      await fetch('/api/einstellungen', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stil }),
+      });
+    }, stilVorher);
     await profilZurueck(page);
   }
 });
 
 test('Handbuch nennt die Benachrichtigungen nicht', async ({ page }) => {
   await anmelden(page);
-  const stil = await page.evaluate(async () => {
+  const vorher = await page.evaluate(async () => {
+    const stand = (await fetch('/api/einstellungen').then((antwort) => antwort.json())) as { stil?: string };
     const antwort = await fetch('/api/einstellungen', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ stil: 'antik' }),
     });
-    return antwort.ok;
+    return { ok: antwort.ok, stil: typeof stand.stil === 'string' ? stand.stil : 'standard' };
   });
-  expect(stil).toBe(true);
+  expect(vorher.ok).toBe(true);
+  try {
   await page.goto('/handbuch');
   await expect(page.locator('html')).toHaveAttribute('data-stil', 'antik');
   await expect(page.getByRole('heading', { name: 'Handbuch', exact: true })).toBeVisible();
@@ -613,4 +626,15 @@ test('Handbuch nennt die Benachrichtigungen nicht', async ({ page }) => {
   await verlauf.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
   await ohneSeitlichenUeberlauf(page);
   await page.screenshot({ path: `tmp-test/benachrichtigungen/${projekt}-version.png` });
+  } finally {
+    const wieder = await page.evaluate(async (stil) => {
+      const antwort = await fetch('/api/einstellungen', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stil }),
+      });
+      return antwort.ok;
+    }, vorher.stil);
+    expect(wieder).toBe(true);
+  }
 });

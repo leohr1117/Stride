@@ -35,7 +35,7 @@ export function LaufendSeite() {
 
       {bosse.length > 0 && (
         <section className="space-y-2">
-          <Ueberschrift titel={tx('Bosse')} />
+          <Ueberschrift titel={tx('Bosse')} className="gruppen-kopf" />
           <Liste>
             {bosse.map((eintrag) => (
               <LaufendesVorhaben key={eintrag.id} vorhaben={eintrag} zeigeBoss projekteAn={projekteAn} />
@@ -46,7 +46,7 @@ export function LaufendSeite() {
 
       {vorhaben.length > 0 && (
         <section className="space-y-2">
-          <Ueberschrift titel={tx(zielTitel('vorhaben'))} />
+          <Ueberschrift titel={tx(zielTitel('vorhaben'))} className="gruppen-kopf" />
           <Liste>
             {vorhaben.map((eintrag) => (
               <LaufendesVorhaben key={eintrag.id} vorhaben={eintrag} zeigeBoss={false} projekteAn={projekteAn} />
