@@ -238,6 +238,52 @@ async function loescheStill(seite: Page, id: number): Promise<void> {
   }
 }
 
+async function spracheSetzen(seite: Page, sprache: string): Promise<void> {
+  const ok = await seite.evaluate(async (code) => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sprache: code }),
+    });
+    return antwort.ok;
+  }, sprache);
+  expect(ok).toBe(true);
+  await seite.reload();
+}
+
+async function pruefeTextknopf(seite: Page, kennung: string): Promise<void> {
+  const zeile = seite.locator(`[data-kette="${kennung}"]`);
+  const zeilen = await zeile.locator('[data-kette-satz]').evaluate((element) => {
+    const stil = getComputedStyle(element);
+    const zeilenhoehe = Number.parseFloat(stil.lineHeight);
+    const hoehe = element.getBoundingClientRect().height;
+    return { zeilen: Math.round(hoehe / zeilenhoehe), umbruch: stil.whiteSpace };
+  });
+  expect(zeilen.umbruch).toBe('nowrap');
+  expect(zeilen.zeilen).toBe(1);
+  const mass = await zeile.getByRole('button', { name: /^\+/ }).evaluate((element) => {
+    const kasten = element.getBoundingClientRect();
+    const stil = getComputedStyle(element);
+    const aktion = getComputedStyle(document.documentElement).getPropertyValue('--aktion').trim();
+    const probe = document.createElement('span');
+    probe.style.color = aktion;
+    document.body.append(probe);
+    const soll = getComputedStyle(probe).color;
+    probe.remove();
+    return {
+      hoehe: Math.round(kasten.height),
+      breite: Math.round(kasten.width),
+      hintergrund: stil.backgroundColor,
+      farbe: stil.color,
+      soll,
+    };
+  });
+  expect(mass.hoehe).toBe(48);
+  expect(mass.breite).toBeGreaterThanOrEqual(48);
+  expect(mass.hintergrund).toBe('rgba(0, 0, 0, 0)');
+  expect(mass.farbe).toBe(mass.soll);
+}
+
 async function dialogBleibtZeile(seite: Page, zeile: string): Promise<void> {
   const karte = seite.locator(`[data-kette="${zeile}"]`);
   await karte.getByRole('button', { name: '+ Eintrag', exact: true }).click();
@@ -391,7 +437,11 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
     }
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Streak', exact: true })).toBeVisible();
-    await expect(page.locator('[data-kette="streak"]')).toContainText('Gestern war dein freier Tag.');
+    await expect(page.locator('[data-kette="streak"]')).toContainText('Pause genutzt · gestern frei');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await pruefeTextknopf(page, 'streak');
+    await expect(page.locator('[data-kette="streak"]').getByRole('button', { name: /^Info/ })).toHaveCount(1);
+    await page.setViewportSize(ausgang);
     await expect(page.locator('[data-kette="rueckkehr"]')).toHaveCount(0);
     await expect(page.locator('[data-kette="schutz"]')).toHaveCount(0);
     await dialogBleibtZeile(page, 'streak');
@@ -401,7 +451,18 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
     await loescheStill(page, streakId);
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Streak', exact: true })).toBeVisible();
-    await expect(page.locator('[data-kette="rueckkehr"]')).toContainText('Streak unterbrochen');
+    await expect(page.locator('[data-kette="rueckkehr"]')).toContainText('Streak unterbrochen · bis');
+    await expect(page.locator('[data-kette="rueckkehr"]')).toContainText('zurückholen');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await pruefeTextknopf(page, 'rueckkehr');
+    await spracheSetzen(page, 'ru');
+    await expect(page.locator('[data-kette="rueckkehr"] [data-kette-satz]')).toContainText('прервана');
+    await pruefeTextknopf(page, 'rueckkehr');
+    await spracheSetzen(page, 'ja');
+    await expect(page.locator('[data-kette="rueckkehr"] [data-kette-satz]')).toContainText('連続');
+    await pruefeTextknopf(page, 'rueckkehr');
+    await spracheSetzen(page, 'de');
+    await page.setViewportSize(ausgang);
     await expect(page.locator('[data-kette="schutz"]')).toContainText('Hält die');
     await expect(page.locator('[data-kette="schutz"]').getByRole('button', { name: 'Einsetzen' })).toBeVisible();
     await expect(page.locator('[data-kette="streak"]')).toHaveCount(0);
@@ -419,7 +480,11 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
     await expect(page.locator('[data-kette="schutz"]')).toHaveCount(0);
     await expect(page.locator('[data-kette="rueckkehr"]')).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Streak', exact: true })).toBeVisible();
-    await expect(page.locator('[data-kette="offen"]')).toContainText('Trag heute etwas ein, damit der Streak bleibt.');
+    await expect(page.locator('[data-kette="offen"]')).toContainText('Streak offen · heute eintragen');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await pruefeTextknopf(page, 'offen');
+    await expect(page.locator('[data-kette="offen"]').getByRole('button', { name: /^Info/ })).toHaveCount(1);
+    await page.setViewportSize(ausgang);
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(page.getByText('Rückkehr +')).toHaveCount(0);
     await expect(page.locator('[data-wochenwert="Streak"] .text-streak')).toBeVisible();
@@ -434,6 +499,7 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
       await loescheStill(page, id).catch(() => undefined);
     }
     wieder?.();
+    await spracheSetzen(page, 'de').catch(() => undefined);
     await page.setViewportSize(ausgang).catch(() => undefined);
   }
 });

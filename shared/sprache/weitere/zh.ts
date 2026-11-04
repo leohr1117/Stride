@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "在「今天」上，连续记录的提示占一行。「+ 记录」是文字按钮。",
   "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "在手机上，可折叠的分组四角都是圆角。",
   "Flächen heben sich deutlicher vom Hintergrund ab.": "表面与背景的区分更明显。",
   "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "在手机上，每个分区是缩进的一组。里面的各行之间有一条分隔线。",
@@ -411,7 +412,9 @@ export const TEXTE: Record<string, string> = {
   "+ Eintrag": "+ 记录",
   "Trag heute etwas ein, damit der Streak bleibt.": "今天记一笔，连续记录才不断。",
   "Gestern war dein freier Tag.": "昨天是你的休息日。",
-  "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "连续记录中断了。在 {datum} 之前记一笔即可回来。",
+  "Streak offen · heute eintragen": "连续未记 · 今天记一笔",
+  "Pause genutzt · gestern frei": "已用休息 · 昨天自由",
+  "Streak unterbrochen · bis {datum} zurückholen": "连续中断 · {datum}前找回",
   "Neuer Streak beginnt mit dem nächsten Eintrag.": "下一次记录开始新的连续。",
   "Einsetzen": "使用",
   "{n} Tage · Pause aufgebraucht": "{n} 天 · 休息已用完",

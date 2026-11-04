@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "「今日」の連続の案内は1行です。「+ 記録」は文字ボタンです。",
   "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "スマートフォンでは、折りたたみできるグループの角がすべて丸くなっています。",
   "Flächen heben sich deutlicher vom Hintergrund ab.": "面が背景からはっきり浮かび上がります。",
   "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "スマホでは、各セクションが内側に寄せたグループになります。中の行は線で区切ります。",
@@ -411,7 +412,9 @@ export const TEXTE: Record<string, string> = {
   "+ Eintrag": "+ 記録",
   "Trag heute etwas ein, damit der Streak bleibt.": "今日なにかを記録すると、連続が続きます。",
   "Gestern war dein freier Tag.": "昨日は自由な日でした。",
-  "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "連続が途切れました。{datum}までに記録すると戻れます。",
+  "Streak offen · heute eintragen": "連続は未記録 · 今日記録",
+  "Pause genutzt · gestern frei": "休みを使用 · 昨日は自由",
+  "Streak unterbrochen · bis {datum} zurückholen": "連続中断 · {datum}まで戻す",
   "Neuer Streak beginnt mit dem nächsten Eintrag.": "次の記録から新しい連続が始まります。",
   "Einsetzen": "使う",
   "{n} Tage · Pause aufgebraucht": "{n}日 · 休みを使い切り",

@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "На «Сегодня» подсказка серии помещается в одну строку. «+ Запись» — текстовая кнопка.",
   "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "На телефоне сворачиваемые группы скруглены по всем углам.",
   "Flächen heben sich deutlicher vom Hintergrund ab.": "Поверхности заметнее отделяются от фона.",
   "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "На телефоне каждый раздел — группа с отступом. Строки внутри разделяет линия.",
@@ -411,7 +412,9 @@ export const TEXTE: Record<string, string> = {
   "+ Eintrag": "+ Запись",
   "Trag heute etwas ein, damit der Streak bleibt.": "Запиши сегодня что-нибудь, чтобы серия сохранилась.",
   "Gestern war dein freier Tag.": "Вчера был твой свободный день.",
-  "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "Серия прервана. Запиши что-нибудь до {datum}, чтобы вернуться.",
+  "Streak offen · heute eintragen": "Серия открыта · запиши сегодня",
+  "Pause genutzt · gestern frei": "Пауза использована · вчера свободно",
+  "Streak unterbrochen · bis {datum} zurückholen": "Серия прервана · вернуть до {datum}",
   "Neuer Streak beginnt mit dem nächsten Eintrag.": "Новая серия начинается со следующей записи.",
   "Einsetzen": "Применить",
   "{n} Tage · Pause aufgebraucht": "{n} дней · пауза исчерпана",

@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "En Hoy, el aviso de la racha cabe en una línea. + Entrada es un botón de texto.",
   "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "En el teléfono, los grupos desplegables están redondeados en todas las esquinas.",
   "Flächen heben sich deutlicher vom Hintergrund ab.": "Las superficies se distinguen con más claridad del fondo.",
   "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "En el teléfono, cada sección es un grupo con margen. Una línea separa las filas.",
@@ -411,7 +412,9 @@ export const TEXTE: Record<string, string> = {
   "+ Eintrag": "+ Entrada",
   "Trag heute etwas ein, damit der Streak bleibt.": "Apunta algo hoy para que la racha siga.",
   "Gestern war dein freier Tag.": "Ayer fue tu día libre.",
-  "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "Racha interrumpida. Apunta algo hasta el {datum} para volver.",
+  "Streak offen · heute eintragen": "Racha abierta · anota hoy",
+  "Pause genutzt · gestern frei": "Pausa usada · ayer libre",
+  "Streak unterbrochen · bis {datum} zurückholen": "Racha interrumpida · recuperar hasta el {datum}",
   "Neuer Streak beginnt mit dem nächsten Eintrag.": "Una racha nueva empieza con la siguiente entrada.",
   "Einsetzen": "Usar",
   "{n} Tage · Pause aufgebraucht": "{n} días · pausa agotada",

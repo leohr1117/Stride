@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.41
+
+### Geändert
+
+- Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.
+
 ## 3.56.40
 
 ### Behoben

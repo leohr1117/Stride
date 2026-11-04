@@ -10,7 +10,7 @@ import { streakAbschnittSichtbar, streakArt, type StreakArt } from './streakSatz
 
 function EintragKnopf({ onClick }: { onClick: () => void }) {
   return (
-    <Knopf variante="leise" className="shrink-0 whitespace-nowrap px-3" onClick={onClick}>
+    <Knopf variante="text" className="shrink-0" onClick={onClick}>
       {tx('+ Eintrag')}
     </Knopf>
   );
@@ -35,17 +35,54 @@ const KENNUNG: Record<Exclude<StreakArt, 'lauf'>, string> = {
 
 function satzText(art: Exclude<StreakArt, 'lauf'>, stand: KetteHeute): string {
   if (art === 'offen') {
-    return tx('Trag heute etwas ein, damit der Streak bleibt.');
+    return tx('Streak offen · heute eintragen');
   }
   if (art === 'pause') {
-    return tx('Gestern war dein freier Tag.');
+    return tx('Pause genutzt · gestern frei');
   }
   if (art === 'rueckkehr' && stand.rueckkehr) {
-    return tx('Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.', {
+    return tx('Streak unterbrochen · bis {datum} zurückholen', {
       datum: kurzesDatum(ausTagesSchluessel(stand.rueckkehr.fristAm).toISOString()),
     });
   }
   return tx('Neuer Streak beginnt mit dem nächsten Eintrag.');
+}
+
+function handlungInfo(art: Exclude<StreakArt, 'lauf'>): ReactNode {
+  if (art === 'offen') {
+    return <InfoHinweis name="Streak" text="Trag heute etwas ein, damit der Streak bleibt." />;
+  }
+  if (art === 'pause') {
+    return <InfoHinweis name="Streak" text="Gestern war dein freier Tag." />;
+  }
+  if (art === 'rueckkehr') {
+    return <InfoHinweis name="Rückkehr" text="Ein Eintrag in sieben Tagen, ohne Abzug." />;
+  }
+  return null;
+}
+
+function Handlungszeile({
+  kennung,
+  text,
+  info,
+  aktion,
+}: {
+  kennung: string;
+  text: string;
+  info?: ReactNode;
+  aktion?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-col px-4 md:flex-row md:items-center md:gap-3" data-kette={kennung}>
+      <div className="flex min-h-12 min-w-0 flex-1 items-center">
+        <p className="min-w-0 truncate text-sm leading-5" data-kette-satz>
+          {text}
+        </p>
+        {info}
+      </div>
+      {aktion ? <div className="flex justify-end md:shrink-0">{aktion}</div> : null}
+    </div>
+  );
 }
 
 export function HeuteKarte() {
@@ -92,14 +129,10 @@ export function HeuteKarte() {
               </div>
             ) : null}
             {handlung && stand && (
-              <Zeile
+              <Handlungszeile
                 kennung={KENNUNG[handlung]}
                 text={satzText(handlung, stand)}
-                extra={
-                  handlung === 'rueckkehr' ? (
-                    <InfoHinweis name="Rückkehr" text="Ein Eintrag in sieben Tagen, ohne Abzug." />
-                  ) : undefined
-                }
+                info={handlungInfo(handlung)}
                 aktion={<EintragKnopf onClick={() => eintragOeffnen()} />}
               />
             )}

@@ -11,6 +11,8 @@ const WURZEL = join(import.meta.dirname, '../../..');
 const ERLAUBT = new Set([
   'Ein Tag Pause ist frei. Danach ist der Streak angeschlagen.',
   'Ein Eintrag in sieben Tagen, ohne Abzug.',
+  'Trag heute etwas ein, damit der Streak bleibt.',
+  'Gestern war dein freier Tag.',
   'Einmalig Bonus-XP nach den Einträgen im Projekt. Wieder öffnen gibt den Bonus nicht noch einmal.',
   INVESTITION_INFO,
   BOSS_DATUM_INFO,

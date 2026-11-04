@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "Sur Aujourd'hui, l'indication de la série tient sur une ligne. + Entrée est un bouton texte.",
   "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "Sur le téléphone, les groupes repliables sont arrondis à tous les coins.",
   "Flächen heben sich deutlicher vom Hintergrund ab.": "Les surfaces se détachent plus nettement de l'arrière-plan.",
   "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "Sur le téléphone, chaque section est un groupe en retrait. Un trait sépare les rangées.",
@@ -411,7 +412,9 @@ export const TEXTE: Record<string, string> = {
   "+ Eintrag": "+ Entrée",
   "Trag heute etwas ein, damit der Streak bleibt.": "Note quelque chose aujourd'hui pour que la série tienne.",
   "Gestern war dein freier Tag.": "Hier était ton jour libre.",
-  "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "Série interrompue. Note quelque chose jusqu'au {datum} pour revenir.",
+  "Streak offen · heute eintragen": "Série ouverte · noter aujourd'hui",
+  "Pause genutzt · gestern frei": "Pause utilisée · hier libre",
+  "Streak unterbrochen · bis {datum} zurückholen": "Série interrompue · à reprendre jusqu'au {datum}",
   "Neuer Streak beginnt mit dem nächsten Eintrag.": "Une nouvelle série commence avec la prochaine entrée.",
   "Einsetzen": "Utiliser",
   "{n} Tage · Pause aufgebraucht": "{n} jours · pause épuisée",

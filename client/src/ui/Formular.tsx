@@ -18,7 +18,10 @@ import { tx } from '../text.ts';
 import { Fehlermeldung } from './Anzeige.tsx';
 import { FLAECHE_KLASSE } from './Flaeche.tsx';
 
-type KnopfVariante = 'primaer' | 'sekundaer' | 'leise' | 'gefahr' | 'warnung';
+type KnopfVariante = 'primaer' | 'sekundaer' | 'leise' | 'gefahr' | 'warnung' | 'text';
+
+const TEXT_KNOPF =
+  'h-12 min-h-12 min-w-12 whitespace-nowrap bg-transparent px-3 text-aktion hover:bg-transparent';
 
 const KNOPF_STIL: Record<KnopfVariante, string> = {
   primaer: 'min-h-12 rounded-lg bg-aktion px-4 text-aktion-text hover:brightness-110',
@@ -26,6 +29,7 @@ const KNOPF_STIL: Record<KnopfVariante, string> = {
   leise: 'min-h-12 rounded-lg px-4 text-leise hover:bg-flaeche-2 hover:text-haupt',
   gefahr: 'min-h-12 rounded-lg px-4 text-gefahr hover:bg-gefahr/10',
   warnung: 'min-h-12 rounded-lg bg-gefahr px-4 text-gefahr-text hover:brightness-110',
+  text: TEXT_KNOPF,
 };
 
 function istFehler(knoten: ReactNode): boolean {

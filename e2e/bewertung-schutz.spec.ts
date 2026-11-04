@@ -192,6 +192,10 @@ test('testvoll ohne den Testschlüssel zeigt die Karte nicht', async ({ page }) 
 
 test('Handbuch nennt Schutz und Rückkehr in kurzen Zeilen', async ({ page }) => {
   await anmelden(page);
+  const vorher = await page.evaluate(async () => {
+    const daten = (await fetch('/api/einstellungen').then((antwort) => antwort.json())) as { stil: string };
+    return daten.stil;
+  });
   const stil = await page.evaluate(async () => {
     const antwort = await fetch('/api/einstellungen', {
       method: 'PATCH',
@@ -201,33 +205,43 @@ test('Handbuch nennt Schutz und Rückkehr in kurzen Zeilen', async ({ page }) =>
     return antwort.ok;
   });
   expect(stil).toBe(true);
-  await page.goto('/handbuch');
-  await expect(page.locator('html')).toHaveAttribute('data-stil', 'antik');
-  await expect(page.getByRole('heading', { name: 'Handbuch', exact: true })).toBeVisible();
-  const karte = page.locator('#streak');
-  await expect(karte).toBeVisible();
-  await expect(karte.getByRole('heading', { name: 'Streak', exact: true })).toBeVisible();
-  await expect(karte).toContainText(`Pause: ${ERLAUBTE_PAUSENTAGE} Tag frei`);
-  await expect(karte).toContainText(`Schutz: alle ${SCHUTZ.schwelleTage} Tage, unter Heute einsetzen`);
-  await expect(karte).toContainText(`Rückkehr: ${RUECKKEHR.fristTage} Tage, wenn kein Schutz`);
-  await expect(karte).toContainText('Schutz und Rückkehr geben keine XP');
-  await expect(karte.getByRole('columnheader', { name: 'Faktor', exact: true })).toBeVisible();
-  await expect(karte.getByRole('button', { name: /^Info/ })).toHaveCount(0);
-  const abgeschnitten = await karte.evaluate((el) => el.scrollWidth > el.clientWidth + 1);
-  expect(abgeschnitten).toBe(false);
-  await ohneSeitlichenUeberlauf(page);
-  await karte.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
-  fs.mkdirSync('tmp-test/bewertung-schutz', { recursive: true });
-  const projekt = test.info().project.name;
-  await karte.screenshot({ path: `tmp-test/bewertung-schutz/${projekt}-karte.png` });
-  await page.screenshot({ path: `tmp-test/bewertung-schutz/${projekt}-seite.png` });
+  try {
+    await page.goto('/handbuch');
+    await expect(page.locator('html')).toHaveAttribute('data-stil', 'antik');
+    await expect(page.getByRole('heading', { name: 'Handbuch', exact: true })).toBeVisible();
+    const karte = page.locator('#streak');
+    await expect(karte).toBeVisible();
+    await expect(karte.getByRole('heading', { name: 'Streak', exact: true })).toBeVisible();
+    await expect(karte).toContainText(`Pause: ${ERLAUBTE_PAUSENTAGE} Tag frei`);
+    await expect(karte).toContainText(`Schutz: alle ${SCHUTZ.schwelleTage} Tage, unter Heute einsetzen`);
+    await expect(karte).toContainText(`Rückkehr: ${RUECKKEHR.fristTage} Tage, wenn kein Schutz`);
+    await expect(karte).toContainText('Schutz und Rückkehr geben keine XP');
+    await expect(karte.getByRole('columnheader', { name: 'Faktor', exact: true })).toBeVisible();
+    await expect(karte.getByRole('button', { name: /^Info/ })).toHaveCount(0);
+    const abgeschnitten = await karte.evaluate((el) => el.scrollWidth > el.clientWidth + 1);
+    expect(abgeschnitten).toBe(false);
+    await ohneSeitlichenUeberlauf(page);
+    await karte.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
+    fs.mkdirSync('tmp-test/bewertung-schutz', { recursive: true });
+    const projekt = test.info().project.name;
+    await karte.screenshot({ path: `tmp-test/bewertung-schutz/${projekt}-karte.png` });
+    await page.screenshot({ path: `tmp-test/bewertung-schutz/${projekt}-seite.png` });
 
-  await page.goto('/mehr/neu');
-  const verlauf = page.getByRole('region', { name: 'Version 3.16.0' });
-  await expect(verlauf).toBeVisible();
-  await expect(verlauf.getByText('Der Schutz hält den Streak, wenn ein Tag Pause nicht reicht. Du verdienst ihn alle sieben Tage und setzt ihn unter Heute ein.')).toBeVisible();
-  await expect(verlauf.getByText('Bricht der Streak, bleiben sieben Tage für die Rückkehr. Ein Eintrag in der Frist schließt sie.')).toBeVisible();
-  await verlauf.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
-  await ohneSeitlichenUeberlauf(page);
-  await page.screenshot({ path: `tmp-test/bewertung-schutz/${projekt}-version.png` });
+    await page.goto('/mehr/neu');
+    const verlauf = page.getByRole('region', { name: 'Version 3.16.0' });
+    await expect(verlauf).toBeVisible();
+    await expect(verlauf.getByText('Der Schutz hält den Streak, wenn ein Tag Pause nicht reicht. Du verdienst ihn alle sieben Tage und setzt ihn unter Heute ein.')).toBeVisible();
+    await expect(verlauf.getByText('Bricht der Streak, bleiben sieben Tage für die Rückkehr. Ein Eintrag in der Frist schließt sie.')).toBeVisible();
+    await verlauf.evaluate((el) => el.scrollIntoView({ block: 'start', inline: 'nearest' }));
+    await ohneSeitlichenUeberlauf(page);
+    await page.screenshot({ path: `tmp-test/bewertung-schutz/${projekt}-version.png` });
+  } finally {
+    await page.evaluate(async (stil) => {
+      await fetch('/api/einstellungen', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stil }),
+      });
+    }, vorher);
+  }
 });
