@@ -135,12 +135,12 @@ test('Feste Bedeutungsfarben in Palette Dunkel', async ({ page }, testInfo) => {
       );
     }
     const ringHtml = await page.locator('.levelring').first().innerHTML();
-    // Lichtpunkt und Farbverlauf.
-    expect(ringHtml.toLowerCase()).toContain('fill="white"');
-    expect(ringHtml).toContain('conic-gradient');
-    expect(ringHtml).toContain('feGaussianBlur');
-    expect(ringHtml).toContain('levelring-spitze-schein');
-    expect(ringHtml).toContain('--fortschritt');
+    expect(ringHtml.toLowerCase()).not.toContain('fill="white"');
+    expect(ringHtml).not.toContain('conic-gradient');
+    expect(ringHtml).not.toContain('feGaussianBlur');
+    expect(ringHtml).not.toContain('levelring-spitze-schein');
+    expect(ringHtml).toContain('stroke="var(--fortschritt)"');
+    expect(ringHtml).toContain('stroke="var(--flaeche-2)"');
     expect(ringHtml).not.toContain('--akzent');
     const kopf = await page.evaluate(() => {
       const ring = document.querySelector('[data-kopfring]');

@@ -623,6 +623,7 @@ export const PAARE = [
   ['Speichern · +{xp} {name}', 'Save · +{xp} {name}'],
   ['Ansehen Lvl {level}', 'Reputation lvl {level}'],
   ['Lvl {level}', 'Lvl {level}'],
+  ['Außen: Lvl {level}', 'Outer: Lvl {level}'],
   ['Erfahrung {aktuell} / {gesamt} XP', 'Experience {aktuell} / {gesamt} XP'],
   ['noch {rest} bis Level {level}', '{rest} to level {level}'],
   ['Erfahrung in {name}', 'Experience in {name}'],

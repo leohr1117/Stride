@@ -4,11 +4,24 @@ import { describe, expect, it } from 'vitest';
 import { LevelRing } from './Anzeige.tsx';
 
 describe('LevelRing', () => {
-  it('zeigt Farbverlauf entlang des Bogens und den weissen Lichtpunkt an der Spitze', () => {
-    const html = renderToStaticMarkup(createElement(LevelRing, { level: 3, anteil: 0.5 }));
-    expect(html).toContain('data-levelbogen');
-    expect(html).toMatch(/conic-gradient\(from 0deg, color-mix\(in srgb, var\(--haupt\) 67%, transparent\) 0deg, color-mix\(in srgb, var\(--fortschritt\) 59%, var\(--haupt\)\) 180deg/);
-    expect(html).toMatch(/data-ringlicht="" [^>]*r="1.25" fill="white" fill-opacity="0.75"/);
+  it('zeichnet den Ring auf Heute mit 64 px und 6 px Strich in einer Farbe', () => {
+    const html = renderToStaticMarkup(createElement(LevelRing, { level: 58, anteil: 0.4 }));
+    expect(html).toContain('width:64px');
+    expect(html).toContain('height:64px');
+    expect(html).toContain('stroke-width="9.375"');
+    expect(html).toContain('stroke="var(--fortschritt)"');
+    expect(html).toContain('stroke="var(--flaeche-2)"');
+    expect(html).toContain('stroke-linecap="butt"');
+    expect(html).toContain('text-[12px]');
+    expect(html).toContain('text-[20px]');
+    expect(html).toContain('font-semibold');
+    expect(html).toContain('leading-[24px]');
+    expect(html).toContain('>Level<');
+    expect(html).not.toContain('uppercase');
+    expect(html).not.toContain('conic-gradient');
+    expect(html).not.toContain('feGaussianBlur');
+    expect(html).not.toContain('fill="white"');
+    expect(html).not.toContain('filter=');
   });
 
   it('lässt die Schrift im grossen Ring und verkleinert sie im kleinen', () => {
@@ -21,9 +34,18 @@ describe('LevelRing', () => {
     expect(klein).toContain('font-size:14px');
   });
 
-  it('wird mit dem Fortschritt kraeftiger', () => {
+  it('verlängert den Strich mit dem Fortschritt und lässt 0 leer', () => {
+    const laenge = (html: string) => Number(html.match(/stroke-dasharray="([0-9.]+) /)?.[1]);
     const wenig = renderToStaticMarkup(createElement(LevelRing, { level: 1, anteil: 0.1 }));
-    expect(wenig).toContain('var(--fortschritt) 26%');
-    expect(wenig).toMatch(/fill-opacity="0.59/);
+    const viel = renderToStaticMarkup(createElement(LevelRing, { level: 1, anteil: 0.8 }));
+    const leer = renderToStaticMarkup(createElement(LevelRing, { level: 1, anteil: 0 }));
+    const voll = renderToStaticMarkup(createElement(LevelRing, { level: 1, anteil: 1 }));
+    expect(laenge(wenig)).toBeLessThan(laenge(viel));
+    expect(leer).not.toContain('stroke-dasharray');
+    expect(leer).not.toContain('var(--fortschritt)');
+    expect(leer).toContain('var(--flaeche-2)');
+    expect(voll).toContain('stroke="var(--fortschritt)"');
+    expect(voll).not.toContain('stroke-dasharray');
+    expect(voll).not.toContain('rotate');
   });
 });

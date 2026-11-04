@@ -23,17 +23,24 @@ export function AttributRadar({
   }
   const radarDaten = werte.map((attribut) => ({ name: attributName(attribut), wert: radarWert(attribut.level) }));
   const radarRand = radarMaximum(werte.map((attribut) => attribut.level));
-  const farbe = typ === 'status' ? 'var(--xp)' : 'var(--akzent)';
+  const farbe = 'var(--fortschritt)';
 
   return (
     <div ref={rahmen} data-spektrum={typ} data-achsen-max={radarRand} data-werte={radarDaten.map((eintrag) => eintrag.wert).join(',')}>
       <div className={`w-full min-w-0 overflow-hidden ${kompakt ? 'h-32' : 'h-56'}`}>
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart data={radarDaten} outerRadius={kompakt ? '78%' : '70%'}>
-            <PolarGrid stroke="var(--rand)" />
-            <PolarAngleAxis dataKey="name" tick={kompakt ? false : { fill: 'var(--leise)', fontSize: 12 }} />
+            <PolarGrid stroke="var(--trenner)" />
+            <PolarAngleAxis dataKey="name" tick={kompakt ? false : { fill: 'var(--leise)', fontSize: 13 }} />
             <PolarRadiusAxis type="number" domain={[0, radarRand]} allowDataOverflow niceTicks="none" tick={false} axisLine={false} />
-            <Radar animationDuration={DIAGRAMM_ANIMATION_MS} dataKey="wert" stroke={farbe} fill={farbe} fillOpacity={0.25} />
+            <Radar
+              animationDuration={DIAGRAMM_ANIMATION_MS}
+              dataKey="wert"
+              stroke={farbe}
+              strokeWidth={2}
+              fill={farbe}
+              fillOpacity={0.16}
+            />
             <Tooltip
               portal={typeof document === 'undefined' ? undefined : document.body}
               wrapperStyle={{ position: 'fixed', width: 0, height: 0, overflow: 'visible', pointerEvents: 'none', zIndex: 40 }}
@@ -52,7 +59,7 @@ export function AttributRadar({
           </RadarChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-center text-xs text-leise">{tx('Lvl {level}', { level: levelZahl(radarRand) })}</p>
+      <p className="text-center text-xs text-leise">{tx('Außen: Lvl {level}', { level: levelZahl(radarRand) })}</p>
     </div>
   );
 }

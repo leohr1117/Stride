@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.28',
+    seiten: 'Heute, Können, Haben',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Der Levelring ist einfarbig und auf Heute kleiner. Die XP-Zeile passt in eine Zeile. Bei Können und Haben zeigt das Radar die Werte als Fläche.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.27',
     seiten: 'Heute, Können, Haben, Rückblick',
     abschnitte: [

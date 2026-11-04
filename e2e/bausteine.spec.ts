@@ -89,15 +89,15 @@ test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInf
 
     await page.goto('/');
     await expect(page.locator('.levelring').first()).toBeVisible();
-    const schein = page.locator('.levelring-spitze-schein').first();
-    await expect(schein).toBeVisible();
     const ringHtml = await page.locator('.levelring').first().innerHTML();
-    const ohneLicht = ringHtml.replace(/<circle[^>]*data-ringlicht=""[^>]*>/g, '');
-    expect(ringHtml).toContain('feGaussianBlur');
-    expect(ringHtml).toContain('color-mix(in srgb, var(--fortschritt)');
-    expect(ringHtml).toContain('var(--haupt)');
-    expect(ohneLicht.toLowerCase()).not.toContain('fill="white"');
+    expect(ringHtml).not.toContain('feGaussianBlur');
+    expect(ringHtml).not.toContain('conic-gradient');
+    expect(ringHtml).not.toContain('levelring-spitze-schein');
+    expect(ringHtml.toLowerCase()).not.toContain('fill="white"');
+    expect(ringHtml).toContain('stroke="var(--fortschritt)"');
+    expect(ringHtml).toContain('stroke="var(--flaeche-2)"');
     expect(ringHtml).not.toContain('--akzent');
+    await expect(page.locator('.levelring-spitze-schein')).toHaveCount(0);
     await bild('ring-an');
 
     await page.goto('/mehr/darstellung');
@@ -109,9 +109,10 @@ test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInf
     await expect(page.locator('html')).toHaveAttribute('data-glimmen', 'aus');
     await expect.poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--glimm').trim())).toBe('0');
     await page.goto('/');
-    await expect(page.locator('.levelring-spitze-schein').first()).toBeAttached();
-    const versteckt = await page.locator('.levelring-spitze-schein').first().evaluate((element) => getComputedStyle(element).display);
-    expect(versteckt).toBe('none');
+    const ringAus = await page.locator('.levelring').first().innerHTML();
+    expect(ringAus).not.toContain('feGaussianBlur');
+    expect(ringAus).toContain('stroke="var(--fortschritt)"');
+    await expect(page.locator('.levelring-spitze-schein')).toHaveCount(0);
     await bild('ring-aus');
 
     await page.goto('/chronik');

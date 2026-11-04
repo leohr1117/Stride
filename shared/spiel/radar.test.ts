@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { LevelInfo } from './level.ts';
-import { achsenMaximum, DU_RING_MIN, duZeichenwert, radarMaximum, radarWert } from './radar.ts';
+import { achsenMaximum, DU_RING_MIN, duZeichenwert, radarMaximum, radarPunkte, radarWert } from './radar.ts';
 
 function level(stufe: number, fortschritt = 0): LevelInfo {
   return { level: stufe, xpGesamt: 100, xpImLevel: 0, xpFuerNaechstes: 100, fortschritt };
@@ -24,6 +24,23 @@ describe('radarMaximum', () => {
     const gemischt = achsenMaximum([2, 2, 2, 40]);
     expect(gemischt).toBe(40);
     expect(2 / gemischt).toBe(0.05);
+  });
+
+  it('legt die Polygonpunkte bekannter Level auf den Außenring', () => {
+    const werte = [level(10), level(50), level(30)].map((eintrag) => radarWert(eintrag));
+    const punkte = radarPunkte(werte, 100);
+    expect(punkte).toHaveLength(3);
+    expect(punkte[0]?.x).toBeCloseTo(0);
+    expect(punkte[0]?.y).toBeCloseTo(-20);
+    expect(punkte[1]?.x).toBeCloseTo(Math.cos(Math.PI / 6) * 100);
+    expect(punkte[1]?.y).toBeCloseTo(Math.sin(Math.PI / 6) * 100);
+    expect(punkte[2]?.x).toBeCloseTo(Math.cos((Math.PI * 5) / 6) * 60);
+    expect(punkte[2]?.y).toBeCloseTo(Math.sin((Math.PI * 5) / 6) * 60);
+    const abstand = (punkt: { x: number; y: number } | undefined) => Math.hypot(punkt?.x ?? 0, punkt?.y ?? 0);
+    expect(abstand(punkte[1])).toBeCloseTo(100);
+    expect(abstand(punkte[0])).toBeLessThan(abstand(punkte[2]));
+    expect(abstand(punkte[2])).toBeLessThan(abstand(punkte[1]));
+    expect(radarPunkte([0, 0, 0], 100).every((punkt) => punkt.x === 0 && punkt.y === 0)).toBe(true);
   });
 
   it('hebt nur die gezeichnete eigene Fläche an, nicht die Level', () => {

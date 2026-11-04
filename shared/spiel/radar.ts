@@ -38,3 +38,25 @@ export function duZeichenwert(wert: number, duMax: number, achse: number): numbe
 export function radarMaximum(levels: LevelInfo[]): number {
   return achsenMaximum(levels.map((eintrag) => radarWert(eintrag)));
 }
+
+/** Polygon im Uhrzeigersinn, erster Punkt oben. radius ist der Außenring. */
+export function radarPunkte(
+  werte: readonly number[],
+  radius: number,
+  mitte: { x: number; y: number } = { x: 0, y: 0 },
+): { x: number; y: number }[] {
+  const aussen = achsenMaximum(werte);
+  const n = werte.length;
+  if (n === 0 || !(radius > 0)) {
+    return [];
+  }
+  return werte.map((wert, index) => {
+    const anteil = Math.max(0, wert) / aussen;
+    const winkel = -Math.PI / 2 + (2 * Math.PI * index) / n;
+    const reichweite = radius * anteil;
+    return {
+      x: mitte.x + Math.cos(winkel) * reichweite,
+      y: mitte.y + Math.sin(winkel) * reichweite,
+    };
+  });
+}

@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Levelring ist einfarbig und auf Heute kleiner. Die XP-Zeile passt in eine Zeile. Bei Können und Haben zeigt das Radar die Werte als Fläche.": "レベルリングは単色で、今日ではより小さくなりました。XPの行は1行に収まります。能力と資産では、レーダーが値を面で示します。",
   "Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.": "今日、能力、資産では、レベル、ヒント、XPの減少が赤ではなくなりました。振り返りでは、失ったXPは通常の文字色です。",
   "Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.": "今日では、ボスのピンクの背景がなくなりました。赤は規律の減少だけに残ります。履歴の記録は他と同じ色です。",
   "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "「保存」と「つなぐ」は読みやすいままです。入力がないとき、エラーは欄に出ます。",
@@ -1800,6 +1801,7 @@ export const TEXTE: Record<string, string> = {
   "So": "日",
   "Ansehen Lvl {level}": "評判 Lv {level}",
   "Lvl {level}": "Lv {level}",
+  "Außen: Lvl {level}": "外側: Lv {level}",
   "Erfahrung {aktuell} / {gesamt} XP": "経験 {aktuell} / {gesamt} XP",
   "noch {rest} bis Level {level}": "レベル {level} まであと {rest}",
   "Erfahrung in {name}": "{name}の経験",

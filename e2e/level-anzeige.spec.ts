@@ -23,6 +23,64 @@ async function gleicheZeile(name: Locator, icon: Locator): Promise<void> {
   expect(Math.abs(iconKasten.y + iconKasten.height / 2 - (nameKasten.y + nameKasten.height / 2))).toBeLessThan(8);
 }
 
+async function flaechePasst(page: Page, spektrum: string): Promise<void> {
+  const ziel = page.locator(`[data-spektrum="${spektrum}"]`).first();
+  await expect(ziel).toBeVisible();
+  await expect.poll(async () => ziel.evaluate((element) => {
+    const werte = (element.getAttribute('data-werte') ?? '').split(',').map((teil) => Number(teil)).filter((wert) => Number.isFinite(wert));
+    const lesePfad = (knoten: Element | null) => [...(knoten?.getAttribute('d') ?? '').matchAll(/[ML]\s*(-?[0-9.]+)\s*,\s*(-?[0-9.]+)/gi)].map((treffer) => ({
+      x: Number(treffer[1]),
+      y: Number(treffer[2]),
+    }));
+    const flaeche = element.querySelector('path.recharts-polygon');
+    const gelesen = lesePfad(flaeche);
+    if (gelesen.length > 1) {
+      const erster = gelesen[0];
+      const letzter = gelesen[gelesen.length - 1];
+      if (erster && letzter && Math.hypot(erster.x - letzter.x, erster.y - letzter.y) < 0.05) {
+        gelesen.pop();
+      }
+    }
+    const gitter = [...element.querySelectorAll('path.recharts-polar-grid-concentric-polygon')].map((knoten) => lesePfad(knoten)).filter((punkte) => punkte.length >= 3);
+    if (!(flaeche instanceof Element) || werte.length < 3 || gelesen.length !== werte.length || gitter.length === 0) {
+      return { grund: 'unvollstaendig', werte: werte.length, punkte: gelesen.length, gitter: gitter.length };
+    }
+    const mitteVon = (punkte: { x: number; y: number }[]) => ({
+      x: punkte.reduce((summe, punkt) => summe + punkt.x, 0) / punkte.length,
+      y: punkte.reduce((summe, punkt) => summe + punkt.y, 0) / punkte.length,
+    });
+    const reichweite = (punkte: { x: number; y: number }[], zentrum: { x: number; y: number }) =>
+      punkte.reduce((max, punkt) => Math.max(max, Math.hypot(punkt.x - zentrum.x, punkt.y - zentrum.y)), 0);
+    let zentrum = mitteVon(gitter[0] ?? []);
+    let kleinst = Number.POSITIVE_INFINITY;
+    for (const punkte of gitter) {
+      const mitte = mitteVon(punkte);
+      const radius = reichweite(punkte, mitte);
+      if (radius < kleinst) {
+        kleinst = radius;
+        zentrum = mitte;
+      }
+    }
+    const abst = gelesen.map((punkt) => Math.hypot(punkt.x - zentrum.x, punkt.y - zentrum.y));
+    const maxA = Math.max(...abst);
+    const maxW = Math.max(...werte);
+    const abweichung = maxA === 0 || maxW === 0
+      ? 999
+      : werte.reduce((max, wert, index) => Math.max(max, Math.abs((abst[index] ?? 0) - (wert / maxW) * maxA)), 0);
+    const stil = getComputedStyle(flaeche);
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--fortschritt)';
+    document.body.append(probe);
+    const farbe = getComputedStyle(probe).color;
+    probe.remove();
+    const deckkraft = Number(stil.fillOpacity);
+    if (abweichung > 1.5 || stil.stroke !== farbe || stil.fill !== farbe || stil.strokeWidth !== '2px' || Math.abs(deckkraft - 0.16) > 0.02) {
+      return { grund: 'abweichung', abweichung, strich: stil.stroke, flaeche: stil.fill, farbe, breite: stil.strokeWidth, deckkraft: stil.fillOpacity };
+    }
+    return { grund: 'ok' };
+  })).toEqual({ grund: 'ok' });
+}
+
 async function ringPasst(ring: Locator): Promise<void> {
   const passt = await ring.evaluate((element) => {
     const kasten = element.getBoundingClientRect();
@@ -55,6 +113,8 @@ test('Level ohne Bruch, Radare nebeneinander, Hinweis und Ring', async ({ page }
   await page.goto('/charakter');
   await expect(page.locator('[data-spektrum="attribut"]')).toBeVisible();
   await expect(page.locator('[data-spektrum="status"]')).toBeVisible();
+  await flaechePasst(page, 'attribut');
+  await flaechePasst(page, 'status');
   const spektren = page.locator('[data-spektren]');
   const kaesten = await spektren.locator('[data-spektrum]').evaluateAll((elemente) =>
     elemente.map((element) => {
@@ -97,9 +157,11 @@ test('Level ohne Bruch, Radare nebeneinander, Hinweis und Ring', async ({ page }
     expect(hinweisKasten.x + hinweisKasten.width).toBeLessThanOrEqual(fenster.width + 1);
     expect(hinweisKasten.y + hinweisKasten.height).toBeLessThanOrEqual(fenster.height + 1);
   }
-  const untertitel = await spektren.locator('p').allInnerTexts();
+  const untertitel = await spektren.locator('[data-spektrum] p').allInnerTexts();
+  expect(untertitel.length).toBeGreaterThan(0);
   for (const text of untertitel) {
     expect(bruch(text)).toBe(false);
+    expect(text).toMatch(/^Außen: Lvl \d+$/);
   }
   await ohneSeitlichenUeberlauf(page);
   await bild(page, `${name}-profil`);
@@ -119,8 +181,8 @@ test('Level ohne Bruch, Radare nebeneinander, Hinweis und Ring', async ({ page }
   await bild(page, `${name}-heute`);
 
   await page.goto('/koennen');
-  await expect(page.locator('[data-spektrum="attribut"] p')).toBeVisible();
-  expect(bruch(await page.locator('[data-spektrum="attribut"] p').innerText())).toBe(false);
+  await expect(page.locator('[data-spektrum="attribut"] p')).toHaveText(/^Außen: Lvl \d+$/);
+  await flaechePasst(page, 'attribut');
   const seitenIcon = page.getByRole('button', { name: 'Lvl zu niedrig' }).first();
   await expect(seitenIcon).toBeVisible();
   const attributZeile = seitenIcon.locator('xpath=ancestor::div[contains(@class,"attributzeile")][1]');
@@ -130,6 +192,10 @@ test('Level ohne Bruch, Radare nebeneinander, Hinweis und Ring', async ({ page }
   await page.keyboard.press('Escape');
   await ohneSeitlichenUeberlauf(page);
   await bild(page, `${name}-koennen`);
+
+  await page.goto('/haben');
+  await expect(page.locator('[data-spektrum="status"] p')).toHaveText(/^Außen: Lvl \d+$/);
+  await flaechePasst(page, 'status');
 
   await page.goto('/faehigkeiten');
   const ring = page.locator('main [data-levelring]').first();

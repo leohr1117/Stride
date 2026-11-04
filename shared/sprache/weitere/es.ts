@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Levelring ist einfarbig und auf Heute kleiner. Die XP-Zeile passt in eine Zeile. Bei Können und Haben zeigt das Radar die Werte als Fläche.": "El anillo de nivel es de un solo color y más pequeño en Hoy. La línea de XP cabe en una línea. En Capacidad y Bienes, el radar muestra los valores como un área.",
   "Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.": "En Hoy, Capacidad y Bienes, el nivel, el aviso y la deducción de XP ya no están en rojo. En Repaso, el XP perdido usa el color de texto normal.",
   "Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.": "En Hoy, los jefes ya no tienen fondo rosa. El rojo queda solo para la pérdida de Disciplina. Las entradas del Historial tienen el mismo color que las demás.",
   "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "Guardar y Conectar siguen siendo fáciles de leer. Si falta un dato, el error aparece en el campo.",
@@ -1800,6 +1801,7 @@ export const TEXTE: Record<string, string> = {
   "So": "dom",
   "Ansehen Lvl {level}": "Reputación niv {level}",
   "Lvl {level}": "Niv {level}",
+  "Außen: Lvl {level}": "Exterior: Niv {level}",
   "Erfahrung {aktuell} / {gesamt} XP": "Experiencia {aktuell} / {gesamt} XP",
   "noch {rest} bis Level {level}": "faltan {rest} para el nivel {level}",
   "Erfahrung in {name}": "Experiencia en {name}",

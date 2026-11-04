@@ -17,7 +17,25 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
 
   const ring = page.locator('main [data-levelring]').first();
   const ringBreite = await ring.evaluate((element) => Math.round(element.getBoundingClientRect().width));
-  expect(ringBreite).toBe(96);
+  expect(ringBreite).toBe(64);
+  await expect(ring.locator('.uppercase')).toHaveCount(0);
+  const label = ring.locator('span').first();
+  expect(await label.evaluate((element) => getComputedStyle(element).fontSize)).toBe('12px');
+  expect(await label.evaluate((element) => getComputedStyle(element).textTransform)).toBe('none');
+  await expect(label).toHaveText('Level');
+  const zahlSchrift = await ring.locator('span.zahl').evaluate((element) => {
+    const stil = getComputedStyle(element);
+    return { groesse: stil.fontSize, gewicht: stil.fontWeight, hoehe: stil.lineHeight };
+  });
+  expect(zahlSchrift).toEqual({ groesse: '20px', gewicht: '600', hoehe: '24px' });
+  const xpZeile = page.locator('main p.zahl.text-sm.text-leise').locator('visible=true');
+  await expect(xpZeile).toBeVisible();
+  const xpZeilen = await xpZeile.evaluate((element) => {
+    const bereich = document.createRange();
+    bereich.selectNodeContents(element);
+    return bereich.getClientRects().length;
+  });
+  expect(xpZeilen).toBe(1);
   const name = page.locator('main .kopfblock-name').locator('visible=true').first();
   await expect(name).toHaveClass(/text-2xl/);
   const schrift = await name.evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize));

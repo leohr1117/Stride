@@ -495,10 +495,6 @@ html[data-eingabe='zeiger'] :focus {
   --tw-shadow-colored: 0 0 #0000;
 }
 
-[data-glimmen='aus'] .levelring-spitze-schein {
-  display: none;
-}
-
 .liste > * + * {
   position: relative;
 }

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.28
+
+### Geändert
+
+- Der Levelring ist einfarbig und auf Heute kleiner. Die XP-Zeile passt in eine Zeile. Bei Können und Haben zeigt das Radar die Werte als Fläche.
+
 ## 3.56.27
 
 ### Geändert

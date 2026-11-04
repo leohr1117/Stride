@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Der Levelring ist einfarbig und auf Heute kleiner. Die XP-Zeile passt in eine Zeile. Bei Können und Haben zeigt das Radar die Werte als Fläche.', 'The level ring is a single color and smaller on Today. The XP line fits on one line. On Ability and Assets, the radar shows the values as an area.'],
   ['Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.', 'On Today, Ability, and Assets, the level, the hint, and the XP deduction are no longer red. In Review, lost XP uses the normal text color.'],
   ['Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.', 'On Today, bosses no longer sit on a pink background. Red remains only for the Discipline loss. Entries in History use the same color as the others.'],
   ['Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.', 'Save and Connect stay easy to read. If an entry is missing, the error sits on the field.'],
