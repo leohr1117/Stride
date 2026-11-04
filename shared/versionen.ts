@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.45',
+    seiten: 'Heute, Können, Haben',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.'],
+      },
+    ],
+  },
+  {
     version: '3.56.44',
     seiten: 'Heute, Profil, Fähigkeiten, Ziele',
     abschnitte: [

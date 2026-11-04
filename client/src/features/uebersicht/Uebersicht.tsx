@@ -29,7 +29,6 @@ import {
   Knopf,
   Ladeanzeige,
   LevelRing,
-  ZuNiedrigHinweis,
 } from '../../ui/index.ts';
 import { BewertungKarte } from './Bewertung.tsx';
 import { HeuteKarte } from './Heute.tsx';
@@ -354,12 +353,16 @@ function Werte({
                 <Icon name={attribut.icon} className="mt-0.5 size-4 shrink-0" style={{ color: attribut.farbe }} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <AttributBezeichnung name={attribut.name} kennung={attribut.kennung} prozent={prozent} />
+                    <AttributBezeichnung
+                      name={attribut.name}
+                      kennung={attribut.kennung}
+                      prozent={prozent}
+                      zuNiedrig={ursache}
+                    />
                     <span className="zahl shrink-0 whitespace-nowrap text-right text-xs text-leise">
                       {tx('Lvl {level}', { level: attribut.level.level })}
                     </span>
                   </div>
-                  {ursache ? <ZuNiedrigHinweis /> : null}
                 </div>
               </div>
               <Fortschrittsbalken anteil={balken.stand} verlustBis={balken.verlustBis} farbe={attribut.farbe} hoehe="h-1.5" />

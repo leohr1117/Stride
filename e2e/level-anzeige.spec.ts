@@ -13,24 +13,58 @@ function bruch(text: string): boolean {
   return /Lvl\s+\d+,\d/.test(text);
 }
 
-async function zustandszeile(name: Locator, zeile: Locator): Promise<void> {
-  await expect(zeile).toBeVisible();
-  await expect(zeile).toContainText('Lvl zu niedrig');
-  await expect(zeile.getByRole('button')).toHaveCount(0);
-  const zeichen = zeile.locator('span[aria-hidden="true"]');
+async function zustandszeile(zeile: Locator, hinweis: Locator, tippen: boolean): Promise<void> {
+  await expect(hinweis).toBeVisible();
+  const zeichen = hinweis.locator('span[aria-hidden="true"]');
   await expect(zeichen).toHaveText('⚠');
   await expect(zeichen).toHaveClass(/text-haupt/);
   await expect(zeichen).not.toHaveClass(/text-gefahr|bg-gefahr/);
   expect(await zeichen.evaluate((element) => getComputedStyle(element).fontSize)).toBe('16px');
-  expect(await zeile.evaluate((element) => getComputedStyle(element).fontSize)).toBe('13px');
+  expect(await hinweis.evaluate((element) => getComputedStyle(element).fontSize)).toBe('13px');
+  const name = zeile.locator('[data-attribut-name]').first();
   const nameKasten = await name.boundingBox();
-  const zeileKasten = await zeile.boundingBox();
-  expect(nameKasten && zeileKasten).toBeTruthy();
-  if (!nameKasten || !zeileKasten) {
+  const hinweisKasten = await hinweis.boundingBox();
+  const stufe = zeile.getByText(/^Lvl \d+$/).last();
+  const stufeKasten = await stufe.boundingBox();
+  expect(nameKasten && hinweisKasten && stufeKasten).toBeTruthy();
+  if (!nameKasten || !hinweisKasten || !stufeKasten) {
     return;
   }
-  expect(zeileKasten.y).toBeGreaterThan(nameKasten.y + nameKasten.height / 2);
-  expect(Math.abs(zeileKasten.x - nameKasten.x)).toBeLessThan(16);
+  expect(Math.abs(hinweisKasten.y + hinweisKasten.height / 2 - (nameKasten.y + nameKasten.height / 2))).toBeLessThan(8);
+  expect(hinweisKasten.x).toBeGreaterThanOrEqual(nameKasten.x + nameKasten.width - 2);
+  expect(stufeKasten.x).toBeGreaterThan(hinweisKasten.x);
+  expect(hinweisKasten.height).toBeLessThanOrEqual(24);
+  const text = (await hinweis.innerText()).replace(/\s+/g, ' ').trim();
+  if (text.includes('Lvl zu niedrig')) {
+    await expect(hinweis.getByRole('button')).toHaveCount(0);
+    return;
+  }
+  const knopf = hinweis.getByRole('button', { name: 'Lvl zu niedrig' });
+  await expect(knopf).toBeVisible();
+  if (!tippen) {
+    return;
+  }
+  await knopf.click();
+  const seite = hinweis.page();
+  await expect(seite.getByRole('tooltip')).toContainText('Lvl zu niedrig');
+  await seite.keyboard.press('Escape');
+  await expect(seite.getByRole('tooltip')).toHaveCount(0);
+}
+
+async function pruefeHinweise(seite: Page, klasse: string, tippen: boolean): Promise<void> {
+  const hinweise = seite.locator('[data-zustand="zu-niedrig"]');
+  const anzahl = await hinweise.count();
+  expect(anzahl).toBeGreaterThan(0);
+  let getippt = false;
+  for (let index = 0; index < anzahl; index += 1) {
+    const hinweis = hinweise.nth(index);
+    const zeile = hinweis.locator(`xpath=ancestor::div[contains(@class,"${klasse}")][1]`);
+    const jetzt = tippen && !getippt && (await hinweis.getByRole('button', { name: 'Lvl zu niedrig' }).count()) > 0;
+    await zustandszeile(zeile, hinweis, jetzt);
+    if (jetzt) {
+      getippt = true;
+    }
+  }
 }
 
 async function flaechePasst(page: Page, spektrum: string): Promise<void> {
@@ -181,21 +215,39 @@ test('Level ohne Bruch, Radare nebeneinander, Hinweis und Ring', async ({ page }
   if ((await werteKopf.getAttribute('aria-expanded')) !== 'true') {
     await werteKopf.click();
   }
-  const heuteHinweis = page.locator('[data-zustand="zu-niedrig"]').first();
-  const heuteZeile = heuteHinweis.locator('xpath=ancestor::div[contains(@class,"space-y-1.5")][1]');
-  await zustandszeile(heuteZeile.locator('span.truncate').first(), heuteHinweis);
-  await expect(page.getByRole('button', { name: 'Lvl zu niedrig' })).toHaveCount(0);
+  await pruefeHinweise(page, 'space-y-1.5', true);
   await bild(page, `${name}-heute`);
 
   await page.goto('/koennen');
   await expect(page.locator('[data-spektrum="attribut"] p')).toHaveText(/^Außen: Lvl \d+$/);
   await flaechePasst(page, 'attribut');
-  const seitenHinweis = page.locator('main [data-zustand="zu-niedrig"]').first();
-  const attributZeile = seitenHinweis.locator('xpath=ancestor::div[contains(@class,"attributzeile")][1]');
-  await zustandszeile(attributZeile.locator('span.truncate').first(), seitenHinweis);
-  await expect(page.getByRole('button', { name: 'Lvl zu niedrig' })).toHaveCount(0);
+  await pruefeHinweise(page, 'attributzeile', true);
+  if ((page.viewportSize()?.width ?? 0) >= 1200) {
+    await expect(page.locator('main [data-zustand="zu-niedrig"]').first()).toContainText('Lvl zu niedrig');
+  }
   await ohneSeitlichenUeberlauf(page);
   await bild(page, `${name}-koennen`);
+
+  const ausgang = page.viewportSize();
+  await page.setViewportSize({ width: 320, height: 844 });
+  try {
+    await page.goto('/');
+    const werteKopf = page.getByRole('button', { name: 'Werte', exact: true });
+    if ((await werteKopf.getAttribute('aria-expanded')) !== 'true') {
+      await werteKopf.click();
+    }
+    await pruefeHinweise(page, 'space-y-1.5', true);
+    await ohneSeitlichenUeberlauf(page);
+    await page.goto('/koennen');
+    await expect(page.locator('main [data-zustand="zu-niedrig"]').first().getByRole('button', { name: 'Lvl zu niedrig' })).toBeVisible();
+    await pruefeHinweise(page, 'attributzeile', true);
+    await ohneSeitlichenUeberlauf(page);
+    await bild(page, `${name}-320`);
+  } finally {
+    if (ausgang) {
+      await page.setViewportSize(ausgang);
+    }
+  }
 
   await page.goto('/haben');
   await expect(page.locator('[data-spektrum="status"] p')).toHaveText(/^Außen: Lvl \d+$/);

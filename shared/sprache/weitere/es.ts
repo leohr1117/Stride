@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.": "En los atributos, el estado va detrás del nombre y el nivel permanece a la derecha. Si falta espacio, queda el signo de aviso y un toque muestra el texto.",
   "Der Levelring schließt mit einem kurzen Verlauf, einer Spitze und einem leichten Glühen ab.": "El anillo de nivel termina con un degradado corto, una punta y un leve brillo.",
   "Die Schwerter der Bosse bleiben im Ring.": "Las espadas de los jefes permanecen dentro del anillo.",
   "Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.": "El símbolo de clase en la imagen de perfil está sobre una superficie, en el color del texto. En el ordenador, el puntero muestra el perfil y el nivel.",

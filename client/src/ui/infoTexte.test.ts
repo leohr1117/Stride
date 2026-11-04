@@ -9,6 +9,7 @@ import { WERTE_HINWEIS } from '../features/vorbilder/vorbildTeile.tsx';
 const WURZEL = join(import.meta.dirname, '../../..');
 
 const ERLAUBT = new Set([
+  'Lvl zu niedrig',
   'Ein Tag Pause ist frei. Danach ist der Streak angeschlagen.',
   'Ein Eintrag in sieben Tagen, ohne Abzug.',
   'Trag heute etwas ein, damit der Streak bleibt.',

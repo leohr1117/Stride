@@ -28,6 +28,7 @@ import { IconAuswahl } from '../../components/IconAuswahl.tsx';
 import { AttributRadar } from '../../components/mitDiagramm.tsx';
 import {
   AllgemeinerXpAbzug,
+  AttributBezeichnung,
   EINGABE_STIL,
   Farbauswahl,
   Feld,
@@ -38,9 +39,7 @@ import {
   Knopf,
   Schalter,
   VorschlagFeld,
-  XpAbzug,
   type VorschlagOption,
-  ZuNiedrigHinweis,
 } from '../../ui/index.ts';
 import { Aktivierung, ziffern } from './Aktivierung.tsx';
 
@@ -101,12 +100,16 @@ export function AttributBereich({
                     pfeil={false}
                     symbol={<Icon name={attribut.icon} style={{ color: attribut.farbe }} />}
                     titel={
-                      <span className="flex min-w-0 flex-nowrap items-center gap-1">
-                        <span className="min-w-0 truncate">{name}</span>
-                        {prozent !== null ? <XpAbzug prozent={prozent} /> : null}
+                      <span className="block w-full min-w-0">
+                        <AttributBezeichnung
+                          name={attribut.name}
+                          kennung={attribut.kennung}
+                          prozent={prozent}
+                          zuNiedrig={ursache}
+                          schrift="text-base"
+                        />
                       </span>
                     }
-                    neben={ursache ? <ZuNiedrigHinweis /> : undefined}
                     wert={<span className="text-leise">{stufe}</span>}
                     rechts={menue}
                   />

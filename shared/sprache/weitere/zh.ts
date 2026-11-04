@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.": "属性的状态紧跟在名称后面，等级仍在右侧。空间不够时只保留警告符号，点按后显示文字。",
   "Der Levelring schließt mit einem kurzen Verlauf, einer Spitze und einem leichten Glühen ab.": "等级环的末端有短渐变、尖端和轻微发光。",
   "Die Schwerter der Bosse bleiben im Ring.": "首领的剑留在圆环里。",
   "Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.": "资料图片里的职业符号在一块表面上，用文字颜色。在电脑上，指针显示资料和等级。",

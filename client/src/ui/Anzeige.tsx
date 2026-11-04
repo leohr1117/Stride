@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
 import { type CSSProperties, type ReactNode, useId } from 'react';
 import { prozentPunkte } from '../format.ts';
-import { attributName, tx } from '../text.ts';
+import { tx } from '../text.ts';
 import { RING_HEUTE, RING_MITTE, RING_RADIUS, RING_SCHRIFT_AB, RING_UMFANG, ringAbschluss, strichWeite } from './levelringAbschluss.ts';
 
-export function XpAbzug({ prozent }: { prozent: number }) {
+export function XpAbzug({ prozent, schrift = 'text-xs' }: { prozent: number; schrift?: string }) {
   return (
-    <span data-abzug="ziel" className="zahl shrink-0 text-xs font-medium whitespace-nowrap text-haupt">
+    <span data-abzug="ziel" className={`zahl shrink-0 font-medium whitespace-nowrap text-haupt ${schrift}`}>
       −{prozentPunkte(prozent)} XP
     </span>
   );
@@ -19,25 +19,6 @@ export function AllgemeinerXpAbzug({ prozent }: { prozent: number | null }) {
   return (
     <span data-abzug="allgemein" className="inline-flex shrink-0">
       <XpAbzug prozent={prozent} />
-    </span>
-  );
-}
-
-export function AttributBezeichnung({
-  name,
-  kennung,
-  prozent,
-  schrift = 'text-sm',
-}: {
-  name: string;
-  kennung?: string | null;
-  prozent: number | null;
-  schrift?: string;
-}) {
-  return (
-    <span className="flex min-w-0 flex-1 flex-nowrap items-center gap-1">
-      <span className={`min-w-0 truncate ${schrift}`}>{attributName({ name, kennung })}</span>
-      {prozent !== null ? <XpAbzug prozent={prozent} /> : null}
     </span>
   );
 }

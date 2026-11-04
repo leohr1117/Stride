@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.": "У атрибутов состояние стоит за именем, а уровень остаётся справа. Если места мало, остаётся только знак предупреждения, и нажатие показывает текст.",
   "Der Levelring schließt mit einem kurzen Verlauf, einer Spitze und einem leichten Glühen ab.": "Кольцо уровня заканчивается коротким градиентом, кончиком и лёгким свечением.",
   "Die Schwerter der Bosse bleiben im Ring.": "Шпаги боссов остаются внутри кольца.",
   "Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.": "Знак класса на изображении профиля лежит на поверхности цветом текста. На компьютере указатель показывает профиль и уровень.",

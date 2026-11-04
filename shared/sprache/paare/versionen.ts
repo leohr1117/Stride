@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.', 'On attributes, the status sits behind the name and the level stays on the right. When space is tight, only the warning sign remains, and a tap shows the text.'],
   ['Der Levelring schließt mit einem kurzen Verlauf, einer Spitze und einem leichten Glühen ab.', 'The level ring ends with a short gradient, a tip, and a slight glow.'],
   ['Die Schwerter der Bosse bleiben im Ring.', 'Boss swords stay inside the ring.'],
   ['Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.', 'The class symbol in the profile picture sits on a surface in the text color. On a computer, the pointer shows profile and level.'],

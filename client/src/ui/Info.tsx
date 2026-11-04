@@ -1,7 +1,8 @@
 import { Info } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { tx } from '../text.ts';
+import { attributName, tx } from '../text.ts';
+import { XpAbzug } from './Anzeige.tsx';
 
 export function InfoHinweis({
   text,
@@ -136,13 +137,144 @@ export function InfoHinweis({
   );
 }
 
-export function ZuNiedrigHinweis() {
+const HINWEIS = 'Lvl zu niedrig';
+const HINWEIS_SCHRIFT = 'text-[13px] leading-[18px]';
+const ZEICHEN_SCHRIFT = 'text-[16px] leading-none';
+/** Der Name behält mindestens so viel, kürzere Namen bleiben ganz sichtbar. */
+const NAME_MIN_PX = 48;
+
+export function zustandNurZeichen(eingabe: {
+  zeilenBreite: number;
+  nameBreite: number;
+  textBreite: number;
+  zeichenBreite: number;
+  abzugBreite: number;
+  luecke: number;
+}): boolean {
+  const nameMin = Math.min(Math.max(0, eingabe.nameBreite), NAME_MIN_PX);
+  const gruppen = 2 + (eingabe.abzugBreite > 0 ? 1 : 0);
+  const aussen = eingabe.luecke * (gruppen - 1);
+  const warnung = eingabe.zeichenBreite + eingabe.luecke + eingabe.textBreite;
+  const frei = eingabe.zeilenBreite - aussen - warnung - eingabe.abzugBreite;
+  return frei < nameMin;
+}
+
+function zustandZeichen() {
   return (
-    <span data-zustand="zu-niedrig" className="inline-flex max-w-full items-center gap-1 text-[13px] leading-[18px] text-leise">
-      <span aria-hidden="true" className="shrink-0 text-[16px] leading-none text-haupt">
-        ⚠
+    <span aria-hidden="true" className={`shrink-0 text-haupt ${ZEICHEN_SCHRIFT}`}>
+      ⚠
+    </span>
+  );
+}
+
+export function ZuNiedrigHinweis({ nurZeichen = false }: { nurZeichen?: boolean }) {
+  if (nurZeichen) {
+    return (
+      <span data-zustand="zu-niedrig" className={`inline-flex shrink-0 items-center whitespace-nowrap text-leise ${HINWEIS_SCHRIFT}`}>
+        <InfoHinweis
+          text="Lvl zu niedrig"
+          label="Lvl zu niedrig"
+          kompakt
+          abstand={false}
+          knopfKlasse="relative inline-flex shrink-0 items-center justify-center leading-none before:absolute before:-inset-4 before:content-['']"
+          icon={zustandZeichen()}
+        />
       </span>
-      <span className="min-w-0 truncate">{tx('Lvl zu niedrig')}</span>
+    );
+  }
+  return (
+    <span data-zustand="zu-niedrig" className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-leise ${HINWEIS_SCHRIFT}`}>
+      {zustandZeichen()}
+      <span>{tx(HINWEIS)}</span>
+    </span>
+  );
+}
+
+function missBreite(text: string, klasse: string): number {
+  const probe = document.createElement('span');
+  probe.className = klasse;
+  probe.textContent = text;
+  probe.style.position = 'fixed';
+  probe.style.left = '0';
+  probe.style.top = '0';
+  probe.style.visibility = 'hidden';
+  probe.style.pointerEvents = 'none';
+  probe.style.whiteSpace = 'nowrap';
+  document.body.append(probe);
+  const breite = probe.offsetWidth;
+  probe.remove();
+  return breite;
+}
+
+function lueckeVon(knoten: HTMLElement): number {
+  const wert = Number.parseFloat(getComputedStyle(knoten).columnGap);
+  return Number.isFinite(wert) ? wert : 4;
+}
+
+export function AttributBezeichnung({
+  name,
+  kennung,
+  prozent,
+  zuNiedrig = false,
+  schrift = 'text-sm',
+}: {
+  name: string;
+  kennung?: string | null;
+  prozent: number | null;
+  zuNiedrig?: boolean;
+  schrift?: string;
+}) {
+  const zeile = useRef<HTMLSpanElement>(null);
+  const [nurZeichen, setNurZeichen] = useState(false);
+
+  useLayoutEffect(() => {
+    const knoten = zeile.current;
+    if (!knoten || !zuNiedrig) {
+      setNurZeichen(false);
+      return;
+    }
+    const pruefe = () => {
+      const nameEl = knoten.querySelector('[data-attribut-name]');
+      if (!(nameEl instanceof HTMLElement)) {
+        return;
+      }
+      const abzug = knoten.querySelector('[data-abzug="ziel"]');
+      const nur = zustandNurZeichen({
+        zeilenBreite: knoten.clientWidth,
+        nameBreite: nameEl.scrollWidth,
+        textBreite: missBreite(tx(HINWEIS), HINWEIS_SCHRIFT),
+        zeichenBreite: missBreite('⚠', ZEICHEN_SCHRIFT),
+        abzugBreite: abzug instanceof HTMLElement ? abzug.offsetWidth : 0,
+        luecke: lueckeVon(knoten),
+      });
+      setNurZeichen((alt) => (alt === nur ? alt : nur));
+    };
+    pruefe();
+    if (typeof ResizeObserver === 'undefined') {
+      return;
+    }
+    const beobachter = new ResizeObserver(pruefe);
+    beobachter.observe(knoten);
+    let aktiv = true;
+    void document.fonts.ready.then(() => {
+      if (aktiv) {
+        pruefe();
+      }
+    });
+    return () => {
+      aktiv = false;
+      beobachter.disconnect();
+    };
+  }, [zuNiedrig, prozent, name, kennung, schrift]);
+
+  const sichtbar = attributName({ name, kennung });
+  return (
+    <span ref={zeile} className="flex min-w-0 flex-1 flex-nowrap items-center gap-1">
+      <span data-attribut-name="" className={`min-w-0 truncate ${schrift}`}>
+        {sichtbar}
+      </span>
+      {zuNiedrig ? <ZuNiedrigHinweis nurZeichen={nurZeichen} /> : null}
+      {prozent !== null ? <XpAbzug prozent={prozent} schrift="text-[13px] leading-[18px]" /> : null}
     </span>
   );
 }

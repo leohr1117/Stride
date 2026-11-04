@@ -106,9 +106,21 @@ async function pruefeAbzugNebenNamen(zeile: Locator, name: string, prozent: numb
     return;
   }
   expect(abzugKasten.x).toBeGreaterThanOrEqual(nameKasten.x + nameKasten.width - 2);
-  expect(abzugKasten.x).toBeLessThanOrEqual(nameKasten.x + nameKasten.width + 48);
   expect(Math.abs(abzugKasten.y + abzugKasten.height / 2 - (nameKasten.y + nameKasten.height / 2))).toBeLessThan(14);
   expect(abzugKasten.y + abzugKasten.height / 2).toBeLessThan(balkenKasten.y);
+  expect(await zeile.getByText(abzugText(prozent), { exact: true }).evaluate((element) => getComputedStyle(element).fontSize)).toBe('13px');
+  const hinweis = zeile.locator('[data-zustand="zu-niedrig"]');
+  if ((await hinweis.count()) > 0) {
+    const hinweisKasten = await hinweis.boundingBox();
+    expect(hinweisKasten).toBeTruthy();
+    if (hinweisKasten) {
+      expect(hinweisKasten.x).toBeGreaterThanOrEqual(nameKasten.x + nameKasten.width - 2);
+      expect(abzugKasten.x).toBeGreaterThanOrEqual(hinweisKasten.x + hinweisKasten.width - 2);
+      expect(abzugKasten.x).toBeLessThanOrEqual(hinweisKasten.x + hinweisKasten.width + 16);
+    }
+  } else {
+    expect(abzugKasten.x).toBeLessThanOrEqual(nameKasten.x + nameKasten.width + 16);
+  }
 }
 
 test.beforeEach(async ({ page }) => {
@@ -274,13 +286,21 @@ test('Erschöpfung steht neben dem Namen', async ({ page }, testInfo) => {
       .locator('xpath=ancestor::div[contains(@class,"space-y-1.5")][1]');
     const nameKasten = await ursacheZeile.getByText(ursache.name, { exact: true }).boundingBox();
     const hinweis = ursacheZeile.locator('[data-zustand="zu-niedrig"]');
-    await expect(hinweis).toContainText('Lvl zu niedrig');
     await expect(hinweis.locator('span[aria-hidden="true"]')).toHaveText('⚠');
+    const hinweisText = (await hinweis.innerText()).replace(/\s+/g, ' ').trim();
+    if (hinweisText.includes('Lvl zu niedrig')) {
+      await expect(hinweis.getByRole('button')).toHaveCount(0);
+    } else {
+      await expect(hinweis.getByRole('button', { name: 'Lvl zu niedrig' })).toBeVisible();
+    }
     const hinweisKasten = await hinweis.boundingBox();
-    expect(nameKasten && hinweisKasten).toBeTruthy();
-    if (nameKasten && hinweisKasten) {
-      expect(hinweisKasten.y).toBeGreaterThan(nameKasten.y + nameKasten.height / 2);
-      expect(Math.abs(hinweisKasten.x - nameKasten.x)).toBeLessThan(16);
+    const stufeKasten = await ursacheZeile.getByText(/^Lvl \d+$/).last().boundingBox();
+    expect(nameKasten && hinweisKasten && stufeKasten).toBeTruthy();
+    if (nameKasten && hinweisKasten && stufeKasten) {
+      expect(Math.abs(hinweisKasten.y + hinweisKasten.height / 2 - (nameKasten.y + nameKasten.height / 2))).toBeLessThan(8);
+      expect(hinweisKasten.x).toBeGreaterThanOrEqual(nameKasten.x + nameKasten.width - 2);
+      expect(stufeKasten.x).toBeGreaterThan(hinweisKasten.x);
+      expect(hinweisKasten.height).toBeLessThanOrEqual(24);
     }
   }
 

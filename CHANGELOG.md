@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.45
+
+### Geändert
+
+- Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.
+
 ## 3.56.44
 
 ### Geändert

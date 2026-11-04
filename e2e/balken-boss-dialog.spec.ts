@@ -262,12 +262,17 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
   expect(erwarteteUrsachen).toBeGreaterThan(0);
   await expect(bereich.getByRole('link', { name: 'Details' })).toHaveCount(0);
   await expect(bereich.getByText('zu niedrig', { exact: true })).toHaveCount(0);
-  await expect(bereich.getByRole('button', { name: 'Lvl zu niedrig' })).toHaveCount(0);
   const hinweise = bereich.locator('[data-zustand="zu-niedrig"]');
   await expect(hinweise).toHaveCount(erwarteteUrsachen);
   for (let index = 0; index < erwarteteUrsachen; index += 1) {
-    await expect(hinweise.nth(index)).toContainText('Lvl zu niedrig');
-    await expect(hinweise.nth(index).locator('span[aria-hidden="true"]')).toHaveText('⚠');
+    const hinweis = hinweise.nth(index);
+    await expect(hinweis.locator('span[aria-hidden="true"]')).toHaveText('⚠');
+    const text = (await hinweis.innerText()).replace(/\s+/g, ' ').trim();
+    if (text.includes('Lvl zu niedrig')) {
+      await expect(hinweis.getByRole('button')).toHaveCount(0);
+    } else {
+      await expect(hinweis.getByRole('button', { name: 'Lvl zu niedrig' })).toBeVisible();
+    }
   }
   const ursache = werte.find((attribut) => bild.ursachen.includes(attribut.id));
   expect(ursache).toBeTruthy();
@@ -289,10 +294,13 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
     const nameKasten = await ursacheZeile.getByText(ursache.name, { exact: true }).boundingBox();
     const hinweisKasten = await zustand.boundingBox();
     const balkenKasten = await ursacheZeile.locator('.balken').boundingBox();
-    expect(nameKasten && hinweisKasten && balkenKasten).toBeTruthy();
-    if (nameKasten && hinweisKasten && balkenKasten) {
-      expect(hinweisKasten.y).toBeGreaterThan(nameKasten.y + nameKasten.height / 2);
-      expect(Math.abs(hinweisKasten.x - nameKasten.x)).toBeLessThan(16);
+    const stufeKasten = await stufe.boundingBox();
+    expect(nameKasten && hinweisKasten && balkenKasten && stufeKasten).toBeTruthy();
+    if (nameKasten && hinweisKasten && balkenKasten && stufeKasten) {
+      expect(Math.abs(hinweisKasten.y + hinweisKasten.height / 2 - (nameKasten.y + nameKasten.height / 2))).toBeLessThan(8);
+      expect(hinweisKasten.x).toBeGreaterThanOrEqual(nameKasten.x + nameKasten.width - 2);
+      expect(stufeKasten.x).toBeGreaterThan(hinweisKasten.x);
+      expect(hinweisKasten.height).toBeLessThanOrEqual(24);
       expect(hinweisKasten.y + hinweisKasten.height).toBeLessThanOrEqual(balkenKasten.y + 1);
     }
   }
@@ -464,8 +472,12 @@ test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
     await expect(koennen.getByText('zu niedrig', { exact: true })).toHaveCount(0);
     const hinweis = koennen.locator('[data-zustand="zu-niedrig"]').first();
     await expect(hinweis).toBeVisible();
-    await expect(hinweis).toContainText('Lvl zu niedrig');
-    await expect(koennen.getByRole('button', { name: 'Lvl zu niedrig' })).toHaveCount(0);
+    const hinweisText = (await hinweis.innerText()).replace(/\s+/g, ' ').trim();
+    if (hinweisText.includes('Lvl zu niedrig')) {
+      await expect(hinweis.getByRole('button')).toHaveCount(0);
+    } else {
+      await expect(hinweis.getByRole('button', { name: 'Lvl zu niedrig' })).toBeVisible();
+    }
     await expect(koennen.locator('.text-gefahr', { hasText: /^Lvl / })).toHaveCount(0);
     const zeile = hinweis.locator('xpath=ancestor::div[contains(@class,"attributzeile")][1]');
     const stufe = zeile.locator('span', { hasText: /^Lvl / }).last();
