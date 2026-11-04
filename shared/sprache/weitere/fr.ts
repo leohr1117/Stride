@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Flächen heben sich deutlicher vom Hintergrund ab.": "Les surfaces se détachent plus nettement de l'arrière-plan.",
   "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "Sur le téléphone, chaque section est un groupe en retrait. Un trait sépare les rangées.",
   "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "Sur Aujourd'hui, le nombre de la série reste visible. La section en dessous n'apparaît que lorsqu'il y a quelque chose à faire.",
   "Die Abstände über und unter den Abschnittsüberschriften sind überall gleich.": "L'espace au-dessus et en dessous des titres de section est le même partout.",

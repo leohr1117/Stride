@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Flächen heben sich deutlicher vom Hintergrund ab.', 'Surfaces stand out more clearly from the background.'],
   ['Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.', 'On a phone, each section is an inset group. A line separates the rows inside.'],
   ['Die Abstände über und unter den Abschnittsüberschriften sind überall gleich.', 'The space above and below section headings is the same everywhere.'],
   ['Bei 1 steht die Einzahl, in jeder Sprache.', 'A count of 1 uses the singular, in every language.'],

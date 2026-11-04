@@ -2,14 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { helligkeit, kontrast, MINDEST_KONTRAST } from '../../spiel/farben.ts';
 import { fuellToene, FUELL_KONTRAST, spitzeTon } from './balkenAbschluss.ts';
 import { bedeutungsfarben } from './bedeutung.ts';
-import { wacheKontrast, type GewachteFarben } from './kontrastWaechter.ts';
-import { erscheinungAus, vorlagen, type Erscheinung } from './paletten.ts';
+import { flaecheHebtSich, wacheKontrast, type GewachteFarben } from './kontrastWaechter.ts';
+import { erscheinungAus, standardVorlage, vorlagen, type Erscheinung } from './paletten.ts';
 import { STILE } from './stile.ts';
 
 const UI = 3;
 
-function flaechenVon(bild: Erscheinung): string[] {
-  return [bild.hintergrund, bild.flaechen.flaeche, bild.flaechen.flaeche2];
+function flaechenVon(bild: Erscheinung, wache?: GewachteFarben): string[] {
+  return [bild.hintergrund, wache?.flaeche ?? bild.flaechen.flaeche, wache?.flaeche2 ?? bild.flaechen.flaeche2];
 }
 
 function farbton(hex: string): number {
@@ -47,17 +47,17 @@ function bunt(hex: string): boolean {
 }
 
 function pruefePaare(bild: Erscheinung, wache: GewachteFarben): void {
-  const flaechen = flaechenVon(bild);
+  const flaechen = flaechenVon(bild, wache);
   for (const farbe of [wache.haupt, wache.leise, wache.gefahr, wache.streak, wache.fortschritt]) {
     for (const hintergrund of flaechen) {
       expect(kontrast(farbe, hintergrund)).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
     }
   }
   expect(kontrast(wache.schalterKnopfAn, wache.schalterAn)).toBeGreaterThanOrEqual(UI);
-  expect(kontrast(wache.schalterAn, bild.flaechen.flaeche)).toBeGreaterThanOrEqual(UI);
+  expect(kontrast(wache.schalterAn, wache.flaeche)).toBeGreaterThanOrEqual(UI);
   expect(kontrast(wache.schalterKnopfAus, wache.schalterAus)).toBeGreaterThanOrEqual(UI);
-  expect(kontrast(wache.feldrand, bild.flaechen.flaeche)).toBeGreaterThanOrEqual(UI);
-  expect(kontrast(wache.fortschritt, bild.flaechen.flaeche2)).toBeGreaterThanOrEqual(UI);
+  expect(kontrast(wache.feldrand, wache.flaeche)).toBeGreaterThanOrEqual(UI);
+  expect(kontrast(wache.fortschritt, wache.flaeche2)).toBeGreaterThanOrEqual(UI);
   expect(kontrast(wache.fokus, bild.hintergrund)).toBeGreaterThanOrEqual(UI);
   expect(kontrast(wache.aktionText, wache.aktion)).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
 }
@@ -80,7 +80,7 @@ describe('Kontrastwächter', () => {
         expect(wache.schalterKnopfAus, vorlage.name).toBe(fest.schalterKnopfAus);
         expect(wache.feldrand, vorlage.name).toBe('#767676');
         expect(wache.haupt, vorlage.name).toBe(bild.flaechen.haupt);
-        const leiseRoh = flaechenVon(bild).every((hintergrund) => kontrast(bild.flaechen.leise, hintergrund) >= MINDEST_KONTRAST);
+        const leiseRoh = flaechenVon(bild, wache).every((hintergrund) => kontrast(bild.flaechen.leise, hintergrund) >= MINDEST_KONTRAST);
         if (leiseRoh) {
           expect(wache.leise, vorlage.name).toBe(bild.flaechen.leise);
         } else {
@@ -95,7 +95,9 @@ describe('Kontrastwächter', () => {
     expect(nebel).toBeDefined();
     if (nebel) {
       const bild = erscheinungAus(nebel);
-      const roh = flaechenVon(bild).every((hintergrund) => kontrast(bild.flaechen.leise, hintergrund) >= MINDEST_KONTRAST);
+      const roh = flaechenVon(bild, wacheKontrast(bild, bedeutungsfarben(bild.flaechen.schema))).every(
+        (hintergrund) => kontrast(bild.flaechen.leise, hintergrund) >= MINDEST_KONTRAST,
+      );
       expect(roh).toBe(false);
     }
   });
@@ -155,6 +157,52 @@ describe('Kontrastwächter', () => {
           expect(helligkeit(spitzeTon(farbe, schema)), ort).toBeGreaterThan(helligkeit(farbe));
         }
         expect(helligkeit(toene.hell), ort).toBeGreaterThan(helligkeit(toene.dunkel));
+      }
+    }
+  });
+
+  it('hebt die Fläche in jeder Ansicht und Palette vom Grund ab', () => {
+    for (const stil of STILE) {
+      for (const vorlage of vorlagen(stil)) {
+        const bild = erscheinungAus(vorlage);
+        const wache = wacheKontrast(bild, bedeutungsfarben(bild.flaechen.schema));
+        const name = `${stil} ${vorlage.name}`;
+        const minimalHell = stil === 'minimal' && vorlage.name === 'Hell';
+        if (minimalHell) {
+          expect(wache.flaeche, name).toBe('#ffffff');
+          expect(kontrast(bild.primaer, '#fefefe'), name).toBeLessThan(MINDEST_KONTRAST);
+        } else {
+          expect(flaecheHebtSich(wache.flaeche, bild.hintergrund), name).toBe(true);
+        }
+        for (const grund of [wache.flaeche, wache.flaeche2]) {
+          expect(kontrast(wache.haupt, grund), `${name} Text`).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
+          expect(kontrast(wache.leise, grund), `${name} Leise`).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
+        }
+      }
+    }
+    const hell = erscheinungAus(standardVorlage('standard', false));
+    expect(hell.flaechen.flaeche).toBe('#ffffff');
+    expect(hell.flaechen.flaeche2).toBe('#ebebeb');
+    const dunkel = wacheKontrast(erscheinungAus(standardVorlage('standard', true)), bedeutungsfarben('dark'));
+    expect(dunkel.flaeche).toBe('#202020');
+    expect(dunkel.flaeche2).toBe('#2a2a2a');
+    const eigene = [
+      { primaer: '#3355ff', akzent: '#cc8800', hintergrund: '#fefefe' },
+      { primaer: '#3355ff', akzent: '#cc8800', hintergrund: '#010203' },
+      { primaer: '#f4f4f4', akzent: '#fbfbfb', hintergrund: '#fefefe' },
+    ];
+    for (const trio of eigene) {
+      const bild = erscheinungAus(trio);
+      const wache = wacheKontrast(bild, bedeutungsfarben(bild.flaechen.schema));
+      expect(flaecheHebtSich(wache.flaeche, bild.hintergrund), trio.hintergrund).toBe(true);
+      for (const grund of [wache.flaeche, wache.flaeche2]) {
+        expect(kontrast(wache.haupt, grund), `${trio.hintergrund} Text`).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
+        expect(kontrast(wache.leise, grund), `${trio.hintergrund} Leise`).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
+      }
+      for (const farbe of [wache.fortschritt, wache.gefahr]) {
+        const toene = fuellToene(farbe);
+        expect(kontrast(toene.hell, wache.flaeche2), trio.hintergrund).toBeGreaterThanOrEqual(FUELL_KONTRAST);
+        expect(kontrast(toene.dunkel, wache.flaeche2), trio.hintergrund).toBeGreaterThanOrEqual(FUELL_KONTRAST);
       }
     }
   });

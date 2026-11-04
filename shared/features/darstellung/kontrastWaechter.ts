@@ -1,14 +1,22 @@
-import { farbtonHalten, kontrast, lesbareFarbe, MINDEST_KONTRAST } from '../../spiel/farben.ts';
+import { farbtonHalten, helligkeit, kontrast, lesbareFarbe, MINDEST_KONTRAST } from '../../spiel/farben.ts';
 import { type Bedeutungsfarben } from './bedeutung.ts';
 import { type Erscheinung } from './paletten.ts';
 
 /** Nicht-Text, WCAG 1.4.11. Text bleibt bei MINDEST_KONTRAST. */
 const UI = 3;
 
+export const FLAECHE_GEGEN_GRUND = 1.12;
+
+export function flaecheHebtSich(flaeche: string, grund: string): boolean {
+  return Number(kontrast(flaeche, grund).toFixed(2)) >= FLAECHE_GEGEN_GRUND;
+}
+
 /** Feldrand aus der Ansicht, solange er gegen die Fläche besteht. */
 export const FELD_RAND = '#767676';
 
 export interface GewachteFarben {
+  flaeche: string;
+  flaeche2: string;
   haupt: string;
   leise: string;
   gefahr: string;
@@ -53,11 +61,56 @@ function knopf(bisher: string, bahn: string, grund: string): string {
   return kontrast(grund, bahn) >= kontrast(weiss, bahn) ? grund : weiss;
 }
 
+function kanalVersatz(farbe: string, schritte: number): string {
+  const roh = farbe.replace('#', '');
+  const kanal = (start: number) => {
+    const wert = Number.parseInt(roh.slice(start, start + 2), 16) + schritte;
+    return Math.max(0, Math.min(255, wert)).toString(16).padStart(2, '0');
+  };
+  return `#${kanal(0)}${kanal(2)}${kanal(4)}`;
+}
+
+function textBleibt(flaeche: string, flaeche2: string, texte: readonly string[]): boolean {
+  return texte.every((farbe) => kontrast(farbe, flaeche) >= MINDEST_KONTRAST && kontrast(farbe, flaeche2) >= MINDEST_KONTRAST);
+}
+
+function hebeFlaechen(
+  flaeche: string,
+  flaeche2: string,
+  grund: string,
+  texte: readonly string[],
+): { flaeche: string; flaeche2: string } {
+  if (flaecheHebtSich(flaeche, grund)) {
+    return { flaeche, flaeche2 };
+  }
+  const aufhellen = helligkeit(grund) < 0.4;
+  const richtung = aufhellen ? 1 : -1;
+  let beste = { flaeche, flaeche2 };
+  let vorher = flaeche;
+  for (let schritt = 1; schritt <= 48; schritt += 1) {
+    const naechste = kanalVersatz(flaeche, richtung * schritt);
+    if (naechste === vorher) {
+      break;
+    }
+    vorher = naechste;
+    const zweite = aufhellen ? kanalVersatz(flaeche2, richtung * schritt) : flaeche2;
+    if (!textBleibt(naechste, zweite, texte)) {
+      break;
+    }
+    beste = { flaeche: naechste, flaeche2: zweite };
+    if (flaecheHebtSich(naechste, grund)) {
+      return beste;
+    }
+  }
+  return beste;
+}
+
 /** Prüfpaare nach Palette und eigenen Farben. Bestehende Paare bleiben unverändert. */
 export function wacheKontrast(bild: Erscheinung, bedeutung: Bedeutungsfarben, feldrand = FELD_RAND): GewachteFarben {
   const grund = bild.hintergrund;
-  const flaeche = bild.flaechen.flaeche;
-  const flaeche2 = bild.flaechen.flaeche2;
+  const gehoben = hebeFlaechen(bild.flaechen.flaeche, bild.flaechen.flaeche2, grund, [bild.primaer]);
+  const flaeche = gehoben.flaeche;
+  const flaeche2 = gehoben.flaeche2;
   const flaechen = [grund, flaeche, flaeche2];
   const haupt = besteht(bild.flaechen.haupt, flaechen, MINDEST_KONTRAST)
     ? bild.flaechen.haupt
@@ -78,6 +131,8 @@ export function wacheKontrast(bild: Erscheinung, bedeutung: Bedeutungsfarben, fe
     ? bedeutung.gefahrText
     : lesbareFarbe(bedeutung.gefahrText, [gefahr], MINDEST_KONTRAST);
   return {
+    flaeche,
+    flaeche2,
     haupt,
     leise,
     gefahr,

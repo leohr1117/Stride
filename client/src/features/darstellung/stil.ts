@@ -74,8 +74,8 @@ export function wendeErscheinung(wahl: Farbwahl): void {
   const wache = wacheKontrast(bild, bedeutung);
   const abgeleitet = kombination(bild, gelesenerStil(wurzel.dataset.stil) ?? STANDARD_STIL);
   wurzel.style.setProperty('--grund', bild.hintergrund);
-  wurzel.style.setProperty('--flaeche', flaechen.flaeche);
-  wurzel.style.setProperty('--flaeche-2', flaechen.flaeche2);
+  wurzel.style.setProperty('--flaeche', wache.flaeche);
+  wurzel.style.setProperty('--flaeche-2', wache.flaeche2);
   wurzel.style.setProperty('--rand', flaechen.rand);
   wurzel.style.setProperty('--haupt', wache.haupt);
   wurzel.style.setProperty('--leise', wache.leise);

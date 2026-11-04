@@ -3,7 +3,7 @@ import { kontrast } from '../../spiel/farben.ts';
 import { bedeutungsfarben } from './bedeutung.ts';
 
 const HELL_FLAECHEN = ['#f2f2f2', '#ffffff', '#ebebeb'] as const;
-const DUNKEL_FLAECHEN = ['#141414', '#1c1c1c', '#262626'] as const;
+const DUNKEL_FLAECHEN = ['#141414', '#202020', '#2a2a2a'] as const;
 
 describe('bedeutungsfarben', () => {
   it('setzt Blau für Fortschritt und Orange für den Streak, unabhängig vom Akzent', () => {
@@ -29,9 +29,9 @@ describe('bedeutungsfarben', () => {
     expect(kontrast(hell.schalterAn, '#ffffff')).toBeGreaterThanOrEqual(3);
     expect(kontrast(dunkel.schalterKnopfAn, dunkel.schalterAn)).toBeGreaterThanOrEqual(3);
     expect(kontrast(dunkel.schalterKnopfAus, dunkel.schalterAus)).toBeGreaterThanOrEqual(3);
-    expect(kontrast(dunkel.schalterAn, '#1c1c1c')).toBeGreaterThanOrEqual(3);
+    expect(kontrast(dunkel.schalterAn, '#202020')).toBeGreaterThanOrEqual(3);
     expect(kontrast(hell.fortschritt, '#ebebeb')).toBeGreaterThanOrEqual(3);
-    expect(kontrast(dunkel.fortschritt, '#262626')).toBeGreaterThanOrEqual(3);
+    expect(kontrast(dunkel.fortschritt, '#2a2a2a')).toBeGreaterThanOrEqual(3);
     expect(kontrast(hell.gefahrText, hell.gefahr)).toBeGreaterThanOrEqual(4.5);
     expect(kontrast(dunkel.gefahrText, dunkel.gefahr)).toBeGreaterThanOrEqual(4.5);
     for (const flaeche of HELL_FLAECHEN) {

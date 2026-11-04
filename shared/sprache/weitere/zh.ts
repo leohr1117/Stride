@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Flächen heben sich deutlicher vom Hintergrund ab.": "表面与背景的区分更明显。",
   "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "在手机上，每个分区是缩进的一组。里面的各行之间有一条分隔线。",
   "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "在今天，连续天数仍然可见。下方区块只在有事可做时出现。",
   "Die Abstände über und unter den Abschnittsüberschriften sind überall gleich.": "各节标题上下的间距处处相同。",

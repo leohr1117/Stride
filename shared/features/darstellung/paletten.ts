@@ -47,7 +47,7 @@ const STANDARD_HELL: Vorlage = {
   },
 };
 
-/** Logo-Grau #707070 ist nur Deko. Text ist #949494, weil #8a8a8a auf #262626 unter 4,5 liegt. */
+/** Logo-Grau #707070 ist nur Deko. Text ist #949494, weil #8a8a8a auf #2a2a2a unter 4,5 liegt. */
 const STANDARD_DUNKEL: Vorlage = {
   name: 'Dunkel',
   primaer: '#f2f2f2',
@@ -55,8 +55,8 @@ const STANDARD_DUNKEL: Vorlage = {
   hintergrund: '#141414',
   text: '#141414',
   flaechen: {
-    flaeche: '#1c1c1c',
-    flaeche2: '#262626',
+    flaeche: '#202020',
+    flaeche2: '#2a2a2a',
     rand: '#2e2e2e',
     haupt: '#f2f2f2',
     leise: '#949494',
@@ -73,8 +73,8 @@ const STANDARD_NEBEL: Vorlage = {
   hintergrund: '#101010',
   text: '#141414',
   flaechen: {
-    flaeche: '#1a1a1a',
-    flaeche2: '#242424',
+    flaeche: '#1c1c1c',
+    flaeche2: '#262626',
     rand: '#333333',
     haupt: '#f2f2f2',
     leise: '#8a8a8a',
@@ -109,8 +109,8 @@ const MINIMAL_DUNKEL: Vorlage = {
   hintergrund: '#0e0e12',
   text: '#ffffff',
   flaechen: {
-    flaeche: '#16161c',
-    flaeche2: '#1f1f27',
+    flaeche: '#1b1b21',
+    flaeche2: '#24242c',
     rand: '#2a2a34',
     haupt: '#ececf1',
     leise: '#8b8b99',
@@ -142,8 +142,8 @@ const VORLAGEN: Record<Stil, readonly Vorlage[]> = {
       hintergrund: '#10141c',
       text: '#07101f',
       flaechen: {
-        flaeche: '#181d28',
-        flaeche2: '#222838',
+        flaeche: '#1a1f2a',
+        flaeche2: '#242a3a',
         rand: '#343b4e',
         haupt: '#e7eaf2',
         leise: '#939bb0',
@@ -161,8 +161,8 @@ const VORLAGEN: Record<Stil, readonly Vorlage[]> = {
       hintergrund: '#0c0d0f',
       text: '#03140b',
       flaechen: {
-        flaeche: '#141518',
-        flaeche2: '#1b1d21',
+        flaeche: '#191a1d',
+        flaeche2: '#202226',
         rand: '#282b30',
         haupt: '#eceef1',
         leise: '#979ba3',
@@ -178,8 +178,8 @@ const VORLAGEN: Record<Stil, readonly Vorlage[]> = {
       hintergrund: '#08110d',
       text: '#03140b',
       flaechen: {
-        flaeche: '#101a15',
-        flaeche2: '#18241d',
+        flaeche: '#141e19',
+        flaeche2: '#1c2821',
         rand: '#2c4036',
         haupt: '#e7f3ec',
         leise: '#8eaa9b',
@@ -195,8 +195,8 @@ const VORLAGEN: Record<Stil, readonly Vorlage[]> = {
       hintergrund: '#121614',
       text: '#03140b',
       flaechen: {
-        flaeche: '#1a201d',
-        flaeche2: '#242c28',
+        flaeche: '#1c221f',
+        flaeche2: '#262e2a',
         rand: '#3a4640',
         haupt: '#e8efe9',
         leise: '#96a69c',
@@ -214,8 +214,8 @@ const VORLAGEN: Record<Stil, readonly Vorlage[]> = {
       hintergrund: '#050914',
       text: '#031020',
       flaechen: {
-        flaeche: '#0a1224',
-        flaeche2: '#111c36',
+        flaeche: '#10182a',
+        flaeche2: '#17223c',
         rand: '#1d3563',
         haupt: '#e8f1ff',
         leise: '#849bc6',
@@ -231,8 +231,8 @@ const VORLAGEN: Record<Stil, readonly Vorlage[]> = {
       hintergrund: '#070612',
       text: '#100818',
       flaechen: {
-        flaeche: '#120e22',
-        flaeche2: '#1b1533',
+        flaeche: '#181428',
+        flaeche2: '#211b39',
         rand: '#3a2d66',
         haupt: '#f3eeff',
         leise: '#a394c9',
@@ -248,8 +248,8 @@ const VORLAGEN: Record<Stil, readonly Vorlage[]> = {
       hintergrund: '#041016',
       text: '#031018',
       flaechen: {
-        flaeche: '#0a1c24',
-        flaeche2: '#102833',
+        flaeche: '#0b1d25',
+        flaeche2: '#112934',
         rand: '#1c4a5c',
         haupt: '#e7f7fb',
         leise: '#86b4c4',
@@ -267,8 +267,8 @@ const VORLAGEN: Record<Stil, readonly Vorlage[]> = {
       hintergrund: '#0d0c0a',
       text: '#15130f',
       flaechen: {
-        flaeche: '#161512',
-        flaeche2: '#211f1b',
+        flaeche: '#1b1a17',
+        flaeche2: '#262420',
         rand: '#3a362f',
         haupt: '#ece6d6',
         leise: '#a49d8e',
@@ -284,8 +284,8 @@ const VORLAGEN: Record<Stil, readonly Vorlage[]> = {
       hintergrund: '#140e0a',
       text: '#15130f',
       flaechen: {
-        flaeche: '#1f1611',
-        flaeche2: '#2b2018',
+        flaeche: '#231a15',
+        flaeche2: '#2f241c',
         rand: '#4d3c2c',
         haupt: '#f6e7d4',
         leise: '#b7a08c',
@@ -301,8 +301,8 @@ const VORLAGEN: Record<Stil, readonly Vorlage[]> = {
       hintergrund: '#120c10',
       text: '#15130f',
       flaechen: {
-        flaeche: '#1c1419',
-        flaeche2: '#291c22',
+        flaeche: '#21191e',
+        flaeche2: '#2e2127',
         rand: '#4a3540',
         haupt: '#f6ebdf',
         leise: '#b7a399',

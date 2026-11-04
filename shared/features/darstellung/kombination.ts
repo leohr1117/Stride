@@ -49,12 +49,12 @@ function sicher(farbe: string, hintergruende: readonly string[], mindest: number
 export function kombination(bild: Erscheinung, stil: Stil): KombinationsFarben {
   const fest = bedeutungsfarben(bild.flaechen.schema);
   const wache = wacheKontrast(bild, fest);
-  const flaechen = [bild.hintergrund, bild.flaechen.flaeche, bild.flaechen.flaeche2];
+  const flaechen = [bild.hintergrund, wache.flaeche, wache.flaeche2];
   const akzentSchrift = AKZENT_ALS_TEXT.has(stil)
     ? sicher(bild.primaer, flaechen, MINDEST_KONTRAST, wache.haupt)
     : bild.primaer;
   const rahmen = AKZENT_ALS_TEXT.has(stil)
-    ? sicher(bild.flaechen.rand, [bild.flaechen.flaeche, bild.hintergrund], RAHMEN, wache.haupt)
+    ? sicher(bild.flaechen.rand, [wache.flaeche, bild.hintergrund], RAHMEN, wache.haupt)
     : wache.feldrand;
   return {
     haupt: wache.haupt,

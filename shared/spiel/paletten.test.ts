@@ -59,15 +59,15 @@ describe('paletten', () => {
     const dunkel = erscheinungAus(standardVorlage('minimal', true));
     expect(dunkel.primaer).toBe('#8b7dff');
     expect(dunkel.akzent).toBe('#f5b942');
-    expect(dunkel.flaechen.flaeche).toBe('#16161c');
+    expect(dunkel.flaechen.flaeche).toBe('#1b1b21');
 
     const jade = erscheinungAus(standardVorlage('jade', true));
-    expect(jade.flaechen.flaeche).toBe('#141518');
+    expect(jade.flaechen.flaeche).toBe('#191a1d');
     expect(jade.flaechen.diagramm).toBe('#c4b5fd');
 
     const holo = erscheinungAus(standardVorlage('holo', true));
     expect(holo.hintergrund).toBe('#050914');
-    expect(holo.flaechen.flaeche).toBe('#0a1224');
+    expect(holo.flaechen.flaeche).toBe('#10182a');
 
     const antik = erscheinungAus(standardVorlage('antik', true));
     expect(antik.primaer).toBe('#d6c79c');
@@ -139,7 +139,7 @@ describe('paletten', () => {
 
   it('nutzt bei bekanntem Hintergrund die Flächen der Ansicht und folgt mit dem Diagramm dem Akzent', () => {
     const geaendert = erscheinungAus({ primaer: '#3dd68c', akzent: '#f0d48a', hintergrund: '#0c0d0f' });
-    expect(geaendert.flaechen.flaeche).toBe('#141518');
+    expect(geaendert.flaechen.flaeche).toBe('#191a1d');
     expect(geaendert.flaechen.diagramm).toBe(geaendert.akzent);
     expect(geaendert.flaechen.diagramm).not.toBe('#8fa8bf');
   });

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.39
+
+### Geändert
+
+- Flächen heben sich deutlicher vom Hintergrund ab.
+
 ## 3.56.38
 
 ### Geändert
