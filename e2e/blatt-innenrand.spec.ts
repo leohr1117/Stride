@@ -2,24 +2,86 @@ import fs from 'node:fs';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
-/** Sichtbarer Kasten gegen den Innenrand des Blattkörpers. Abgeschnitten zählt mit. */
+const BAHN = [
+  'formular',
+  'formular-felder',
+  'formular-fuss',
+  'blatt-sofort',
+  'blatt-sofort-felder',
+  'blatt-sofort-fuss',
+  'dialog-auswahl',
+  'dialog-auswahl-liste',
+  'dialog-aktionen',
+];
+
+/** Inhalt bleibt 16 px vom Rand. Der Balken liegt daneben, nicht auf Feldern. */
 async function rechterInnenrand(dialog: Locator, eng: boolean): Promise<void> {
-  const ergebnis = await dialog.evaluate((el) => {
+  const ergebnis = await dialog.evaluate((el, bahn) => {
     const koerper = el.querySelector('.dialog-koerper');
     if (!(koerper instanceof HTMLElement)) {
       return { fehler: 'koerper' };
     }
     const stil = getComputedStyle(koerper);
     const kasten = koerper.getBoundingClientRect();
-    const innen = kasten.right - parseFloat(stil.paddingRight);
     const probleme: string[] = [];
+    const istBahn = (knoten: HTMLElement) => bahn.some((name) => knoten.classList.contains(name));
+    const fein = window.matchMedia('(pointer: fine)').matches && window.innerWidth >= 768;
+    const gutterSoll = (knoten: HTMLElement) => {
+      if (knoten.classList.contains('formular-felder') || knoten.classList.contains('blatt-sofort-felder')) {
+        return true;
+      }
+      if (knoten.classList.contains('dialog-auswahl-liste') && knoten.parentElement?.classList.contains('dialog-auswahl')) {
+        return true;
+      }
+      if (
+        knoten.classList.contains('dialog-koerper') &&
+        !knoten.querySelector(':scope > .formular, :scope > .dialog-auswahl, :scope > .blatt-sofort')
+      ) {
+        return true;
+      }
+      return (
+        fein &&
+        (knoten.classList.contains('formular-fuss') ||
+          knoten.classList.contains('blatt-sofort-fuss') ||
+          knoten.classList.contains('dialog-aktionen'))
+      );
+    };
+    const pruefeGutter = (knoten: HTMLElement) => {
+      if (!gutterSoll(knoten)) {
+        return;
+      }
+      const wert = getComputedStyle(knoten).scrollbarGutter;
+      const erwartet = fein ? 'stable' : 'auto';
+      if (!wert.startsWith(erwartet)) {
+        probleme.push(`gutter ${erwartet} ${wert} ${knoten.className}`.slice(0, 80));
+      }
+    };
+    pruefeGutter(koerper);
+    for (const knoten of koerper.querySelectorAll(
+      '.formular-felder, .blatt-sofort-felder, .dialog-auswahl-liste, .formular-fuss, .blatt-sofort-fuss, .dialog-aktionen',
+    )) {
+      if (knoten instanceof HTMLElement) {
+        pruefeGutter(knoten);
+      }
+    }
+    const portVon = (knoten: HTMLElement): HTMLElement | null => {
+      let vorfahr: HTMLElement | null = knoten;
+      while (vorfahr) {
+        const ueber = getComputedStyle(vorfahr).overflowY;
+        if (ueber === 'auto' || ueber === 'scroll') {
+          return vorfahr;
+        }
+        vorfahr = vorfahr.parentElement;
+      }
+      return null;
+    };
     const voll = (knoten: Element, name: string) => {
       if (!(knoten instanceof HTMLElement)) {
         probleme.push(name);
         return;
       }
       const lage = knoten.getBoundingClientRect();
-      if (lage.width < 2 || lage.right > innen + 1 || lage.left < kasten.left + parseFloat(stil.paddingLeft) - 1) {
+      if (lage.width < 2 || lage.right > kasten.right - 16 + 1 || lage.left < kasten.left + parseFloat(stil.paddingLeft) - 1) {
         probleme.push(`${name} ${Math.round(lage.left)}-${Math.round(lage.right)}`);
       }
     };
@@ -64,9 +126,24 @@ async function rechterInnenrand(dialog: Locator, eng: boolean): Promise<void> {
       if (rechts - links < 2 || unten - oben < 2) {
         continue;
       }
-      if (rechts > innen + 1) {
+      if (istBahn(knoten)) {
+        if (rechts > kasten.right + 1) {
+          probleme.push(`bahn ${Math.round(rechts)} ${knoten.className}`.slice(0, 70));
+        }
+        continue;
+      }
+      if (rechts > kasten.right - 16 + 1) {
         const text = (knoten.getAttribute('aria-label') || knoten.innerText || knoten.className).replace(/\s+/g, ' ').slice(0, 40);
         probleme.push(`rand ${Math.round(rechts)} ${text}`);
+      }
+      const port = portVon(knoten);
+      if (port) {
+        const box = port.getBoundingClientRect();
+        const inhaltRechts = box.left + port.clientLeft + port.clientWidth;
+        if (rechts > inhaltRechts + 1) {
+          const text = (knoten.getAttribute('aria-label') || knoten.className).replace(/\s+/g, ' ').slice(0, 30);
+          probleme.push(`balken ${Math.round(rechts)}>${Math.round(inhaltRechts)} ${text}`);
+        }
       }
     }
     for (const knoten of [el, ...el.querySelectorAll('*')]) {
@@ -82,24 +159,50 @@ async function rechterInnenrand(dialog: Locator, eng: boolean): Promise<void> {
         probleme.push(`scroll ${knoten.className}`.slice(0, 60));
       }
     }
+    const feld = koerper.querySelector('.formular-felder .feld-eingabe, .blatt-sofort-felder .feld-eingabe');
+    const knopf = koerper.querySelector('.formular-fuss .knopf-primaer, .blatt-sofort-fuss .knopf-primaer');
+    const flucht =
+      feld instanceof HTMLElement && knopf instanceof HTMLElement
+        ? Math.round(feld.getBoundingClientRect().right - knopf.getBoundingClientRect().right)
+        : 0;
+    const scroller = koerper.querySelector('.formular-felder, .blatt-sofort-felder, .dialog-auswahl > .dialog-auswahl-liste');
     const blatt = el.getBoundingClientRect();
+    const balken =
+      scroller instanceof HTMLElement
+        ? scroller.offsetWidth - scroller.clientWidth - scroller.clientLeft
+        : koerper.offsetWidth - koerper.clientWidth - koerper.clientLeft;
     return {
       fehler: '',
       paddingLinks: Math.round(parseFloat(stil.paddingLeft)),
       paddingRechts: Math.round(parseFloat(stil.paddingRight)),
+      innenHost: Boolean(koerper.querySelector(':scope > .formular, :scope > .dialog-auswahl, :scope > .blatt-sofort')),
+      scrollerPad: scroller instanceof HTMLElement ? Math.round(parseFloat(getComputedStyle(scroller).paddingRight)) : null,
+      balken,
+      flucht,
+      seitenGutter: getComputedStyle(document.documentElement).scrollbarGutter,
       links: Math.round(blatt.left),
       rechts: Math.round(blatt.right),
       fenster: window.innerWidth,
       offset: document.documentElement.offsetWidth,
       probleme: probleme.slice(0, 8),
     };
-  });
+  }, BAHN);
   expect(ergebnis.fehler).toBe('');
   if (!('paddingLinks' in ergebnis)) {
     return;
   }
   expect(ergebnis.paddingLinks).toBe(16);
-  expect(ergebnis.paddingRechts).toBe(16);
+  expect(ergebnis.paddingRechts).toBe(ergebnis.innenHost ? 0 : 16);
+  if (ergebnis.scrollerPad !== null) {
+    expect(ergebnis.scrollerPad).toBe(16);
+  }
+  expect(Math.abs(ergebnis.flucht)).toBeLessThanOrEqual(1);
+  expect(ergebnis.seitenGutter).toBe('auto');
+  if (eng) {
+    expect(ergebnis.balken).toBeLessThanOrEqual(1);
+  } else {
+    expect(ergebnis.balken).toBeGreaterThanOrEqual(8);
+  }
   expect(ergebnis.probleme).toEqual([]);
   if (eng) {
     expect(ergebnis.links).toBeLessThanOrEqual(1);
@@ -124,11 +227,12 @@ test('Investitionsblatt bleibt im rechten Innenrand', async ({ page }, testInfo)
   const eng = testInfo.project.name === 'handy';
   const investition = await oeffneInvestition(page);
   await rechterInnenrand(investition, eng);
-  await page.screenshot({ path: `tmp-test/blatt-rand/${testInfo.project.name}.png` });
+  await page.screenshot({ path: `tmp-test/blatt-rand/${testInfo.project.name}-d11.png` });
   await investition.getByRole('button', { name: 'Bezahlt mit · Ressourcen' }).click();
   const wahl = page.getByRole('dialog', { name: 'Bezahlt mit' });
   await expect(wahl.getByRole('option', { name: 'Nichts', exact: true })).toBeVisible();
   await rechterInnenrand(wahl, eng);
+  await page.screenshot({ path: `tmp-test/blatt-rand/${testInfo.project.name}-bezahlt.png` });
   await wahl.getByRole('button', { name: 'Schließen' }).click();
   await expect(wahl).toBeHidden();
   await investition.getByRole('button', { name: 'Schließen' }).click();
@@ -139,4 +243,14 @@ test('Investitionsblatt bleibt im rechten Innenrand', async ({ page }, testInfo)
   const eintrag = page.getByRole('dialog', { name: 'Was hast du getan?' });
   await expect(eintrag.getByRole('button', { name: 'Schließen' })).toBeVisible();
   await rechterInnenrand(eintrag, eng);
+  await page.screenshot({ path: `tmp-test/blatt-rand/${testInfo.project.name}-eintrag.png` });
+  await eintrag.getByRole('button', { name: 'Schließen' }).click();
+  await expect(eintrag).toBeHidden();
+
+  await page.goto('/basis');
+  await page.getByRole('button', { name: /Basis-Aufgabe/ }).first().click();
+  const basis = page.getByRole('dialog', { name: 'Basis-Aufgabe' });
+  await expect(basis.getByRole('button', { name: 'Schließen' })).toBeVisible();
+  await rechterInnenrand(basis, eng);
+  await page.screenshot({ path: `tmp-test/blatt-rand/${testInfo.project.name}-basis.png` });
 });

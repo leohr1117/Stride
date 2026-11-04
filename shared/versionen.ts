@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.47',
+    seiten: 'Investitionen, Heute, Basis',
+    behoben: 'Investitionen, Heute, Basis',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.46',
     seiten: 'Heute, Können, Haben, Verlauf',
     abschnitte: [

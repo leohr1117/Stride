@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.": "シートではスクロールバーが内容の横にあり、項目を隠しません。スマートフォンではスクロール中だけ表示されます。",
   "Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.": "ボスの記号と割合での経験値の減点は赤です。属性が低すぎるときは、警告記号、テキスト、レベルが赤になります。",
   "Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.": "属性では状態が名前の直後にあり、レベルは右に残ります。幅が足りないときは警告記号だけになり、タップで文字を表示します。",
   "Der Levelring schließt mit einem kurzen Verlauf, einer Spitze und einem leichten Glühen ab.": "レベルリングの終わりに短いグラデーション、先端、わずかな輝きが付きます。",

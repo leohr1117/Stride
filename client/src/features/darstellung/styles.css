@@ -988,6 +988,44 @@ html:has(.dialog-lage) {
   overscroll-behavior: contain;
 }
 
+.dialog-fenster .dialog-koerper:is(:has(> .formular), :has(> .dialog-auswahl), :has(> .blatt-sofort)) {
+  padding-inline-end: 0;
+}
+
+.dialog-fenster :is(.formular-felder, .blatt-sofort-felder, .formular-fuss, .blatt-sofort-fuss),
+.dialog-fenster .dialog-auswahl > .dialog-auswahl-liste,
+.dialog-fenster .dialog-auswahl > :not(.dialog-auswahl-liste) {
+  padding-inline-end: 16px;
+}
+
+.dialog-fenster :is(
+  .dialog-koerper:not(:has(> .formular, > .dialog-auswahl, > .blatt-sofort)),
+  .formular-felder,
+  .blatt-sofort-felder,
+  .dialog-auswahl > .dialog-auswahl-liste
+) {
+  scrollbar-gutter: auto;
+}
+
+@media (pointer: fine) and (min-width: 768px) {
+  .dialog-fenster :is(
+    .dialog-koerper:not(:has(> .formular, > .dialog-auswahl, > .blatt-sofort)),
+    .formular-felder,
+    .blatt-sofort-felder,
+    .dialog-auswahl > .dialog-auswahl-liste,
+    .formular-fuss,
+    .blatt-sofort-fuss,
+    .dialog-auswahl > .dialog-aktionen
+  ) {
+    scrollbar-gutter: stable;
+  }
+
+  .dialog-fenster :is(.formular-fuss, .blatt-sofort-fuss, .dialog-auswahl > .dialog-aktionen) {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+
 .dialog-fenster .feld,
 .dialog-fenster .formular {
   min-width: 0;

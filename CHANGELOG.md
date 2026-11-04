@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.47
+
+### Behoben
+
+- Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.
+
 ## 3.56.46
 
 ### Geändert

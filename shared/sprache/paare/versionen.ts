@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.', 'In sheets, the scrollbar sits beside the content and does not cover fields. On a phone, it appears only while scrolling.'],
   ['Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.', 'Boss symbols and percentage XP deductions are red. When an attribute is too low, the warning sign, the text, and the level are red.'],
   ['Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.', 'On attributes, the status sits behind the name and the level stays on the right. When space is tight, only the warning sign remains, and a tap shows the text.'],
   ['Der Levelring schließt mit einem kurzen Verlauf, einer Spitze und einem leichten Glühen ab.', 'The level ring ends with a short gradient, a tip, and a slight glow.'],

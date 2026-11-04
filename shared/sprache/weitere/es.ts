@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.": "En las hojas, la barra de desplazamiento queda junto al contenido y no tapa ningún campo. En el teléfono solo aparece al desplazar.",
   "Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.": "Los símbolos de los jefes y las deducciones de XP en porcentaje son rojos. Si un atributo está demasiado bajo, el signo de aviso, el texto y el nivel son rojos.",
   "Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.": "En los atributos, el estado va detrás del nombre y el nivel permanece a la derecha. Si falta espacio, queda el signo de aviso y un toque muestra el texto.",
   "Der Levelring schließt mit einem kurzen Verlauf, einer Spitze und einem leichten Glühen ab.": "El anillo de nivel termina con un degradado corto, una punta y un leve brillo.",

@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.": "В листах полоса прокрутки стоит рядом с содержимым и не перекрывает поля. На телефоне она появляется только при прокрутке.",
   "Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.": "Символы боссов и процентные вычеты опыта красные. Если атрибут слишком низкий, красными становятся знак предупреждения, текст и уровень.",
   "Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.": "У атрибутов состояние стоит за именем, а уровень остаётся справа. Если места мало, остаётся только знак предупреждения, и нажатие показывает текст.",
   "Der Levelring schließt mit einem kurzen Verlauf, einer Spitze und einem leichten Glühen ab.": "Кольцо уровня заканчивается коротким градиентом, кончиком и лёгким свечением.",
