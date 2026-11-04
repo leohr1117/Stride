@@ -168,6 +168,7 @@ html[data-stil='standard'] body {
   width: 20px;
   height: 20px;
   stroke-width: 1.75;
+  --zeilen-strich: 1.75;
 }
 
 :root[data-stil='standard'] .mobilleiste a[aria-current='page'] svg.lucide {

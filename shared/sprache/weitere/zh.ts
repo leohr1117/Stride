@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Schwerter der Bosse bleiben im Ring.": "首领的剑留在圆环里。",
   "Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.": "资料图片里的职业符号在一块表面上，用文字颜色。在电脑上，指针显示资料和等级。",
   "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "在「今天」上，连续记录的提示占一行。「+ 记录」是文字按钮。",
   "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "在手机上，可折叠的分组四角都是圆角。",

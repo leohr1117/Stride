@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Schwerter der Bosse bleiben im Ring.": "ボスの剣は輪の中に収まります。",
   "Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.": "プロフィール画像のクラス記号は、文字色で面の上にあります。パソコンでは、ポインターがプロフィールとレベルを示します。",
   "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "「今日」の連続の案内は1行です。「+ 記録」は文字ボタンです。",
   "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "スマートフォンでは、折りたたみできるグループの角がすべて丸くなっています。",

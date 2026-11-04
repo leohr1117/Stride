@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Schwerter der Bosse bleiben im Ring.": "Las espadas de los jefes permanecen dentro del anillo.",
   "Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.": "El símbolo de clase en la imagen de perfil está sobre una superficie, en el color del texto. En el ordenador, el puntero muestra el perfil y el nivel.",
   "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "En Hoy, el aviso de la racha cabe en una línea. + Entrada es un botón de texto.",
   "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "En el teléfono, los grupos desplegables están redondeados en todas las esquinas.",

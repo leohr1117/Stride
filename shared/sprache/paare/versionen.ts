@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die Schwerter der Bosse bleiben im Ring.', 'Boss swords stay inside the ring.'],
   ['Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.', 'The class symbol in the profile picture sits on a surface in the text color. On a computer, the pointer shows profile and level.'],
   ['Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.', 'On Today, the streak note fits on one line. + Entry is a text button.'],
   ['Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.', 'On a phone, collapsible groups are rounded on every corner.'],

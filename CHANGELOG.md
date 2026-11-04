@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.43
+
+### Behoben
+
+- Die Schwerter der Bosse bleiben im Ring.
+
 ## 3.56.42
 
 ### Geändert
