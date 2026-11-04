@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.": "En Hoy, Base aparece solo en el título. La última fila abre todas las tareas base.",
   "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "En Repaso, la sección se llama Cambio. Las cifras son uniformes, las flechas de la semana son más grandes y los campos ya no se pueden arrastrar.",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "En Historial, el botón para cargar registros anteriores tiene un borde en lugar de un fondo gris.",
   "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "En Metas, las organizaciones son más bajas. Los proyectos debajo están sangrados. Terminado aparece en la segunda línea.",
@@ -209,6 +210,7 @@ export const TEXTE: Record<string, string> = {
   "Filter": "Filtro",
   "Filter zurücksetzen": "Restablecer el filtro",
   "Basis-Aufgabe anlegen": "Crear una tarea base",
+  "Alle Basis-Aufgaben": "Todas las tareas base",
   "Zahlen": "Cifras",
   "Vorbilder lassen sich als Favorit merken.": "Los referentes se pueden guardar como favoritos.",
   "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "Los favoritos quedan arriba en la lista y siguen visibles con cada filtro de dirección.",

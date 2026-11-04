@@ -224,6 +224,7 @@ export const PAARE = [
   ['Alle anzeigen ({anzahl})', 'Show all ({anzahl})'],
   ['Alle aktuellen Daten werden durch die Sicherung ersetzt. Der jetzige Stand wird vorher automatisch gesichert.', 'All current data is replaced by the backup. The current state is saved automatically beforehand.'],
   ['Alle anzeigen', 'Show all'],
+  ['Alle Basis-Aufgaben', 'All basics tasks'],
   ['Als Nächstes', 'Upcoming'],
   ['Ältere Einträge laden', 'Load older entries'],
   ['Einführung', 'Onboarding'],

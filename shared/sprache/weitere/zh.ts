@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.": "在今天，基础只出现在标题里。最后一行打开全部基础事项。",
   "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "在回顾中，这一栏称为变化。各项数字样式一致，周箭头更大，文本框不能再拖拽。",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "在历程中，加载更早记录的按钮改为边框，不再是灰色底。",
   "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "在目标中，组织更矮。其下的项目向内缩进。已完成显示在第二行。",
@@ -209,6 +210,7 @@ export const TEXTE: Record<string, string> = {
   "Filter": "筛选",
   "Filter zurücksetzen": "重置筛选",
   "Basis-Aufgabe anlegen": "新建基础事项",
+  "Alle Basis-Aufgaben": "全部基础事项",
   "Zahlen": "数字",
   "Vorbilder lassen sich als Favorit merken.": "可以把榜样标为收藏。",
   "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "收藏在列表顶部，换方向筛选时仍然可见。",

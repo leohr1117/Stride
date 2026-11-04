@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.": "今日では、基本は見出しにだけ出ます。最後の行ですべての基本タスクを開きます。",
   "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "振り返りでは、この欄は変化という名前です。指標の見た目は揃い、週の矢印は大きくなり、欄はもう引き伸ばせません。",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "履歴では、古い記録を読み込むボタンが灰色の面ではなく枠になりました。",
   "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "目標では組織が低くなり、その下のプロジェクトは字下げされます。完了は2行目に出ます。",
@@ -209,6 +210,7 @@ export const TEXTE: Record<string, string> = {
   "Filter": "フィルター",
   "Filter zurücksetzen": "フィルターを戻す",
   "Basis-Aufgabe anlegen": "基本タスクを作る",
+  "Alle Basis-Aufgaben": "すべての基本タスク",
   "Zahlen": "数字",
   "Vorbilder lassen sich als Favorit merken.": "お手本をお気に入りにできます。",
   "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "お気に入りはリストの上にあり、どの方向の絞り込みでも表示されます。",

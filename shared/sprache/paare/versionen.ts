@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.', 'On Today, Basics appears only in the heading. The last row opens all basics tasks.'],
   ['Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.', 'In Review, the section is called Change. The figures are consistent, the week arrows are larger, and the fields can no longer be dragged.'],
   ['Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.', 'In History, the button for loading older entries has a border instead of a grey fill.'],
   ['Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.', 'On Goals, organizations are shorter. The projects under them are indented. Finished appears on the second line.'],

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.34
+
+### Geändert
+
+- Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.
+
 ## 3.56.33
 
 ### Geändert

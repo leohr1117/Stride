@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.": "На странице «Сегодня» База стоит только в заголовке. Последняя строка открывает все базовые задачи.",
   "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "В «Итогах» раздел называется «Изменение». Показатели выглядят одинаково, стрелки недель крупнее, а поля больше нельзя растягивать.",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "В «Истории» у кнопки загрузки старых записей рамка вместо серой заливки.",
   "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "В «Целях» организации ниже. Проекты под ними сдвинуты вправо. «Завершено» стоит во второй строке.",
@@ -209,6 +210,7 @@ export const TEXTE: Record<string, string> = {
   "Filter": "Фильтр",
   "Filter zurücksetzen": "Сбросить фильтр",
   "Basis-Aufgabe anlegen": "Создать базовую задачу",
+  "Alle Basis-Aufgaben": "Все базовые задачи",
   "Zahlen": "Цифры",
   "Vorbilder lassen sich als Favorit merken.": "Ориентиры можно сохранять в избранном.",
   "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "Избранное стоит вверху списка и остаётся видимым при любом фильтре направления.",

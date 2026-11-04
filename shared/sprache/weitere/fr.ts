@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.": "Sur Aujourd'hui, Base n'apparaît que dans le titre. La dernière ligne ouvre toutes les tâches de base.",
   "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "Dans Bilan, la section s'appelle Changement. Les chiffres sont uniformes, les flèches de semaine sont plus grandes et les champs ne se laissent plus étirer.",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "Dans Historique, le bouton pour charger les entrées plus anciennes a un cadre à la place d'un fond gris.",
   "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "Dans Objectifs, les organisations sont plus basses. Les projets en dessous sont en retrait. Terminé apparaît sur la deuxième ligne.",
@@ -209,6 +210,7 @@ export const TEXTE: Record<string, string> = {
   "Filter": "Filtre",
   "Filter zurücksetzen": "Réinitialiser le filtre",
   "Basis-Aufgabe anlegen": "Créer une tâche de base",
+  "Alle Basis-Aufgaben": "Toutes les tâches de base",
   "Zahlen": "Chiffres",
   "Vorbilder lassen sich als Favorit merken.": "Les modèles peuvent être enregistrés comme favoris.",
   "Favoriten stehen oben auf der Liste und bleiben bei jedem Richtungsfilter sichtbar.": "Les favoris restent en haut de la liste et visibles avec chaque filtre de direction.",

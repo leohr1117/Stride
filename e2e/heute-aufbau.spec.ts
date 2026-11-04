@@ -72,6 +72,7 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
     expect(masse.rand).toBe(1);
     expect(masse.flaechenBreite).toBeLessThanOrEqual(720);
   }
+  await expect(page.getByRole('heading', { name: 'Basis', exact: true })).toHaveCount(1);
   for (const name of ['Streak', 'Bosse greifen an', 'Basis']) {
     const schrift = await page.getByRole('heading', { name, exact: true }).evaluate((element) => {
       const stil = getComputedStyle(element);
@@ -143,37 +144,72 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await expect(page.getByText('Kurz dehnen')).toHaveCount(0);
   await basisSchalter.click();
   await expect(page.getByText('Kurz dehnen')).toBeVisible();
-  const basis = page.locator('main a[href="/basis"]');
-  await expect(basis).toBeVisible();
-  await expect(basis.locator('svg')).toHaveCount(1);
+  const basisLinks = page.locator('main a[href="/basis"]');
+  await expect(basisLinks).toHaveCount(1);
+  const basisZeile = basisLinks.locator('xpath=ancestor::*[@data-zeile][1]');
+  await expect(basisZeile).toContainText('Alle Basis-Aufgaben');
+  await expect(basisZeile.locator('svg')).toHaveCount(1);
+  expect(await basisZeile.evaluate((element) => Math.round(element.getBoundingClientRect().height))).toBe(48);
+  const basisFlaeche = page.locator('section', { has: page.getByRole('heading', { name: 'Basis', exact: true }) }).locator('[data-flaeche]');
+  await expect(basisFlaeche).not.toHaveClass(/\bp-4\b/);
   const pfeileGetrennt = await page.evaluate(() => {
     const knoepfe = [...document.querySelectorAll('button[aria-expanded]')];
-    const basisKopf = knoepfe.find((knopf) => {
-      const id = knopf.getAttribute('aria-labelledby');
-      return id !== null && document.getElementById(id)?.textContent === 'Basis';
-    });
-    const link = document.querySelector('main a[href="/basis"]');
-    if (!(basisKopf instanceof HTMLElement) || !(link instanceof HTMLElement)) {
-      return false;
-    }
-    const kopfFrei = (name: string) => {
-      const knopf = knoepfe.find((element) => {
-        const id = element.getAttribute('aria-labelledby');
+    const kopfVon = (name: string) =>
+      knoepfe.find((knopf) => {
+        const id = knopf.getAttribute('aria-labelledby');
         return id !== null && document.getElementById(id)?.textContent === name;
       });
+    const kopfFrei = (name: string) => {
+      const knopf = kopfVon(name);
       const zeile = knopf?.parentElement;
       return zeile instanceof HTMLElement && zeile.querySelectorAll('svg').length === 1 && zeile.querySelectorAll('a').length === 0;
     };
+    const ueberschriften = [...document.querySelectorAll('main h1, main h2, main h3')].filter((element) =>
+      (element.textContent ?? '').includes('Basis'),
+    );
+    const links = [...document.querySelectorAll('main a[href="/basis"]')];
+    const link = links[0];
+    const basisKopf = kopfVon('Basis');
+    if (!(basisKopf instanceof HTMLElement) || !(link instanceof HTMLElement)) {
+      return false;
+    }
+    const flaeche = link.closest('[data-flaeche]');
+    const zeile = link.closest('.zeile');
+    if (!(flaeche instanceof HTMLElement) || !(zeile instanceof HTMLElement)) {
+      return false;
+    }
+    const bossKopf = [...document.querySelectorAll('h2')].find((element) => element.textContent?.trim() === 'Bosse greifen an');
+    const bossSymbol = bossKopf?.closest('section')?.querySelector('.zeile svg');
+    const basisSymbol = flaeche.querySelector('ul svg');
+    if (!(bossSymbol instanceof Element) || !(basisSymbol instanceof Element)) {
+      return false;
+    }
+    const delta = Math.abs(bossSymbol.getBoundingClientRect().left - basisSymbol.getBoundingClientRect().left);
+    const titel = zeile.querySelector('.zeile-titel');
+    const probe = document.createElement('span');
+    probe.className = 'text-leise';
+    document.body.append(probe);
+    const leise = titel instanceof HTMLElement && getComputedStyle(titel).color === getComputedStyle(probe).color;
+    probe.remove();
     return (
+      ueberschriften.length === 1 &&
+      ueberschriften[0]?.textContent?.trim() === 'Basis' &&
+      links.length === 1 &&
       basisKopf.closest('[data-flaeche]') === null &&
-      link.closest('[data-flaeche]') !== null &&
+      flaeche.contains(link) &&
+      flaeche.lastElementChild === zeile &&
+      Math.round(zeile.getBoundingClientRect().height) === 48 &&
+      zeile.querySelectorAll('svg').length === 1 &&
+      !flaeche.classList.contains('p-4') &&
+      leise &&
+      delta <= 1 &&
       kopfFrei('Basis') &&
       kopfFrei('Werte') &&
       kopfFrei('Aktivität')
     );
   });
   expect(pfeileGetrennt).toBe(true);
-  await basis.click();
+  await basisLinks.click();
   await expect(page).toHaveURL(/\/basis$/);
   await expect(page.locator('main h1')).toHaveText('Basis');
   await page.goto('/');

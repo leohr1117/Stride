@@ -1,9 +1,8 @@
 import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronRight, Pencil } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import { AbhakKreis } from './AbhakKreis.tsx';
-import { useState, type FormEvent } from 'react';
-import { Link } from 'react-router';
+import { useState, type CSSProperties, type FormEvent } from 'react';
 import type { BasisAufgabe } from '../../../../shared/api/index.ts';
 import { DAUER_OPTIONEN, GRENZEN, type IconName } from '../../../../shared/spiel/begriffe.ts';
 import { fehlendeZuordnung } from '../../../../shared/spiel/ebenen.ts';
@@ -15,6 +14,7 @@ import { dauerText } from '../../format.ts';
 import { useEbenen } from '../../funktionen.ts';
 import { leseMerker, merke } from '../../speicher.ts';
 import { EinklappKopf } from '../../components/Ausklappbar.tsx';
+import { DichteZeilen, Zeile } from '../../components/Zeile.tsx';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { Icon } from '../../components/Icons.tsx';
@@ -87,21 +87,24 @@ export function BasisListe({
   aufgaben,
   mitProjekt,
   onBearbeiten,
+  fluchten = false,
 }: {
   aufgaben: BasisAufgabe[];
   mitProjekt: boolean;
   onBearbeiten?: (aufgabe: BasisAufgabe) => void;
+  fluchten?: boolean;
 }) {
   const aktionen = useBasisAktionen();
   return (
     <>
-      <ul className="space-y-1">
+      <ul className={fluchten ? 'liste' : 'space-y-1'}>
         {aufgaben.map((aufgabe) => (
           <BasisZeile
             key={aufgabe.id}
             aufgabe={aufgabe}
             mitProjekt={mitProjekt}
             laeuft={aktionen.laeuft}
+            fluchten={fluchten}
             onErledigen={() => aktionen.erledigen(aufgabe.id)}
             onRueckgaengig={aktionen.rueckgaengig}
             onBearbeiten={onBearbeiten && (() => onBearbeiten(aufgabe))}
@@ -113,10 +116,13 @@ export function BasisListe({
   );
 }
 
+const FLUCHT_EINZUG = { '--liste-einzug': '36px' } as CSSProperties;
+
 function BasisZeile({
   aufgabe,
   mitProjekt,
   laeuft,
+  fluchten = false,
   onErledigen,
   onRueckgaengig,
   onBearbeiten,
@@ -124,6 +130,7 @@ function BasisZeile({
   aufgabe: BasisAufgabe;
   mitProjekt: boolean;
   laeuft: boolean;
+  fluchten?: boolean;
   onErledigen: () => void;
   onRueckgaengig: (eintragId: number) => void;
   onBearbeiten?: () => void;
@@ -137,13 +144,13 @@ function BasisZeile({
     .join(' · ');
 
   return (
-    <li>
+    <li style={fluchten ? FLUCHT_EINZUG : undefined}>
       <SchnellZeile
-        className="rounded-xl"
+        className={fluchten ? '' : 'rounded-xl'}
         ziel={{ art: 'basis', id: aufgabe.id, name: aufgabe.name, archiviert: aufgabe.archiviert, loeschbar: aufgabe.loeschbar }}
       >
         {(menue) => (
-    <div className="flex items-center gap-1 px-1 py-0.5">
+    <div className={fluchten ? 'flex min-h-12 items-center gap-1 px-4' : 'flex items-center gap-1 px-1 py-0.5'}>
       <Icon name={aufgabe.icon} className="size-4 shrink-0" style={{ color: aufgabe.farbe }} />
       <div className="min-w-0 flex-1">
         <p className={`truncate text-sm ${heuteEintragId !== null ? 'text-leise' : 'font-medium'}`}>{aufgabe.name}</p>
@@ -202,16 +209,11 @@ export function BasisKarte() {
         }
       />
       {!eingeklappt && (
-        <Flaeche className="p-4">
-          <div>
-            <div className="ueberschrift abschnittskopf mb-2 min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
-              <Link to="/basis" className="inline-flex items-center">
-                {tx("Basis")}
-                <ChevronRight className="size-4 shrink-0" aria-hidden />
-              </Link>
-            </div>
-            <BasisListe aufgaben={aktive} mitProjekt={ebenen.projekte} />
-          </div>
+        <Flaeche>
+          <BasisListe aufgaben={aktive} mitProjekt={ebenen.projekte} fluchten />
+          <DichteZeilen>
+            <Zeile titel={tx("Alle Basis-Aufgaben")} nach="/basis" className="text-leise" />
+          </DichteZeilen>
         </Flaeche>
       )}
     </section>
