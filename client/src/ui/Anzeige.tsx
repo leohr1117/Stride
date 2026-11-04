@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
-import { type CSSProperties, type ReactNode } from 'react';
+import { type CSSProperties, type ReactNode, useId } from 'react';
 import { prozentPunkte } from '../format.ts';
 import { attributName, tx } from '../text.ts';
+import { RING_HEUTE, RING_MITTE, RING_RADIUS, RING_SCHRIFT_AB, RING_UMFANG, ringAbschluss, strichWeite } from './levelringAbschluss.ts';
 
 export function XpAbzug({ prozent }: { prozent: number }) {
   return (
@@ -189,25 +190,11 @@ export function Fortschrittsbalken({
   );
 }
 
-const RING_MITTE = 50;
-const RING_RADIUS = 42;
-const RING_STRICH = 8;
-const RING_HEUTE = 64;
-const RING_HEUTE_STRICH_PX = 6;
-const RING_SCHRIFT_AB = 96;
-
 function ringSchrift(groesse: number, basis: number): number | undefined {
   if (groesse >= RING_SCHRIFT_AB) {
     return undefined;
   }
   return Math.max(1, Math.round((basis * groesse) / RING_SCHRIFT_AB));
-}
-
-function strichWeite(groesse: number): number {
-  if (groesse === RING_HEUTE) {
-    return (RING_HEUTE_STRICH_PX * 100) / groesse;
-  }
-  return RING_STRICH;
 }
 
 function levelZeile(level: number, groesse: number, darunter: boolean): ReactNode {
@@ -239,26 +226,63 @@ function levelZeile(level: number, groesse: number, darunter: boolean): ReactNod
   );
 }
 
-function levelGrafik(anteil: number, groesse: number): ReactNode {
+function levelGrafik(anteil: number, groesse: number, verlaufId: string): ReactNode {
   const begrenzt = Math.min(1, Math.max(0, anteil));
   const strich = strichWeite(groesse);
-  const umfang = 2 * Math.PI * RING_RADIUS;
   const voll = begrenzt >= 0.999;
+  const abschluss = ringAbschluss(anteil, groesse);
+  const kreis = {
+    cx: RING_MITTE,
+    cy: RING_MITTE,
+    r: RING_RADIUS,
+    fill: 'none',
+    strokeWidth: strich,
+    strokeLinecap: 'butt',
+  } as const;
   return (
     <svg viewBox="0 0 100 100" className="absolute inset-0" aria-hidden="true">
       <circle cx={RING_MITTE} cy={RING_MITTE} r={RING_RADIUS} fill="none" stroke="var(--flaeche-2)" strokeWidth={strich} />
-      {begrenzt > 0 && (
-        <circle
-          cx={RING_MITTE}
-          cy={RING_MITTE}
-          r={RING_RADIUS}
-          fill="none"
-          stroke="var(--fortschritt)"
-          strokeWidth={strich}
-          strokeLinecap="butt"
-          strokeDasharray={voll ? undefined : `${begrenzt * umfang} ${umfang}`}
-          transform={voll ? undefined : `rotate(-90 ${RING_MITTE} ${RING_MITTE})`}
-        />
+      {abschluss && (
+        <g className="levelring-bogen">
+          <circle
+            className="levelring-strich"
+            {...kreis}
+            stroke="var(--fortschritt)"
+            strokeDasharray={voll ? undefined : `${begrenzt * RING_UMFANG} ${RING_UMFANG}`}
+            transform={voll ? undefined : `rotate(-90 ${RING_MITTE} ${RING_MITTE})`}
+          />
+          {abschluss.verlauf !== null && abschluss.versatzVerlauf !== null && abschluss.verlaufVon && abschluss.verlaufNach && (
+            <>
+              <defs>
+                <linearGradient
+                  id={verlaufId}
+                  gradientUnits="userSpaceOnUse"
+                  x1={abschluss.verlaufVon.x}
+                  y1={abschluss.verlaufVon.y}
+                  x2={abschluss.verlaufNach.x}
+                  y2={abschluss.verlaufNach.y}
+                >
+                  <stop offset="0" stopColor="var(--balken-farbe)" />
+                  <stop offset="1" stopColor="var(--balken-verlauf-ton)" />
+                </linearGradient>
+              </defs>
+              <circle
+                className="levelring-verlauf"
+                {...kreis}
+                stroke={`url(#${verlaufId})`}
+                strokeDasharray={`${abschluss.verlauf} ${RING_UMFANG}`}
+                strokeDashoffset={abschluss.versatzVerlauf}
+              />
+            </>
+          )}
+          <circle
+            className="levelring-spitze"
+            {...kreis}
+            stroke="var(--balken-spitze)"
+            strokeDasharray={`${abschluss.spitze} ${RING_UMFANG}`}
+            strokeDashoffset={abschluss.versatzSpitze}
+          />
+        </g>
       )}
     </svg>
   );
@@ -275,7 +299,8 @@ export function LevelRing({
   groesse?: number;
   mitte?: ReactNode;
 }) {
-  const grafik = levelGrafik(anteil, groesse);
+  const verlaufId = `lr${useId().replaceAll(':', '')}`;
+  const grafik = levelGrafik(anteil, groesse, verlaufId);
   const zeile = levelZeile(level, groesse, Boolean(mitte));
 
   if (mitte) {

@@ -150,8 +150,8 @@ describe('Kontrastwächter', () => {
         const ort = `${schema} ${farbe} auf ${track}`;
         expect(kontrast(toene.hell, track), `hell ${ort}`).toBeGreaterThanOrEqual(FUELL_KONTRAST);
         expect(kontrast(toene.dunkel, track), `dunkel ${ort}`).toBeGreaterThanOrEqual(FUELL_KONTRAST);
+        expect(kontrast(spitzeTon(farbe, schema), track), `spitze ${ort}`).toBeGreaterThanOrEqual(FUELL_KONTRAST);
         if (schema === 'light') {
-          expect(kontrast(spitzeTon(farbe, schema), track), `spitze ${ort}`).toBeGreaterThanOrEqual(FUELL_KONTRAST);
           expect(helligkeit(spitzeTon(farbe, schema)), ort).toBeLessThan(helligkeit(farbe));
         } else {
           expect(helligkeit(spitzeTon(farbe, schema)), ort).toBeGreaterThan(helligkeit(farbe));
@@ -203,6 +203,7 @@ describe('Kontrastwächter', () => {
         const toene = fuellToene(farbe);
         expect(kontrast(toene.hell, wache.flaeche2), trio.hintergrund).toBeGreaterThanOrEqual(FUELL_KONTRAST);
         expect(kontrast(toene.dunkel, wache.flaeche2), trio.hintergrund).toBeGreaterThanOrEqual(FUELL_KONTRAST);
+        expect(kontrast(spitzeTon(farbe, bild.flaechen.schema), wache.flaeche2), trio.hintergrund).toBeGreaterThanOrEqual(FUELL_KONTRAST);
       }
     }
   });

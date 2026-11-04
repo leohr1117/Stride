@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Levelring schließt mit einem kurzen Verlauf, einer Spitze und einem leichten Glühen ab.": "L'anneau de niveau se termine par un court dégradé, une pointe et une légère lueur.",
   "Die Schwerter der Bosse bleiben im Ring.": "Les épées des boss restent dans l'anneau.",
   "Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.": "Le symbole de classe dans l'image de profil est sur une surface, dans la couleur du texte. Sur un ordinateur, le pointeur affiche le profil et le niveau.",
   "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "Sur Aujourd'hui, l'indication de la série tient sur une ligne. + Entrée est un bouton texte.",

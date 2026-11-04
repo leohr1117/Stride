@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.44
+
+### Geändert
+
+- Der Levelring schließt mit einem kurzen Verlauf, einer Spitze und einem leichten Glühen ab.
+
 ## 3.56.43
 
 ### Behoben

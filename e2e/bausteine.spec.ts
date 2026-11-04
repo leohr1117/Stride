@@ -96,8 +96,24 @@ test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInf
     expect(ringHtml.toLowerCase()).not.toContain('fill="white"');
     expect(ringHtml).toContain('stroke="var(--fortschritt)"');
     expect(ringHtml).toContain('stroke="var(--flaeche-2)"');
+    expect(ringHtml).toContain('levelring-bogen');
+    expect(ringHtml).toContain('levelring-spitze');
+    expect(ringHtml).toContain('stroke="var(--balken-spitze)"');
     expect(ringHtml).not.toContain('--akzent');
     await expect(page.locator('.levelring-spitze-schein')).toHaveCount(0);
+    const ringAn = await page.locator('.levelring-bogen').first().evaluate((element) => {
+      const spitze = element.querySelector('.levelring-spitze');
+      const strich = element.querySelector('.levelring-strich');
+      return {
+        filter: getComputedStyle(element).filter,
+        spitze: spitze ? getComputedStyle(spitze).stroke : '',
+        strich: strich ? getComputedStyle(strich).stroke : '',
+      };
+    });
+    expect(ringAn.filter).not.toBe('none');
+    expect(ringAn.filter).toMatch(/[46]px/);
+    expect(ringAn.spitze).not.toBe('rgb(255, 255, 255)');
+    expect(ringAn.spitze).not.toBe(ringAn.strich);
     await bild('ring-an');
 
     await page.goto('/mehr/darstellung');
@@ -112,7 +128,10 @@ test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInf
     const ringAus = await page.locator('.levelring').first().innerHTML();
     expect(ringAus).not.toContain('feGaussianBlur');
     expect(ringAus).toContain('stroke="var(--fortschritt)"');
+    expect(ringAus).toContain('levelring-spitze');
     await expect(page.locator('.levelring-spitze-schein')).toHaveCount(0);
+    const filterAus = await page.locator('.levelring-bogen').first().evaluate((element) => getComputedStyle(element).filter);
+    expect(filterAus === 'none' || /\/\s*0\s*\)|rgba?\([^)]*,\s*0\s*\)/.test(filterAus)).toBe(true);
     await bild('ring-aus');
 
     await page.goto('/chronik');

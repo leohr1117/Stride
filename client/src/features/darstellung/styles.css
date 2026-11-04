@@ -188,21 +188,35 @@ body {
   filter: grayscale(0.45) brightness(0.75);
 }
 
-.balken-fuellung {
-  overflow: hidden;
-  --balken-verlauf: linear-gradient(90deg, transparent calc(100% - 24px), color-mix(in srgb, white 25%, var(--balken-farbe)));
+.balken-fuellung,
+.levelring-bogen {
+  --balken-verlauf-ton: color-mix(in srgb, white 25%, var(--balken-farbe));
   --balken-spitze: color-mix(in srgb, black 18%, var(--balken-farbe));
   --balken-gluehen: 0 0 4px color-mix(in srgb, hsl(from var(--balken-farbe) h calc(s * 1.35) l) calc(var(--glimm) * 25%), transparent);
+}
+
+.balken-fuellung {
+  overflow: hidden;
+  --balken-verlauf: linear-gradient(90deg, transparent calc(100% - 24px), var(--balken-verlauf-ton));
   box-shadow: var(--balken-gluehen);
 }
 
-:root[data-schema='dark'] .balken-fuellung {
+.levelring svg {
+  overflow: visible;
+}
+
+.levelring-bogen {
+  --balken-farbe: var(--fortschritt);
+  filter: drop-shadow(var(--balken-gluehen));
+}
+
+:root[data-schema='dark'] :is(.balken-fuellung, .levelring-bogen) {
   --balken-spitze: color-mix(in srgb, white 40%, var(--balken-farbe));
   --balken-gluehen: 0 0 6px color-mix(in srgb, var(--balken-farbe) calc(var(--glimm) * 35%), transparent);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-schema='light']) .balken-fuellung {
+  :root:not([data-schema='light']) :is(.balken-fuellung, .levelring-bogen) {
     --balken-spitze: color-mix(in srgb, white 40%, var(--balken-farbe));
     --balken-gluehen: 0 0 6px color-mix(in srgb, var(--balken-farbe) calc(var(--glimm) * 35%), transparent);
   }
@@ -253,6 +267,15 @@ body {
   }
 
   .balken > .balken-fuellung > .balken-mass {
+    display: none;
+  }
+
+  .levelring-bogen {
+    filter: none;
+  }
+
+  .levelring-verlauf,
+  .levelring-spitze {
     display: none;
   }
 }
