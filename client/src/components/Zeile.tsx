@@ -127,7 +127,7 @@ export function Zeile({
   pfeil?: boolean;
   gefahr?: boolean;
   symbol?: ReactNode;
-  neben?: string;
+  neben?: ReactNode;
   typ?: ZeilenArt;
   id?: string;
   className?: string;

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.29
+
+### Geändert
+
+- Offene Aufgaben zeigen einen leeren Kreis, erledigte einen gefüllten Kreis mit Haken. Ein zu niedriges Attribut steht als Zeile mit Warnzeichen.
+
 ## 3.56.28
 
 ### Geändert

@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { type CSSProperties, type ReactNode } from 'react';
 import { prozentPunkte } from '../format.ts';
 import { attributName, tx } from '../text.ts';
-import { ZuNiedrigHinweis } from './Info.tsx';
 
 export function XpAbzug({ prozent }: { prozent: number }) {
   return (
@@ -26,20 +25,17 @@ export function AllgemeinerXpAbzug({ prozent }: { prozent: number | null }) {
 export function AttributBezeichnung({
   name,
   kennung,
-  ursache,
   prozent,
   schrift = 'text-sm',
 }: {
   name: string;
   kennung?: string | null;
-  ursache: boolean;
   prozent: number | null;
   schrift?: string;
 }) {
   return (
     <span className="flex min-w-0 flex-1 flex-nowrap items-center gap-1">
       <span className={`min-w-0 truncate ${schrift}`}>{attributName({ name, kennung })}</span>
-      {ursache ? <ZuNiedrigHinweis /> : null}
       {prozent !== null ? <XpAbzug prozent={prozent} /> : null}
     </span>
   );

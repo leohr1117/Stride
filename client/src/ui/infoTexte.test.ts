@@ -27,7 +27,6 @@ const ERLAUBT = new Set([
   HINWEIS_MEILENSTEIN,
   'Beim Öffnen und alle 15 Minuten.',
   'Die XP richtet sich nach der Dauer des Termins.',
-  'Lvl zu niedrig',
 ]);
 
 const KONSTANTEN: Record<string, string> = {

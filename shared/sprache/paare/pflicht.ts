@@ -282,6 +282,7 @@ export const PAARE = [
   ['Neue {name}', 'New {name}'],
   ['Neues {name}', 'New {name}'],
   ['{name} bearbeiten', 'Edit {name}'],
+  ['{name} abhaken', 'Check off {name}'],
   ['{name} nach oben', 'Move {name} up'],
   ['{name} nach unten', 'Move {name} down'],
   ['{name} entfernen', 'Remove {name}'],

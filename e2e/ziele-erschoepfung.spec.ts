@@ -270,11 +270,14 @@ test('Erschöpfung steht neben dem Namen', async ({ page }, testInfo) => {
       .getByText(ursache.name, { exact: true })
       .locator('xpath=ancestor::div[contains(@class,"space-y-1.5")][1]');
     const nameKasten = await ursacheZeile.getByText(ursache.name, { exact: true }).boundingBox();
-    const iconKasten = await ursacheZeile.getByRole('button', { name: 'Lvl zu niedrig' }).boundingBox();
-    expect(nameKasten && iconKasten).toBeTruthy();
-    if (nameKasten && iconKasten) {
-      expect(iconKasten.x).toBeGreaterThanOrEqual(nameKasten.x + nameKasten.width - 2);
-      expect(iconKasten.x).toBeLessThanOrEqual(nameKasten.x + nameKasten.width + 16);
+    const hinweis = ursacheZeile.locator('[data-zustand="zu-niedrig"]');
+    await expect(hinweis).toContainText('Lvl zu niedrig');
+    await expect(hinweis.locator('span[aria-hidden="true"]')).toHaveText('⚠');
+    const hinweisKasten = await hinweis.boundingBox();
+    expect(nameKasten && hinweisKasten).toBeTruthy();
+    if (nameKasten && hinweisKasten) {
+      expect(hinweisKasten.y).toBeGreaterThan(nameKasten.y + nameKasten.height / 2);
+      expect(Math.abs(hinweisKasten.x - nameKasten.x)).toBeLessThan(16);
     }
   }
 

@@ -24,6 +24,7 @@ import {
   Fortschrittsbalken,
   InfoHinweis,
   Karte,
+  ZuNiedrigHinweis,
   Knopf,
   Ladeanzeige,
   LevelRing,
@@ -323,12 +324,17 @@ function Werte({
           const balken = verlustBalken(attribut.level.xpGesamt, hoechstXp, LEVEL_KURVEN[attribut.typ]);
           return (
             <div key={attribut.id} className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <Icon name={attribut.icon} className="size-4 shrink-0" style={{ color: attribut.farbe }} />
-                <AttributBezeichnung name={attribut.name} kennung={attribut.kennung} ursache={ursache} prozent={prozent} />
-                <span className="zahl shrink-0 whitespace-nowrap text-right text-xs text-leise">
-                  {tx('Lvl {level}', { level: attribut.level.level })}
-                </span>
+              <div className="flex items-start gap-2">
+                <Icon name={attribut.icon} className="mt-0.5 size-4 shrink-0" style={{ color: attribut.farbe }} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <AttributBezeichnung name={attribut.name} kennung={attribut.kennung} prozent={prozent} />
+                    <span className="zahl shrink-0 whitespace-nowrap text-right text-xs text-leise">
+                      {tx('Lvl {level}', { level: attribut.level.level })}
+                    </span>
+                  </div>
+                  {ursache ? <ZuNiedrigHinweis /> : null}
+                </div>
               </div>
               <Fortschrittsbalken anteil={balken.stand} verlustBis={balken.verlustBis} farbe={attribut.farbe} hoehe="h-1.5" />
             </div>

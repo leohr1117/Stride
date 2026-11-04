@@ -27,6 +27,7 @@
   --gefahr: #c62828;
   --gefahr-text: #ffffff;
   --erfolg: #166534;
+  --erfolg-text: #ffffff;
   --fokus: #1d4ed8;
   --schalter-an: #1d4ed8;
   --schalter-knopf-an: #ffffff;
@@ -62,6 +63,7 @@
     --gefahr: #f87171;
     --gefahr-text: #141414;
     --erfolg: #4ade80;
+    --erfolg-text: #141414;
     --fokus: #60a5fa;
     --schalter-an: #60a5fa;
     --schalter-knopf-an: #141414;
@@ -99,6 +101,7 @@
   --color-gefahr: var(--gefahr);
   --color-gefahr-text: var(--gefahr-text);
   --color-erfolg: var(--erfolg);
+  --color-erfolg-text: var(--erfolg-text);
   --color-fokus: var(--fokus);
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }

@@ -122,13 +122,27 @@ test('Verlauf, Rückblick, Statistik und Basis', async ({ page }, testInfo) => {
     const leer = page.getByRole('button', { name: 'Basis-Aufgabe anlegen', exact: true });
     await expect(anlegen.or(leer)).toBeVisible();
     if ((await anlegen.count()) > 0) {
-      const haken = page.locator('main').getByRole('button', { name: 'Erledigt', exact: true });
-      const rueck = page.locator('main').getByRole('button', { name: 'Rückgängig', exact: true });
-      const knopf = (await haken.count()) > 0 ? haken.first() : rueck.first();
+      const knopf = page.locator('main').getByRole('checkbox').first();
+      await expect(knopf).toBeVisible();
       const kasten = await knopf.boundingBox();
       expect(kasten).not.toBeNull();
-      expect(kasten!.width).toBeGreaterThanOrEqual(48);
-      expect(kasten!.height).toBeGreaterThanOrEqual(48);
+      expect(Math.round(kasten!.width)).toBe(48);
+      expect(Math.round(kasten!.height)).toBe(48);
+      const ring = knopf.locator('[data-abhak]');
+      const mass = await ring.evaluate((element) => {
+        const box = element.getBoundingClientRect();
+        return {
+          breite: Math.round(box.width),
+          hoehe: Math.round(box.height),
+          rand: getComputedStyle(element).borderTopWidth,
+          haken: element.querySelector('svg') !== null,
+          zustand: element.getAttribute('data-abhak'),
+        };
+      });
+      expect(mass.breite).toBe(24);
+      expect(mass.hoehe).toBe(24);
+      expect(mass.haken).toBe(mass.zustand === 'erledigt');
+      expect(mass.rand).toBe(mass.zustand === 'offen' ? '2px' : '0px');
       const erste = page.locator('main [data-schnell]').first();
       await erste.getByRole('button', { name: /Aktionen für/ }).click();
       await page.getByRole('menuitem', { name: 'Bearbeiten', exact: true }).click();

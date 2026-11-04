@@ -1,6 +1,7 @@
 import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, ChevronRight, Pencil } from 'lucide-react';
+import { ChevronRight, Pencil } from 'lucide-react';
+import { AbhakKreis } from './AbhakKreis.tsx';
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
 import type { BasisAufgabe } from '../../../../shared/api/index.ts';
@@ -154,27 +155,12 @@ function BasisZeile({
           <Pencil className="size-4" />
         </Knopf>
       )}
-      {heuteEintragId !== null ? (
-        <button
-          type="button"
-          onClick={() => onRueckgaengig(heuteEintragId)}
-          disabled={laeuft}
-          title={tx("Rückgängig")}
-          className="flex size-8 shrink-0 items-center justify-center rounded-full bg-xp/20 text-xp transition active:scale-90"
-        >
-          <Check className="size-4" strokeWidth={3} />
-        </button>
-      ) : (
-        <button
-          type="button"
-          onClick={onErledigen}
-          disabled={laeuft}
-          title={tx("Erledigt")}
-          className="flex size-8 shrink-0 items-center justify-center rounded-full bg-akzent text-akzent-text transition active:scale-90"
-        >
-          <Check className="size-4" strokeWidth={3} />
-        </button>
-      )}
+      <AbhakKreis
+        name={aufgabe.name}
+        erledigt={heuteEintragId !== null}
+        laeuft={laeuft}
+        onUmschalten={() => (heuteEintragId !== null ? onRueckgaengig(heuteEintragId) : onErledigen())}
+      />
     </div>
         )}
       </SchnellZeile>

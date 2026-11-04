@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Offene Aufgaben zeigen einen leeren Kreis, erledigte einen gefüllten Kreis mit Haken. Ein zu niedriges Attribut steht als Zeile mit Warnzeichen.', 'Open tasks show an empty circle, and finished ones a filled circle with a check. An attribute that is too low appears as a line with a warning sign.'],
   ['Der Levelring ist einfarbig und auf Heute kleiner. Die XP-Zeile passt in eine Zeile. Bei Können und Haben zeigt das Radar die Werte als Fläche.', 'The level ring is a single color and smaller on Today. The XP line fits on one line. On Ability and Assets, the radar shows the values as an area.'],
   ['Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.', 'On Today, Ability, and Assets, the level, the hint, and the XP deduction are no longer red. In Review, lost XP uses the normal text color.'],
   ['Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.', 'On Today, bosses no longer sit on a pink background. Red remains only for the Discipline loss. Entries in History use the same color as the others.'],

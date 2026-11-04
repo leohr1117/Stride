@@ -1,7 +1,7 @@
 import { tx } from '../../text.ts';
-import { Check } from 'lucide-react';
 import { useState } from 'react';
 import type { BasisAufgabe } from '../../../../shared/api/index.ts';
+import { AbhakKreis } from './AbhakKreis.tsx';
 import { BasisFormular, useBasisAktionen, useBasisAufgaben } from './Basis.tsx';
 import { Abschnitt } from '../../components/Ausklappbar.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
@@ -70,27 +70,12 @@ function BasisZeile({
             {details ? <p className="truncate text-[13px] leading-[18px] text-leise">{details}</p> : null}
           </div>
           {menue}
-          {heuteEintragId !== null ? (
-            <button
-              type="button"
-              onClick={() => onRueckgaengig(heuteEintragId)}
-              disabled={laeuft}
-              aria-label={tx("Rückgängig")}
-              className="flex size-12 shrink-0 items-center justify-center rounded-full bg-xp/20 text-xp active:scale-90"
-            >
-              <Check className="size-5" strokeWidth={3} />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={onErledigen}
-              disabled={laeuft}
-              aria-label={tx("Erledigt")}
-              className="flex size-12 shrink-0 items-center justify-center rounded-full bg-akzent text-akzent-text active:scale-90"
-            >
-              <Check className="size-5" strokeWidth={3} />
-            </button>
-          )}
+          <AbhakKreis
+            name={aufgabe.name}
+            erledigt={heuteEintragId !== null}
+            laeuft={laeuft}
+            onUmschalten={() => (heuteEintragId !== null ? onRueckgaengig(heuteEintragId) : onErledigen())}
+          />
         </div>
       )}
     </SchnellZeile>

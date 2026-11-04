@@ -262,13 +262,12 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
   expect(erwarteteUrsachen).toBeGreaterThan(0);
   await expect(bereich.getByRole('link', { name: 'Details' })).toHaveCount(0);
   await expect(bereich.getByText('zu niedrig', { exact: true })).toHaveCount(0);
-  const hinweise = bereich.getByRole('button', { name: 'Lvl zu niedrig' });
+  await expect(bereich.getByRole('button', { name: 'Lvl zu niedrig' })).toHaveCount(0);
+  const hinweise = bereich.locator('[data-zustand="zu-niedrig"]');
   await expect(hinweise).toHaveCount(erwarteteUrsachen);
   for (let index = 0; index < erwarteteUrsachen; index += 1) {
-    await hinweise.nth(index).click();
-    await expect(seite.getByRole('tooltip')).toHaveText('Lvl zu niedrig');
-    await seite.keyboard.press('Escape');
-    await expect(seite.getByRole('tooltip')).toHaveCount(0);
+    await expect(hinweise.nth(index)).toContainText('Lvl zu niedrig');
+    await expect(hinweise.nth(index).locator('span[aria-hidden="true"]')).toHaveText('⚠');
   }
   const ursache = werte.find((attribut) => bild.ursachen.includes(attribut.id));
   expect(ursache).toBeTruthy();
@@ -281,18 +280,20 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
     await expect(stufe).not.toHaveClass(/text-gefahr/);
     expect(await farbeWie(stufe, '--leise')).toBe(true);
     expect(await farbeWie(stufe, '--gefahr')).toBe(false);
-    const zeichen = ursacheZeile.getByRole('button', { name: 'Lvl zu niedrig' }).locator('span[aria-hidden="true"]');
+    const zustand = ursacheZeile.locator('[data-zustand="zu-niedrig"]');
+    const zeichen = zustand.locator('span[aria-hidden="true"]');
+    await expect(zeichen).toHaveText('⚠');
     await expect(zeichen).not.toHaveClass(/bg-gefahr|text-gefahr/);
     expect(await farbeWie(zeichen, '--haupt')).toBe(true);
     expect(await flaecheWie(zeichen, '--gefahr')).toBe(false);
     const nameKasten = await ursacheZeile.getByText(ursache.name, { exact: true }).boundingBox();
-    const iconKasten = await ursacheZeile.getByRole('button', { name: 'Lvl zu niedrig' }).boundingBox();
+    const hinweisKasten = await zustand.boundingBox();
     const balkenKasten = await ursacheZeile.locator('.balken').boundingBox();
-    expect(nameKasten && iconKasten && balkenKasten).toBeTruthy();
-    if (nameKasten && iconKasten && balkenKasten) {
-      expect(iconKasten.x).toBeGreaterThanOrEqual(nameKasten.x + nameKasten.width - 1);
-      expect(iconKasten.x).toBeLessThanOrEqual(nameKasten.x + nameKasten.width + 16);
-      expect(iconKasten.y + iconKasten.height / 2).toBeLessThan(balkenKasten.y);
+    expect(nameKasten && hinweisKasten && balkenKasten).toBeTruthy();
+    if (nameKasten && hinweisKasten && balkenKasten) {
+      expect(hinweisKasten.y).toBeGreaterThan(nameKasten.y + nameKasten.height / 2);
+      expect(Math.abs(hinweisKasten.x - nameKasten.x)).toBeLessThan(16);
+      expect(hinweisKasten.y + hinweisKasten.height).toBeLessThanOrEqual(balkenKasten.y + 1);
     }
   }
   if (bild.allgemein !== null || bild.jeZiel.some((eintrag) => ids.has(eintrag.zielId))) {
@@ -461,11 +462,10 @@ test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
     await page.goto('/koennen');
     const koennen = page.locator('main');
     await expect(koennen.getByText('zu niedrig', { exact: true })).toHaveCount(0);
-    const hinweis = koennen.getByRole('button', { name: 'Lvl zu niedrig' }).first();
+    const hinweis = koennen.locator('[data-zustand="zu-niedrig"]').first();
     await expect(hinweis).toBeVisible();
-    await hinweis.click();
-    await expect(page.getByRole('tooltip')).toHaveText('Lvl zu niedrig');
-    await page.keyboard.press('Escape');
+    await expect(hinweis).toContainText('Lvl zu niedrig');
+    await expect(koennen.getByRole('button', { name: 'Lvl zu niedrig' })).toHaveCount(0);
     await expect(koennen.locator('.text-gefahr', { hasText: /^Lvl / })).toHaveCount(0);
     const zeile = hinweis.locator('xpath=ancestor::div[contains(@class,"attributzeile")][1]');
     const stufe = zeile.locator('span', { hasText: /^Lvl / }).last();

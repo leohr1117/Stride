@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 async function bild(seite: Page, name: string, volleSeite = true): Promise<void> {
@@ -154,4 +154,97 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await expect(page.locator('main .kopfblock-name').locator('visible=true').first()).toHaveClass(/text-2xl/);
   await ohneSeitlichenUeberlauf(page);
   await bild(page, `${projekt}-profil`);
+});
+
+async function kreisMass(kreis: Locator): Promise<{ breite: number; hoehe: number; rand: string; haken: boolean; zustand: string | null }> {
+  const kasten = await kreis.boundingBox();
+  expect(kasten).toBeTruthy();
+  expect(Math.round(kasten!.width)).toBe(48);
+  expect(Math.round(kasten!.height)).toBe(48);
+  return kreis.locator('[data-abhak]').evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    return {
+      breite: Math.round(box.width),
+      hoehe: Math.round(box.height),
+      rand: getComputedStyle(element).borderTopWidth,
+      haken: element.querySelector('svg') !== null,
+      zustand: element.getAttribute('data-abhak'),
+    };
+  });
+}
+
+function kreisErwartet(
+  mass: { breite: number; hoehe: number; rand: string; haken: boolean; zustand: string | null },
+  erledigt: boolean,
+): void {
+  expect(mass.breite).toBe(24);
+  expect(mass.hoehe).toBe(24);
+  expect(mass.zustand).toBe(erledigt ? 'erledigt' : 'offen');
+  expect(mass.haken).toBe(erledigt);
+  expect(mass.rand).toBe(erledigt ? '0px' : '2px');
+}
+
+test('Abhakkreis bleibt leer oder zeigt den Haken', async ({ page }) => {
+  await anmelden(page);
+  await page.goto('/');
+  const kreis = page.getByRole('checkbox', { name: 'Kurz dehnen abhaken' });
+  await expect(kreis).toBeVisible();
+  const anfang = (await kreis.getAttribute('aria-checked')) === 'true';
+  kreisErwartet(await kreisMass(kreis), anfang);
+  const titel = kreis.locator('xpath=ancestor::div[contains(@class,"items-center")][1]').locator('p').first();
+  if (anfang) {
+    await expect(titel).toHaveClass(/text-leise/);
+  } else {
+    await expect(titel).not.toHaveClass(/text-leise/);
+  }
+  const menueLinks = await kreis.evaluate((element) => {
+    const zeile = element.parentElement;
+    if (!zeile) {
+      return false;
+    }
+    const knoepfe = [...zeile.querySelectorAll('button')];
+    const menu = knoepfe.findIndex((knopf) => (knopf.getAttribute('aria-label') ?? '').startsWith('Aktionen'));
+    return menu !== -1 && menu < knoepfe.indexOf(element);
+  });
+  expect(menueLinks).toBe(true);
+
+  let umgeschaltet = false;
+  try {
+    await expect(kreis).toBeEnabled();
+    await kreis.focus();
+    await page.keyboard.press('Space');
+    await expect(kreis).toHaveAttribute('aria-checked', anfang ? 'false' : 'true');
+    umgeschaltet = true;
+    const dialog = page.getByRole('dialog');
+    if ((await dialog.count()) > 0) {
+      await page.keyboard.press('Escape');
+      await expect(dialog).toHaveCount(0);
+    }
+    kreisErwartet(await kreisMass(kreis), !anfang);
+    if (anfang) {
+      await expect(titel).not.toHaveClass(/text-leise/);
+    } else {
+      await expect(titel).toHaveClass(/text-leise/);
+    }
+
+    await expect(kreis).toBeEnabled();
+    await kreis.focus();
+    await page.keyboard.press('Space');
+    await expect(kreis).toHaveAttribute('aria-checked', anfang ? 'true' : 'false');
+    umgeschaltet = false;
+
+    await page.goto('/basis');
+    const dort = page.getByRole('checkbox', { name: 'Kurz dehnen abhaken' });
+    await expect(dort).toBeVisible();
+    kreisErwartet(await kreisMass(dort), anfang);
+  } finally {
+    if (umgeschaltet) {
+      const knopf = page.getByRole('checkbox', { name: 'Kurz dehnen abhaken' }).first();
+      if ((await knopf.count()) > 0) {
+        await knopf.focus();
+        await page.keyboard.press('Space');
+        await expect(knopf).toHaveAttribute('aria-checked', anfang ? 'true' : 'false');
+      }
+    }
+  }
 });

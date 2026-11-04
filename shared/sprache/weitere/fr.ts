@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Offene Aufgaben zeigen einen leeren Kreis, erledigte einen gefüllten Kreis mit Haken. Ein zu niedriges Attribut steht als Zeile mit Warnzeichen.": "Les tâches ouvertes montrent un cercle vide, les tâches faites un cercle plein avec une coche. Un attribut trop bas s'affiche sur une ligne avec un signe d'avertissement.",
   "Der Levelring ist einfarbig und auf Heute kleiner. Die XP-Zeile passt in eine Zeile. Bei Können und Haben zeigt das Radar die Werte als Fläche.": "L'anneau de niveau est d'une seule couleur et plus petit sur Aujourd'hui. La ligne d'XP tient sur une ligne. Sur Aptitude et Biens, le radar montre les valeurs comme une surface.",
   "Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.": "Sur Aujourd'hui, Aptitude et Biens, le niveau, l'indication et la déduction d'XP ne sont plus rouges. Dans Bilan, l'XP perdu a la couleur de texte normale.",
   "Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.": "Sur Aujourd'hui, les boss n'ont plus de fond rose. Le rouge ne reste que pour la perte de Discipline. Les entrées de l'Historique ont la même couleur que les autres.",

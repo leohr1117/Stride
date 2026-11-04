@@ -103,10 +103,10 @@ export function AttributBereich({
                     titel={
                       <span className="flex min-w-0 flex-nowrap items-center gap-1">
                         <span className="min-w-0 truncate">{name}</span>
-                        {ursache ? <ZuNiedrigHinweis /> : null}
                         {prozent !== null ? <XpAbzug prozent={prozent} /> : null}
                       </span>
                     }
+                    neben={ursache ? <ZuNiedrigHinweis /> : undefined}
                     wert={<span className="text-leise">{stufe}</span>}
                     rechts={menue}
                   />

@@ -138,17 +138,11 @@ export function InfoHinweis({
 
 export function ZuNiedrigHinweis() {
   return (
-    <InfoHinweis
-      text={tx("Lvl zu niedrig")}
-      label={tx("Lvl zu niedrig")}
-      kompakt
-      abstand={false}
-      knopfKlasse="inline-flex size-8 items-center justify-center rounded-full"
-      icon={
-        <span aria-hidden="true" className="flex size-4 items-center justify-center rounded-full border border-rand bg-flaeche-2 text-[11px] leading-none font-bold text-haupt">
-          !
-        </span>
-      }
-    />
+    <span data-zustand="zu-niedrig" className="inline-flex max-w-full items-center gap-1 text-[13px] leading-[18px] text-leise">
+      <span aria-hidden="true" className="shrink-0 text-[16px] leading-none text-haupt">
+        ⚠
+      </span>
+      <span className="min-w-0 truncate">{tx('Lvl zu niedrig')}</span>
+    </span>
   );
 }

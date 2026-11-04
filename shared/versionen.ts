@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.29',
+    seiten: 'Heute, Basis, Können, Haben',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Offene Aufgaben zeigen einen leeren Kreis, erledigte einen gefüllten Kreis mit Haken. Ein zu niedriges Attribut steht als Zeile mit Warnzeichen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.28',
     seiten: 'Heute, Können, Haben',
     abschnitte: [
