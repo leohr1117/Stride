@@ -166,7 +166,7 @@ export function ZieleSeite() {
                   onBearbeiten={() => setBearbeitung({ art: 'organisation', organisation: gruppe.organisation })}
                 />
                 {gruppe.projekte.length > 0 && (
-                  <div className="liste ps-4">
+                  <div className="liste organisation-einzug">
                     {gruppe.projekte.map((projekt) => (
                       <ProjektZeile key={projekt.id} projekt={projekt} />
                     ))}
@@ -205,7 +205,7 @@ export function ZieleSeite() {
                   onBearbeiten={() => setBearbeitung({ art: 'organisation', organisation: gruppe.organisation })}
                 />
                 {gruppe.projekte.length > 0 && (
-                  <div className="liste ps-4">
+                  <div className="liste organisation-einzug">
                     {gruppe.projekte.map((projekt) => (
                       <ProjektZeile key={projekt.id} projekt={projekt} />
                     ))}
@@ -226,7 +226,7 @@ export function ZieleSeite() {
                 onBearbeiten={() => setBearbeitung({ art: 'organisation', organisation: gruppe.organisation })}
               />
               {gruppe.projekte.length > 0 && (
-                <div className="liste ps-4">
+                <div className="liste organisation-einzug">
                   {gruppe.projekte.map((projekt) => (
                     <ProjektZeile key={projekt.id} projekt={projekt} />
                   ))}
@@ -389,7 +389,7 @@ function visionTitel(vision: Vision, onOeffnen: () => void) {
 function organisationsTitel(organisation: Organisation) {
   return (
     <h3 className="flex min-w-0 items-center text-[13px] font-semibold leading-[18px] text-leise">
-      <Farbpunkt farbe={organisation.farbe} className="me-2" />
+      <Farbpunkt farbe={organisation.farbe} groesse={8} className="me-2" />
       <span className="min-w-0 truncate">{organisation.name}</span>
     </h3>
   );
@@ -423,7 +423,7 @@ function OrganisationsKopf({ organisation, onBearbeiten }: { organisation: Organ
       {(menue) => (
         <Zeile
           typ="lesen"
-          className={organisation.archiviert ? 'opacity-50' : ''}
+          className={`organisation-kopf${organisation.archiviert ? ' opacity-50' : ''}`}
           name={organisation.name}
           titel={organisationsTitel(organisation)}
           menue={menue}
@@ -434,7 +434,8 @@ function OrganisationsKopf({ organisation, onBearbeiten }: { organisation: Organ
 }
 
 function ProjektZeile({ projekt }: { projekt: Projekt }) {
-  const neben = `${tx('{anzahl} Einträge', { anzahl: zahl(projekt.anzahlEintraege) })} · ${tx('{anzahl} Vorhaben offen', { anzahl: zahl(projekt.offeneVorhaben) })}`;
+  const zaehlung = `${tx('{anzahl} Einträge', { anzahl: zahl(projekt.anzahlEintraege) })} · ${tx('{anzahl} Vorhaben offen', { anzahl: zahl(projekt.offeneVorhaben) })}`;
+  const neben = projekt.geschafftAm ? `${tx('Abgeschlossen')} · ${zaehlung}` : zaehlung;
   return (
     <SchnellZeile
       hintergrund="bg-flaeche"
@@ -448,14 +449,7 @@ function ProjektZeile({ projekt }: { projekt: Projekt }) {
           className={projekt.archiviert ? 'opacity-50' : ''}
           neben={neben}
           menue={menue}
-          titel={
-            <span className="flex min-w-0 items-center gap-2">
-              <span className="min-w-0 truncate">{projekt.name}</span>
-              {projekt.geschafftAm ? (
-                <span className="shrink-0 text-xs font-normal whitespace-nowrap text-leise">{tx('abgeschlossen')}</span>
-              ) : null}
-            </span>
-          }
+          titel={projekt.name}
           rechts={
             <span className="flex min-w-0 items-center gap-3">
               {projekt.kette.laenge >= 2 ? (
@@ -760,7 +754,7 @@ function ArchivOrganisation({ organisation, onBearbeiten }: { organisation: Orga
       {(menue) => (
         <Zeile
           typ="lesen"
-          className="opacity-50"
+          className="organisation-kopf opacity-50"
           name={organisation.name}
           titel={organisationsTitel(organisation)}
           menue={menue}

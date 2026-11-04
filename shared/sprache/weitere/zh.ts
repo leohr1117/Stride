@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "在目标中，组织更矮。其下的项目向内缩进。已完成显示在第二行。",
   "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "在今天，各区域占满整行宽度。首领以列表显示。基础、数值和活动以同样的方式折叠。",
   "seit {datum}": "自 {datum}",
   "Offene Aufgaben zeigen einen leeren Kreis, erledigte einen gefüllten Kreis mit Haken. Ein zu niedriges Attribut steht als Zeile mit Warnzeichen.": "未完成的任务显示空心圆，已完成的显示带勾的实心圆。过低的属性显示为带警告符的一行。",

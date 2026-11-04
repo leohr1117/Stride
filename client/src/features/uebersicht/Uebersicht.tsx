@@ -324,9 +324,12 @@ function Werte({
   const bild = erschoepfungsBild(
     erschoepfungen.map((eintrag) => ({ quelleId: eintrag.attributId, zielId: eintrag.zielId, faktor: eintrag.faktor })),
   );
-  const rand = trennung ? 'border-t border-rand md:border-s md:border-t-0' : '';
+  const rand = trennung ? 'relative border-t border-rand md:border-t-0' : '';
   return (
     <div data-werte={kennung} className={`min-w-0 p-4 ${rand}`}>
+      {trennung ? (
+        <span className="pointer-events-none absolute inset-y-0 start-0 hidden w-px bg-rand md:block" aria-hidden="true" />
+      ) : null}
       <div className="mb-2 flex items-center justify-between gap-3">
         <h2 className="ueberschrift abschnittskopf min-w-0 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
           <Link to={pfad} className="inline-flex items-center">

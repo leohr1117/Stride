@@ -15,11 +15,12 @@ function nah(wert: number, ziel: number): boolean {
   return Math.abs(wert - ziel) <= 1;
 }
 
-async function zeilenMasse(page: Page): Promise<{ zeilen: string | null; hoehe: number }[]> {
+async function zeilenMasse(page: Page): Promise<{ zeilen: string | null; hoehe: number; kopf: boolean }[]> {
   return page.locator('main [data-zeile]').evaluateAll((knoten) =>
     knoten.map((knoten) => ({
       zeilen: knoten.getAttribute('data-zeilen'),
       hoehe: knoten.getBoundingClientRect().height,
+      kopf: knoten.classList.contains('organisation-kopf'),
     })),
   );
 }
@@ -73,8 +74,11 @@ test('Zeilen auf Mehr, Konto, Vorbilder, Accounts, Verlauf und Ziele sind 48 ode
     }
     const zeilen = await zeilenMasse(page);
     expect(zeilen.length).toBeGreaterThan(0);
+    if (seite.name === 'ziele') {
+      expect(zeilen.some((zeile) => zeile.kopf)).toBe(true);
+    }
     for (const zeile of zeilen) {
-      const ziel = zeile.zeilen === '2' ? 64 : 48;
+      const ziel = zeile.kopf ? 40 : zeile.zeilen === '2' ? 64 : 48;
       expect(nah(zeile.hoehe, ziel)).toBe(true);
     }
     if (seite.name === 'mehr') {

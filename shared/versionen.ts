@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.31',
+    seiten: 'Ziele',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.30',
     seiten: 'Heute',
     abschnitte: [

@@ -153,11 +153,14 @@ test('Projekt abschließen aktiviert die Investition und lässt sich öffnen', a
 
     await page.goto('/ziele');
     const projektZeile = page.locator('[data-zeile]').filter({ has: page.locator(`a[href="/projekte/${ziel.id}"]`) });
-    const marke = projektZeile.getByText('abgeschlossen', { exact: true });
+    const marke = projektZeile.locator('.zeile-neben');
     await expect(marke).toBeVisible();
-    await expect(marke).toHaveClass(/text-xs/);
+    await expect(marke).toHaveText(/^Abgeschlossen · /);
     await expect(marke).toHaveClass(/text-leise/);
-    await expect(projektZeile.getByText(ziel.name, { exact: true })).toBeVisible();
+    const schrift = await marke.evaluate((element) => getComputedStyle(element).fontSize);
+    expect(schrift).toBe('13px');
+    await expect(projektZeile.locator('.zeile-titel')).toHaveText(ziel.name);
+    await expect(projektZeile.locator('.zeile-titel')).not.toContainText('Abgeschlossen');
     await expect(projektZeile).not.toHaveClass(/opacity-50/);
     await page.screenshot({ path: `tmp-test/ziele-erschoepfung/${testInfo.project.name}-liste.png`, fullPage: true });
 

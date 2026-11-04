@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.', 'On Goals, organizations are shorter. The projects under them are indented. Finished appears on the second line.'],
   ['Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.', 'On Today, the sections span the full width. Bosses sit in a list. Basics, Values, and Activity collapse the same way.'],
   ['Offene Aufgaben zeigen einen leeren Kreis, erledigte einen gefüllten Kreis mit Haken. Ein zu niedriges Attribut steht als Zeile mit Warnzeichen.', 'Open tasks show an empty circle, and finished ones a filled circle with a check. An attribute that is too low appears as a line with a warning sign.'],
   ['Der Levelring ist einfarbig und auf Heute kleiner. Die XP-Zeile passt in eine Zeile. Bei Können und Haben zeigt das Radar die Werte als Fläche.', 'The level ring is a single color and smaller on Today. The XP line fits on one line. On Ability and Assets, the radar shows the values as an area.'],

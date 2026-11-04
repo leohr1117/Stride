@@ -531,32 +531,89 @@ async function wochenZurueckBisVerlust(seite: Page): Promise<number | null> {
   });
 }
 
+const BALKEN_SICHTBAR = 6;
+const VERLUST_XP = -100_000;
+
+async function aktiveAttributIds(seite: Page): Promise<number[]> {
+  return seite.evaluate(async () => {
+    const einstellungen = (await fetch('/api/einstellungen').then((antwort) => antwort.json())) as {
+      funktionen: { koennen?: boolean; status?: boolean };
+    };
+    const daten = (await fetch('/api/uebersicht').then((antwort) => antwort.json())) as {
+      attribute: { id: number }[];
+      status: { id: number }[];
+    };
+    const ids: number[] = [];
+    if (einstellungen.funktionen.koennen === true) {
+      ids.push(...daten.attribute.map((eintrag) => eintrag.id));
+    }
+    if (einstellungen.funktionen.status === true) {
+      ids.push(...daten.status.map((eintrag) => eintrag.id));
+    }
+    return ids;
+  });
+}
+
+function setzeVerstecktenVerlust(ids: number[]): () => void {
+  if (ids.length === 0) {
+    throw new Error('Kein aktives Attribut für den Rückblick.');
+  }
+  const datei = weltDatei();
+  const db = new DatabaseSync(datei);
+  const jetzt = new Date().toISOString();
+  const einfuegen = db.prepare(
+    `INSERT INTO xp_ereignisse (quelle, attribut_id, xp, erstellt_am) VALUES ('umverteilung', ?, ?, ?)`,
+  );
+  const zeilen: number[] = [];
+  try {
+    const letzte = ids.length - 1;
+    ids.forEach((id, index) => {
+      zeilen.push(Number(einfuegen.run(id, index === letzte ? VERLUST_XP : 50, jetzt).lastInsertRowid));
+    });
+  } finally {
+    db.close();
+  }
+  return () => {
+    const weg = new DatabaseSync(datei);
+    try {
+      for (const id of zeilen) {
+        weg.prepare('DELETE FROM xp_ereignisse WHERE id = ?').run(id);
+      }
+    } finally {
+      weg.close();
+    }
+  };
+}
+
 test('Rückblick zeigt verlorenes XP in der Hauptfarbe', async ({ page }, testInfo) => {
   verbieteBrowserFenster(page);
   await anmelden(page);
   const uhr = await page.request.post('/api/test/heute', { data: { datum: null } });
   expect(uhr.ok()).toBe(true);
-  await page.goto('/rueckblick');
-  await expect(page.locator('main h1')).toHaveText('Rückblick');
-  const schritte = await wochenZurueckBisVerlust(page);
-  expect(schritte).not.toBeNull();
-  const vorher = page.getByRole('button', { name: 'Vorherige Woche' });
-  const titel = page.locator('main p.zahl').first();
-  for (let index = 0; index < (schritte ?? 0); index += 1) {
-    const text = await titel.innerText();
-    await vorher.click();
-    await expect(titel).not.toHaveText(text);
+  const ids = await aktiveAttributIds(page);
+  expect(ids.length).toBeGreaterThan(BALKEN_SICHTBAR);
+  const raeume = setzeVerstecktenVerlust(ids);
+  try {
+    await page.goto('/rueckblick');
+    await expect(page.locator('main h1')).toHaveText('Rückblick');
+    const schritte = await wochenZurueckBisVerlust(page);
+    expect(schritte).toBe(0);
+    const titel = page.locator('main p.zahl').first();
+    await expect(titel).toBeVisible();
+    const bereich = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Gewachsen', exact: true }) });
+    await expect(bereich.getByRole('heading', { name: 'Gewachsen', exact: true })).toBeVisible();
+    await alleAnzeigen(bereich);
+    const verlust = bereich.locator('span.zahl', { hasText: /^\u2212/ });
+    await expect(verlust.first()).toBeVisible();
+    await expect(verlust.first()).toHaveClass(/text-haupt/);
+    await expect(verlust.first()).not.toHaveClass(/text-gefahr/);
+    expect(await farbeWie(verlust.first(), '--haupt')).toBe(true);
+    expect(await farbeWie(verlust.first(), '--gefahr')).toBe(false);
+    await expect(bereich.locator('.text-gefahr')).toHaveCount(0);
+    await verlust.first().scrollIntoViewIfNeeded();
+    await ohneSeitlichenUeberlauf(page);
+    await page.screenshot({ path: `tmp-test/balken-boss-dialog/${testInfo.project.name}-rueckblick-verlust.png` });
+  } finally {
+    raeume();
   }
-  const bereich = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Gewachsen', exact: true }) });
-  await alleAnzeigen(bereich);
-  const verlust = bereich.locator('span.zahl', { hasText: /^\u2212/ });
-  await expect(verlust.first()).toBeVisible();
-  await expect(verlust.first()).toHaveClass(/text-haupt/);
-  await expect(verlust.first()).not.toHaveClass(/text-gefahr/);
-  expect(await farbeWie(verlust.first(), '--haupt')).toBe(true);
-  expect(await farbeWie(verlust.first(), '--gefahr')).toBe(false);
-  await expect(bereich.locator('.text-gefahr')).toHaveCount(0);
-  await verlust.first().scrollIntoViewIfNeeded();
-  await ohneSeitlichenUeberlauf(page);
-  await page.screenshot({ path: `tmp-test/balken-boss-dialog/${testInfo.project.name}-rueckblick-verlust.png` });
 });

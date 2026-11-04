@@ -41,13 +41,21 @@ export function AttributBezeichnung({
   );
 }
 
-/** Farbe von Vision und Organisation: 10 px vor dem Namen, bündig zur ersten Zeile. */
-export function Farbpunkt({ farbe, className = '' }: { farbe: string; className?: string }) {
+/** Farbpunkt vor dem Namen, bündig zur Zeile. Standard 10 px, Organisation in der Liste 8 px. */
+export function Farbpunkt({
+  farbe,
+  className = '',
+  groesse = 10,
+}: {
+  farbe: string;
+  className?: string;
+  groesse?: 8 | 10;
+}) {
   return (
     <span
       data-farbpunkt=""
       aria-hidden
-      className={`inline-block size-[10px] shrink-0 rounded-full align-middle ${className}`}
+      className={`inline-block shrink-0 rounded-full align-middle ${groesse === 8 ? 'size-2' : 'size-[10px]'} ${className}`}
       style={{ backgroundColor: farbe }}
     />
   );

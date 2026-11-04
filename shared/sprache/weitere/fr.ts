@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.": "Dans Objectifs, les organisations sont plus basses. Les projets en dessous sont en retrait. Terminé apparaît sur la deuxième ligne.",
   "Auf Heute stehen die Bereiche auf der vollen Breite. Bosse stehen in einer Liste. Basis, Werte und Aktivität klappen gleich auf.": "Sur Aujourd'hui, les sections occupent toute la largeur. Les boss sont dans une liste. Base, Valeurs et Activité se replient de la même façon.",
   "seit {datum}": "depuis {datum}",
   "Offene Aufgaben zeigen einen leeren Kreis, erledigte einen gefüllten Kreis mit Haken. Ein zu niedriges Attribut steht als Zeile mit Warnzeichen.": "Les tâches ouvertes montrent un cercle vide, les tâches faites un cercle plein avec une coche. Un attribut trop bas s'affiche sur une ligne avec un signe d'avertissement.",

@@ -26,17 +26,21 @@ async function punktBuendig(punkt: Locator, text: Locator): Promise<void> {
   expect(abstand).toBeLessThanOrEqual(3);
 }
 
-async function punktIst10(punkt: Locator): Promise<void> {
+async function punktIst(punkt: Locator, kante: number): Promise<void> {
   await expect(punkt).toBeVisible();
   const kasten = await punkt.boundingBox();
   expect(kasten).not.toBeNull();
   if (!kasten) {
     return;
   }
-  expect(Math.round(kasten.width)).toBe(10);
-  expect(Math.round(kasten.height)).toBe(10);
+  expect(Math.round(kasten.width)).toBe(kante);
+  expect(Math.round(kasten.height)).toBe(kante);
   const farbe = await punkt.evaluate((element) => getComputedStyle(element).backgroundColor);
   expect(farbe).not.toBe('rgba(0, 0, 0, 0)');
+}
+
+async function punktIst10(punkt: Locator): Promise<void> {
+  await punktIst(punkt, 10);
 }
 
 async function keineFarbLinie(wurzel: Locator): Promise<void> {
@@ -68,7 +72,7 @@ test('Farbpunkt statt Linie und Balken', async ({ page }, testInfo) => {
 
   const org = fit.locator('[data-ast="organisation"]').filter({ has: page.getByRole('heading', { name: 'Lauftreff', level: 3 }) });
   const orgPunkt = org.locator('[data-farbpunkt]');
-  await punktIst10(orgPunkt);
+  await punktIst(orgPunkt, 8);
   await punktBuendig(orgPunkt, org.locator('h3 span:not([data-farbpunkt])'));
   const orgKasten = await orgPunkt.boundingBox();
   expect(punktKasten && orgKasten && Math.abs(punktKasten.x - orgKasten.x)).toBeLessThanOrEqual(1);

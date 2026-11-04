@@ -46,6 +46,22 @@ async function eckenRadius(seite: Page, auswahl: string): Promise<string> {
   return seite.locator(auswahl).first().evaluate((element) => getComputedStyle(element).borderTopLeftRadius);
 }
 
+async function kartenEcke(seite: Page): Promise<string> {
+  return seite.evaluate(() => {
+    const vorhanden = document.querySelector('.karte');
+    const ziel = vorhanden ?? document.createElement('section');
+    if (!vorhanden) {
+      ziel.className = 'karte rounded-2xl';
+      document.body.append(ziel);
+    }
+    const radius = getComputedStyle(ziel).borderTopLeftRadius;
+    if (!vorhanden) {
+      ziel.remove();
+    }
+    return radius;
+  });
+}
+
 async function flaecheGleich(seite: Page, auswahl: string): Promise<boolean> {
   return seite.locator(auswahl).evaluate((element) => {
     const ist = getComputedStyle(element).backgroundColor;
@@ -151,7 +167,8 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
 
     await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('data-stil', 'standard');
-    expect(await eckenRadius(page, '.karte')).toBe('8px');
+    expect(await eckenRadius(page, '[data-flaeche]')).toBe(projekt === 'handy' ? '0px' : '8px');
+    expect(await kartenEcke(page)).toBe('8px');
     await ohneSeitlichenUeberlauf(page);
     await page.screenshot({ path: `tmp-test/standard-stil/${projekt}-heute.png`, fullPage: true });
 
@@ -186,7 +203,7 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
     await waehleAnsicht(page, 'Minimal', 'minimal');
     await expect(page.getByRole('switch', { name: 'Glühen', exact: true })).toBeVisible();
     await page.goto('/');
-    expect(await eckenRadius(page, '.karte')).toBe('16px');
+    expect(await kartenEcke(page)).toBe('16px');
     await page.goto('/mehr/darstellung');
     await expect(page.getByRole('heading', { name: 'Darstellung', exact: true })).toBeVisible();
     const zurueckMinimal = await eckenRadius(page, '[data-zurueck]');

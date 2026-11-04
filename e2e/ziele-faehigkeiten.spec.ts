@@ -151,14 +151,16 @@ test('Abgeschlossen bleibt in der Kopfzeile', async ({ page }, testInfo) => {
 
     await page.goto('/ziele');
     const link = page.locator('[data-zeile]').filter({ has: page.locator(`a[href="/projekte/${ziel.id}"]`) });
-    const name = link.getByText(ziel.name, { exact: true });
-    const wort = link.getByText('abgeschlossen', { exact: true });
-    await expect(wort).toBeVisible();
+    const name = link.locator('.zeile-titel');
+    const neben = link.locator('.zeile-neben');
+    await expect(name).toHaveText(ziel.name);
+    await expect(neben).toHaveText(new RegExp(`^Abgeschlossen · `));
+    await expect(link.locator('.zeile-titel')).not.toContainText('Abgeschlossen');
     const nameKasten = await name.boundingBox();
-    const wortKasten = await wort.boundingBox();
-    expect(nameKasten && wortKasten).toBeTruthy();
-    if (nameKasten && wortKasten) {
-      expect(Math.abs(wortKasten.y + wortKasten.height / 2 - (nameKasten.y + nameKasten.height / 2))).toBeLessThan(8);
+    const nebenKasten = await neben.boundingBox();
+    expect(nameKasten && nebenKasten).toBeTruthy();
+    if (nameKasten && nebenKasten) {
+      expect(nebenKasten.y).toBeGreaterThan(nameKasten.y + nameKasten.height - 4);
     }
   } finally {
     await stelleProjekt(page, ziel.id, { geschafft: ziel.geschafftAm !== null });

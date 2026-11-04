@@ -526,6 +526,15 @@ html[data-eingabe='zeiger'] :focus {
   min-height: 48px;
 }
 
+:root .zeile.organisation-kopf[data-zeilen='1'] {
+  height: 40px;
+  min-height: 40px;
+}
+
+.organisation-einzug {
+  padding-inline-start: 16px;
+}
+
 .zeile[data-zeilen='2'] {
   height: 64px;
   min-height: 64px;
@@ -534,6 +543,13 @@ html[data-eingabe='zeiger'] :focus {
 .zeile[data-zeilen] .zeile-titel {
   font-size: 16px;
   line-height: 22px;
+}
+
+.zeile.organisation-kopf .zeile-titel {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+  color: var(--leise);
 }
 
 .zeile[data-zeilen] .zeile-neben {
@@ -569,6 +585,15 @@ html[data-eingabe='zeiger'] :focus {
   height: 48px;
   flex: none;
   pointer-events: auto;
+}
+
+.liste:has([data-hat-menue]) .zeile.organisation-kopf .zeile-menue,
+.zeile.organisation-kopf .zeile-menue {
+  height: 40px;
+}
+
+.zeile.organisation-kopf .zeile-menue > button {
+  height: 40px;
 }
 
 .abschnitt-kopf {

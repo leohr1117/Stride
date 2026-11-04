@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.31
+
+### Geändert
+
+- Auf Ziele sind Organisationen niedriger. Die Projekte darunter rücken ein. Abgeschlossen steht in der Nebenzeile.
+
 ## 3.56.30
 
 ### Geändert
