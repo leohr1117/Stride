@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.": "资料图片里的职业符号在一块表面上，用文字颜色。在电脑上，指针显示资料和等级。",
   "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "在「今天」上，连续记录的提示占一行。「+ 记录」是文字按钮。",
   "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "在手机上，可折叠的分组四角都是圆角。",
   "Flächen heben sich deutlicher vom Hintergrund ab.": "表面与背景的区分更明显。",
@@ -382,6 +383,7 @@ export const TEXTE: Record<string, string> = {
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "返回会先关闭最上层的对话框。下面的页面保持不变。",
   "Zurück zu {ziel}": "返回{ziel}",
   "Profil, Level {level}": "资料，等级 {level}",
+  "Profil · Level {level}": "资料 · 等级 {level}",
   "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "页眉显示页面标题。子页面的返回箭头在左侧。",
   "Das Profilbild mit Levelring liegt rechts im Kopf. Die Knöpfe Profil und Mehr dort entfallen.": "页眉右侧是带等级环的头像。那里的“资料”和“更多”按钮已去掉。",
   "Zum Start": "开始之前",

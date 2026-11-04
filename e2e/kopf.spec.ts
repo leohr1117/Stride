@@ -27,6 +27,11 @@ test('Kopf zeigt Titel, Profilring oder genau einen Pfeil', async ({ page }, tes
     const level = ((await uebersicht.json()) as { level: { level: number } }).level.level;
     const profil = page.getByRole('link', { name: `Profil, Level ${level}` });
     await expect(profil).toBeVisible();
+    if (handy) {
+      await expect(profil).not.toHaveAttribute('title');
+    } else {
+      await expect(profil).toHaveAttribute('title', `Profil · Level ${level}`);
+    }
     const masse = await profil.evaluate((element) => {
       const kasten = element.getBoundingClientRect();
       const bild = element.querySelector('.klassenbild');

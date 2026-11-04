@@ -1097,6 +1097,13 @@ html:is(:lang(es), :lang(fr), :lang(ru), :lang(zh), :lang(ja))[data-stil='antik'
 :root[data-stil] .klassenbild.profilbild {
   border-radius: 50%;
   overflow: hidden;
+  background-color: var(--flaeche-2);
+  color: var(--haupt);
+}
+
+:root[data-stil] [data-kopf] .klassenbild.profilbild {
+  background-color: var(--flaeche-2);
+  color: var(--haupt);
 }
 
 .profilbild svg {

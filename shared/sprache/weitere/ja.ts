@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.": "プロフィール画像のクラス記号は、文字色で面の上にあります。パソコンでは、ポインターがプロフィールとレベルを示します。",
   "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "「今日」の連続の案内は1行です。「+ 記録」は文字ボタンです。",
   "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "スマートフォンでは、折りたたみできるグループの角がすべて丸くなっています。",
   "Flächen heben sich deutlicher vom Hintergrund ab.": "面が背景からはっきり浮かび上がります。",
@@ -382,6 +383,7 @@ export const TEXTE: Record<string, string> = {
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "戻るは一番上のダイアログを閉じます。その下のページはそのままです。",
   "Zurück zu {ziel}": "{ziel}に戻る",
   "Profil, Level {level}": "プロフィール、レベル {level}",
+  "Profil · Level {level}": "プロフィール · レベル {level}",
   "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "ヘッダーにページ名を表示します。下のページでは戻る矢印が左にあります。",
   "Das Profilbild mit Levelring liegt rechts im Kopf. Die Knöpfe Profil und Mehr dort entfallen.": "ヘッダーの右にレベルリング付きのプロフィール画像があります。「プロフィール」と「その他」のボタンはそこからなくなります。",
   "Zum Start": "開始前に",

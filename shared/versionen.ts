@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.42',
+    seiten: 'Heute, Ziele, Verlauf, Mehr, Profil',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.'],
+      },
+    ],
+  },
+  {
     version: '3.56.41',
     seiten: 'Heute',
     abschnitte: [

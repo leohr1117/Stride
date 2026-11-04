@@ -64,6 +64,18 @@ test('Profil fasst Level, Kennzahlen, Blätter und Spektren zusammen', async ({ 
   await page.getByRole('button', { name: 'Klassen und Titel', exact: true }).click();
   const klassen = page.getByRole('dialog', { name: 'Klassen und Titel' });
   await expect(klassen).toBeVisible();
+  const zeichen = klassen.locator('.klassenbild');
+  await expect(zeichen).not.toHaveClass(/profilbild/);
+  const liste = await zeichen.evaluate((element) => {
+    const probe = document.createElement('span');
+    probe.style.backgroundColor = 'var(--flaeche-2)';
+    document.body.append(probe);
+    const flaeche = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return getComputedStyle(element).backgroundColor === flaeche;
+  });
+  expect(liste).toBe(false);
+  await klassen.screenshot({ path: bild(info, 'klassen') });
   await page.keyboard.press('Escape');
   await expect(klassen).toHaveCount(0);
 

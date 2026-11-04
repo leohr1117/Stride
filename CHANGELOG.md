@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.42
+
+### Geändert
+
+- Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.
+
 ## 3.56.41
 
 ### Geändert

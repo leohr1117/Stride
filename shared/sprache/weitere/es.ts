@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.": "El símbolo de clase en la imagen de perfil está sobre una superficie, en el color del texto. En el ordenador, el puntero muestra el perfil y el nivel.",
   "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "En Hoy, el aviso de la racha cabe en una línea. + Entrada es un botón de texto.",
   "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "En el teléfono, los grupos desplegables están redondeados en todas las esquinas.",
   "Flächen heben sich deutlicher vom Hintergrund ab.": "Las superficies se distinguen con más claridad del fondo.",
@@ -382,6 +383,7 @@ export const TEXTE: Record<string, string> = {
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "Atrás cierra el diálogo de encima. La página de debajo permanece.",
   "Zurück zu {ziel}": "Volver a {ziel}",
   "Profil, Level {level}": "Perfil, nivel {level}",
+  "Profil · Level {level}": "Perfil · nivel {level}",
   "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "La cabecera muestra el título de la página. En las subpáginas la flecha de volver está a la izquierda.",
   "Das Profilbild mit Levelring liegt rechts im Kopf. Die Knöpfe Profil und Mehr dort entfallen.": "La foto de perfil con el anillo de nivel está a la derecha. Los botones Perfil y Más de allí desaparecen.",
   "Zum Start": "Para empezar",

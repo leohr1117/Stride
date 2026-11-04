@@ -28,6 +28,72 @@ function kreis(radius: string, breite: number): boolean {
   return Number.isFinite(px) && px + 0.6 >= breite / 2;
 }
 
+function klassenSvgs(): string[] {
+  const quelle = fs.readFileSync('client/src/components/KlassenBild.tsx', 'utf8');
+  const start = quelle.indexOf('const ZEICHEN');
+  const ende = quelle.indexOf('export function KlassenBild');
+  const block = quelle.slice(start, ende);
+  return [...block.matchAll(/<Zeichen kinder=\{([\s\S]*?)\} \/>/g)].map((treffer) => {
+    const innen = (treffer[1] ?? '')
+      .replaceAll('<>', '')
+      .replaceAll('</>', '')
+      .replaceAll('fillRule=', 'fill-rule=')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${innen}</svg>`;
+  });
+}
+
+async function flaechen(seite: Page, auswahl: string): Promise<{ hintergrund: string; flaeche: string; farbe: string; text: string; zeichen: number }> {
+  const ziel = seite.locator(auswahl);
+  await expect(ziel).toBeVisible();
+  return ziel.evaluate((element) => {
+    const stil = getComputedStyle(element);
+    const probe = document.createElement('span');
+    probe.style.backgroundColor = 'var(--flaeche-2)';
+    probe.style.color = 'var(--haupt)';
+    document.body.append(probe);
+    const probeStil = getComputedStyle(probe);
+    const svg = element.querySelector('svg');
+    const ergebnis = {
+      hintergrund: stil.backgroundColor,
+      flaeche: probeStil.backgroundColor,
+      farbe: stil.color,
+      text: probeStil.color,
+      zeichen: svg ? Math.round(svg.getBoundingClientRect().width) : 0,
+    };
+    probe.remove();
+    return ergebnis;
+  });
+}
+
+async function zeigeZeichenprobe(seite: Page): Promise<void> {
+  const bilder = klassenSvgs();
+  expect(bilder).toHaveLength(12);
+  await seite.evaluate((svgs) => {
+    document.querySelector('[data-zeichenprobe]')?.remove();
+    const kopf = document.querySelector('[data-kopf]');
+    if (!(kopf instanceof HTMLElement)) {
+      return;
+    }
+    const zeile = document.createElement('div');
+    zeile.setAttribute('data-zeichenprobe', '');
+    zeile.style.display = 'flex';
+    zeile.style.flexWrap = 'wrap';
+    zeile.style.gap = '8px';
+    zeile.style.alignItems = 'center';
+    zeile.style.padding = '8px 16px';
+    zeile.style.background = 'var(--grund)';
+    for (const svg of svgs) {
+      const span = document.createElement('span');
+      span.className = 'klassenbild profilbild inline-flex shrink-0 items-center justify-center rounded-full size-8';
+      span.innerHTML = `<span class="size-[18px]">${svg}</span>`;
+      zeile.append(span);
+    }
+    kopf.append(zeile);
+  }, bilder);
+}
+
 async function form(seite: Page, auswahl: string): Promise<{ radius: string; breite: number; ueberlauf: string; schatten: string; hintergrund: string }> {
   const ziel = seite.locator(auswahl);
   await expect(ziel).toBeVisible();
@@ -67,6 +133,10 @@ test('Profilbild bleibt in jeder Ansicht rund', async ({ page }, testInfo) => {
       expect(kopf.ueberlauf).toBe('hidden');
       expect(Math.round(kopf.breite)).toBeGreaterThanOrEqual(30);
       expect(Math.round(kopf.breite)).toBeLessThanOrEqual(34);
+      const kopfFarbe = await flaechen(page, '[data-kopf] [data-profilbild]');
+      expect(kopfFarbe.hintergrund, `${ansicht.name} Kopf-Fläche`).toBe(kopfFarbe.flaeche);
+      expect(kopfFarbe.farbe, `${ansicht.name} Kopf-Zeichen`).toBe(kopfFarbe.text);
+      expect(kopfFarbe.zeichen, `${ansicht.name} Kopf-Zeichengröße`).toBe(18);
 
       if (ansicht.stil === 'antik') {
         expect(kopf.radius).toBe('9999px');
@@ -85,8 +155,48 @@ test('Profilbild bleibt in jeder Ansicht rund', async ({ page }, testInfo) => {
         expect(liste.profil).toBe(false);
       }
 
+      const seitenbild = await page.locator('.seitenleiste .klassenbild').evaluate((element) => {
+        const probe = document.createElement('span');
+        probe.style.backgroundColor = 'var(--flaeche-2)';
+        document.body.append(probe);
+        const flaeche = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return {
+          profil: element.classList.contains('profilbild'),
+          gleicheFlaeche: getComputedStyle(element).backgroundColor === flaeche,
+        };
+      });
+      expect(seitenbild.profil, `${ansicht.name} Seitenleiste`).toBe(false);
+      expect(seitenbild.gleicheFlaeche, `${ansicht.name} Seitenleiste`).toBe(false);
+
+      if (ansicht.stil === 'standard') {
+        await zeigeZeichenprobe(page);
+        const probe = page.locator('[data-zeichenprobe] .klassenbild');
+        await expect(probe).toHaveCount(12);
+        const masse = await probe.evaluateAll((knoten) => knoten.map((element) => {
+          const svg = element.querySelector('svg');
+          return {
+            breite: Math.round(element.getBoundingClientRect().width),
+            zeichen: svg ? Math.round(svg.getBoundingClientRect().width) : 0,
+          };
+        }));
+        for (const eintrag of masse) {
+          expect(eintrag.breite).toBe(32);
+          expect(eintrag.zeichen).toBe(18);
+        }
+        await page.locator('[data-zeichenprobe]').screenshot({ path: `tmp-test/profilbild/${projekt}-klassenzeichen-32.png` });
+        await page.evaluate(() => document.querySelector('[data-zeichenprobe]')?.remove());
+      }
+
       const link = page.locator('header a.profilziel');
       await expect(link).toBeVisible();
+      const name = await link.getAttribute('aria-label');
+      expect(name).toMatch(/^Profil, Level \d+$/);
+      if (projekt === 'desktop') {
+        await expect(link).toHaveAttribute('title', name?.replace('Profil, Level ', 'Profil · Level ') ?? '');
+      } else {
+        await expect(link).not.toHaveAttribute('title');
+      }
       let taste = false;
       for (let schritt = 0; schritt < 40; schritt += 1) {
         taste = await link.evaluate((element) => element === document.activeElement);
@@ -136,6 +246,11 @@ test('Profilbild bleibt in jeder Ansicht rund', async ({ page }, testInfo) => {
       expect(kreis(zeile.radius, zeile.breite), `${ansicht.name} Mehr ${zeile.radius}`).toBe(true);
       expect(zeile.ueberlauf).toBe('hidden');
       expect(Math.round(zeile.breite)).toBe(20);
+      const zeileFarbe = await flaechen(page, '[data-abschnitt="seiten"] [data-profilbild]');
+      expect(zeileFarbe.hintergrund, `${ansicht.name} Mehr-Fläche`).toBe(zeileFarbe.flaeche);
+      expect(zeileFarbe.farbe, `${ansicht.name} Mehr-Zeichen`).toBe(zeileFarbe.text);
+      expect(zeileFarbe.zeichen).toBeGreaterThan(10);
+      expect(zeileFarbe.zeichen).toBeLessThan(16);
       await ohneSeitlichenUeberlauf(page);
       if (ansicht.stil === 'holo' || ansicht.stil === 'antik') {
         await bild(`${ansicht.stil}-mehr`);
@@ -149,6 +264,11 @@ test('Profilbild bleibt in jeder Ansicht rund', async ({ page }, testInfo) => {
       expect(kreis(profil.radius, profil.breite), `${ansicht.name} Profil ${profil.radius}`).toBe(true);
       expect(profil.ueberlauf).toBe('hidden');
       expect(Math.round(profil.breite)).toBe(64);
+      const profilFarbe = await flaechen(page, 'main [data-levelring] [data-profilbild]');
+      expect(profilFarbe.hintergrund, `${ansicht.name} Profil-Fläche`).toBe(profilFarbe.flaeche);
+      expect(profilFarbe.farbe, `${ansicht.name} Profil-Zeichen`).toBe(profilFarbe.text);
+      expect(profilFarbe.zeichen).toBeGreaterThan(36);
+      expect(profilFarbe.zeichen).toBeLessThan(44);
       const ring = await page.locator('main [data-levelring]').evaluate((element) => Math.round(element.getBoundingClientRect().width));
       expect(ring).toBe(104);
       await expect(page.locator('main [data-levelring] span.uppercase')).toBeVisible();

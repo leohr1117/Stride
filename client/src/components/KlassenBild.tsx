@@ -114,13 +114,14 @@ export function KlassenBild({
   if (!rahmen) {
     return <span className={`inline-flex shrink-0 text-akzent ${groesse}`} aria-hidden="true">{bild}</span>;
   }
+  const flaeche = profil ? 'profilbild bg-flaeche-2 text-haupt' : 'bg-akzent text-akzent-text';
   return (
     <span
-      className={`klassenbild${profil ? ' profilbild' : ''} inline-flex shrink-0 items-center justify-center rounded-full bg-akzent text-akzent-text ${groesse}`}
+      className={`klassenbild ${flaeche} inline-flex shrink-0 items-center justify-center rounded-full ${groesse}`}
       data-profilbild={profil ? '' : undefined}
       aria-hidden="true"
     >
-      <span className="size-[62%]">{bild}</span>
+      <span className={profil && groesse === 'size-8' ? 'size-[18px]' : 'size-[62%]'}>{bild}</span>
     </span>
   );
 }

@@ -122,7 +122,20 @@ function DuennRing({ anteil, kinder }: { anteil: number; kinder: ReactNode }) {
   );
 }
 
+function useIstPc(): boolean {
+  const [pc, setPc] = useState(() => window.matchMedia('(min-width: 768px)').matches);
+  useEffect(() => {
+    const medien = window.matchMedia('(min-width: 768px)');
+    const setze = () => setPc(medien.matches);
+    setze();
+    medien.addEventListener('change', setze);
+    return () => medien.removeEventListener('change', setze);
+  }, []);
+  return pc;
+}
+
 export function Kopf() {
+  const pc = useIstPc();
   const { pathname } = useLocation();
   const navigiere = useNavigate();
   const ziel = useZurueck(null);
@@ -201,6 +214,7 @@ export function Kopf() {
           <Link
             to="/charakter"
             aria-label={tx('Profil, Level {level}', { level: uebersicht.level.level })}
+            title={pc ? tx('Profil · Level {level}', { level: uebersicht.level.level }) : undefined}
             className="profilziel inline-flex size-12 shrink-0 items-center justify-center"
           >
             <DuennRing anteil={uebersicht.level.fortschritt} kinder={<ProfilBild klasse={uebersicht.klasse} groesse="size-8" />} />

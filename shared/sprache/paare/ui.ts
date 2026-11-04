@@ -140,6 +140,7 @@ export const PAARE = [
   ['Jahr eintragen', 'Enter'],
   ['Zurück zu {ziel}', 'Back to {ziel}'],
   ['Profil, Level {level}', 'Profile, level {level}'],
+  ['Profil · Level {level}', 'Profile · level {level}'],
   ['Konto', 'Account'],
   ['Verlauf', 'History'],
   ['Statistik', 'Statistics'],

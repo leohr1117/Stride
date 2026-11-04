@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Klassenzeichen im Profilbild liegt auf einer Fläche in der Textfarbe. Am Computer zeigt der Zeiger Profil und Level.": "Le symbole de classe dans l'image de profil est sur une surface, dans la couleur du texte. Sur un ordinateur, le pointeur affiche le profil et le niveau.",
   "Auf Heute steht der Streak-Hinweis in einer Zeile. + Eintrag ist ein Textknopf.": "Sur Aujourd'hui, l'indication de la série tient sur une ligne. + Entrée est un bouton texte.",
   "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "Sur le téléphone, les groupes repliables sont arrondis à tous les coins.",
   "Flächen heben sich deutlicher vom Hintergrund ab.": "Les surfaces se détachent plus nettement de l'arrière-plan.",
@@ -382,6 +383,7 @@ export const TEXTE: Record<string, string> = {
   "Zurück schließt den obersten Dialog. Die Seite darunter bleibt.": "Retour ferme le dialogue du dessus. La page en dessous reste.",
   "Zurück zu {ziel}": "Retour à {ziel}",
   "Profil, Level {level}": "Profil, niveau {level}",
+  "Profil · Level {level}": "Profil · niveau {level}",
   "Der Kopf zeigt den Seitentitel. Auf Unterseiten sitzt der Zurück-Pfeil links im Kopf.": "L'en-tête affiche le titre de la page. Sur les sous-pages, la flèche retour est à gauche.",
   "Das Profilbild mit Levelring liegt rechts im Kopf. Die Knöpfe Profil und Mehr dort entfallen.": "La photo de profil avec l'anneau de niveau est à droite. Les boutons Profil et Plus y disparaissent.",
   "Zum Start": "Pour commencer",

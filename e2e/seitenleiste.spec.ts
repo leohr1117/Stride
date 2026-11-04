@@ -72,6 +72,7 @@ test('PC-Seitenleiste in vier Blöcken, Handy bleibt bei der Leiste', async ({ p
   await expect(seite.locator('[role="separator"]')).toHaveCount(3);
   const profil = seite.getByRole('link', { name: 'Profil', exact: true });
   await expect(profil.locator('.klassenbild')).toBeVisible();
+  await expect(profil.locator('.klassenbild')).not.toHaveClass(/profilbild/);
   await expect(page.getByText('Lädt …')).toHaveCount(0);
   await bild('uebersicht');
 
