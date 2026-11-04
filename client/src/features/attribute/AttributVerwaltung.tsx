@@ -107,7 +107,7 @@ export function AttributBereich({
                         {prozent !== null ? <XpAbzug prozent={prozent} /> : null}
                       </span>
                     }
-                    wert={<span className={ursache ? 'font-semibold text-gefahr' : undefined}>{stufe}</span>}
+                    wert={<span className="text-leise">{stufe}</span>}
                     rechts={menue}
                   />
                 )}

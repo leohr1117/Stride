@@ -326,7 +326,7 @@ function Werte({
               <div className="flex items-center gap-2">
                 <Icon name={attribut.icon} className="size-4 shrink-0" style={{ color: attribut.farbe }} />
                 <AttributBezeichnung name={attribut.name} kennung={attribut.kennung} ursache={ursache} prozent={prozent} />
-                <span className={`zahl shrink-0 whitespace-nowrap text-right text-xs ${ursache ? 'font-semibold text-gefahr' : 'text-leise'}`}>
+                <span className="zahl shrink-0 whitespace-nowrap text-right text-xs text-leise">
                   {tx('Lvl {level}', { level: attribut.level.level })}
                 </span>
               </div>

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.27
+
+### Geändert
+
+- Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.
+
 ## 3.56.26
 
 ### Geändert

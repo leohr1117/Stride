@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.": "En Hoy, Capacidad y Bienes, el nivel, el aviso y la deducción de XP ya no están en rojo. En Repaso, el XP perdido usa el color de texto normal.",
   "Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.": "En Hoy, los jefes ya no tienen fondo rosa. El rojo queda solo para la pérdida de Disciplina. Las entradas del Historial tienen el mismo color que las demás.",
   "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "Guardar y Conectar siguen siendo fáciles de leer. Si falta un dato, el error aparece en el campo.",
   "Schreib zuerst eine Antwort.": "Escribe primero una respuesta.",

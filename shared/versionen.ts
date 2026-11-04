@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.27',
+    seiten: 'Heute, Können, Haben, Rückblick',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.26',
     seiten: 'Heute, Verlauf',
     abschnitte: [

@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.": "在今天、能力和资产中，等级、提示和 XP 扣减不再显示为红色。在回顾中，损失的 XP 使用正常文字颜色。",
   "Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.": "在今天，首领不再铺粉色背景。红色只留给自律的扣减。历程中的记录与其他记录颜色相同。",
   "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "「保存」和「连接」保持清晰可读。缺少输入时，错误显示在字段旁。",
   "Schreib zuerst eine Antwort.": "请先写一条回答。",

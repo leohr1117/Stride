@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.": "Sur Aujourd'hui, Aptitude et Biens, le niveau, l'indication et la déduction d'XP ne sont plus rouges. Dans Bilan, l'XP perdu a la couleur de texte normale.",
   "Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.": "Sur Aujourd'hui, les boss n'ont plus de fond rose. Le rouge ne reste que pour la perte de Discipline. Les entrées de l'Historique ont la même couleur que les autres.",
   "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "Enregistrer et Connecter restent bien lisibles. S'il manque une saisie, l'erreur s'affiche sur le champ.",
   "Schreib zuerst eine Antwort.": "Écris d'abord une réponse.",

@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute, Können und Haben sind Level, Hinweis und XP-Abzug nicht mehr rot. Im Rückblick steht verlorenes XP in der normalen Textfarbe.": "На «Сегодня», в «Умениях» и «Активах» уровень, подсказка и списание XP больше не красные. В «Итогах» потерянное XP обычного цвета.",
   "Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.": "На «Сегодня» боссы больше не на розовом фоне. Красный остаётся только у потери дисциплины. Записи в «Истории» того же цвета, что и остальные.",
   "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "«Сохранить» и «Подключить» остаются хорошо читаемыми. Если ввода нет, ошибка стоит у поля.",
   "Schreib zuerst eine Antwort.": "Сначала напиши ответ.",

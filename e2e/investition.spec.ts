@@ -208,10 +208,11 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
       await segment.click();
     }
     const chip = dialog.getByRole('button', { name: ziel.name, exact: true });
-    if (!(await chip.getAttribute('class'))?.includes('chip-aktiv')) {
+    if ((await chip.getAttribute('aria-pressed')) !== 'true') {
       await chip.click();
     }
-    await expect(chip).toHaveClass(/chip-aktiv/);
+    await expect(chip).toHaveAttribute('aria-pressed', 'true');
+    await expect(chip.locator('.chip-flaeche')).toHaveClass(/chip-aktiv/);
 
     const regler = dialog.getByRole('slider', { name: 'Größe' });
     await regler.scrollIntoViewIfNeeded();
@@ -339,7 +340,7 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
 
     await page.goto('/chronik');
     await meilensteineAus(page);
-    await page.getByText('Prüfbonus 63').first().click();
+    await page.locator('[data-zeile]').filter({ hasText: 'Prüfbonus 63' }).first().locator('> button').click();
     const chronik = page.getByRole('dialog');
     await expect(chronik.getByText(`Investitionen +${Math.round(erwartet * 100)} %`)).toBeVisible();
     await chronik.getByRole('button', { name: 'Schließen' }).click();

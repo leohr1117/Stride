@@ -6,7 +6,7 @@ import { ZuNiedrigHinweis } from './Info.tsx';
 
 export function XpAbzug({ prozent }: { prozent: number }) {
   return (
-    <span data-abzug="ziel" className="zahl shrink-0 text-xs font-medium whitespace-nowrap text-gefahr">
+    <span data-abzug="ziel" className="zahl shrink-0 text-xs font-medium whitespace-nowrap text-haupt">
       −{prozentPunkte(prozent)} XP
     </span>
   );

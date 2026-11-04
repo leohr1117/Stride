@@ -57,6 +57,28 @@ async function ohneSeitlichenUeberlauf(seite: Page): Promise<void> {
   expect(ueberlauf).toBe(false);
 }
 
+async function farbeWie(ziel: Locator, variable: '--gefahr' | '--haupt' | '--leise'): Promise<boolean> {
+  return ziel.evaluate((element, name) => {
+    const probe = document.createElement('span');
+    probe.style.color = `var(${name})`;
+    document.body.append(probe);
+    const soll = getComputedStyle(probe).color;
+    probe.remove();
+    return getComputedStyle(element).color === soll;
+  }, variable);
+}
+
+async function flaecheWie(ziel: Locator, variable: '--gefahr' | '--flaeche-2'): Promise<boolean> {
+  return ziel.evaluate((element, name) => {
+    const probe = document.createElement('span');
+    probe.style.backgroundColor = `var(${name})`;
+    document.body.append(probe);
+    const soll = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return getComputedStyle(element).backgroundColor === soll;
+  }, variable);
+}
+
 async function uebersicht(seite: Page): Promise<UebersichtDaten> {
   return seite.evaluate(async () => {
     const antwort = await fetch('/api/uebersicht');
@@ -254,7 +276,15 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
     const ursacheZeile = bereich
       .getByText(ursache.name, { exact: true })
       .locator('xpath=ancestor::div[contains(@class,"space-y-1.5")][1]');
-    await expect(ursacheZeile.getByText(`Lvl ${ursache.level.level}`, { exact: true })).toHaveClass(/text-gefahr/);
+    const stufe = ursacheZeile.getByText(`Lvl ${ursache.level.level}`, { exact: true });
+    await expect(stufe).toHaveClass(/text-leise/);
+    await expect(stufe).not.toHaveClass(/text-gefahr/);
+    expect(await farbeWie(stufe, '--leise')).toBe(true);
+    expect(await farbeWie(stufe, '--gefahr')).toBe(false);
+    const zeichen = ursacheZeile.getByRole('button', { name: 'Lvl zu niedrig' }).locator('span[aria-hidden="true"]');
+    await expect(zeichen).not.toHaveClass(/bg-gefahr|text-gefahr/);
+    expect(await farbeWie(zeichen, '--haupt')).toBe(true);
+    expect(await flaecheWie(zeichen, '--gefahr')).toBe(false);
     const nameKasten = await ursacheZeile.getByText(ursache.name, { exact: true }).boundingBox();
     const iconKasten = await ursacheZeile.getByRole('button', { name: 'Lvl zu niedrig' }).boundingBox();
     const balkenKasten = await ursacheZeile.locator('.balken').boundingBox();
@@ -266,7 +296,12 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
     }
   }
   if (bild.allgemein !== null || bild.jeZiel.some((eintrag) => ids.has(eintrag.zielId))) {
-    await expect(bereich.getByText(/−\d+ % XP/).first()).toBeVisible();
+    const abzug = bereich.locator('[data-abzug="ziel"]').first();
+    await expect(abzug).toBeVisible();
+    await expect(abzug).toHaveClass(/text-haupt/);
+    await expect(abzug).not.toHaveClass(/text-gefahr/);
+    expect(await farbeWie(abzug, '--haupt')).toBe(true);
+    expect(await farbeWie(abzug, '--gefahr')).toBe(false);
   }
 
   let einLevel = 0;
@@ -431,8 +466,23 @@ test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
     await hinweis.click();
     await expect(page.getByRole('tooltip')).toHaveText('Lvl zu niedrig');
     await page.keyboard.press('Escape');
-    await expect(koennen.locator('.text-gefahr', { hasText: /^Lvl / }).first()).toBeVisible();
+    await expect(koennen.locator('.text-gefahr', { hasText: /^Lvl / })).toHaveCount(0);
     const zeile = hinweis.locator('xpath=ancestor::div[contains(@class,"attributzeile")][1]');
+    const stufe = zeile.locator('span', { hasText: /^Lvl / }).last();
+    await expect(stufe).toHaveClass(/text-leise/);
+    await expect(stufe).not.toHaveClass(/text-gefahr/);
+    expect(await farbeWie(stufe, '--leise')).toBe(true);
+    const zeichen = hinweis.locator('span[aria-hidden="true"]');
+    await expect(zeichen).toHaveClass(/text-haupt/);
+    await expect(zeichen).not.toHaveClass(/bg-gefahr|text-gefahr/);
+    expect(await flaecheWie(zeichen, '--gefahr')).toBe(false);
+    const abzug = zeile.locator('[data-abzug="ziel"]');
+    if ((await abzug.count()) > 0) {
+      await expect(abzug).toHaveClass(/text-haupt/);
+      await expect(abzug).not.toHaveClass(/text-gefahr/);
+    }
+    await zeile.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: `tmp-test/balken-boss-dialog/${testInfo.project.name}-koennen-stufe.png` });
     const oeffnen = zeile.locator('[data-zeile] > button');
     const name = await oeffnen.getAttribute('aria-label');
     expect(name).toBeTruthy();
@@ -444,4 +494,69 @@ test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
   });
   await test.step('Titel', async () => pruefeTitel(page, testInfo));
   await test.step('Chronik', async () => pruefeChronik(page, testInfo));
+});
+
+async function wochenZurueckBisVerlust(seite: Page): Promise<number | null> {
+  return seite.evaluate(async () => {
+    function schluesselVon(datum: Date): string {
+      const monat = String(datum.getMonth() + 1).padStart(2, '0');
+      const tag = String(datum.getDate()).padStart(2, '0');
+      return `${datum.getFullYear()}-${monat}-${tag}`;
+    }
+    function montagVon(datum: Date): string {
+      const beginn = new Date(datum);
+      const tage = (beginn.getDay() + 6) % 7;
+      beginn.setDate(beginn.getDate() - tage);
+      return schluesselVon(beginn);
+    }
+    function zurueck(schluessel: string): string {
+      const teile = schluessel.split('-').map(Number);
+      const datum = new Date(teile[0] ?? 0, (teile[1] ?? 1) - 1, teile[2] ?? 1);
+      datum.setDate(datum.getDate() - 7);
+      return schluesselVon(datum);
+    }
+    let woche = montagVon(new Date());
+    for (let schritt = 0; schritt < 40; schritt += 1) {
+      const antwort = await fetch(`/api/rueckblick?woche=${woche}`);
+      if (!antwort.ok) {
+        return null;
+      }
+      const daten = (await antwort.json()) as { woche: string; attribute: { xp: number }[] };
+      if (daten.attribute.some((eintrag) => Number(eintrag.xp) < 0)) {
+        return schritt;
+      }
+      woche = zurueck(daten.woche);
+    }
+    return null;
+  });
+}
+
+test('Rückblick zeigt verlorenes XP in der Hauptfarbe', async ({ page }, testInfo) => {
+  verbieteBrowserFenster(page);
+  await anmelden(page);
+  const uhr = await page.request.post('/api/test/heute', { data: { datum: null } });
+  expect(uhr.ok()).toBe(true);
+  await page.goto('/rueckblick');
+  await expect(page.locator('main h1')).toHaveText('Rückblick');
+  const schritte = await wochenZurueckBisVerlust(page);
+  expect(schritte).not.toBeNull();
+  const vorher = page.getByRole('button', { name: 'Vorherige Woche' });
+  const titel = page.locator('main p.zahl').first();
+  for (let index = 0; index < (schritte ?? 0); index += 1) {
+    const text = await titel.innerText();
+    await vorher.click();
+    await expect(titel).not.toHaveText(text);
+  }
+  const bereich = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Gewachsen', exact: true }) });
+  await alleAnzeigen(bereich);
+  const verlust = bereich.locator('span.zahl', { hasText: /^\u2212/ });
+  await expect(verlust.first()).toBeVisible();
+  await expect(verlust.first()).toHaveClass(/text-haupt/);
+  await expect(verlust.first()).not.toHaveClass(/text-gefahr/);
+  expect(await farbeWie(verlust.first(), '--haupt')).toBe(true);
+  expect(await farbeWie(verlust.first(), '--gefahr')).toBe(false);
+  await expect(bereich.locator('.text-gefahr')).toHaveCount(0);
+  await verlust.first().scrollIntoViewIfNeeded();
+  await ohneSeitlichenUeberlauf(page);
+  await page.screenshot({ path: `tmp-test/balken-boss-dialog/${testInfo.project.name}-rueckblick-verlust.png` });
 });
