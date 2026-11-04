@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.": "今日では、ボスのピンクの背景がなくなりました。赤は規律の減少だけに残ります。履歴の記録は他と同じ色です。",
   "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "「保存」と「つなぐ」は読みやすいままです。入力がないとき、エラーは欄に出ます。",
   "Schreib zuerst eine Antwort.": "先に答えを書いてください。",
   "Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.": "記録するとき、活動・目標・スキルはそれぞれ1行に並びます。シートの欄は高さが揃い、導入の「次へ」はすぐ下に来ます。",

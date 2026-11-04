@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.26
+
+### Geändert
+
+- Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.
+
 ## 3.56.25
 
 ### Behoben

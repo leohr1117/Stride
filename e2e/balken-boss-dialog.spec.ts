@@ -347,13 +347,25 @@ async function pruefeChronik(seite: Page, info: TestInfo): Promise<void> {
     ]);
   }
   await expect(karte).toBeVisible();
-  await expect(karte).toHaveClass(/text-gefahr|border-gefahr/);
+  await expect(karte).not.toHaveClass(/text-gefahr|bg-gefahr|border-gefahr/);
+  await expect(karte.locator('[class*="bg-gefahr"]')).toHaveCount(1);
+  await expect(karte.locator('[data-schnell-streifen]')).toHaveClass(/bg-gefahr/);
+  const titelRot = await karte.locator('.zeile-titel').evaluate((element) => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--gefahr)';
+    document.body.append(probe);
+    const gefahr = getComputedStyle(probe).color;
+    probe.remove();
+    return getComputedStyle(element).color === gefahr;
+  });
+  expect(titelRot).toBe(false);
   await karte.scrollIntoViewIfNeeded();
   await ohneSeitlichenUeberlauf(seite);
   await seite.screenshot({ path: `tmp-test/balken-boss-dialog/${info.project.name}-chronik-boss.png` });
 
   await karte.click();
   const dialog = seite.getByRole('dialog');
+  await expect(dialog.locator('[class*="gefahr"]')).toHaveCount(0);
   await expect(dialog.getByText(/Level \d/)).toBeVisible();
   await expect(dialog.getByText(/Kampf-XP/)).toBeVisible();
   if (boss && boss.beute > 0) {

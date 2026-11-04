@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.": "Sur Aujourd'hui, les boss n'ont plus de fond rose. Le rouge ne reste que pour la perte de Discipline. Les entrées de l'Historique ont la même couleur que les autres.",
   "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "Enregistrer et Connecter restent bien lisibles. S'il manque une saisie, l'erreur s'affiche sur le champ.",
   "Schreib zuerst eine Antwort.": "Écris d'abord une réponse.",
   "Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.": "Quand tu enregistres, l'activité, l'objectif et la compétence tiennent chacun sur une ligne. Les champs des feuilles ont la même hauteur, et dans l'introduction Continuer se place juste en dessous.",

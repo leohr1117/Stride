@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.": "En Hoy, los jefes ya no tienen fondo rosa. El rojo queda solo para la pérdida de Disciplina. Las entradas del Historial tienen el mismo color que las demás.",
   "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "Guardar y Conectar siguen siendo fáciles de leer. Si falta un dato, el error aparece en el campo.",
   "Schreib zuerst eine Antwort.": "Escribe primero una respuesta.",
   "Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.": "Al registrar, la actividad, la meta y la habilidad van cada una en una fila. Los campos de las hojas tienen la misma altura, y en la introducción Continuar queda justo debajo.",

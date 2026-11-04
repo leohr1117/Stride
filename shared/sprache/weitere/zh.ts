@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.": "在今天，首领不再铺粉色背景。红色只留给自律的扣减。历程中的记录与其他记录颜色相同。",
   "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "「保存」和「连接」保持清晰可读。缺少输入时，错误显示在字段旁。",
   "Schreib zuerst eine Antwort.": "请先写一条回答。",
   "Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.": "记录时，活动、目标和技能各自占一行。表单里的字段一样高，引导里的「继续」紧挨在下面。",

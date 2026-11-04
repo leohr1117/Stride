@@ -198,11 +198,11 @@ function Angriffe({
       <div className="space-y-2">
         {bosse.map((vorhaben) => {
           const klasse =
-            'flex items-center gap-3 rounded-2xl border border-gefahr/40 bg-gefahr/5 px-4 py-3 transition hover:border-gefahr';
+            'flex items-center gap-3 rounded-2xl border border-rand bg-flaeche px-4 py-3 transition hover:bg-flaeche-2';
           const boss = vorhaben.boss;
           const inhalt = (
             <>
-              {boss && <BossRing ring={boss.ring} erwacht />}
+              {boss && <BossRing ring={boss.ring} erwacht ton="haupt" />}
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">{vorhaben.titel}</p>
                 {projekteAn && vorhaben.projektName && <p className="truncate text-xs text-leise">{vorhaben.projektName}</p>}

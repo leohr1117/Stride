@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.', 'On Today, bosses no longer sit on a pink background. Red remains only for the Discipline loss. Entries in History use the same color as the others.'],
   ['Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.', 'Save and Connect stay easy to read. If an entry is missing, the error sits on the field.'],
   ['Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.', 'When you log an entry, activity, goal, and skill each sit on one row. Fields in the sheets share one height, and in the introduction Next sits directly below.'],
   ['Im Verlauf und bei den Zielen sind die Zeilen gleich hoch. Die XP-Werte im Verlauf stehen rechts bündig.', 'In History and on Goals, the rows share one height. The XP values in History line up on the right.'],

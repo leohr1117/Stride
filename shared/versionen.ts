@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.26',
+    seiten: 'Heute, Verlauf',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.25',
     seiten: 'Rückblick, Verbindungen',
     behoben: 'Rückblick, Verbindungen',

@@ -136,6 +136,14 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
   const angriff = page.locator('a.rounded-2xl, div.rounded-2xl').filter({ hasText: erwachtTitel });
   await expect(angriff).toContainText(/Erwacht · seit \d+\. [A-Za-zäöüÄÖÜ]+\./);
   await expect(angriff).toContainText('Disziplin');
+  await expect(angriff).not.toHaveClass(/gefahr/);
+  await expect(angriff.locator('.text-gefahr')).toHaveCount(1);
+  await expect(angriff.locator('.text-gefahr')).toContainText('Disziplin');
+  const striche = await angriff.locator('svg circle').evaluateAll((kreise) => kreise.map((kreis) => kreis.getAttribute('stroke')));
+  expect(striche.length).toBeGreaterThan(0);
+  for (const strich of striche) {
+    expect(strich).toBe('var(--haupt)');
+  }
   const datumSichtbar = await angriff.locator('p', { hasText: 'Erwacht' }).evaluate((element) => element.scrollWidth <= element.clientWidth + 1);
   expect(datumSichtbar).toBe(true);
   await expect(page.getByText('Kreuzheben 100 Kilo')).toHaveCount(0);

@@ -172,8 +172,8 @@ function EintragZeile({ eintrag, onOeffnen }: { eintrag: Eintrag; onOeffnen: () 
   return (
     <SchnellZeile
       ziel={{ art: 'eintrag', id: eintrag.id, name, hinweis: tx('Die {xp} XP werden wieder abgezogen.', { xp: eintrag.xp }) }}
-      className={bossSieg ? 'boss-sieg text-gefahr' : ''}
-      hintergrund={bossSieg ? 'bg-gefahr/5' : 'bg-transparent'}
+      className={bossSieg ? 'boss-sieg' : ''}
+      hintergrund="bg-transparent"
     >
       {(menue) => (
         <Zeile

@@ -61,15 +61,9 @@ export function eintragSchnellZiel(eintrag: Eintrag): SchnellZiel {
 }
 
 export function EintragKarte({ eintrag, onOeffnen }: { eintrag: Eintrag; onOeffnen: () => void }) {
-  const sichtbarkeit = useSichtbarkeit();
-  const bossSieg = istAn('bossAngriffe', sichtbarkeit) && eintrag.bossSieg != null;
   const kern = kernzeile(eintrag);
   const farbe = eintrag.kontext?.farbe ?? FALLBACK_FARBE;
-  const rahmen = bossSieg
-    ? 'boss-sieg border-gefahr/40 bg-gefahr/5'
-    : eintrag.meilenstein
-      ? 'border-xp/40 bg-xp/5'
-      : 'border-rand bg-flaeche';
+  const rahmen = eintrag.meilenstein ? 'border-xp/40 bg-xp/5' : 'border-rand bg-flaeche';
   return (
     <SchnellZeile ziel={eintragSchnellZiel(eintrag)} className={`rounded-2xl border ${rahmen}`} hintergrund="bg-transparent">
       {(menue) => (
@@ -81,24 +75,18 @@ export function EintragKarte({ eintrag, onOeffnen }: { eintrag: Eintrag; onOeffn
     >
       <span
         className="flex size-10 shrink-0 items-center justify-center rounded-xl"
-        style={
-          bossSieg
-            ? { backgroundColor: 'color-mix(in srgb, var(--gefahr) 13%, transparent)', color: 'var(--gefahr)' }
-            : { backgroundColor: `${farbe}22`, color: farbe }
-        }
+        style={{ backgroundColor: `${farbe}22`, color: farbe }}
       >
-        {bossSieg ? (
-          <Swords className="size-5 text-gefahr" aria-hidden="true" />
-        ) : eintrag.meilenstein ? (
+        {eintrag.meilenstein ? (
           <Trophy className="size-5 text-xp" />
         ) : (
           <Icon name={eintrag.vorlageIcon} className="size-5" />
         )}
       </span>
       <span className="min-w-0 flex-1">
-        <span className={`block truncate font-medium ${bossSieg ? 'text-gefahr' : ''}`}>{eintrag.vorlageName}</span>
+        <span className="block truncate font-medium">{eintrag.vorlageName}</span>
         {kern ? <span className="block truncate text-xs text-leise">{kern}</span> : null}
-        {eintrag.meilenstein && !bossSieg ? (
+        {eintrag.meilenstein ? (
           <span className="mt-1 block">
             <MeilensteinPill />
           </span>
@@ -195,10 +183,10 @@ export function EintragDetail({ eintrag }: { eintrag: Eintrag }) {
       </div>
       <DetailZeile label={tx('Notiz')} wert={notiz} />
       {boss && (
-        <div className="mt-2 rounded-2xl border border-gefahr/40 bg-gefahr/10 p-3">
+        <div className="mt-2 rounded-2xl border border-rand p-3">
           <div className="flex items-center gap-2">
-            <Swords className="size-4 shrink-0 text-gefahr" aria-hidden="true" />
-            <p className="min-w-0 truncate font-medium text-gefahr">{eintrag.vorhaben?.titel}</p>
+            <Swords className="size-4 shrink-0 text-haupt" aria-hidden="true" />
+            <p className="min-w-0 truncate font-medium">{eintrag.vorhaben?.titel}</p>
           </div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             <MetaChip kinder={tx('Level {level}', { level: zahl(boss.level) })} />

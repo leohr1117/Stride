@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute sind Bosse nicht mehr rosa hinterlegt. Rot bleibt nur der Abzug bei Disziplin. Einträge im Verlauf haben dieselbe Farbe wie die übrigen.": "На «Сегодня» боссы больше не на розовом фоне. Красный остаётся только у потери дисциплины. Записи в «Истории» того же цвета, что и остальные.",
   "Speichern und Verbinden bleiben gut lesbar. Fehlt eine Eingabe, steht der Fehler am Feld.": "«Сохранить» и «Подключить» остаются хорошо читаемыми. Если ввода нет, ошибка стоит у поля.",
   "Schreib zuerst eine Antwort.": "Сначала напиши ответ.",
   "Beim Eintragen stehen Tätigkeit, Vorhaben und Fähigkeit in je einer Zeile. Die Felder in den Blättern sind gleich hoch, und in der Einführung steht Weiter direkt darunter.": "При записи занятие, цель и навык стоят каждое в одной строке. Поля в листах одной высоты, а во введении «Далее» стоит сразу под списком.",
