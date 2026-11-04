@@ -154,7 +154,6 @@ export const PAARE = [
   ['Schutz einsetzen', 'Use protection'],
   ['Hält die {n} Tage', 'Keeps the {n} days'],
   ['+ Eintrag', '+ Entry'],
-  ['{n} Tage in Folge.', '{n} days in a row.'],
   ['Trag heute etwas ein, damit der Streak bleibt.', 'Log something today so the streak holds.'],
   ['Gestern war dein freier Tag.', 'Yesterday was your free day.'],
   ['Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.', 'Streak broken. Log something by {datum} to come back.'],

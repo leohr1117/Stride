@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.35
+
+### Geändert
+
+- Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.
+
 ## 3.56.34
 
 ### Geändert

@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "На странице «Сегодня» число серии остаётся на виду. Раздел ниже появляется только тогда, когда есть что сделать.",
   "Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.": "На странице «Сегодня» База стоит только в заголовке. Последняя строка открывает все базовые задачи.",
   "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "В «Итогах» раздел называется «Изменение». Показатели выглядят одинаково, стрелки недель крупнее, а поля больше нельзя растягивать.",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "В «Истории» у кнопки загрузки старых записей рамка вместо серой заливки.",
@@ -385,7 +386,6 @@ export const TEXTE: Record<string, string> = {
   "Schutz einsetzen": "Использовать защиту",
   "Hält die {n} Tage": "Сохраняет {n} дн.",
   "+ Eintrag": "+ Запись",
-  "{n} Tage in Folge.": "{n} дн. подряд.",
   "Trag heute etwas ein, damit der Streak bleibt.": "Запиши сегодня что-нибудь, чтобы серия сохранилась.",
   "Gestern war dein freier Tag.": "Вчера был твой свободный день.",
   "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "Серия прервана. Запиши что-нибудь до {datum}, чтобы вернуться.",

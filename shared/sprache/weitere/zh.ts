@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "在今天，连续天数仍然可见。下方区块只在有事可做时出现。",
   "Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.": "在今天，基础只出现在标题里。最后一行打开全部基础事项。",
   "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "在回顾中，这一栏称为变化。各项数字样式一致，周箭头更大，文本框不能再拖拽。",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "在历程中，加载更早记录的按钮改为边框，不再是灰色底。",
@@ -385,7 +386,6 @@ export const TEXTE: Record<string, string> = {
   "Schutz einsetzen": "使用保护",
   "Hält die {n} Tage": "保住 {n} 天",
   "+ Eintrag": "+ 记录",
-  "{n} Tage in Folge.": "连续 {n} 天。",
   "Trag heute etwas ein, damit der Streak bleibt.": "今天记一笔，连续记录才不断。",
   "Gestern war dein freier Tag.": "昨天是你的休息日。",
   "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "连续记录中断了。在 {datum} 之前记一笔即可回来。",

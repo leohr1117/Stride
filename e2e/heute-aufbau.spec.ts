@@ -73,7 +73,26 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
     expect(masse.flaechenBreite).toBeLessThanOrEqual(720);
   }
   await expect(page.getByRole('heading', { name: 'Basis', exact: true })).toHaveCount(1);
-  for (const name of ['Streak', 'Bosse greifen an', 'Basis']) {
+  const ketteStand = await page.request.get('/api/kette/heute');
+  expect(ketteStand.ok()).toBe(true);
+  const lauf = (await ketteStand.json()) as {
+    schutz: boolean;
+    schutzLaenge: number | null;
+    rueckkehr: unknown;
+    serie: { laenge: number };
+    heuteErfasst: boolean;
+  };
+  expect(lauf.heuteErfasst).toBe(true);
+  expect(lauf.serie.laenge).toBeGreaterThan(0);
+  expect(lauf.rueckkehr).toBeNull();
+  expect(lauf.schutz).toBe(false);
+  expect(lauf.schutzLaenge).toBeNull();
+  await expect(page.getByRole('heading', { name: 'Streak', exact: true })).toHaveCount(0);
+  await expect(page.locator('[data-heute]')).toHaveCount(0);
+  const kennzahl = page.locator('[data-wochenwert="Streak"] .zahl');
+  await expect(kennzahl).toBeVisible();
+  await expect(kennzahl).toContainText(String(lauf.serie.laenge));
+  for (const name of ['Bosse greifen an', 'Basis']) {
     const schrift = await page.getByRole('heading', { name, exact: true }).evaluate((element) => {
       const stil = getComputedStyle(element);
       return { groesse: stil.fontSize, gewicht: stil.fontWeight, transform: stil.textTransform };
@@ -235,18 +254,20 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await expect(aktivBereich.locator('section.karte')).toHaveCount(0);
   await expect(aktivBereich.getByText('Weniger', { exact: true })).toBeVisible();
   const ordnung = await page.evaluate(() => {
-    const namen = ['Streak', 'Bosse greifen an', 'Zurück aufstehen', 'Basis', 'Werte', 'Aktivität'];
+    const namen = ['Bosse greifen an', 'Zurück aufstehen', 'Basis', 'Werte', 'Aktivität'];
     return namen.flatMap((name) => {
       const kopf = [...document.querySelectorAll('h2')].find((element) => element.textContent?.trim() === name);
-      return kopf ? [Math.round(kopf.getBoundingClientRect().top)] : [];
+      return kopf ? [{ name, top: Math.round(kopf.getBoundingClientRect().top) }] : [];
     });
   });
-  expect(ordnung.length).toBeGreaterThanOrEqual(5);
+  for (const name of ['Bosse greifen an', 'Basis', 'Werte', 'Aktivität']) {
+    expect(ordnung.some((eintrag) => eintrag.name === name)).toBe(true);
+  }
   for (let index = 1; index < ordnung.length; index += 1) {
-    expect(ordnung[index]).toBeGreaterThan(ordnung[index - 1] ?? 0);
+    expect(ordnung[index]?.top ?? 0).toBeGreaterThan(ordnung[index - 1]?.top ?? 0);
   }
   const identitaetOben = await page.locator('[data-xp-zeile]').evaluate((element) => Math.round(element.getBoundingClientRect().top));
-  expect(identitaetOben).toBeLessThan(ordnung[0] ?? 0);
+  expect(identitaetOben).toBeLessThan(ordnung[0]?.top ?? 0);
   await ohneSeitlichenUeberlauf(page);
   await bild(page, `${projekt}-oben`, false);
   await bild(page, `${projekt}-heute`);

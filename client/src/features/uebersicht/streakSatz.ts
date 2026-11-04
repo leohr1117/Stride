@@ -2,6 +2,10 @@ import type { KetteHeute } from '../../../../shared/api/kette.ts';
 
 export type StreakArt = 'lauf' | 'offen' | 'pause' | 'rueckkehr' | 'neu';
 
+export function streakAbschnittSichtbar(art: StreakArt | null, schutzLaenge: number | null, fehler: boolean): boolean {
+  return !(art === 'lauf' && schutzLaenge === null && !fehler);
+}
+
 export function streakArt(stand: KetteHeute): StreakArt | null {
   if (stand.rueckkehr) {
     return 'rueckkehr';

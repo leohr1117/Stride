@@ -6,7 +6,7 @@ import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { ausTagesSchluessel, kurzesDatum, zahl } from '../../format.ts';
 import { AbschnittKopf, Fehlermeldung, Flaeche, InfoHinweis, Knopf } from '../../ui/index.ts';
-import { streakArt, type StreakArt } from './streakSatz.ts';
+import { streakAbschnittSichtbar, streakArt, type StreakArt } from './streakSatz.ts';
 
 function EintragKnopf({ onClick }: { onClick: () => void }) {
   return (
@@ -26,18 +26,14 @@ function Zeile({ kennung, text, extra, aktion }: { kennung: string; text: string
   );
 }
 
-const KENNUNG: Record<StreakArt, string> = {
-  lauf: 'lauf',
+const KENNUNG: Record<Exclude<StreakArt, 'lauf'>, string> = {
   offen: 'offen',
   pause: 'streak',
   rueckkehr: 'rueckkehr',
   neu: 'neu',
 };
 
-function satzText(art: StreakArt, stand: KetteHeute): string {
-  if (art === 'lauf') {
-    return tx('{n} Tage in Folge.', { n: zahl(stand.serie.laenge) });
-  }
+function satzText(art: Exclude<StreakArt, 'lauf'>, stand: KetteHeute): string {
   if (art === 'offen') {
     return tx('Trag heute etwas ein, damit der Streak bleibt.');
   }
@@ -74,6 +70,11 @@ export function HeuteKarte() {
   const stand = abfrage.isError ? null : abfrage.data;
   const art = stand ? streakArt(stand) : null;
   const schutzLaenge = stand?.schutz && stand.schutzLaenge !== null ? stand.schutzLaenge : null;
+  const fehler = abfrage.isError || einsetzen.isError;
+  if (!streakAbschnittSichtbar(art, schutzLaenge, fehler)) {
+    return null;
+  }
+  const handlung = art !== null && art !== 'lauf' ? art : null;
 
   return (
     <section data-heute className="md:max-w-[720px]">
@@ -90,16 +91,16 @@ export function HeuteKarte() {
                 <Fehlermeldung fehler={einsetzen.error} />
               </div>
             ) : null}
-            {art && stand && (
+            {handlung && stand && (
               <Zeile
-                kennung={KENNUNG[art]}
-                text={satzText(art, stand)}
+                kennung={KENNUNG[handlung]}
+                text={satzText(handlung, stand)}
                 extra={
-                  art === 'rueckkehr' ? (
+                  handlung === 'rueckkehr' ? (
                     <InfoHinweis name="Rückkehr" text="Ein Eintrag in sieben Tagen, ohne Abzug." />
                   ) : undefined
                 }
-                aktion={art === 'lauf' ? undefined : <EintragKnopf onClick={() => eintragOeffnen()} />}
+                aktion={<EintragKnopf onClick={() => eintragOeffnen()} />}
               />
             )}
             {schutzLaenge !== null && (

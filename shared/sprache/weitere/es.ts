@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "En Hoy, el número de la racha sigue visible. La sección de abajo aparece solo cuando hay algo que hacer.",
   "Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.": "En Hoy, Base aparece solo en el título. La última fila abre todas las tareas base.",
   "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "En Repaso, la sección se llama Cambio. Las cifras son uniformes, las flechas de la semana son más grandes y los campos ya no se pueden arrastrar.",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "En Historial, el botón para cargar registros anteriores tiene un borde en lugar de un fondo gris.",
@@ -385,7 +386,6 @@ export const TEXTE: Record<string, string> = {
   "Schutz einsetzen": "Usar la protección",
   "Hält die {n} Tage": "Mantiene los {n} días",
   "+ Eintrag": "+ Entrada",
-  "{n} Tage in Folge.": "{n} días seguidos.",
   "Trag heute etwas ein, damit der Streak bleibt.": "Apunta algo hoy para que la racha siga.",
   "Gestern war dein freier Tag.": "Ayer fue tu día libre.",
   "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "Racha interrumpida. Apunta algo hasta el {datum} para volver.",

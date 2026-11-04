@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { KetteHeute } from '../../../../shared/api/kette.ts';
-import { streakArt } from './streakSatz.ts';
+import { streakAbschnittSichtbar, streakArt } from './streakSatz.ts';
 
 function stand(teil: Partial<KetteHeute> = {}): KetteHeute {
   return {
@@ -15,7 +15,7 @@ function stand(teil: Partial<KetteHeute> = {}): KetteHeute {
 }
 
 describe('Streak-Satz', () => {
-  it('nennt die Länge, wenn heute schon ein Eintrag liegt', () => {
+  it('erkennt einen laufenden Streak, wenn heute schon ein Eintrag liegt', () => {
     expect(streakArt(stand({ heuteErfasst: true, serie: { laenge: 4, angeknackst: false } }))).toBe('lauf');
   });
 
@@ -47,5 +47,21 @@ describe('Streak-Satz', () => {
 
   it('lässt den Schutz allein stehen, ohne einen neuen Streak daneben', () => {
     expect(streakArt(stand({ schutz: true, schutzLaenge: 5 }))).toBeNull();
+  });
+
+  it('blendet den Abschnitt aus, solange der Streak nur läuft', () => {
+    expect(streakAbschnittSichtbar('lauf', null, false)).toBe(false);
+  });
+
+  it('zeigt den Abschnitt bei Handlung, Schutz oder Fehler', () => {
+    expect(streakAbschnittSichtbar('offen', null, false)).toBe(true);
+    expect(streakAbschnittSichtbar('pause', null, false)).toBe(true);
+    expect(streakAbschnittSichtbar('rueckkehr', null, false)).toBe(true);
+    expect(streakAbschnittSichtbar('neu', null, false)).toBe(true);
+    expect(streakAbschnittSichtbar('lauf', 7, false)).toBe(true);
+    expect(streakAbschnittSichtbar(null, 7, false)).toBe(true);
+    expect(streakAbschnittSichtbar('lauf', null, true)).toBe(true);
+    expect(streakAbschnittSichtbar(null, null, true)).toBe(true);
+    expect(streakAbschnittSichtbar(null, null, false)).toBe(true);
   });
 });

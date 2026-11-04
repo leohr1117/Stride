@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "Sur Aujourd'hui, le nombre de la série reste visible. La section en dessous n'apparaît que lorsqu'il y a quelque chose à faire.",
   "Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.": "Sur Aujourd'hui, Base n'apparaît que dans le titre. La dernière ligne ouvre toutes les tâches de base.",
   "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "Dans Bilan, la section s'appelle Changement. Les chiffres sont uniformes, les flèches de semaine sont plus grandes et les champs ne se laissent plus étirer.",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "Dans Historique, le bouton pour charger les entrées plus anciennes a un cadre à la place d'un fond gris.",
@@ -385,7 +386,6 @@ export const TEXTE: Record<string, string> = {
   "Schutz einsetzen": "Utiliser la protection",
   "Hält die {n} Tage": "Garde les {n} jours",
   "+ Eintrag": "+ Entrée",
-  "{n} Tage in Folge.": "{n} jours d'affilée.",
   "Trag heute etwas ein, damit der Streak bleibt.": "Note quelque chose aujourd'hui pour que la série tienne.",
   "Gestern war dein freier Tag.": "Hier était ton jour libre.",
   "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "Série interrompue. Note quelque chose jusqu'au {datum} pour revenir.",

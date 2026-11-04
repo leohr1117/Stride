@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "今日では、連続の数字は表示されたままです。下の節は、することがあるときだけ出ます。",
   "Auf Heute steht Basis nur in der Überschrift. Die letzte Zeile öffnet alle Basis-Aufgaben.": "今日では、基本は見出しにだけ出ます。最後の行ですべての基本タスクを開きます。",
   "Im Rückblick heißt der Bereich Veränderung. Die Kennzahlen sind einheitlich, die Wochenpfeile sind größer, und die Felder lassen sich nicht mehr ziehen.": "振り返りでは、この欄は変化という名前です。指標の見た目は揃い、週の矢印は大きくなり、欄はもう引き伸ばせません。",
   "Im Verlauf hat der Knopf zum Laden älterer Einträge einen Rahmen statt einer grauen Fläche.": "履歴では、古い記録を読み込むボタンが灰色の面ではなく枠になりました。",
@@ -385,7 +386,6 @@ export const TEXTE: Record<string, string> = {
   "Schutz einsetzen": "保護を使う",
   "Hält die {n} Tage": "{n}日を守る",
   "+ Eintrag": "+ 記録",
-  "{n} Tage in Folge.": "{n}日連続。",
   "Trag heute etwas ein, damit der Streak bleibt.": "今日なにかを記録すると、連続が続きます。",
   "Gestern war dein freier Tag.": "昨日は自由な日でした。",
   "Streak unterbrochen. Trag bis {datum} etwas ein, um zurückzukehren.": "連続が途切れました。{datum}までに記録すると戻れます。",
