@@ -406,6 +406,163 @@ function kreisErwartet(
   expect(mass.rand).toBe(erledigt ? '0px' : '2px');
 }
 
+const HELL = { stil: 'standard', primaer: '#141414', akzent: '#707070', hintergrund: '#f2f2f2' };
+const DUNKEL = { stil: 'standard', primaer: '#f2f2f2', akzent: '#8a8a8a', hintergrund: '#141414' };
+
+async function speichereFarben(seite: Page, koerper: Record<string, unknown>): Promise<void> {
+  const ok = await seite.evaluate(async (daten) => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(daten),
+    });
+    return antwort.ok;
+  }, koerper);
+  expect(ok).toBe(true);
+}
+
+async function warteHeute(seite: Page): Promise<void> {
+  await expect(seite.getByRole('heading', { name: 'Heute', exact: true })).toBeVisible();
+  await expect(seite.getByText('Lädt …')).toHaveCount(0);
+  await expect(seite.getByRole('heading', { name: 'Basis', exact: true })).toBeVisible();
+}
+
+async function setzeGruppen(seite: Page, offen: boolean): Promise<void> {
+  const ziel = offen ? 'false' : 'true';
+  const knopf = seite.locator(`main .abschnitt-kopf > button[aria-expanded="${ziel}"]`);
+  for (let index = 0; index < 8 && (await knopf.count()) > 0; index += 1) {
+    await knopf.first().scrollIntoViewIfNeeded();
+    await knopf.first().click();
+  }
+  await expect(knopf).toHaveCount(0);
+}
+
+function gruppenBericht(soll: string): string[] {
+  const probleme: string[] = [];
+  const merke = (text: string) => {
+    if (!probleme.includes(text)) probleme.push(text);
+  };
+  const gruppen = [...document.querySelectorAll('main section')].filter((section) =>
+    section.querySelector(':scope > .abschnitt-kopf > button[aria-expanded]'),
+  );
+  const namen = gruppen.map((section) => section.querySelector('h2')?.textContent?.trim() ?? '?');
+  for (const name of ['Basis', 'Werte', 'Aktivität']) {
+    if (!namen.includes(name)) merke(`Gruppe fehlt: ${name}`);
+  }
+  const deckt = (farbe: string) => {
+    if (farbe === 'transparent') return false;
+    const werte = farbe.match(/[\d.]+/g);
+    if (!werte || werte.length < 4) return farbe !== '';
+    return Number(werte[3]) > 0.01;
+  };
+  const eckeFrei = (flaeche: HTMLElement, x: number, y: number) => {
+    if (x < 1 || y < 1 || x > window.innerWidth - 1 || y > window.innerHeight - 1) return false;
+    for (const knoten of document.elementsFromPoint(x, y)) {
+      if (!(knoten instanceof HTMLElement)) continue;
+      if (!deckt(getComputedStyle(knoten).backgroundColor)) continue;
+      return knoten !== flaeche && !flaeche.contains(knoten);
+    }
+    return true;
+  };
+  for (const section of gruppen) {
+    const name = section.querySelector('h2')?.textContent?.trim() ?? '?';
+    const offen = section.querySelector(':scope > .abschnitt-kopf > button[aria-expanded="true"]') !== null;
+    const flaechen = [...section.querySelectorAll('[data-flaeche]')].filter(
+      (element): element is HTMLElement => element instanceof HTMLElement,
+    );
+    if (!offen) {
+      if (flaechen.length > 0) merke(`${name}: zugeklappt mit Fläche`);
+      continue;
+    }
+    if (flaechen.length === 0) {
+      merke(`${name}: ohne Fläche`);
+      continue;
+    }
+    for (const flaeche of flaechen) {
+      const stil = getComputedStyle(flaeche);
+      const ecken = [
+        stil.borderTopLeftRadius,
+        stil.borderTopRightRadius,
+        stil.borderBottomRightRadius,
+        stil.borderBottomLeftRadius,
+      ];
+      if (ecken.some((wert) => wert !== soll)) merke(`${name}: Radius ${ecken.join(' ')}`);
+      if (stil.overflowX !== 'hidden' && stil.overflowX !== 'clip') merke(`${name}: Überlauf ${stil.overflowX}`);
+      if (stil.overflowY !== 'hidden' && stil.overflowY !== 'clip') merke(`${name}: Überlauf senkrecht ${stil.overflowY}`);
+      if (soll !== '12px') continue;
+      const mitte = window.innerHeight / 2;
+      const zeige = (kante: number) => {
+        window.scrollBy(0, kante - mitte);
+      };
+      flaeche.scrollIntoView({ block: 'center', inline: 'nearest' });
+      zeige(flaeche.getBoundingClientRect().top + 2);
+      const nachOben = flaeche.getBoundingClientRect();
+      const obenFrei =
+        eckeFrei(flaeche, nachOben.left + 2, nachOben.top + 2) &&
+        eckeFrei(flaeche, nachOben.right - 2, nachOben.top + 2);
+      zeige(flaeche.getBoundingClientRect().bottom - 2);
+      const nachUnten = flaeche.getBoundingClientRect();
+      const untenFrei =
+        eckeFrei(flaeche, nachUnten.left + 2, nachUnten.bottom - 2) &&
+        eckeFrei(flaeche, nachUnten.right - 2, nachUnten.bottom - 2);
+      if (!obenFrei) merke(`${name}: oben übermalt`);
+      if (!untenFrei) merke(`${name}: unten übermalt`);
+    }
+  }
+  return probleme;
+}
+
+test('Einklappbare Gruppen sind an allen Ecken rund', async ({ page }, testInfo) => {
+  const projekt = testInfo.project.name;
+  const soll = projekt === 'handy' ? '12px' : '8px';
+  await anmelden(page);
+  const original = await page.evaluate(async () => {
+    const daten = (await fetch('/api/einstellungen').then((antwort) => antwort.json())) as {
+      stil: string;
+      glimmen: boolean;
+      primaer: string;
+      akzent: string;
+      hintergrund: string;
+    };
+    return daten;
+  });
+  await page.goto('/');
+  await warteHeute(page);
+
+  try {
+    await setzeGruppen(page, false);
+    expect(await page.evaluate(gruppenBericht, soll)).toEqual([]);
+    await setzeGruppen(page, true);
+    expect(await page.evaluate(gruppenBericht, soll)).toEqual([]);
+
+    if (projekt === 'handy') {
+      for (const [name, farben] of [
+        ['hell', HELL],
+        ['dunkel', DUNKEL],
+      ] as const) {
+        await speichereFarben(page, farben);
+        await page.goto('/');
+        await warteHeute(page);
+        await expect(page.locator('html')).toHaveAttribute('data-schema', name === 'hell' ? 'light' : 'dark');
+        await setzeGruppen(page, true);
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await bild(page, `${projekt}-oben-${name}`, false);
+        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+        await bild(page, `${projekt}-unten-${name}`, false);
+        expect(await page.evaluate(gruppenBericht, soll)).toEqual([]);
+      }
+    }
+  } finally {
+    await speichereFarben(page, {
+      stil: original.stil,
+      glimmen: original.glimmen,
+      primaer: original.primaer,
+      akzent: original.akzent,
+      hintergrund: original.hintergrund,
+    });
+  }
+});
+
 test('Abhakkreis bleibt leer oder zeigt den Haken', async ({ page }) => {
   await anmelden(page);
   await page.goto('/');

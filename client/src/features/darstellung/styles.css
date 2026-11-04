@@ -686,6 +686,11 @@ html[data-eingabe='zeiger'] :focus {
     border-radius: 12px;
   }
 
+  section:has(> .abschnitt-kopf > button[aria-expanded]) [data-flaeche] {
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
   .abschnitt-kopf,
   .gruppen-kopf {
     padding-inline: 16px;

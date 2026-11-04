@@ -17,6 +17,17 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.40',
+    seiten: 'Heute, Ziele, Basis',
+    behoben: 'Heute, Ziele, Basis',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.'],
+      },
+    ],
+  },
+  {
     version: '3.56.39',
     seiten: 'Heute, Ziele, Verlauf, Rückblick, Statistik, Basis, Handbuch, Mehr, Vorbilder',
     abschnitte: [

@@ -82,16 +82,21 @@ function pruefeSeite(kopfPflicht: boolean): Bericht {
   for (const flaeche of flaechen) {
     const stil = getComputedStyle(flaeche);
     const kasten = flaeche.getBoundingClientRect();
-    const radius = parseFloat(stil.borderTopLeftRadius);
+    const radien = [
+      stil.borderTopLeftRadius,
+      stil.borderTopRightRadius,
+      stil.borderBottomRightRadius,
+      stil.borderBottomLeftRadius,
+    ].map((wert) => parseFloat(wert));
     const rand = parseFloat(stil.borderTopWidth);
     if (mobil) {
-      if (Math.abs(radius - 12) > 0.5) merke(`Radius auf dem Handy ${radius}`);
+      if (radien.some((wert) => Math.abs(wert - 12) > 0.5)) merke(`Radius auf dem Handy ${radien.join(' ')}`);
       if (rand !== 0) merke(`Rand auf dem Handy ${rand}`);
       if (Math.abs(kasten.x - 16) > 1) merke(`Fläche beginnt bei ${Math.round(kasten.x)}`);
       const zielRechts = breite - 16;
       if (Math.abs(kasten.right - zielRechts) > 1) merke(`Fläche endet bei ${Math.round(kasten.right)} von ${breite}`);
-    } else if (radius !== 8 || rand !== 1 || kasten.width > 720) {
-      merke(`Fläche am PC: Radius ${radius}, Rand ${rand}, Breite ${Math.round(kasten.width)}`);
+    } else if (radien.some((wert) => wert !== 8) || rand !== 1 || kasten.width > 720) {
+      merke(`Fläche am PC: Radius ${radien.join(' ')}, Rand ${rand}, Breite ${Math.round(kasten.width)}`);
     }
   }
 

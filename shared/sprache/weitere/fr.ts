@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "Sur le téléphone, les groupes repliables sont arrondis à tous les coins.",
   "Flächen heben sich deutlicher vom Hintergrund ab.": "Les surfaces se détachent plus nettement de l'arrière-plan.",
   "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "Sur le téléphone, chaque section est un groupe en retrait. Un trait sépare les rangées.",
   "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "Sur Aujourd'hui, le nombre de la série reste visible. La section en dessous n'apparaît que lorsqu'il y a quelque chose à faire.",

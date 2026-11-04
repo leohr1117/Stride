@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "スマートフォンでは、折りたたみできるグループの角がすべて丸くなっています。",
   "Flächen heben sich deutlicher vom Hintergrund ab.": "面が背景からはっきり浮かび上がります。",
   "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "スマホでは、各セクションが内側に寄せたグループになります。中の行は線で区切ります。",
   "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "今日では、連続の数字は表示されたままです。下の節は、することがあるときだけ出ます。",

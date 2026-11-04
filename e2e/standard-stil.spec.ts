@@ -168,6 +168,22 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
     await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('data-stil', 'standard');
     expect(await eckenRadius(page, '[data-flaeche]')).toBe(projekt === 'handy' ? '12px' : '8px');
+    const sollEcke = projekt === 'handy' ? '12px' : '8px';
+    const flaechenEcken = await page.locator('main [data-flaeche]').evaluateAll((knoten) =>
+      knoten.map((element) => {
+        const stil = getComputedStyle(element);
+        return [
+          stil.borderTopLeftRadius,
+          stil.borderTopRightRadius,
+          stil.borderBottomRightRadius,
+          stil.borderBottomLeftRadius,
+        ];
+      }),
+    );
+    expect(flaechenEcken.length).toBeGreaterThan(0);
+    for (const ecken of flaechenEcken) {
+      expect(ecken).toEqual([sollEcke, sollEcke, sollEcke, sollEcke]);
+    }
     expect(await kartenEcke(page)).toBe('8px');
     await ohneSeitlichenUeberlauf(page);
     await page.screenshot({ path: `tmp-test/standard-stil/${projekt}-heute.png`, fullPage: true });

@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.": "На телефоне сворачиваемые группы скруглены по всем углам.",
   "Flächen heben sich deutlicher vom Hintergrund ab.": "Поверхности заметнее отделяются от фона.",
   "Auf dem Handy steht jeder Abschnitt als eingerückte Gruppe. Die Zeilen darin trennt eine Linie.": "На телефоне каждый раздел — группа с отступом. Строки внутри разделяет линия.",
   "Auf Heute bleibt die Streak-Zahl sichtbar. Der Abschnitt darunter erscheint nur, wenn es etwas zu tun gibt.": "На странице «Сегодня» число серии остаётся на виду. Раздел ниже появляется только тогда, когда есть что сделать.",

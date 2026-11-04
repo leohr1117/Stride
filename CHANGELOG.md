@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.40
+
+### Behoben
+
+- Auf dem Handy sind einklappbare Gruppen an allen Ecken abgerundet.
+
 ## 3.56.39
 
 ### Geändert
