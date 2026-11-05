@@ -179,6 +179,7 @@ export const PAARE = [
   ['+ Eintrag', '+ Entry'],
   ['Trag heute etwas ein, damit der Streak bleibt.', 'Log something today so the streak holds.'],
   ['Gestern war dein freier Tag.', 'Yesterday was your free day.'],
+  ['Streak offen', 'Streak open'],
   ['Streak offen · heute eintragen', 'Streak open · log today'],
   ['Pause genutzt · gestern frei', 'Pause used · free yesterday'],
   ['Streak unterbrochen · bis {datum} zurückholen', 'Streak broken · recover by {datum}'],

@@ -1,12 +1,24 @@
 import { tx, txMenge } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { KetteHeute } from '../../../../shared/api/kette.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { ausTagesSchluessel, kurzesDatum, zahl } from '../../format.ts';
 import { AbschnittKopf, Fehlermeldung, Flaeche, InfoHinweis, Knopf } from '../../ui/index.ts';
-import { streakAbschnittSichtbar, streakArt, type StreakArt } from './streakSatz.ts';
+import { streakAbschnittSichtbar, streakArt, STREAK_ZEILE_ENG, type StreakArt } from './streakSatz.ts';
+
+function useStreakZeileEng(): boolean {
+  const [eng, setEng] = useState(() => window.matchMedia(STREAK_ZEILE_ENG).matches);
+  useEffect(() => {
+    const medien = window.matchMedia(STREAK_ZEILE_ENG);
+    const setze = () => setEng(medien.matches);
+    setze();
+    medien.addEventListener('change', setze);
+    return () => medien.removeEventListener('change', setze);
+  }, []);
+  return eng;
+}
 
 function EintragKnopf({ onClick }: { onClick: () => void }) {
   return (
@@ -50,13 +62,13 @@ function satzText(art: Exclude<StreakArt, 'lauf'>, stand: KetteHeute): string {
 
 function handlungInfo(art: Exclude<StreakArt, 'lauf'>): ReactNode {
   if (art === 'offen') {
-    return <InfoHinweis name="Streak" text="Trag heute etwas ein, damit der Streak bleibt." />;
+    return <InfoHinweis abstand={false} name="Streak" text="Trag heute etwas ein, damit der Streak bleibt." />;
   }
   if (art === 'pause') {
-    return <InfoHinweis name="Streak" text="Gestern war dein freier Tag." />;
+    return <InfoHinweis abstand={false} name="Streak" text="Gestern war dein freier Tag." />;
   }
   if (art === 'rueckkehr') {
-    return <InfoHinweis name="Rückkehr" text="Ein Eintrag in sieben Tagen, ohne Abzug." />;
+    return <InfoHinweis abstand={false} name="Rückkehr" text="Ein Eintrag in sieben Tagen, ohne Abzug." />;
   }
   return null;
 }
@@ -73,14 +85,27 @@ function Handlungszeile({
   aktion?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col px-4 md:flex-row md:items-center md:gap-3" data-kette={kennung}>
-      <div className="flex min-h-12 min-w-0 flex-1 items-center">
-        <p className="min-w-0 truncate text-sm leading-5" data-kette-satz>
-          {text}
-        </p>
-        {info}
+    <div className="px-4 py-4" data-kette={kennung}>
+      <div className="flex min-w-0 items-center gap-3" data-kette-zeile>
+        <div className="flex min-w-0 flex-1 items-center">
+          <p className="min-w-0 truncate text-sm leading-5" data-kette-satz>
+            {text}
+          </p>
+          {info ? (
+            <span className="relative ms-1.5 h-0 w-11 shrink-0">
+              <span className="absolute top-1/2 left-0 -translate-y-1/2">{info}</span>
+            </span>
+          ) : null}
+        </div>
+        {aktion ? (
+          <span className="relative flex h-0 min-h-0 w-max shrink-0">
+            <span className="invisible px-3 text-sm font-medium whitespace-nowrap" aria-hidden="true">
+              {tx('+ Eintrag')}
+            </span>
+            <span className="absolute top-1/2 right-0 -translate-y-1/2">{aktion}</span>
+          </span>
+        ) : null}
       </div>
-      {aktion ? <div className="flex justify-end md:shrink-0">{aktion}</div> : null}
     </div>
   );
 }
@@ -88,6 +113,7 @@ function Handlungszeile({
 export function HeuteKarte() {
   const queryClient = useQueryClient();
   const eintragOeffnen = useEintragOeffnen();
+  const eng = useStreakZeileEng();
   const abfrage = useQuery({
     queryKey: SCHLUESSEL.ketteHeute,
     queryFn: api.ketteHeute,
@@ -131,7 +157,7 @@ export function HeuteKarte() {
             {handlung && stand && (
               <Handlungszeile
                 kennung={KENNUNG[handlung]}
-                text={satzText(handlung, stand)}
+                text={eng ? tx('Streak offen') : satzText(handlung, stand)}
                 info={handlungInfo(handlung)}
                 aktion={<EintragKnopf onClick={() => eintragOeffnen()} />}
               />

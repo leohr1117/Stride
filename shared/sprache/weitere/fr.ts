@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.": "Dans Aujourd'hui, le texte de la série, l'indication et + Entrée tiennent sur une ligne. Sur un écran étroit, on lit Série ouverte.",
   "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "Dans Objectifs, le bouton Nouveau est plein et a un signe plus devant.",
   "Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.": "Dans Objectifs, les niveaux des visions sont dans la même colonne que ceux des projets.",
   "Auf Ziele beginnt die Nebenzeile eines Projekts mit den Tagen in Folge. Rechts steht nur das Level.": "Dans Objectifs, la deuxième ligne d'un projet commence par les jours d'affilée. À droite, il ne reste que le niveau.",
@@ -437,6 +438,7 @@ export const TEXTE: Record<string, string> = {
   "+ Eintrag": "+ Entrée",
   "Trag heute etwas ein, damit der Streak bleibt.": "Note quelque chose aujourd'hui pour que la série tienne.",
   "Gestern war dein freier Tag.": "Hier était ton jour libre.",
+  "Streak offen": "Série ouverte",
   "Streak offen · heute eintragen": "Série ouverte · noter aujourd'hui",
   "Pause genutzt · gestern frei": "Pause utilisée · hier libre",
   "Streak unterbrochen · bis {datum} zurückholen": "Série interrompue · à reprendre jusqu'au {datum}",

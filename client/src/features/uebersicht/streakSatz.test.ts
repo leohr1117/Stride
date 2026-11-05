@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { KetteHeute } from '../../../../shared/api/kette.ts';
-import { streakAbschnittSichtbar, streakArt } from './streakSatz.ts';
+import { streakAbschnittSichtbar, streakArt, streakZeileEng } from './streakSatz.ts';
 
 function stand(teil: Partial<KetteHeute> = {}): KetteHeute {
   return {
@@ -51,6 +51,13 @@ describe('Streak-Satz', () => {
 
   it('blendet den Abschnitt aus, solange der Streak nur läuft', () => {
     expect(streakAbschnittSichtbar('lauf', null, false)).toBe(false);
+  });
+
+  it('kürzt den Satz auf schmalen Viewports und lässt ihn ab 361 px stehen', () => {
+    expect(streakZeileEng(320)).toBe(true);
+    expect(streakZeileEng(360)).toBe(true);
+    expect(streakZeileEng(361)).toBe(false);
+    expect(streakZeileEng(390)).toBe(false);
   });
 
   it('zeigt den Abschnitt bei Handlung, Schutz oder Fehler', () => {

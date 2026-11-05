@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.": "En Hoy, el texto de la racha, la nota y + Entrada están en una línea. En una pantalla estrecha dice Racha abierta.",
   "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "En Metas, el botón Nuevo está relleno y tiene un signo más delante.",
   "Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.": "En Metas, los niveles de las visiones quedan en la misma columna que los niveles de los proyectos.",
   "Auf Ziele beginnt die Nebenzeile eines Projekts mit den Tagen in Folge. Rechts steht nur das Level.": "En Metas, la segunda línea de un proyecto empieza con los días seguidos. A la derecha solo queda el nivel.",
@@ -437,6 +438,7 @@ export const TEXTE: Record<string, string> = {
   "+ Eintrag": "+ Entrada",
   "Trag heute etwas ein, damit der Streak bleibt.": "Apunta algo hoy para que la racha siga.",
   "Gestern war dein freier Tag.": "Ayer fue tu día libre.",
+  "Streak offen": "Racha abierta",
   "Streak offen · heute eintragen": "Racha abierta · anota hoy",
   "Pause genutzt · gestern frei": "Pausa usada · ayer libre",
   "Streak unterbrochen · bis {datum} zurückholen": "Racha interrumpida · recuperar hasta el {datum}",

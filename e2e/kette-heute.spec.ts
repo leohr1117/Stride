@@ -282,6 +282,32 @@ async function pruefeTextknopf(seite: Page, kennung: string): Promise<void> {
   expect(mass.breite).toBeGreaterThanOrEqual(48);
   expect(mass.hintergrund).toBe('rgba(0, 0, 0, 0)');
   expect(mass.farbe).toBe(mass.soll);
+  const lage = await zeile.evaluate((element) => {
+    const text = element.querySelector('[data-kette-satz]');
+    const knopf = element.querySelector('button.knopf');
+    if (!(text instanceof HTMLElement) || !(knopf instanceof HTMLElement)) {
+      return null;
+    }
+    const textKasten = text.getBoundingClientRect();
+    const knopfKasten = knopf.getBoundingClientRect();
+    const zeilen = [...text.getClientRects()];
+    const kasten = element.getBoundingClientRect();
+    const mitte = (box: DOMRect) => box.top + box.height / 2;
+    return {
+      zeilen: zeilen.length,
+      zeile: zeilen[0]?.height ?? 0,
+      kasten: kasten.height,
+      textMitte: mitte(textKasten),
+      knopfMitte: mitte(knopfKasten),
+      gleicheZeile: knopfKasten.top < textKasten.bottom && textKasten.top < knopfKasten.bottom,
+    };
+  });
+  expect(lage).not.toBeNull();
+  expect(lage?.zeilen).toBe(1);
+  expect(lage?.gleicheZeile).toBe(true);
+  expect(Math.abs((lage?.textMitte ?? 0) - (lage?.knopfMitte ?? 0))).toBeLessThanOrEqual(2);
+  const abweichung = Math.abs((lage?.kasten ?? 0) - ((lage?.zeile ?? 0) + 32));
+  expect(abweichung, JSON.stringify(lage)).toBeLessThanOrEqual(1);
 }
 
 async function dialogBleibtZeile(seite: Page, zeile: string): Promise<void> {
@@ -500,6 +526,173 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
     }
     wieder?.();
     await spracheSetzen(page, 'de').catch(() => undefined);
+    await page.setViewportSize(ausgang).catch(() => undefined);
+  }
+});
+
+interface DarstellungStand {
+  stil: string;
+  glimmen: boolean;
+  primaer: string;
+  akzent: string;
+  hintergrund: string;
+  eigeneFarben: boolean;
+}
+
+async function leseDarstellung(seite: Page): Promise<DarstellungStand> {
+  return seite.evaluate(async () => {
+    const daten = (await fetch('/api/einstellungen').then((antwort) => antwort.json())) as DarstellungStand;
+    return {
+      stil: daten.stil,
+      glimmen: daten.glimmen,
+      primaer: daten.primaer,
+      akzent: daten.akzent,
+      hintergrund: daten.hintergrund,
+      eigeneFarben: daten.eigeneFarben,
+    };
+  });
+}
+
+async function speichereDarstellung(seite: Page, koerper: Record<string, unknown>): Promise<void> {
+  const ok = await seite.evaluate(async (daten) => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(daten),
+    });
+    return antwort.ok;
+  }, koerper);
+  expect(ok).toBe(true);
+  await seite.reload();
+  await expect(seite.locator('[data-heute]')).toBeVisible();
+}
+
+async function pruefeStreakZeile(seite: Page, kurz: boolean): Promise<void> {
+  const karte = seite.locator('[data-heute] [data-flaeche]');
+  const satz = karte.locator('[data-kette-satz]');
+  await expect(satz).toBeVisible();
+  if (kurz) {
+    await expect(satz).toHaveText('Streak offen');
+  } else {
+    await expect(satz).not.toHaveText('Streak offen');
+  }
+  await expect(karte.getByRole('button', { name: '+ Eintrag', exact: true })).toBeVisible();
+  await expect(karte.getByRole('button', { name: /^Info/ })).toBeVisible();
+  const mass = await karte.evaluate((flaeche) => {
+    const text = flaeche.querySelector('[data-kette-satz]');
+    const info = [...flaeche.querySelectorAll('button')].find((knopf) => knopf.getAttribute('aria-label')?.startsWith('Info'));
+    const eintrag = [...flaeche.querySelectorAll('button')].find((knopf) => knopf.textContent?.trim() === '+ Eintrag');
+    if (!(text instanceof HTMLElement) || !(info instanceof HTMLElement) || !(eintrag instanceof HTMLElement)) {
+      return null;
+    }
+    const textKasten = text.getBoundingClientRect();
+    const infoKasten = info.getBoundingClientRect();
+    const knopfKasten = eintrag.getBoundingClientRect();
+    const kartenKasten = flaeche.getBoundingClientRect();
+    const handlung = text.closest('[data-kette]');
+    const handlungKasten = handlung?.getBoundingClientRect();
+    const zeilen = [...text.getClientRects()];
+    const mitte = (box: DOMRect) => box.top + box.height / 2;
+    return {
+      zeilen: zeilen.length,
+      zeile: zeilen[0]?.height ?? 0,
+      kartenHoehe: kartenKasten.height,
+      handlungHoehe: handlungKasten?.height ?? 0,
+      nurHandlung: flaeche.querySelector('[data-kette="schutz"]') === null,
+      textMitte: mitte(textKasten),
+      infoMitte: mitte(infoKasten),
+      knopfMitte: mitte(knopfKasten),
+      knopfHoehe: knopfKasten.height,
+      infoNachText: infoKasten.left - textKasten.right,
+      knopfRechts: Math.abs(kartenKasten.right - 16 - knopfKasten.right),
+      gleicheZeile:
+        knopfKasten.top < textKasten.bottom &&
+        textKasten.top < knopfKasten.bottom &&
+        infoKasten.top < textKasten.bottom &&
+        textKasten.top < infoKasten.bottom,
+    };
+  });
+  expect(mass).not.toBeNull();
+  expect(mass?.zeilen).toBe(1);
+  expect(mass?.gleicheZeile).toBe(true);
+  expect(Math.abs((mass?.textMitte ?? 0) - (mass?.knopfMitte ?? 0))).toBeLessThanOrEqual(2);
+  expect(Math.abs((mass?.textMitte ?? 0) - (mass?.infoMitte ?? 0))).toBeLessThanOrEqual(2);
+  expect(mass?.infoNachText ?? 99).toBeGreaterThanOrEqual(0);
+  expect(mass?.infoNachText ?? 99).toBeLessThanOrEqual(16);
+  expect(mass?.knopfRechts ?? 99).toBeLessThanOrEqual(2);
+  expect(Math.round(mass?.knopfHoehe ?? 0)).toBe(48);
+  const hoehe = mass?.nurHandlung ? mass.kartenHoehe : mass?.handlungHoehe;
+  const abweichung = Math.abs((hoehe ?? 0) - ((mass?.zeile ?? 0) + 32));
+  expect(abweichung, JSON.stringify(mass)).toBeLessThanOrEqual(1);
+}
+
+async function streakAufnahme(seite: Page, name: string): Promise<void> {
+  const karte = seite.locator('[data-heute]');
+  await karte.scrollIntoViewIfNeeded();
+  await karte.screenshot({ path: `tmp-test/streak-zeile/${name}-karte.png` });
+  await seite.screenshot({ path: `tmp-test/streak-zeile/${name}.png` });
+}
+
+test('Streak-Zeile bleibt eine Zeile', async ({ page }, testInfo) => {
+  test.setTimeout(90_000);
+  await anmelden(page);
+  const projekt = testInfo.project.name;
+  fs.mkdirSync('tmp-test/streak-zeile', { recursive: true });
+  const original = await leseDarstellung(page);
+  const ausgang = page.viewportSize() ?? { width: 390, height: 844 };
+  const letzter = await letzterEintragTag(page);
+  await setzeHeute(page, tagPlus(letzter, 1));
+  try {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.reload();
+    await pruefeStreakZeile(page, false);
+    await ohneSeitlichenUeberlauf(page);
+    await streakAufnahme(page, `${projekt}-390-hell`);
+
+    await page.setViewportSize({ width: 320, height: 844 });
+    await page.reload();
+    await pruefeStreakZeile(page, true);
+    await ohneSeitlichenUeberlauf(page);
+    await streakAufnahme(page, `${projekt}-320-hell`);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await speichereDarstellung(page, {
+      stil: 'standard',
+      primaer: '#f2f2f2',
+      akzent: '#8a8a8a',
+      hintergrund: '#141414',
+      glimmen: original.glimmen,
+    });
+    await expect(page.locator('html')).toHaveAttribute('data-schema', 'dark');
+    await pruefeStreakZeile(page, false);
+    await ohneSeitlichenUeberlauf(page);
+    await streakAufnahme(page, `${projekt}-390-dunkel`);
+
+    await page.setViewportSize({ width: 320, height: 844 });
+    await page.reload();
+    await pruefeStreakZeile(page, true);
+    await ohneSeitlichenUeberlauf(page);
+    await streakAufnahme(page, `${projekt}-320-dunkel`);
+  } finally {
+    const wieder = original.eigeneFarben
+      ? {
+          stil: original.stil,
+          glimmen: original.glimmen,
+          primaer: original.primaer,
+          akzent: original.akzent,
+          hintergrund: original.hintergrund,
+        }
+      : { stil: original.stil, glimmen: original.glimmen, farbenZuruecksetzen: true };
+    await page
+      .evaluate(async (daten) => {
+        await fetch('/api/einstellungen', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(daten),
+        });
+      }, wieder)
+      .catch(() => undefined);
+    await setzeHeute(page, null).catch(() => undefined);
     await page.setViewportSize(ausgang).catch(() => undefined);
   }
 });

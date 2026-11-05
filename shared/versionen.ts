@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.67',
+    seiten: 'Heute',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.66',
     seiten: 'Ziele',
     abschnitte: [

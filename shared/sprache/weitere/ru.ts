@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.": "В «Сегодня» текст серии, подсказка и «+ Запись» стоят в одной строке. На узком экране там написано «Серия открыта».",
   "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "В «Целях» кнопка «Новое» залита и перед ней стоит плюс.",
   "Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.": "В «Целях» уровни видений стоят в том же столбце, что и уровни проектов.",
   "Auf Ziele beginnt die Nebenzeile eines Projekts mit den Tagen in Folge. Rechts steht nur das Level.": "В «Целях» вторая строка проекта начинается с дней подряд. Справа остаётся только уровень.",
@@ -437,6 +438,7 @@ export const TEXTE: Record<string, string> = {
   "+ Eintrag": "+ Запись",
   "Trag heute etwas ein, damit der Streak bleibt.": "Запиши сегодня что-нибудь, чтобы серия сохранилась.",
   "Gestern war dein freier Tag.": "Вчера был твой свободный день.",
+  "Streak offen": "Серия открыта",
   "Streak offen · heute eintragen": "Серия открыта · запиши сегодня",
   "Pause genutzt · gestern frei": "Пауза использована · вчера свободно",
   "Streak unterbrochen · bis {datum} zurückholen": "Серия прервана · вернуть до {datum}",

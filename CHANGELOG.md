@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.67
+
+### Behoben
+
+- Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.
+
 ## 3.56.66
 
 ### Verbessert
