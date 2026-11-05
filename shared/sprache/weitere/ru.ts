@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bosse öffnen sich in Laufend und auf der Projektseite durch Tippen auf die ganze Zeile.": "Боссы открываются в «Текущем» и на странице проекта при нажатии на всю строку.",
   "Kennzahlen auf Heute stehen mittig in gleich breiten Spalten.": "В «Сегодня» цифры стоят по центру в столбцах одинаковой ширины.",
   "Die Mitte von Symbolen, Zahlen und Texten wird geprüft. Die Oberfläche bleibt gleich.": "Проверяется центр символов, чисел и текста. Внешний вид не меняется.",
   "In der Basis, bei Bossen und auf Laufend stehen die Symbole der Zeilen in einer Spalte und mittig am Text.": "В базе, у боссов и в разделе «Активно» символы строк стоят в одном столбце и по центру текста.",

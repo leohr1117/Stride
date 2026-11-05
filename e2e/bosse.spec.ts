@@ -845,3 +845,165 @@ test('Schwert und Kreis haben dieselbe Mitte', async ({ page }, testInfo) => {
     await stelleFarbenWiederHer(page, original);
   }
 });
+
+async function warteAufHelleFlaeche(seite: Page): Promise<void> {
+  await expect
+    .poll(() =>
+      seite.evaluate(() => {
+        const wurzel = getComputedStyle(document.documentElement);
+        const karte = document.querySelector('[data-flaeche]');
+        const schrift = document.querySelector('h1, .zeile p');
+        return {
+          flaeche: wurzel.getPropertyValue('--flaeche').trim().toLowerCase(),
+          haupt: wurzel.getPropertyValue('--haupt').trim().toLowerCase(),
+          leise: wurzel.getPropertyValue('--leise').trim().toLowerCase(),
+          gefahr: wurzel.getPropertyValue('--gefahr').trim().toLowerCase(),
+          grund: wurzel.getPropertyValue('--grund').trim().toLowerCase(),
+          karte: karte instanceof HTMLElement ? getComputedStyle(karte).backgroundColor : '',
+          schrift: schrift instanceof HTMLElement ? getComputedStyle(schrift).color : '',
+        };
+      }),
+    )
+    .toEqual({
+      flaeche: '#ffffff',
+      haupt: '#141414',
+      leise: '#666666',
+      gefahr: '#c62828',
+      grund: '#f2f2f2',
+      karte: 'rgb(255, 255, 255)',
+      schrift: 'rgb(20, 20, 20)',
+    });
+  await seite.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+      }),
+  );
+  await seite.waitForTimeout(500);
+}
+
+async function tippeMitte(seite: Page, ziel: Locator): Promise<void> {
+  const kasten = await ziel.boundingBox();
+  expect(kasten).not.toBeNull();
+  if (!kasten) {
+    return;
+  }
+  await seite.mouse.click(kasten.x + kasten.width / 2, kasten.y + kasten.height / 2);
+}
+
+async function mindestTreffer(ziel: Locator): Promise<void> {
+  const kasten = await ziel.boundingBox();
+  expect(kasten).not.toBeNull();
+  if (!kasten) {
+    return;
+  }
+  expect(kasten.width).toBeGreaterThanOrEqual(48);
+  expect(kasten.height).toBeGreaterThanOrEqual(48);
+}
+
+async function schliesseDialog(seite: Page, name: string): Promise<void> {
+  const dialog = seite.getByRole('dialog', { name, exact: true });
+  await dialog.getByRole('button', { name: 'Schließen', exact: true }).click();
+  await expect(dialog).toBeHidden();
+}
+
+async function pruefeBossZeile(seite: Page, zeile: Locator, titel: string, mitMenue: boolean): Promise<void> {
+  await zeile.scrollIntoViewIfNeeded();
+  const oeffnen = zeile.getByRole('button', { name: titel, exact: true });
+  const weiter = zeile.getByRole('button', { name: 'Weiter', exact: true });
+  await expect(oeffnen).toBeVisible();
+  await mindestTreffer(weiter);
+  const boss = seite.getByRole('dialog', { name: 'Boss', exact: true });
+
+  if (mitMenue) {
+    const menue = zeile.getByRole('button', { name: `Aktionen für ${titel}`, exact: true });
+    await mindestTreffer(menue);
+    await menue.click();
+    await expect(seite.getByRole('menuitem', { name: 'Boss bearbeiten', exact: true })).toBeVisible();
+    await expect(boss).toHaveCount(0);
+    await seite.keyboard.press('Escape');
+    await expect(seite.getByRole('menu')).toHaveCount(0);
+  }
+
+  await tippeMitte(seite, zeile.getByText(titel, { exact: true }));
+  await expect(boss.locator('input[type="date"]')).toBeVisible();
+  await schliesseDialog(seite, 'Boss');
+
+  const kasten = await zeile.boundingBox();
+  expect(kasten).not.toBeNull();
+  if (!kasten) {
+    return;
+  }
+  await seite.mouse.click(kasten.x + 8, kasten.y + kasten.height / 2);
+  await expect(boss.locator('input[type="date"]')).toBeVisible();
+  await schliesseDialog(seite, 'Boss');
+
+  await oeffnen.focus();
+  await seite.keyboard.press('Shift+Tab');
+  await expect(oeffnen).not.toBeFocused();
+  await seite.keyboard.press('Tab');
+  await expect(oeffnen).toBeFocused();
+  await seite.keyboard.press('Enter');
+  await expect(boss.locator('input[type="date"]')).toBeVisible();
+  await schliesseDialog(seite, 'Boss');
+
+  await weiter.click();
+  const eintrag = seite.getByRole('dialog', { name: 'Was hast du getan?', exact: true });
+  await expect(eintrag).toBeVisible();
+  await expect(boss).toHaveCount(0);
+  await schliesseDialog(seite, 'Was hast du getan?');
+}
+
+test('die Boss-Zeile öffnet das Blatt, Weiter und Menü bleiben eigene Ziele', async ({ page }, testInfo) => {
+  const fund = await page.evaluate(async () => {
+    const laufend = (await fetch('/api/laufend').then((antwort) => antwort.json())) as {
+      bosse: { titel: string; projektId: number | null }[];
+    };
+    const boss = laufend.bosse.find((eintrag) => eintrag.titel === 'Erste Version raus' && eintrag.projektId !== null)
+      ?? laufend.bosse.find((eintrag) => eintrag.projektId !== null);
+    if (boss?.projektId == null) {
+      return null;
+    }
+    return { titel: boss.titel, projektId: boss.projektId };
+  });
+  expect(fund).not.toBeNull();
+  if (!fund) {
+    return;
+  }
+
+  const original = await leseFarben(page);
+  try {
+    await setzeFarben(page, { ...HELL, glimmen: original.glimmen });
+    await page.goto('/laufend');
+    await expect(page.getByRole('heading', { name: 'Laufend', level: 1 })).toBeVisible();
+    await expect(page.getByText('Lädt …')).toHaveCount(0);
+    await expect(page.locator('html')).toHaveAttribute('data-schema', 'light');
+    await expect(page.locator('html')).toHaveAttribute('data-stil', 'standard');
+    await warteAufHelleFlaeche(page);
+    await page.evaluate(() => document.fonts.ready);
+    const laufendZeile = page.locator('.zeile', { hasText: fund.titel }).first();
+    await expect(laufendZeile).toBeVisible();
+    if (testInfo.project.name === 'handy') {
+      fs.mkdirSync('tmp-test/boss-zeile', { recursive: true });
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.screenshot({ path: 'tmp-test/boss-zeile/nachher-390-laufend.png' });
+      await page.screenshot({ path: 'tmp-test/boss-zeile/nachher-390-laufend-ganz.png', fullPage: true });
+    }
+    await pruefeBossZeile(page, laufendZeile, fund.titel, false);
+
+    await page.goto(`/projekte/${fund.projektId}`);
+    await expect(page.getByText('Lädt …')).toHaveCount(0);
+    await expect(page.locator('html')).toHaveAttribute('data-schema', 'light');
+    await warteAufHelleFlaeche(page);
+    const projektZeile = page.locator('.rounded-2xl', { hasText: fund.titel }).first();
+    await expect(projektZeile).toBeVisible();
+    if (testInfo.project.name === 'handy') {
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.screenshot({ path: 'tmp-test/boss-zeile/nachher-390-projekt.png' });
+      await page.screenshot({ path: 'tmp-test/boss-zeile/nachher-390-projekt-ganz.png', fullPage: true });
+    }
+    await pruefeBossZeile(page, projektZeile, fund.titel, true);
+  } finally {
+    await stelleFarbenWiederHer(page, original);
+  }
+});

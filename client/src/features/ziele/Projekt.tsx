@@ -1,4 +1,4 @@
-import { feldLeer, tx, txMenge } from '../../text.ts';
+import { tx, txMenge } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CircleCheck, CircleX, Pencil, RotateCcw, Swords, Wind, Wrench } from 'lucide-react';
 import { useState, type FormEvent, type ReactNode } from 'react';
@@ -6,7 +6,7 @@ import { useParams } from 'react-router';
 import type { BasisAufgabe, Projekt, Vorlage, Vorhaben } from '../../../../shared/api/index.ts';
 import { GRENZEN, VORHABEN_STATUS_LABEL } from '../../../../shared/spiel/begriffe.ts';
 import { zielTitel } from '../../../../shared/spiel/ebenen.ts';
-import { BOSS_DATUM_INFO, NEUER_ANLAUF } from '../../../../shared/spiel/xp.ts';
+import { NEUER_ANLAUF } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { BasisFormular, BasisListe, useBasisAufgaben } from '../basis/Basis.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
@@ -21,6 +21,7 @@ import { KettenAnzeige } from '../../components/KettenAnzeige.tsx';
 import { ProjektInvestition } from '../investitionen/Investitionen.tsx';
 import { KopfAktion, useKopf } from '../../components/Kopf.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
+import { BossFormular } from '../bosse/BossFormular.tsx';
 import { BossRing } from '../bosse/BossRing.tsx';
 import {
   EINGABE_STIL,
@@ -38,7 +39,7 @@ import { TaetigkeitFormular, TaetigkeitMenue } from '../taetigkeiten/TaetigkeitF
 import { ZielDialog, type ZielBearbeitung } from './ZielDialoge.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
-import { bonusProzent, kurzesDatum, lokalesDatum, stunden as stundenText, zahl } from '../../format.ts';
+import { bonusProzent, kurzesDatum, stunden as stundenText, zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 
 function AbschlussMarke() {
@@ -505,7 +506,11 @@ function OffenesVorhaben({
   return (
     <>
       <SchnellZeile
-        className={`rounded-2xl border ${boss ? 'border-gefahr/40' : 'border-rand'}`}
+        className={`rounded-2xl border ${
+          boss
+            ? 'border-gefahr/40 [&_[data-schnell-menue]]:size-12 [&_[data-schnell-menue]]:-m-0.5'
+            : 'border-rand'
+        }`}
         eintraege={eintraege}
         onEintrag={(punkt) => {
           if (punkt.id === 'umbenennen') {
@@ -522,16 +527,42 @@ function OffenesVorhaben({
         ziel={{ art: 'vorhaben', id: vorhaben.id, name: vorhaben.titel, loeschbar: vorhaben.loeschbar }}
       >
         {(menue) => (
-          <div className="bg-flaeche px-4 py-3">
+          <div
+            className={`bg-flaeche px-4 py-3 ${boss ? 'focus-visible:outline-offset-[-2px]' : ''}`}
+            role={boss ? 'button' : undefined}
+            tabIndex={boss ? 0 : undefined}
+            aria-label={boss ? vorhaben.titel : undefined}
+            onClick={boss ? onBoss : undefined}
+            onKeyDown={
+              boss
+                ? (ereignis) => {
+                    if (ereignis.target !== ereignis.currentTarget) {
+                      return;
+                    }
+                    if (ereignis.key === 'Enter' || ereignis.key === ' ') {
+                      ereignis.preventDefault();
+                      onBoss();
+                    }
+                  }
+                : undefined
+            }
+          >
             <div className="flex items-center gap-3">
               {boss && <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />}
-              <div className="min-w-0 flex-1">
+              <div className={`min-w-0 flex-1 ${boss ? 'pointer-events-none' : ''}`}>
                 <p className="truncate text-base leading-6">{vorhaben.titel}</p>
                 {boss && <p className="truncate text-xs text-leise">{bossZeile(boss)}</p>}
                 <VorhabenKennzahlen vorhaben={vorhaben} ohneXp={boss !== null} />
               </div>
               {menue}
-              <Knopf className="shrink-0 px-3 py-1.5" data-schnell-frei="" onClick={onWeiter}>
+              <Knopf
+                className="shrink-0 px-3 py-1.5"
+                data-schnell-frei=""
+                onClick={(ereignis) => {
+                  ereignis.stopPropagation();
+                  onWeiter();
+                }}
+              >
                 {tx('Weiter')}
               </Knopf>
             </div>
@@ -564,77 +595,6 @@ function OffenesVorhaben({
         </Formular>
       </Dialog>
     </>
-  );
-}
-
-function BossFormular({ vorhaben, onFertig }: { vorhaben: Vorhaben; onFertig: () => void }) {
-  const queryClient = useQueryClient();
-  const heute = lokalesDatum(new Date());
-  const [deadline, setDeadline] = useState(vorhaben.boss?.deadline ?? '');
-  const [datumFehler, setDatumFehler] = useState<string | null>(null);
-  const deadlineGueltig = /^\d{4}-\d{2}-\d{2}$/.test(deadline);
-  const minDatum = deadlineGueltig && deadline < heute ? deadline : heute;
-
-  const speichern = useMutation({
-    mutationFn: (beenden: boolean) =>
-      api.aendereVorhaben(vorhaben.id, {
-        boss: beenden ? null : { deadline },
-      }),
-    onSuccess: () => {
-      void queryClient.invalidateQueries();
-      onFertig();
-    },
-  });
-
-  const absenden = (ereignis: FormEvent) => {
-    ereignis.preventDefault();
-    if (!deadlineGueltig) {
-      setDatumFehler(feldLeer('Deadline'));
-      return;
-    }
-    if (speichern.isPending) {
-      return;
-    }
-    setDatumFehler(null);
-    speichern.mutate(false);
-  };
-
-  return (
-    <Formular onAbsenden={absenden}>
-      <p className="font-medium">{vorhaben.titel}</p>
-      <Feld
-        label={
-          <span className="inline-flex items-center">
-            {tx("Deadline")}
-            <InfoHinweis name="Deadline" text={BOSS_DATUM_INFO} />
-          </span>
-        }
-        fehler={datumFehler}
-      >
-        <input
-          type="date"
-          min={minDatum}
-          className={EINGABE_STIL}
-          value={deadline}
-          onChange={(ereignis) => {
-            setDeadline(ereignis.target.value);
-            setDatumFehler(null);
-          }}
-          autoFocus
-        />
-      </Feld>
-      <Fehlermeldung fehler={speichern.error} />
-      <div className="flex gap-2">
-        {vorhaben.boss && (
-          <Knopf variante="gefahr" onClick={() => speichern.mutate(true)} disabled={speichern.isPending}>
-            {tx("Kein Boss mehr")}
-          </Knopf>
-        )}
-        <Knopf type="submit" variante="primaer" className="flex-1" aria-busy={speichern.isPending || undefined}>
-          {tx("Speichern")}
-        </Knopf>
-      </div>
-    </Formular>
   );
 }
 

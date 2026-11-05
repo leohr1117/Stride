@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.75
+
+### Behoben
+
+- Bosse öffnen sich in Laufend und auf der Projektseite durch Tippen auf die ganze Zeile.
+
 ## 3.56.74
 
 ### Behoben

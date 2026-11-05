@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Bosse öffnen sich in Laufend und auf der Projektseite durch Tippen auf die ganze Zeile.', 'Bosses open in Active and on the project page by tapping the whole row.'],
   ['Kennzahlen auf Heute stehen mittig in gleich breiten Spalten.', 'On Today, the figures sit centered in columns of equal width.'],
   ['Die Mitte von Symbolen, Zahlen und Texten wird geprüft. Die Oberfläche bleibt gleich.', 'The centering of symbols, numbers, and text is checked. The surface stays the same.'],
   ['In der Basis, bei Bossen und auf Laufend stehen die Symbole der Zeilen in einer Spalte und mittig am Text.', 'In Basics, for bosses, and on Active, the row symbols sit in one column and are centered on the text.'],

@@ -1,12 +1,15 @@
 import { tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import type { VorhabenMitProjekt } from '../../../../shared/api/index.ts';
 import { zielTitel } from '../../../../shared/spiel/ebenen.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
+import { Dialog } from '../../components/Dialog.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { Liste, Zeile } from '../../components/Zeile.tsx';
+import { BossFormular } from '../bosse/BossFormular.tsx';
 import { BossRing } from '../bosse/BossRing.tsx';
 import { Fehlermeldung, Knopf, Ladeanzeige, Leer, Ueberschrift } from '../../ui/index.ts';
 import { bossZeile, VorhabenKennzahlen } from '../../components/VorhabenInfo.tsx';
@@ -16,6 +19,7 @@ export function LaufendSeite() {
   const bosseAn = istAn('bossAngriffe', sichtbarkeit);
   const projekteAn = istAn('projekte', sichtbarkeit);
   const { data: laufendes, error, isPending } = useQuery({ queryKey: SCHLUESSEL.laufendes, queryFn: api.laufendes });
+  const [bossBlatt, setBossBlatt] = useState<VorhabenMitProjekt | null>(null);
 
   if (isPending) {
     return <Ladeanzeige />;
@@ -37,7 +41,13 @@ export function LaufendSeite() {
           <Ueberschrift titel={tx('Bosse')} className="gruppen-kopf" />
           <Liste className="symbol-liste">
             {bosse.map((eintrag) => (
-              <LaufendesVorhaben key={eintrag.id} vorhaben={eintrag} zeigeBoss projekteAn={projekteAn} />
+              <LaufendesVorhaben
+                key={eintrag.id}
+                vorhaben={eintrag}
+                zeigeBoss
+                projekteAn={projekteAn}
+                onBoss={() => setBossBlatt(eintrag)}
+              />
             ))}
           </Liste>
         </section>
@@ -53,6 +63,9 @@ export function LaufendSeite() {
           </Liste>
         </section>
       )}
+      <Dialog offen={bossBlatt !== null} titel={tx('Boss')} onSchliessen={() => setBossBlatt(null)}>
+        {bossBlatt && <BossFormular key={bossBlatt.id} vorhaben={bossBlatt} onFertig={() => setBossBlatt(null)} />}
+      </Dialog>
     </div>
   );
 }
@@ -61,10 +74,12 @@ function LaufendesVorhaben({
   vorhaben,
   zeigeBoss,
   projekteAn,
+  onBoss,
 }: {
   vorhaben: VorhabenMitProjekt;
   zeigeBoss: boolean;
   projekteAn: boolean;
+  onBoss?: () => void;
 }) {
   const eintragOeffnen = useEintragOeffnen();
   const boss = zeigeBoss ? vorhaben.boss : null;
@@ -78,8 +93,9 @@ function LaufendesVorhaben({
 
   if (boss) {
     return (
-      <div className="zeile symbol-zeile flex min-h-12 items-center gap-3 px-4 py-3">
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+      <div className="zeile symbol-zeile relative flex min-h-12 items-center gap-3 px-4 py-3">
+        <button type="button" className="absolute inset-0 z-0" aria-label={vorhaben.titel} onClick={onBoss} />
+        <div className="pointer-events-none flex min-w-0 flex-1 items-center gap-3">
           <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />
           <div className="zeilen-text min-w-0 flex-1">
             <p className="truncate text-base leading-6">{vorhaben.titel}</p>
@@ -90,7 +106,7 @@ function LaufendesVorhaben({
             <VorhabenKennzahlen vorhaben={vorhaben} ohneXp />
           </div>
         </div>
-        <Knopf className="shrink-0" data-schnell-frei="" onClick={weiter}>
+        <Knopf className="relative z-10 shrink-0" data-schnell-frei="" onClick={weiter}>
           {tx('Weiter')}
         </Knopf>
       </div>
