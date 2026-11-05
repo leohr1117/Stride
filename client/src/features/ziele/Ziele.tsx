@@ -152,7 +152,7 @@ export function ZieleSeite() {
 
       {gliederung.visionen.map((ast) => (
         <section key={ast.vision.id}>
-          <Liste>
+          <Liste className={ast.vision.level !== null ? 'menue-spalte' : ''}>
             <VisionKopf vision={ast.vision} onOeffnen={() => setDetailId(ast.vision.id)} />
             {ast.direkte.map((projekt) => (
               <div key={projekt.id} data-ast="vision">

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.65
+
+### Behoben
+
+- Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.
+
 ## 3.56.64
 
 ### Behoben
