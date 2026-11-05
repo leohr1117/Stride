@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.66
+
+### Verbessert
+
+- Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.
+
 ## 3.56.65
 
 ### Behoben

@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "在目标中，「新建」按钮是实心的，前面有一个加号。",
   "Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.": "在目标中，愿景的等级与项目的等级在同一列。",
   "Auf Ziele beginnt die Nebenzeile eines Projekts mit den Tagen in Folge. Rechts steht nur das Level.": "在目标中，项目的第二行以连续天数开头。右边只保留等级。",
   "Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.": "在「今天」上，通知的按钮并排，样子和对话框里的按钮一样。",

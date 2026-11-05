@@ -111,15 +111,16 @@ export function ZieleSeite() {
     <div className="space-y-6">
       {neuPunkte.length > 0 && (
         <KopfAktion>
-          <button
-            type="button"
-            className="inline-flex h-12 items-center px-3 text-base font-medium text-haupt"
+          <Knopf
+            variante="primaer"
+            className="h-[36px]! min-h-[36px]! rounded-full! py-0! text-[14px]! whitespace-nowrap"
             aria-haspopup="menu"
             aria-expanded={menue !== null}
             onClick={(ereignis) => oeffneMenue(ereignis.currentTarget)}
           >
+            <Plus className="size-4! shrink-0" aria-hidden="true" />
             {tx('Neu')}
-          </button>
+          </Knopf>
         </KopfAktion>
       )}
       {menue && (

@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "目標では、「新規」ボタンが塗りつぶしになり、前にプラスが付きます。",
   "Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.": "目標では、ビジョンのレベルがプロジェクトのレベルと同じ列に並びます。",
   "Auf Ziele beginnt die Nebenzeile eines Projekts mit den Tagen in Folge. Rechts steht nur das Level.": "目標では、プロジェクトの2行目が連続日数から始まります。右にはレベルだけが残ります。",
   "Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.": "「今日」では、通知のボタンが横に並び、ダイアログのボタンと同じ見た目です。",

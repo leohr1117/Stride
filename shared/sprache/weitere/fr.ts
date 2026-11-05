@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "Dans Objectifs, le bouton Nouveau est plein et a un signe plus devant.",
   "Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.": "Dans Objectifs, les niveaux des visions sont dans la même colonne que ceux des projets.",
   "Auf Ziele beginnt die Nebenzeile eines Projekts mit den Tagen in Folge. Rechts steht nur das Level.": "Dans Objectifs, la deuxième ligne d'un projet commence par les jours d'affilée. À droite, il ne reste que le niveau.",
   "Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.": "Sur Aujourd'hui, les boutons de la notification sont côte à côte et ressemblent à ceux des dialogues.",

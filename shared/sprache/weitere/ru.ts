@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "В «Целях» кнопка «Новое» залита и перед ней стоит плюс.",
   "Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.": "В «Целях» уровни видений стоят в том же столбце, что и уровни проектов.",
   "Auf Ziele beginnt die Nebenzeile eines Projekts mit den Tagen in Folge. Rechts steht nur das Level.": "В «Целях» вторая строка проекта начинается с дней подряд. Справа остаётся только уровень.",
   "Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.": "На «Сегодня» кнопки уведомления стоят рядом и выглядят как кнопки в диалогах.",

@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "En Metas, el botón Nuevo está relleno y tiene un signo más delante.",
   "Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.": "En Metas, los niveles de las visiones quedan en la misma columna que los niveles de los proyectos.",
   "Auf Ziele beginnt die Nebenzeile eines Projekts mit den Tagen in Folge. Rechts steht nur das Level.": "En Metas, la segunda línea de un proyecto empieza con los días seguidos. A la derecha solo queda el nivel.",
   "Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.": "En Hoy, los botones del aviso están uno al lado del otro y se ven como los de los diálogos.",
