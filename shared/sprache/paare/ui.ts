@@ -550,6 +550,7 @@ export const PAARE = [
   ['Keins', 'None'],
   ['Level aufgestiegen', 'Level up'],
   ['Loslassen', 'Let go'],
+  ['Admin', 'Admin'],
   ['Mitglied', 'Member'],
   ['Name', 'Name'],
   ['Nichts am Laufen.', 'Nothing in progress.'],

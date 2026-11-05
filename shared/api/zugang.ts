@@ -14,10 +14,9 @@ export interface Konto {
   id: number;
   benutzername: string;
   rolle: Rolle;
+  /** Wahr, wenn der Benutzername der Admin aus der Umgebung ist. */
+  admin: boolean;
 }
 
-/** Konto in der Admin-Liste. Ohne Rolle und ohne Welt, nur zum Umbenennen. */
-export interface AdminKonto {
-  id: number;
-  benutzername: string;
-}
+/** Öffentliche Zeile der Admin-Liste. Dieselben Felder wie Konto, ohne Welt. */
+export type AdminKonto = Konto;

@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.": "在账号里，每一行的第二行显示用户名和角色。",
   "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "在榜样里，你的那一行位于单独的表面上。方向在左右两侧留出间距。",
   "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "指南里的表格都留在宽度之内。等级表显示等级、XP 和时长，下面的说明写出每天的 XP。榜样以列表显示方向和等级。",
   "In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.": "在统计中，所选时段的文字更粗。坐标轴使用整齐的刻度，活动和项目的条形一样高。",
@@ -1777,6 +1778,7 @@ export const TEXTE: Record<string, string> = {
   "Keins": "无",
   "Level aufgestiegen": "等级提升",
   "Loslassen": "放下",
+  "Admin": "管理员",
   "Mitglied": "成员",
   "Name": "名称",
   "Nichts am Laufen.": "现在没有在进行的。",

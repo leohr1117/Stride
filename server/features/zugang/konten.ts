@@ -5,7 +5,7 @@ import { KONFIG } from '../../config.ts';
 import { mitWelt, schliesseWelt } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { aendereEinstellungen } from '../einstellungen/einstellungen.ts';
-import { legeBenutzerAn, listeKonten, loescheBenutzer, loeseWeltdatei, setzeWeltdatei } from './zugang.ts';
+import { istAdminName, legeBenutzerAn, listeKonten, loescheBenutzer, loeseWeltdatei, setzeWeltdatei } from './zugang.ts';
 
 const NEBEN_DATEIEN = ['', '-wal', '-shm', '-journal'];
 
@@ -13,8 +13,17 @@ export function hauptweltdatei(): string {
   return path.basename(KONFIG.datenbankPfad);
 }
 
+function zeigeKonto(konto: { id: number; benutzername: string; rolle: Konto['rolle'] }): Konto {
+  return {
+    id: konto.id,
+    benutzername: konto.benutzername,
+    rolle: konto.rolle,
+    admin: istAdminName(konto.benutzername),
+  };
+}
+
 export function konten(): Konto[] {
-  return listeKonten().map(({ id, benutzername, rolle }) => ({ id, benutzername, rolle }));
+  return listeKonten().map(zeigeKonto);
 }
 
 function entferneDatei(absolut: string): void {
@@ -44,7 +53,7 @@ export function erstelleMitglied(daten: { benutzername: string; passwort: string
     loescheBenutzer(angelegt.id);
     throw fehler;
   }
-  return { id: angelegt.id, benutzername: angelegt.benutzername, rolle: angelegt.rolle };
+  return zeigeKonto(angelegt);
 }
 
 export function entferneKonto(id: number): void {

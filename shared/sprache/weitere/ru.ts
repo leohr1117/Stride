@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.": "В разделе «Аккаунты» каждая строка показывает имя пользователя и роль во второй строке.",
   "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "В разделе «Ориентиры» строка «Ты» стоит на отдельной поверхности. У направлений есть отступ слева и справа.",
   "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "В справке таблицы остаются в пределах ширины. Таблица уровней показывает уровень, XP и длительность, а примечание под ней называет XP в день. Ориентиры стоят списком с направлением и уровнем.",
   "In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.": "В разделе «Статистика» выбранный период написан жирнее. Оси идут ровными шагами, а полосы занятий и проектов одной высоты.",
@@ -1777,6 +1778,7 @@ export const TEXTE: Record<string, string> = {
   "Keins": "Нет",
   "Level aufgestiegen": "Уровень вырос",
   "Loslassen": "Отпустить",
+  "Admin": "Администратор",
   "Mitglied": "Участник",
   "Name": "Имя",
   "Nichts am Laufen.": "Сейчас пусто.",

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.51
+
+### Geändert
+
+- Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.
+
 ## 3.56.50
 
 ### Geändert

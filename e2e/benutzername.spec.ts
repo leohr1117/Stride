@@ -5,6 +5,18 @@ import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 interface AdminKonto {
   id: number;
   benutzername: string;
+  rolle: 'inhaber' | 'mitglied';
+  admin: boolean;
+}
+
+function rollenWort(konto: AdminKonto): string {
+  if (konto.rolle === 'inhaber') {
+    return 'Inhaber';
+  }
+  if (konto.admin) {
+    return 'Admin';
+  }
+  return 'Mitglied';
 }
 
 function passwortVon(name: string): string {
@@ -97,7 +109,10 @@ test('Nutzer ändert den eigenen Namen nicht, nur der Admin', async ({ page, req
     await expect(page).toHaveURL(/\/mehr\/profil\/accounts$/);
     await expect(page.getByRole('heading', { name: 'Accounts', exact: true })).toBeVisible();
     for (const konto of konten) {
-      await expect(page.getByText(konto.benutzername, { exact: true }).first()).toBeVisible();
+      const zeile = page.locator('.zeile', { has: page.getByText(konto.benutzername, { exact: true }) });
+      await expect(zeile).toHaveCount(1);
+      await expect(zeile).toContainText(`${konto.benutzername} · ${rollenWort(konto)}`);
+      await expect(zeile).toHaveAttribute('data-zeilen', '2');
     }
     await expect(page.getByRole('button', { name: 'Account anlegen' })).toHaveCount(0);
     const kontoZeile = page.locator('.zeile', { hasText: 'testteil' }).first();

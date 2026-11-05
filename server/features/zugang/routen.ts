@@ -11,7 +11,6 @@ import {
   istGesperrt,
   kontenSichtbar,
   legeBenutzerAn,
-  listeKonten,
   merkeFehlversuch,
   oeffneSitzung,
   passwortDerSitzungStimmt,
@@ -214,7 +213,7 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
 
   app.get('/zugang/admin/konten', async (anfrage) => {
     fordereAdmin(leseSitzungsToken(anfrage.headers.cookie));
-    return listeKonten().map(({ id, benutzername }) => ({ id, benutzername }));
+    return konten();
   });
 
   app.post('/zugang/admin/konten/:id/benutzername', async (anfrage) => {
@@ -222,11 +221,11 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
     const { id } = idParameter.parse(anfrage.params);
     const { benutzername } = benutzernameSchema.parse(anfrage.body);
     benenneBenutzer(id, benutzername);
-    const konto = listeKonten().find((eintrag) => eintrag.id === id);
+    const konto = konten().find((eintrag) => eintrag.id === id);
     if (!konto) {
       throw new AppFehler(404, 'Der Account existiert nicht.');
     }
-    return { id: konto.id, benutzername: konto.benutzername };
+    return konto;
   });
 
   app.get('/zugang/konten', async (anfrage) => {

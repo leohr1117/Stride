@@ -369,12 +369,12 @@ describe('admin', () => {
         payload: { benutzername: 'Berta' },
       });
       expect(ok.statusCode).toBe(200);
-      expect(ok.json()).toEqual({ id: bob.id, benutzername: 'Berta' });
+      expect(ok.json()).toEqual({ id: bob.id, benutzername: 'Berta', rolle: 'mitglied', admin: false });
       const liste = await app.inject({ method: 'GET', url: '/api/zugang/admin/konten', headers: cookie(token) });
       expect(liste.statusCode).toBe(200);
       expect(liste.json()).toEqual([
-        { id: ada.id, benutzername: 'Ada' },
-        { id: bob.id, benutzername: 'Berta' },
+        { id: ada.id, benutzername: 'Ada', rolle: 'mitglied', admin: true },
+        { id: bob.id, benutzername: 'Berta', rolle: 'mitglied', admin: false },
       ]);
     });
     expect(listeKonten().find((konto) => konto.id === ada.id)?.benutzername).toBe('Ada');

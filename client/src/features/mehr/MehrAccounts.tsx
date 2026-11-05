@@ -11,17 +11,23 @@ import { BenutzernameDialog, type BenutzernameZiel } from './MehrBenutzerAdmin.t
 import { Bereich, PROFIL_ZURUECK } from './rahmen.tsx';
 
 interface AccountZeile {
-  id: number;
   benutzername: string;
-  rolle?: Rolle;
+  rolle: Rolle;
+  admin: boolean;
 }
 
-function nebenzeile(konto: AccountZeile): string | undefined {
-  if (!konto.rolle) {
-    return undefined;
+function rollenWort(konto: AccountZeile): string {
+  if (konto.rolle === 'inhaber') {
+    return tx('Inhaber');
   }
-  const rolle = konto.rolle === 'inhaber' ? tx('Inhaber') : tx('Mitglied');
-  return `${konto.benutzername} · ${rolle}`;
+  if (konto.admin) {
+    return tx('Admin');
+  }
+  return tx('Mitglied');
+}
+
+function nebenzeile(konto: AccountZeile): string {
+  return `${konto.benutzername} · ${rollenWort(konto)}`;
 }
 
 export function AccountsBereich() {
@@ -79,9 +85,7 @@ export function AccountsBereich() {
     return <Bereich titel={tx('Accounts')} zurueck={PROFIL_ZURUECK} kinder={<Fehlermeldung fehler={listeFehler} />} />;
   }
 
-  const konten: AccountZeile[] = inhaber
-    ? (kontenQuery.data ?? []).map((konto) => ({ id: konto.id, benutzername: konto.benutzername, rolle: konto.rolle }))
-    : (adminQuery.data ?? []).map((konto) => ({ id: konto.id, benutzername: konto.benutzername }));
+  const konten = inhaber ? (kontenQuery.data ?? []) : (adminQuery.data ?? []);
 
   return (
     <Bereich
@@ -100,7 +104,7 @@ export function AccountsBereich() {
                   art: 'konto',
                   id: konto.id,
                   name: konto.benutzername,
-                  gesperrt: konto.rolle === undefined || konto.rolle === 'inhaber',
+                  gesperrt: !(inhaber && konto.rolle === 'mitglied'),
                 }}
               >
                 {(menue) => (
