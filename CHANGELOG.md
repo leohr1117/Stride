@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.58
+
+### Behoben
+
+- Bei offenen Bossen sitzt das Schwert mittig im Ring. Ein voller Ring hat oben keine Lücke.
+
 ## 3.56.57
 
 ### Behoben

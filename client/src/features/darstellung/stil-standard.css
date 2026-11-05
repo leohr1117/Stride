@@ -164,7 +164,7 @@ html[data-stil='standard'] body {
   border-top-color: var(--trenner);
 }
 
-:root[data-stil='standard'] :is([data-zurueck], .mobilleiste a, .seitenleiste a, .zeile) svg.lucide {
+:root[data-stil='standard'] :is([data-zurueck], .mobilleiste a, .seitenleiste a, .zeile) svg.lucide:not(.boss-symbol) {
   width: 20px;
   height: 20px;
   stroke-width: 1.75;

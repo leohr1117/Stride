@@ -1,3 +1,4 @@
+import { inflateSync } from 'node:zlib';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import fs from 'node:fs';
 import { kontrast } from '../shared/spiel/farben.ts';
@@ -504,5 +505,343 @@ test('offene Boss-Zeilen zeigen denselben Ring', async ({ page }, testInfo) => {
     } else {
       await setzeFarben(page, { stil: original.stil, glimmen: original.glimmen, farbenZuruecksetzen: true });
     }
+  }
+});
+
+interface RingBild {
+  breite: number;
+  hoehe: number;
+  pixel: Uint8Array;
+}
+
+interface SchwertMitte {
+  dx: number;
+  dy: number;
+  kreisDx: number;
+  kreisDy: number;
+  svgDy: number;
+  breite: number;
+  ring: number;
+  voll: boolean;
+  strich: number;
+}
+
+function paeth(links: number, oben: number, obenLinks: number): number {
+  const p = links + oben - obenLinks;
+  const pa = Math.abs(p - links);
+  const pb = Math.abs(p - oben);
+  const pc = Math.abs(p - obenLinks);
+  if (pa <= pb && pa <= pc) {
+    return links;
+  }
+  if (pb <= pc) {
+    return oben;
+  }
+  return obenLinks;
+}
+
+function pngLesen(png: Buffer): RingBild {
+  let offset = 8;
+  let breite = 0;
+  let hoehe = 0;
+  let typ = 0;
+  let tiefe = 0;
+  const teile: Buffer[] = [];
+  while (offset + 8 <= png.length) {
+    const laenge = png.readUInt32BE(offset);
+    const art = png.toString('ascii', offset + 4, offset + 8);
+    const daten = png.subarray(offset + 8, offset + 8 + laenge);
+    if (art === 'IHDR') {
+      breite = daten.readUInt32BE(0);
+      hoehe = daten.readUInt32BE(4);
+      tiefe = daten[8] ?? 0;
+      typ = daten[9] ?? 0;
+    } else if (art === 'IDAT') {
+      teile.push(daten);
+    } else if (art === 'IEND') {
+      break;
+    }
+    offset += 12 + laenge;
+  }
+  if (tiefe !== 8 || (typ !== 2 && typ !== 6)) {
+    throw new Error(`PNG nicht lesbar: Tiefe ${tiefe}, Typ ${typ}`);
+  }
+  const kanaele = typ === 6 ? 4 : 3;
+  const roh = inflateSync(Buffer.concat(teile));
+  const schritt = breite * kanaele;
+  const pixel = new Uint8Array(breite * hoehe * 4);
+  let quelle = 0;
+  let vorher = new Uint8Array(schritt);
+  for (let y = 0; y < hoehe; y += 1) {
+    const filter = roh[quelle] ?? 0;
+    quelle += 1;
+    const zeile = new Uint8Array(schritt);
+    for (let i = 0; i < schritt; i += 1) {
+      const wert = roh[quelle + i] ?? 0;
+      const links = i >= kanaele ? (zeile[i - kanaele] ?? 0) : 0;
+      const oben = vorher[i] ?? 0;
+      const obenLinks = i >= kanaele ? (vorher[i - kanaele] ?? 0) : 0;
+      if (filter === 0) {
+        zeile[i] = wert;
+      } else if (filter === 1) {
+        zeile[i] = (wert + links) & 255;
+      } else if (filter === 2) {
+        zeile[i] = (wert + oben) & 255;
+      } else if (filter === 3) {
+        zeile[i] = (wert + Math.floor((links + oben) / 2)) & 255;
+      } else if (filter === 4) {
+        zeile[i] = (wert + paeth(links, oben, obenLinks)) & 255;
+      } else {
+        throw new Error(`PNG-Filter ${filter}`);
+      }
+    }
+    quelle += schritt;
+    vorher = zeile;
+    for (let x = 0; x < breite; x += 1) {
+      const i = x * kanaele;
+      const ziel = (y * breite + x) * 4;
+      pixel[ziel] = zeile[i] ?? 0;
+      pixel[ziel + 1] = zeile[i + 1] ?? 0;
+      pixel[ziel + 2] = zeile[i + 2] ?? 0;
+      pixel[ziel + 3] = kanaele === 4 ? (zeile[i + 3] ?? 0) : 255;
+    }
+  }
+  return { breite, hoehe, pixel };
+}
+
+function pixelRot(pixel: Uint8Array, index: number): boolean {
+  const rot = pixel[index] ?? 0;
+  const gruen = pixel[index + 1] ?? 0;
+  const blau = pixel[index + 2] ?? 0;
+  const alpha = pixel[index + 3] ?? 0;
+  return alpha > 140 && rot > 90 && rot > gruen + 20 && rot > blau + 20;
+}
+
+function roteInnen(
+  bild: RingBild,
+  mitteX: number,
+  mitteY: number,
+  innen: number,
+  radius: number,
+): { dx: number; dy: number; sx: number; sy: number; anzahl: number; geschlossen: boolean } {
+  const { breite, hoehe, pixel } = bild;
+  let summeX = 0;
+  let summeY = 0;
+  let anzahl = 0;
+  for (let y = 0; y < hoehe; y += 1) {
+    for (let x = 0; x < breite; x += 1) {
+      const abX = x + 0.5 - mitteX;
+      const abY = y + 0.5 - mitteY;
+      if (abX * abX + abY * abY > innen * innen) {
+        continue;
+      }
+      const index = (y * breite + x) * 4;
+      if (!pixelRot(pixel, index)) {
+        continue;
+      }
+      summeX += x + 0.5;
+      summeY += y + 0.5;
+      anzahl += 1;
+    }
+  }
+  if (anzahl < 40) {
+    throw new Error(`Zu wenig rote Pixel im Ring: ${anzahl}`);
+  }
+  const px = Math.min(breite - 1, Math.max(0, Math.floor(mitteX)));
+  const py = Math.min(hoehe - 1, Math.max(0, Math.floor(mitteY - radius)));
+  let geschlossen = true;
+  for (const versatz of [-2, 0, 2]) {
+    const x = Math.min(breite - 1, Math.max(0, px + versatz));
+    if (!pixelRot(pixel, (py * breite + x) * 4)) {
+      geschlossen = false;
+    }
+  }
+  const sx = summeX / anzahl - mitteX;
+  const sy = summeY / anzahl - mitteY;
+  return {
+    dx: Math.abs(sx),
+    dy: Math.abs(sy),
+    sx,
+    sy,
+    anzahl,
+    geschlossen,
+  };
+}
+
+async function ringAufnahme(
+  seite: Page,
+  ring: Locator,
+  strich: number,
+): Promise<{ bild: RingBild; mitteX: number; mitteY: number; innen: number; radius: number }> {
+  const kasten = await ring.boundingBox();
+  const sicht = seite.viewportSize();
+  if (!kasten || !sicht) {
+    throw new Error('Ring nicht messbar');
+  }
+  const rand = 8;
+  const x = Math.max(0, kasten.x - rand);
+  const y = Math.max(0, kasten.y - rand);
+  const rechts = Math.min(sicht.width, kasten.x + kasten.width + rand);
+  const unten = Math.min(sicht.height, kasten.y + kasten.height + rand);
+  const clip = { x, y, width: Math.max(1, rechts - x), height: Math.max(1, unten - y) };
+  const bild = pngLesen(await seite.screenshot({ clip }));
+  const massstabX = bild.breite / clip.width;
+  const massstabY = bild.hoehe / clip.height;
+  const mitteX = (kasten.x - x + kasten.width / 2) * massstabX;
+  const mitteY = (kasten.y - y + kasten.height / 2) * massstabY;
+  return {
+    bild,
+    mitteX,
+    mitteY,
+    innen: ((kasten.width / 2 - strich - 3) / kasten.width) * kasten.width * massstabX,
+    radius: ((kasten.width - strich) / 2) * massstabY,
+  };
+}
+
+async function missMitte(ring: Locator): Promise<SchwertMitte> {
+  return ring.evaluate((element) => {
+    const kreis = element.querySelector('circle.bossring-bogen');
+    const schwert = element.querySelector('.boss-symbol');
+    if (!(kreis instanceof SVGCircleElement) || !(schwert instanceof SVGElement)) {
+      throw new Error('Ring oder Schwert fehlt');
+    }
+    const kasten = kreis.getBoundingClientRect();
+    const elementKasten = element.getBoundingClientRect();
+    const kx = kasten.left + kasten.width / 2;
+    const ky = kasten.top + kasten.height / 2;
+    const pfade = [...schwert.querySelectorAll('path')];
+    if (pfade.length === 0) {
+      throw new Error('Schwert ohne Pfad');
+    }
+    let links = Number.POSITIVE_INFINITY;
+    let oben = Number.POSITIVE_INFINITY;
+    let rechts = Number.NEGATIVE_INFINITY;
+    let unten = Number.NEGATIVE_INFINITY;
+    for (const pfad of pfade) {
+      const box = pfad.getBoundingClientRect();
+      links = Math.min(links, box.left);
+      oben = Math.min(oben, box.top);
+      rechts = Math.max(rechts, box.right);
+      unten = Math.max(unten, box.bottom);
+    }
+    const schwertKasten = schwert.getBoundingClientRect();
+    const stil = getComputedStyle(kreis);
+    const px = (links + rechts) / 2;
+    const py = (oben + unten) / 2;
+    const sx = schwertKasten.left + schwertKasten.width / 2;
+    const sy = schwertKasten.top + schwertKasten.height / 2;
+    return {
+      dx: Math.abs(px - kx),
+      dy: py - ky,
+      kreisDx: Math.abs(kx - (elementKasten.left + elementKasten.width / 2)),
+      kreisDy: ky - (elementKasten.top + elementKasten.height / 2),
+      svgDy: sy - ky,
+      breite: schwertKasten.width,
+      ring: elementKasten.width,
+      voll: kreis.getAttribute('stroke-dasharray') === null && stil.strokeDasharray === 'none',
+      strich: Number.parseFloat(stil.strokeWidth),
+    };
+  });
+}
+
+async function stelleFarbenWiederHer(seite: Page, original: Farbstand): Promise<void> {
+  if (original.eigeneFarben) {
+    await setzeFarben(seite, {
+      stil: original.stil,
+      primaer: original.primaer,
+      akzent: original.akzent,
+      hintergrund: original.hintergrund,
+      glimmen: original.glimmen,
+    });
+    return;
+  }
+  await setzeFarben(seite, { stil: original.stil, glimmen: original.glimmen, farbenZuruecksetzen: true });
+}
+
+test('Schwert und Kreis haben dieselbe Mitte', async ({ page }, testInfo) => {
+  test.setTimeout(180_000);
+  const fund = await page.evaluate(async () => {
+    const laufend = (await fetch('/api/laufend').then((antwort) => antwort.json())) as {
+      bosse: { titel: string; projektId: number | null; boss: { phase: string } | null }[];
+    };
+    const boss = laufend.bosse.find((eintrag) => eintrag.boss?.phase === 'erwacht' && eintrag.projektId !== null);
+    if (boss?.projektId == null) {
+      return null;
+    }
+    return { titel: boss.titel, projektId: boss.projektId };
+  });
+  expect(fund).not.toBeNull();
+  if (!fund) {
+    return;
+  }
+  const orte = [
+    { pfad: '/', rahmen: '.zeile' },
+    { pfad: '/laufend', rahmen: '.zeile' },
+    { pfad: `/projekte/${fund.projektId}`, rahmen: '.rounded-2xl' },
+  ];
+  const original = await leseFarben(page);
+  let lupe = false;
+  try {
+    for (const breite of [390, 1280]) {
+      await page.setViewportSize({ width: breite, height: breite === 390 ? 844 : 900 });
+      for (const thema of [HELL, DUNKEL]) {
+        await setzeFarben(page, { ...thema, glimmen: original.glimmen });
+        for (const ort of orte) {
+          await page.goto(ort.pfad);
+          await expect
+            .poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--grund').trim().toLowerCase()))
+            .toBe(thema.hintergrund);
+          const ring = page.locator(ort.rahmen, { hasText: fund.titel }).locator('[data-boss-ring]').first();
+          await expect(ring).toBeVisible();
+          await ring.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
+          const masse = await missMitte(ring);
+          expect(masse.dx, `Pfad x ${masse.dx}`).toBeLessThanOrEqual(0.5);
+          expect(Math.abs(masse.dy), `Pfad y ${masse.dy} Svg y ${masse.svgDy} Kreis y ${masse.kreisDy}`).toBeLessThanOrEqual(0.5);
+          expect(masse.kreisDx, `Kreis x ${masse.kreisDx}`).toBeLessThanOrEqual(0.5);
+          expect(Math.abs(masse.kreisDy), `Kreis y ${masse.kreisDy}`).toBeLessThanOrEqual(0.5);
+          expect(masse.breite).toBeCloseTo(RING_D / 2, 0);
+          expect(masse.voll).toBe(true);
+          expect(masse.strich).toBeCloseTo(RING_D * 0.06, 1);
+          const aufnahme = await ringAufnahme(page, ring, masse.strich);
+          const rot = roteInnen(aufnahme.bild, aufnahme.mitteX, aufnahme.mitteY, aufnahme.innen, aufnahme.radius);
+          expect(rot.dx, `Pixel x ${rot.sx}`).toBeLessThanOrEqual(1);
+          expect(rot.dy, `Pixel y ${rot.sy} Pfad y ${masse.dy}`).toBeLessThanOrEqual(1);
+          expect(rot.geschlossen, 'Kerbe auf 12 Uhr').toBe(true);
+          if (!lupe && breite === 390) {
+            fs.mkdirSync('tmp-test/bosse', { recursive: true });
+            await ring.evaluate((element) => {
+              const kasten = document.createElement('div');
+              kasten.id = 'ring-lupe';
+              kasten.style.cssText =
+                'position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:var(--flaeche);';
+              const zoom = element.cloneNode(true) as HTMLElement;
+              zoom.style.transformOrigin = 'center';
+              zoom.style.transform = 'scale(4)';
+              kasten.append(zoom);
+              document.body.append(kasten);
+            });
+            const gezoomt = pngLesen(
+              await page.locator('#ring-lupe [data-boss-ring]').screenshot({
+                path: `tmp-test/bosse/${testInfo.project.name}-ring-mitte-4x.png`,
+              }),
+            );
+            const faktor = await page.evaluate(() => window.devicePixelRatio);
+            expect(gezoomt.breite).toBeGreaterThan(RING_D * faktor * 3);
+            const naht = roteInnen(
+              gezoomt,
+              gezoomt.breite / 2,
+              gezoomt.hoehe / 2,
+              gezoomt.hoehe * ((masse.ring / 2 - masse.strich - 3) / masse.ring),
+              gezoomt.hoehe * ((masse.ring - masse.strich) / (2 * masse.ring)),
+            );
+            expect(naht.geschlossen, '4×-Zoom hat eine Kerbe').toBe(true);
+            await page.evaluate(() => document.getElementById('ring-lupe')?.remove());
+            lupe = true;
+          }
+        }
+      }
+    }
+  } finally {
+    await stelleFarbenWiederHer(page, original);
   }
 });

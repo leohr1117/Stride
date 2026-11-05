@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.58',
+    seiten: 'Heute, Laufend, Projekt',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Bei offenen Bossen sitzt das Schwert mittig im Ring. Ein voller Ring hat oben keine Lücke.'],
+      },
+    ],
+  },
+  {
     version: '3.56.57',
     seiten: 'Fähigkeiten',
     abschnitte: [

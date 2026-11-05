@@ -132,11 +132,11 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   expect(bossLinien[0]?.dicke).toBe(0);
   expect(bossLinien[bossLinien.length - 1]?.unten).toBe(0);
   for (const linie of bossLinien) {
-    expect(linie.soll).toBe(64);
+    expect(linie.soll).toBe(68);
   }
   for (const linie of bossLinien.slice(1)) {
     expect(linie.dicke).toBe(1);
-    expect(linie.einzug).toBe(64);
+    expect(linie.einzug).toBe(68);
   }
 
   const zeile = await page.locator('[data-wochenwert]').evaluateAll((knoten) =>
@@ -232,7 +232,7 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
     if (!(bossSymbol instanceof Element) || !(basisSymbol instanceof Element)) {
       return false;
     }
-    const delta = Math.abs(bossSymbol.getBoundingClientRect().left - basisSymbol.getBoundingClientRect().left);
+    const delta = bossSymbol.getBoundingClientRect().left - basisSymbol.getBoundingClientRect().left;
     const titel = zeile.querySelector('.zeile-titel');
     const probe = document.createElement('span');
     probe.className = 'text-leise';
@@ -250,7 +250,8 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
       zeile.querySelectorAll('svg').length === 1 &&
       !flaeche.classList.contains('p-4') &&
       leise &&
-      delta <= 1 &&
+      delta >= 1 &&
+      delta <= 3 &&
       kopfFrei('Basis') &&
       kopfFrei('Werte') &&
       kopfFrei('Aktivität')
