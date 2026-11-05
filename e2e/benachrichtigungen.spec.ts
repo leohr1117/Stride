@@ -519,7 +519,7 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
     const karte = page.getByRole('region', { name: FRAGE });
     await expect(karte).toBeVisible();
     await expect(karte.getByRole('button', { name: /^Info/ })).toHaveCount(0);
-    await expect(karte.getByRole('link', { name: 'Ansehen', exact: true })).toBeVisible();
+    await expect(karte.getByRole('button', { name: 'Ansehen', exact: true })).toBeVisible();
     await expect(karte.getByRole('button', { name: 'Nicht jetzt', exact: true })).toBeVisible();
     const ident = page.locator('[data-flaeche]').filter({ has: page.locator('[data-levelring]') }).first();
     const oben = await ident.boundingBox();
@@ -542,7 +542,7 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
     await page.reload();
     await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
     await expect(karte).toBeVisible();
-    await karte.getByRole('link', { name: 'Ansehen', exact: true }).click();
+    await karte.getByRole('button', { name: 'Ansehen', exact: true }).click();
     await expect(page).toHaveURL(/\/mehr\/benachrichtigungen$/);
     await expect(page.getByRole('heading', { name: 'Benachrichtigungen', exact: true })).toBeVisible();
     expect(await erlaubnisZaehler(page)).toBe(0);
@@ -636,5 +636,120 @@ test('Handbuch nennt die Benachrichtigungen nicht', async ({ page }) => {
       return antwort.ok;
     }, vorher.stil);
     expect(wieder).toBe(true);
+  }
+});
+
+const HELL = { stil: 'standard', primaer: '#141414', akzent: '#707070', hintergrund: '#f2f2f2' };
+const DUNKEL = { stil: 'standard', primaer: '#f2f2f2', akzent: '#8a8a8a', hintergrund: '#141414' };
+
+async function setzeFarben(seite: Page, koerper: Record<string, unknown>): Promise<void> {
+  const ok = await seite.evaluate(async (daten) => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(daten),
+    });
+    return antwort.ok;
+  }, koerper);
+  expect(ok).toBe(true);
+}
+
+async function pruefeKnopfZeile(seite: Page, breite: number): Promise<void> {
+  await seite.setViewportSize({ width: breite, height: 844 });
+  const karte = seite.getByRole('region', { name: FRAGE });
+  await karte.scrollIntoViewIfNeeded();
+  await expect(karte).toBeVisible();
+  const frage = karte.getByText(FRAGE, { exact: true });
+  const nicht = karte.getByRole('button', { name: 'Nicht jetzt', exact: true });
+  const ansehen = karte.getByRole('button', { name: 'Ansehen', exact: true });
+  const nichtKlassen = ((await nicht.getAttribute('class')) ?? '').split(/\s+/);
+  const ansehenKlassen = ((await ansehen.getAttribute('class')) ?? '').split(/\s+/);
+  expect(nichtKlassen).toContain('knopf');
+  expect(nichtKlassen).toContain('knopf-leise');
+  expect(ansehenKlassen).toContain('knopf');
+  expect(ansehenKlassen).toContain('knopf-primaer');
+  const frageKasten = await frage.boundingBox();
+  const nichtKasten = await nicht.boundingBox();
+  const ansehenKasten = await ansehen.boundingBox();
+  expect(frageKasten).not.toBeNull();
+  expect(nichtKasten).not.toBeNull();
+  expect(ansehenKasten).not.toBeNull();
+  if (!frageKasten || !nichtKasten || !ansehenKasten) {
+    return;
+  }
+  const mitte = (kasten: { y: number; height: number }) => kasten.y + kasten.height / 2;
+  expect(Math.abs(mitte(nichtKasten) - mitte(ansehenKasten))).toBeLessThanOrEqual(2);
+  expect(ansehenKasten.x).toBeGreaterThan(nichtKasten.x);
+  expect(ansehenKasten.x - (nichtKasten.x + nichtKasten.width)).toBeGreaterThanOrEqual(4);
+  expect(Math.abs(ansehenKasten.x + ansehenKasten.width - (frageKasten.x + frageKasten.width))).toBeLessThanOrEqual(2);
+  expect(nichtKasten.x).toBeGreaterThanOrEqual(frageKasten.x + 8);
+  expect(nichtKasten.y).toBeGreaterThanOrEqual(frageKasten.y + frageKasten.height - 2);
+  await ohneSeitlichenUeberlauf(seite);
+}
+
+test('Angebotskarte hält beide Knöpfe in einer Zeile', async ({ page }, testInfo) => {
+  test.setTimeout(180_000);
+  let stilVorher = 'standard';
+  const abo = 'https://geraet.example/abo-karte';
+  try {
+    stilVorher = await vorbereitenTeil(page);
+    await zumStartTeil(page);
+    setzeNichtVor('2000-01-01T00:00:00.000Z');
+    await page.goto('/');
+    await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
+    await eintraegeLegen(page, 9);
+    await angebotTesten(page, true);
+    await tragEin(page);
+    await expect(page.getByRole('region', { name: FRAGE })).toBeVisible();
+    await pruefeKnopfZeile(page, 390);
+    await pruefeKnopfZeile(page, 360);
+
+    if (testInfo.project.name === 'handy') {
+      fs.mkdirSync('tmp-test/angebotskarte', { recursive: true });
+      for (const [name, farben] of [
+        ['hell', HELL],
+        ['dunkel', DUNKEL],
+      ] as const) {
+        await setzeFarben(page, farben);
+        for (const breite of [390, 360]) {
+          await page.setViewportSize({ width: breite, height: 844 });
+          await page.goto('/');
+          await expect(page.locator('html')).toHaveAttribute('data-schema', name === 'hell' ? 'light' : 'dark');
+          const karte = page.getByRole('region', { name: FRAGE });
+          await karte.scrollIntoViewIfNeeded();
+          await expect(karte).toBeVisible();
+          await karte.screenshot({ path: `tmp-test/angebotskarte/karte-${breite}-${name}.png` });
+        }
+      }
+      const db = new DatabaseSync(teilWelt(), { timeout: 5_000 });
+      try {
+        db.prepare('DELETE FROM push_abos WHERE endpoint = ?').run(abo);
+        db.prepare('INSERT INTO push_abos (endpoint, p256dh, auth) VALUES (?, ?, ?)').run(abo, 'abo-p256', 'abo-auth');
+      } finally {
+        db.close();
+      }
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto('/mehr/benachrichtigungen');
+      await page.getByRole('button', { name: 'Ruhezeit', exact: true }).click();
+      const dialog = page.getByRole('dialog', { name: 'Ruhezeit' });
+      await expect(dialog.getByRole('button', { name: 'Abbrechen', exact: true })).toBeVisible();
+      await expect(dialog.getByRole('button', { name: 'Speichern', exact: true })).toBeVisible();
+      await dialog.screenshot({ path: 'tmp-test/angebotskarte/dialog-abbrechen-speichern-390-dunkel.png' });
+    }
+  } finally {
+    const db = new DatabaseSync(teilWelt(), { timeout: 5_000 });
+    try {
+      db.prepare('DELETE FROM push_abos WHERE endpoint = ?').run(abo);
+    } finally {
+      db.close();
+    }
+    await page.evaluate(async (stil) => {
+      await fetch('/api/einstellungen', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stil, farbenZuruecksetzen: true }),
+      });
+    }, stilVorher);
+    await profilZurueck(page);
   }
 });

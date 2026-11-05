@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.": "在「今天」上，通知的按钮并排，样子和对话框里的按钮一样。",
   "Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.": "在关联里，Todoist 令牌的链接单独成行，更容易点到。",
   "Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.": "在账号里，每一行的第二行显示用户名和角色。",
   "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "在榜样里，你的那一行位于单独的表面上。方向在左右两侧留出间距。",

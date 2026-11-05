@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.63
+
+### Behoben
+
+- Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.
+
 ## 3.56.62
 
 ### Behoben

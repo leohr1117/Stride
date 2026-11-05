@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.": "「今日」では、通知のボタンが横に並び、ダイアログのボタンと同じ見た目です。",
   "Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.": "つながりでは、Todoist のトークンへのリンクが別の行になり、タップしやすくなりました。",
   "Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.": "アカウントでは、各行の2行目にユーザー名と役割が表示されます。",
   "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "お手本では、自分の行が専用の面の中にあります。方向は左右に余白があります。",

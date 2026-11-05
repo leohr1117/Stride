@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.', 'On Today, the notification buttons sit side by side and look like the ones in dialogs.'],
   ['Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.', 'On Connections, the link to the Todoist token sits on its own line and is easier to tap.'],
   ['Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.', 'On Accounts, each row shows the username and the role on the second line.'],
   ['Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.', 'On Role models, the You row sits in its own surface. The directions leave space on the left and right edges.'],

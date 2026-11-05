@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.": "Sur Aujourd'hui, les boutons de la notification sont côte à côte et ressemblent à ceux des dialogues.",
   "Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.": "Dans Connexions, le lien vers le jeton Todoist est sur sa propre ligne et plus facile à toucher.",
   "Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.": "Dans Comptes, chaque ligne indique le nom d'utilisateur et le rôle sur la deuxième ligne.",
   "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "Dans Modèles, la ligne Toi est dans une surface à part. Les directions laissent de l'espace à gauche et à droite.",

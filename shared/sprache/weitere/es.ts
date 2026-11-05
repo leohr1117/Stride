@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.": "En Hoy, los botones del aviso están uno al lado del otro y se ven como los de los diálogos.",
   "Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.": "En Conexiones, el enlace al token de Todoist está en su propia línea y es más fácil de pulsar.",
   "Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.": "En Cuentas, cada fila muestra el nombre de usuario y el rol en la segunda línea.",
   "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "En Referentes, la fila Tú está en una superficie propia. Las direcciones dejan espacio a la izquierda y a la derecha.",
