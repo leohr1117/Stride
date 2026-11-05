@@ -133,14 +133,18 @@ export function KurzListe<T>({
   anzahl,
   darstellen,
   className,
+  zeile = 'leise',
 }: {
   eintraege: T[];
   anzahl: number;
   darstellen: (eintrag: T) => ReactNode;
   className?: string;
+  zeile?: 'leise' | 'abschnitt';
 }) {
   const [alleOffen, setAlleOffen] = useState(false);
   const sichtbar = alleOffen ? eintraege : eintraege.slice(0, anzahl);
+  const titelStil =
+    zeile === 'abschnitt' ? STANDARD_TITEL : 'text-xs font-normal tracking-normal text-leise normal-case';
   return (
     <div>
       <div className={className}>{sichtbar.map(darstellen)}</div>
@@ -149,7 +153,7 @@ export function KurzListe<T>({
           className="mt-2"
           element="span"
           titel={alleOffen ? tx("Weniger anzeigen") : `Alle anzeigen (${eintraege.length})`}
-          titelStil="text-xs font-normal tracking-normal text-leise normal-case"
+          titelStil={titelStil}
           offen={alleOffen}
           onToggle={() => setAlleOffen(!alleOffen)}
         />

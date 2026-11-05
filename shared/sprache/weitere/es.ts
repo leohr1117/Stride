@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.": "En Estadística, el período elegido está escrito con más peso. Los ejes usan pasos regulares y las barras de actividades y proyectos tienen la misma altura.",
   "Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.": "En las hojas, la barra de desplazamiento queda junto al contenido y no tapa ningún campo. En el teléfono solo aparece al desplazar.",
   "Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.": "Los símbolos de los jefes y las deducciones de XP en porcentaje son rojos. Si un atributo está demasiado bajo, el signo de aviso, el texto y el nivel son rojos.",
   "Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.": "En los atributos, el estado va detrás del nombre y el nivel permanece a la derecha. Si falta espacio, queda el signo de aviso y un toque muestra el texto.",

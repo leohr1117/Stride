@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.48',
+    seiten: 'Statistik',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.47',
     seiten: 'Investitionen, Heute, Basis',
     behoben: 'Investitionen, Heute, Basis',

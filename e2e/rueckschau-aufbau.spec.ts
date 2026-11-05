@@ -207,8 +207,12 @@ test('Verlauf, Rückblick, Statistik und Basis', async ({ page }, testInfo) => {
 
     await page.goto('/statistiken');
     await expect(page.locator('main h1')).toHaveText('Statistik');
-    await expect(page.getByRole('button', { name: '3 Monate', exact: true })).toBeVisible();
+    const zeitraum = page.getByRole('button', { name: '3 Monate', exact: true });
+    await expect(zeitraum).toBeVisible();
+    await expect(zeitraum.locator('svg')).toBeVisible();
+    await expect(zeitraum).toHaveCSS('font-weight', '600');
     await expect(page.getByRole('button', { name: '12 Monate', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: '12 Monate', exact: true }).locator('svg')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Gesamt', exact: true })).toBeVisible();
     const kennzahlen = page.locator('[data-kennzahl]');
     if ((await kennzahlen.count()) === 0) {
@@ -219,8 +223,57 @@ test('Verlauf, Rückblick, Statistik und Basis', async ({ page }, testInfo) => {
       expect(klasse).not.toContain('rounded');
       expect(klasse).not.toContain('border');
       await expect(page.getByRole('heading', { name: /XP pro (Woche|Monat)/ })).toBeVisible();
+      await expect(page.locator('[data-achsen]').first()).toHaveAttribute('data-achsen', /\d/);
+      const achsenText = (await page.locator('[data-achsen]').first().getAttribute('data-achsen')) ?? '';
+      const achsen = achsenText.split(' ').map(Number);
+      expect(achsen.length).toBeGreaterThan(1);
+      expect(achsen[0]).toBe(0);
+      const schritt = (achsen[1] ?? 0) - (achsen[0] ?? 0);
+      const zehner = 10 ** Math.floor(Math.log10(schritt));
+      const norm = Math.round((schritt / zehner) * 1e6) / 1e6;
+      expect([1, 2, 5]).toContain(norm);
+      for (let index = 1; index < achsen.length; index += 1) {
+        expect((achsen[index] ?? 0) - (achsen[index - 1] ?? 0)).toBe(schritt);
+      }
+      await bild('statistik-wochen');
       await page.getByRole('button', { name: '12 Monate', exact: true }).click();
       await expect(page.getByRole('heading', { name: 'XP pro Monat' })).toBeVisible();
+      await expect(page.getByRole('button', { name: '12 Monate', exact: true }).locator('svg')).toBeVisible();
+      const mass = async (name: string) => {
+        const abschnitt = page.locator('section').filter({ has: page.getByRole('heading', { name, exact: true }) });
+        const zeile = abschnitt.locator('[data-balken]').first();
+        await expect(zeile).toBeVisible();
+        return zeile.evaluate((element) => {
+          const spur = element.querySelector('.bg-flaeche-2');
+          const fuellung = spur?.querySelector('div');
+          const nameEl = element.querySelector('.truncate');
+          const wert = element.querySelector('.zahl');
+          const probe = document.createElement('span');
+          probe.style.backgroundColor = 'var(--diagramm-vorbild)';
+          document.body.append(probe);
+          const diagramm = getComputedStyle(probe).backgroundColor;
+          probe.remove();
+          return {
+            hoehe: spur ? Math.round(spur.getBoundingClientRect().height) : 0,
+            name: nameEl ? getComputedStyle(nameEl).fontSize : '',
+            wert: wert ? getComputedStyle(wert).fontSize : '',
+            farbe: fuellung ? getComputedStyle(fuellung).backgroundColor : '',
+            diagramm,
+          };
+        });
+      };
+      const taetigkeiten = await mass('Tätigkeiten');
+      const projekte = await mass('Projekte');
+      expect(taetigkeiten.hoehe).toBe(6);
+      expect(projekte.hoehe).toBe(6);
+      expect(taetigkeiten.name).toBe('16px');
+      expect(projekte.name).toBe('16px');
+      expect(taetigkeiten.wert).toBe('13px');
+      expect(projekte.wert).toBe('13px');
+      expect(taetigkeiten.farbe).toBe(taetigkeiten.diagramm);
+      expect(projekte.farbe).not.toBe(taetigkeiten.diagramm);
+      await page.getByRole('heading', { name: 'Tätigkeiten', exact: true }).scrollIntoViewIfNeeded();
+      await bild('statistik-balken');
     }
     await ohneSeitlichenUeberlauf(page);
     await bild('statistik');

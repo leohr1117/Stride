@@ -52,7 +52,12 @@ export function StatistikenSeite() {
     <div className="space-y-6">
       <div className="chip-reihe flex gap-2 overflow-x-auto pe-4">
         {(Object.keys(ZEITRAUM_LABEL) as Zeitraum[]).map((wert) => (
-          <Chip key={wert} aktiv={zeitraum === wert} onClick={() => setZeitraum(wert)}>
+          <Chip
+            key={wert}
+            aktiv={zeitraum === wert}
+            onClick={() => setZeitraum(wert)}
+            className={zeitraum === wert ? 'font-semibold' : ''}
+          >
             {tx(ZEITRAUM_LABEL[wert])}
           </Chip>
         ))}
@@ -80,7 +85,11 @@ export function StatistikenSeite() {
             <AbschnittKopf titel={statistiken.verlaufEinheit === 'woche' ? tx("XP pro Woche") : tx("XP pro Monat")} />
             <Flaeche>
               <div className="px-2 py-3">
-                <LinienDiagramm werte={verlaufWerte(statistiken)} einheit="XP" />
+                <LinienDiagramm
+                  werte={verlaufWerte(statistiken)}
+                  einheit="XP"
+                  jedeZweiteBeschriftung={statistiken.verlaufEinheit === 'woche'}
+                />
               </div>
             </Flaeche>
           </section>
@@ -96,6 +105,8 @@ export function StatistikenSeite() {
                 <Flaeche>
                   <div className="px-4 py-3">
                     <BalkenListe
+                      liste
+                      farbe="var(--diagramm-vorbild)"
                       werte={statistiken.vorlagen.map((vorlage) => ({
                         schluessel: vorlage.id,
                         label: (
@@ -123,6 +134,7 @@ export function StatistikenSeite() {
                   <Flaeche>
                     <div className="px-4 py-3">
                       <BalkenListe
+                        liste
                         werte={statistiken.projekte.map((projekt) => ({
                           schluessel: projekt.id,
                           label: (

@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.": "在统计中，所选时段的文字更粗。坐标轴使用整齐的刻度，活动和项目的条形一样高。",
   "Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.": "在底部面板中，滚动条位于内容旁边，不会挡住字段。在手机上，它只在滚动时出现。",
   "Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.": "首领符号和按百分比扣除的经验为红色。属性过低时，警告符号、文字和等级为红色。",
   "Bei Attributen steht der Zustand hinter dem Namen, das Level bleibt rechts. Reicht der Platz nicht, bleibt das Warnzeichen, und ein Tipp zeigt den Text.": "属性的状态紧跟在名称后面，等级仍在右侧。空间不够时只保留警告符号，点按后显示文字。",
