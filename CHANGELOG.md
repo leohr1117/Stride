@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.49
+
+### Geändert
+
+- Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.
+
 ## 3.56.48
 
 ### Geändert

@@ -11,6 +11,7 @@ import { RUECKKEHR, SCHUTZ } from '../../../../shared/spiel/schutz.ts';
 import { beispielVorbilder, durchschnittXpProTag } from '../../../../shared/features/vorbilder/vorbilder.ts';
 import { basisXp, visionBeute } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
+import { DichteZeilen, Zeile } from '../../components/Zeile.tsx';
 import { AbschnittKopf, Chip, FlaecheInnen, Ladeanzeige } from '../../ui/index.ts';
 import { faktorText, zahl, zeitspanne } from '../../format.ts';
 
@@ -112,12 +113,19 @@ export function HandbuchSeite() {
 
       <HandbuchAbschnitt id="level" titel="Level">
         <Tabelle
-          spalten={[tx('Level'), tx('XP gesamt'), tx('Tage bei {xp} XP am Tag', { xp: zahl(xpAmTag) })]}
+          spalten={[tx('Level'), tx('XP'), tx('Dauer')]}
           zeilen={LEVEL_MARKEN.map((level) => {
             const xp = xpBisLevel(level, LEVEL_KURVEN.charakter);
             return [zahl(level), zahl(xp), zeitspanne(xp / xpAmTag)];
           })}
+          innen="p-3"
+          zellen="text-[15px] leading-5"
+          alleZahlen
+          breiten={['28%', '36%', '36%']}
         />
+        <p className="border-t border-rand px-3 py-3 text-[13px] leading-[18px] text-leise">
+          {tx('Dauer bei {n} XP am Tag', { n: zahl(xpAmTag) })}
+        </p>
       </HandbuchAbschnitt>
 
       {mitVisionen ? (
@@ -125,17 +133,14 @@ export function HandbuchSeite() {
           <Tabelle
             spalten={[tx('Beispiel'), tx('Level'), tx('XP beim Erreichen')]}
             zeilen={VISION_BEISPIELE.map((beispiel) => [tx(beispiel.titel), zahl(beispiel.level), zahl(visionBeute(beispiel.level))])}
+            breiten={['46%', '22%', '32%']}
           />
         </HandbuchAbschnitt>
       ) : null}
 
       {mitVorbildern ? (
         <HandbuchAbschnitt id="vorbilder" titel="Vorbilder">
-          <Tabelle
-            spalten={[tx('Person'), tx('Richtung'), tx('Level')]}
-            zahlAb={2}
-            zeilen={beispielVorbilder().map((vorbild) => [tx(vorbild.name), vorbild.richtung ? tx(vorbild.richtung) : '—', zahl(vorbild.level)])}
-          />
+          <VorbildListe />
         </HandbuchAbschnitt>
       ) : null}
     </div>
@@ -210,40 +215,83 @@ function HandbuchAbschnitt({ id, titel, children }: { id: string; titel: string;
       <div className="md:px-4">
         <AbschnittKopf titel={tx(titel)} />
       </div>
-      <FlaecheInnen className="max-w-full overflow-x-auto overscroll-x-contain">
-        <div>{children}</div>
+      <FlaecheInnen className="min-w-0">
+        <div className="min-w-0">{children}</div>
       </FlaecheInnen>
     </section>
   );
 }
 
-function Tabelle({ spalten, zeilen, zahlAb = 1 }: { spalten: string[]; zeilen: ReactNode[][]; zahlAb?: number }) {
-  const ausrichtung = (index: number) => (index >= zahlAb ? 'zahl text-right' : 'text-left');
+function VorbildListe() {
   return (
-      <table className="w-max min-w-full text-sm">
-        <thead>
-          <tr className="border-b border-rand">
-            {spalten.map((spalte, index) => (
-              <th
-                key={spalte}
-                className={`px-4 py-2 text-[13px] leading-[18px] font-medium whitespace-nowrap text-leise ${ausrichtung(index)}`}
+    <DichteZeilen>
+      <div className="liste">
+        {beispielVorbilder().map((vorbild) => (
+          <Zeile
+            key={vorbild.schluessel}
+            titel={tx(vorbild.name)}
+            neben={vorbild.richtung ? tx(vorbild.richtung) : '—'}
+            wert={tx('Lvl {level}', { level: zahl(vorbild.level) })}
+          />
+        ))}
+      </div>
+    </DichteZeilen>
+  );
+}
+
+function Tabelle({
+  spalten,
+  zeilen,
+  zahlAb = 1,
+  innen = 'px-4 py-2',
+  zellen = 'text-sm',
+  alleZahlen = false,
+  breiten,
+}: {
+  spalten: string[];
+  zeilen: ReactNode[][];
+  zahlAb?: number;
+  innen?: string;
+  zellen?: string;
+  alleZahlen?: boolean;
+  breiten?: readonly string[];
+}) {
+  const rechts = (index: number) => index >= zahlAb;
+  return (
+    <table className="w-full table-fixed">
+      {breiten ? (
+        <colgroup>
+          {breiten.map((breite, index) => (
+            <col key={spalten[index] ?? index} style={{ width: breite }} />
+          ))}
+        </colgroup>
+      ) : null}
+      <thead>
+        <tr className="border-b border-rand">
+          {spalten.map((spalte, index) => (
+            <th
+              key={spalte}
+              className={`${innen} text-[13px] leading-[18px] font-medium break-words text-leise ${rechts(index) ? 'zahl text-right' : 'text-left'}`}
+            >
+              {spalte}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-rand">
+        {zeilen.map((zeile, zeilenIndex) => (
+          <tr key={zeilenIndex}>
+            {zeile.map((zelle, index) => (
+              <td
+                key={index}
+                className={`${innen} ${zellen} ${rechts(index) || alleZahlen ? 'zahl whitespace-nowrap' : 'break-words'} ${rechts(index) ? 'text-right' : 'text-left'}`}
               >
-                {spalte}
-              </th>
+                {zelle}
+              </td>
             ))}
           </tr>
-        </thead>
-        <tbody className="divide-y divide-rand">
-          {zeilen.map((zeile, zeilenIndex) => (
-            <tr key={zeilenIndex}>
-              {zeile.map((zelle, index) => (
-                <td key={index} className={`px-4 py-2 whitespace-nowrap ${ausrichtung(index)}`}>
-                  {zelle}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        ))}
+      </tbody>
+    </table>
   );
 }

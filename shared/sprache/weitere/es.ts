@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "En la guía, las tablas se quedan dentro del ancho. La tabla de nivel muestra nivel, XP y duración, y la nota de debajo indica la XP al día. Los referentes aparecen como lista con dirección y nivel.",
   "In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.": "En Estadística, el período elegido está escrito con más peso. Los ejes usan pasos regulares y las barras de actividades y proyectos tienen la misma altura.",
   "Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.": "En las hojas, la barra de desplazamiento queda junto al contenido y no tapa ningún campo. En el teléfono solo aparece al desplazar.",
   "Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.": "Los símbolos de los jefes y las deducciones de XP en porcentaje son rojos. Si un atributo está demasiado bajo, el signo de aviso, el texto y el nivel son rojos.",
@@ -233,6 +234,7 @@ export const TEXTE: Record<string, string> = {
   "Rückkehr: {frist} Tage, wenn kein Schutz": "Regreso: {frist} días si no hay protección",
   "Schutz und Rückkehr geben keine XP": "Protección y Regreso no dan XP",
   "Tage bei {xp} XP am Tag": "Días con {xp} XP al día",
+  "Dauer bei {n} XP am Tag": "Duración con {n} XP al día",
   "XP beim Erreichen": "XP al alcanzar",
   "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "El historial filtra en una hoja. Repaso y Estadística están arriba como filas.",
   "Löschen im Verlauf ist nur beim Wischen rot.": "Eliminar en el historial solo se pone rojo al deslizar.",

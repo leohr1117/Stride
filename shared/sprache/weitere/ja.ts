@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "ガイドの表は幅の中に収まります。レベル表はレベル、XP、長さを示し、下の注記が1日のXPを示します。お手本は方向とレベルのリストになります。",
   "In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.": "統計では、選んだ期間が太字になります。軸の目盛りはきりのよい間隔になり、活動とプロジェクトのバーは同じ高さです。",
   "Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.": "シートではスクロールバーが内容の横にあり、項目を隠しません。スマートフォンではスクロール中だけ表示されます。",
   "Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.": "ボスの記号と割合での経験値の減点は赤です。属性が低すぎるときは、警告記号、テキスト、レベルが赤になります。",
@@ -233,6 +234,7 @@ export const TEXTE: Record<string, string> = {
   "Rückkehr: {frist} Tage, wenn kein Schutz": "復帰：保護がないときは{frist}日",
   "Schutz und Rückkehr geben keine XP": "保護と復帰はXPにならない",
   "Tage bei {xp} XP am Tag": "1日{xp} XPの日数",
+  "Dauer bei {n} XP am Tag": "1日{n} XPの期間",
   "XP beim Erreichen": "到達時のXP",
   "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "履歴はシートで絞り込みます。振り返りと統計は上に行として並びます。",
   "Löschen im Verlauf ist nur beim Wischen rot.": "履歴の削除はスワイプしているときだけ赤くなります。",

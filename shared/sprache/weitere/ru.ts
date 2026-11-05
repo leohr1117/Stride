@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "В справке таблицы остаются в пределах ширины. Таблица уровней показывает уровень, XP и длительность, а примечание под ней называет XP в день. Ориентиры стоят списком с направлением и уровнем.",
   "In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.": "В разделе «Статистика» выбранный период написан жирнее. Оси идут ровными шагами, а полосы занятий и проектов одной высоты.",
   "Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.": "В листах полоса прокрутки стоит рядом с содержимым и не перекрывает поля. На телефоне она появляется только при прокрутке.",
   "Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.": "Символы боссов и процентные вычеты опыта красные. Если атрибут слишком низкий, красными становятся знак предупреждения, текст и уровень.",
@@ -233,6 +234,7 @@ export const TEXTE: Record<string, string> = {
   "Rückkehr: {frist} Tage, wenn kein Schutz": "Возвращение: {frist} дней, если нет защиты",
   "Schutz und Rückkehr geben keine XP": "Защита и возвращение не дают XP",
   "Tage bei {xp} XP am Tag": "Дней при {xp} XP в день",
+  "Dauer bei {n} XP am Tag": "Длительность при {n} XP в день",
   "XP beim Erreichen": "XP при достижении",
   "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "История фильтруется на листе. Обзор и Статистика стоят сверху строками.",
   "Löschen im Verlauf ist nur beim Wischen rot.": "Удаление в истории красное только при смахивании.",

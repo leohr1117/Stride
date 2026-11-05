@@ -14,7 +14,7 @@ export const RICHTUNGEN = [
 
 export type Richtung = (typeof RICHTUNGEN)[number];
 
-/** Ein oder zwei bekannte Beispiele je Richtung, für die Tabelle im Handbuch. */
+/** Ein oder zwei bekannte Beispiele je Richtung, für die Liste im Handbuch. */
 export const BEISPIEL_SCHLUESSEL: Readonly<Record<Richtung, readonly string[]>> = {
   'Körper': ['johnson', 'biles'],
   'Wettkampf': ['ronaldo', 'messi'],

@@ -51,6 +51,7 @@ export const PAARE = [
   ['Rückkehr: {frist} Tage, wenn kein Schutz', 'Return: {frist} days if there is no protection'],
   ['Schutz und Rückkehr geben keine XP', 'Protection and Return grant no XP'],
   ['Tage bei {xp} XP am Tag', 'Days at {xp} XP a day'],
+  ['Dauer bei {n} XP am Tag', 'Duration at {n} XP a day'],
   ['XP beim Erreichen', 'XP when reached'],
   ['Filter', 'Filter'],
   ['Filter zurücksetzen', 'Reset filter'],

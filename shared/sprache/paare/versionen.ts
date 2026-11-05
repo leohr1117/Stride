@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.', 'In the guide, the tables stay within the width. The level table shows level, XP, and duration, and the note below names the XP per day. Role models appear as a list with direction and level.'],
   ['In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.', 'In Statistics, the selected period is written in a stronger weight. The axes use round steps, and the bars for activities and projects are the same height.'],
   ['Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.', 'In sheets, the scrollbar sits beside the content and does not cover fields. On a phone, it appears only while scrolling.'],
   ['Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.', 'Boss symbols and percentage XP deductions are red. When an attribute is too low, the warning sign, the text, and the level are red.'],

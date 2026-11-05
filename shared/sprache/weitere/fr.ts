@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "Dans le guide, les tableaux restent dans la largeur. Le tableau des niveaux montre le niveau, l'XP et la durée, et la note en dessous indique l'XP par jour. Les modèles apparaissent en liste avec la direction et le niveau.",
   "In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.": "Dans Statistique, la période choisie est écrite plus fortement. Les axes utilisent des pas réguliers, et les barres des activités et des projets ont la même hauteur.",
   "Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.": "Dans les feuilles, la barre de défilement est à côté du contenu et ne couvre aucun champ. Sur le téléphone, elle n'apparaît qu'en faisant défiler.",
   "Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.": "Les symboles des boss et les déductions d'XP en pourcentage sont rouges. Quand un attribut est trop bas, le signe d'avertissement, le texte et le niveau sont rouges.",
@@ -233,6 +234,7 @@ export const TEXTE: Record<string, string> = {
   "Rückkehr: {frist} Tage, wenn kein Schutz": "Retour : {frist} jours sans protection",
   "Schutz und Rückkehr geben keine XP": "Protection et Retour ne donnent pas d'XP",
   "Tage bei {xp} XP am Tag": "Jours à {xp} XP par jour",
+  "Dauer bei {n} XP am Tag": "Durée à {n} XP par jour",
   "XP beim Erreichen": "XP à l'atteinte",
   "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "L'historique filtre dans une feuille. Bilan et Statistique sont en haut, en lignes.",
   "Löschen im Verlauf ist nur beim Wischen rot.": "Supprimer dans l'historique n'est rouge qu'en glissant.",

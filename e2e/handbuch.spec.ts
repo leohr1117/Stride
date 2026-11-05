@@ -2,6 +2,32 @@ import fs from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
+async function ohneTabellenUeberlauf(seite: Page): Promise<void> {
+  const ueber = await seite.evaluate(() => {
+    const knoten = [
+      ...document.querySelectorAll(
+        'main table, main th, main td, #vorbilder .zeile-titel, #vorbilder .zeile-neben, #vorbilder .zeile-wert, #level p',
+      ),
+    ];
+    return knoten
+      .filter((element) => element.scrollWidth > element.clientWidth + 1)
+      .map((element) => (element.textContent ?? '').trim());
+  });
+  expect(ueber).toEqual([]);
+}
+
+async function spracheSetzen(seite: Page, sprache: string): Promise<void> {
+  const ok = await seite.evaluate(async (code) => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sprache: code }),
+    });
+    return antwort.ok;
+  }, sprache);
+  expect(ok).toBe(true);
+}
+
 async function bild(seite: Page, name: string): Promise<void> {
   fs.mkdirSync('tmp-test/handbuch', { recursive: true });
   await seite.screenshot({ path: `tmp-test/handbuch/${name}.png`, fullPage: true });
@@ -52,8 +78,9 @@ test('Handbuch ist eine offene Scrollseite', async ({ page }, testInfo) => {
   await expect(page.getByRole('heading', { name: 'Einträge', level: 2 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Streak', level: 2 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Level', level: 2 })).toBeVisible();
-  await expect(page.getByRole('columnheader', { name: 'Dauer', exact: true })).toBeVisible();
-  await expect(page.getByRole('columnheader', { name: 'XP ohne Boni', exact: true })).toBeVisible();
+  const eintraegeAbschnitt = page.locator('#eintraege');
+  await expect(eintraegeAbschnitt.getByRole('columnheader', { name: 'Dauer', exact: true })).toBeVisible();
+  await expect(eintraegeAbschnitt.getByRole('columnheader', { name: 'XP ohne Boni', exact: true })).toBeVisible();
   await expect(page.getByRole('columnheader', { name: 'Beute', exact: true })).toHaveCount(0);
   await expect(page.getByText('Empfohlen', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Nach Vorliebe', { exact: true })).toHaveCount(0);
@@ -63,8 +90,8 @@ test('Handbuch ist eine offene Scrollseite', async ({ page }, testInfo) => {
   await expect(page.getByRole('button', { name: /^Info/ })).toHaveCount(0);
   await expect(page.getByRole('button', { name: /^Info zu / })).toHaveCount(0);
 
-  const dauer = page.getByRole('columnheader', { name: 'Dauer', exact: true });
-  const xp = page.getByRole('columnheader', { name: 'XP ohne Boni', exact: true });
+  const dauer = eintraegeAbschnitt.getByRole('columnheader', { name: 'Dauer', exact: true });
+  const xp = eintraegeAbschnitt.getByRole('columnheader', { name: 'XP ohne Boni', exact: true });
   const kopfSchrift = await dauer.evaluate((element) => getComputedStyle(element).fontSize);
   expect(kopfSchrift).toBe('13px');
   await expect(dauer).toHaveCSS('text-align', 'left');
@@ -72,20 +99,40 @@ test('Handbuch ist eine offene Scrollseite', async ({ page }, testInfo) => {
   const ziffern = await xp.evaluate((element) => getComputedStyle(element).fontVariantNumeric);
   expect(ziffern).toContain('tabular-nums');
 
-  const kaesten = page.locator('main [data-flaeche]').filter({ has: page.locator('table') });
-  const masse = await kaesten.evaluateAll((liste) =>
-    liste.map((element) => ({
-      overflow: getComputedStyle(element).overflowX,
-      scroll: element.scrollWidth,
-      client: element.clientWidth,
-    })),
-  );
-  expect(masse.length).toBeGreaterThanOrEqual(3);
-  for (const kasten of masse) {
-    expect(kasten.overflow === 'auto' || kasten.overflow === 'scroll').toBe(true);
-  }
-  if (handy) {
-    expect(masse.some((kasten) => kasten.scroll > kasten.client + 1)).toBe(true);
+  const level = page.locator('#level');
+  await expect(level.getByRole('columnheader', { name: 'Level', exact: true })).toBeVisible();
+  await expect(level.getByRole('columnheader', { name: 'XP', exact: true })).toBeVisible();
+  await expect(level.getByRole('columnheader', { name: 'Dauer', exact: true })).toBeVisible();
+  await expect(level.getByRole('columnheader', { name: 'XP gesamt', exact: true })).toHaveCount(0);
+  const hinweis = level.locator('p');
+  await expect(hinweis).toHaveText(/Dauer bei \S+ XP am Tag/);
+  const levelZelle = level.locator('tbody td').first();
+  const levelSchrift = await levelZelle.evaluate((element) => {
+    const stil = getComputedStyle(element);
+    return { groesse: stil.fontSize, ziffern: stil.fontVariantNumeric, abstand: stil.paddingLeft };
+  });
+  expect(levelSchrift.groesse).toBe('15px');
+  expect(levelSchrift.ziffern).toContain('tabular-nums');
+  expect(levelSchrift.abstand).toBe('12px');
+  const levelKopf = level.getByRole('columnheader', { name: 'XP', exact: true });
+  expect(await levelKopf.evaluate((element) => getComputedStyle(element).fontSize)).toBe('13px');
+
+  await expect(page.locator('main table')).toHaveCount(stand.visionen ? 4 : 3);
+  await ohneTabellenUeberlauf(page);
+  if (stand.vorbilder) {
+    const vorbildZeilen = page.locator('#vorbilder .zeile');
+    await expect(vorbildZeilen.first()).toBeVisible();
+    const hoehen = await vorbildZeilen.evaluateAll((liste) =>
+      liste.map((element) => ({
+        hoehe: element.getBoundingClientRect().height,
+        zeilen: element.getAttribute('data-zeilen'),
+      })),
+    );
+    expect(hoehen.length).toBeGreaterThan(0);
+    for (const zeile of hoehen) {
+      expect(zeile.zeilen).toBe('2');
+      expect(Math.abs(zeile.hoehe - 64)).toBeLessThanOrEqual(1);
+    }
   }
   await ohneSeitlichenUeberlauf(page);
   await page.screenshot({ path: `tmp-test/handbuch/${projekt}-oben.png` });
@@ -132,5 +179,21 @@ test('Handbuch ist eine offene Scrollseite', async ({ page }, testInfo) => {
     await page.request.patch('/api/einstellungen', {
       data: { ebenen: { visionen: stand.visionen }, funktionen: { vorbilder: stand.vorbilder } },
     });
+  }
+});
+
+test('Handbuch-Tabellen bleiben in Russisch und Japanisch in der Breite', async ({ page }) => {
+  await anmelden(page);
+  try {
+    for (const sprache of ['ru', 'ja'] as const) {
+      await spracheSetzen(page, sprache);
+      await page.goto('/handbuch');
+      await expect(page.locator('#level p')).toBeVisible();
+      await expect(page.locator('#level p')).not.toHaveText(/Dauer bei/);
+      await ohneTabellenUeberlauf(page);
+      await ohneSeitlichenUeberlauf(page);
+    }
+  } finally {
+    await spracheSetzen(page, 'de');
   }
 });

@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "指南里的表格都留在宽度之内。等级表显示等级、XP 和时长，下面的说明写出每天的 XP。榜样以列表显示方向和等级。",
   "In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.": "在统计中，所选时段的文字更粗。坐标轴使用整齐的刻度，活动和项目的条形一样高。",
   "Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.": "在底部面板中，滚动条位于内容旁边，不会挡住字段。在手机上，它只在滚动时出现。",
   "Boss-Symbole und prozentuale XP-Abzüge sind rot. Bei einem zu niedrigen Attribut sind Warnzeichen, Text und Level rot.": "首领符号和按百分比扣除的经验为红色。属性过低时，警告符号、文字和等级为红色。",
@@ -233,6 +234,7 @@ export const TEXTE: Record<string, string> = {
   "Rückkehr: {frist} Tage, wenn kein Schutz": "回归：没有保护时为 {frist} 天",
   "Schutz und Rückkehr geben keine XP": "保护和回归不给 XP",
   "Tage bei {xp} XP am Tag": "每天 {xp} XP 时的天数",
+  "Dauer bei {n} XP am Tag": "每天 {n} XP 时的时长",
   "XP beim Erreichen": "达成时的 XP",
   "Der Verlauf filtert über ein Blatt. Rückblick und Statistik stehen oben als Zeilen.": "历程用一张表来筛选。回顾和统计作为行显示在上方。",
   "Löschen im Verlauf ist nur beim Wischen rot.": "历程里的删除只在滑动时显示为红色。",
