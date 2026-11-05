@@ -1,10 +1,8 @@
 import { useMemo, type CSSProperties } from 'react';
-import { Check } from 'lucide-react';
 import type { Faehigkeit, SkillKnoten } from '../../../../shared/api/index.ts';
 import { kompakt } from '../../format.ts';
 import { Icon } from '../../components/Icons.tsx';
 import { berechneBaum, type BaumLayout, type BaumPosition } from './skillbaumLayout.ts';
-import { skillVariablen, useSkillToene, type SkillToene } from './skillToene.ts';
 
 const SPALTE = 104;
 const EBENE = 108;
@@ -48,32 +46,22 @@ function xpSchrift(text: string): string {
   return 'text-xs';
 }
 
-function KnotenScheibe({ zustand, farbe, toene, xp }: { zustand: Zustand; farbe: string; toene: SkillToene; xp: number }) {
+function KnotenScheibe({ zustand, farbe, xp }: { zustand: Zustand; farbe: string; xp: number }) {
   const text = kompakt(xp);
-  const stil = {
-    ...skillVariablen(farbe, toene),
-    outlineColor: farbe,
-    width: KNOTEN,
-    height: KNOTEN,
-  } as CSSProperties;
+  const stil = { '--skillfarbe': farbe, outlineColor: farbe } as CSSProperties;
   if (zustand === 'verfuegbar') {
-    stil.borderColor = toene.text;
+    stil.borderColor = farbe;
   } else if (zustand === 'gesperrt') {
     stil.borderColor = `color-mix(in srgb, ${farbe} 28%, var(--rand))`;
   }
   return (
     <span
       className={`baum-knoten relative flex shrink-0 items-center justify-center overflow-hidden rounded-full border-2 transition duration-200 group-hover:scale-105 group-focus-visible:scale-105 group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 ${
-        zustand === 'frei'
-          ? 'baum-frei border-transparent text-white'
-          : zustand === 'verfuegbar'
-            ? 'baum-puls bg-flaeche text-haupt'
-            : 'border-dashed bg-flaeche-2/70 text-haupt'
+        zustand === 'frei' ? 'baum-frei border-transparent text-white' : zustand === 'verfuegbar' ? 'baum-puls bg-flaeche text-haupt' : 'border-dashed bg-flaeche-2/70 text-haupt'
       }`}
-      style={stil}
+      style={{ ...stil, width: KNOTEN, height: KNOTEN }}
     >
       <span className={`zahl max-w-full px-0.5 leading-none font-semibold whitespace-nowrap ${xpSchrift(text)}`}>{text}</span>
-      {zustand === 'frei' && <Check data-haken="" aria-hidden className="absolute bottom-0.5 size-3" strokeWidth={2} style={{ color: '#ffffff' }} />}
     </span>
   );
 }
@@ -83,10 +71,9 @@ function Graph({ daten, onWaehlen }: { daten: BaumDaten; onWaehlen: (id: number)
   const breite = layout.spalten * SPALTE;
   const hoehe = (layout.ebenen - 1) * EBENE + OBEN + KNOTEN + TITEL + 10;
   const wurzel = mitte(layout.wurzel, true);
-  const toene = useSkillToene(faehigkeit.farbe);
 
   return (
-    <div className="relative" style={{ width: breite, height: hoehe, ...skillVariablen(faehigkeit.farbe, toene) }}>
+    <div className="relative" style={{ width: breite, height: hoehe }}>
       <svg className="absolute inset-0 overflow-visible" width={breite} height={hoehe} aria-hidden="true">
         {faehigkeit.knoten.map((knoten) => {
           const position = layout.positionen.get(knoten.id);
@@ -100,9 +87,8 @@ function Graph({ daten, onWaehlen }: { daten: BaumDaten; onWaehlen: (id: number)
           const start = von.y + (elternIstWurzel ? WURZEL / 2 : KNOTEN / 2 + TITEL);
           const ende = nach.y - KNOTEN / 2;
           const knick = start + (ende - start) * 0.55;
-          const knotenZustand = zustand(knoten);
-          const frei = knotenZustand === 'frei';
-          const offen = knotenZustand === 'verfuegbar';
+          const frei = zustand(knoten) === 'frei';
+          const offen = zustand(knoten) === 'verfuegbar';
           return (
             <path
               key={knoten.id}
@@ -125,12 +111,12 @@ function Graph({ daten, onWaehlen }: { daten: BaumDaten; onWaehlen: (id: number)
           top: wurzel.y,
           width: WURZEL,
           height: WURZEL,
-          borderColor: toene.text,
+          borderColor: faehigkeit.farbe,
           backgroundColor: `color-mix(in srgb, ${faehigkeit.farbe} 16%, var(--flaeche))`,
-          color: toene.text,
+          color: faehigkeit.farbe,
         }}
       >
-        <Icon name={faehigkeit.icon} data-symbol="" className="size-6" />
+        <Icon name={faehigkeit.icon} className="size-6" />
       </div>
 
       {faehigkeit.knoten.map((knoten) => {
@@ -149,7 +135,7 @@ function Graph({ daten, onWaehlen }: { daten: BaumDaten; onWaehlen: (id: number)
             className="group absolute flex flex-col items-center gap-1 px-1 text-center"
             style={{ left: punkt.x - SPALTE / 2, top: punkt.y - KNOTEN / 2, width: SPALTE }}
           >
-            <KnotenScheibe zustand={knotenZustand} farbe={faehigkeit.farbe} toene={toene} xp={knoten.xp} />
+            <KnotenScheibe zustand={knotenZustand} farbe={faehigkeit.farbe} xp={knoten.xp} />
             <span
               className={`line-clamp-2 w-full break-words text-[11px] leading-tight ${
                 knotenZustand === 'frei' ? 'font-semibold text-haupt' : knotenZustand === 'verfuegbar' ? 'font-medium text-haupt' : 'text-leise'
@@ -162,6 +148,12 @@ function Graph({ daten, onWaehlen }: { daten: BaumDaten; onWaehlen: (id: number)
       })}
     </div>
   );
+}
+
+export function skillSchein(farbe: string): CSSProperties {
+  return {
+    backgroundImage: `radial-gradient(ellipse 70% 180px at 50% 0%, color-mix(in srgb, ${farbe} calc(var(--glimm, 1) * 16%), transparent), transparent)`,
+  };
 }
 
 export function SkillBaum({ faehigkeit, onWaehlen }: { faehigkeit: Faehigkeit; onWaehlen: (id: number) => void }) {

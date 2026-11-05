@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.62
+
+### Behoben
+
+- Auf einer Fähigkeit ist der Ring wieder dünn und beginnt oben. Baum, Ränge und Karte leuchten wieder in der Farbe der Fähigkeit.
+
 ## 3.56.61
 
 ### Verbessert

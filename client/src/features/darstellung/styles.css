@@ -537,7 +537,6 @@ html[data-eingabe='zeiger'] :focus {
 }
 
 .skill-leuchten {
-  box-shadow: 0 0 14px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm) * 55%), transparent);
   animation: skill-schimmer 3.2s ease-in-out infinite;
 }
 
@@ -552,136 +551,44 @@ html[data-eingabe='zeiger'] :focus {
 }
 
 .baum-puls {
-  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm) * 65%), transparent));
   animation: baum-puls 3.2s ease-in-out infinite;
 }
 
 .baum-frei {
-  background-color: var(--skill-tief);
-  background-image: linear-gradient(to bottom, var(--skill-tief), var(--skill-tiefer));
+  background-image:
+    radial-gradient(circle at 32% 24%, color-mix(in srgb, white 72%, transparent) 0%, transparent 46%),
+    radial-gradient(circle at 50% 62%, color-mix(in srgb, var(--skillfarbe) 68%, white), var(--skillfarbe));
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
     0 0 10px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm, 1) * 40%), transparent);
-  color: #ffffff;
 }
 
 .baum-frei .zahl {
   text-shadow: 0 1px 1px rgb(0 0 0 / 35%);
 }
 
-.skill-ring {
-  --ring-d: 76px;
-  --ring-strich: calc(var(--ring-d) * 0.09);
-  --skill-spitze: color-mix(in srgb, black 18%, var(--skillfarbe));
-  --ring-schein: calc(var(--ring-d) * 0.035);
-  --ring-schein-deckung: 25%;
-  position: relative;
-  flex: none;
-  width: var(--ring-d);
-  height: var(--ring-d);
-}
-
-.skill-ring-spur,
-.skill-ring-bogen {
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  -webkit-mask: radial-gradient(circle, transparent calc(50% - var(--ring-strich)), #000 calc(50% - var(--ring-strich) + 0.5px));
-  mask: radial-gradient(circle, transparent calc(50% - var(--ring-strich)), #000 calc(50% - var(--ring-strich) + 0.5px));
-}
-
-.skill-ring-spur {
-  background: var(--flaeche-2);
-}
-
-.skill-ring-bogen {
-  background: conic-gradient(
-    from -90deg,
-    color-mix(in srgb, var(--skillfarbe) 45%, transparent),
-    var(--skillfarbe) calc(var(--anteil) * 360deg),
-    transparent calc(var(--anteil) * 360deg)
-  );
-}
-
-.skill-ring-punkt-lage {
-  position: absolute;
-  inset: 0;
-  transform: rotate(calc(var(--anteil) * 360deg));
-}
-
-.skill-ring-punkt {
-  position: absolute;
-  left: 50%;
-  top: calc(var(--ring-strich) / 2);
-  width: calc(var(--ring-strich) * 1.5);
-  height: calc(var(--ring-strich) * 1.5);
-  transform: translate(-50%, -50%);
-  border-radius: 9999px;
-  background: var(--skill-spitze);
-  box-shadow: 0 0 var(--ring-schein) color-mix(in srgb, var(--skillfarbe) var(--ring-schein-deckung), transparent);
-}
-
-.skill-ring-mitte {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-:root[data-schema='dark'] .skill-ring {
-  --skill-spitze: color-mix(in srgb, white 40%, var(--skillfarbe));
-  --ring-schein: calc(var(--ring-d) * 0.07);
-  --ring-schein-deckung: 50%;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-schema='light']) .skill-ring {
-    --skill-spitze: color-mix(in srgb, white 40%, var(--skillfarbe));
-    --ring-schein: calc(var(--ring-d) * 0.07);
-    --ring-schein-deckung: 50%;
-  }
-}
-
 :root[data-glimmen='aus'] .baum-frei {
   box-shadow: inset 0 1px 0 color-mix(in srgb, white 45%, transparent);
 }
 
-:root[data-glimmen='aus'] .baum-puls,
-:root[data-glimmen='aus'] .skill-leuchten {
+:root[data-glimmen='aus'] .baum-puls {
   animation: none;
   filter: none;
-  box-shadow: none;
-}
-
-:root[data-glimmen='aus'] .skill-ring-punkt {
-  box-shadow: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .baum-puls,
-  .skill-leuchten {
+  .baum-puls {
     animation: none;
+    filter: none;
   }
 }
 
-@media (forced-colors: active) {
-  .skill-ring-bogen {
-    background: CanvasText;
-  }
+:root[data-glimmen='aus'] .skill-leuchten {
+  animation: none;
+}
 
-  .skill-ring-punkt {
-    display: none;
-  }
-
-  .baum-puls,
-  .skill-leuchten,
-  .baum-frei {
-    animation: none;
-    filter: none;
-    box-shadow: none;
-  }
+:root[data-glimmen='aus'] .glimm-fleck {
+  opacity: 0;
 }
 
 .pfad-an {

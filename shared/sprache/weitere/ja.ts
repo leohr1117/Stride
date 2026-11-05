@@ -101,6 +101,7 @@ export const TEXTE: Record<string, string> = {
   "Der Levelring beginnt wieder oben, läuft im Uhrzeigersinn und endet mit einem Lichtpunkt.": "レベルリングは再び上から始まり、時計回りに進んで、先端に光点があります。",
   "Der Levelring auf Heute und im Projekt ist etwas größer. Die Zahl, das Wort Level, der Strich und der Lichtpunkt wachsen im gleichen Verhältnis mit.": "今日とプロジェクトのレベルリングが少し大きくなりました。数字、レベルの文字、線、光点が同じ割合で大きくなります。",
   "Der Levelring auf Heute und im Projekt ist wieder größer, und Schrift und Strich passen zur Größe.": "今日とプロジェクトのレベルリングが再び大きくなり、文字と線の太さも大きさに合います。",
+  "Auf einer Fähigkeit ist der Ring wieder dünn und beginnt oben. Baum, Ränge und Karte leuchten wieder in der Farbe der Fähigkeit.": "スキルのリングは再び細く、上から始まります。ツリー、ランク、カードがスキルの色で再び光ります。",
   "Auf einer Fähigkeit sind Farbe, Verlauf und Glühen wieder da. Zahlen auf erreichten Rängen und Knoten bleiben weiß und lesbar, der Rangname auch, und der Ring leuchtet in der Farbe der Fähigkeit.": "スキルには色、グラデーション、光が戻ります。到達したランクとノードの数字は白く読みやすく、ランク名も同様で、リングはスキルの色で光ります。",
   "Auf einer Fähigkeit sind Ring, XP-Balken und erreichte Ränge in der Fortschrittsfarbe. Der Rangname bleibt lesbar, Knoten haben einen Rand, und freigeschaltete zeigen einen Haken. Die Farbe der Fähigkeit bleibt am Symbol.": "スキルでは、リング、XPバー、到達したランクが進捗の色になります。ランク名は読みやすいまま、ノードには枠があり、解放済みはチェックを示します。スキルの色は記号だけに残ります。",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "どの表示でも、用意された配色をすべて選べます。自分で作った配色は、作った表示に残ります。",

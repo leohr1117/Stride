@@ -126,7 +126,7 @@ test('Fähigkeiten zeigen denselben Baum', async ({ page }) => {
   const naechstes = karte.locator('[data-zustand="verfuegbar"]', { hasText: 'Release bauen' });
   await expect(frei.first()).toBeVisible();
   await expect(frei.locator('.baum-puls')).toHaveCount(0);
-  await expect(frei.locator('[data-haken]').first()).toBeVisible();
+  await expect(frei.locator('[data-haken]')).toHaveCount(0);
   await expect(naechstes).toBeVisible();
   await expect(naechstes.locator('.baum-puls')).toHaveCount(1);
   await expect(naechstes.locator('[data-haken]')).toHaveCount(0);

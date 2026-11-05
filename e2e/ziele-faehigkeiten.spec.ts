@@ -168,7 +168,7 @@ test('Abgeschlossen bleibt in der Kopfzeile', async ({ page }, testInfo) => {
   }
 });
 
-test('Skill-Blasen zeigen XP, freigeschaltet mit Haken', async ({ page }, testInfo) => {
+test('Skill-Blasen zeigen XP ohne Haken', async ({ page }, testInfo) => {
   const faehigkeit = await page.evaluate(async () => {
     const antwort = await fetch('/api/faehigkeiten');
     if (!antwort.ok) {
@@ -193,8 +193,8 @@ test('Skill-Blasen zeigen XP, freigeschaltet mit Haken', async ({ page }, testIn
   await page.goto(`/faehigkeiten/${faehigkeit.id}`);
   const karte = page.locator('.baum-karte');
   await expect(karte.locator('.baum-wurzel')).toBeVisible();
+  await expect(karte.locator('.baum-knoten svg')).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
-  const freiIds = new Set(faehigkeit.knoten.filter((eintrag) => eintrag.freigeschaltetAm !== null).map((eintrag) => eintrag.id));
 
   for (const knoten of faehigkeit.knoten) {
     const text = kompakt(knoten.xp);
@@ -204,31 +204,23 @@ test('Skill-Blasen zeigen XP, freigeschaltet mit Haken', async ({ page }, testIn
     await expect(knopf).toHaveCount(1);
     await knopf.scrollIntoViewIfNeeded();
     const kreis = knopf.locator('.baum-knoten');
-    await expect(kreis.locator('.zahl')).toHaveText(text);
+    await expect(kreis).toHaveText(text);
     await zahlPasstInBlase(kreis);
-    const rand = await kreis.evaluate((element) => {
-      const stil = getComputedStyle(element);
-      return {
-        breite: stil.borderTopWidth,
-        art: stil.borderTopStyle,
-        verlauf: stil.backgroundImage.includes('gradient'),
-        schatten: stil.boxShadow,
-        filter: stil.filter,
-      };
-    });
-    expect(rand.breite).toBe('2px');
-    const gesperrt = knoten.freigeschaltetAm === null && knoten.elternId !== null && !freiIds.has(knoten.elternId);
     if (knoten.freigeschaltetAm !== null) {
       await expect(knopf).toHaveAttribute('data-zustand', 'frei');
-      await expect(kreis.locator('[data-haken]')).toHaveCount(1);
-      expect(rand.art).toBe('solid');
-      expect(rand.verlauf).toBe(true);
-      expect(rand.schatten).not.toBe('none');
+      await expect(kreis).toHaveClass(/baum-frei/);
+      const schein = await kreis.evaluate((element) => {
+        const stil = getComputedStyle(element);
+        return {
+          verlauf: stil.backgroundImage.includes('gradient'),
+          glanz: stil.boxShadow !== 'none',
+        };
+      });
+      expect(schein.verlauf).toBe(true);
+      expect(schein.glanz).toBe(true);
     } else {
-      await expect(kreis.locator('[data-haken]')).toHaveCount(0);
+      await expect(kreis).not.toHaveClass(/baum-frei/);
       await expect(knopf).not.toHaveAttribute('data-zustand', 'frei');
-      expect(rand.art).toBe(gesperrt ? 'dashed' : 'solid');
-      expect(rand.verlauf).toBe(false);
     }
   }
 

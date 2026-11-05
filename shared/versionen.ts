@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.62',
+    seiten: 'Fähigkeiten',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Auf einer Fähigkeit ist der Ring wieder dünn und beginnt oben. Baum, Ränge und Karte leuchten wieder in der Farbe der Fähigkeit.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.61',
     seiten: 'Heute, Projekt, Profil',
     abschnitte: [

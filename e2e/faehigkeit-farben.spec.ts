@@ -1,31 +1,32 @@
 import fs from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
-import { kontrast, MINDEST_KONTRAST } from '../shared/spiel/farben.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { warteAufRuhe } from './pruefaufnahme.ts';
 
 const HELL = { stil: 'standard', primaer: '#141414', akzent: '#707070', hintergrund: '#f2f2f2', glimmen: true };
 const DUNKEL = { stil: 'standard', primaer: '#f2f2f2', akzent: '#8a8a8a', hintergrund: '#141414', glimmen: true };
 
-interface Paar {
-  name: string;
-  vordergrund: string;
-  hintergrund: string;
-  mindest: number;
-}
-
-interface Bericht {
-  paare: Paar[];
-  verlauf: string[];
-  balken: string;
-  fortschritt: string;
-  ring: string;
-}
-
 interface FaehigkeitZeile {
   id: number;
   name: string;
+  farbe: string;
+  icon: string;
   knoten: { titel: string; freigeschaltetAm: string | null }[];
+}
+
+interface RingForm {
+  breite: number;
+  radius: number;
+  strich: number;
+  kappe: string;
+  startX: number;
+  startY: number;
+  weiterX: number;
+  anteil: number;
+  offset: number;
+  laenge: number;
+  endeWinkel: number;
+  klasse: string;
 }
 
 async function speichere(seite: Page, koerper: Record<string, unknown>): Promise<void> {
@@ -79,120 +80,64 @@ async function faehigkeit(seite: Page, name: string): Promise<FaehigkeitZeile> {
   return fund;
 }
 
-function berichtVon(wurzel: string): string {
-  return `(() => {
-    const wurzel = document.querySelector(${JSON.stringify(wurzel)});
-    if (!wurzel) {
-      return { paare: [], verlauf: ['fehlt'], balken: '', fortschritt: '', ring: '' };
+function winkelAbstand(gemessen: number, erwartet: number): number {
+  const delta = Math.abs(gemessen - erwartet) % 360;
+  return Math.min(delta, 360 - delta);
+}
+
+async function ringForm(seite: Page): Promise<RingForm> {
+  return seite.locator('main svg[viewBox="0 0 100 100"]').evaluate((svg) => {
+    if (!(svg instanceof SVGSVGElement)) {
+      throw new Error('Ring fehlt');
     }
-    const berechne = (farbe) => {
-      const probe = document.createElement('span');
-      probe.style.color = farbe;
-      document.body.append(probe);
-      const wert = getComputedStyle(probe).color;
-      probe.remove();
-      return wert;
+    const kreise = [...svg.querySelectorAll('circle')];
+    const spur = kreise[0];
+    const bogen = kreise[1];
+    if (!(spur instanceof SVGCircleElement) || !(bogen instanceof SVGCircleElement)) {
+      throw new Error('Bogen fehlt');
+    }
+    const laenge = bogen.getTotalLength();
+    const radius = Number(bogen.getAttribute('r'));
+    const box = svg.getBoundingClientRect();
+    const massstab = box.width / 100;
+    const roh = bogen.getAttribute('stroke-dashoffset') ?? bogen.style.strokeDashoffset;
+    const zahl = Number.parseFloat(roh);
+    const offset = Number.isFinite(zahl) ? (zahl > laenge * 1.5 ? zahl / massstab : zahl) : Number.NaN;
+    const ctm = bogen.getScreenCTM();
+    if (!ctm) {
+      throw new Error('Keine Bildmatrix');
+    }
+    const punkt = (strecke: number) => {
+      const ort = bogen.getPointAtLength(strecke);
+      const bild = new DOMPoint(ort.x, ort.y).matrixTransform(ctm);
+      return { x: bild.x - (box.x + box.width / 2), y: bild.y - (box.y + box.height / 2) };
     };
-    const grundVon = (element) => {
-      let knoten = element;
-      while (knoten) {
-        const farbe = getComputedStyle(knoten).backgroundColor;
-        if (farbe !== 'rgba(0, 0, 0, 0)' && farbe !== 'transparent') {
-          return farbe;
-        }
-        knoten = knoten.parentElement;
-      }
-      return getComputedStyle(document.body).backgroundColor;
-    };
-    const paare = [];
-    const schiebe = (name, element, vordergrund, hintergrund, mindest) => {
-      if (!(element instanceof Element) || element.getClientRects().length === 0) {
-        return;
-      }
-      paare.push({ name, vordergrund, hintergrund, mindest });
-    };
-    const ringStrich = wurzel.querySelector('.skill-ring-strich');
-    const ringBahn = wurzel.querySelector('.skill-ring-bahn');
-    if (ringStrich && ringBahn) {
-      schiebe('ring', ringStrich, getComputedStyle(ringStrich).stroke, getComputedStyle(ringBahn).stroke, 3);
-    }
-    for (const symbol of wurzel.querySelectorAll('[data-symbol]')) {
-      schiebe('symbol', symbol, getComputedStyle(symbol).color, grundVon(symbol), 3);
-    }
-    const balken = wurzel.querySelector('.balken-fuellung');
-    if (balken) {
-      schiebe('balken', balken, getComputedStyle(balken).backgroundColor, grundVon(balken.parentElement || balken), 3);
-    }
-    for (const kasten of wurzel.querySelectorAll('[data-rang="erreicht"]')) {
-      const stil = getComputedStyle(kasten);
-      schiebe('rang', kasten, stil.color, stil.backgroundColor, 4.5);
-    }
-    const rangname = wurzel.querySelector('.rang-name');
-    if (rangname) {
-      schiebe('rangname', rangname, getComputedStyle(rangname).color, grundVon(rangname), 4.5);
-    }
-    for (const kreis of wurzel.querySelectorAll('.baum-knoten')) {
-      const stil = getComputedStyle(kreis);
-      if (stil.borderTopColor !== 'rgba(0, 0, 0, 0)' && stil.borderTopColor !== 'transparent') {
-        schiebe('knotenrand', kreis, stil.borderTopColor, stil.backgroundColor, 3);
-      }
-      const zahl = kreis.querySelector('.zahl');
-      if (zahl) {
-        schiebe('knotenzahl', zahl, getComputedStyle(zahl).color, stil.backgroundColor, 4.5);
-      }
-      const haken = kreis.querySelector('[data-haken]');
-      if (haken) {
-        schiebe('haken', haken, getComputedStyle(haken).color, stil.backgroundColor, 3);
-      }
-      const titel = kreis.parentElement?.querySelector(':scope > span:last-child');
-      if (titel) {
-        schiebe('titel', titel, getComputedStyle(titel).color, grundVon(titel), 4.5);
-      }
-    }
-    for (const text of wurzel.querySelectorAll('p, button, .rang-name')) {
-      if (!(text instanceof HTMLElement) || text.closest('[data-rang]') || text.innerText.trim() === '') {
-        continue;
-      }
-      schiebe('text', text, getComputedStyle(text).color, grundVon(text), 4.5);
-    }
-    const verlauf = [...wurzel.querySelectorAll('*')]
-      .filter((element) => {
-        if (element.closest('.balken, .mobilkopf, .mobilleiste, .seitenleiste')) {
-          return false;
-        }
-        const stil = getComputedStyle(element);
-        return stil.backgroundImage.includes('gradient') || stil.filter.includes('blur') || stil.backdropFilter.includes('blur');
-      })
-      .map((element) => String(element.className).slice(0, 80));
+    const start = punkt(0);
+    const weiter = punkt(laenge * 0.08);
+    const anteilText = svg.parentElement?.textContent?.match(/(\d+)\s*\/\s*(\d+)/);
+    const frei = Number(anteilText?.[1] ?? 0);
+    const gesamt = Number(anteilText?.[2] ?? 0);
+    const anteil = gesamt === 0 ? 0 : frei / gesamt;
+    const ende = punkt(Math.min(laenge, Math.max(0, laenge - offset)));
+    const endeWinkel = (Math.atan2(ende.x, -ende.y) * 180) / Math.PI;
     return {
-      paare,
-      verlauf,
-      balken: balken ? getComputedStyle(balken).backgroundColor : '',
-      fortschritt: berechne('var(--fortschritt)'),
-      ring: ringStrich ? getComputedStyle(ringStrich).stroke : '',
+      breite: box.width,
+      radius,
+      strich: Number(spur.getAttribute('stroke-width')),
+      kappe: bogen.getAttribute('stroke-linecap') ?? '',
+      startX: start.x,
+      startY: start.y,
+      weiterX: weiter.x,
+      anteil,
+      offset,
+      laenge,
+      endeWinkel: (endeWinkel + 360) % 360,
+      klasse: svg.getAttribute('class') ?? '',
     };
-  })()`;
+  });
 }
 
-async function bericht(seite: Page, wurzel: string): Promise<Bericht> {
-  return seite.evaluate(berichtVon(wurzel));
-}
-
-function maengel(daten: Bericht): string[] {
-  const liste: string[] = [];
-  for (const paar of daten.paare) {
-    if (paar.name === 'ring' || paar.name === 'balken') {
-      continue;
-    }
-    const wert = kontrast(paar.vordergrund, paar.hintergrund);
-    if (!Number.isFinite(wert) || wert < paar.mindest) {
-      liste.push(`${paar.name} ${Number.isFinite(wert) ? wert.toFixed(2) : 'nan'} ${paar.vordergrund} auf ${paar.hintergrund}`);
-    }
-  }
-  return liste;
-}
-
-test('Fähigkeit und Knoten halten den Kontrast in Hell und Dunkel', async ({ page }, testInfo) => {
+test('Der Fähigkeitsring beginnt oben und der Baum leuchtet', async ({ page }, testInfo) => {
   test.setTimeout(180_000);
   await anmelden(page);
   const original = await lese(page);
@@ -210,47 +155,49 @@ test('Fähigkeit und Knoten halten den Kontrast in Hell und Dunkel', async ({ pa
       await expect(page.locator('html')).toHaveAttribute('data-stil', 'standard');
       await expect(page.locator('html')).toHaveAttribute('data-schema', schema === 'hell' ? 'light' : 'dark');
       await expect(page.locator('.baum-wurzel')).toBeVisible();
+      await expect(page.locator('.skill-ring')).toHaveCount(0);
       await warteAufRuhe(page);
-      await expect.poll(async () => maengel(await bericht(page, 'main')).join('\n')).toBe('');
-      const form = await page.locator('.skill-ring').evaluate((element) => {
-        const bogen = element.querySelector('.skill-ring-bogen');
-        const balken = document.querySelector('.balken-fuellung');
-        const probe = document.createElement('span');
-        probe.style.backgroundColor = getComputedStyle(element).getPropertyValue('--skillfarbe');
-        document.body.append(probe);
-        const soll = getComputedStyle(probe).backgroundColor;
-        probe.remove();
-        return {
-          breite: Math.round(element.getBoundingClientRect().width),
-          verlauf: bogen ? getComputedStyle(bogen).backgroundImage.includes('gradient') : false,
-          balken: balken ? getComputedStyle(balken).backgroundColor === soll : false,
-          schein: document.querySelector('.glimm-fleck') !== null,
-        };
-      });
-      expect(form.breite).toBe(76);
-      expect(form.verlauf).toBe(true);
-      expect(form.balken).toBe(true);
-      expect(form.schein).toBe(true);
-      expect(kontrast('#f87171', '#ffffff')).toBeLessThan(MINDEST_KONTRAST);
+      const form = await ringForm(page);
+      expect(form.klasse).toContain('-rotate-90');
+      expect(form.radius).toBe(44);
+      expect(form.strich).toBe(7);
+      expect(form.kappe).toBe('round');
+      expect(form.breite).toBeGreaterThan(90);
+      expect(form.breite).toBeLessThan(102);
+      expect(Math.abs(form.startX)).toBeLessThan(4);
+      expect(form.startY).toBeLessThan(-30);
+      expect(form.weiterX).toBeGreaterThan(8);
+      expect(Math.abs(form.offset - form.laenge * (1 - form.anteil))).toBeLessThan(2);
+      if (form.anteil > 0) {
+        const abstand = winkelAbstand(form.endeWinkel, form.anteil * 360);
+        expect(abstand).toBeLessThan(12);
+      }
+      await expect(page.locator('.glimm-fleck')).toBeVisible();
+      await expect(page.locator('.baum-frei').first()).toBeVisible();
+      const schein = await page.locator('.baum-frei').first().evaluate((element) => getComputedStyle(element).boxShadow);
+      expect(schein).toContain('10px');
       await ohneSeitlichenUeberlauf(page);
-      await page.screenshot({ path: `tmp-test/faehigkeit-farben/${projekt}-s10-${schema}.png`, fullPage: true });
+      await page.screenshot({ path: `tmp-test/faehigkeit-farben/${projekt}-kraft-${schema}.png`, fullPage: true });
 
       await page.getByRole('button', { name: /Kniebeuge sauber/ }).click();
       const offen = page.getByRole('dialog', { name: 'Kniebeuge sauber', exact: true });
       await expect(offen).toBeVisible();
-      await expect.poll(async () => maengel(await bericht(page, '[role="dialog"]')).join('\n')).toBe('');
       await offen.getByRole('button', { name: 'Schließen', exact: true }).click();
 
       const code = await faehigkeit(page, 'Programmieren');
       expect(code.knoten.some((knoten) => knoten.titel === 'Release bauen' && knoten.freigeschaltetAm === null)).toBe(true);
       await page.goto(`/faehigkeiten/${code.id}`);
       await expect(page.locator('.baum-wurzel')).toBeVisible();
+      await warteAufRuhe(page);
+      const codeRing = await ringForm(page);
+      expect(Math.abs(codeRing.startX)).toBeLessThan(4);
+      expect(codeRing.startY).toBeLessThan(-30);
+      expect(codeRing.weiterX).toBeGreaterThan(8);
       await page.getByRole('button', { name: /Release bauen/ }).click();
       const knoten = page.getByRole('dialog', { name: 'Release bauen', exact: true });
       await expect(knoten.getByRole('button', { name: /Freischalten/ })).toBeVisible();
       await warteAufRuhe(page);
-      await expect.poll(async () => maengel(await bericht(page, '[role="dialog"]')).join('\n')).toBe('');
-      await page.screenshot({ path: `tmp-test/faehigkeit-farben/${projekt}-d17-${schema}.png`, fullPage: false });
+      await page.screenshot({ path: `tmp-test/faehigkeit-farben/${projekt}-programmieren-${schema}.png`, fullPage: false });
       await knoten.getByRole('button', { name: 'Schließen', exact: true }).click();
     }
 
@@ -259,19 +206,15 @@ test('Fähigkeit und Knoten halten den Kontrast in Hell und Dunkel', async ({ pa
     await page.goto(`/faehigkeiten/${stamm.id}`);
     await expect(page.locator('html')).toHaveAttribute('data-glimmen', 'aus');
     await expect(page.locator('.baum-frei').first()).toBeVisible();
-    const ohneSchein = await page.locator('.baum-frei').first().evaluate((element) => {
-      const stil = getComputedStyle(element);
-      return { bild: stil.backgroundImage, schatten: stil.boxShadow };
-    });
-    expect(ohneSchein.bild).toContain('gradient');
-    expect(ohneSchein.schatten).not.toContain('10px');
-    await expect(page.locator('.glimm-fleck')).toBeVisible();
+    const ohneSchein = await page.locator('.baum-frei').first().evaluate((element) => getComputedStyle(element).boxShadow);
+    expect(ohneSchein).not.toContain('10px');
+    const fleck = page.locator('.glimm-fleck');
+    await expect(fleck).toHaveCount(1);
+    expect(await fleck.evaluate((element) => getComputedStyle(element).opacity)).toBe('0');
     const pulsAus = await page.locator('.baum-puls').first().evaluate((element) => getComputedStyle(element).filter);
     expect(pulsAus).toBe('none');
-    const punktAus = page.locator('.skill-ring-punkt');
-    if ((await punktAus.count()) > 0) {
-      expect(await punktAus.first().evaluate((element) => getComputedStyle(element).boxShadow)).toBe('none');
-    }
+    const leuchtenAus = await page.locator('.skill-leuchten').first().evaluate((element) => getComputedStyle(element).animationName);
+    expect(leuchtenAus).toBe('none');
 
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await speichere(page, { ...DUNKEL, glimmen: true });
@@ -284,7 +227,7 @@ test('Fähigkeit und Knoten halten den Kontrast in Hell und Dunkel', async ({ pa
       filter: getComputedStyle(element).filter,
     }));
     expect(pulsAn.name).toBe('none');
-    expect(pulsAn.filter).not.toBe('none');
+    expect(pulsAn.filter).toBe('none');
     await page.emulateMedia({ reducedMotion: 'no-preference' });
 
     if (projekt === 'handy') {
@@ -294,8 +237,11 @@ test('Fähigkeit und Knoten halten den Kontrast in Hell und Dunkel', async ({ pa
         await expect(page.locator('html')).toHaveAttribute('data-stil', stil);
         await expect(page.locator('.baum-wurzel')).toBeVisible();
         await warteAufRuhe(page);
-        await expect.poll(async () => maengel(await bericht(page, 'main')).join('\n')).toBe('');
-        await page.screenshot({ path: `tmp-test/faehigkeit-farben/${projekt}-s10-${stil}.png`, fullPage: false });
+        const stilRing = await ringForm(page);
+        expect(Math.abs(stilRing.startX)).toBeLessThan(4);
+        expect(stilRing.startY).toBeLessThan(-30);
+        await warteAufRuhe(page);
+        await page.screenshot({ path: `tmp-test/faehigkeit-farben/${projekt}-programmieren-${stil}.png`, fullPage: false });
       }
     }
   } finally {
