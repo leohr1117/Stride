@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.60
+
+### Behoben
+
+- Der Levelring beginnt wieder oben, läuft im Uhrzeigersinn und endet mit einem Lichtpunkt.
+
 ## 3.56.59
 
 ### Behoben

@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { type CSSProperties, type ReactNode, useId } from 'react';
 import { prozentPunkte } from '../format.ts';
 import { tx } from '../text.ts';
-import { RING_MITTE, RING_RADIUS, RING_SCHRIFT_AB, RING_UMFANG, ringAbschluss, strichWeite } from './levelringAbschluss.ts';
 
 export function XpAbzug({ prozent, schrift = 'text-xs' }: { prozent: number; schrift?: string }) {
   return (
@@ -171,6 +170,24 @@ export function Fortschrittsbalken({
   );
 }
 
+const RING_MITTE = 50;
+const RING_RADIUS = 42;
+const RING_STRICH = 8;
+
+function ringId(roh: string): string {
+  return `ringschein${roh.replace(/:/g, '')}`;
+}
+
+function ringSpitze(anteil: number): { cx: number; cy: number } {
+  const winkel = -Math.PI / 2 + anteil * Math.PI * 2;
+  return {
+    cx: RING_MITTE + Math.cos(winkel) * RING_RADIUS,
+    cy: RING_MITTE + Math.sin(winkel) * RING_RADIUS,
+  };
+}
+
+const RING_SCHRIFT_AB = 96;
+
 function ringSchrift(groesse: number, basis: number): number | undefined {
   if (groesse >= RING_SCHRIFT_AB) {
     return undefined;
@@ -178,21 +195,31 @@ function ringSchrift(groesse: number, basis: number): number | undefined {
   return Math.max(1, Math.round((basis * groesse) / RING_SCHRIFT_AB));
 }
 
-const RING_GROSS = 72;
-
-function levelZeileGross(level: number): ReactNode {
-  return (
-    <>
-      <span className="levelring-label max-w-full px-0.5 text-center text-leise">{tx("Level")}</span>
-      <span className="levelring-zahl zahl">{level}</span>
-    </>
-  );
-}
-
-function levelZeile(level: number, groesse: number): ReactNode {
+export function LevelRing({
+  level,
+  anteil,
+  groesse = 96,
+  mitte,
+}: {
+  level: number;
+  anteil: number;
+  groesse?: number;
+  mitte?: ReactNode;
+}) {
+  const schein = ringId(useId());
+  const begrenzt = Math.min(1, Math.max(0, anteil));
+  const voll = begrenzt >= 0.999;
+  const spitze = ringSpitze(begrenzt);
+  const endMix = Math.round(18 + begrenzt * 82);
+  const startKraft = Math.round(58 + begrenzt * 18);
+  const spitzenFarbe = `color-mix(in srgb, var(--fortschritt) ${endMix}%, var(--haupt))`;
+  // 0° im conic-gradient ist 12 Uhr, im Uhrzeigersinn. Blass am Anfang, kräftig an der Spitze.
+  const verlauf = `conic-gradient(from 0deg, color-mix(in srgb, var(--haupt) ${startKraft}%, transparent) 0deg, ${spitzenFarbe} ${begrenzt * 360}deg, transparent ${begrenzt * 360}deg)`;
+  // Die Maske deckt genau den Strich (Mitte 42, Breite 8 in der 100er-Box).
+  const maske = 'radial-gradient(farthest-side, transparent 75.2%, #000 76.4%, #000 91.6%, transparent 92.8%)';
   const labelGroesse = ringSchrift(groesse, 10);
   const zahlGroesse = ringSchrift(groesse, 24);
-  return (
+  const zeile = (
     <>
       <span
         className="max-w-full px-1 text-center text-[10px] leading-none font-medium tracking-wider text-leise uppercase"
@@ -208,101 +235,59 @@ function levelZeile(level: number, groesse: number): ReactNode {
       </span>
     </>
   );
-}
-
-function levelGrafik(anteil: number, groesse: number, verlaufId: string, cssStrich: boolean): ReactNode {
-  const begrenzt = Math.min(1, Math.max(0, anteil));
-  const voll = begrenzt >= 0.999;
-  const abschluss = ringAbschluss(anteil, groesse);
-  const kreis = {
-    cx: RING_MITTE,
-    cy: RING_MITTE,
-    r: RING_RADIUS,
-    fill: 'none',
-    strokeLinecap: 'butt',
-    ...(cssStrich ? {} : { strokeWidth: strichWeite(groesse) }),
-  } as const;
-  return (
-    <svg viewBox="0 0 100 100" className="absolute inset-0" aria-hidden="true">
-      <circle
-        cx={RING_MITTE}
-        cy={RING_MITTE}
-        r={RING_RADIUS}
-        fill="none"
-        stroke="var(--flaeche-2)"
-        strokeWidth={cssStrich ? undefined : strichWeite(groesse)}
-      />
-      {abschluss && (
-        <g className="levelring-bogen">
+  const grafik = (
+    <>
+      <svg viewBox="0 0 100 100" className="absolute inset-0 overflow-visible" aria-hidden="true">
+        <circle cx={RING_MITTE} cy={RING_MITTE} r={RING_RADIUS} fill="none" stroke="var(--flaeche-2)" strokeWidth={RING_STRICH} />
+        {voll && (
           <circle
-            className="levelring-strich"
-            {...kreis}
-            stroke="var(--fortschritt)"
-            strokeDasharray={voll ? undefined : `${begrenzt * RING_UMFANG} ${RING_UMFANG}`}
-            transform={voll ? undefined : `rotate(-90 ${RING_MITTE} ${RING_MITTE})`}
+            cx={RING_MITTE}
+            cy={RING_MITTE}
+            r={RING_RADIUS}
+            fill="none"
+            stroke={spitzenFarbe}
+            strokeWidth={RING_STRICH}
           />
-          {abschluss.verlauf !== null && abschluss.versatzVerlauf !== null && abschluss.verlaufVon && abschluss.verlaufNach && (
-            <>
-              <defs>
-                <linearGradient
-                  id={verlaufId}
-                  gradientUnits="userSpaceOnUse"
-                  x1={abschluss.verlaufVon.x}
-                  y1={abschluss.verlaufVon.y}
-                  x2={abschluss.verlaufNach.x}
-                  y2={abschluss.verlaufNach.y}
-                >
-                  <stop offset="0" stopColor="var(--balken-farbe)" />
-                  <stop offset="1" stopColor="var(--balken-verlauf-ton)" />
-                </linearGradient>
-              </defs>
-              <circle
-                className="levelring-verlauf"
-                {...kreis}
-                stroke={`url(#${verlaufId})`}
-                strokeDasharray={`${abschluss.verlauf} ${RING_UMFANG}`}
-                strokeDashoffset={abschluss.versatzVerlauf}
-              />
-            </>
-          )}
-          <circle
-            className="levelring-spitze"
-            {...kreis}
-            stroke="var(--balken-spitze)"
-            strokeDasharray={`${abschluss.spitze} ${RING_UMFANG}`}
-            strokeDashoffset={abschluss.versatzSpitze}
-          />
-        </g>
+        )}
+      </svg>
+      {begrenzt > 0 && !voll && (
+        <div
+          className="pointer-events-none absolute inset-0"
+          data-levelbogen=""
+          style={{ background: verlauf, maskImage: maske, WebkitMaskImage: maske }}
+        />
       )}
-    </svg>
+      {begrenzt > 0 && (
+        <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 overflow-visible" aria-hidden="true">
+          <defs>
+            <filter id={schein} x="-70%" y="-70%" width="240%" height="240%" colorInterpolationFilters="sRGB">
+              <feGaussianBlur stdDeviation="1.6" />
+            </filter>
+          </defs>
+          <circle
+            className="levelring-spitze-schein"
+            cx={spitze.cx}
+            cy={spitze.cy}
+            r="6.4"
+            fill={spitzenFarbe}
+            fillOpacity={0.45 + begrenzt * 0.5}
+            filter={`url(#${schein})`}
+          />
+          <circle cx={spitze.cx} cy={spitze.cy} r="4.05" fill={spitzenFarbe} />
+          <circle data-ringlicht="" cx={spitze.cx} cy={spitze.cy} r="1.25" fill="white" fillOpacity={0.55 + begrenzt * 0.4} />
+        </svg>
+      )}
+    </>
   );
-}
-
-export function LevelRing({
-  level,
-  anteil,
-  groesse,
-  mitte,
-}: {
-  level: number;
-  anteil: number;
-  groesse?: number;
-  mitte?: ReactNode;
-}) {
-  const gross = groesse === undefined;
-  const mass = groesse ?? RING_GROSS;
-  const verlaufId = `lr${useId().replaceAll(':', '')}`;
-  const grafik = levelGrafik(anteil, mass, verlaufId, gross);
-  const zeile = gross ? levelZeileGross(level) : levelZeile(level, mass);
 
   if (mitte) {
     return (
       <div
         className="levelring relative flex shrink-0 flex-col items-center"
         data-levelring=""
-        style={{ width: mass, minWidth: mass, maxWidth: mass }}
+        style={{ width: groesse, minWidth: groesse, maxWidth: groesse }}
       >
-        <div className="relative" style={{ width: mass, height: mass }}>
+        <div className="relative" style={{ width: groesse, height: groesse }}>
           {grafik}
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">{mitte}</div>
         </div>
@@ -311,17 +296,8 @@ export function LevelRing({
     );
   }
 
-  if (gross) {
-    return (
-      <div className="levelring relative shrink-0" data-levelring="" data-gross="">
-        {grafik}
-        <div className="levelring-innen pointer-events-none absolute inset-0 flex flex-col items-center justify-center">{zeile}</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="levelring relative shrink-0" data-levelring="" style={{ width: mass, height: mass }}>
+    <div className="levelring relative shrink-0" data-levelring="" style={{ width: groesse, height: groesse }}>
       {grafik}
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">{zeile}</div>
     </div>

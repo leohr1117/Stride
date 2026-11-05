@@ -109,7 +109,7 @@ export function ProjektSeite() {
         />
       </KopfAktion>
       <div className="flex items-center gap-5">
-        <LevelRing level={projekt.level.level} anteil={projekt.level.fortschritt} />
+        <LevelRing level={projekt.level.level} anteil={projekt.level.fortschritt} groesse={96} />
         <div className="min-w-0 flex-1">
           <ZielMarke ebene="projekte" />
           <div className="flex min-w-0 flex-nowrap items-center gap-1.5">

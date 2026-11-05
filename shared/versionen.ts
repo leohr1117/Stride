@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.60',
+    seiten: 'Heute, Projekt, Profil, Fähigkeiten',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Der Levelring beginnt wieder oben, läuft im Uhrzeigersinn und endet mit einem Lichtpunkt.'],
+      },
+    ],
+  },
+  {
     version: '3.56.59',
     seiten: 'Heute, Projekt',
     abschnitte: [

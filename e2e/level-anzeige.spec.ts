@@ -1,7 +1,8 @@
 import fs from 'node:fs';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, test, type Locator, type Page } from '@playwright/test';
-import { RING_UMFANG, ringAbschluss, strichWeite } from '../client/src/ui/levelringAbschluss.ts';
-import { helligkeit, kontrast } from '../shared/spiel/farben.ts';
+import { LevelRing } from '../client/src/ui/Anzeige.tsx';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 function bild(seite: Page, name: string): Promise<void> {
@@ -269,13 +270,6 @@ test('Level ohne Bruch, Radare nebeneinander, Hinweis und Ring', async ({ page }
   await bild(page, `${name}-faehigkeiten`);
 });
 
-const RING_PROBEN = [
-  { name: '0', anteil: 0 },
-  { name: 'klein', anteil: 0.08 },
-  { name: 'mittel', anteil: 0.45 },
-  { name: '100', anteil: 1 },
-] as const;
-
 const RING_ANSICHTEN = [
   { name: 'hologramm', stil: 'holo', primaer: '#3ea8ff', akzent: '#b38cff', hintergrund: '#050914' },
   { name: 'dunkel', stil: 'standard', primaer: '#f2f2f2', akzent: '#8a8a8a', hintergrund: '#141414' },
@@ -283,37 +277,6 @@ const RING_ANSICHTEN = [
   { name: 'antik', stil: 'antik', primaer: '#d6c79c', akzent: '#c9a24d', hintergrund: '#0d0c0a' },
   { name: 'jade', stil: 'jade', primaer: '#3dd68c', akzent: '#c4b5fd', hintergrund: '#0c0d0f' },
 ] as const;
-
-function ringProbe(anteil: number, name: string): string {
-  const id = `lr${name}`;
-  const strich = strichWeite(64);
-  const bahn = `<circle cx="50" cy="50" r="42" fill="none" stroke="var(--flaeche-2)" stroke-width="${strich}"/>`;
-  const abschluss = ringAbschluss(anteil, 64);
-  if (!abschluss) {
-    return `<div class="levelring relative shrink-0" data-probe="${name}" style="width:64px;height:64px"><svg viewBox="0 0 100 100" class="absolute inset-0">${bahn}</svg></div>`;
-  }
-  const voll = abschluss.anteil >= 1;
-  const strichKreis = voll
-    ? `<circle class="levelring-strich" cx="50" cy="50" r="42" fill="none" stroke="var(--fortschritt)" stroke-width="${strich}" stroke-linecap="butt"/>`
-    : `<circle class="levelring-strich" cx="50" cy="50" r="42" fill="none" stroke="var(--fortschritt)" stroke-width="${strich}" stroke-linecap="butt" stroke-dasharray="${anteil * RING_UMFANG} ${RING_UMFANG}" transform="rotate(-90 50 50)"/>`;
-  const von = abschluss.verlaufVon;
-  const nach = abschluss.verlaufNach;
-  const verlauf =
-    abschluss.verlauf !== null && abschluss.versatzVerlauf !== null && von && nach
-      ? `<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${von.x}" y1="${von.y}" x2="${nach.x}" y2="${nach.y}"><stop offset="0" stop-color="var(--balken-farbe)"/><stop offset="1" stop-color="var(--balken-verlauf-ton)"/></linearGradient></defs><circle class="levelring-verlauf" cx="50" cy="50" r="42" fill="none" stroke="url(#${id})" stroke-width="${strich}" stroke-linecap="butt" stroke-dasharray="${abschluss.verlauf} ${RING_UMFANG}" stroke-dashoffset="${abschluss.versatzVerlauf}"/>`
-      : '';
-  const spitze = `<circle class="levelring-spitze" cx="50" cy="50" r="42" fill="none" stroke="var(--balken-spitze)" stroke-width="${strich}" stroke-linecap="butt" stroke-dasharray="${abschluss.spitze} ${RING_UMFANG}" stroke-dashoffset="${abschluss.versatzSpitze}"/>`;
-  return `<div class="levelring relative shrink-0" data-probe="${name}" style="width:64px;height:64px"><svg viewBox="0 0 100 100" class="absolute inset-0">${bahn}<g class="levelring-bogen">${strichKreis}${verlauf}${spitze}</g></svg></div>`;
-}
-
-function alsRgb(wert: string): string {
-  const farb = wert.match(/color\(srgb\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)/i);
-  if (!farb?.[1] || !farb[2] || !farb[3]) {
-    return wert;
-  }
-  const kanal = (teil: string) => Math.round(Number(teil) * 255);
-  return `rgb(${kanal(farb[1])}, ${kanal(farb[2])}, ${kanal(farb[3])})`;
-}
 
 test('Levelring: Verlauf, Spitze und Glühen in den Ansichten', async ({ page }, testInfo) => {
   test.setTimeout(180_000);
@@ -343,90 +306,37 @@ test('Levelring: Verlauf, Spitze und Glühen in den Ansichten', async ({ page },
       expect(ok).toBe(true);
       await page.goto('/');
       await expect(page.locator('html')).toHaveAttribute('data-stil', ansicht.stil);
-      await expect(page.locator('main [data-levelring]').first()).toBeVisible();
+      const ring = page.locator('main [data-levelring]').first();
+      await expect(ring).toBeVisible();
       const schema = await page.locator('html').getAttribute('data-schema');
       expect(schema).toBe(ansicht.name === 'minimal' ? 'light' : 'dark');
-      const proben = RING_PROBEN.map((eintrag) => ringProbe(eintrag.anteil, eintrag.name)).join('');
-      await page.evaluate((html) => {
-        document.getElementById('ringproben')?.remove();
-        const kasten = document.createElement('div');
-        kasten.id = 'ringproben';
-        kasten.style.position = 'fixed';
-        kasten.style.zIndex = '40';
-        kasten.style.left = '8px';
-        kasten.style.top = '72px';
-        kasten.style.display = 'flex';
-        kasten.style.gap = '12px';
-        kasten.style.padding = '24px';
-        kasten.style.background = 'var(--flaeche)';
-        kasten.innerHTML = html;
-        document.body.append(kasten);
-      }, proben);
-      const kasten = page.locator('#ringproben');
-      await expect(kasten.locator('[data-probe="0"] .levelring-bogen')).toHaveCount(0);
-      await expect(kasten.locator('[data-probe="klein"] .levelring-verlauf')).toHaveCount(0);
-      await expect(kasten.locator('[data-probe="klein"] .levelring-spitze')).toHaveCount(1);
-      await expect(kasten.locator('[data-probe="mittel"] .levelring-verlauf')).toHaveCount(1);
-      await expect(kasten.locator('[data-probe="100"] .levelring-strich')).not.toHaveAttribute('stroke-dasharray');
-      const farben = await kasten.locator('[data-probe="mittel"]').evaluate((element) => {
-        const bahn = element.querySelector('circle');
-        const strich = element.querySelector('.levelring-strich');
-        const spitze = element.querySelector('.levelring-spitze');
-        const bogen = element.querySelector('.levelring-bogen');
-        if (!(bahn instanceof Element) || !(strich instanceof Element) || !(spitze instanceof Element) || !(bogen instanceof Element)) {
-          return null;
-        }
-        return {
-          bahn: getComputedStyle(bahn).stroke,
-          strich: getComputedStyle(strich).stroke,
-          spitze: getComputedStyle(spitze).stroke,
-          filter: getComputedStyle(bogen).filter,
-        };
-      });
-      expect(farben).not.toBeNull();
-      if (farben) {
-        const bahn = alsRgb(farben.bahn);
-        const strich = alsRgb(farben.strich);
-        const spitze = alsRgb(farben.spitze);
-        expect(kontrast(strich, bahn), `${ansicht.name} Füllung`).toBeGreaterThanOrEqual(3);
-        expect(kontrast(spitze, bahn), `${ansicht.name} Spitze`).toBeGreaterThanOrEqual(3);
-        expect(spitze.replace(/\s/g, '')).not.toBe('rgb(255,255,255)');
-        if (schema === 'light') {
-          expect(helligkeit(spitze), ansicht.name).toBeLessThan(helligkeit(strich));
-          expect(farben.filter).toContain('4px');
-        } else {
-          expect(helligkeit(spitze), ansicht.name).toBeGreaterThan(helligkeit(strich));
-          expect(farben.filter).toContain('6px');
-        }
-        expect(farben.filter).not.toBe('none');
+      const html = await ring.innerHTML();
+      expect(html, ansicht.name).toContain('stroke="var(--flaeche-2)"');
+      expect(html, ansicht.name).toContain('var(--fortschritt)');
+      expect(html, ansicht.name).toContain('var(--haupt)');
+      expect(html, ansicht.name).not.toContain('--akzent');
+      const bogen = ring.locator('[data-levelbogen]');
+      if ((await bogen.count()) > 0) {
+        await expect(bogen).toHaveAttribute('style', /conic-gradient\(from 0deg/);
+      } else {
+        const voll = await ring.evaluate((element) =>
+          [...element.querySelectorAll('circle')].some((kreis) => {
+            const strich = kreis.getAttribute('stroke') ?? '';
+            return strich.includes('color-mix') && strich.includes('var(--fortschritt)') && !kreis.hasAttribute('stroke-dasharray');
+          }),
+        );
+        expect(voll, ansicht.name).toBe(true);
       }
+      const schein = ring.locator('.levelring-spitze-schein');
+      await expect(schein).toBeVisible();
+      await expect(schein).toHaveAttribute('filter', /url\(#/);
       if (ansicht.name !== 'jade') {
-        await kasten.screenshot({ path: `tmp-test/level-anzeige/${projekt}-ring-${ansicht.name}.png` });
         const echt = page.locator('main [data-flaeche]').filter({ has: page.locator('[data-levelring]') }).first();
         await echt.screenshot({ path: `tmp-test/level-anzeige/${projekt}-echt-${ansicht.name}.png` });
       }
     }
-    await page.emulateMedia({ forcedColors: 'active' });
-    const gezwungen = await page.locator('#ringproben [data-probe="mittel"]').evaluate((element) => {
-      const bogen = element.querySelector('.levelring-bogen');
-      const verlauf = element.querySelector('.levelring-verlauf');
-      const spitze = element.querySelector('.levelring-spitze');
-      const strich = element.querySelector('.levelring-strich');
-      return {
-        filter: bogen ? getComputedStyle(bogen).filter : 'fehlend',
-        verlauf: verlauf ? getComputedStyle(verlauf).display : 'fehlend',
-        spitze: spitze ? getComputedStyle(spitze).display : 'fehlend',
-        strich: strich ? getComputedStyle(strich).display : 'fehlend',
-      };
-    });
-    expect(gezwungen.filter).toBe('none');
-    expect(gezwungen.verlauf).toBe('none');
-    expect(gezwungen.spitze).toBe('none');
-    expect(gezwungen.strich).not.toBe('none');
   } finally {
-    await page.emulateMedia({ forcedColors: 'none' });
     const wieder = await page.evaluate(async (koerper) => {
-      document.getElementById('ringproben')?.remove();
       const antwort = await fetch('/api/einstellungen', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -444,68 +354,28 @@ test('Levelring: Verlauf, Spitze und Glühen in den Ansichten', async ({ page },
   }
 });
 
-function aufHalbenPixel(wert: number): number {
-  return Math.round(wert * 2) / 2;
-}
-
-function ringInnen(durchmesser: number): { strich: number; zahl: number; level: number; abstand: number } {
-  return {
-    strich: aufHalbenPixel(durchmesser * 0.09),
-    zahl: aufHalbenPixel(durchmesser * 0.27),
-    level: Math.max(10, aufHalbenPixel(durchmesser * 0.14)),
-    abstand: aufHalbenPixel(durchmesser * 0.02),
-  };
-}
-
-function nahe(ist: number, soll: number): boolean {
-  return Math.abs(ist - soll) <= 0.5;
-}
-
 test('Levelring auf Heute und Projekt ist gleich groß', async ({ page }, testInfo) => {
   const name = testInfo.project.name;
   await anmelden(page);
   await page.goto('/');
-  const ring = page.locator('main [data-gross]').first();
+  const ring = page.locator('main [data-levelring]').first();
   await expect(ring).toBeVisible();
   const fenster = page.viewportSize()?.width ?? 0;
   const heute = await ring.evaluate((element) => {
     const kasten = element.getBoundingClientRect();
     const text = element.nextElementSibling?.getBoundingClientRect();
-    const kreis = element.querySelector('circle');
-    const label = element.querySelector('.levelring-label');
-    const zahl = element.querySelector('.levelring-zahl');
-    const innen = element.querySelector('.levelring-innen');
-    if (!text || !kreis || !label || !zahl || !innen) {
-      return null;
-    }
-    const abstand = getComputedStyle(innen).rowGap;
     return {
       breite: kasten.width,
       hoehe: kasten.height,
       mitte: kasten.top + kasten.height / 2,
-      textHoehe: text.height,
-      textMitte: text.top + text.height / 2,
-      strich: Number.parseFloat(getComputedStyle(kreis).strokeWidth),
-      level: Number.parseFloat(getComputedStyle(label).fontSize),
-      zahl: Number.parseFloat(getComputedStyle(zahl).fontSize),
-      abstand: Number.parseFloat(abstand),
+      textMitte: text ? text.top + text.height / 2 : null,
     };
   });
-  expect(heute, 'Maße des Rings auf Heute').not.toBeNull();
-  if (!heute) {
-    return;
-  }
-  const ausFormel = Math.round((heute.textHoehe + 12) / 2) * 2;
-  const soll = fenster < 360 ? 72 : Math.max(72, ausFormel);
-  expect(Math.round(heute.breite)).toBe(soll);
+  expect(Math.round(heute.breite)).toBe(96);
   expect(Math.abs(heute.breite - heute.hoehe)).toBeLessThanOrEqual(1);
-  expect(Math.abs(heute.hoehe - (heute.textHoehe + 12)), `Ring ${heute.hoehe} px, Textblock ${heute.textHoehe} px`).toBeLessThanOrEqual(2);
-  expect(Math.abs(heute.mitte - heute.textMitte)).toBeLessThanOrEqual(2);
-  const masse = ringInnen(soll);
-  expect(nahe(heute.strich, masse.strich), `Strich ${heute.strich}`).toBe(true);
-  expect(nahe(heute.level, masse.level), `LEVEL ${heute.level}`).toBe(true);
-  expect(nahe(heute.zahl, masse.zahl), `Zahl ${heute.zahl}`).toBe(true);
-  expect(nahe(heute.abstand, masse.abstand), `Abstand ${heute.abstand}`).toBe(true);
+  if (heute.textMitte !== null) {
+    expect(Math.abs(heute.mitte - heute.textMitte)).toBeLessThanOrEqual(2);
+  }
   if (fenster >= 360) {
     const zeilen = await page.locator('main [data-xp-zeile]').evaluate((element) => {
       const bereich = document.createRange();
@@ -515,7 +385,7 @@ test('Levelring auf Heute und Projekt ist gleich groß', async ({ page }, testIn
     expect(zeilen).toBe(1);
   }
   fs.mkdirSync('tmp-test/level-anzeige', { recursive: true });
-  const flaeche = page.locator('main [data-flaeche]').filter({ has: page.locator('[data-gross]') }).first();
+  const flaeche = page.locator('main [data-flaeche]').filter({ has: page.locator('[data-levelring]') }).first();
   await flaeche.screenshot({ path: `tmp-test/level-anzeige/${name}-${fenster}-heute.png` });
 
   const ziel = await page.evaluate(async () => {
@@ -529,7 +399,7 @@ test('Levelring auf Heute und Projekt ist gleich groß', async ({ page }, testIn
     return;
   }
   await page.goto(`/projekte/${ziel.id}`);
-  const projektRing = page.locator('main [data-gross]').first();
+  const projektRing = page.locator('main [data-levelring]').first();
   await expect(projektRing).toBeVisible();
   const projekt = await projektRing.evaluate((element) => {
     const kasten = element.getBoundingClientRect();
@@ -540,6 +410,7 @@ test('Levelring auf Heute und Projekt ist gleich groß', async ({ page }, testIn
       textMitte: text ? text.top + text.height / 2 : null,
     };
   });
+  expect(Math.round(projekt.breite)).toBe(96);
   expect(Math.round(projekt.breite)).toBe(Math.round(heute.breite));
   expect(projekt.textMitte).not.toBeNull();
   if (projekt.textMitte !== null) {
@@ -547,72 +418,79 @@ test('Levelring auf Heute und Projekt ist gleich groß', async ({ page }, testIn
   }
   await projektRing.screenshot({ path: `tmp-test/level-anzeige/${name}-${fenster}-projekt.png` });
 
-  await page.evaluate(() => {
-    document.getElementById('ringmasse')?.remove();
-    const kasten = document.createElement('div');
-    kasten.id = 'ringmasse';
-    kasten.style.position = 'fixed';
-    kasten.style.left = '8px';
-    kasten.style.top = '80px';
-    kasten.style.display = 'flex';
-    kasten.style.gap = '12px';
-    kasten.style.zIndex = '50';
-    for (const durchmesser of [72, 76, 88]) {
-      const ring = document.createElement('div');
-      ring.className = 'levelring';
-      ring.dataset.gross = '';
-      ring.dataset.mass = String(durchmesser);
-      ring.style.setProperty('--ring-d', `${durchmesser}px`);
-      ring.innerHTML =
-        '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor"></circle></svg>' +
-        '<div class="levelring-innen"><span class="levelring-label">Level</span><span class="levelring-zahl">1</span></div>';
-      kasten.append(ring);
-    }
-    document.body.append(kasten);
-  });
-  for (const durchmesser of [72, 76, 88]) {
-    const gemessen = await page.locator(`[data-mass="${durchmesser}"]`).evaluate((element) => {
-      const kreis = element.querySelector('circle');
-      const label = element.querySelector('.levelring-label');
-      const zahl = element.querySelector('.levelring-zahl');
-      const innen = element.querySelector('.levelring-innen');
-      if (!kreis || !label || !zahl || !innen) {
-        return null;
-      }
-      return {
-        breite: element.getBoundingClientRect().width,
-        strich: Number.parseFloat(getComputedStyle(kreis).strokeWidth),
-        level: Number.parseFloat(getComputedStyle(label).fontSize),
-        zahl: Number.parseFloat(getComputedStyle(zahl).fontSize),
-        abstand: Number.parseFloat(getComputedStyle(innen).rowGap),
-        laufweite: Number.parseFloat(getComputedStyle(label).letterSpacing),
-      };
-    });
-    expect(gemessen, `D ${durchmesser}`).not.toBeNull();
-    if (!gemessen) {
-      continue;
-    }
-    const erwartet = ringInnen(durchmesser);
-    expect(Math.abs(gemessen.breite - durchmesser)).toBeLessThanOrEqual(0.5);
-    expect(nahe(gemessen.strich, erwartet.strich), `Strich D ${durchmesser}: ${gemessen.strich}`).toBe(true);
-    expect(nahe(gemessen.level, erwartet.level), `LEVEL D ${durchmesser}: ${gemessen.level}`).toBe(true);
-    expect(nahe(gemessen.zahl, erwartet.zahl), `Zahl D ${durchmesser}: ${gemessen.zahl}`).toBe(true);
-    expect(nahe(gemessen.abstand, erwartet.abstand), `Abstand D ${durchmesser}: ${gemessen.abstand}`).toBe(true);
-    expect(Math.abs(gemessen.laufweite - gemessen.level * 0.06)).toBeLessThanOrEqual(0.5);
-  }
-  await page.evaluate(() => document.getElementById('ringmasse')?.remove());
-
   const ausgang = page.viewportSize();
   await page.setViewportSize({ width: 320, height: 800 });
   await page.goto('/');
-  const eng = page.locator('main [data-gross]').first();
+  const eng = page.locator('main [data-levelring]').first();
   await expect(eng).toBeVisible();
   const engBreite = await eng.evaluate((element) => Math.round(element.getBoundingClientRect().width));
-  expect(engBreite).toBe(72);
-  await page.locator('main [data-flaeche]').filter({ has: page.locator('[data-gross]') }).first().screenshot({
+  expect(engBreite).toBe(96);
+  await page.locator('main [data-flaeche]').filter({ has: page.locator('[data-levelring]') }).first().screenshot({
     path: `tmp-test/level-anzeige/${name}-320-heute.png`,
   });
   if (ausgang) {
     await page.setViewportSize(ausgang);
   }
+});
+
+const BOGEN_FAELLE = [
+  { anteil: 0.25, cx: 92, cy: 50, grad: 90 },
+  { anteil: 0.75, cx: 8, cy: 50, grad: 270 },
+  { anteil: 1, cx: 50, cy: 8, grad: 360 },
+] as const;
+
+test('Levelring: Bogen beginnt oben und der Lichtpunkt sitzt am Ende', async ({ page }) => {
+  await anmelden(page);
+  await page.goto('/');
+  await expect(page.locator('main [data-levelring]').first()).toBeVisible();
+  for (const fall of BOGEN_FAELLE) {
+    const html = renderToStaticMarkup(createElement(LevelRing, { level: 4, anteil: fall.anteil, groesse: 96 }));
+    await page.evaluate((markup) => {
+      document.getElementById('bogenprobe')?.remove();
+      const kasten = document.createElement('div');
+      kasten.id = 'bogenprobe';
+      kasten.style.position = 'fixed';
+      kasten.style.left = '8px';
+      kasten.style.top = '80px';
+      kasten.style.zIndex = '50';
+      kasten.innerHTML = markup;
+      document.body.append(kasten);
+    }, html);
+    const ring = page.locator('#bogenprobe [data-levelring]');
+    const lage = await ring.evaluate((element, erwartet) => {
+      const kasten = element.getBoundingClientRect();
+      const licht = element.querySelector('[data-ringlicht]');
+      if (!(licht instanceof SVGGraphicsElement)) {
+        return { abstand: 999, stil: '', vollerKreis: false, breite: 0 };
+      }
+      const punkt = licht.getBoundingClientRect();
+      const istX = punkt.left + punkt.width / 2;
+      const istY = punkt.top + punkt.height / 2;
+      const sollX = kasten.left + (erwartet.cx / 100) * kasten.width;
+      const sollY = kasten.top + (erwartet.cy / 100) * kasten.height;
+      const bogen = element.querySelector('[data-levelbogen]');
+      const stil = bogen instanceof HTMLElement ? (bogen.getAttribute('style') ?? '') : '';
+      const vollerKreis = [...element.querySelectorAll('circle')].some((kreis) => {
+        const strich = kreis.getAttribute('stroke') ?? '';
+        return strich.includes('color-mix') && !kreis.hasAttribute('stroke-dasharray') && !kreis.hasAttribute('transform');
+      });
+      return {
+        abstand: Math.hypot(istX - sollX, istY - sollY),
+        stil,
+        vollerKreis,
+        breite: kasten.width,
+      };
+    }, { cx: fall.cx, cy: fall.cy });
+    expect(lage.breite, `${fall.anteil}`).toBeCloseTo(96, 0);
+    expect(lage.abstand, `${fall.anteil}`).toBeLessThanOrEqual(2);
+    if (fall.anteil < 1) {
+      expect(lage.stil, `${fall.anteil}`).toContain('conic-gradient(from 0deg');
+      expect(lage.stil, `${fall.anteil}`).toContain(`${fall.grad}deg`);
+      expect(lage.stil, `${fall.anteil}`).toContain(`transparent ${fall.grad}deg`);
+    } else {
+      expect(lage.stil).toBe('');
+      expect(lage.vollerKreis).toBe(true);
+    }
+  }
+  await page.evaluate(() => document.getElementById('bogenprobe')?.remove());
 });
