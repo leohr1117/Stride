@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.": "L'application en cours reste dans son propre dossier. Une compilation à côté ne la change pas d'elle-même.",
   "Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.": "Dans Aujourd'hui, le texte de la série, l'indication et + Entrée tiennent sur une ligne. Sur un écran étroit, on lit Série ouverte.",
   "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "Dans Objectifs, le bouton Nouveau est plein et a un signe plus devant.",
   "Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.": "Dans Objectifs, les niveaux des visions sont dans la même colonne que ceux des projets.",

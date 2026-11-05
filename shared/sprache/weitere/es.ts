@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.": "La aplicación en marcha permanece en su propia carpeta. Una compilación al lado no la cambia por sí sola.",
   "Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.": "En Hoy, el texto de la racha, la nota y + Entrada están en una línea. En una pantalla estrecha dice Racha abierta.",
   "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "En Metas, el botón Nuevo está relleno y tiene un signo más delante.",
   "Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.": "En Metas, los niveles de las visiones quedan en la misma columna que los niveles de los proyectos.",

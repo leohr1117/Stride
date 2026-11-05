@@ -47,7 +47,7 @@ npm run typecheck      # Typprüfung
 npm run e2e            # Browser-Tests (brauchen Testkonten in data/)
 npm run beispieldaten  # Beispielwelt in data/app.db; schaltet die nötigen Bereiche ein
 npm run build          # Produktions-Build nach client/dist
-npm start              # Server mit fertigem Build
+npm start              # Server; Oberfläche aus STRIDE_CLIENT_DIR, Standard client/dist-live
 ```
 
 Die Daten liegen in `data/` (`app.db` und `zugang.db`). Liegt `app.db` schon vor, legt `npm run beispieldaten` nichts an. `npm run beispieldaten -- --ersetzen` sichert die alte Datei und baut die Beispielwelt neu. Dafür schaltet das Skript die Bereiche ein, die die Beispielwelt braucht, und aktiviert fehlende Attribute.
@@ -60,6 +60,7 @@ Die Daten liegen in `data/` (`app.db` und `zugang.db`). Liegt `app.db` schon vor
 | `DB_PFAD` | Pfad der Datenbank, Standard `data/app.db` |
 | `ZUGANG_PFAD` | Pfad der Zugangsdatenbank, Standard `data/zugang.db` |
 | `LOG_LEVEL` | Log-Stufe, Standard `warn` |
+| `STRIDE_CLIENT_DIR` | Ordner, aus dem der laufende Server die Oberfläche ausliefert. Standard ist `client/dist-live`. Ist der Ordner beim ersten Start noch leer, wird `client/dist` hineinkopiert. `npm run build` und die Browser-Tests schreiben und lesen weiter `client/dist`. Der alte Name `ASCEND_CLIENT_DIR` wird weiter gelesen. |
 | `STRIDE_ADMIN` | Benutzername des Admin-Kontos (der alte Name `ASCEND_ADMIN` wird weiter gelesen) |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Schlüssel für Web-Push |
 | `STRIDE_TEST` | Nur für Tests: `1` schaltet den Testmodus ein (alter Name `ASCEND_TEST`). Dann setzt `POST /api/test/heute` mit `{ datum }` die Uhr für Kette und Einträge. `datum: null` stellt die echte Uhr wieder her. |

@@ -1,7 +1,11 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { istTestlauf, verweigereEchteDatenbank } from './testpfad.ts';
+import { strideVariable } from './umgebung.ts';
 
 const PROJEKT_WURZEL = path.resolve(import.meta.dirname, '..');
+export const BAU_CLIENT_PFAD = path.join(PROJEKT_WURZEL, 'client', 'dist');
+export const LIVE_CLIENT_PFAD = path.join(PROJEKT_WURZEL, 'client', 'dist-live');
 const STANDARD_PORT = 3000;
 const ECHTE_DATENBANK = path.join(PROJEKT_WURZEL, 'data', 'app.db');
 
@@ -27,6 +31,24 @@ function zugangPfadAufloesen(): string {
   return gesetzt;
 }
 
+function sauber(wert: string | undefined): string {
+  return typeof wert === 'string' ? wert.trim() : '';
+}
+
+function aufloesen(wert: string): string {
+  return path.isAbsolute(wert) ? path.normalize(wert) : path.resolve(PROJEKT_WURZEL, wert);
+}
+
+function gleicherPfad(a: string, b: string): boolean {
+  return path.normalize(a).toLowerCase() === path.normalize(b).toLowerCase();
+}
+
+export function clientPfadAus(env: NodeJS.ProcessEnv = process.env): string {
+  const gewaehlt = sauber(strideVariable('CLIENT_DIR', env));
+  const wert = gewaehlt.length > 0 ? gewaehlt : sauber(env.ASCEND_CLIENT_DIR);
+  return wert.length > 0 ? aufloesen(wert) : LIVE_CLIENT_PFAD;
+}
+
 function lesePort(wert: string | undefined): number {
   if (wert === undefined || wert === '') {
     return STANDARD_PORT;
@@ -44,9 +66,33 @@ export const KONFIG = {
   logLevel: process.env.LOG_LEVEL ?? 'warn',
   datenbankPfad,
   zugangPfad: zugangPfadAufloesen(),
-  clientPfad: path.join(PROJEKT_WURZEL, 'client', 'dist'),
+  clientPfad: clientPfadAus(),
   todoistApi: process.env.TODOIST_API ?? 'https://api.todoist.com/api/v1/',
 } as const;
+
+function hatIndex(ordner: string): boolean {
+  return fs.existsSync(path.join(ordner, 'index.html'));
+}
+
+export function kopiereDistInLeerenOrdner(ziel: string, quelle: string): boolean {
+  if (gleicherPfad(ziel, quelle) || hatIndex(ziel) || !hatIndex(quelle)) {
+    return false;
+  }
+  fs.cpSync(quelle, ziel, { recursive: true });
+  return true;
+}
+
+export function stelleLiveClientBereit(
+  ziel = KONFIG.clientPfad,
+  quelle = BAU_CLIENT_PFAD,
+  livePfad = LIVE_CLIENT_PFAD,
+  testlauf = istTestlauf(),
+): boolean {
+  if (testlauf || !gleicherPfad(ziel, livePfad)) {
+    return false;
+  }
+  return kopiereDistInLeerenOrdner(ziel, quelle);
+}
 
 export interface VapidZumSenden {
   oeffentlich: string;

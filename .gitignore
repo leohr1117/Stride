@@ -10,3 +10,6 @@ test-results/
 playwright-report/
 *.db
 e2e/bilder/
+client/dist-live
+client/dist-live.prev
+client/dist-live.next

@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.": "動いているアプリは専用のフォルダに残ります。隣のビルドだけでは、そのアプリは変わりません。",
   "Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.": "「今日」では、連続の文、説明、「+ 記録」が1行に並びます。狭い画面では「連続は未記録」と出ます。",
   "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "目標では、「新規」ボタンが塗りつぶしになり、前にプラスが付きます。",
   "Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.": "目標では、ビジョンのレベルがプロジェクトのレベルと同じ列に並びます。",

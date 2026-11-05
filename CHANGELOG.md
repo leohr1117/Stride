@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.68
+
+### Geändert
+
+- Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.
+
 ## 3.56.67
 
 ### Behoben

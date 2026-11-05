@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.": "Работающее приложение остаётся в своей папке. Сборка рядом не меняет его сама.",
   "Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.": "В «Сегодня» текст серии, подсказка и «+ Запись» стоят в одной строке. На узком экране там написано «Серия открыта».",
   "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "В «Целях» кнопка «Новое» залита и перед ней стоит плюс.",
   "Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.": "В «Целях» уровни видений стоят в том же столбце, что и уровни проектов.",

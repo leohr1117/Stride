@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.', 'The running app stays in its own folder. A build next to it does not change the app on its own.'],
   ['Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.', 'On Today, the streak text, the hint and + Entry sit on one line. On a narrow screen it says Streak open.'],
   ['Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.', 'On Goals, the New button is filled and has a plus in front.'],
   ['Auf Ziele stehen die Level der Visionen in derselben Spalte wie die Level der Projekte.', 'On Goals, vision levels sit in the same column as project levels.'],

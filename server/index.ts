@@ -3,7 +3,7 @@ import fastifyStatic from '@fastify/static';
 import Fastify, { type FastifyError } from 'fastify';
 import { ZodError } from 'zod';
 import { aktiviereAnfrageSprache } from './anfrageSprache.ts';
-import { KONFIG } from './config.ts';
+import { KONFIG, stelleLiveClientBereit } from './config.ts';
 import { mitWelt, schliesseDatenbank } from './db.ts';
 import { AppFehler, ungueltig } from './fehler.ts';
 import { attributRouten } from './features/attribute/routen.ts';
@@ -127,6 +127,7 @@ await app.register(
 schalteErfolgeFrei();
 registrierePasswortAdresse(app);
 
+stelleLiveClientBereit();
 const clientVorhanden = fs.existsSync(KONFIG.clientPfad);
 if (clientVorhanden) {
   await app.register(fastifyStatic, { root: KONFIG.clientPfad });

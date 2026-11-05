@@ -23,4 +23,9 @@ describe('strideVariable', () => {
   it('ist leer, wenn keiner gesetzt ist', () => {
     expect(strideVariable(NAME)).toBeUndefined();
   });
+
+  it('liest die übergebene Umgebung', () => {
+    expect(strideVariable(NAME, { [`STRIDE_${NAME}`]: 'aus-env', [`ASCEND_${NAME}`]: 'alt' })).toBe('aus-env');
+    expect(strideVariable(NAME, { [`ASCEND_${NAME}`]: 'alt' })).toBe('alt');
+  });
 });

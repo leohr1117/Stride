@@ -1,6 +1,7 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import fs from 'node:fs';
 import net from 'node:net';
+import path from 'node:path';
 import { AKTUELLE_VERSION } from '../shared/versionen.ts';
 import { starteTodoistAttrappe, type TodoistAttrappe } from '../server/integrationen/todoistAttrappe.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
@@ -117,6 +118,7 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
       ...process.env,
       STRIDE_TEST: '1',
       STRIDE_ADMIN: 'testvoll',
+      STRIDE_CLIENT_DIR: path.join(WURZEL, 'client', 'dist'),
       PORT: String(TEST_PORT),
       DB_PFAD: TEST_APP,
       ZUGANG_PFAD: TEST_ZUGANG,
