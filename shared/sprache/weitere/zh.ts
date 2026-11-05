@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Mitte von Symbolen, Zahlen und Texten wird geprüft. Die Oberfläche bleibt gleich.": "会检查符号、数字和文字是否居中。界面保持不变。",
   "In der Basis, bei Bossen und auf Laufend stehen die Symbole der Zeilen in einer Spalte und mittig am Text.": "在基础、首领和进行中，行符号排在同一列，并与文字垂直居中。",
   "Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter.": "浏览器先前记住的语言、样式或折叠分区仍然有效。",
   "Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.": "没有选定语言、设备语言也不匹配时，应用以英语启动。",

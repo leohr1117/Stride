@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die Mitte von Symbolen, Zahlen und Texten wird geprüft. Die Oberfläche bleibt gleich.', 'The centering of symbols, numbers, and text is checked. The surface stays the same.'],
   ['In der Basis, bei Bossen und auf Laufend stehen die Symbole der Zeilen in einer Spalte und mittig am Text.', 'In Basics, for bosses, and on Active, the row symbols sit in one column and are centered on the text.'],
   ['Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter.', 'A language, look, or collapsed section remembered earlier in the browser still applies.'],
   ['Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.', 'With no chosen language and no matching device language, the app starts in English.'],

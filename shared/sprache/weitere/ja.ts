@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Mitte von Symbolen, Zahlen und Texten wird geprüft. Die Oberfläche bleibt gleich.": "記号、数字、文字の中央を確認します。画面はそのままです。",
   "In der Basis, bei Bossen und auf Laufend stehen die Symbole der Zeilen in einer Spalte und mittig am Text.": "ベース、ボス、進行中では、行の記号が一つの列にそろい、文字の中央に揃います。",
   "Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter.": "ブラウザが以前に覚えた言語、見た目、または折りたたんだ区分は、そのまま有効です。",
   "Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.": "言語が未選択で、端末の言語も合わないときは、アプリは英語で始まります。",

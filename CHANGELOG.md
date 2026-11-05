@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.73
+
+### Hinzugefügt
+
+- Die Mitte von Symbolen, Zahlen und Texten wird geprüft. Die Oberfläche bleibt gleich.
+
 ## 3.56.72
 
 ### Behoben

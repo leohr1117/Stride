@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Mitte von Symbolen, Zahlen und Texten wird geprüft. Die Oberfläche bleibt gleich.": "Le centrage des symboles, des nombres et du texte est vérifié. La surface reste la même.",
   "In der Basis, bei Bossen und auf Laufend stehen die Symbole der Zeilen in einer Spalte und mittig am Text.": "Dans la base, pour les boss et dans Actif, les symboles des lignes sont dans une colonne et centrés sur le texte.",
   "Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter.": "Une langue, un style ou une section repliée déjà mémorisée dans le navigateur reste valable.",
   "Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.": "Sans langue choisie et sans langue de l'appareil correspondante, l'application démarre en anglais.",
