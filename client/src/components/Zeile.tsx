@@ -168,7 +168,7 @@ export function Zeile({
           {symbol}
         </span>
       ) : null}
-      <span className="pointer-events-none flex min-w-0 flex-1 flex-col justify-center">
+      <span className="zeilen-text pointer-events-none flex min-w-0 flex-1 flex-col justify-center">
         <span className="flex min-w-0 items-center">
           <span className={titelKlasse(titel, dicht, titelFarbe)}>{titel}</span>
           {info ? (
@@ -188,13 +188,13 @@ export function Zeile({
           ) : null}
           {rechts ? <span className="pointer-events-auto relative z-10 shrink-0">{rechts}</span> : null}
           <span className="zeile-menue relative z-10">{menue}</span>
-          {zeigePfeil ? <ChevronRight className="pointer-events-none size-5 shrink-0 text-leise" aria-hidden /> : null}
+          {zeigePfeil ? <ChevronRight className="zeile-pfeil pointer-events-none size-5 shrink-0 text-leise" aria-hidden /> : null}
         </>
       ) : (
         <span className="pointer-events-none flex shrink-0 items-center gap-2">
           {wert != null && wert !== '' ? <span className={WERT_ALT}>{wert}</span> : null}
           {rechtsAlt ? <span className="pointer-events-auto relative z-10">{rechtsAlt}</span> : null}
-          {zeigePfeil ? <ChevronRight className="size-5 shrink-0 text-leise" aria-hidden /> : null}
+          {zeigePfeil ? <ChevronRight className="zeile-pfeil size-5 shrink-0 text-leise" aria-hidden /> : null}
         </span>
       )}
     </div>

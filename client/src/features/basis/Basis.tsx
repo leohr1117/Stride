@@ -2,7 +2,7 @@ import { tx, txMenge } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
 import { AbhakKreis } from './AbhakKreis.tsx';
-import { useState, type CSSProperties, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import type { BasisAufgabe } from '../../../../shared/api/index.ts';
 import { DAUER_OPTIONEN, GRENZEN, type IconName } from '../../../../shared/spiel/begriffe.ts';
 import { fehlendeZuordnung } from '../../../../shared/spiel/ebenen.ts';
@@ -97,7 +97,7 @@ export function BasisListe({
   const aktionen = useBasisAktionen();
   return (
     <>
-      <ul className={fluchten ? 'liste' : 'space-y-1'}>
+      <ul className={fluchten ? 'liste symbol-liste' : 'space-y-1'}>
         {aufgaben.map((aufgabe) => (
           <BasisZeile
             key={aufgabe.id}
@@ -115,8 +115,6 @@ export function BasisListe({
     </>
   );
 }
-
-const FLUCHT_EINZUG = { '--liste-einzug': '36px' } as CSSProperties;
 
 function BasisZeile({
   aufgabe,
@@ -143,33 +141,55 @@ function BasisZeile({
     .filter((teil) => teil !== null)
     .join(' · ');
 
+  const abhak = (
+    <AbhakKreis
+      name={aufgabe.name}
+      erledigt={heuteEintragId !== null}
+      laeuft={laeuft}
+      onUmschalten={() => (heuteEintragId !== null ? onRueckgaengig(heuteEintragId) : onErledigen())}
+    />
+  );
+  const stift = onBearbeiten ? (
+    <Knopf variante="leise" className="p-2" aria-label={tx('{name} bearbeiten', { name: aufgabe.name })} onClick={onBearbeiten}>
+      <Pencil className="size-4" />
+    </Knopf>
+  ) : null;
+
   return (
-    <li style={fluchten ? FLUCHT_EINZUG : undefined}>
+    <li className={fluchten ? 'symbol-zeile' : undefined}>
       <SchnellZeile
         className={fluchten ? '' : 'rounded-xl'}
         ziel={{ art: 'basis', id: aufgabe.id, name: aufgabe.name, archiviert: aufgabe.archiviert, loeschbar: aufgabe.loeschbar }}
       >
-        {(menue) => (
-    <div className={fluchten ? 'flex min-h-12 items-center gap-1 px-4' : 'flex items-center gap-1 px-1 py-0.5'}>
-      <Icon name={aufgabe.icon} className="size-4 shrink-0" style={{ color: aufgabe.farbe }} />
-      <div className="min-w-0 flex-1">
-        <p className={`truncate text-sm ${heuteEintragId !== null ? 'text-leise' : 'font-medium'}`}>{aufgabe.name}</p>
-        {details && <p className="truncate text-xs text-leise">{details}</p>}
-      </div>
-      {menue}
-      {onBearbeiten && (
-        <Knopf variante="leise" className="p-2" aria-label={tx('{name} bearbeiten', { name: aufgabe.name })} onClick={onBearbeiten}>
-          <Pencil className="size-4" />
-        </Knopf>
-      )}
-      <AbhakKreis
-        name={aufgabe.name}
-        erledigt={heuteEintragId !== null}
-        laeuft={laeuft}
-        onUmschalten={() => (heuteEintragId !== null ? onRueckgaengig(heuteEintragId) : onErledigen())}
-      />
-    </div>
-        )}
+        {(menue) =>
+          fluchten ? (
+            <div className="flex min-h-12 items-center px-4">
+              <span className="symbol-platz">
+                <Icon name={aufgabe.icon} style={{ color: aufgabe.farbe }} />
+              </span>
+              <div className="zeilen-text ms-3 min-w-0 flex-1">
+                <p className={`truncate text-sm ${heuteEintragId !== null ? 'text-leise' : 'font-medium'}`}>{aufgabe.name}</p>
+                {details && <p className="truncate text-xs text-leise">{details}</p>}
+              </div>
+              <span className="ms-1 flex shrink-0 items-center gap-1">
+                {menue}
+                {stift}
+                {abhak}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1 px-1 py-0.5">
+              <Icon name={aufgabe.icon} className="size-4 shrink-0" style={{ color: aufgabe.farbe }} />
+              <div className="min-w-0 flex-1">
+                <p className={`truncate text-sm ${heuteEintragId !== null ? 'text-leise' : 'font-medium'}`}>{aufgabe.name}</p>
+                {details && <p className="truncate text-xs text-leise">{details}</p>}
+              </div>
+              {menue}
+              {stift}
+              {abhak}
+            </div>
+          )
+        }
       </SchnellZeile>
     </li>
   );

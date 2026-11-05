@@ -449,6 +449,27 @@ html[data-eingabe='zeiger'] :focus {
   transition: stroke-dashoffset 600ms ease;
 }
 
+.symbol-liste {
+  --zeilen-symbol: 22px;
+}
+
+.symbol-zeile {
+  --liste-einzug: 68px;
+}
+
+.symbol-platz {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+}
+
+.symbol-platz > svg {
+  width: var(--zeilen-symbol, 22px);
+  height: var(--zeilen-symbol, 22px);
+}
+
 .boss-platz {
   display: grid;
   place-items: center;

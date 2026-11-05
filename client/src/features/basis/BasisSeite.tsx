@@ -57,25 +57,30 @@ function BasisZeile({
 
   return (
     <SchnellZeile
+      className="symbol-zeile"
       hintergrund="bg-transparent"
       eintraege={[{ art: 'archivieren', id: 'bearbeiten', label: 'Bearbeiten' }]}
       onEintrag={onBearbeiten}
       ziel={{ art: 'basis', id: aufgabe.id, name: aufgabe.name, archiviert: aufgabe.archiviert, loeschbar: aufgabe.loeschbar }}
     >
       {(menue) => (
-        <div className="flex min-h-12 items-center gap-2 py-1 pr-1 pl-4">
-          <Icon name={aufgabe.icon} className="size-5 shrink-0" style={{ color: aufgabe.farbe }} />
-          <div className="min-w-0 flex-1">
+        <div className="flex min-h-12 items-center py-1 pr-4 pl-4">
+          <span className="symbol-platz">
+            <Icon name={aufgabe.icon} style={{ color: aufgabe.farbe }} />
+          </span>
+          <div className="zeilen-text ms-3 min-w-0 flex-1">
             <p className={`truncate text-base ${heuteEintragId !== null ? 'text-leise' : ''}`}>{aufgabe.name}</p>
             {details ? <p className="truncate text-[13px] leading-[18px] text-leise">{details}</p> : null}
           </div>
-          {menue}
-          <AbhakKreis
-            name={aufgabe.name}
-            erledigt={heuteEintragId !== null}
-            laeuft={laeuft}
-            onUmschalten={() => (heuteEintragId !== null ? onRueckgaengig(heuteEintragId) : onErledigen())}
-          />
+          <span className="ms-1 flex shrink-0 items-center gap-1">
+            {menue}
+            <AbhakKreis
+              name={aufgabe.name}
+              erledigt={heuteEintragId !== null}
+              laeuft={laeuft}
+              onUmschalten={() => (heuteEintragId !== null ? onRueckgaengig(heuteEintragId) : onErledigen())}
+            />
+          </span>
         </div>
       )}
     </SchnellZeile>
@@ -126,7 +131,7 @@ export function BasisSeite() {
           {gruppen.map((gruppe) => (
             <section key={gruppe.schluessel}>
               <AbschnittKopf titel={gruppe.projektName} />
-              <Liste>{gruppe.aufgaben.map((aufgabe) => zeile(aufgabe, false))}</Liste>
+              <Liste className="symbol-liste">{gruppe.aufgaben.map((aufgabe) => zeile(aufgabe, false))}</Liste>
             </section>
           ))}
           <Liste>
@@ -134,7 +139,7 @@ export function BasisSeite() {
           </Liste>
         </>
       ) : (
-        <Liste>
+        <Liste className="symbol-liste">
           {aktive.map((aufgabe) => zeile(aufgabe, false))}
           <AnlegeZeile text="Basis-Aufgabe" onKlick={() => oeffne(null)} />
         </Liste>
@@ -142,17 +147,20 @@ export function BasisSeite() {
 
       {archiv.length > 0 && (
         <Abschnitt titel="Archiv" zusatz={`(${zahl(archiv.length)})`} kennung="basis-archiv" anfangEingeklappt>
-          <Liste>
+          <Liste className="symbol-liste">
             {archiv.map((aufgabe) => (
               <SchnellZeile
                 key={aufgabe.id}
+                className="symbol-zeile"
                 hintergrund="bg-transparent"
                 ziel={{ art: 'basis', id: aufgabe.id, name: aufgabe.name, archiviert: true, loeschbar: aufgabe.loeschbar }}
               >
                 {(menue) => (
-                  <div className="flex min-h-12 items-center gap-3 px-4 py-3">
-                    <Icon name={aufgabe.icon} className="size-5 shrink-0" style={{ color: aufgabe.farbe }} />
-                    <span className="min-w-0 flex-1 truncate text-base">
+                  <div className="flex min-h-12 items-center px-4 py-3">
+                    <span className="symbol-platz">
+                      <Icon name={aufgabe.icon} style={{ color: aufgabe.farbe }} />
+                    </span>
+                    <span className="zeilen-text ms-3 me-3 min-w-0 flex-1 truncate text-base">
                       {aufgabe.name}
                       {ebenen.projekte && aufgabe.projektName ? <span className="text-leise"> · {aufgabe.projektName}</span> : null}
                     </span>

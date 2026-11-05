@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.72
+
+### Behoben
+
+- In der Basis, bei Bossen und auf Laufend stehen die Symbole der Zeilen in einer Spalte und mittig am Text.
+
 ## 3.56.71
 
 ### Geändert

@@ -35,7 +35,7 @@ export function LaufendSeite() {
       {bosse.length > 0 && (
         <section className="space-y-2">
           <Ueberschrift titel={tx('Bosse')} className="gruppen-kopf" />
-          <Liste>
+          <Liste className="symbol-liste">
             {bosse.map((eintrag) => (
               <LaufendesVorhaben key={eintrag.id} vorhaben={eintrag} zeigeBoss projekteAn={projekteAn} />
             ))}
@@ -78,15 +78,17 @@ function LaufendesVorhaben({
 
   if (boss) {
     return (
-      <div className="zeile flex min-h-12 items-center gap-3 px-4 py-3">
-        <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-base leading-6">{vorhaben.titel}</p>
-          <p className="truncate text-[13px] leading-[18px] text-leise">{bossZeile(boss)}</p>
-          {projekteAn && vorhaben.projektName ? (
-            <p className="truncate text-[13px] leading-[18px] text-leise">{vorhaben.projektName}</p>
-          ) : null}
-          <VorhabenKennzahlen vorhaben={vorhaben} ohneXp />
+      <div className="zeile symbol-zeile flex min-h-12 items-center gap-3 px-4 py-3">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />
+          <div className="zeilen-text min-w-0 flex-1">
+            <p className="truncate text-base leading-6">{vorhaben.titel}</p>
+            <p className="truncate text-[13px] leading-[18px] text-leise">{bossZeile(boss)}</p>
+            {projekteAn && vorhaben.projektName ? (
+              <p className="truncate text-[13px] leading-[18px] text-leise">{vorhaben.projektName}</p>
+            ) : null}
+            <VorhabenKennzahlen vorhaben={vorhaben} ohneXp />
+          </div>
         </div>
         <Knopf className="shrink-0" data-schnell-frei="" onClick={weiter}>
           {tx('Weiter')}

@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['In der Basis, bei Bossen und auf Laufend stehen die Symbole der Zeilen in einer Spalte und mittig am Text.', 'In Basics, for bosses, and on Active, the row symbols sit in one column and are centered on the text.'],
   ['Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter.', 'A language, look, or collapsed section remembered earlier in the browser still applies.'],
   ['Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.', 'With no chosen language and no matching device language, the app starts in English.'],
   ['Die dunkle Browserleiste und der Startbildschirm der installierten App sind dasselbe Dunkelgrau wie die App.', 'The dark browser bar and the start screen of the installed app are the same dark grey as the app.'],

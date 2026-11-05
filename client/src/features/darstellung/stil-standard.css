@@ -11,6 +11,7 @@
   --radius-2xl: 8px;
   --radius-3xl: 12px;
   --radius-4xl: 12px;
+  --zeilen-symbol: 20px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -164,11 +165,15 @@ html[data-stil='standard'] body {
   border-top-color: var(--trenner);
 }
 
-:root[data-stil='standard'] :is([data-zurueck], .mobilleiste a, .seitenleiste a, .zeile) svg.lucide:not(.boss-symbol) {
-  width: 20px;
-  height: 20px;
-  stroke-width: 1.75;
-  --zeilen-strich: 1.75;
+:root[data-stil='standard'] :is([data-zurueck], .mobilleiste a, .seitenleiste a, .zeile, .symbol-platz) svg.lucide:not(.boss-symbol) {
+  width: var(--zeilen-symbol, 20px);
+  height: var(--zeilen-symbol, 20px);
+  stroke-width: calc(1.75 * var(--zeilen-symbol, 20px) / 20px);
+  --zeilen-strich: calc(1.75 * var(--zeilen-symbol, 20px) / 20px);
+}
+
+:root[data-stil='standard'] .zeile svg.lucide.zeile-pfeil {
+  --zeilen-symbol: 20px;
 }
 
 :root[data-stil='standard'] .mobilleiste a[aria-current='page'] svg.lucide {

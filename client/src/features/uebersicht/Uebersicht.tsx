@@ -214,7 +214,7 @@ function Angriffe({
           ) : undefined
         }
       />
-      <Flaeche>
+      <Flaeche className="symbol-liste">
         <DichteZeilen>
           {bosse.map((vorhaben) => {
             const boss = vorhaben.boss;

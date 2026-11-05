@@ -246,12 +246,14 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
       return false;
     }
     const bossKopf = [...document.querySelectorAll('h2')].find((element) => element.textContent?.trim() === 'Bosse greifen an');
-    const bossSymbol = bossKopf?.closest('section')?.querySelector('.zeile svg');
-    const basisSymbol = flaeche.querySelector('ul svg');
-    if (!(bossSymbol instanceof Element) || !(basisSymbol instanceof Element)) {
+    const bossPlatz = bossKopf?.closest('section')?.querySelector('.boss-platz');
+    const basisPlatz = flaeche.querySelector('.symbol-platz');
+    if (!(bossPlatz instanceof HTMLElement) || !(basisPlatz instanceof HTMLElement)) {
       return false;
     }
-    const delta = bossSymbol.getBoundingClientRect().left - basisSymbol.getBoundingClientRect().left;
+    const bossKasten = bossPlatz.getBoundingClientRect();
+    const basisKasten = basisPlatz.getBoundingClientRect();
+    const delta = Math.abs(bossKasten.left + bossKasten.width / 2 - (basisKasten.left + basisKasten.width / 2));
     const titel = zeile.querySelector('.zeile-titel');
     const probe = document.createElement('span');
     probe.className = 'text-leise';
@@ -269,8 +271,7 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
       zeile.querySelectorAll('svg').length === 1 &&
       !flaeche.classList.contains('p-4') &&
       leise &&
-      delta >= 1 &&
-      delta <= 3 &&
+      delta <= 0.5 &&
       kopfFrei('Basis') &&
       kopfFrei('Werte') &&
       kopfFrei('Aktivität')
