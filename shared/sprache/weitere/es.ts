@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Kennzahlen auf Heute stehen mittig in gleich breiten Spalten.": "En Hoy, las cifras quedan centradas en columnas del mismo ancho.",
   "Die Mitte von Symbolen, Zahlen und Texten wird geprüft. Die Oberfläche bleibt gleich.": "Se comprueba el centrado de símbolos, números y texto. La superficie sigue igual.",
   "In der Basis, bei Bossen und auf Laufend stehen die Symbole der Zeilen in einer Spalte und mittig am Text.": "En la base, con los jefes y en Activo, los símbolos de las filas quedan en una columna y centrados en el texto.",
   "Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter.": "Un idioma, un estilo o una sección plegada que el navegador ya había recordado sigue valiendo.",

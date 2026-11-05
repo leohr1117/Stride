@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.74
+
+### Behoben
+
+- Kennzahlen auf Heute stehen mittig in gleich breiten Spalten.
+
 ## 3.56.73
 
 ### Hinzugefügt

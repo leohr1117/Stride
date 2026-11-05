@@ -81,7 +81,7 @@ export function UebersichtSeite() {
                   </p>
                 </div>
               </div>
-              <div className="grid grid-cols-3 text-center">
+              <div className="grid min-w-0" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                 <Wochenwert label={tx('XP diese Woche')} wert={`+${zahl(uebersicht.wocheXp)}`} hervorheben="fortschritt" />
                 <Wochenwert
                   label={tx('Streak')}
@@ -91,6 +91,7 @@ export function UebersichtSeite() {
                       text="Ein Tag Pause ist frei. Danach ist der Streak angeschlagen."
                       abstand={false}
                       amKasten
+                      knopfKlasse={INFO_NEBEN_WORT}
                     />
                   }
                   wert={
@@ -172,6 +173,9 @@ export function UebersichtSeite() {
   );
 }
 
+const INFO_NEBEN_WORT =
+  "relative inline-flex size-4 shrink-0 items-center justify-center rounded-full text-leise hover:text-haupt before:absolute before:-inset-4 before:content-['']";
+
 function Wochenwert({
   label,
   wert,
@@ -184,10 +188,24 @@ function Wochenwert({
   info?: ReactNode;
 }) {
   return (
-    <div className="relative border-e border-rand px-2 py-2 last:border-e-0" data-wochenwert={label} data-info-kasten>
-      {info ? <span className="absolute end-1 top-1 z-10 flex">{info}</span> : null}
-      <p className={`zahl text-lg font-bold ${hervorheben === 'fortschritt' ? 'text-fortschritt' : ''}`}>{wert}</p>
-      <p className="text-[11px] leading-tight text-leise">{label}</p>
+    <div
+      className="relative min-w-0 border-e border-transparent py-2 ps-[8.5px] pe-[7.5px] text-center last:border-e-0 last:ps-2 last:pe-2 [&:last-child>[data-kennzahl-trenner]]:hidden"
+      data-wochenwert={label}
+      data-info-kasten
+    >
+      <span aria-hidden="true" data-kennzahl-trenner="" className="pointer-events-none absolute inset-y-0 end-[-1.5px] w-px bg-rand" />
+      <p className={`zahl text-center text-lg font-bold ${hervorheben === 'fortschritt' ? 'text-fortschritt' : ''}`}>{wert}</p>
+      {info ? (
+        <p className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center text-center text-[11px] leading-tight text-leise">
+          <span aria-hidden="true" />
+          <span>{label}</span>
+          <span className="relative min-w-0">
+            <span className="absolute start-0 top-1/2 z-10 ms-1 flex -translate-y-1/2">{info}</span>
+          </span>
+        </p>
+      ) : (
+        <p className="text-center text-[11px] leading-tight text-leise">{label}</p>
+      )}
     </div>
   );
 }

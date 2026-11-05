@@ -652,3 +652,197 @@ test('Abhakkreis bleibt leer oder zeigt den Haken', async ({ page }) => {
     }
   }
 });
+
+const KENNZAHL_BREITEN = [
+  { breite: 360, hoehe: 800 },
+  { breite: 390, hoehe: 844 },
+  { breite: 1280, hoehe: 800 },
+] as const;
+
+const KENNZAHL_ANSICHTEN = [
+  { stil: 'standard', schema: 'light', name: 'hell', farben: { primaer: '#141414', akzent: '#707070', hintergrund: '#f2f2f2' } },
+  { stil: 'standard', schema: 'dark', name: 'dunkel', farben: { primaer: '#f2f2f2', akzent: '#8a8a8a', hintergrund: '#141414' } },
+  { stil: 'holo', schema: 'light', name: 'hell', farben: { primaer: '#141414', akzent: '#707070', hintergrund: '#f2f2f2' } },
+  { stil: 'holo', schema: 'dark', name: 'dunkel', farben: { primaer: '#f2f2f2', akzent: '#8a8a8a', hintergrund: '#141414' } },
+] as const;
+
+interface KennzahlSpalte {
+  label: string;
+  breite: number;
+  dxWert: number;
+  dxWort: number;
+}
+
+interface KennzahlBericht {
+  spalten: KennzahlSpalte[];
+  spaltenFormel: string;
+  trenner: number[];
+  trefferBreite: number;
+  trefferHoehe: number;
+  ikonNebenWort: boolean;
+}
+
+function kennzahlBericht(): KennzahlBericht {
+  const spalten = [...document.querySelectorAll('[data-wochenwert]')].filter((element) => element instanceof HTMLElement);
+  const raster = spalten[0]?.parentElement;
+  const rasterKasten = raster?.getBoundingClientRect();
+  const formula = raster ? getComputedStyle(raster).gridTemplateColumns : '';
+
+  function textKaesten(wurzel: Element): DOMRect[] {
+    const bereich = document.createRange();
+    const wandler = document.createTreeWalker(wurzel, NodeFilter.SHOW_TEXT);
+    const kaesten: DOMRect[] = [];
+    let knoten = wandler.nextNode();
+    while (knoten) {
+      const roh = knoten.textContent ?? '';
+      const eltern = knoten.parentElement;
+      if (roh.trim() && eltern && eltern.closest('button, svg') === null) {
+        bereich.selectNodeContents(knoten);
+        const kasten = bereich.getBoundingClientRect();
+        if (kasten.width >= 0.5) kaesten.push(kasten);
+      }
+      knoten = wandler.nextNode();
+    }
+    return kaesten;
+  }
+
+  function mitteVon(kaesten: DOMRect[]): number | null {
+    if (kaesten.length === 0) return null;
+    const links = Math.min(...kaesten.map((kasten) => kasten.left));
+    const rechts = Math.max(...kaesten.map((kasten) => kasten.right));
+    return (links + rechts) / 2;
+  }
+
+  const bericht: KennzahlSpalte[] = [];
+  for (const spalte of spalten) {
+    const rahmen = spalte.getBoundingClientRect();
+    const spaltenMitte = rahmen.left + rahmen.width / 2;
+    const wert = spalte.querySelector('.zahl');
+    const wort = [...spalte.querySelectorAll('p')].find((absatz) => absatz !== wert);
+    const wertTeile = wert ? textKaesten(wert) : [];
+    const flamme = wert?.querySelector('svg');
+    if (flamme) {
+      const kasten = flamme.getBoundingClientRect();
+      if (kasten.width >= 0.5) wertTeile.push(kasten);
+    }
+    const wertMitte = mitteVon(wertTeile);
+    const wortMitte = wort ? mitteVon(textKaesten(wort)) : null;
+    bericht.push({
+      label: spalte.getAttribute('data-wochenwert') ?? '',
+      breite: rahmen.width,
+      dxWert: wertMitte === null ? Number.NaN : wertMitte - spaltenMitte,
+      dxWort: wortMitte === null ? Number.NaN : wortMitte - spaltenMitte,
+    });
+  }
+  const linien = [...(raster?.querySelectorAll('[data-kennzahl-trenner]') ?? [])].filter((linie) => {
+    const stil = getComputedStyle(linie);
+    const kasten = linie.getBoundingClientRect();
+    return stil.display !== 'none' && stil.visibility !== 'hidden' && kasten.width >= 0.5;
+  });
+  const trenner = linien.map((linie, index) => {
+    const kasten = linie.getBoundingClientRect();
+    const mitte = kasten.left + kasten.width / 2;
+    return rasterKasten ? mitte - (rasterKasten.left + (rasterKasten.width * (index + 1)) / 3) : Number.NaN;
+  });
+
+  const knopf = document.querySelector('[data-wochenwert="Streak"] button');
+  const streakWort = [...(document.querySelector('[data-wochenwert="Streak"]')?.querySelectorAll('p') ?? [])].find(
+    (absatz) => !absatz.classList.contains('zahl'),
+  );
+  const wortTeile = streakWort ? textKaesten(streakWort) : [];
+  const wortRechts = wortTeile.length > 0 ? Math.max(...wortTeile.map((kasten) => kasten.right)) : 0;
+  const wortOben = wortTeile.length > 0 ? Math.min(...wortTeile.map((kasten) => kasten.top)) : 0;
+  const wortUnten = wortTeile.length > 0 ? Math.max(...wortTeile.map((kasten) => kasten.bottom)) : 0;
+  let trefferBreite = 0;
+  let trefferHoehe = 0;
+  let ikonNebenWort = false;
+  if (knopf instanceof HTMLElement) {
+    const kasten = knopf.getBoundingClientRect();
+    const vorher = getComputedStyle(knopf, '::before');
+    const links = Number.parseFloat(vorher.left);
+    const rechts = Number.parseFloat(vorher.right);
+    const oben = Number.parseFloat(vorher.top);
+    const unten = Number.parseFloat(vorher.bottom);
+    trefferBreite = kasten.width;
+    trefferHoehe = kasten.height;
+    if (vorher.content !== 'none' && [links, rechts, oben, unten].every((wert) => Number.isFinite(wert))) {
+      trefferBreite = kasten.width - links - rechts;
+      trefferHoehe = kasten.height - oben - unten;
+    }
+    ikonNebenWort =
+      kasten.left + 1 >= wortRechts && kasten.top < wortUnten && kasten.bottom > wortOben && wortTeile.length > 0;
+  }
+  return { spalten: bericht, spaltenFormel: formula, trenner, trefferBreite, trefferHoehe, ikonNebenWort };
+}
+
+test('Kennzahlen auf Heute stehen in gleichen Dritteln', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'Breiten setzt der Test selbst');
+  test.setTimeout(180_000);
+  await anmelden(page);
+  const original = await page.evaluate(async () => {
+    const daten = (await fetch('/api/einstellungen').then((antwort) => antwort.json())) as {
+      stil: string;
+      glimmen: boolean;
+      primaer: string;
+      akzent: string;
+      hintergrund: string;
+      eigeneFarben?: boolean;
+    };
+    return daten;
+  });
+
+  try {
+    for (const ansicht of KENNZAHL_ANSICHTEN) {
+      await speichereFarben(page, { stil: ansicht.stil, glimmen: original.glimmen, ...ansicht.farben });
+      for (const fenster of KENNZAHL_BREITEN) {
+        await page.setViewportSize({ width: fenster.breite, height: fenster.hoehe });
+        await page.goto('/');
+        await expect(page.locator('main h1')).toHaveText('Heute');
+        await expect(page.getByText('Lädt …', { exact: true })).toHaveCount(0);
+        await expect(page.locator('html')).toHaveAttribute('data-stil', ansicht.stil);
+        await expect(page.locator('html')).toHaveAttribute('data-schema', ansicht.schema);
+        await page.evaluate(() => document.fonts.ready);
+        await expect(page.locator('[data-wochenwert]')).toHaveCount(3);
+        const lage = `${fenster.breite} ${ansicht.name} ${ansicht.stil}`;
+        const bericht = await page.evaluate(kennzahlBericht);
+        const breiten = bericht.spalten.map((spalte) => spalte.breite);
+        expect(bericht.spalten, lage).toHaveLength(3);
+        expect(Math.max(...breiten) - Math.min(...breiten), lage).toBeLessThanOrEqual(0.5);
+        const teile = bericht.spaltenFormel.split(' ').map((teil) => Number.parseFloat(teil));
+        expect(teile, lage).toHaveLength(3);
+        expect(Math.max(...teile) - Math.min(...teile), `${lage} ${bericht.spaltenFormel}`).toBeLessThanOrEqual(0.5);
+        for (const spalte of bericht.spalten) {
+          expect(Math.abs(spalte.dxWert), `${lage} ${spalte.label} Wert`).toBeLessThanOrEqual(0.5);
+          expect(Math.abs(spalte.dxWort), `${lage} ${spalte.label} Wort`).toBeLessThanOrEqual(0.5);
+        }
+        expect(bericht.trenner, lage).toHaveLength(2);
+        for (const delta of bericht.trenner) {
+          expect(Math.abs(delta), lage).toBeLessThanOrEqual(0.5);
+        }
+        expect(bericht.trefferBreite, lage).toBeGreaterThanOrEqual(44);
+        expect(bericht.trefferHoehe, lage).toBeGreaterThanOrEqual(44);
+        expect(bericht.ikonNebenWort, lage).toBe(true);
+        if (fenster.breite === 390 && ansicht.stil === 'standard') {
+          fs.mkdirSync('tmp-test/kennzahlen-heute', { recursive: true });
+          const zeile = page.locator('[data-wochenwert]').first().locator('xpath=..');
+          await page.evaluate(() => window.scrollTo(0, 0));
+          await zeile.screenshot({ path: `tmp-test/kennzahlen-heute/nachher-390-${ansicht.name}-kennzahlen.png` });
+          await page.screenshot({ path: `tmp-test/kennzahlen-heute/nachher-390-${ansicht.name}-heute.png` });
+        }
+      }
+    }
+  } finally {
+    await speichereFarben(
+      page,
+      original.eigeneFarben
+        ? {
+            stil: original.stil,
+            glimmen: original.glimmen,
+            primaer: original.primaer,
+            akzent: original.akzent,
+            hintergrund: original.hintergrund,
+          }
+        : { stil: original.stil, glimmen: original.glimmen, farbenZuruecksetzen: true },
+    );
+  }
+});
