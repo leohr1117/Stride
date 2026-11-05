@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.64
+
+### Behoben
+
+- Auf Ziele beginnt die Nebenzeile eines Projekts mit den Tagen in Folge. Rechts steht nur das Level.
+
 ## 3.56.63
 
 ### Behoben

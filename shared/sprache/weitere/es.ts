@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele beginnt die Nebenzeile eines Projekts mit den Tagen in Folge. Rechts steht nur das Level.": "En Metas, la segunda línea de un proyecto empieza con los días seguidos. A la derecha solo queda el nivel.",
   "Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.": "En Hoy, los botones del aviso están uno al lado del otro y se ven como los de los diálogos.",
   "Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.": "En Conexiones, el enlace al token de Todoist está en su propia línea y es más fácil de pulsar.",
   "Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.": "En Cuentas, cada fila muestra el nombre de usuario y el rol en la segunda línea.",

@@ -155,7 +155,7 @@ test('Abgeschlossen bleibt in der Kopfzeile', async ({ page }, testInfo) => {
     const name = link.locator('.zeile-titel');
     const neben = link.locator('.zeile-neben');
     await expect(name).toHaveText(ziel.name);
-    await expect(neben).toHaveText(new RegExp(`^Abgeschlossen · `));
+    await expect(neben).toHaveText(/^(?:\d+ Tage(?: · angeknackst)? · )?Abgeschlossen · /);
     await expect(link.locator('.zeile-titel')).not.toContainText('Abgeschlossen');
     const nameKasten = await name.boundingBox();
     const nebenKasten = await neben.boundingBox();

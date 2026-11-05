@@ -167,7 +167,7 @@ test('Projekt abschließen aktiviert die Investition und lässt sich öffnen', a
     const projektZeile = page.locator('[data-zeile]').filter({ has: page.locator(`a[href="/projekte/${ziel.id}"]`) });
     const marke = projektZeile.locator('.zeile-neben');
     await expect(marke).toBeVisible();
-    await expect(marke).toHaveText(/^Abgeschlossen · /);
+    await expect(marke).toHaveText(/^(?:\d+ Tage(?: · angeknackst)? · )?Abgeschlossen · /);
     await expect(marke).toHaveClass(/text-leise/);
     const schrift = await marke.evaluate((element) => getComputedStyle(element).fontSize);
     expect(schrift).toBe('13px');

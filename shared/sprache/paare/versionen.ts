@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf Ziele beginnt die Nebenzeile eines Projekts mit den Tagen in Folge. Rechts steht nur das Level.', 'On Goals, a project\'s second line starts with the days in a row. Only the level stays on the right.'],
   ['Auf Heute stehen die Knöpfe der Benachrichtigung nebeneinander und sehen aus wie in den Dialogen.', 'On Today, the notification buttons sit side by side and look like the ones in dialogs.'],
   ['Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.', 'On Connections, the link to the Todoist token sits on its own line and is easier to tap.'],
   ['Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.', 'On Accounts, each row shows the username and the role on the second line.'],

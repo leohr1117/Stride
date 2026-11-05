@@ -109,7 +109,7 @@ test('Organisation ist 40 px hoch und Projekte sind 16 px eingerückt', async ({
   await expect(titel).not.toContainText('Abgeschlossen');
   await expect(neben).toContainText('Einträge');
   if (eintrag?.geschafftAm) {
-    await expect(neben).toHaveText(/^Abgeschlossen · .+ Einträge · /);
+    await expect(neben).toHaveText(/^(?:\d+ Tage(?: · angeknackst)? · )?Abgeschlossen · .+ Einträge · /);
   } else {
     await expect(neben).not.toContainText('Abgeschlossen');
   }

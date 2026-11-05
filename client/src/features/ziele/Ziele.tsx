@@ -436,6 +436,7 @@ function OrganisationsKopf({ organisation, onBearbeiten }: { organisation: Organ
 function ProjektZeile({ projekt }: { projekt: Projekt }) {
   const zaehlung = `${txMenge(projekt.anzahlEintraege, '{anzahl} Einträge', { anzahl: zahl(projekt.anzahlEintraege) })} · ${txMenge(projekt.offeneVorhaben, '{anzahl} Vorhaben offen', { anzahl: zahl(projekt.offeneVorhaben) })}`;
   const neben = projekt.geschafftAm ? `${tx('Abgeschlossen')} · ${zaehlung}` : zaehlung;
+  const mitKette = projekt.kette.laenge >= 2;
   return (
     <SchnellZeile
       hintergrund="bg-flaeche"
@@ -447,14 +448,22 @@ function ProjektZeile({ projekt }: { projekt: Projekt }) {
           nach={`/projekte/${projekt.id}`}
           name={projekt.name}
           className={projekt.archiviert ? 'opacity-50' : ''}
-          neben={neben}
+          neben={
+            mitKette ? (
+              <span className="flex min-w-0 items-center">
+                <span className="inline-flex shrink-0 items-center [&_svg]:size-3!">
+                  <KettenAnzeige kette={projekt.kette} />
+                </span>
+                <span className="min-w-0 truncate">{` · ${neben}`}</span>
+              </span>
+            ) : (
+              neben
+            )
+          }
           menue={menue}
           titel={projekt.name}
           rechts={
             <span className="flex min-w-0 items-center gap-3">
-              {projekt.kette.laenge >= 2 ? (
-                <KettenAnzeige kette={projekt.kette} className="max-w-full min-w-0 shrink truncate" />
-              ) : null}
               <span data-zeile-wert="" className="zeile-wert zahl shrink-0">
                 {tx('Lvl {level}', { level: projekt.level.level })}
               </span>
