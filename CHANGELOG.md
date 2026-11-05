@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.57
+
+### Behoben
+
+- Auf einer Fähigkeit sind Farbe, Verlauf und Glühen wieder da. Zahlen auf erreichten Rängen und Knoten bleiben weiß und lesbar, der Rangname auch, und der Ring leuchtet in der Farbe der Fähigkeit.
+
 ## 3.56.56
 
 ### Behoben

@@ -133,7 +133,9 @@ function berichtVon(wurzel: string): string {
     }
     for (const kreis of wurzel.querySelectorAll('.baum-knoten')) {
       const stil = getComputedStyle(kreis);
-      schiebe('knotenrand', kreis, stil.borderTopColor, stil.backgroundColor, 3);
+      if (stil.borderTopColor !== 'rgba(0, 0, 0, 0)' && stil.borderTopColor !== 'transparent') {
+        schiebe('knotenrand', kreis, stil.borderTopColor, stil.backgroundColor, 3);
+      }
       const zahl = kreis.querySelector('.zahl');
       if (zahl) {
         schiebe('knotenzahl', zahl, getComputedStyle(zahl).color, stil.backgroundColor, 4.5);
@@ -177,24 +179,21 @@ async function bericht(seite: Page, wurzel: string): Promise<Bericht> {
 }
 
 function maengel(daten: Bericht): string[] {
-  const liste = daten.verlauf.map((klasse) => `verlauf ${klasse}`);
-  if (daten.balken !== '' && daten.balken !== daten.fortschritt) {
-    liste.push(`balken ${daten.balken} statt ${daten.fortschritt}`);
-  }
-  if (daten.ring !== '' && daten.ring !== daten.fortschritt) {
-    liste.push(`ring ${daten.ring} statt ${daten.fortschritt}`);
-  }
+  const liste: string[] = [];
   for (const paar of daten.paare) {
+    if (paar.name === 'ring' || paar.name === 'balken') {
+      continue;
+    }
     const wert = kontrast(paar.vordergrund, paar.hintergrund);
-    if (wert < paar.mindest) {
-      liste.push(`${paar.name} ${wert.toFixed(2)} ${paar.vordergrund} auf ${paar.hintergrund}`);
+    if (!Number.isFinite(wert) || wert < paar.mindest) {
+      liste.push(`${paar.name} ${Number.isFinite(wert) ? wert.toFixed(2) : 'nan'} ${paar.vordergrund} auf ${paar.hintergrund}`);
     }
   }
   return liste;
 }
 
 test('Fähigkeit und Knoten halten den Kontrast in Hell und Dunkel', async ({ page }, testInfo) => {
-  test.setTimeout(120_000);
+  test.setTimeout(180_000);
   await anmelden(page);
   const original = await lese(page);
   fs.mkdirSync('tmp-test/faehigkeit-farben', { recursive: true });
@@ -213,6 +212,25 @@ test('Fähigkeit und Knoten halten den Kontrast in Hell und Dunkel', async ({ pa
       await expect(page.locator('.baum-wurzel')).toBeVisible();
       await warteAufRuhe(page);
       await expect.poll(async () => maengel(await bericht(page, 'main')).join('\n')).toBe('');
+      const form = await page.locator('.skill-ring').evaluate((element) => {
+        const bogen = element.querySelector('.skill-ring-bogen');
+        const balken = document.querySelector('.balken-fuellung');
+        const probe = document.createElement('span');
+        probe.style.backgroundColor = getComputedStyle(element).getPropertyValue('--skillfarbe');
+        document.body.append(probe);
+        const soll = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return {
+          breite: Math.round(element.getBoundingClientRect().width),
+          verlauf: bogen ? getComputedStyle(bogen).backgroundImage.includes('gradient') : false,
+          balken: balken ? getComputedStyle(balken).backgroundColor === soll : false,
+          schein: document.querySelector('.glimm-fleck') !== null,
+        };
+      });
+      expect(form.breite).toBe(76);
+      expect(form.verlauf).toBe(true);
+      expect(form.balken).toBe(true);
+      expect(form.schein).toBe(true);
       expect(kontrast('#f87171', '#ffffff')).toBeLessThan(MINDEST_KONTRAST);
       await ohneSeitlichenUeberlauf(page);
       await page.screenshot({ path: `tmp-test/faehigkeit-farben/${projekt}-s10-${schema}.png`, fullPage: true });
@@ -234,6 +252,51 @@ test('Fähigkeit und Knoten halten den Kontrast in Hell und Dunkel', async ({ pa
       await expect.poll(async () => maengel(await bericht(page, '[role="dialog"]')).join('\n')).toBe('');
       await page.screenshot({ path: `tmp-test/faehigkeit-farben/${projekt}-d17-${schema}.png`, fullPage: false });
       await knoten.getByRole('button', { name: 'Schließen', exact: true }).click();
+    }
+
+    const stamm = await faehigkeit(page, 'Programmieren');
+    await speichere(page, { ...DUNKEL, glimmen: false });
+    await page.goto(`/faehigkeiten/${stamm.id}`);
+    await expect(page.locator('html')).toHaveAttribute('data-glimmen', 'aus');
+    await expect(page.locator('.baum-frei').first()).toBeVisible();
+    const ohneSchein = await page.locator('.baum-frei').first().evaluate((element) => {
+      const stil = getComputedStyle(element);
+      return { bild: stil.backgroundImage, schatten: stil.boxShadow };
+    });
+    expect(ohneSchein.bild).toContain('gradient');
+    expect(ohneSchein.schatten).not.toContain('10px');
+    await expect(page.locator('.glimm-fleck')).toBeVisible();
+    const pulsAus = await page.locator('.baum-puls').first().evaluate((element) => getComputedStyle(element).filter);
+    expect(pulsAus).toBe('none');
+    const punktAus = page.locator('.skill-ring-punkt');
+    if ((await punktAus.count()) > 0) {
+      expect(await punktAus.first().evaluate((element) => getComputedStyle(element).boxShadow)).toBe('none');
+    }
+
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await speichere(page, { ...DUNKEL, glimmen: true });
+    await page.goto(`/faehigkeiten/${stamm.id}`);
+    await expect
+      .poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--glimm').trim()))
+      .toBe('1');
+    const pulsAn = await page.locator('.baum-puls').first().evaluate((element) => ({
+      name: getComputedStyle(element).animationName,
+      filter: getComputedStyle(element).filter,
+    }));
+    expect(pulsAn.name).toBe('none');
+    expect(pulsAn.filter).not.toBe('none');
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+
+    if (projekt === 'handy') {
+      for (const stil of ['holo', 'antik'] as const) {
+        await speichere(page, { stil, glimmen: true, farbenZuruecksetzen: true });
+        await page.goto(`/faehigkeiten/${stamm.id}`);
+        await expect(page.locator('html')).toHaveAttribute('data-stil', stil);
+        await expect(page.locator('.baum-wurzel')).toBeVisible();
+        await warteAufRuhe(page);
+        await expect.poll(async () => maengel(await bericht(page, 'main')).join('\n')).toBe('');
+        await page.screenshot({ path: `tmp-test/faehigkeit-farben/${projekt}-s10-${stil}.png`, fullPage: false });
+      }
     }
   } finally {
     await speichere(

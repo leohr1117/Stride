@@ -97,6 +97,7 @@ export const TEXTE: Record<string, string> = {
   "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "头像在顶栏、更多和资料页都是圆形，全息和古典也一样。顶栏里的焦点沿着圆形。",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "只改版本号。外观和行为保持不变。",
   "Bei offenen Bossen sind Ring und Schwert größer und beide rot.": "进行中的首领里，圆环和剑都更大，而且都是红色。",
+  "Auf einer Fähigkeit sind Farbe, Verlauf und Glühen wieder da. Zahlen auf erreichten Rängen und Knoten bleiben weiß und lesbar, der Rangname auch, und der Ring leuchtet in der Farbe der Fähigkeit.": "技能页重新有了颜色、渐变和发光。已达到的段位和节点上的数字保持白色且可读，段位名称也一样，圆环以技能的颜色发光。",
   "Auf einer Fähigkeit sind Ring, XP-Balken und erreichte Ränge in der Fortschrittsfarbe. Der Rangname bleibt lesbar, Knoten haben einen Rand, und freigeschaltete zeigen einen Haken. Die Farbe der Fähigkeit bleibt am Symbol.": "在一项技能上，圆环、XP 条和已达到的等级使用进度颜色。等级名称仍然清楚，节点有边框，已解锁的显示对勾。技能颜色只留在符号上。",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "每种外观都能选择全部预设配色。自己创建的配色留在创建它的外观里。",
   "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "配色来自另一种外观时，文字和边框仍然清楚。等级环和错误保持原有颜色。",

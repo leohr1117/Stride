@@ -216,19 +216,19 @@ test('Skill-Blasen zeigen XP, freigeschaltet mit Haken', async ({ page }, testIn
         filter: stil.filter,
       };
     });
-    expect(rand.breite).toBe('1px');
-    expect(rand.verlauf).toBe(false);
-    expect(rand.schatten).toBe('none');
-    expect(rand.filter).toBe('none');
+    expect(rand.breite).toBe('2px');
     const gesperrt = knoten.freigeschaltetAm === null && knoten.elternId !== null && !freiIds.has(knoten.elternId);
     if (knoten.freigeschaltetAm !== null) {
       await expect(knopf).toHaveAttribute('data-zustand', 'frei');
       await expect(kreis.locator('[data-haken]')).toHaveCount(1);
       expect(rand.art).toBe('solid');
+      expect(rand.verlauf).toBe(true);
+      expect(rand.schatten).not.toBe('none');
     } else {
       await expect(kreis.locator('[data-haken]')).toHaveCount(0);
       await expect(knopf).not.toHaveAttribute('data-zustand', 'frei');
       expect(rand.art).toBe(gesperrt ? 'dashed' : 'solid');
+      expect(rand.verlauf).toBe(false);
     }
   }
 

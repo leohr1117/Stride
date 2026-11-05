@@ -97,6 +97,7 @@ export const TEXTE: Record<string, string> = {
   "Das Profilbild im Kopf, auf Mehr und auf dem Profil ist rund, auch in Hologramm und Antik. Der Fokus im Kopf folgt dem Kreis.": "プロフィール画像はヘッダー、その他、プロフィールで円形です。ホログラムと古典でも同じです。ヘッダーのフォーカスも円に沿います。",
   "Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.": "バージョン番号だけです。見た目と動作はそのままです。",
   "Bei offenen Bossen sind Ring und Schwert größer und beide rot.": "進行中のボスでは、リングと剣が大きくなり、どちらも赤になります。",
+  "Auf einer Fähigkeit sind Farbe, Verlauf und Glühen wieder da. Zahlen auf erreichten Rängen und Knoten bleiben weiß und lesbar, der Rangname auch, und der Ring leuchtet in der Farbe der Fähigkeit.": "スキルには色、グラデーション、光が戻ります。到達したランクとノードの数字は白く読みやすく、ランク名も同様で、リングはスキルの色で光ります。",
   "Auf einer Fähigkeit sind Ring, XP-Balken und erreichte Ränge in der Fortschrittsfarbe. Der Rangname bleibt lesbar, Knoten haben einen Rand, und freigeschaltete zeigen einen Haken. Die Farbe der Fähigkeit bleibt am Symbol.": "スキルでは、リング、XPバー、到達したランクが進捗の色になります。ランク名は読みやすいまま、ノードには枠があり、解放済みはチェックを示します。スキルの色は記号だけに残ります。",
   "In jeder Ansicht sind alle vorgegebenen Paletten wählbar. Selbst erstellte bleiben in ihrer Ansicht.": "どの表示でも、用意された配色をすべて選べます。自分で作った配色は、作った表示に残ります。",
   "Text und Rahmen bleiben lesbar, wenn die Palette aus einer anderen Ansicht kommt. Levelring und Fehler behalten ihre Farbe.": "別の表示の配色でも、文字と枠は読めるままです。レベルリングとエラーの色は変わりません。",

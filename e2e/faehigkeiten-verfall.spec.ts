@@ -128,7 +128,7 @@ test('Fähigkeiten zeigen denselben Baum', async ({ page }) => {
   await expect(frei.locator('.baum-puls')).toHaveCount(0);
   await expect(frei.locator('[data-haken]').first()).toBeVisible();
   await expect(naechstes).toBeVisible();
-  await expect(naechstes.locator('.baum-puls')).toHaveCount(0);
+  await expect(naechstes.locator('.baum-puls')).toHaveCount(1);
   await expect(naechstes.locator('[data-haken]')).toHaveCount(0);
   await expect(naechstes.locator('.baum-knoten')).toHaveCSS('border-top-style', 'solid');
   await expect(karte.locator('.baum-knoten', { hasText: '+' })).toHaveCount(0);
