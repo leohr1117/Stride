@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.52
+
+### Geändert
+
+- Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.
+
 ## 3.56.51
 
 ### Geändert

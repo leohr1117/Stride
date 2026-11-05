@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.": "つながりでは、Todoist のトークンへのリンクが別の行になり、タップしやすくなりました。",
   "Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.": "アカウントでは、各行の2行目にユーザー名と役割が表示されます。",
   "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "お手本では、自分の行が専用の面の中にあります。方向は左右に余白があります。",
   "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "ガイドの表は幅の中に収まります。レベル表はレベル、XP、長さを示し、下の注記が1日のXPを示します。お手本は方向とレベルのリストになります。",

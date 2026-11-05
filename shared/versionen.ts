@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.52',
+    seiten: 'Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.'],
+      },
+    ],
+  },
+  {
     version: '3.56.51',
     seiten: 'Accounts',
     abschnitte: [

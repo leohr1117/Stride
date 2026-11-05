@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.', 'On Connections, the link to the Todoist token sits on its own line and is easier to tap.'],
   ['Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.', 'On Accounts, each row shows the username and the role on the second line.'],
   ['Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.', 'On Role models, the You row sits in its own surface. The directions leave space on the left and right edges.'],
   ['Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.', 'In the guide, the tables stay within the width. The level table shows level, XP, and duration, and the note below names the XP per day. Role models appear as a list with direction and level.'],

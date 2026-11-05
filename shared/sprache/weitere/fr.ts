@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.": "Dans Connexions, le lien vers le jeton Todoist est sur sa propre ligne et plus facile à toucher.",
   "Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.": "Dans Comptes, chaque ligne indique le nom d'utilisateur et le rôle sur la deuxième ligne.",
   "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "Dans Modèles, la ligne Toi est dans une surface à part. Les directions laissent de l'espace à gauche et à droite.",
   "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "Dans le guide, les tableaux restent dans la largeur. Le tableau des niveaux montre le niveau, l'XP et la durée, et la note en dessous indique l'XP par jour. Les modèles apparaissent en liste avec la direction et le niveau.",

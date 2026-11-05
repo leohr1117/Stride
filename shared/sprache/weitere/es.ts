@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.": "En Conexiones, el enlace al token de Todoist está en su propia línea y es más fácil de pulsar.",
   "Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.": "En Cuentas, cada fila muestra el nombre de usuario y el rol en la segunda línea.",
   "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "En Referentes, la fila Tú está en una superficie propia. Las direcciones dejan espacio a la izquierda y a la derecha.",
   "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "En la guía, las tablas se quedan dentro del ancho. La tabla de nivel muestra nivel, XP y duración, y la nota de debajo indica la XP al día. Los referentes aparecen como lista con dirección y nivel.",

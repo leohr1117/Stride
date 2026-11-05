@@ -30,6 +30,55 @@ async function waehleZaehltAls(seite: Page, dialogName: string, index: number): 
   return name;
 }
 
+async function ueberschrift(seite: Page, abschnitt: string, titel: string, hinweis: string): Promise<void> {
+  const probleme = await seite.locator(`#${abschnitt} .abschnitt-kopf`).evaluate(
+    (kopf, erwartung) => {
+      const fund: string[] = [];
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--leise)';
+      document.body.append(probe);
+      const leise = getComputedStyle(probe).color;
+      probe.remove();
+      const h2 = kopf.querySelector('h2');
+      const p = [...kopf.children].find((kind) => kind.tagName === 'P');
+      if (!h2 || h2.textContent?.trim() !== erwartung.titel) {
+        fund.push('titel');
+      }
+      if (h2) {
+        const stil = getComputedStyle(h2);
+        if (stil.fontSize !== '13px') fund.push(`schrift ${stil.fontSize}`);
+        if (stil.fontWeight !== '600') fund.push(`gewicht ${stil.fontWeight}`);
+        if (stil.textTransform !== 'none') fund.push(`schreibung ${stil.textTransform}`);
+        const sperrung = stil.letterSpacing;
+        if (sperrung !== 'normal' && parseFloat(sperrung) !== 0) fund.push(`sperrung ${sperrung}`);
+        if (stil.color !== leise) fund.push('farbe');
+        if (document.documentElement.clientWidth < 768 && Math.abs(h2.getBoundingClientRect().x - 32) > 1) {
+          fund.push(`x ${Math.round(h2.getBoundingClientRect().x)}`);
+        }
+      }
+      if (!(p instanceof HTMLElement) || p.textContent?.trim() !== erwartung.hinweis) {
+        fund.push('hinweis');
+      }
+      if (p instanceof HTMLElement) {
+        const stil = getComputedStyle(p);
+        if (stil.fontSize !== '13px') fund.push(`hinweis-schrift ${stil.fontSize}`);
+        if (stil.color !== leise) fund.push('hinweis-farbe');
+        if (p.closest('[data-flaeche]')) fund.push('hinweis in der flaeche');
+      }
+      const flaeche = kopf.closest('section')?.querySelector('[data-flaeche]');
+      if (!flaeche) {
+        fund.push('ohne flaeche');
+      } else {
+        const abstand = Math.round(flaeche.getBoundingClientRect().top - kopf.getBoundingClientRect().bottom);
+        if (abstand !== 8) fund.push(`abstand ${abstand}`);
+      }
+      return fund;
+    },
+    { titel, hinweis },
+  );
+  expect(probleme).toEqual([]);
+}
+
 async function fertig(seite: Page, dialogName: string): Promise<void> {
   const blatt = seite.getByRole('dialog', { name: dialogName });
   await blatt.getByRole('button', { name: 'Fertig' }).click();
@@ -44,7 +93,15 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
   await expect(page.getByText('Öffne die Entwicklerseite in Todoist.')).toBeVisible();
   await expect(page.getByText('Kopiere den API-Token.')).toBeVisible();
   await expect(page.getByText('Füge ihn hier ein und tippe auf Verbinden.')).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Token in Todoist öffnen' })).toHaveAttribute('href', TOKEN_SEITE);
+  await ueberschrift(page, 'todoist', 'Todoist', 'Jede erledigte Aufgabe wird ein Eintrag mit XP.');
+  await ueberschrift(page, 'kalender', 'Kalender', 'Jeder vergangene Termin wird ein Eintrag mit XP.');
+  const link = page.getByRole('link', { name: 'Token in Todoist öffnen' });
+  await expect(link).toHaveAttribute('href', TOKEN_SEITE);
+  const linkKasten = await link.boundingBox();
+  expect(linkKasten).toBeTruthy();
+  if (linkKasten) {
+    expect(linkKasten.height).toBeGreaterThanOrEqual(48);
+  }
   await page.screenshot({ path: `tmp-test/todoist/todoist-token-${info.project.name}.png`, fullPage: true });
 
   const token = page.getByRole('textbox', { name: 'API-Token' });
@@ -59,9 +116,20 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
   const feldKasten = await token.boundingBox();
   expect(knopfKasten && feldKasten).toBeTruthy();
   if (knopfKasten && feldKasten) {
-    expect(knopfKasten.height).toBeGreaterThanOrEqual(48);
+    expect(Math.abs(knopfKasten.height - 48)).toBeLessThanOrEqual(1);
+    expect(Math.abs(knopfKasten.x - feldKasten.x)).toBeLessThanOrEqual(2);
     expect(Math.abs(knopfKasten.width - feldKasten.width)).toBeLessThanOrEqual(2);
+    expect(knopfKasten.width).toBeGreaterThan(200);
   }
+  const aktionGleich = await verbinden.evaluate((element) => {
+    const probe = document.createElement('span');
+    probe.style.backgroundColor = 'var(--aktion)';
+    document.body.append(probe);
+    const soll = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return getComputedStyle(element).backgroundColor === soll;
+  });
+  expect(aktionGleich).toBe(true);
 
   const vorschauAufrufe: string[] = [];
   page.on('request', (anfrage) => {

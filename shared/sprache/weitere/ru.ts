@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.": "В разделе «Связи» ссылка на токен Todoist стоит отдельной строкой, и её легче нажать.",
   "Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.": "В разделе «Аккаунты» каждая строка показывает имя пользователя и роль во второй строке.",
   "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "В разделе «Ориентиры» строка «Ты» стоит на отдельной поверхности. У направлений есть отступ слева и справа.",
   "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "В справке таблицы остаются в пределах ширины. Таблица уровней показывает уровень, XP и длительность, а примечание под ней называет XP в день. Ориентиры стоят списком с направлением и уровнем.",

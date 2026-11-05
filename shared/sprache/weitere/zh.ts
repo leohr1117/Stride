@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Verbindungen steht der Link zum Todoist-Token in einer eigenen Zeile und ist leichter zu treffen.": "在关联里，Todoist 令牌的链接单独成行，更容易点到。",
   "Bei Accounts zeigt jede Zeile den Benutzernamen und die Rolle in der Nebenzeile.": "在账号里，每一行的第二行显示用户名和角色。",
   "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "在榜样里，你的那一行位于单独的表面上。方向在左右两侧留出间距。",
   "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "指南里的表格都留在宽度之内。等级表显示等级、XP 和时长，下面的说明写出每天的 XP。榜样以列表显示方向和等级。",

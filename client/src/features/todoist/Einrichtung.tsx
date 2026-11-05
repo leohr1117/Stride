@@ -7,15 +7,15 @@ export function TodoistTokenSchritte() {
   return (
     <ol className="list-decimal space-y-2 pl-5 text-sm marker:text-leise">
       <li>
-        {tx('Öffne die Entwicklerseite in Todoist.')}{' '}
+        <p>{tx('Öffne die Entwicklerseite in Todoist.')}</p>
         <a
           href={TODOIST_TOKEN_SEITE}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex flex-wrap items-center gap-1 text-akzent hover:underline"
+          className="mt-1 flex min-h-12 w-full items-center gap-1 text-akzent hover:underline"
         >
           {tx('Token in Todoist öffnen')}
-          <ExternalLink className="size-3.5 shrink-0" />
+          <ExternalLink className="size-3.5 shrink-0" aria-hidden="true" />
         </a>
       </li>
       <li>{tx('Kopiere den API-Token.')}</li>
