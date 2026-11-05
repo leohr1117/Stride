@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.55',
+    seiten: 'Fähigkeiten',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Auf einer Fähigkeit sind Ring, XP-Balken und erreichte Ränge in der Fortschrittsfarbe. Der Rangname bleibt lesbar, Knoten haben einen Rand, und freigeschaltete zeigen einen Haken. Die Farbe der Fähigkeit bleibt am Symbol.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.54',
     seiten: 'Was ist neu',
     abschnitte: [

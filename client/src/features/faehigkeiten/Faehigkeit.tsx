@@ -2,7 +2,7 @@ import { tx, txMenge } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Plus, Sparkles } from 'lucide-react';
-import { useState, type CSSProperties, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useParams } from 'react-router';
 import type { Faehigkeit, SkillKnoten } from '../../../../shared/api/index.ts';
 import { DREYFUS_STUFEN, GRENZEN } from '../../../../shared/spiel/begriffe.ts';
@@ -12,7 +12,8 @@ import { Dialog } from '../../components/Dialog.tsx';
 import { FaehigkeitFormular } from '../../components/FaehigkeitFormular.tsx';
 import { SchnellMenueKnopf, useSchnellAktion } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
-import { SkillBaum, skillSchein } from './SkillBaum.tsx';
+import { SkillBaum } from './SkillBaum.tsx';
+import { useSymbolFarbe } from './symbolFarbe.ts';
 import { KopfAktion, useKopf } from '../../components/Kopf.tsx';
 import {
   EINGABE_STIL,
@@ -79,10 +80,9 @@ export function FaehigkeitSeite() {
   const frei = faehigkeit.knoten.filter((knoten) => knoten.freigeschaltetAm !== null).length;
   const gesamt = faehigkeit.knoten.length;
   const auswahl = faehigkeit.knoten.find((knoten) => knoten.id === ausgewaehlt) ?? null;
-  const farbStil = { '--skillfarbe': faehigkeit.farbe } as CSSProperties;
 
   return (
-    <div className="space-y-6" style={farbStil}>
+    <div className="space-y-6">
       <KopfAktion>
         <SchnellMenueKnopf
           ziel={{
@@ -96,10 +96,6 @@ export function FaehigkeitSeite() {
         />
       </KopfAktion>
       <Karte className="relative space-y-5 overflow-hidden">
-        <div
-          className="glimm-fleck pointer-events-none absolute -top-24 -right-24 size-64 rounded-full opacity-25 blur-3xl"
-          style={{ backgroundColor: faehigkeit.farbe }}
-        />
         <div className="relative flex items-center gap-5">
           <SkillRing frei={frei} gesamt={gesamt} farbe={faehigkeit.farbe} icon={faehigkeit.icon} />
           <div className="min-w-0 flex-1">
@@ -111,14 +107,14 @@ export function FaehigkeitSeite() {
               {faehigkeit.archiviert && ` ${tx('· archiviert')}`}
             </p>
             <div className="mt-3">
-              <Fortschrittsbalken anteil={faehigkeit.level.fortschritt} farbe={faehigkeit.farbe} />
+              <Fortschrittsbalken anteil={faehigkeit.level.fortschritt} />
               <p className="zahl mt-1 text-right text-xs text-leise">
                 {zahl(faehigkeit.level.xpImLevel)} / {zahl(faehigkeit.level.xpFuerNaechstes)} XP
               </p>
             </div>
           </div>
         </div>
-        <Rangleiste level={faehigkeit.level.level} farbe={faehigkeit.farbe} />
+        <Rangleiste level={faehigkeit.level.level} />
       </Karte>
 
       <section className="min-w-0">
@@ -136,10 +132,7 @@ export function FaehigkeitSeite() {
         {gesamt === 0 ? (
           <Leer text={tx("Noch nichts.")} />
         ) : (
-          <div
-            className="baum-karte karte w-full min-w-0 overflow-x-auto overscroll-x-contain rounded-2xl border border-rand bg-flaeche"
-            style={skillSchein(faehigkeit.farbe)}
-          >
+          <div className="baum-karte karte w-full min-w-0 overflow-x-auto overscroll-x-contain rounded-2xl border border-rand bg-flaeche">
             <div className="baum-flaeche mx-auto w-fit px-4 py-6">
               <SkillBaum faehigkeit={faehigkeit} onWaehlen={setAusgewaehlt} />
             </div>
@@ -218,16 +211,18 @@ export function FaehigkeitSeite() {
 
 function SkillRing({ frei, gesamt, farbe, icon }: { frei: number; gesamt: number; farbe: string; icon: string }) {
   const anteil = gesamt === 0 ? 0 : frei / gesamt;
+  const symbol = useSymbolFarbe(farbe);
   return (
-    <div className="relative size-24 shrink-0">
+    <div className="skill-ring relative size-24 shrink-0">
       <svg viewBox="0 0 100 100" className="size-full -rotate-90">
-        <circle cx="50" cy="50" r={RING_RADIUS} fill="none" stroke="var(--flaeche-2)" strokeWidth="7" />
+        <circle className="skill-ring-bahn" cx="50" cy="50" r={RING_RADIUS} fill="none" stroke="var(--flaeche-2)" strokeWidth="7" />
         <motion.circle
+          className="skill-ring-strich"
           cx="50"
           cy="50"
           r={RING_RADIUS}
           fill="none"
-          stroke={farbe}
+          stroke="var(--fortschritt)"
           strokeWidth="7"
           strokeLinecap="round"
           strokeDasharray={RING_UMFANG}
@@ -237,7 +232,7 @@ function SkillRing({ frei, gesamt, farbe, icon }: { frei: number; gesamt: number
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <Icon name={icon} className="size-6" style={{ color: farbe }} />
+        <Icon name={icon} data-symbol="" className="size-6" style={{ color: symbol }} />
         <span className="zahl mt-0.5 text-xs font-semibold">
           {frei}/{gesamt}
         </span>
@@ -246,7 +241,7 @@ function SkillRing({ frei, gesamt, farbe, icon }: { frei: number; gesamt: number
   );
 }
 
-function Rangleiste({ level, farbe }: { level: number; farbe: string }) {
+function Rangleiste({ level }: { level: number }) {
   let aktuell = 0;
   DREYFUS_STUFEN.forEach((stufe, index) => {
     if (level >= stufe.abLevel) {
@@ -258,25 +253,36 @@ function Rangleiste({ level, farbe }: { level: number; farbe: string }) {
   return (
     <div className="relative">
       <div className="flex items-center">
-        {DREYFUS_STUFEN.map((stufe, index) => (
-          <div key={stufe.name} className="flex flex-1 items-center last:flex-none">
-            <div
-              className={`flex size-7 shrink-0 items-center justify-center rounded-full border-2 text-[11px] font-bold transition ${
-                index <= aktuell ? 'text-white' : 'border-rand text-leise'
-              } ${index === aktuell ? 'skill-leuchten' : ''}`}
-              style={index <= aktuell ? { backgroundColor: farbe, borderColor: farbe } : undefined}
-              title={tx('{name} ab Level {level}', { name: tx(stufe.name), level: stufe.abLevel })}
-            >
-              {index + 1}
+        {DREYFUS_STUFEN.map((stufe, index) => {
+          const erreicht = index <= aktuell;
+          return (
+            <div key={stufe.name} className="flex flex-1 items-center last:flex-none">
+              <div
+                data-rang={erreicht ? 'erreicht' : 'offen'}
+                className={`flex size-7 shrink-0 items-center justify-center rounded-full border-2 text-[11px] font-bold ${
+                  erreicht ? '' : 'border-rand text-leise'
+                }`}
+                style={
+                  erreicht
+                    ? { backgroundColor: 'var(--fortschritt)', borderColor: 'var(--fortschritt)', color: 'var(--grund)' }
+                    : undefined
+                }
+                title={tx('{name} ab Level {level}', { name: tx(stufe.name), level: stufe.abLevel })}
+              >
+                {index + 1}
+              </div>
+              {index < DREYFUS_STUFEN.length - 1 && (
+                <div
+                  className="mx-1 h-0.5 flex-1 rounded-full"
+                  style={{ backgroundColor: index < aktuell ? 'var(--fortschritt)' : 'var(--rand)' }}
+                />
+              )}
             </div>
-            {index < DREYFUS_STUFEN.length - 1 && (
-              <div className="mx-1 h-0.5 flex-1 rounded-full" style={{ backgroundColor: index < aktuell ? farbe : 'var(--rand)' }} />
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
       <div className="mt-2 flex items-baseline justify-between gap-3 text-sm">
-        <span className="min-w-0 font-semibold break-words" style={{ color: farbe }}>
+        <span className="rang-name min-w-0 font-semibold break-words text-haupt">
           {tx(DREYFUS_STUFEN[aktuell].name)}
         </span>
         {naechste && (
@@ -322,8 +328,8 @@ function SkillAktionen({
           type="button"
           onClick={onFreischalten}
           disabled={laeuft}
-          className="skill-leuchten flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3.5 text-base font-semibold text-white transition active:scale-[0.98] disabled:opacity-60"
-          style={{ backgroundColor: faehigkeit.farbe }}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3.5 text-base font-semibold transition active:scale-[0.98] disabled:opacity-60"
+          style={{ backgroundColor: 'var(--aktion)', color: 'var(--aktion-text)' }}
         >
           <Sparkles className="size-5" />
           {tx('Freischalten · +{xp} XP', { xp: zahl(knoten.xp) })}

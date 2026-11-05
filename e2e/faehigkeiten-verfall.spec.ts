@@ -126,8 +126,11 @@ test('Fähigkeiten zeigen denselben Baum', async ({ page }) => {
   const naechstes = karte.locator('[data-zustand="verfuegbar"]', { hasText: 'Release bauen' });
   await expect(frei.first()).toBeVisible();
   await expect(frei.locator('.baum-puls')).toHaveCount(0);
+  await expect(frei.locator('[data-haken]').first()).toBeVisible();
   await expect(naechstes).toBeVisible();
-  await expect(naechstes.locator('.baum-puls')).toHaveCount(1);
+  await expect(naechstes.locator('.baum-puls')).toHaveCount(0);
+  await expect(naechstes.locator('[data-haken]')).toHaveCount(0);
+  await expect(naechstes.locator('.baum-knoten')).toHaveCSS('border-top-style', 'solid');
   await expect(karte.locator('.baum-knoten', { hasText: '+' })).toHaveCount(0);
 
   await page.getByRole('button', { name: 'Neu', exact: true }).click();
@@ -175,6 +178,7 @@ test('Fähigkeiten zeigen denselben Baum', async ({ page }) => {
     const gesperrt = karte.locator('[data-zustand="gesperrt"]', { hasText: 'Lauf64 gesperrt' });
     await expect(gesperrt).toBeVisible();
     await expect(gesperrt.locator('.baum-puls')).toHaveCount(0);
+    await expect(gesperrt.locator('.baum-knoten')).toHaveCSS('border-top-style', 'dashed');
     await expect(gesperrt).not.toContainText('+');
     await gesperrt.click();
     await expect(xpImDialog(page.getByRole('dialog'))).toBeVisible();

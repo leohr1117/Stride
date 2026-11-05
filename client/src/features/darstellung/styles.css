@@ -486,77 +486,12 @@ html[data-eingabe='zeiger'] :focus {
   }
 }
 
-@keyframes skill-schimmer {
-  0%,
-  100% {
-    box-shadow: 0 0 14px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm) * 55%), transparent);
-  }
-  50% {
-    box-shadow: 0 0 26px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm) * 85%), transparent);
-  }
-}
-
-.skill-leuchten {
-  animation: skill-schimmer 3.2s ease-in-out infinite;
-}
-
-@keyframes baum-puls {
-  0%,
-  100% {
-    filter: drop-shadow(0 0 3px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm) * 65%), transparent));
-  }
-  50% {
-    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm) * 100%), transparent));
-  }
-}
-
-.baum-puls {
-  animation: baum-puls 3.2s ease-in-out infinite;
-}
-
-.baum-frei {
-  background-image:
-    radial-gradient(circle at 32% 24%, color-mix(in srgb, white 72%, transparent) 0%, transparent 46%),
-    radial-gradient(circle at 50% 62%, color-mix(in srgb, var(--skillfarbe) 68%, white), var(--skillfarbe));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
-    0 0 10px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm, 1) * 40%), transparent);
-}
-
-.baum-frei .zahl {
-  text-shadow: 0 1px 1px rgb(0 0 0 / 35%);
-}
-
-:root[data-glimmen='aus'] .baum-frei {
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 45%, transparent);
-}
-
-:root[data-glimmen='aus'] .baum-puls {
-  animation: none;
-  filter: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .baum-puls {
-    animation: none;
-    filter: none;
-  }
-}
-
 .pfad-an {
   box-shadow: 0 0 12px color-mix(in srgb, var(--akzent) calc(var(--glimm) * 70%), transparent);
 }
 
 :root[data-glimmen='aus'] .pfad-an {
   box-shadow: none;
-}
-
-:root[data-glimmen='aus'] .skill-leuchten {
-  animation: none;
-}
-
-:root[data-glimmen='aus'] .glimm-fleck {
-  opacity: 0;
 }
 
 :root[data-glimmen='aus'] .knopf-rund {

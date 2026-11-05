@@ -1,8 +1,10 @@
-import { useMemo, type CSSProperties } from 'react';
+import { useMemo } from 'react';
+import { Check } from 'lucide-react';
 import type { Faehigkeit, SkillKnoten } from '../../../../shared/api/index.ts';
 import { kompakt } from '../../format.ts';
 import { Icon } from '../../components/Icons.tsx';
 import { berechneBaum, type BaumLayout, type BaumPosition } from './skillbaumLayout.ts';
+import { useSymbolFarbe } from './symbolFarbe.ts';
 
 const SPALTE = 104;
 const EBENE = 108;
@@ -46,22 +48,19 @@ function xpSchrift(text: string): string {
   return 'text-xs';
 }
 
-function KnotenScheibe({ zustand, farbe, xp }: { zustand: Zustand; farbe: string; xp: number }) {
+function KnotenScheibe({ zustand, xp }: { zustand: Zustand; xp: number }) {
   const text = kompakt(xp);
-  const stil = { '--skillfarbe': farbe, outlineColor: farbe } as CSSProperties;
-  if (zustand === 'verfuegbar') {
-    stil.borderColor = farbe;
-  } else if (zustand === 'gesperrt') {
-    stil.borderColor = `color-mix(in srgb, ${farbe} 28%, var(--rand))`;
-  }
+  const frei = zustand === 'frei';
+  const gesperrt = zustand === 'gesperrt';
   return (
     <span
-      className={`baum-knoten relative flex shrink-0 items-center justify-center overflow-hidden rounded-full border-2 transition duration-200 group-hover:scale-105 group-focus-visible:scale-105 group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 ${
-        zustand === 'frei' ? 'baum-frei border-transparent text-white' : zustand === 'verfuegbar' ? 'baum-puls bg-flaeche text-haupt' : 'border-dashed bg-flaeche-2/70 text-haupt'
+      className={`baum-knoten relative flex shrink-0 items-center justify-center rounded-full border bg-flaeche text-haupt transition duration-200 group-hover:scale-105 group-focus-visible:scale-105 group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 ${
+        gesperrt ? 'border-dashed' : 'border-solid'
       }`}
-      style={{ ...stil, width: KNOTEN, height: KNOTEN }}
+      style={{ borderColor: 'var(--feldrand)', outlineColor: 'var(--fokus)', width: KNOTEN, height: KNOTEN }}
     >
       <span className={`zahl max-w-full px-0.5 leading-none font-semibold whitespace-nowrap ${xpSchrift(text)}`}>{text}</span>
+      {frei && <Check data-haken="" aria-hidden className="absolute bottom-0.5 size-3 text-erfolg" strokeWidth={3} />}
     </span>
   );
 }
@@ -71,6 +70,7 @@ function Graph({ daten, onWaehlen }: { daten: BaumDaten; onWaehlen: (id: number)
   const breite = layout.spalten * SPALTE;
   const hoehe = (layout.ebenen - 1) * EBENE + OBEN + KNOTEN + TITEL + 10;
   const wurzel = mitte(layout.wurzel, true);
+  const symbol = useSymbolFarbe(faehigkeit.farbe);
 
   return (
     <div className="relative" style={{ width: breite, height: hoehe }}>
@@ -87,36 +87,35 @@ function Graph({ daten, onWaehlen }: { daten: BaumDaten; onWaehlen: (id: number)
           const start = von.y + (elternIstWurzel ? WURZEL / 2 : KNOTEN / 2 + TITEL);
           const ende = nach.y - KNOTEN / 2;
           const knick = start + (ende - start) * 0.55;
-          const frei = zustand(knoten) === 'frei';
-          const offen = zustand(knoten) === 'verfuegbar';
+          const knotenZustand = zustand(knoten);
+          const frei = knotenZustand === 'frei';
+          const gesperrt = knotenZustand === 'gesperrt';
           return (
             <path
               key={knoten.id}
               d={`M ${von.x} ${start} C ${von.x} ${knick}, ${nach.x} ${knick}, ${nach.x} ${ende}`}
               fill="none"
               strokeLinecap="round"
-              stroke={frei || offen ? faehigkeit.farbe : 'var(--rand)'}
-              strokeWidth={frei ? 2.5 : 2}
-              strokeOpacity={frei ? 0.95 : offen ? 0.55 : 0.85}
-              strokeDasharray={frei ? undefined : '4 6'}
+              stroke={frei ? 'var(--fortschritt)' : 'var(--feldrand)'}
+              strokeWidth={2}
+              strokeDasharray={gesperrt ? '4 6' : undefined}
             />
           );
         })}
       </svg>
 
       <div
-        className="baum-wurzel absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2"
+        className="baum-wurzel absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-flaeche"
         style={{
           left: wurzel.x,
           top: wurzel.y,
           width: WURZEL,
           height: WURZEL,
-          borderColor: faehigkeit.farbe,
-          backgroundColor: `color-mix(in srgb, ${faehigkeit.farbe} 16%, var(--flaeche))`,
-          color: faehigkeit.farbe,
+          borderColor: 'var(--feldrand)',
+          color: symbol,
         }}
       >
-        <Icon name={faehigkeit.icon} className="size-6" />
+        <Icon name={faehigkeit.icon} data-symbol="" className="size-6" />
       </div>
 
       {faehigkeit.knoten.map((knoten) => {
@@ -135,7 +134,7 @@ function Graph({ daten, onWaehlen }: { daten: BaumDaten; onWaehlen: (id: number)
             className="group absolute flex flex-col items-center gap-1 px-1 text-center"
             style={{ left: punkt.x - SPALTE / 2, top: punkt.y - KNOTEN / 2, width: SPALTE }}
           >
-            <KnotenScheibe zustand={knotenZustand} farbe={faehigkeit.farbe} xp={knoten.xp} />
+            <KnotenScheibe zustand={knotenZustand} xp={knoten.xp} />
             <span
               className={`line-clamp-2 w-full break-words text-[11px] leading-tight ${
                 knotenZustand === 'frei' ? 'font-semibold text-haupt' : knotenZustand === 'verfuegbar' ? 'font-medium text-haupt' : 'text-leise'
@@ -148,12 +147,6 @@ function Graph({ daten, onWaehlen }: { daten: BaumDaten; onWaehlen: (id: number)
       })}
     </div>
   );
-}
-
-export function skillSchein(farbe: string): CSSProperties {
-  return {
-    backgroundImage: `radial-gradient(ellipse 70% 180px at 50% 0%, color-mix(in srgb, ${farbe} calc(var(--glimm, 1) * 16%), transparent), transparent)`,
-  };
 }
 
 export function SkillBaum({ faehigkeit, onWaehlen }: { faehigkeit: Faehigkeit; onWaehlen: (id: number) => void }) {

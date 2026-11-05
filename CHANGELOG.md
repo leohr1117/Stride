@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.55
+
+### Behoben
+
+- Auf einer Fähigkeit sind Ring, XP-Balken und erreichte Ränge in der Fortschrittsfarbe. Der Rangname bleibt lesbar, Knoten haben einen Rand, und freigeschaltete zeigen einen Haken. Die Farbe der Fähigkeit bleibt am Symbol.
+
 ## 3.56.54
 
 ### Geändert
