@@ -32,7 +32,7 @@ import {
   RESSOURCEN_SCHALTER,
 } from '../spiel/xp.ts';
 import { ABSCHNITTE, VERSIONEN } from '../versionen.ts';
-import { localeFuer, platzhalter, SPRACH_NAME, spracheAusBrowser, spracheAusKopf, ZIEL_SPRACHEN } from './kern.ts';
+import { FALLBACK_SPRACHE, localeFuer, platzhalter, SPRACH_NAME, spracheAusBrowser, spracheAusKopf, spracheWaehlen, ZIEL_SPRACHEN } from './kern.ts';
 import { MENGEN_PAARE } from './menge.ts';
 import {
   allePaare,
@@ -190,15 +190,20 @@ describe('sprachen', () => {
     setzeAktiveSprache('de');
   });
 
-  it('erkennt die Browsersprache und fällt sonst auf Deutsch zurück', () => {
+  it('erkennt die Browsersprache und fällt sonst auf Englisch zurück', () => {
+    expect(FALLBACK_SPRACHE).toBe('en');
     expect(spracheAusBrowser(['it-IT', 'en-GB'])).toBe('en');
     expect(spracheAusBrowser(['de-AT,de;q=0.9'])).toBe('de');
+    expect(spracheAusBrowser(['de'])).toBe('de');
+    expect(spracheAusBrowser(['de-DE'])).toBe('de');
     expect(spracheAusBrowser(['fr-FR', 'en-GB'])).toBe('fr');
     expect(spracheAusBrowser(['es-MX'])).toBe('es');
     expect(spracheAusBrowser(['ru'])).toBe('ru');
     expect(spracheAusBrowser(['zh-Hans', 'en'])).toBe('zh');
     expect(spracheAusBrowser(['ja-JP'])).toBe('ja');
-    expect(spracheAusBrowser(['pt-BR', 'it'])).toBe('de');
+    expect(spracheAusBrowser(['pt-BR', 'it'])).toBe('en');
+    expect(spracheAusBrowser(['pl'])).toBe('en');
+    expect(spracheAusBrowser([])).toBe('en');
     expect(spracheAusKopf('en-US,en;q=0.8')).toBe('en');
     expect(spracheAusKopf('fr-CH, en;q=0.8')).toBe('fr');
     expect(localeFuer('en')).toBe('en-US');
@@ -213,6 +218,17 @@ describe('sprachen', () => {
     expect(SPRACH_NAME.ru).toBe('Русский');
     expect(SPRACH_NAME.zh).toBe('中文');
     expect(SPRACH_NAME.ja).toBe('日本語');
+  });
+
+  it('lässt die gespeicherte Wahl und die Server-Einstellung vor Browser und Standard gewinnen', () => {
+    expect(spracheWaehlen(null, null, ['pl'])).toBe('en');
+    expect(spracheWaehlen(null, null, ['pl-PL'])).toBe('en');
+    expect(spracheWaehlen(null, null, ['de'])).toBe('de');
+    expect(spracheWaehlen(null, null, ['de-DE'])).toBe('de');
+    expect(spracheWaehlen('ja', null, ['pl'])).toBe('ja');
+    expect(spracheWaehlen('fr', 'en', ['de'])).toBe('fr');
+    expect(spracheWaehlen(null, 'es', ['pl'])).toBe('es');
+    expect(spracheWaehlen(null, 'de', ['en'])).toBe('de');
   });
 
   it('hat für jeden deutschen Text jede Sprache mit denselben Platzhaltern', () => {

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { istSprache, localeFuer, spracheAusBrowser, type Sprache } from '../../shared/sprache/kern.ts';
+import { istSprache, localeFuer, spracheWaehlen, type Sprache } from '../../shared/sprache/kern.ts';
 import { setzeAktiveSprache } from '../../shared/sprache/index.ts';
 import { api, SCHLUESSEL } from './api/index.ts';
 
@@ -46,7 +46,7 @@ function merkeHinweis(sprache: Sprache | null): void {
 }
 
 function anfangsSprache(): Sprache {
-  return gespeicherterHinweis() ?? spracheAusBrowser(browserSprachen());
+  return spracheWaehlen(gespeicherterHinweis(), null, browserSprachen());
 }
 
 export function SpracheProvider({ children }: { children: ReactNode }) {
@@ -65,7 +65,7 @@ export function SpracheProvider({ children }: { children: ReactNode }) {
       return;
     }
     eigeneWahl.current = false;
-    const naechste = gespeichert ?? spracheAusBrowser(browserSprachen());
+    const naechste = spracheWaehlen(null, gespeichert, browserSprachen());
     setSprache(naechste);
     merkeHinweis(gespeichert);
   }, []);

@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.": "言語が未選択で、端末の言語も合わないときは、アプリは英語で始まります。",
   "Die dunkle Browserleiste und der Startbildschirm der installierten App sind dasselbe Dunkelgrau wie die App.": "暗いブラウザのバーと、インストールしたアプリの開始画面は、アプリと同じ暗い灰色です。",
   "Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.": "動いているアプリは専用のフォルダに残ります。隣のビルドだけでは、そのアプリは変わりません。",
   "Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.": "「今日」では、連続の文、説明、「+ 記録」が1行に並びます。狭い画面では「連続は未記録」と出ます。",

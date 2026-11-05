@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.70',
+    seiten: 'Was ist neu',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.69',
     seiten: 'Was ist neu',
     abschnitte: [

@@ -4,7 +4,7 @@ export type Sprache = (typeof SPRACHEN)[number];
 export const ZIEL_SPRACHEN = ['en', 'es', 'fr', 'ru', 'zh', 'ja'] as const;
 export type ZielSprache = (typeof ZIEL_SPRACHEN)[number];
 
-export const FALLBACK_SPRACHE: Sprache = 'de';
+export const FALLBACK_SPRACHE: Sprache = 'en';
 
 /** Name in der eigenen Schrift, unabhängig von der Oberflächensprache. */
 export const SPRACH_NAME: Record<Sprache, string> = {
@@ -39,7 +39,7 @@ export function localeFuer(sprache: Sprache): string {
   return LOCALE[sprache];
 }
 
-/** Erste unterstützte Sprache, sonst Deutsch. `en-US` zählt als Englisch, `zh-CN` als Chinesisch. */
+/** Erste unterstützte Sprache, sonst Englisch. `en-US` zählt als Englisch, `zh-CN` als Chinesisch. */
 export function spracheAusBrowser(liste: readonly string[]): Sprache {
   for (const eintrag of liste) {
     const code = eintrag.trim().toLowerCase().replace('_', '-').split('-')[0] ?? '';
@@ -48,6 +48,16 @@ export function spracheAusBrowser(liste: readonly string[]): Sprache {
     }
   }
   return FALLBACK_SPRACHE;
+}
+
+export function spracheWaehlen(gespeichert: Sprache | null, server: Sprache | null, browser: readonly string[]): Sprache {
+  if (gespeichert !== null) {
+    return gespeichert;
+  }
+  if (server !== null) {
+    return server;
+  }
+  return spracheAusBrowser(browser);
 }
 
 export function spracheAusKopf(kopf: string | string[] | undefined): Sprache {

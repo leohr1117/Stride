@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.70
+
+### Geändert
+
+- Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.
+
 ## 3.56.69
 
 ### Geändert

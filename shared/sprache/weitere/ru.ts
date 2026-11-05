@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.": "Если язык не выбран и язык устройства не подходит, приложение запускается на английском.",
   "Die dunkle Browserleiste und der Startbildschirm der installierten App sind dasselbe Dunkelgrau wie die App.": "Тёмная полоса браузера и начальный экран установленного приложения того же тёмно-серого цвета, что и само приложение.",
   "Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.": "Работающее приложение остаётся в своей папке. Сборка рядом не меняет его сама.",
   "Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.": "В «Сегодня» текст серии, подсказка и «+ Запись» стоят в одной строке. На узком экране там написано «Серия открыта».",

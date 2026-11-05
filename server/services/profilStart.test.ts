@@ -4,7 +4,7 @@ import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { ebenenFuerStufe, standardEbenen } from '../../shared/spiel/ebenen.ts';
 import { FOKUS_IDS, startKennungen, startTaetigkeiten, START_TAETIGKEITEN } from '../../shared/spiel/profil.ts';
-import { ZIEL_SPRACHEN } from '../../shared/sprache/kern.ts';
+import { FALLBACK_SPRACHE, ZIEL_SPRACHEN } from '../../shared/sprache/kern.ts';
 import { zeige } from '../../shared/sprache/index.ts';
 import { mitAnfrageSprache } from '../anfrageSprache.ts';
 import { alle, ausfuehren, mitWelt, schliesseWelt } from '../db.ts';
@@ -77,7 +77,7 @@ describe('profil beim start', () => {
         profilAngelegt: true,
         weltLeer: false,
       });
-      expect(vorlagenNamen()).toEqual(['Training', 'Laufen', 'Dehnen']);
+      expect(vorlagenNamen()).toEqual(startTaetigkeiten(['sport']).map((taetigkeit) => zeige(taetigkeit.name, FALLBACK_SPRACHE)));
       expect(aktiveKennungen()).toEqual([...startKennungen(['sport'])].sort());
       expect(neu.ebenen).toEqual(ebenenFuerStufe('traeumer'));
       expect(neu.funktionen.koennen).toBe(true);
@@ -163,11 +163,12 @@ describe('profil beim start', () => {
       ausfuehren(`INSERT INTO vorlagen (name, icon, sortierung) VALUES ('Über Sport lesen', 'book-open', 90)`);
       aendereEinstellungen({ fokus: ['geld'] });
       expect(vorlagenNamen()).toContain('Über Sport lesen');
-      expect(vorlagenNamen()).toContain('Training');
-      expect(vorlagenNamen()).toContain('Sparen');
-      expect(vorlagenNamen().filter((name) => name === 'Training')).toHaveLength(1);
+      expect(vorlagenNamen()).toContain(zeige('Training', FALLBACK_SPRACHE));
+      const sparenName = zeige('Sparen', FALLBACK_SPRACHE);
+      expect(vorlagenNamen()).toContain(sparenName);
+      expect(vorlagenNamen().filter((name) => name === zeige('Training', FALLBACK_SPRACHE))).toHaveLength(1);
       const sparen = START_TAETIGKEITEN.geld.find((taetigkeit) => taetigkeit.name === 'Sparen');
-      expect(gewichtPaare('Sparen')).toEqual(
+      expect(gewichtPaare(sparenName)).toEqual(
         [...(sparen?.gewichte ?? [])]
           .map((gewicht) => `${gewicht.kennung}:${gewicht.gewicht}`)
           .sort((links, rechts) => links.localeCompare(rechts)),
@@ -178,7 +179,7 @@ describe('profil beim start', () => {
       }
       for (const id of FOKUS_IDS) {
         for (const taetigkeit of START_TAETIGKEITEN[id]) {
-          expect(vorlagenNamen()).toContain(taetigkeit.name);
+          expect(vorlagenNamen()).toContain(zeige(taetigkeit.name, FALLBACK_SPRACHE));
         }
       }
       expect(new Set(vorlagenNamen()).size).toBe(vorlagenNamen().length);
