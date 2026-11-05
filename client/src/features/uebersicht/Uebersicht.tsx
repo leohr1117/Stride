@@ -10,7 +10,7 @@ import { abzugNebenNamen, erschoepfungsBild } from '../../../../shared/spiel/bel
 import { LEVEL_KURVEN, verlustBalken } from '../../../../shared/spiel/level.ts';
 import { NEUER_ANLAUF, WEITERMACHEN } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
-import { BossRing } from '../bosse/BossRing.tsx';
+import { BossRing, bossListenEinzug } from '../bosse/BossRing.tsx';
 import { bossSeit } from '../../components/VorhabenInfo.tsx';
 import { Abschnitt, KurzListe } from '../../components/Ausklappbar.tsx';
 import { DichteZeilen, Zeile } from '../../components/Zeile.tsx';
@@ -40,7 +40,7 @@ import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { karteGewaehlt } from '../../../../shared/spiel/uebersichtKarten.ts';
 
 const WERTE_SICHTBAR = 5;
-const SYMBOL_FREI = 'pointer-events-none flex size-5 shrink-0 items-center justify-center';
+const BOSS_SYMBOL = 'pointer-events-none flex shrink-0 items-center justify-center';
 
 export function UebersichtSeite() {
   const { data: uebersicht, error, isPending } = useQuery({ queryKey: SCHLUESSEL.uebersicht, queryFn: api.uebersicht });
@@ -229,11 +229,10 @@ function Angriffe({
                 pfeil={false}
                 nach={ziel}
                 symbol={
-                  boss ? (
-                    <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} ton="haupt" klein />
-                  ) : undefined
+                  boss ? <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} /> : undefined
                 }
-                symbolKlasse={SYMBOL_FREI}
+                symbolKlasse={BOSS_SYMBOL}
+                listenEinzug={boss ? bossListenEinzug() : undefined}
                 wert={
                   <span className="font-semibold text-gefahr">
                     −{zahl(boss?.angriffXp ?? 0)} {tx('Disziplin')}

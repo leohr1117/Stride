@@ -110,6 +110,7 @@ export function Zeile({
   gefahr = false,
   symbol,
   symbolKlasse,
+  listenEinzug,
   neben,
   typ,
   id,
@@ -129,6 +130,7 @@ export function Zeile({
   gefahr?: boolean;
   symbol?: ReactNode;
   symbolKlasse?: string;
+  listenEinzug?: string;
   neben?: ReactNode;
   typ?: ZeilenArt;
   id?: string;
@@ -138,7 +140,7 @@ export function Zeile({
   const art = typ ?? artVon({ gefahr, pfeil, onKlick, nach, href });
   const zeigePfeil = art === 'navigation' || art === 'auswahl';
   const titelFarbe = art === 'aktion' ? (gefahr ? 'text-gefahr' : 'text-haupt') : '';
-  const einzug = { '--liste-einzug': symbol ? '48px' : '16px' } as CSSProperties;
+  const einzug = { '--liste-einzug': listenEinzug ?? (symbol ? '48px' : '16px') } as CSSProperties;
   const dicht = useContext(ZeilenDicht);
   const rechtsAlt = rechts ?? menue;
   return (

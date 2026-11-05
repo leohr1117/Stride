@@ -106,7 +106,7 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   const bossZeile = angriff.locator('.zeile[data-zeilen="2"]').first();
   await expect(bossZeile).toBeVisible();
   expect(await bossZeile.evaluate((element) => Math.round(element.getBoundingClientRect().height))).toBe(64);
-  expect(await bossZeile.locator('svg').first().evaluate((element) => Math.round(element.getBoundingClientRect().width))).toBe(20);
+  expect(await bossZeile.locator('[data-boss-ring]').evaluate((element) => Math.round(element.getBoundingClientRect().width))).toBe(36);
   await expect(bossZeile).toContainText(/seit /);
   await expect(bossZeile).not.toContainText('Erwacht');
   await expect(bossZeile.locator('.text-gefahr', { hasText: 'Disziplin' })).toBeVisible();
@@ -132,11 +132,11 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   expect(bossLinien[0]?.dicke).toBe(0);
   expect(bossLinien[bossLinien.length - 1]?.unten).toBe(0);
   for (const linie of bossLinien) {
-    expect(linie.soll).toBe(48);
+    expect(linie.soll).toBe(64);
   }
   for (const linie of bossLinien.slice(1)) {
     expect(linie.dicke).toBe(1);
-    expect(linie.einzug).toBe(48);
+    expect(linie.einzug).toBe(64);
   }
 
   const zeile = await page.locator('[data-wochenwert]').evaluateAll((knoten) =>

@@ -526,10 +526,7 @@ function OffenesVorhaben({
             <div className="flex items-center gap-3">
               {boss && <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />}
               <div className="min-w-0 flex-1">
-                <p className="flex min-w-0 items-center gap-1.5 text-base leading-6">
-                  {boss && <Swords className="size-4 shrink-0 text-gefahr" />}
-                  <span className="truncate">{vorhaben.titel}</span>
-                </p>
+                <p className="truncate text-base leading-6">{vorhaben.titel}</p>
                 {boss && <p className="truncate text-xs text-leise">{bossZeile(boss)}</p>}
                 <VorhabenKennzahlen vorhaben={vorhaben} ohneXp={boss !== null} />
               </div>

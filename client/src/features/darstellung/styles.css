@@ -471,6 +471,57 @@ html[data-eingabe='zeiger'] :focus {
   transition: stroke-dashoffset 600ms ease;
 }
 
+.boss-ring {
+  --ring-strich: calc(var(--ring-d) * 0.06);
+  --ring-symbol: calc(var(--ring-d) * 0.5);
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--ring-d);
+  height: var(--ring-d);
+  color: var(--gefahr);
+}
+
+.boss-ring-bild {
+  display: block;
+  width: var(--ring-d);
+  height: var(--ring-d);
+  overflow: visible;
+}
+
+.boss-ring circle {
+  fill: none;
+  stroke: var(--gefahr);
+  stroke-width: var(--ring-strich);
+  stroke-linecap: round;
+  cx: calc(var(--ring-d) / 2);
+  cy: calc(var(--ring-d) / 2);
+  r: calc((var(--ring-d) - var(--ring-strich)) / 2);
+}
+
+.boss-ring-spur {
+  stroke-opacity: 0.25;
+}
+
+.boss-ring > .boss-ring-symbol {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--ring-symbol);
+  height: var(--ring-symbol);
+  transform: translate(-50%, -50%);
+}
+
+.boss-ring > .boss-ring-symbol svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  stroke-width: var(--ring-strich);
+  vector-effect: non-scaling-stroke;
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root {
     --glimm: 0;

@@ -1,5 +1,6 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import fs from 'node:fs';
+import { kontrast } from '../shared/spiel/farben.ts';
 
 async function passwort(): Promise<string> {
   const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
@@ -46,6 +47,120 @@ async function setzeArchiv(seite: Page, kennung: string, archiviert: boolean): P
     { kennung, archiviert },
   );
   expect(status).toBe(200);
+}
+
+const RING_D = 36;
+const RING_KONTRAST = 3;
+const HELL = { stil: 'standard', primaer: '#141414', akzent: '#707070', hintergrund: '#f2f2f2' };
+const DUNKEL = { stil: 'standard', primaer: '#f2f2f2', akzent: '#8a8a8a', hintergrund: '#141414' };
+
+interface RingMass {
+  breite: number;
+  hoehe: number;
+  strich: number;
+  symbol: number | null;
+  symbolLayout: number | null;
+  symbolStrich: number | null;
+  links: number;
+  oben: number;
+  rechts: number;
+  unten: number;
+  strichFarbe: string;
+  flaeche: string;
+}
+
+interface Farbstand {
+  stil: string;
+  primaer: string;
+  akzent: string;
+  hintergrund: string;
+  glimmen: boolean;
+  eigeneFarben: boolean;
+}
+
+async function missRing(ring: Locator): Promise<RingMass> {
+  return ring.evaluate((element) => {
+    const kasten = element.getBoundingClientRect();
+    const kreis = element.querySelector('circle.bossring-bogen');
+    const symbol = element.querySelector('.boss-ring-symbol');
+    const klinge = element.querySelector('.lucide-swords');
+    if (!(kreis instanceof SVGCircleElement)) {
+      throw new Error('Ring fehlt');
+    }
+    const stil = getComputedStyle(kreis);
+    const radius = Number.parseFloat(stil.r);
+    const strich = Number.parseFloat(stil.strokeWidth);
+    const cx = Number.parseFloat(stil.cx);
+    const cy = Number.parseFloat(stil.cy);
+    let knoten: Element | null = element;
+    let flaeche = getComputedStyle(document.body).backgroundColor;
+    while (knoten) {
+      const farbe = getComputedStyle(knoten).backgroundColor;
+      if (farbe && farbe !== 'rgba(0, 0, 0, 0)' && farbe !== 'transparent') {
+        flaeche = farbe;
+        break;
+      }
+      knoten = knoten.parentElement;
+    }
+    const symbolKasten = symbol instanceof Element ? symbol.getBoundingClientRect() : null;
+    const symbolStil = symbol instanceof Element ? getComputedStyle(symbol) : null;
+    const symbolStrich = klinge instanceof Element ? Number.parseFloat(getComputedStyle(klinge).strokeWidth) : null;
+    return {
+      breite: kasten.width,
+      hoehe: kasten.height,
+      strich,
+      symbol: symbolKasten ? symbolKasten.width : null,
+      symbolLayout: symbolStil ? Number.parseFloat(symbolStil.width) : null,
+      symbolStrich,
+      links: cx - radius - strich / 2,
+      oben: cy - radius - strich / 2,
+      rechts: cx + radius + strich / 2,
+      unten: cy + radius + strich / 2,
+      strichFarbe: stil.stroke,
+      flaeche,
+    };
+  });
+}
+
+function pruefeRing(mass: RingMass): void {
+  expect(Math.round(mass.breite)).toBe(RING_D);
+  expect(Math.round(mass.hoehe)).toBe(RING_D);
+  expect(mass.strich).toBeCloseTo(RING_D * 0.06, 1);
+  expect(mass.links).toBeGreaterThanOrEqual(-0.75);
+  expect(mass.oben).toBeGreaterThanOrEqual(-0.75);
+  expect(mass.rechts).toBeLessThanOrEqual(mass.breite + 0.75);
+  expect(mass.unten).toBeLessThanOrEqual(mass.hoehe + 0.75);
+  expect(kontrast(mass.strichFarbe, mass.flaeche)).toBeGreaterThanOrEqual(RING_KONTRAST);
+  expect(mass.symbolLayout).toBeCloseTo(RING_D / 2, 1);
+  expect(mass.symbol).not.toBeNull();
+  expect(mass.symbol ?? 0).toBeLessThanOrEqual(mass.breite);
+  expect(mass.symbolStrich).toBeCloseTo(RING_D * 0.06, 1);
+}
+
+async function leseFarben(seite: Page): Promise<Farbstand> {
+  return seite.evaluate(async () => {
+    const daten = (await fetch('/api/einstellungen').then((antwort) => antwort.json())) as Farbstand;
+    return {
+      stil: daten.stil,
+      primaer: daten.primaer,
+      akzent: daten.akzent,
+      hintergrund: daten.hintergrund,
+      glimmen: daten.glimmen,
+      eigeneFarben: daten.eigeneFarben,
+    };
+  });
+}
+
+async function setzeFarben(seite: Page, daten: Record<string, unknown>): Promise<void> {
+  const ok = await seite.evaluate(async (koerper) => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(koerper),
+    });
+    return antwort.ok;
+  }, daten);
+  expect(ok).toBe(true);
 }
 
 test.beforeEach(async ({ page }) => {
@@ -152,10 +267,18 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
     return getComputedStyle(element).color === soll;
   });
   expect(gefahrStimmt).toBe(true);
-  const striche = await angriff.locator('svg circle').evaluateAll((kreise) => kreise.map((kreis) => kreis.getAttribute('stroke')));
+  const striche = await angriff.locator('svg circle').evaluateAll((kreise) => kreise.map((kreis) => getComputedStyle(kreis).stroke));
+  const gefahrFarbe = await angriff.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--gefahr)';
+    document.body.append(probe);
+    const soll = getComputedStyle(probe).color;
+    probe.remove();
+    return soll;
+  });
   expect(striche.length).toBeGreaterThan(0);
   for (const strich of striche) {
-    expect(strich).toBe('var(--haupt)');
+    expect(strich).toBe(gefahrFarbe);
   }
   const nebenZeilen = await angriff.locator('.zeile-neben').evaluate((element) => {
     const bereich = document.createRange();
@@ -293,5 +416,93 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
   } finally {
     await setzeArchiv(page, 'disziplin', false);
     await setzeArchiv(page, 'ressourcen', false);
+  }
+});
+
+test('offene Boss-Zeilen zeigen denselben Ring', async ({ page }, testInfo) => {
+  const fund = await page.evaluate(async () => {
+    const laufend = (await fetch('/api/laufend').then((antwort) => antwort.json())) as {
+      bosse: { titel: string; projektId: number | null; boss: { phase: string } | null }[];
+    };
+    const boss = laufend.bosse.find((eintrag) => eintrag.boss?.phase === 'erwacht' && eintrag.projektId !== null);
+    if (boss?.projektId == null) {
+      return null;
+    }
+    return { titel: boss.titel, projektId: boss.projektId };
+  });
+  expect(fund).not.toBeNull();
+  if (!fund) {
+    return;
+  }
+
+  async function ringAuf(pfad: string, rahmen: string, bild: string): Promise<RingMass> {
+    await page.goto(pfad);
+    const ring = page.locator(rahmen, { hasText: fund.titel }).locator('[data-boss-ring]').first();
+    await expect(ring).toBeVisible();
+    await page.screenshot({ path: `tmp-test/bosse/${testInfo.project.name}-${bild}.png` });
+    return missRing(ring);
+  }
+
+  const heute = await ringAuf('/', '.zeile', 'ring-heute');
+  const laufend = await ringAuf('/laufend', '.zeile', 'ring-laufend');
+  const projekt = await ringAuf(`/projekte/${fund.projektId}`, '.rounded-2xl', 'ring-projekt');
+  pruefeRing(heute);
+  pruefeRing(laufend);
+  pruefeRing(projekt);
+  expect(Math.round(heute.breite)).toBe(Math.round(laufend.breite));
+  expect(Math.round(heute.breite)).toBe(Math.round(projekt.breite));
+  expect(Math.round(heute.symbol ?? 0)).toBe(Math.round(laufend.symbol ?? 0));
+  expect(Math.round(heute.symbol ?? 0)).toBe(Math.round(projekt.symbol ?? 0));
+
+  await page.goto('/');
+  const ring = page.locator('.zeile', { hasText: fund.titel }).locator('[data-boss-ring]').first();
+  await ring.scrollIntoViewIfNeeded();
+  await page.evaluate(() => {
+    const quelle = document.querySelector('[data-boss-ring]');
+    if (!(quelle instanceof HTMLElement)) {
+      return;
+    }
+    const kasten = document.createElement('div');
+    kasten.id = 'ring-lupe';
+    kasten.style.cssText =
+      'position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:var(--flaeche);';
+    const zoom = quelle.cloneNode(true) as HTMLElement;
+    zoom.style.transform = 'scale(4)';
+    kasten.append(zoom);
+    document.body.append(kasten);
+  });
+  await page.screenshot({ path: `tmp-test/bosse/${testInfo.project.name}-ring-4x.png` });
+  await page.evaluate(() => document.getElementById('ring-lupe')?.remove());
+
+  const original = await leseFarben(page);
+  try {
+    await setzeFarben(page, { ...HELL, glimmen: original.glimmen });
+    await page.goto('/');
+    await expect
+      .poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--grund').trim().toLowerCase()))
+      .toBe(HELL.hintergrund);
+    const hell = await missRing(page.locator('.zeile', { hasText: fund.titel }).locator('[data-boss-ring]').first());
+    expect(kontrast(hell.strichFarbe, hell.flaeche)).toBeGreaterThanOrEqual(RING_KONTRAST);
+
+    await setzeFarben(page, { ...DUNKEL, glimmen: original.glimmen });
+    await page.goto('/');
+    await expect
+      .poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--grund').trim().toLowerCase()))
+      .toBe(DUNKEL.hintergrund);
+    const dunkel = await missRing(page.locator('.zeile', { hasText: fund.titel }).locator('[data-boss-ring]').first());
+    expect(kontrast(dunkel.strichFarbe, dunkel.flaeche)).toBeGreaterThanOrEqual(RING_KONTRAST);
+    expect(dunkel.strichFarbe).not.toBe(hell.strichFarbe);
+  } finally {
+    if (original.eigeneFarben) {
+      await setzeFarben(page, {
+        stil: original.stil,
+        primaer: original.primaer,
+        akzent: original.akzent,
+        hintergrund: original.hintergrund,
+        glimmen: original.glimmen,
+      });
+    } else {
+      await setzeFarben(page, { stil: original.stil, glimmen: original.glimmen, farbenZuruecksetzen: true });
+    }
   }
 });

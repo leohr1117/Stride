@@ -1,6 +1,5 @@
 import { tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
-import { Swords } from 'lucide-react';
 import type { VorhabenMitProjekt } from '../../../../shared/api/index.ts';
 import { zielTitel } from '../../../../shared/spiel/ebenen.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
@@ -82,10 +81,7 @@ function LaufendesVorhaben({
       <div className="zeile flex min-h-12 items-center gap-3 px-4 py-3">
         <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />
         <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-1.5 text-base leading-6">
-            <Swords className="size-4 shrink-0 text-gefahr" />
-            <span className="truncate">{vorhaben.titel}</span>
-          </p>
+          <p className="truncate text-base leading-6">{vorhaben.titel}</p>
           <p className="truncate text-[13px] leading-[18px] text-leise">{bossZeile(boss)}</p>
           {projekteAn && vorhaben.projektName ? (
             <p className="truncate text-[13px] leading-[18px] text-leise">{vorhaben.projektName}</p>

@@ -1,64 +1,47 @@
 import { Swords } from 'lucide-react';
 import type { CSSProperties } from 'react';
 
-const GROESSE = 36;
-const STROKE = 2.5;
-const RADIUS = (GROESSE - STROKE) / 2;
-const UMFANG = 2 * Math.PI * RADIUS;
-const RASTER = 24;
-const ZEILEN_SYMBOL = 20;
-const KLEIN_RING = 20;
-const ABSTAND_ZUM_RAND = 2.25;
-const SCHWERT_ECKE = 9 * Math.SQRT2;
-const ZEILEN_STRICH = 2;
-const HALB_STRICH = (ZEILEN_STRICH * ZEILEN_SYMBOL) / RASTER / 2;
-const KLEIN_KLINGE = ((KLEIN_RING / 2 - ABSTAND_ZUM_RAND - HALB_STRICH) * RASTER) / SCHWERT_ECKE;
-const KLEIN_FAKTOR = ZEILEN_SYMBOL / KLEIN_KLINGE;
+/** Zweizeilige Boss-Zeile. Kreis = 0,56 der Zeilenhöhe, auf eine gerade Zahl gerundet. */
+const BOSS_ZEILENHOEHE = 64;
+const KREIS_ANTEIL = 0.56;
+const ZEILEN_RAND = 16;
+const ZEILEN_ABSTAND = 12;
+
+export function bossRingDurchmesser(zeilenhoehe = BOSS_ZEILENHOEHE): number {
+  return Math.round((KREIS_ANTEIL * zeilenhoehe) / 2) * 2;
+}
+
+export const BOSS_RING_D = bossRingDurchmesser();
+
+/** Trennlinie beginnt hinter Ring und Abstand, nicht im Kreis. */
+export function bossListenEinzug(durchmesser = BOSS_RING_D): string {
+  return `${ZEILEN_RAND + durchmesser + ZEILEN_ABSTAND}px`;
+}
 
 /** Ring aus der Zeit bis zur Deadline. Erwacht: geschlossen, Schwert in der Mitte. */
-export function BossRing({
-  ring,
-  erwacht,
-  ton = 'gefahr',
-  klein = false,
-}: {
-  ring: number;
-  erwacht: boolean;
-  ton?: 'gefahr' | 'haupt';
-  klein?: boolean;
-}) {
+export function BossRing({ ring, erwacht }: { ring: number; erwacht: boolean }) {
   const anteil = Math.min(1, Math.max(0, ring));
-  const offset = UMFANG * (1 - anteil);
-  const mitte = GROESSE / 2;
-  const strich = ton === 'haupt' ? 'var(--haupt)' : 'var(--gefahr)';
-  const klinge = 'text-gefahr';
-  const kasten = klein ? 'size-5' : 'size-9';
-  const klingeKlasse = klein ? 'absolute' : 'absolute size-3.5';
-  const klingeStil: CSSProperties | undefined = klein
-    ? {
-        width: KLEIN_KLINGE,
-        height: KLEIN_KLINGE,
-        strokeWidth: `calc(var(--zeilen-strich, ${ZEILEN_STRICH}) * ${KLEIN_FAKTOR})`,
-      }
-    : undefined;
+  const stil = { '--ring-d': `${BOSS_RING_D}px` } as CSSProperties;
 
   return (
-    <span className={`relative inline-flex ${kasten} shrink-0 items-center justify-center`}>
-      <svg viewBox={`0 0 ${GROESSE} ${GROESSE}`} className={`${kasten} -rotate-90`} aria-hidden>
-        <circle cx={mitte} cy={mitte} r={RADIUS} fill="none" stroke={strich} strokeOpacity={0.25} strokeWidth={STROKE} />
+    <span className="boss-ring" style={stil} data-boss-ring="">
+      <svg className="boss-ring-bild -rotate-90" aria-hidden="true">
+        <circle className="boss-ring-spur" pathLength={100} />
         <circle
-          cx={mitte}
-          cy={mitte}
-          r={RADIUS}
-          fill="none"
-          stroke={strich}
-          strokeWidth={STROKE}
-          strokeDasharray={UMFANG}
-          strokeDashoffset={offset}
           className="bossring-bogen"
+          pathLength={100}
+          strokeDasharray={100}
+          strokeDashoffset={100 * (1 - anteil)}
         />
       </svg>
-      {erwacht && <Swords className={`${klingeKlasse} ${klinge}`} style={klingeStil} aria-hidden />}
+      {erwacht ? (
+        <span className="boss-ring-symbol" aria-hidden="true">
+          <Swords
+            className="text-gefahr"
+            style={{ strokeWidth: 'var(--ring-strich)', vectorEffect: 'non-scaling-stroke' }}
+          />
+        </span>
+      ) : null}
     </span>
   );
 }

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.56
+
+### Behoben
+
+- Bei offenen Bossen sind Ring und Schwert größer und beide rot.
+
 ## 3.56.55
 
 ### Behoben
