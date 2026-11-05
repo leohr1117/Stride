@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter.": "Un idioma, un estilo o una sección plegada que el navegador ya había recordado sigue valiendo.",
   "Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.": "Sin un idioma elegido y sin un idioma del dispositivo que encaje, la aplicación empieza en inglés.",
   "Die dunkle Browserleiste und der Startbildschirm der installierten App sind dasselbe Dunkelgrau wie die App.": "La barra oscura del navegador y la pantalla de inicio de la aplicación instalada son el mismo gris oscuro que la aplicación.",
   "Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.": "La aplicación en marcha permanece en su propia carpeta. Una compilación al lado no la cambia por sí sola.",

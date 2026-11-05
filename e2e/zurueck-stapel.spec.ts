@@ -112,7 +112,10 @@ test('Heute behält den Boss und Ziele behält Archiv und Scrollstand', async ({
   });
   expect(archivProjekt).not.toBeNull();
   try {
-  await page.evaluate(() => localStorage.removeItem('ascend.eingeklappt.ziele-archiv'));
+  await page.evaluate(() => {
+    localStorage.removeItem('stride.eingeklappt.ziele-archiv');
+    localStorage.removeItem('ascend.eingeklappt.ziele-archiv');
+  });
   await page.goto('/ziele');
   const archiv = page.getByRole('button', { name: 'Archiv', exact: true });
   await expect(archiv).toBeVisible();

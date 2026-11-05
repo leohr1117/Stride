@@ -34,6 +34,7 @@ async function onboarding(seite: Page): Promise<void> {
     if (!antwort.ok) {
       throw new Error(`zuruecksetzen ${antwort.status}`);
     }
+    localStorage.removeItem('stride-sprache');
     localStorage.removeItem('ascend-sprache');
     sessionStorage.clear();
   });
@@ -364,7 +365,10 @@ test.describe('Französisch', () => {
     expect(namen).not.toContain('Laufen');
     expect(namen).not.toContain('Training');
     expect(await gespeicherteSprache(page)).toBe('fr');
-    await page.evaluate(() => localStorage.removeItem('ascend-sprache'));
+    await page.evaluate(() => {
+      localStorage.removeItem('stride-sprache');
+      localStorage.removeItem('ascend-sprache');
+    });
     await page.reload();
     await expect(page.getByRole('navigation').getByRole('link', { name: zeige('Heute', 'fr'), exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Overview', exact: true })).toHaveCount(0);

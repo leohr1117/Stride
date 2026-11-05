@@ -1,6 +1,7 @@
 import { RICHTUNGEN, type Richtung } from '../../../../shared/features/vorbilder/index.ts';
+import { leseSitzungstext, merkeSitzungstext, vergissSitzung } from '../../speicher.ts';
 
-const SPEICHER = 'ascend.vorbilder.richtung';
+const SPEICHER = 'stride.vorbilder.richtung';
 const ALLE = 'alle';
 
 export type VorbildAuswahl = typeof ALLE | Richtung;
@@ -20,23 +21,15 @@ export function auswahlAus(parameter: string | null, gespeichert: string | null)
 }
 
 export function speichereRichtung(auswahl: VorbildAuswahl): void {
-  try {
-    if (auswahl === ALLE) {
-      sessionStorage.removeItem(SPEICHER);
-      return;
-    }
-    sessionStorage.setItem(SPEICHER, auswahl);
-  } catch {
+  if (auswahl === ALLE) {
+    vergissSitzung(SPEICHER);
     return;
   }
+  merkeSitzungstext(SPEICHER, auswahl);
 }
 
 export function gespeicherteRichtung(): string | null {
-  try {
-    return sessionStorage.getItem(SPEICHER);
-  } catch {
-    return null;
-  }
+  return leseSitzungstext(SPEICHER);
 }
 
 export function vorbilderListePfad(): string {

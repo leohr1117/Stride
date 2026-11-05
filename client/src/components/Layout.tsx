@@ -129,10 +129,10 @@ function AppGeruest() {
   const [gehalten, setGehalten] = useState(false);
 
   useEffect(() => {
-    vergiss('ascend.einfuehrung');
-    merkeSitzung('ascend.einfuehrung.weg', false);
-    merkeSitzung('ascend.sprache.weg', false);
-    merkeSitzung('ascend.fragen.offen', false);
+    vergiss('stride.einfuehrung');
+    merkeSitzung('stride.einfuehrung.weg', false);
+    merkeSitzung('stride.sprache.weg', false);
+    merkeSitzung('stride.fragen.offen', false);
   }, []);
 
   const daten = einstellungen.data;

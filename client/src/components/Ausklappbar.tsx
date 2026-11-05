@@ -1,11 +1,11 @@
 import { ChevronRight } from 'lucide-react';
 import { useId, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
-import { merke } from '../speicher.ts';
+import { leseText, merke } from '../speicher.ts';
 import { tx } from '../text.ts';
 import { InfoHinweis } from '../ui/index.ts';
 
-const SPEICHER_PRAEFIX = 'ascend.eingeklappt.';
+const SPEICHER_PRAEFIX = 'stride.eingeklappt.';
 const STANDARD_TITEL = 'ueberschrift abschnittskopf text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case';
 
 export function EinklappKopf({
@@ -71,15 +71,11 @@ export function EinklappKopf({
 }
 
 function startEingeklappt(schluessel: string, vorgabe: boolean): boolean {
-  try {
-    const wert = window.localStorage.getItem(schluessel);
-    if (wert === null) {
-      return vorgabe;
-    }
-    return wert === '1';
-  } catch {
+  const wert = leseText(schluessel);
+  if (wert === null) {
     return vorgabe;
   }
+  return wert === '1';
 }
 
 export function Abschnitt({

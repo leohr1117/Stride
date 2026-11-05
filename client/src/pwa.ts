@@ -1,7 +1,7 @@
 import { leseSitzungszahl, merkeSitzungszahl } from './speicher.ts';
 
 const SERVICE_WORKER = '/sw.js';
-const NEU_GELADEN_SCHLUESSEL = 'ascend.neuGeladen';
+const NEU_GELADEN_SCHLUESSEL = 'stride.neuGeladen';
 const NEU_LADEN_SPERRE_MS = 10_000;
 
 export function registriereServiceWorker(): void {

@@ -382,6 +382,7 @@ async function vorbereitenTeil(seite: Page): Promise<string> {
     if (!stil.ok) {
       throw new Error(`stil ${stil.status}`);
     }
+    localStorage.removeItem('stride-sprache');
     localStorage.removeItem('ascend-sprache');
     sessionStorage.clear();
     return typeof stand.stil === 'string' ? stand.stil : 'standard';

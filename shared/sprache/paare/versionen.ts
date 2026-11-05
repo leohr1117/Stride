@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter.', 'A language, look, or collapsed section remembered earlier in the browser still applies.'],
   ['Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.', 'With no chosen language and no matching device language, the app starts in English.'],
   ['Die dunkle Browserleiste und der Startbildschirm der installierten App sind dasselbe Dunkelgrau wie die App.', 'The dark browser bar and the start screen of the installed app are the same dark grey as the app.'],
   ['Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.', 'The running app stays in its own folder. A build next to it does not change the app on its own.'],

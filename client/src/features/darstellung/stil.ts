@@ -9,11 +9,11 @@ import { gelesenerStil, STANDARD_STIL, type Stil } from '../../../../shared/feat
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { leseText, merkeText } from '../../speicher.ts';
 
-const SPEICHER_SCHLUESSEL = 'ascend.stil';
-const PRIMAER_SCHLUESSEL = 'ascend.primaer';
-const AKZENT_SCHLUESSEL = 'ascend.akzent';
-const HINTERGRUND_SCHLUESSEL = 'ascend.hintergrund';
-const GLIMM_SCHLUESSEL = 'ascend.glimmen';
+const SPEICHER_SCHLUESSEL = 'stride.stil';
+const PRIMAER_SCHLUESSEL = 'stride.primaer';
+const AKZENT_SCHLUESSEL = 'stride.akzent';
+const HINTERGRUND_SCHLUESSEL = 'stride.hintergrund';
+const GLIMM_SCHLUESSEL = 'stride.glimmen';
 const THEME_FARBE = 'meta[name="theme-color"]';
 
 export interface Farbwahl extends Farbtrio {

@@ -5,7 +5,7 @@ import { leseSitzung, merkeSitzung } from '../../speicher.ts';
 import { bewertungIstFaellig } from './bewertungStand.ts';
 
 /** Übersteht Neuladen im selben Tab. Abmelden leert ihn, damit das nächste Konto die Karte nicht erbt. */
-const SPEICHER = 'ascend.hinweisAngebot';
+const SPEICHER = 'stride.hinweisAngebot';
 
 let faellig = false;
 let gelesen = false;

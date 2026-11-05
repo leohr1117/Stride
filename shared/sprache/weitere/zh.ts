@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter.": "浏览器先前记住的语言、样式或折叠分区仍然有效。",
   "Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.": "没有选定语言、设备语言也不匹配时，应用以英语启动。",
   "Die dunkle Browserleiste und der Startbildschirm der installierten App sind dasselbe Dunkelgrau wie die App.": "深色浏览器栏和已安装应用的启动画面与应用本身是同一种深灰。",
   "Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.": "正在运行的应用留在自己的文件夹里。旁边的构建不会自行改变它。",

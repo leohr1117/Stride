@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter.": "ブラウザが以前に覚えた言語、見た目、または折りたたんだ区分は、そのまま有効です。",
   "Ohne gewählte Sprache und ohne passende Sprache des Geräts startet die App auf Englisch.": "言語が未選択で、端末の言語も合わないときは、アプリは英語で始まります。",
   "Die dunkle Browserleiste und der Startbildschirm der installierten App sind dasselbe Dunkelgrau wie die App.": "暗いブラウザのバーと、インストールしたアプリの開始画面は、アプリと同じ暗い灰色です。",
   "Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.": "動いているアプリは専用のフォルダに残ります。隣のビルドだけでは、そのアプリは変わりません。",

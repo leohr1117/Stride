@@ -32,6 +32,7 @@ async function vorbereiten(seite: Page): Promise<void> {
     if (!stil.ok) {
       throw new Error(`stil ${stil.status}`);
     }
+    localStorage.removeItem('stride-sprache');
     localStorage.removeItem('ascend-sprache');
     sessionStorage.clear();
   });

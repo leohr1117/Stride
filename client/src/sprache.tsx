@@ -3,8 +3,9 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { istSprache, localeFuer, spracheWaehlen, type Sprache } from '../../shared/sprache/kern.ts';
 import { setzeAktiveSprache } from '../../shared/sprache/index.ts';
 import { api, SCHLUESSEL } from './api/index.ts';
+import { leseText, merkeText, vergiss } from './speicher.ts';
 
-const SPEICHER_SCHLUESSEL = 'ascend-sprache';
+export const SPEICHER_SCHLUESSEL = 'stride-sprache';
 
 interface SpracheWert {
   sprache: Sprache;
@@ -24,25 +25,17 @@ function browserSprachen(): string[] {
   return navigator.language ? [navigator.language] : [];
 }
 
-function gespeicherterHinweis(): Sprache | null {
-  try {
-    const wert = localStorage.getItem(SPEICHER_SCHLUESSEL);
-    return istSprache(wert) ? wert : null;
-  } catch {
-    return null;
-  }
+export function gespeicherterHinweis(): Sprache | null {
+  const wert = leseText(SPEICHER_SCHLUESSEL);
+  return istSprache(wert) ? wert : null;
 }
 
-function merkeHinweis(sprache: Sprache | null): void {
-  try {
-    if (sprache) {
-      localStorage.setItem(SPEICHER_SCHLUESSEL, sprache);
-    } else {
-      localStorage.removeItem(SPEICHER_SCHLUESSEL);
-    }
-  } catch {
-    // Privater Modus.
+export function merkeHinweis(sprache: Sprache | null): void {
+  if (sprache) {
+    merkeText(SPEICHER_SCHLUESSEL, sprache);
+    return;
   }
+  vergiss(SPEICHER_SCHLUESSEL);
 }
 
 function anfangsSprache(): Sprache {

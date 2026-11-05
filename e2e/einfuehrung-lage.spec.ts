@@ -39,6 +39,7 @@ test('Weiter steht in der Einführung direkt unter der Liste', async ({ page }, 
     if (!antwort.ok) {
       throw new Error(`zuruecksetzen ${antwort.status}`);
     }
+    localStorage.removeItem('stride-sprache');
     localStorage.removeItem('ascend-sprache');
     sessionStorage.clear();
   });

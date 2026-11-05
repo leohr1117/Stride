@@ -175,7 +175,7 @@ function BasisZeile({
   );
 }
 
-const EINGEKLAPPT_SCHLUESSEL = 'ascend.basisEingeklappt';
+const EINGEKLAPPT_SCHLUESSEL = 'stride.basisEingeklappt';
 
 export function BasisKarte() {
   const ebenen = useEbenen();

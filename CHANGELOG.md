@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.71
+
+### Geändert
+
+- Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter.
+
 ## 3.56.70
 
 ### Geändert

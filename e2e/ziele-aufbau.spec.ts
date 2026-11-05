@@ -107,7 +107,10 @@ test('Ziele, Laufend und Projekt folgen der Liste', async ({ page }, testInfo) =
   try {
     const archiv = await page.request.patch(`/api/projekte/${ziel.id}`, { data: { archiviert: true } });
     expect(archiv.ok()).toBe(true);
-    await page.evaluate(() => localStorage.removeItem('ascend.eingeklappt.ziele-archiv'));
+    await page.evaluate(() => {
+      localStorage.removeItem('stride.eingeklappt.ziele-archiv');
+      localStorage.removeItem('ascend.eingeklappt.ziele-archiv');
+    });
     await page.goto('/ziele');
     const knopf = page.getByRole('button', { name: 'Archiv', exact: true });
     await expect(knopf).toHaveAttribute('aria-expanded', 'false');
