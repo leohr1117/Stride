@@ -36,6 +36,12 @@ test.beforeEach(async ({ page }) => {
 test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ page }) => {
   await page.goto('/vorbilder');
   await expect(page.getByRole('heading', { name: 'Vorbilder', exact: true })).toBeVisible();
+  const du = page.locator('[data-flaeche] [data-zeile="lesen"]').filter({ hasText: 'Du · Level' });
+  await expect(du).toBeVisible();
+  const duHoehe = await du.evaluate((element) => element.getBoundingClientRect().height);
+  expect(Math.abs(duHoehe - 48)).toBeLessThanOrEqual(1);
+  await expect(du.getByRole('link')).toHaveCount(0);
+  await expect(du.getByRole('button')).toHaveCount(0);
   await expect(page.locator('.recharts-wrapper')).toHaveCount(0);
 
   const zeilen = page.locator('[data-zeile]').filter({ has: page.locator('a[href^="/vorbilder/"]') });
@@ -91,6 +97,36 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   }
   const chipY = kaesten.map((kasten) => kasten.y);
   expect(Math.max(...chipY) - Math.min(...chipY)).toBeLessThan(8);
+  expect(Math.abs(kaesten[1].x - (kaesten[0].x + kaesten[0].width) - 8)).toBeLessThanOrEqual(1);
+  const rand = await rolle.evaluate((scroller) => {
+    const innen = scroller.firstElementChild;
+    const knoepfe = [...scroller.querySelectorAll('button.chip')];
+    const erster = knoepfe[0];
+    const letzter = knoepfe[knoepfe.length - 1];
+    const flaeche = erster?.querySelector('.chip-flaeche');
+    if (!(innen instanceof HTMLElement) || !erster || !letzter || !flaeche) {
+      return null;
+    }
+    const stil = getComputedStyle(innen);
+    scroller.scrollLeft = 0;
+    const start = erster.getBoundingClientRect().left - scroller.getBoundingClientRect().left;
+    scroller.scrollLeft = scroller.scrollWidth;
+    const ende = scroller.getBoundingClientRect().right - letzter.getBoundingClientRect().right;
+    scroller.scrollLeft = 0;
+    return {
+      links: Math.round(parseFloat(stil.paddingLeft)),
+      rechts: Math.round(parseFloat(stil.paddingRight)),
+      start: Math.round(start),
+      ende: Math.round(ende),
+      flaeche: Math.round(flaeche.getBoundingClientRect().height),
+    };
+  });
+  expect(rand).not.toBeNull();
+  expect(rand?.links).toBe(16);
+  expect(rand?.rechts).toBe(16);
+  expect(Math.abs((rand?.start ?? 99) - 16)).toBeLessThanOrEqual(1);
+  expect(Math.abs((rand?.ende ?? 99) - 16)).toBeLessThanOrEqual(1);
+  expect(rand?.flaeche).toBe(36);
   for (let links = 0; links < kaesten.length; links += 1) {
     for (let rechts = links + 1; rechts < kaesten.length; rechts += 1) {
       const a = kaesten[links];

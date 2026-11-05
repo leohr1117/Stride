@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.50
+
+### Geändert
+
+- Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.
+
 ## 3.56.49
 
 ### Geändert

@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "お手本では、自分の行が専用の面の中にあります。方向は左右に余白があります。",
   "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "ガイドの表は幅の中に収まります。レベル表はレベル、XP、長さを示し、下の注記が1日のXPを示します。お手本は方向とレベルのリストになります。",
   "In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.": "統計では、選んだ期間が太字になります。軸の目盛りはきりのよい間隔になり、活動とプロジェクトのバーは同じ高さです。",
   "Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.": "シートではスクロールバーが内容の横にあり、項目を隠しません。スマートフォンではスクロール中だけ表示されます。",

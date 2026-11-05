@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.": "En Referentes, la fila Tú está en una superficie propia. Las direcciones dejan espacio a la izquierda y a la derecha.",
   "Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.": "En la guía, las tablas se quedan dentro del ancho. La tabla de nivel muestra nivel, XP y duración, y la nota de debajo indica la XP al día. Los referentes aparecen como lista con dirección y nivel.",
   "In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.": "En Estadística, el período elegido está escrito con más peso. Los ejes usan pasos regulares y las barras de actividades y proyectos tienen la misma altura.",
   "Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.": "En las hojas, la barra de desplazamiento queda junto al contenido y no tapa ningún campo. En el teléfono solo aparece al desplazar.",

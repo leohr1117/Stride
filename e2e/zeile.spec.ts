@@ -163,7 +163,7 @@ test('Zeilen auf Mehr, Konto, Vorbilder, Accounts, Verlauf und Ziele sind 48 ode
   expect(nah(knopf?.width ?? 0, 48)).toBe(true);
   expect(nah(knopf?.height ?? 0, 48)).toBe(true);
   const person = await abstand('[data-hat-menue]');
-  const massstab = await abstand('[data-zeile]:not([data-hat-menue])');
+  const massstab = await abstand('[data-zeile]:has(a[href="/vorbilder/durchschnitt"])');
   expect(person - massstab).toBeGreaterThan(50);
   expect(person - massstab).toBeLessThan(70);
 

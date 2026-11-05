@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.50',
+    seiten: 'Vorbilder',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.49',
     seiten: 'Handbuch',
     abschnitte: [

@@ -38,6 +38,24 @@ function auswerten(profil: EigenesProfil): VorbildAuswertung[] {
   })).sort((a, b) => (b.aehnlichkeit ?? -1) - (a.aehnlichkeit ?? -1));
 }
 
+/** Nur-Lesen, 48 px, in der eigenen Fläche. Die Klasse fehlt, wenn Können aus ist. */
+function duZeile(level: number, klasse: string | null) {
+  const basis = tx('Du · Level {level}', { level: zahl(level) });
+  const text = klasse ? `${basis} · ${klassenText(klasse)}` : basis;
+  return (
+    <Liste>
+      <Zeile
+        typ="lesen"
+        className="zahl"
+        titel={text}
+        name={text}
+        symbol={klasse ? <KlassenBild klasse={klasse} groesse="size-5" rahmen={false} /> : undefined}
+        symbolKlasse="pointer-events-none flex size-5 shrink-0 items-center justify-center"
+      />
+    </Liste>
+  );
+}
+
 export function VorbilderSeite() {
   const funktionen = useFunktionen();
   const [params, setParams] = useSearchParams();
@@ -94,15 +112,7 @@ export function VorbilderSeite() {
   return (
     <DichteZeilen>
     <div>
-      {uebersicht && (
-        <p className="flex w-fit min-w-0 items-center gap-1.5 text-sm text-leise">
-          {funktionen.koennen && <KlassenBild klasse={uebersicht.klasse} groesse="size-4" rahmen={false} />}
-          <span className="zahl min-w-0 break-words">
-            {tx('Du · Level {level}', { level: zahl(uebersicht.level.level) })}
-            {funktionen.koennen && ` · ${klassenText(uebersicht.klasse)}`}
-          </span>
-        </p>
-      )}
+      {uebersicht ? duZeile(uebersicht.level.level, funktionen.koennen ? uebersicht.klasse : null) : null}
       {favoriten.length > 0 && (
         <section>
           <AbschnittKopf titel={tx('Favoriten')} />
@@ -123,25 +133,27 @@ export function VorbilderSeite() {
           <VorbildZeile auswertung={massstab} />
         </Liste>
       )}
-      <div className="mt-4 flex w-full min-w-0 max-w-full gap-2 overflow-x-auto overscroll-x-contain pb-1">
-        <RichtungsChip
-          label="Alle"
-          aktiv={auswahl === ALLE}
-          prozent={besteAehnlichkeit(personen.map((eintrag) => eintrag.aehnlichkeit))}
-          onClick={() => setzeAuswahl(ALLE)}
-        />
-        {RICHTUNGEN.map((richtung) => {
-          const gruppe = personen.filter((eintrag) => eintrag.vorbild.richtung === richtung);
-          return (
-            <RichtungsChip
-              key={richtung}
-              label={richtung}
-              aktiv={auswahl === richtung}
-              prozent={besteAehnlichkeit(gruppe.map((eintrag) => eintrag.aehnlichkeit))}
-              onClick={() => setzeAuswahl(richtung)}
-            />
-          );
-        })}
+      <div className="mt-4 min-w-0 overflow-x-auto overscroll-x-contain">
+        <div className="flex w-max min-w-full gap-2 px-4 pb-1">
+          <RichtungsChip
+            label="Alle"
+            aktiv={auswahl === ALLE}
+            prozent={besteAehnlichkeit(personen.map((eintrag) => eintrag.aehnlichkeit))}
+            onClick={() => setzeAuswahl(ALLE)}
+          />
+          {RICHTUNGEN.map((richtung) => {
+            const gruppe = personen.filter((eintrag) => eintrag.vorbild.richtung === richtung);
+            return (
+              <RichtungsChip
+                key={richtung}
+                label={richtung}
+                aktiv={auswahl === richtung}
+                prozent={besteAehnlichkeit(gruppe.map((eintrag) => eintrag.aehnlichkeit))}
+                onClick={() => setzeAuswahl(richtung)}
+              />
+            );
+          })}
+        </div>
       </div>
       <section>
         <AbschnittKopf titel={tx('Ähnlich')} zusatz={<WerteHinweis name="Ähnlich" />} />

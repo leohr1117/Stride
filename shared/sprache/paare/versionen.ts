@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Bei den Vorbildern steht die Zeile Du in einer eigenen Fläche. Die Richtungen haben links und rechts Abstand zum Rand.', 'On Role models, the You row sits in its own surface. The directions leave space on the left and right edges.'],
   ['Im Handbuch bleiben die Tabellen in der Breite. Die Level-Tabelle zeigt Level, XP und Dauer, der Hinweis darunter nennt die XP am Tag. Vorbilder stehen als Liste mit Richtung und Level.', 'In the guide, the tables stay within the width. The level table shows level, XP, and duration, and the note below names the XP per day. Role models appear as a list with direction and level.'],
   ['In der Statistik ist der gewählte Zeitraum kräftiger geschrieben. Die Achsen nutzen glatte Schritte, und die Balken von Tätigkeiten und Projekten sind gleich hoch.', 'In Statistics, the selected period is written in a stronger weight. The axes use round steps, and the bars for activities and projects are the same height.'],
   ['Der Scrollbalken in Blättern liegt neben dem Inhalt und verdeckt keine Felder. Auf dem Handy erscheint er nur beim Scrollen.', 'In sheets, the scrollbar sits beside the content and does not cover fields. On a phone, it appears only while scrolling.'],
