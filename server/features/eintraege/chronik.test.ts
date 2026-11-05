@@ -171,4 +171,43 @@ describe('Chronik Protokoll', () => {
       expect(wieder.filter((zeile) => zeile.name === null)).toHaveLength(3);
     });
   });
+
+  it('zeigt die Rückbuchung nicht bei der nächsten Investition, wenn die Kennung wieder frei ist', () => {
+    mitWelt(welt(), () => {
+      const ressourcen = attributId('ressourcen');
+      const koerper = attributId('koerper');
+      bucheAttributXp(
+        { quelle: 'eintrag', attributId: ressourcen, xp: 100, eintragId: null, vorhabenId: null },
+        '2026-06-01T08:00:00.000Z',
+      );
+      const angelegt = erstelleInvestition({
+        name: 'Lager',
+        icon: 'gem',
+        groesse: 1,
+        attributId: koerper,
+        bezahltAttributId: ressourcen,
+        betrag: 40,
+      });
+      loescheInvestition(angelegt.id);
+      ausfuehren(`UPDATE xp_ereignisse SET erstellt_am = ? WHERE quelle = 'investition'`, '2099-01-01T00:00:00.000Z');
+
+      const neu = erstelleInvestition({
+        name: 'Regal',
+        icon: 'gem',
+        groesse: 1,
+        attributId: koerper,
+        bezahltAttributId: ressourcen,
+        betrag: 10,
+      });
+      const wieder = ladeChronik({}, undefined, 20).eintraege.map(buchungVon);
+      expect(wieder.filter((zeile) => zeile.name === 'Regal').map((zeile) => zeile.xp)).toEqual([-10]);
+      expect(wieder.filter((zeile) => zeile.investitionId === neu.id)).toHaveLength(1);
+      expect(
+        wieder
+          .filter((zeile) => zeile.name === null)
+          .map((zeile) => zeile.xp)
+          .sort((a, b) => a - b),
+      ).toEqual([-40, 40]);
+    });
+  });
 });

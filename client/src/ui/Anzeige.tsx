@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { type CSSProperties, type ReactNode, useId } from 'react';
 import { prozentPunkte } from '../format.ts';
 import { tx } from '../text.ts';
-import { RING_HEUTE, RING_MITTE, RING_RADIUS, RING_SCHRIFT_AB, RING_UMFANG, ringAbschluss, strichWeite } from './levelringAbschluss.ts';
+import { RING_MITTE, RING_RADIUS, RING_SCHRIFT_AB, RING_UMFANG, ringAbschluss, strichWeite } from './levelringAbschluss.ts';
 
 export function XpAbzug({ prozent, schrift = 'text-xs' }: { prozent: number; schrift?: string }) {
   return (
@@ -178,15 +178,18 @@ function ringSchrift(groesse: number, basis: number): number | undefined {
   return Math.max(1, Math.round((basis * groesse) / RING_SCHRIFT_AB));
 }
 
-function levelZeile(level: number, groesse: number, darunter: boolean): ReactNode {
-  if (!darunter && groesse === RING_HEUTE) {
-    return (
-      <>
-        <span className="max-w-full px-0.5 text-center text-[12px] leading-none text-leise">{tx("Level")}</span>
-        <span className="zahl text-[20px] leading-[24px] font-semibold">{level}</span>
-      </>
-    );
-  }
+const RING_GROSS = 72;
+
+function levelZeileGross(level: number): ReactNode {
+  return (
+    <>
+      <span className="levelring-label max-w-full px-0.5 text-center text-leise">{tx("Level")}</span>
+      <span className="levelring-zahl zahl">{level}</span>
+    </>
+  );
+}
+
+function levelZeile(level: number, groesse: number): ReactNode {
   const labelGroesse = ringSchrift(groesse, 10);
   const zahlGroesse = ringSchrift(groesse, 24);
   return (
@@ -207,9 +210,8 @@ function levelZeile(level: number, groesse: number, darunter: boolean): ReactNod
   );
 }
 
-function levelGrafik(anteil: number, groesse: number, verlaufId: string): ReactNode {
+function levelGrafik(anteil: number, groesse: number, verlaufId: string, cssStrich: boolean): ReactNode {
   const begrenzt = Math.min(1, Math.max(0, anteil));
-  const strich = strichWeite(groesse);
   const voll = begrenzt >= 0.999;
   const abschluss = ringAbschluss(anteil, groesse);
   const kreis = {
@@ -217,12 +219,19 @@ function levelGrafik(anteil: number, groesse: number, verlaufId: string): ReactN
     cy: RING_MITTE,
     r: RING_RADIUS,
     fill: 'none',
-    strokeWidth: strich,
     strokeLinecap: 'butt',
+    ...(cssStrich ? {} : { strokeWidth: strichWeite(groesse) }),
   } as const;
   return (
     <svg viewBox="0 0 100 100" className="absolute inset-0" aria-hidden="true">
-      <circle cx={RING_MITTE} cy={RING_MITTE} r={RING_RADIUS} fill="none" stroke="var(--flaeche-2)" strokeWidth={strich} />
+      <circle
+        cx={RING_MITTE}
+        cy={RING_MITTE}
+        r={RING_RADIUS}
+        fill="none"
+        stroke="var(--flaeche-2)"
+        strokeWidth={cssStrich ? undefined : strichWeite(groesse)}
+      />
       {abschluss && (
         <g className="levelring-bogen">
           <circle
@@ -272,7 +281,7 @@ function levelGrafik(anteil: number, groesse: number, verlaufId: string): ReactN
 export function LevelRing({
   level,
   anteil,
-  groesse = RING_HEUTE,
+  groesse,
   mitte,
 }: {
   level: number;
@@ -280,18 +289,20 @@ export function LevelRing({
   groesse?: number;
   mitte?: ReactNode;
 }) {
+  const gross = groesse === undefined;
+  const mass = groesse ?? RING_GROSS;
   const verlaufId = `lr${useId().replaceAll(':', '')}`;
-  const grafik = levelGrafik(anteil, groesse, verlaufId);
-  const zeile = levelZeile(level, groesse, Boolean(mitte));
+  const grafik = levelGrafik(anteil, mass, verlaufId, gross);
+  const zeile = gross ? levelZeileGross(level) : levelZeile(level, mass);
 
   if (mitte) {
     return (
       <div
         className="levelring relative flex shrink-0 flex-col items-center"
         data-levelring=""
-        style={{ width: groesse, minWidth: groesse, maxWidth: groesse }}
+        style={{ width: mass, minWidth: mass, maxWidth: mass }}
       >
-        <div className="relative" style={{ width: groesse, height: groesse }}>
+        <div className="relative" style={{ width: mass, height: mass }}>
           {grafik}
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">{mitte}</div>
         </div>
@@ -300,8 +311,17 @@ export function LevelRing({
     );
   }
 
+  if (gross) {
+    return (
+      <div className="levelring relative shrink-0" data-levelring="" data-gross="">
+        {grafik}
+        <div className="levelring-innen pointer-events-none absolute inset-0 flex flex-col items-center justify-center">{zeile}</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="levelring relative shrink-0" data-levelring="" style={{ width: groesse, height: groesse }}>
+    <div className="levelring relative shrink-0" data-levelring="" style={{ width: mass, height: mass }}>
       {grafik}
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">{zeile}</div>
     </div>

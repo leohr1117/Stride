@@ -7,9 +7,35 @@ async function bild(seite: Page, name: string, volleSeite = true): Promise<void>
   await seite.screenshot({ path: `tmp-test/heute-aufbau/${name}.png`, fullPage: volleSeite });
 }
 
+function tagesSchluessel(zeit: Date): string {
+  const monat = String(zeit.getMonth() + 1).padStart(2, '0');
+  const tag = String(zeit.getDate()).padStart(2, '0');
+  return `${zeit.getFullYear()}-${monat}-${tag}`;
+}
+
+async function setzeTesttag(seite: Page, datum: string | null): Promise<void> {
+  const antwort = await seite.request.post('/api/test/heute', { data: { datum } });
+  expect(antwort.ok()).toBe(true);
+}
+
+test.afterEach(async ({ page }) => {
+  await setzeTesttag(page, null);
+});
+
 test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) => {
   const projekt = testInfo.project.name;
   await anmelden(page);
+  const stand = await page.request.get('/api/kette/heute');
+  expect(stand.ok()).toBe(true);
+  const vorher = (await stand.json()) as {
+    heuteErfasst: boolean;
+    serie: { laenge: number; angeknackst: boolean };
+  };
+  if (!vorher.heuteErfasst && vorher.serie.laenge > 0 && !vorher.serie.angeknackst) {
+    const gestern = new Date();
+    gestern.setDate(gestern.getDate() - 1);
+    await setzeTesttag(page, tagesSchluessel(gestern));
+  }
   await page.goto('/');
   await expect(page.locator('main h1')).toHaveText('Heute');
   await expect(page.getByRole('heading', { name: 'Willkommen bei Stride' })).toHaveCount(0);
@@ -17,17 +43,26 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
 
   const ring = page.locator('main [data-levelring]').first();
   const ringBreite = await ring.evaluate((element) => Math.round(element.getBoundingClientRect().width));
-  expect(ringBreite).toBe(64);
+  expect(ringBreite).toBe(72);
   await expect(ring.locator('.uppercase')).toHaveCount(0);
-  const label = ring.locator('span').first();
-  expect(await label.evaluate((element) => getComputedStyle(element).fontSize)).toBe('12px');
-  expect(await label.evaluate((element) => getComputedStyle(element).textTransform)).toBe('none');
+  const label = ring.locator('.levelring-label');
+  expect(await label.evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize))).toBeCloseTo(10, 1);
+  expect(await label.evaluate((element) => getComputedStyle(element).textTransform)).toBe('uppercase');
+  expect(await label.evaluate((element) => Number.parseFloat(getComputedStyle(element).letterSpacing))).toBeCloseTo(0.6, 1);
   await expect(label).toHaveText('Level');
-  const zahlSchrift = await ring.locator('span.zahl').evaluate((element) => {
+  const zahlSchrift = await ring.locator('.levelring-zahl').evaluate((element) => {
     const stil = getComputedStyle(element);
-    return { groesse: stil.fontSize, gewicht: stil.fontWeight, hoehe: stil.lineHeight };
+    return {
+      groesse: Number.parseFloat(stil.fontSize),
+      gewicht: stil.fontWeight,
+      hoehe: Number.parseFloat(stil.lineHeight),
+    };
   });
-  expect(zahlSchrift).toEqual({ groesse: '20px', gewicht: '600', hoehe: '24px' });
+  expect(zahlSchrift.gewicht).toBe('600');
+  expect(zahlSchrift.groesse).toBeCloseTo(19.5, 1);
+  expect(zahlSchrift.hoehe).toBeCloseTo(19.5, 1);
+  const strich = await ring.locator('circle').first().evaluate((element) => Number.parseFloat(getComputedStyle(element).strokeWidth));
+  expect(Math.abs(strich - 6.5)).toBeLessThanOrEqual(0.5);
   const xpZeile = page.locator('main [data-xp-zeile]');
   await expect(xpZeile).toBeVisible();
   const xpZeilen = await xpZeile.evaluate((element) => {

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.59
+
+### Behoben
+
+- Der Levelring auf Heute und im Projekt ist wieder größer, und Schrift und Strich passen zur Größe.
+
 ## 3.56.58
 
 ### Behoben

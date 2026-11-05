@@ -37,7 +37,7 @@ async function anlegen(seite: Page, daten: unknown): Promise<void> {
 async function ringUndName(seite: Page): Promise<void> {
   const ring = seite.locator('main [data-levelring]').first();
   const breite = await ring.evaluate((element) => Math.round(element.getBoundingClientRect().width));
-  expect(breite).toBe(64);
+  expect(breite).toBe(72);
   await expect(seite.locator('main .kopfblock-name').locator('visible=true').first()).toHaveClass(/text-2xl/);
 }
 

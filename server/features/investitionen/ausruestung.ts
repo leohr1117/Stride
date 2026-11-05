@@ -8,7 +8,7 @@ import { istLoeschbar } from '../../services/loeschen.ts';
 import { aktivesAttribut } from '../attribute/attribute.ts';
 import { funktionAktiv, ladeEinstellungen, pruefeEbene } from '../einstellungen/einstellungen.ts';
 import { KONTEXT_JOINS, PROJEKT_AKTIV } from '../ziele/kontext.ts';
-import { bucheZahlungsDifferenz, KEINE_ZAHLUNG, loeseZahlung } from './zahlung.ts';
+import { anlageHinterAltenBuchungen, bucheZahlungsDifferenz, KEINE_ZAHLUNG, loeseZahlung } from './zahlung.ts';
 
 const AKTIV = `i.investition = 1 AND i.archiviert = 0 AND i.geschafft_am IS NOT NULL AND i.geschafft_am <= ?`;
 
@@ -276,6 +276,7 @@ export function erstelleInvestition(daten: InvestitionDaten): Investition {
       zahlung.betrag,
     );
     const investitionId = Number(id);
+    anlageHinterAltenBuchungen(investitionId);
     bucheZahlungsDifferenz(investitionId, KEINE_ZAHLUNG, zahlung, new Date().toISOString());
     return ladeInvestition(investitionId);
   });

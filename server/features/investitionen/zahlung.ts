@@ -1,4 +1,4 @@
-import { eine } from '../../db.ts';
+import { ausfuehren, eine } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
 import { bucheAttributXp } from '../../services/fortschritt.ts';
 import { ladeAttributXp } from '../attribute/attribute.ts';
@@ -23,6 +23,28 @@ export function loeseZahlung(bisher: Zahlung | null, angabe: { bezahltAttributId
     return KEINE_ZAHLUNG;
   }
   return { bezahltAttributId: attributId, betrag };
+}
+
+export function anlageHinterAltenBuchungen(investitionId: number): void {
+  const zeile = eine<{ angelegt: string; alt: string | null }>(
+    `SELECT n.erstellt_am AS angelegt,
+            (SELECT MAX(x.erstellt_am) FROM xp_ereignisse x WHERE x.investition_id = n.id) AS alt
+     FROM investitionen n
+     WHERE n.id = ?`,
+    investitionId,
+  );
+  if (!zeile?.alt || zeile.angelegt > zeile.alt) {
+    return;
+  }
+  const millis = Date.parse(zeile.alt);
+  if (Number.isNaN(millis)) {
+    return;
+  }
+  const danach = new Date(millis + 1).toISOString();
+  if (!(danach > zeile.alt)) {
+    return;
+  }
+  ausfuehren('UPDATE investitionen SET erstellt_am = ? WHERE id = ?', danach, investitionId);
 }
 
 function zeitAbAnlage(investitionId: number, zeitpunkt: string): string {

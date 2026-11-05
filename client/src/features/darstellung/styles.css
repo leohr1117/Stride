@@ -205,6 +205,49 @@ body {
   overflow: visible;
 }
 
+.levelring[data-gross] {
+  --ring-d: 72px;
+  --ring-strich: round(nearest, calc(var(--ring-d) * 0.09), 0.5px);
+  --ring-zahl: round(nearest, calc(var(--ring-d) * 0.27), 0.5px);
+  --ring-level: max(10px, round(nearest, calc(var(--ring-d) * 0.14), 0.5px));
+  --ring-abstand: round(nearest, calc(var(--ring-d) * 0.02), 0.5px);
+  width: var(--ring-d);
+  height: var(--ring-d);
+}
+
+@media (max-width: 359px) {
+  .levelring[data-gross] {
+    --ring-d: 72px;
+  }
+}
+
+.levelring[data-gross] circle {
+  stroke-width: var(--ring-strich);
+  vector-effect: non-scaling-stroke;
+}
+
+.levelring[data-gross] .levelring-innen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ring-abstand);
+}
+
+.levelring[data-gross] .levelring-label {
+  font-size: var(--ring-level);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.levelring[data-gross] .levelring-zahl {
+  font-size: var(--ring-zahl);
+  font-weight: 600;
+  line-height: 1;
+}
+
 .levelring-bogen {
   --balken-farbe: var(--fortschritt);
   filter: drop-shadow(var(--balken-gluehen));

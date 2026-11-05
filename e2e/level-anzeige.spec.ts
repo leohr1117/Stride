@@ -443,3 +443,176 @@ test('Levelring: Verlauf, Spitze und Glühen in den Ansichten', async ({ page },
     expect(wieder).toBe(true);
   }
 });
+
+function aufHalbenPixel(wert: number): number {
+  return Math.round(wert * 2) / 2;
+}
+
+function ringInnen(durchmesser: number): { strich: number; zahl: number; level: number; abstand: number } {
+  return {
+    strich: aufHalbenPixel(durchmesser * 0.09),
+    zahl: aufHalbenPixel(durchmesser * 0.27),
+    level: Math.max(10, aufHalbenPixel(durchmesser * 0.14)),
+    abstand: aufHalbenPixel(durchmesser * 0.02),
+  };
+}
+
+function nahe(ist: number, soll: number): boolean {
+  return Math.abs(ist - soll) <= 0.5;
+}
+
+test('Levelring auf Heute und Projekt ist gleich groß', async ({ page }, testInfo) => {
+  const name = testInfo.project.name;
+  await anmelden(page);
+  await page.goto('/');
+  const ring = page.locator('main [data-gross]').first();
+  await expect(ring).toBeVisible();
+  const fenster = page.viewportSize()?.width ?? 0;
+  const heute = await ring.evaluate((element) => {
+    const kasten = element.getBoundingClientRect();
+    const text = element.nextElementSibling?.getBoundingClientRect();
+    const kreis = element.querySelector('circle');
+    const label = element.querySelector('.levelring-label');
+    const zahl = element.querySelector('.levelring-zahl');
+    const innen = element.querySelector('.levelring-innen');
+    if (!text || !kreis || !label || !zahl || !innen) {
+      return null;
+    }
+    const abstand = getComputedStyle(innen).rowGap;
+    return {
+      breite: kasten.width,
+      hoehe: kasten.height,
+      mitte: kasten.top + kasten.height / 2,
+      textHoehe: text.height,
+      textMitte: text.top + text.height / 2,
+      strich: Number.parseFloat(getComputedStyle(kreis).strokeWidth),
+      level: Number.parseFloat(getComputedStyle(label).fontSize),
+      zahl: Number.parseFloat(getComputedStyle(zahl).fontSize),
+      abstand: Number.parseFloat(abstand),
+    };
+  });
+  expect(heute, 'Maße des Rings auf Heute').not.toBeNull();
+  if (!heute) {
+    return;
+  }
+  const ausFormel = Math.round((heute.textHoehe + 12) / 2) * 2;
+  const soll = fenster < 360 ? 72 : Math.max(72, ausFormel);
+  expect(Math.round(heute.breite)).toBe(soll);
+  expect(Math.abs(heute.breite - heute.hoehe)).toBeLessThanOrEqual(1);
+  expect(Math.abs(heute.hoehe - (heute.textHoehe + 12)), `Ring ${heute.hoehe} px, Textblock ${heute.textHoehe} px`).toBeLessThanOrEqual(2);
+  expect(Math.abs(heute.mitte - heute.textMitte)).toBeLessThanOrEqual(2);
+  const masse = ringInnen(soll);
+  expect(nahe(heute.strich, masse.strich), `Strich ${heute.strich}`).toBe(true);
+  expect(nahe(heute.level, masse.level), `LEVEL ${heute.level}`).toBe(true);
+  expect(nahe(heute.zahl, masse.zahl), `Zahl ${heute.zahl}`).toBe(true);
+  expect(nahe(heute.abstand, masse.abstand), `Abstand ${heute.abstand}`).toBe(true);
+  if (fenster >= 360) {
+    const zeilen = await page.locator('main [data-xp-zeile]').evaluate((element) => {
+      const bereich = document.createRange();
+      bereich.selectNodeContents(element);
+      return bereich.getClientRects().length;
+    });
+    expect(zeilen).toBe(1);
+  }
+  fs.mkdirSync('tmp-test/level-anzeige', { recursive: true });
+  const flaeche = page.locator('main [data-flaeche]').filter({ has: page.locator('[data-gross]') }).first();
+  await flaeche.screenshot({ path: `tmp-test/level-anzeige/${name}-${fenster}-heute.png` });
+
+  const ziel = await page.evaluate(async () => {
+    const ziele = (await fetch('/api/ziele').then((antwort) => antwort.json())) as {
+      projekte: { id: number; archiviert: boolean }[];
+    };
+    return ziele.projekte.find((eintrag) => !eintrag.archiviert) ?? null;
+  });
+  expect(ziel).not.toBeNull();
+  if (!ziel) {
+    return;
+  }
+  await page.goto(`/projekte/${ziel.id}`);
+  const projektRing = page.locator('main [data-gross]').first();
+  await expect(projektRing).toBeVisible();
+  const projekt = await projektRing.evaluate((element) => {
+    const kasten = element.getBoundingClientRect();
+    const text = element.nextElementSibling?.getBoundingClientRect();
+    return {
+      breite: kasten.width,
+      mitte: kasten.top + kasten.height / 2,
+      textMitte: text ? text.top + text.height / 2 : null,
+    };
+  });
+  expect(Math.round(projekt.breite)).toBe(Math.round(heute.breite));
+  expect(projekt.textMitte).not.toBeNull();
+  if (projekt.textMitte !== null) {
+    expect(Math.abs(projekt.mitte - projekt.textMitte)).toBeLessThanOrEqual(2);
+  }
+  await projektRing.screenshot({ path: `tmp-test/level-anzeige/${name}-${fenster}-projekt.png` });
+
+  await page.evaluate(() => {
+    document.getElementById('ringmasse')?.remove();
+    const kasten = document.createElement('div');
+    kasten.id = 'ringmasse';
+    kasten.style.position = 'fixed';
+    kasten.style.left = '8px';
+    kasten.style.top = '80px';
+    kasten.style.display = 'flex';
+    kasten.style.gap = '12px';
+    kasten.style.zIndex = '50';
+    for (const durchmesser of [72, 76, 88]) {
+      const ring = document.createElement('div');
+      ring.className = 'levelring';
+      ring.dataset.gross = '';
+      ring.dataset.mass = String(durchmesser);
+      ring.style.setProperty('--ring-d', `${durchmesser}px`);
+      ring.innerHTML =
+        '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor"></circle></svg>' +
+        '<div class="levelring-innen"><span class="levelring-label">Level</span><span class="levelring-zahl">1</span></div>';
+      kasten.append(ring);
+    }
+    document.body.append(kasten);
+  });
+  for (const durchmesser of [72, 76, 88]) {
+    const gemessen = await page.locator(`[data-mass="${durchmesser}"]`).evaluate((element) => {
+      const kreis = element.querySelector('circle');
+      const label = element.querySelector('.levelring-label');
+      const zahl = element.querySelector('.levelring-zahl');
+      const innen = element.querySelector('.levelring-innen');
+      if (!kreis || !label || !zahl || !innen) {
+        return null;
+      }
+      return {
+        breite: element.getBoundingClientRect().width,
+        strich: Number.parseFloat(getComputedStyle(kreis).strokeWidth),
+        level: Number.parseFloat(getComputedStyle(label).fontSize),
+        zahl: Number.parseFloat(getComputedStyle(zahl).fontSize),
+        abstand: Number.parseFloat(getComputedStyle(innen).rowGap),
+        laufweite: Number.parseFloat(getComputedStyle(label).letterSpacing),
+      };
+    });
+    expect(gemessen, `D ${durchmesser}`).not.toBeNull();
+    if (!gemessen) {
+      continue;
+    }
+    const erwartet = ringInnen(durchmesser);
+    expect(Math.abs(gemessen.breite - durchmesser)).toBeLessThanOrEqual(0.5);
+    expect(nahe(gemessen.strich, erwartet.strich), `Strich D ${durchmesser}: ${gemessen.strich}`).toBe(true);
+    expect(nahe(gemessen.level, erwartet.level), `LEVEL D ${durchmesser}: ${gemessen.level}`).toBe(true);
+    expect(nahe(gemessen.zahl, erwartet.zahl), `Zahl D ${durchmesser}: ${gemessen.zahl}`).toBe(true);
+    expect(nahe(gemessen.abstand, erwartet.abstand), `Abstand D ${durchmesser}: ${gemessen.abstand}`).toBe(true);
+    expect(Math.abs(gemessen.laufweite - gemessen.level * 0.06)).toBeLessThanOrEqual(0.5);
+  }
+  await page.evaluate(() => document.getElementById('ringmasse')?.remove());
+
+  const ausgang = page.viewportSize();
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto('/');
+  const eng = page.locator('main [data-gross]').first();
+  await expect(eng).toBeVisible();
+  const engBreite = await eng.evaluate((element) => Math.round(element.getBoundingClientRect().width));
+  expect(engBreite).toBe(72);
+  await page.locator('main [data-flaeche]').filter({ has: page.locator('[data-gross]') }).first().screenshot({
+    path: `tmp-test/level-anzeige/${name}-320-heute.png`,
+  });
+  if (ausgang) {
+    await page.setViewportSize(ausgang);
+  }
+});
