@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.53
+
+### Geändert
+
+- Nur die Versionsnummer. Aussehen und Verhalten bleiben gleich.
+
 ## 3.56.52
 
 ### Geändert
