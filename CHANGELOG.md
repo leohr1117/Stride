@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.69
+
+### Geändert
+
+- Die dunkle Browserleiste und der Startbildschirm der installierten App sind dasselbe Dunkelgrau wie die App.
+
 ## 3.56.68
 
 ### Geändert

@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die dunkle Browserleiste und der Startbildschirm der installierten App sind dasselbe Dunkelgrau wie die App.": "深色浏览器栏和已安装应用的启动画面与应用本身是同一种深灰。",
   "Die laufende App bleibt in ihrem eigenen Ordner. Ein Bau daneben ändert sie nicht von selbst.": "正在运行的应用留在自己的文件夹里。旁边的构建不会自行改变它。",
   "Auf Heute stehen Streak-Text, Hinweis und + Eintrag in einer Zeile. Auf einem schmalen Bildschirm steht dort Streak offen.": "在「今天」上，连续记录的文字、说明和「+ 记录」排在同一行。窄屏幕上显示「连续未记」。",
   "Auf Ziele ist der Knopf Neu gefüllt und hat ein Plus davor.": "在目标中，「新建」按钮是实心的，前面有一个加号。",

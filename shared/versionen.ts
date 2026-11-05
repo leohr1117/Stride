@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.69',
+    seiten: 'Was ist neu',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Die dunkle Browserleiste und der Startbildschirm der installierten App sind dasselbe Dunkelgrau wie die App.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.68',
     seiten: 'Was ist neu',
     abschnitte: [
