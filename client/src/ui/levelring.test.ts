@@ -11,14 +11,27 @@ describe('LevelRing', () => {
     expect(html).toMatch(/data-ringlicht="" [^>]*r="1.25" fill="white" fill-opacity="0.75"/);
   });
 
-  it('lässt die Schrift im grossen Ring und verkleinert sie im kleinen', () => {
-    const gross = renderToStaticMarkup(createElement(LevelRing, { level: 12, anteil: 0.4, groesse: 104 }));
-    expect(gross).toContain('text-[10px]');
-    expect(gross).toContain('text-2xl');
-    expect(gross).not.toContain('font-size:');
+  it('verkleinert die Schrift im kleinen Ring', () => {
     const klein = renderToStaticMarkup(createElement(LevelRing, { level: 12, anteil: 0.4, groesse: 56 }));
+    expect(klein).toContain('width:56px');
     expect(klein).toContain('font-size:6px');
     expect(klein).toContain('font-size:14px');
+    expect(klein).toContain('stroke-width="8"');
+  });
+
+  it('groesser als 96 skaliert mit', () => {
+    const html = renderToStaticMarkup(createElement(LevelRing, { level: 12, anteil: 0.4, groesse: 104 }));
+    expect(html).toContain('width:104px');
+    expect(html).toContain('height:104px');
+    expect(html).toContain('font-size:11px');
+    expect(html).toContain('font-size:26px');
+    expect(html).toContain('stroke-width="8"');
+    expect(html).toContain('r="4.05"');
+    expect(html).toContain('r="1.25"');
+    const weiter = renderToStaticMarkup(createElement(LevelRing, { level: 12, anteil: 0.4, groesse: 120 }));
+    expect(weiter).toContain('width:120px');
+    expect(weiter).toContain('font-size:13px');
+    expect(weiter).toContain('font-size:30px');
   });
 
   it('wird mit dem Fortschritt kraeftiger', () => {

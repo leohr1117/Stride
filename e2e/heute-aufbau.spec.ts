@@ -43,7 +43,7 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
 
   const ring = page.locator('main [data-levelring]').first();
   const ringBreite = await ring.evaluate((element) => Math.round(element.getBoundingClientRect().width));
-  expect(ringBreite).toBe(96);
+  expect(ringBreite).toBe(104);
   const label = ring.locator('span.uppercase');
   await expect(label).toHaveText('Level');
   expect(await label.evaluate((element) => getComputedStyle(element).textTransform)).toBe('uppercase');

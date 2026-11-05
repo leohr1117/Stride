@@ -99,6 +99,7 @@ export const TEXTE: Record<string, string> = {
   "Bei offenen Bossen sind Ring und Schwert größer und beide rot.": "进行中的首领里，圆环和剑都更大，而且都是红色。",
   "Bei offenen Bossen sitzt das Schwert mittig im Ring. Ein voller Ring hat oben keine Lücke.": "进行中的首领里，剑位于圆环正中。完整的圆环上方没有缺口。",
   "Der Levelring beginnt wieder oben, läuft im Uhrzeigersinn und endet mit einem Lichtpunkt.": "等级环再次从顶部开始，沿顺时针延伸，末端有一个光点。",
+  "Der Levelring auf Heute und im Projekt ist etwas größer. Die Zahl, das Wort Level, der Strich und der Lichtpunkt wachsen im gleichen Verhältnis mit.": "今天和项目中的等级环稍大一些。数字、等级一词、线条和光点按相同比例变大。",
   "Der Levelring auf Heute und im Projekt ist wieder größer, und Schrift und Strich passen zur Größe.": "今天和项目里的等级环再次变大，文字和描边随尺寸变化。",
   "Auf einer Fähigkeit sind Farbe, Verlauf und Glühen wieder da. Zahlen auf erreichten Rängen und Knoten bleiben weiß und lesbar, der Rangname auch, und der Ring leuchtet in der Farbe der Fähigkeit.": "技能页重新有了颜色、渐变和发光。已达到的段位和节点上的数字保持白色且可读，段位名称也一样，圆环以技能的颜色发光。",
   "Auf einer Fähigkeit sind Ring, XP-Balken und erreichte Ränge in der Fortschrittsfarbe. Der Rangname bleibt lesbar, Knoten haben einen Rand, und freigeschaltete zeigen einen Haken. Die Farbe der Fähigkeit bleibt am Symbol.": "在一项技能上，圆环、XP 条和已达到的等级使用进度颜色。等级名称仍然清楚，节点有边框，已解锁的显示对勾。技能颜色只留在符号上。",

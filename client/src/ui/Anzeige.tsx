@@ -189,9 +189,6 @@ function ringSpitze(anteil: number): { cx: number; cy: number } {
 const RING_SCHRIFT_AB = 96;
 
 function ringSchrift(groesse: number, basis: number): number | undefined {
-  if (groesse >= RING_SCHRIFT_AB) {
-    return undefined;
-  }
   return Math.max(1, Math.round((basis * groesse) / RING_SCHRIFT_AB));
 }
 

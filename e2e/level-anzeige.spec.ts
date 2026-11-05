@@ -184,12 +184,11 @@ test('Level ohne Bruch, Radare nebeneinander, Hinweis und Ring', async ({ page }
     expect(rechts.rechts).toBeLessThanOrEqual(fenster.width + 1);
   }
   expect(await spektren.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
-  const stil = await page.locator('html').getAttribute('data-stil');
   const profilLabel = page.locator('main [data-levelring] span.uppercase');
   await expect(profilLabel).toBeVisible();
-  expect(await profilLabel.evaluate((element) => getComputedStyle(element).fontSize)).toBe(stil === 'standard' ? '12px' : '10px');
+  expect(await profilLabel.evaluate((element) => getComputedStyle(element).fontSize)).toBe('11px');
   const profilZahl = page.locator('main [data-levelring] span.zahl');
-  expect(await profilZahl.evaluate((element) => element.getAttribute('style') ?? '')).toBe('');
+  expect(await profilZahl.evaluate((element) => getComputedStyle(element).fontSize)).toBe('26px');
 
   const flaeche = page.locator('[data-spektrum="attribut"] .recharts-radar-polygon').first();
   await flaeche.hover({ force: true });
@@ -371,7 +370,7 @@ test('Levelring auf Heute und Projekt ist gleich groß', async ({ page }, testIn
       textMitte: text ? text.top + text.height / 2 : null,
     };
   });
-  expect(Math.round(heute.breite)).toBe(96);
+  expect(Math.round(heute.breite)).toBe(104);
   expect(Math.abs(heute.breite - heute.hoehe)).toBeLessThanOrEqual(1);
   if (heute.textMitte !== null) {
     expect(Math.abs(heute.mitte - heute.textMitte)).toBeLessThanOrEqual(2);
@@ -410,13 +409,14 @@ test('Levelring auf Heute und Projekt ist gleich groß', async ({ page }, testIn
       textMitte: text ? text.top + text.height / 2 : null,
     };
   });
-  expect(Math.round(projekt.breite)).toBe(96);
+  expect(Math.round(projekt.breite)).toBe(104);
   expect(Math.round(projekt.breite)).toBe(Math.round(heute.breite));
   expect(projekt.textMitte).not.toBeNull();
   if (projekt.textMitte !== null) {
     expect(Math.abs(projekt.mitte - projekt.textMitte)).toBeLessThanOrEqual(2);
   }
   await projektRing.screenshot({ path: `tmp-test/level-anzeige/${name}-${fenster}-projekt.png` });
+  await page.screenshot({ path: `tmp-test/level-anzeige/${name}-${fenster}-projekt-seite.png` });
 
   const ausgang = page.viewportSize();
   await page.setViewportSize({ width: 320, height: 800 });
@@ -424,10 +424,30 @@ test('Levelring auf Heute und Projekt ist gleich groß', async ({ page }, testIn
   const eng = page.locator('main [data-levelring]').first();
   await expect(eng).toBeVisible();
   const engBreite = await eng.evaluate((element) => Math.round(element.getBoundingClientRect().width));
-  expect(engBreite).toBe(96);
+  expect(engBreite).toBe(104);
   await page.locator('main [data-flaeche]').filter({ has: page.locator('[data-levelring]') }).first().screenshot({
     path: `tmp-test/level-anzeige/${name}-320-heute.png`,
   });
+  if (ausgang) {
+    await page.setViewportSize(ausgang);
+  }
+
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto('/');
+  const zeile360 = page.locator('main [data-xp-zeile]');
+  await expect(zeile360).toBeVisible();
+  const zeilen360 = await zeile360.evaluate((element) => {
+    const bereich = document.createRange();
+    bereich.selectNodeContents(element);
+    return bereich.getClientRects().length;
+  });
+  expect(zeilen360).toBe(1);
+  const ring360 = await page.locator('main [data-levelring]').first().evaluate((element) => Math.round(element.getBoundingClientRect().width));
+  expect(ring360).toBe(104);
+  await ohneSeitlichenUeberlauf(page);
+  await page.goto(`/projekte/${ziel.id}`);
+  await expect(page.locator('main [data-levelring]').first()).toBeVisible();
+  await ohneSeitlichenUeberlauf(page);
   if (ausgang) {
     await page.setViewportSize(ausgang);
   }

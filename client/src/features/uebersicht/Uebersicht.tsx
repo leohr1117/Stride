@@ -71,8 +71,8 @@ export function UebersichtSeite() {
         {karteGewaehlt('identitaet', karten) && (
           <Flaeche className="identitaets-flaeche p-4">
             <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-5">
-                <LevelRing level={uebersicht.level.level} anteil={uebersicht.level.fortschritt} />
+              <div className="flex items-center gap-2">
+                <LevelRing level={uebersicht.level.level} anteil={uebersicht.level.fortschritt} groesse={104} />
                 <div className="min-w-0 flex-1">
                   <p className="kopfblock-name truncate text-2xl font-bold tracking-tight">{uebersicht.name}</p>
                   <p className="text-[13px] leading-[18px] break-words text-leise">{identitaet}</p>

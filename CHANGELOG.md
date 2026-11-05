@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.61
+
+### Verbessert
+
+- Der Levelring auf Heute und im Projekt ist etwas größer. Die Zahl, das Wort Level, der Strich und der Lichtpunkt wachsen im gleichen Verhältnis mit.
+
 ## 3.56.60
 
 ### Behoben
