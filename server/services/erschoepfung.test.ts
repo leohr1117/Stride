@@ -7,7 +7,8 @@ import { LEVEL_KURVEN, xpBisLevel } from '../../shared/spiel/level.ts';
 import { momentumFuerSerie } from '../../shared/spiel/momentum.ts';
 import { basisXp } from '../../shared/spiel/xp.ts';
 import { ausfuehren, eine, mitWelt, schliesseWelt } from '../db.ts';
-import { aendereAttribut, ladeErschoepfungen } from '../features/attribute/attribute.ts';
+import { aendereAttribut, ladeAttribut, ladeErschoepfungen } from '../features/attribute/attribute.ts';
+import { aendereEinstellungen } from '../features/einstellungen/einstellungen.ts';
 import { erstelleEintrag } from '../features/eintraege/eintraege.ts';
 import { ladeUebersicht } from '../features/uebersicht/uebersicht.ts';
 import { erstelleVorlage } from '../features/taetigkeiten/vorlagen.ts';
@@ -87,6 +88,7 @@ function logge(vorlageId: number) {
 describe('mehrere Erschöpfungen', () => {
   it('multipliziert zwei gezielte Regeln auf dasselbe Attribut', () => {
     mitWelt(welt(), () => {
+      aendereEinstellungen({ funktionen: { verfallKoennen: true } });
       const koerper = attributId('koerper');
       const geist = attributId('geist');
       const soziales = attributId('soziales');
@@ -115,6 +117,7 @@ describe('mehrere Erschöpfungen', () => {
 
   it('multipliziert eine allgemeine und eine gezielte Regel', () => {
     mitWelt(welt(), () => {
+      aendereEinstellungen({ funktionen: { verfallKoennen: true } });
       const koerper = attributId('koerper');
       const geist = attributId('geist');
       const soziales = attributId('soziales');
@@ -133,6 +136,74 @@ describe('mehrere Erschöpfungen', () => {
       expect(bild.ursachen).toEqual(expect.arrayContaining([geist, soziales]));
       expect(bild.allgemein).toBe(Math.round((1 - allgemein) * 100));
       expect(bild.jeZiel).toEqual([{ zielId: koerper, prozent: Math.round((1 - gezielt) * 100) }]);
+    });
+  });
+
+  it('lässt die Erschöpfung aus, solange der passende Verfall aus ist', () => {
+    mitWelt(welt(), () => {
+      const koerper = attributId('koerper');
+      const geist = attributId('geist');
+      const einfluss = attributId('einfluss');
+      const ressourcen = attributId('ressourcen');
+      setzeLevel(koerper, 20);
+      setzeLevel(ressourcen, 20);
+      const allgemein = erschoepfungsFaktor(1, 20);
+      expect(allgemein).toBeLessThan(1);
+      const voll = Math.round(basisXp(1) * momentumFuerSerie(1));
+
+      aendereAttribut(geist, { erschoepfung: true, erschoepfungZiel: null });
+      const koennenVorlage = erstelleVorlage({
+        name: 'Können',
+        icon: 'star',
+        gewichte: [{ attributId: koerper, gewicht: 1 }],
+      }).id;
+      const koennenAus = logge(koennenVorlage);
+      expect(gespeicherterFaktor(koennenAus.eintrag.id)).toBeCloseTo(momentumFuerSerie(1));
+      expect(eintragXpAuf(koennenAus.eintrag.id, koerper)).toBe(voll);
+      expect(ladeErschoepfungen().some((regel) => regel.quelleId === geist)).toBe(false);
+      expect(erschoepfungsBild(ladeErschoepfungen()).allgemein).toBeNull();
+      expect(ladeAttribut(geist).erschoepfung).toBe(true);
+      expect(ladeAttribut(geist).erschoepfungZiel).toBeNull();
+
+      aendereAttribut(geist, { erschoepfung: true, erschoepfungZiel: koerper });
+      const gezieltAus = logge(koennenVorlage);
+      expect(gespeicherterFaktor(gezieltAus.eintrag.id)).toBeCloseTo(momentumFuerSerie(1));
+      expect(eintragXpAuf(gezieltAus.eintrag.id, koerper)).toBe(voll);
+      expect(ladeErschoepfungen()).toEqual([]);
+      expect(ladeAttribut(geist).erschoepfung).toBe(true);
+      expect(ladeAttribut(geist).erschoepfungZiel).toBe(koerper);
+
+      aendereAttribut(einfluss, { erschoepfung: true, erschoepfungZiel: null });
+      const habenVorlage = erstelleVorlage({
+        name: 'Haben',
+        icon: 'star',
+        gewichte: [{ attributId: ressourcen, gewicht: 1 }],
+      }).id;
+      const habenAus = logge(habenVorlage);
+      expect(gespeicherterFaktor(habenAus.eintrag.id)).toBeCloseTo(momentumFuerSerie(1));
+      expect(eintragXpAuf(habenAus.eintrag.id, ressourcen)).toBe(voll);
+      expect(ladeErschoepfungen().some((regel) => regel.quelleId === einfluss)).toBe(false);
+      expect(ladeAttribut(einfluss).erschoepfung).toBe(true);
+      expect(ladeAttribut(einfluss).erschoepfungZiel).toBeNull();
+
+      aendereEinstellungen({ funktionen: { verfallHaben: true } });
+      const habenAn = logge(habenVorlage);
+      const habenFaktor = momentumFuerSerie(1) * allgemein;
+      expect(gespeicherterFaktor(habenAn.eintrag.id)).toBeCloseTo(habenFaktor);
+      expect(eintragXpAuf(habenAn.eintrag.id, ressourcen)).toBe(Math.round(basisXp(1) * habenFaktor));
+      expect(eintragXpAuf(habenAn.eintrag.id, ressourcen)).toBeLessThan(voll);
+      const habenRegeln = ladeErschoepfungen();
+      expect(habenRegeln.map((regel) => regel.quelleId)).toEqual([einfluss]);
+      expect(habenRegeln[0]?.zielId).toBeNull();
+      expect(erschoepfungsBild(habenRegeln).allgemein).toBe(Math.round((1 - allgemein) * 100));
+      expect(ladeAttribut(geist).erschoepfung).toBe(true);
+
+      aendereEinstellungen({ funktionen: { verfallHaben: false, verfallKoennen: true } });
+      expect(ladeAttribut(einfluss).erschoepfung).toBe(true);
+      expect(ladeErschoepfungen().some((regel) => regel.quelleId === einfluss)).toBe(false);
+      expect(ladeErschoepfungen().some((regel) => regel.quelleId === geist)).toBe(true);
+      const koennenAn = logge(koennenVorlage);
+      expect(eintragXpAuf(koennenAn.eintrag.id, koerper)).toBe(Math.round(Math.round(basisXp(1) * momentumFuerSerie(1)) * allgemein));
     });
   });
 });

@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import fs from 'node:fs';
-import { abzugNebenNamen, erschoepfungsBild } from '../shared/spiel/belastung.ts';
+import { abzugNebenNamen, erschoepfungsBild, erschoepfungsFaktor } from '../shared/spiel/belastung.ts';
 
 interface ZielRef {
   art: string;
@@ -400,5 +400,169 @@ test('Ein Tipp in die Einstellungszeile trifft den Schalter', async ({ page }, t
         body: JSON.stringify({ funktionen }),
       });
     }, vorher.funktionen);
+  }
+});
+
+interface AttributVoll extends AttributZeile {
+  typ: 'attribut' | 'status';
+  archiviert: boolean;
+  erschoepfung: boolean;
+  erschoepfungZiel: number | null;
+}
+
+async function alleAttribute(seite: Page): Promise<AttributVoll[]> {
+  const antwort = await seite.request.get('/api/attribute');
+  expect(antwort.ok()).toBe(true);
+  return antwort.json() as Promise<AttributVoll[]>;
+}
+
+async function setzeVerfall(seite: Page, funktionen: Record<string, boolean>): Promise<void> {
+  const antwort = await seite.request.patch('/api/einstellungen', { data: { funktionen } });
+  expect(antwort.ok()).toBe(true);
+}
+
+async function legeEintrag(seite: Page, vorlageId: number): Promise<{ id: number; faktor: number; xp: number }> {
+  const antwort = await seite.request.post('/api/eintraege', {
+    data: {
+      projektId: null,
+      vorlageId,
+      vorhaben: null,
+      abschluss: null,
+      erkenntnis: '',
+      stunden: 1,
+      notiz: '',
+      meilenstein: false,
+      faehigkeitId: null,
+      datum: '2020-06-02',
+    },
+  });
+  if (!antwort.ok()) {
+    throw new Error(`Eintrag ${antwort.status()} ${await antwort.text()}`);
+  }
+  const daten = (await antwort.json()) as { eintrag: { id: number; faktor: number; xp: number } };
+  return daten.eintrag;
+}
+
+test('Ohne Verfall mindert ein zu niedriges Attribut keine XP', async ({ page }) => {
+  const vorher = await page.evaluate(async () => {
+    const antwort = await fetch('/api/einstellungen');
+    if (!antwort.ok) {
+      throw new Error('Einstellungen nicht geladen');
+    }
+    return antwort.json() as Promise<EinstellungenZeile>;
+  });
+  const attribute = await alleAttribute(page);
+  const vorlagenAntwort = await page.request.get('/api/vorlagen');
+  expect(vorlagenAntwort.ok()).toBe(true);
+  const vorlagen = (await vorlagenAntwort.json()) as { id: number; archiviert: boolean; projektId: number | null }[];
+  const vorlage = vorlagen.find((eintrag) => !eintrag.archiviert && eintrag.projektId === null);
+  expect(vorlage).toBeTruthy();
+  if (!vorlage) {
+    return;
+  }
+  const eintraege: number[] = [];
+  const faelle = [
+    { typ: 'status' as const, schalter: 'verfallHaben', pfad: '/haben' },
+    { typ: 'attribut' as const, schalter: 'verfallKoennen', pfad: '/koennen' },
+  ];
+  const geaendert = faelle.map((fall) => {
+    const gruppe = attribute.filter((eintrag) => eintrag.typ === fall.typ && !eintrag.archiviert);
+    const niedrig = [...gruppe].sort((a, b) => a.level.level - b.level.level || a.id - b.id)[0];
+    return { fall, gruppe, niedrig };
+  });
+
+  try {
+    for (const { niedrig } of geaendert) {
+      expect(niedrig).toBeTruthy();
+      if (!niedrig) {
+        continue;
+      }
+      const gesetzt = await page.request.patch(`/api/attribute/${niedrig.id}`, {
+        data: { erschoepfung: true, erschoepfungZiel: null },
+      });
+      expect(gesetzt.ok()).toBe(true);
+    }
+
+    for (const { fall, gruppe, niedrig } of geaendert) {
+      expect(niedrig && gruppe.length > 1).toBeTruthy();
+      if (!niedrig || gruppe.length < 2) {
+        continue;
+      }
+      const hoechstesAnderes = Math.max(...gruppe.filter((eintrag) => eintrag.id !== niedrig.id).map((eintrag) => eintrag.level.level));
+      const erwartet = erschoepfungsFaktor(niedrig.level.level, hoechstesAnderes);
+      const ids = new Set(gruppe.map((eintrag) => eintrag.id));
+
+      await setzeVerfall(page, { ...vorher.funktionen, [fall.schalter]: false });
+      const ausDaten = await uebersicht(page);
+      expect(ausDaten.erschoepfungen.filter((regel) => ids.has(regel.attributId))).toEqual([]);
+      const ausBild = erschoepfungsBild(
+        ausDaten.erschoepfungen.map((eintrag) => ({ quelleId: eintrag.attributId, zielId: eintrag.zielId, faktor: eintrag.faktor })),
+      );
+      await page.goto(fall.pfad);
+      const ausAbzug = page.locator('main').locator('[data-abzug="allgemein"]');
+      await expect(ausAbzug).toHaveCount(ausBild.allgemein !== null ? 1 : 0);
+      if (ausBild.allgemein !== null) {
+        await expect(ausAbzug).toHaveText(abzugText(ausBild.allgemein));
+      }
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+
+      const aus = await legeEintrag(page, vorlage.id);
+      eintraege.push(aus.id);
+      await page.request.delete(`/api/eintraege/${aus.id}`);
+
+      await setzeVerfall(page, { ...vorher.funktionen, [fall.schalter]: true });
+      const anDaten = await uebersicht(page);
+      const regeln = anDaten.erschoepfungen.filter((regel) => ids.has(regel.attributId));
+      const eigene = regeln.find((regel) => regel.attributId === niedrig.id && regel.zielId === null);
+      if (erwartet < 1) {
+        expect(eigene?.faktor).toBeCloseTo(erwartet, 5);
+      } else {
+        expect(eigene).toBeUndefined();
+      }
+      let extra = 1;
+      for (const regel of regeln) {
+        if (regel.zielId === null && regel.faktor < 1) {
+          extra *= regel.faktor;
+        }
+      }
+      const anBild = erschoepfungsBild(
+        anDaten.erschoepfungen.map((eintrag) => ({ quelleId: eintrag.attributId, zielId: eintrag.zielId, faktor: eintrag.faktor })),
+      );
+      await page.goto(fall.pfad);
+      const werte = fall.typ === 'status' ? anDaten.status : anDaten.attribute;
+      const abzug = page.locator('main').locator('[data-abzug="allgemein"]');
+      await expect(abzug).toHaveCount(anBild.allgemein !== null ? 1 : 0);
+      if (anBild.allgemein !== null && werte[0]) {
+        await expect(abzug).toHaveText(abzugText(anBild.allgemein));
+        const abzugKasten = await abzug.boundingBox();
+        const nameKasten = await page.locator('main').getByText(werte[0].name, { exact: true }).first().boundingBox();
+        expect(abzugKasten && nameKasten).toBeTruthy();
+        if (abzugKasten && nameKasten) {
+          expect(abzugKasten.y + abzugKasten.height).toBeLessThanOrEqual(nameKasten.y + 2);
+        }
+      }
+
+      const an = await legeEintrag(page, vorlage.id);
+      eintraege.push(an.id);
+      expect(an.faktor).toBeCloseTo(aus.faktor * extra, 5);
+      if (erwartet < 1) {
+        expect(extra).toBeLessThan(1);
+        expect(an.xp).toBeLessThan(aus.xp);
+      }
+      await page.request.delete(`/api/eintraege/${an.id}`);
+    }
+  } finally {
+    for (const { niedrig } of geaendert) {
+      if (!niedrig) {
+        continue;
+      }
+      await page.request.patch(`/api/attribute/${niedrig.id}`, {
+        data: { erschoepfung: niedrig.erschoepfung, erschoepfungZiel: niedrig.erschoepfungZiel },
+      });
+    }
+    for (const id of eintraege) {
+      await page.request.delete(`/api/eintraege/${id}`).catch(() => undefined);
+    }
+    await setzeVerfall(page, vorher.funktionen);
   }
 });

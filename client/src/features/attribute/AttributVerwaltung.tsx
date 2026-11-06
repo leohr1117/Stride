@@ -237,25 +237,27 @@ export function AttributFormular({
           />
         </section>
       )}
-      <div className="space-y-3 rounded-xl bg-flaeche-2 p-3">
-        <Schalter an={erschoepfung} onAendern={setErschoepfung} label={ERSCHOEPFUNG_SCHALTER} umbruch />
-        {erschoepfung && (
-          <Feld label={tx("Ziel")}>
-            <select
-              className={EINGABE_STIL}
-              value={erschoepfungZiel ?? ''}
-              onChange={(ereignis) => setErschoepfungZiel(ereignis.target.value ? Number(ereignis.target.value) : null)}
-            >
-              <option value="">{tx("Für alle XP")}</option>
-              {andere.map((eintrag) => (
-                <option key={eintrag.id} value={eintrag.id}>
-                  {tx('Nur für {name}', { name: attributName(eintrag) })}
-                </option>
-              ))}
-            </select>
-          </Feld>
-        )}
-      </div>
+      {verfallAn && (
+        <div className="space-y-3 rounded-xl bg-flaeche-2 p-3">
+          <Schalter an={erschoepfung} onAendern={setErschoepfung} label={ERSCHOEPFUNG_SCHALTER} umbruch />
+          {erschoepfung && (
+            <Feld label={tx("Ziel")}>
+              <select
+                className={EINGABE_STIL}
+                value={erschoepfungZiel ?? ''}
+                onChange={(ereignis) => setErschoepfungZiel(ereignis.target.value ? Number(ereignis.target.value) : null)}
+              >
+                <option value="">{tx("Für alle XP")}</option>
+                {andere.map((eintrag) => (
+                  <option key={eintrag.id} value={eintrag.id}>
+                    {tx('Nur für {name}', { name: attributName(eintrag) })}
+                  </option>
+                ))}
+              </select>
+            </Feld>
+          )}
+        </div>
+      )}
       <Fehlermeldung fehler={speichern.error} />
       <Knopf type="submit" variante="primaer" className="w-full" aria-busy={speichern.isPending || undefined}>
         {tx("Speichern")}

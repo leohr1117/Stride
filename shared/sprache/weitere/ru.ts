@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.": "Слишком низкий атрибут снижает XP других только пока спад для Умения или Активов включён.",
   "Auf dem Computer sind alle Seiten gleich breit, und die Aktionen im Kopf stehen auf derselben Kante wie der Inhalt.": "На компьютере все страницы одной ширины, а действия в шапке стоят на том же краю, что и содержимое.",
   "Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.": "Символ выбирается в одной строке. Сетка открывается только по нажатию.",
   "Das eigene Level steht in derselben Zeile wie die Vorschläge.": "Свой уровень стоит в одной строке с подсказками.",

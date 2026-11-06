@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.85
+
+### Geändert
+
+- Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.
+
 ## 3.56.84
 
 ### Geändert

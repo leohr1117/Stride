@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.85',
+    seiten: 'Können, Haben',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.'],
+      },
+    ],
+  },
+  {
     version: '3.56.84',
     seiten: 'Heute, Mehr, Ziele, Vorbilder, Fokus, Passwort, Leiste',
     abschnitte: [

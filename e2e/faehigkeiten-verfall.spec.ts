@@ -74,6 +74,80 @@ function xpImDialog(dialog: Locator): Locator {
   return dialog.getByText(/^\d+ XP$/);
 }
 
+const ERSCHOEPFUNG_SCHALTER = 'Zu niedrig senkt XP anderer Attribute';
+
+async function kasten(ziel: Locator): Promise<{ x: number; y: number; width: number; height: number } | null> {
+  if ((await ziel.count()) === 0) {
+    return null;
+  }
+  return ziel.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+  });
+}
+
+/** Lage unter dem Verfall, Text links, Bahn rechts, Knopf am Start oder am Ende. */
+async function pruefeErschoepfungsSchalter(dialog: Locator, sichtbar: boolean): Promise<void> {
+  const schalter = dialog.getByRole('switch', { name: ERSCHOEPFUNG_SCHALTER });
+  const speichern = dialog.getByRole('button', { name: 'Speichern', exact: true });
+  await expect(speichern).toBeVisible();
+  if (!sichtbar) {
+    await expect(schalter).toHaveCount(0);
+    await expect(dialog.getByRole('combobox', { name: 'Ziel' })).toHaveCount(0);
+    await expect(dialog.getByText('Für alle XP', { exact: true })).toHaveCount(0);
+    return;
+  }
+  await expect(schalter).toBeVisible();
+  const verfall = dialog.getByRole('heading', { name: 'Verfall', exact: true });
+  const zeit = dialog.getByText('Verlust über Zeit', { exact: true });
+  const schalterKasten = await kasten(schalter);
+  const verfallKasten = await kasten(verfall);
+  const zeitKasten = await kasten(zeit);
+  const speichernKasten = await kasten(speichern);
+  expect(verfallKasten && zeitKasten && schalterKasten && speichernKasten).toBeTruthy();
+  if (!verfallKasten || !zeitKasten || !schalterKasten || !speichernKasten) {
+    return;
+  }
+  expect(verfallKasten.y).toBeLessThan(zeitKasten.y);
+  expect(zeitKasten.y).toBeLessThan(schalterKasten.y);
+  const ordnung = await dialog.evaluate((wurzel) => {
+    const felder = wurzel.querySelector('.formular-felder');
+    const fuss = wurzel.querySelector('.formular-fuss');
+    const schalterElement = wurzel.querySelector('[role="switch"]');
+    const speichernElement = wurzel.querySelector('button[type="submit"]');
+    if (!felder || !fuss || !schalterElement || !speichernElement) {
+      return null;
+    }
+    return {
+      schalterInFeldern: felder.contains(schalterElement),
+      speichernImFuss: fuss.contains(speichernElement),
+      felderVorFuss: (felder.compareDocumentPosition(fuss) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0,
+    };
+  });
+  expect(ordnung).toEqual({ schalterInFeldern: true, speichernImFuss: true, felderVorFuss: true });
+
+  const bahn = schalter.locator('.schalter-bahn');
+  const knopf = schalter.locator('.schalter-knopf');
+  const label = schalter.locator('span.font-medium');
+  const bahnKasten = await kasten(bahn);
+  const knopfKasten = await kasten(knopf);
+  const labelKasten = await kasten(label);
+  expect(bahnKasten && knopfKasten && labelKasten).toBeTruthy();
+  if (!bahnKasten || !knopfKasten || !labelKasten) {
+    return;
+  }
+  expect(labelKasten.x).toBeGreaterThanOrEqual(schalterKasten.x - 1);
+  expect(labelKasten.x).toBeLessThan(bahnKasten.x);
+  expect(bahnKasten.x + bahnKasten.width).toBeGreaterThanOrEqual(schalterKasten.x + schalterKasten.width - 4);
+  expect(bahnKasten.x).toBeGreaterThan(schalterKasten.x + schalterKasten.width / 2);
+  const an = (await schalter.getAttribute('aria-checked')) === 'true';
+  if (an) {
+    expect(knopfKasten.x + knopfKasten.width).toBeGreaterThanOrEqual(bahnKasten.x + bahnKasten.width - 3);
+  } else {
+    expect(Math.abs(knopfKasten.x - bahnKasten.x)).toBeLessThanOrEqual(3);
+  }
+}
+
 test.beforeEach(async ({ page }) => {
   await anmelden(page);
 });
@@ -268,6 +342,7 @@ test('XP-Verlust ist für Können und Haben getrennt', async ({ page }) => {
     await expect(koennenDialog.getByRole('heading', { name: 'Verfall', exact: true })).toBeVisible();
     await expect(koennenDialog.getByText('Verlust bei Nichtnutzung')).toBeVisible();
     await expect(koennenDialog.getByText('Verlust über Zeit')).toBeVisible();
+    await pruefeErschoepfungsSchalter(koennenDialog, true);
     await koennenDialog.getByRole('button', { name: 'Schließen' }).click();
 
     await page.goto('/haben');
@@ -276,9 +351,127 @@ test('XP-Verlust ist für Können und Haben getrennt', async ({ page }) => {
     await expect(habenDialog.getByRole('heading', { name: 'Verfall', exact: true })).toHaveCount(0);
     await expect(habenDialog.getByText('Verlust bei Nichtnutzung')).toHaveCount(0);
     await expect(habenDialog.getByText('Verlust über Zeit')).toHaveCount(0);
+    await pruefeErschoepfungsSchalter(habenDialog, false);
     await habenDialog.getByRole('button', { name: 'Schließen' }).click();
     await ohneSeitlichenUeberlauf(page);
   } finally {
+    await page.evaluate(async (funktionen) => {
+      await fetch('/api/einstellungen', {
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ funktionen }),
+      });
+    }, vorher.funktionen);
+  }
+});
+
+test('Erschöpfung bleibt gespeichert und der Schalter folgt dem Verfall', async ({ page }, testInfo) => {
+  const vorher = await page.evaluate(async () => {
+    const antwort = await fetch('/api/einstellungen');
+    if (!antwort.ok) {
+      throw new Error('Einstellungen nicht geladen');
+    }
+    return antwort.json() as Promise<EinstellungenZeile>;
+  });
+  const liste = await page.evaluate(async () => {
+    const antwort = await fetch('/api/attribute');
+    if (!antwort.ok) {
+      throw new Error('Attribute nicht geladen');
+    }
+    return antwort.json() as Promise<{
+      id: number;
+      name: string;
+      typ: 'attribut' | 'status';
+      archiviert: boolean;
+      erschoepfung: boolean;
+      erschoepfungZiel: number | null;
+    }[]>;
+  });
+  const koerper = liste.find((eintrag) => eintrag.name === 'Körper' && eintrag.typ === 'attribut' && !eintrag.archiviert);
+  const haben = liste.find((eintrag) => eintrag.typ === 'status' && !eintrag.archiviert);
+  expect(koerper && haben).toBeTruthy();
+  if (!koerper || !haben) {
+    return;
+  }
+  const staende = [koerper, haben];
+
+  try {
+    for (const attribut of staende) {
+      const gesetzt = await page.request.patch(`/api/attribute/${attribut.id}`, {
+        data: { erschoepfung: true, erschoepfungZiel: null },
+      });
+      expect(gesetzt.ok()).toBe(true);
+    }
+    if (testInfo.project.name === 'handy') {
+      await page.setViewportSize({ width: 390, height: 844 });
+    }
+
+    const schalte = async (verfallKoennen: boolean, verfallHaben: boolean) => {
+      const antwort = await page.request.patch('/api/einstellungen', {
+        data: { funktionen: { ...vorher.funktionen, verfallKoennen, verfallHaben } },
+      });
+      expect(antwort.ok()).toBe(true);
+    };
+    const oeffne = async (pfad: string, name: string) => {
+      await page.goto(pfad);
+      const knopf = page.getByRole('button', { name, exact: true });
+      await knopf.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
+      await knopf.click();
+      const dialog = page.getByRole('dialog', { name, exact: true });
+      await expect(dialog).toBeVisible();
+      return dialog;
+    };
+
+    await schalte(true, true);
+    const koennenAn = await oeffne('/koennen', koerper.name);
+    await pruefeErschoepfungsSchalter(koennenAn, true);
+    if (testInfo.project.name === 'handy') {
+      await page.screenshot({ path: 'tmp-test/erschoepfung-verfall/handy-390-koennen-an.png' });
+    }
+    await koennenAn.getByRole('button', { name: 'Schließen' }).click();
+    await expect(koennenAn).toBeHidden();
+
+    await schalte(false, false);
+    const koennenAus = await oeffne('/koennen', koerper.name);
+    await pruefeErschoepfungsSchalter(koennenAus, false);
+    if (testInfo.project.name === 'handy') {
+      await page.screenshot({ path: 'tmp-test/erschoepfung-verfall/handy-390-koennen-aus.png' });
+    }
+    await koennenAus.getByRole('button', { name: 'Speichern', exact: true }).click();
+    await expect(koennenAus).toBeHidden();
+
+    const habenAus = await oeffne('/haben', haben.name);
+    await pruefeErschoepfungsSchalter(habenAus, false);
+    if (testInfo.project.name === 'handy') {
+      await page.screenshot({ path: 'tmp-test/erschoepfung-verfall/handy-390-haben-aus.png' });
+    }
+    await habenAus.getByRole('button', { name: 'Speichern', exact: true }).click();
+    await expect(habenAus).toBeHidden();
+
+    const nachSpeichern = await page.evaluate(async () => {
+      const antwort = await fetch('/api/attribute');
+      if (!antwort.ok) {
+        throw new Error('Attribute nicht geladen');
+      }
+      return antwort.json() as Promise<{ id: number; erschoepfung: boolean; erschoepfungZiel: number | null }[]>;
+    });
+    for (const attribut of staende) {
+      const stand = nachSpeichern.find((eintrag) => eintrag.id === attribut.id);
+      expect(stand?.erschoepfung).toBe(true);
+      expect(stand?.erschoepfungZiel).toBeNull();
+    }
+
+    await schalte(false, true);
+    const habenAn = await oeffne('/haben', haben.name);
+    await pruefeErschoepfungsSchalter(habenAn, true);
+    await habenAn.getByRole('button', { name: 'Schließen' }).click();
+    await expect(habenAn).toBeHidden();
+  } finally {
+    for (const attribut of staende) {
+      await page.request.patch(`/api/attribute/${attribut.id}`, {
+        data: { erschoepfung: attribut.erschoepfung, erschoepfungZiel: attribut.erschoepfungZiel },
+      });
+    }
     await page.evaluate(async (funktionen) => {
       await fetch('/api/einstellungen', {
         method: 'PATCH',

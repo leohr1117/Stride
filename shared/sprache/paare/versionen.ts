@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.', 'An attribute that is too low lowers other XP only while decay for Ability or Assets is on.'],
   ['Auf dem Computer sind alle Seiten gleich breit, und die Aktionen im Kopf stehen auf derselben Kante wie der Inhalt.', 'On a computer, every page is the same width, and the actions in the header sit on the same edge as the content.'],
   ['Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.', 'The icon is chosen on one row. The grid opens only when you tap it.'],
   ['Das eigene Level steht in derselben Zeile wie die Vorschläge.', 'The custom level sits on the same line as the suggestions.'],

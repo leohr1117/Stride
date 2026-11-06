@@ -147,9 +147,10 @@ export function ladeKlasse(): string {
 
 export function ladeErschoepfungen(): ErschoepfungRegel[] {
   const attribute = ladeWirksameAttribute();
+  const funktionen = ladeEinstellungen().funktionen;
   const regeln: ErschoepfungRegel[] = [];
   for (const quelle of attribute) {
-    if (quelle.erschoepfung) {
+    if (quelle.erschoepfung && funktionen[verfallFunktion(quelle.typ)]) {
       let hoechstesAnderes = 0;
       for (const attribut of attribute) {
         if (attribut.id !== quelle.id && attribut.typ === quelle.typ) {
