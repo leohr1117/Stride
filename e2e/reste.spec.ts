@@ -23,7 +23,7 @@ test('Handbuch und Einführung nennen die Bereiche nicht mehr', async ({ page },
 
   await page.goto('/mehr/profil/fokus');
   await expect(page.getByRole('heading', { name: 'Fokus', level: 1 })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Sport' })).toContainText('Training, Körper, Schlaf und Ernährung');
+  await expect(page.getByRole('checkbox', { name: 'Sport' })).toContainText('Training, Körper, Schlaf und Ernährung');
   await expect(page.getByText('Eigene Aufgaben')).toHaveCount(0);
   await expect(page.getByText('Trainingsplan')).toHaveCount(0);
   await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Konto');

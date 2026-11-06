@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.79
+
+### Geändert
+
+- Auswahllisten stehen als Zeilen statt als Karten.
+
 ## 3.56.78
 
 ### Geändert

@@ -396,7 +396,7 @@ async function zumStartTeil(seite: Page): Promise<void> {
   await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
   await seite.locator('input[name="nickname"]').fill('Start');
   await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
-  await seite.getByRole('button', { name: 'Sport' }).click();
+  await seite.getByRole('checkbox', { name: 'Sport' }).click();
   await seite.getByRole('button', { name: 'Weiter', exact: true }).click();
   await seite.getByRole('radio', { name: 'In etwas besser werden' }).click();
   await seite.getByRole('button', { name: 'Weiter', exact: true }).click();

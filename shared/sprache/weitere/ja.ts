@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auswahllisten stehen als Zeilen statt als Karten.": "選択リストはカードではなく行で表示されます。",
   "Zweitknöpfe haben keine graue Fläche mehr.": "副ボタンに灰色の塗りがなくなりました。",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "「プロジェクトを終える」は、プロジェクトページのヘッダーのメニューにあります。",
   "Projekt abschließen": "プロジェクトを終える",

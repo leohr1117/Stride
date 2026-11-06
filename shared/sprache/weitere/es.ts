@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auswahllisten stehen als Zeilen statt als Karten.": "Las listas de selección aparecen como filas en lugar de tarjetas.",
   "Zweitknöpfe haben keine graue Fläche mehr.": "Los botones secundarios ya no tienen un relleno gris.",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "Terminar proyecto está en el menú del encabezado de la página del proyecto.",
   "Projekt abschließen": "Terminar proyecto",

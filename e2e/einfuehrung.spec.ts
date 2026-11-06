@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import fs from 'node:fs';
 import { SPRACH_NAME, SPRACHEN, type Sprache } from '../shared/sprache/kern.ts';
 import { zeige } from '../shared/sprache/index.ts';
+import { auswahlZeilen } from './helfer.ts';
 
 async function merkbild(seite: Page, name: string): Promise<void> {
   fs.mkdirSync('tmp-test/einfuehrung', { recursive: true });
@@ -81,6 +82,7 @@ async function sprachwahlSichtbar(seite: Page, sprache: Sprache): Promise<void> 
   await expect(seite.getByRole('heading', { name: zeige('Sprache', sprache), exact: true })).toBeVisible();
   await expect(seite.getByRole('radio', { name: SPRACH_NAME[sprache], exact: true })).toBeChecked();
   await expect(seite.getByRole('heading', { name: zeige('Wie heißt du in Stride?', sprache), exact: true })).toHaveCount(0);
+  await auswahlZeilen(seite.getByRole('radiogroup', { name: zeige('Sprache', sprache) }), 'radio', 56, 'rechts', true);
   const breite = seite.viewportSize()?.width ?? 0;
   for (const code of SPRACHEN) {
     const wahl = seite.getByRole('radio', { name: SPRACH_NAME[code], exact: true });
@@ -98,8 +100,9 @@ async function nameWeiter(seite: Page, sprache: Sprache): Promise<void> {
 }
 
 async function sportWaehlen(seite: Page, sprache: Sprache): Promise<void> {
-  await seite.getByRole('button', { name: zeige('Sport', sprache) }).click();
-  await expect(seite.getByRole('button', { name: zeige('Sport', sprache) })).toHaveAttribute('aria-pressed', 'true');
+  const sport = seite.getByRole('checkbox', { name: zeige('Sport', sprache) });
+  await sport.click();
+  await expect(sport).toBeChecked();
 }
 
 async function vorlagenNamen(seite: Page): Promise<string[]> {
@@ -157,6 +160,7 @@ test('Weg A legt ein Projekt an und Fertig öffnet Heute', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Worin willst du wachsen?', exact: true })).toBeVisible();
   aktionen += 1;
   await sportWaehlen(page, 'de');
+  await auswahlZeilen(page.getByRole('group', { name: 'Fokus' }), 'checkbox', 64, 'links', false);
   await expect(page.getByText('Tätigkeiten:')).toBeVisible();
   await ohneSeitlichenUeberhang(page);
   await merkbild(page, 'a-fokus');
@@ -165,6 +169,7 @@ test('Weg A legt ein Projekt an und Fertig öffnet Heute', async ({ page }) => {
 
   await expect(page.getByRole('heading', { name: 'Was willst du erreichen?', exact: true })).toBeVisible();
   await expect(page.getByRole('radio', { name: 'Projekte umsetzen' })).toBeChecked();
+  await auswahlZeilen(page.getByRole('radiogroup', { name: 'Was willst du erreichen?' }), 'radio', 64, 'rechts', true);
   await expect(page.getByRole('progressbar')).toHaveAttribute('aria-valuemax', '5');
   await expect(page.getByRole('progressbar').locator('span')).toHaveCount(5);
   await merkbild(page, 'a-ziel');
@@ -307,7 +312,7 @@ test('Zurück auf Schritt 4 behält den Fokus', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Was willst du erreichen?', exact: true })).toBeVisible();
   await page.goBack();
   await expect(page.getByRole('heading', { name: 'Worin willst du wachsen?', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Sport' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('checkbox', { name: 'Sport' })).toBeChecked();
   await merkbild(page, 'zurueck-fokus');
 });
 

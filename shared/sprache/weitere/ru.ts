@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auswahllisten stehen als Zeilen statt als Karten.": "Списки выбора показаны строками, а не карточками.",
   "Zweitknöpfe haben keine graue Fläche mehr.": "Вторичные кнопки больше не залиты серым.",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "«Завершить проект» стоит в меню в шапке страницы проекта.",
   "Projekt abschließen": "Завершить проект",

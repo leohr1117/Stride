@@ -49,7 +49,7 @@ test('Weiter steht in der Einführung direkt unter der Liste', async ({ page }, 
   for (const schritt of schritte) {
     if (schritt === 'fokus') {
       await expect(page.getByRole('heading', { name: 'Worin willst du wachsen?', exact: true })).toBeVisible();
-      await page.getByRole('button', { name: 'Sport' }).click();
+      await page.getByRole('checkbox', { name: 'Sport' }).click();
     }
     if (schritt === 'abschluss') {
       await expect(page.getByRole('heading', { name: 'Eingerichtet', exact: true })).toBeVisible();

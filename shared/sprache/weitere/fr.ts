@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auswahllisten stehen als Zeilen statt als Karten.": "Les listes de choix s'affichent en lignes au lieu de cartes.",
   "Zweitknöpfe haben keine graue Fläche mehr.": "Les boutons secondaires n'ont plus de fond gris.",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "Terminer le projet est dans le menu en tête de la page du projet.",
   "Projekt abschließen": "Terminer le projet",

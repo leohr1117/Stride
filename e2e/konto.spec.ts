@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
-import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+import { anmelden, auswahlZeilen, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 function altersText(jahr: number): string {
   const alter = new Date().getFullYear() - jahr;
@@ -147,6 +147,7 @@ test('Konto gruppiert Profil und Anmeldung', async ({ page }, testInfo) => {
     await expect(page.getByRole('radio', { name: /In etwas besser werden/ })).toBeVisible();
     await expect(page.getByRole('radio', { name: /Einfach festhalten/ })).toBeVisible();
     await expect(page.getByRole('radio')).toHaveCount(4);
+    await auswahlZeilen(page.getByRole('radiogroup', { name: 'Was willst du erreichen?' }), 'radio', 64, 'rechts', true);
     await expect(page.getByRole('button', { name: 'Speichern' })).toBeEnabled();
     await page.getByRole('button', { name: 'Speichern' }).click();
     await expect(page.getByRole('heading', { name: 'Was willst du erreichen?', level: 1 })).toBeVisible();
@@ -158,10 +159,27 @@ test('Konto gruppiert Profil und Anmeldung', async ({ page }, testInfo) => {
     await expect(page.getByText('Speichern archiviert abgewählte Attribute.')).toBeVisible();
     await expect(page.getByRole('button', { name: /^Info/ })).toHaveCount(0);
     const gruppe = page.getByRole('group', { name: 'Fokus' });
-    for (let schutz = 0; schutz < 20 && (await gruppe.locator('button[aria-pressed="true"]').count()) > 0; schutz += 1) {
-      await gruppe.locator('button[aria-pressed="true"]').first().click();
+    await auswahlZeilen(gruppe, 'checkbox', 64, 'links', false);
+    for (const anfang of ['Tätigkeiten:', 'Können:', 'Haben:']) {
+      const zeile = page.locator('p', { hasText: anfang });
+      if ((await zeile.count()) === 0) {
+        continue;
+      }
+      const masse = await zeile.first().evaluate((element) => {
+        const stil = getComputedStyle(element);
+        const schrift = Number.parseFloat(stil.fontSize);
+        const zeilenhoehe = Number.parseFloat(stil.lineHeight);
+        return {
+          hoehe: element.getBoundingClientRect().height,
+          zeile: Number.isFinite(zeilenhoehe) ? zeilenhoehe : schrift * 1.4,
+        };
+      });
+      expect(masse.hoehe).toBeLessThanOrEqual(masse.zeile * 2 + 1);
     }
-    await expect(gruppe.locator('button[aria-pressed="true"]')).toHaveCount(0);
+    for (let schutz = 0; schutz < 20 && (await gruppe.locator('[role="checkbox"][aria-checked="true"]').count()) > 0; schutz += 1) {
+      await gruppe.locator('[role="checkbox"][aria-checked="true"]').first().click();
+    }
+    await expect(gruppe.locator('[role="checkbox"][aria-checked="true"]')).toHaveCount(0);
     const pflicht = page.getByRole('alert');
     await expect(pflicht).toContainText('Wähle mindestens einen Fokus.');
     await expect(gruppe).toHaveAttribute('aria-invalid', 'true');

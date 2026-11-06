@@ -16,7 +16,7 @@ import {
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useSprache } from '../sprache.tsx';
 import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf, Ladeanzeige } from '../ui/index.ts';
-import { FokusVorschau, FokusWahl, ZielWahl } from './ProfilErstellung.tsx';
+import { FokusVorschau, FokusWahl, WahlListe, ZielWahl } from './ProfilErstellung.tsx';
 
 /** Überlebt den Neuaufbau beim Sprachwechsel, damit ältere Speichern nicht gewinnen. */
 let speicherKette: Promise<void> = Promise.resolve();
@@ -308,23 +308,15 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
     titel = 'Sprache';
     knopf = fehler ? 'Erneut versuchen' : 'Weiter';
     inhalt = (
-      <div data-schritt-inhalt="" role="radiogroup" aria-label={tx('Sprache')} className="space-y-2">
-        {SPRACHEN.map((code) => {
-          const aktiv = sprache === code;
-          return (
-            <button
-              key={code}
-              type="button"
-              role="radio"
-              lang={code}
-              aria-checked={aktiv}
-              onClick={() => waehleSprache(code)}
-              className={`sprach-wahl min-h-14 w-full rounded-2xl border px-4 text-left text-sm font-medium break-words transition ${aktiv ? 'border-akzent bg-akzent/10' : 'border-rand bg-flaeche hover:border-leise/50'}`}
-            >
-              {SPRACH_NAME[code]}
-            </button>
-          );
-        })}
+      <div data-schritt-inhalt="">
+        <WahlListe
+          art="einfach"
+          label={tx('Sprache')}
+          zeilenKlasse="sprach-wahl"
+          optionen={SPRACHEN.map((code) => ({ wert: code, name: SPRACH_NAME[code], lang: code }))}
+          istGewaehlt={(code) => sprache === code}
+          onWaehlen={waehleSprache}
+        />
       </div>
     );
   } else if (schritt === 'profilname') {

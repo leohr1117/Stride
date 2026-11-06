@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auswahllisten stehen als Zeilen statt als Karten.": "选择列表以行显示，不再是卡片。",
   "Zweitknöpfe haben keine graue Fläche mehr.": "次要按钮不再有灰色填充。",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "「完成项目」在项目页顶部的菜单里。",
   "Projekt abschließen": "完成项目",
