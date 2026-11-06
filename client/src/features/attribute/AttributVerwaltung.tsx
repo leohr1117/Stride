@@ -6,7 +6,6 @@ import { ATTRIBUT_KATALOG } from '../../../../shared/features/attribute/attribut
 import { GRENZEN, type AttributKennung, type AttributTyp, type IconName } from '../../../../shared/spiel/begriffe.ts';
 import {
   ERSCHOEPFUNG_SCHALTER,
-  VERFALL_STUFE_LABEL,
   VERFALL_STUFEN,
   abzugNebenNamen,
   erschoepfungsBild,
@@ -14,6 +13,7 @@ import {
   verfallAusText,
   verfallProzent,
   type VerfallArt,
+  type VerfallStufe,
 } from '../../../../shared/spiel/belastung.ts';
 import { verfallFunktion } from '../../../../shared/spiel/funktionen.ts';
 import { LEVEL_KURVEN, verlustBalken } from '../../../../shared/spiel/level.ts';
@@ -129,18 +129,16 @@ export function AttributBereich({
 
 const ABSCHNITT = 'ueberschrift abschnittskopf text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case';
 
+function verfallFeld(art: VerfallArt, stufe: VerfallStufe): string {
+  return stufe === 'aus' ? '' : verfallAlsText(art, stufe);
+}
+
 function verfallOptionen(art: VerfallArt): VorschlagOption[] {
-  return VERFALL_STUFEN.map((stufe) => {
-    const name = tx(VERFALL_STUFE_LABEL[stufe]);
-    const prozent = stufe === 'aus' ? '' : prozentPunkte(verfallProzent(art, stufe));
-    return {
-      id: `${art}-${stufe}`,
-      wert: verfallAlsText(art, stufe),
-      zeile: name,
-      neben: prozent || undefined,
-      name: prozent ? `${name}, ${prozent}` : name,
-    };
-  });
+  return VERFALL_STUFEN.map((stufe) => ({
+    id: `${art}-${stufe}`,
+    wert: verfallFeld(art, stufe),
+    zeile: stufe === 'aus' ? tx('Aus') : prozentPunkte(verfallProzent(art, stufe)),
+  }));
 }
 
 export function AttributFormular({
@@ -157,8 +155,8 @@ export function AttributFormular({
   const [beschreibung, setBeschreibung] = useState(attribut.beschreibung);
   const [farbe, setFarbe] = useState(attribut.farbe);
   const [icon, setIcon] = useState<IconName>(attribut.icon as IconName);
-  const [belastungText, setBelastungText] = useState(verfallAlsText('belastung', attribut.verfallBelastung));
-  const [zeitText, setZeitText] = useState(verfallAlsText('zeit', attribut.verfallZeit));
+  const [belastungText, setBelastungText] = useState(verfallFeld('belastung', attribut.verfallBelastung));
+  const [zeitText, setZeitText] = useState(verfallFeld('zeit', attribut.verfallZeit));
   const [erschoepfung, setErschoepfung] = useState(attribut.erschoepfung);
   const [erschoepfungZiel, setErschoepfungZiel] = useState<number | null>(attribut.erschoepfungZiel);
   const verfallAn = Boolean(funktionen[verfallFunktion(attribut.typ)]);
@@ -219,6 +217,7 @@ export function AttributFormular({
           <h3 className={ABSCHNITT}>{tx('Verfall')}</h3>
           <VorschlagFeld
             label="Verlust bei Nichtnutzung"
+            anordnung="reihe"
             text={belastungText}
             onText={setBelastungText}
             optionen={verfallOptionen('belastung')}
@@ -229,6 +228,7 @@ export function AttributFormular({
           />
           <VorschlagFeld
             label="Verlust über Zeit"
+            anordnung="reihe"
             text={zeitText}
             onText={setZeitText}
             optionen={verfallOptionen('zeit')}

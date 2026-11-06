@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.": "Los niveles de pérdida de un atributo quedan en una línea por grupo.",
   "Bosse öffnen sich in Laufend und auf der Projektseite durch Tippen auf die ganze Zeile.": "Los jefes se abren en En curso y en la página del proyecto al tocar toda la fila.",
   "Kennzahlen auf Heute stehen mittig in gleich breiten Spalten.": "En Hoy, las cifras quedan centradas en columnas del mismo ancho.",
   "Die Mitte von Symbolen, Zahlen und Texten wird geprüft. Die Oberfläche bleibt gleich.": "Se comprueba el centrado de símbolos, números y texto. La superficie sigue igual.",

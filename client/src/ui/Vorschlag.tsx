@@ -121,6 +121,7 @@ export function VorschlagFeld({
   };
 
   const reihe = anordnung === 'reihe';
+  const reiheStil = reihe ? { gridTemplateColumns: `repeat(${optionen.length + 1}, minmax(0, 1fr))` } : undefined;
 
   return (
     <div className="feld block min-w-0 space-y-2" data-feld-fehler={fehler ? '' : undefined}>
@@ -130,7 +131,8 @@ export function VorschlagFeld({
       <div
         role="group"
         aria-labelledby={gruppeId}
-        className={reihe ? 'grid min-w-0 grid-cols-4 gap-2' : 'flex min-w-0 flex-wrap items-end gap-2'}
+        className={reihe ? 'grid min-w-0 gap-2' : 'flex min-w-0 flex-wrap items-end gap-2'}
+        style={reiheStil}
       >
         {reihe ? (
           optionen.map((option, index) => {

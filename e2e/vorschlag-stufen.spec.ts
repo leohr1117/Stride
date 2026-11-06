@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import { ATTRIBUT_KATALOG } from '../shared/features/attribute/attributKatalog.ts';
 import type { AttributKennung } from '../shared/spiel/begriffe.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
@@ -26,8 +26,37 @@ async function api<T>(seite: Page, pfad: string, methode: string, koerper?: unkn
   return text ? (JSON.parse(text) as T) : (undefined as T);
 }
 
+const VERLUST_BILD = 'tmp-test/verlust-stufen';
+
+async function stufenZeile(gruppe: Locator, namen: readonly string[]): Promise<void> {
+  const knoepfe = gruppe.getByRole('button');
+  await expect(knoepfe).toHaveCount(namen.length);
+  for (let index = 0; index < namen.length; index += 1) {
+    await expect(knoepfe.nth(index)).toHaveAttribute('aria-label', namen[index] ?? '');
+  }
+  const kaesten = await gruppe.locator('button, input').evaluateAll((knoten) =>
+    knoten.map((knoten) => {
+      const kasten = knoten.getBoundingClientRect();
+      return { oben: kasten.top, links: kasten.left, rechts: kasten.right };
+    }),
+  );
+  expect(kaesten).toHaveLength(namen.length + 1);
+  const oben = kaesten[0]?.oben ?? 0;
+  for (const kasten of kaesten) {
+    expect(Math.abs(kasten.oben - oben)).toBeLessThan(2);
+  }
+  for (let index = 1; index < kaesten.length; index += 1) {
+    const vorher = kaesten[index - 1];
+    const aktuell = kaesten[index];
+    expect(vorher).toBeTruthy();
+    expect(aktuell).toBeTruthy();
+    expect(aktuell!.links).toBeGreaterThan((vorher?.rechts ?? 0) - 1);
+  }
+}
+
 test.beforeAll(() => {
   fs.mkdirSync(BILD, { recursive: true });
+  fs.mkdirSync(VERLUST_BILD, { recursive: true });
 });
 
 test('Ein Vision-Vorschlag setzt das Level, ein eigener Wert bleibt gespeichert', async ({ page }, testInfo) => {
@@ -71,14 +100,31 @@ test('Verfall-Stufen setzen das Feld, ein eigener Prozentwert wird als Stufe ges
   const einstellungen = await api<{ funktionen: { verfallKoennen?: boolean } }>(page, '/api/einstellungen', 'GET');
   const verfallWarAn = einstellungen.funktionen.verfallKoennen === true;
   const liste = await api<AttributZeile[]>(page, '/api/attribute', 'GET');
-  const ziel = liste.find((eintrag) => eintrag.typ === 'attribut' && !eintrag.archiviert);
+  const ziel =
+    liste.find((eintrag) => eintrag.name === 'Körper' && eintrag.typ === 'attribut' && !eintrag.archiviert) ??
+    liste.find((eintrag) => eintrag.typ === 'attribut' && !eintrag.archiviert);
   expect(ziel).toBeTruthy();
   if (!ziel) {
     return;
   }
+  const hell = testInfo.project.name === 'handy';
+  let darstellung: { stil: string; glimmen: boolean; eigeneFarben: boolean; primaer: string; akzent: string; hintergrund: string } | null =
+    null;
   try {
     if (!verfallWarAn) {
       await api(page, '/api/einstellungen', 'PATCH', { funktionen: { verfallKoennen: true } });
+    }
+    if (hell) {
+      darstellung = await api<{
+        stil: string;
+        glimmen: boolean;
+        eigeneFarben: boolean;
+        primaer: string;
+        akzent: string;
+        hintergrund: string;
+      }>(page, '/api/einstellungen', 'GET');
+      await page.emulateMedia({ colorScheme: 'light' });
+      await api(page, '/api/einstellungen', 'PATCH', { stil: 'standard', farbenZuruecksetzen: true });
     }
     await page.goto('/koennen');
     await page.getByRole('button', { name: `Aktionen für ${ziel.name}`, exact: true }).click();
@@ -88,19 +134,49 @@ test('Verfall-Stufen setzen das Feld, ein eigener Prozentwert wird als Stufe ges
     const zeit = dialog.getByRole('group', { name: 'Verlust über Zeit' });
     await nicht.scrollIntoViewIfNeeded();
     await ohneSeitlichenUeberlauf(page);
+    await stufenZeile(nicht, ['Aus', '5 %', '10 %', '20 %']);
+    await stufenZeile(zeit, ['Aus', '5 %', '10 %', '25 %']);
+    await expect(nicht.getByText('Eigener', { exact: true })).toHaveCount(0);
+    await expect(nicht.getByRole('button', { name: 'Leicht', exact: true })).toHaveCount(0);
     await page.screenshot({ path: `${BILD}/${testInfo.project.name}-verfall.png` });
-    const mittel = nicht.getByRole('button', { name: 'Mittel' });
-    await mittel.click();
+    if (hell) {
+      await expect
+        .poll(async () =>
+          page.evaluate(() => {
+            const stil = getComputedStyle(document.documentElement);
+            return `${stil.getPropertyValue('--flaeche').trim()}|${stil.getPropertyValue('--gefahr').trim()}`;
+          }),
+        )
+        .toBe('#ffffff|#c62828');
+      const abschnitt = dialog.locator('section').filter({ hasText: 'Verlust bei Nichtnutzung' });
+      await abschnitt.scrollIntoViewIfNeeded();
+      await page.evaluate(
+        () => new Promise((loesen) => requestAnimationFrame(() => requestAnimationFrame(() => loesen(undefined)))),
+      );
+      await page.screenshot({ path: `${VERLUST_BILD}/390-verlust.png` });
+      await page.screenshot({ path: `${VERLUST_BILD}/390-verlust-ganz.png`, fullPage: true });
+      await abschnitt.screenshot({ path: `${VERLUST_BILD}/390-verlust-abschnitt.png` });
+    }
+    const aus = nicht.getByRole('button', { name: 'Aus', exact: true });
+    await aus.click();
     const feld = nicht.getByRole('textbox');
+    await expect(feld).toHaveValue('');
+    await expect(aus).toHaveAttribute('aria-pressed', 'true');
+    const mittel = nicht.getByRole('button', { name: '10 %', exact: true });
+    await mittel.click();
     await expect(feld).toHaveValue('10');
     await expect(mittel).toHaveAttribute('aria-pressed', 'true');
+    await expect(aus).toHaveAttribute('aria-pressed', 'false');
     await feld.fill('20');
     await expect(mittel).toHaveAttribute('aria-pressed', 'false');
-    const leicht = zeit.getByRole('button', { name: 'Leicht' });
+    const leicht = zeit.getByRole('button', { name: '5 %', exact: true });
     await leicht.click();
     const zeitFeld = zeit.getByRole('textbox');
     await expect(zeitFeld).toHaveValue('5');
     await expect(leicht).toHaveAttribute('aria-pressed', 'true');
+    await zeitFeld.fill('7');
+    await expect(leicht).toHaveAttribute('aria-pressed', 'false');
+    await expect(zeitFeld).toHaveValue('7');
     await zeitFeld.fill('25');
     await expect(leicht).toHaveAttribute('aria-pressed', 'false');
     await dialog.getByRole('button', { name: 'Speichern', exact: true }).click();
@@ -116,6 +192,22 @@ test('Verfall-Stufen setzen das Feld, ein eigener Prozentwert wird als Stufe ges
     }).catch(() => undefined);
     if (!verfallWarAn) {
       await api(page, '/api/einstellungen', 'PATCH', { funktionen: { verfallKoennen: false } }).catch(() => undefined);
+    }
+    if (darstellung) {
+      await api(
+        page,
+        '/api/einstellungen',
+        'PATCH',
+        darstellung.eigeneFarben
+          ? {
+              stil: darstellung.stil,
+              glimmen: darstellung.glimmen,
+              primaer: darstellung.primaer,
+              akzent: darstellung.akzent,
+              hintergrund: darstellung.hintergrund,
+            }
+          : { stil: darstellung.stil, glimmen: darstellung.glimmen, farbenZuruecksetzen: true },
+      ).catch(() => undefined);
     }
   }
 });

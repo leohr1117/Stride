@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.": "属性の損失段階は、グループごとに1行に並びます。",
   "Bosse öffnen sich in Laufend und auf der Projektseite durch Tippen auf die ganze Zeile.": "「進行中」とプロジェクトのページでは、行全体をタップするとボスが開きます。",
   "Kennzahlen auf Heute stehen mittig in gleich breiten Spalten.": "「今日」では、数字は同じ幅の列の中央に並びます。",
   "Die Mitte von Symbolen, Zahlen und Texten wird geprüft. Die Oberfläche bleibt gleich.": "記号、数字、文字の中央を確認します。画面はそのままです。",

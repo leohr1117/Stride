@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.', 'An attribute\'s loss stages sit on one line per group.'],
   ['Bosse öffnen sich in Laufend und auf der Projektseite durch Tippen auf die ganze Zeile.', 'Bosses open in Active and on the project page by tapping the whole row.'],
   ['Kennzahlen auf Heute stehen mittig in gleich breiten Spalten.', 'On Today, the figures sit centered in columns of equal width.'],
   ['Die Mitte von Symbolen, Zahlen und Texten wird geprüft. Die Oberfläche bleibt gleich.', 'The centering of symbols, numbers, and text is checked. The surface stays the same.'],

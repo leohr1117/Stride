@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.": "Les paliers de perte d'un attribut tiennent sur une ligne par groupe.",
   "Bosse öffnen sich in Laufend und auf der Projektseite durch Tippen auf die ganze Zeile.": "Les boss s'ouvrent dans En cours et sur la page du projet en touchant toute la ligne.",
   "Kennzahlen auf Heute stehen mittig in gleich breiten Spalten.": "Dans Aujourd'hui, les chiffres sont centrés dans des colonnes de même largeur.",
   "Die Mitte von Symbolen, Zahlen und Texten wird geprüft. Die Oberfläche bleibt gleich.": "Le centrage des symboles, des nombres et du texte est vérifié. La surface reste la même.",

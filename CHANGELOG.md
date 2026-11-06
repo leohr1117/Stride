@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.76
+
+### Verbessert
+
+- Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.
+
 ## 3.56.75
 
 ### Behoben

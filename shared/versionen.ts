@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.76',
+    seiten: 'Können, Haben',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: ['Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.'],
+      },
+    ],
+  },
+  {
     version: '3.56.75',
     seiten: 'Laufend, Projekt',
     abschnitte: [
