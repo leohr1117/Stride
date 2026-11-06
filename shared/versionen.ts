@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.87',
+    seiten: 'Benachrichtigungen',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.'],
+      },
+    ],
+  },
+  {
     version: '3.56.86',
     seiten: 'Leiste',
     abschnitte: [

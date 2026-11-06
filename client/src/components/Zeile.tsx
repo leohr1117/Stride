@@ -115,6 +115,7 @@ export function Zeile({
   typ,
   id,
   className = '',
+  deaktiviert = false,
 }: {
   titel: ReactNode;
   name?: string;
@@ -135,10 +136,11 @@ export function Zeile({
   typ?: ZeilenArt;
   id?: string;
   className?: string;
+  deaktiviert?: boolean;
 }) {
   const bezeichnung = nameVon(titel, name);
   const art = typ ?? artVon({ gefahr, pfeil, onKlick, nach, href });
-  const zeigePfeil = art === 'navigation' || art === 'auswahl';
+  const zeigePfeil = !deaktiviert && (art === 'navigation' || art === 'auswahl');
   const titelFarbe = art === 'aktion' ? (gefahr ? 'text-gefahr' : 'text-haupt') : '';
   const einzug = { '--liste-einzug': listenEinzug ?? (symbol ? '48px' : '16px') } as CSSProperties;
   const dicht = useContext(ZeilenDicht);
@@ -149,14 +151,24 @@ export function Zeile({
       data-zeile={art}
       data-zeilen={dicht ? (neben ? '2' : '1') : undefined}
       data-hat-menue={dicht && menue ? '' : undefined}
+      aria-disabled={deaktiviert ? true : undefined}
       style={einzug}
       className={`${dicht ? RAHMEN_NEU : RAHMEN_ALT} ${className}`}
     >
-      {nach ? <Link to={nach} aria-label={bezeichnung} className="absolute inset-0 z-0" /> : null}
-      {href ? (
+      {deaktiviert ? (
+        <button
+          type="button"
+          disabled
+          aria-disabled={true}
+          aria-label={bezeichnung}
+          className="absolute inset-0 z-0 disabled:cursor-not-allowed"
+        />
+      ) : null}
+      {nach && !deaktiviert ? <Link to={nach} aria-label={bezeichnung} className="absolute inset-0 z-0" /> : null}
+      {href && !deaktiviert ? (
         <a href={href} download={download || undefined} aria-label={bezeichnung} className="absolute inset-0 z-0" />
       ) : null}
-      {onKlick && !nach && !href ? (
+      {onKlick && !nach && !href && !deaktiviert ? (
         <button type="button" onClick={onKlick} aria-label={bezeichnung} className="absolute inset-0 z-0" />
       ) : null}
       {symbol ? (
@@ -170,19 +182,21 @@ export function Zeile({
       ) : null}
       <span className="zeilen-text pointer-events-none flex min-w-0 flex-1 flex-col justify-center">
         <span className="flex min-w-0 items-center">
-          <span className={titelKlasse(titel, dicht, titelFarbe)}>{titel}</span>
+          <span className={deaktiviert ? `${titelKlasse(titel, dicht, titelFarbe)} opacity-60` : titelKlasse(titel, dicht, titelFarbe)}>{titel}</span>
           {info ? (
             <span className="pointer-events-auto inline-flex self-center">
               <InfoHinweis text={info} name={typeof titel === 'string' ? titel : name} knopfKlasse={INFO_IN_ZEILE} />
             </span>
           ) : null}
         </span>
-        {neben ? <span className={dicht ? NEBEN_NEU : NEBEN_ALT}>{neben}</span> : null}
+        {neben ? (
+          <span className={deaktiviert ? `${dicht ? NEBEN_NEU : NEBEN_ALT} opacity-60` : dicht ? NEBEN_NEU : NEBEN_ALT}>{neben}</span>
+        ) : null}
       </span>
       {dicht ? (
         <>
           {wert != null && wert !== '' ? (
-            <span data-zeile-wert="" className={`pointer-events-none ${WERT_NEU}`}>
+            <span data-zeile-wert="" className={deaktiviert ? `pointer-events-none ${WERT_NEU} opacity-60` : `pointer-events-none ${WERT_NEU}`}>
               {wert}
             </span>
           ) : null}
@@ -192,7 +206,7 @@ export function Zeile({
         </>
       ) : (
         <span className="pointer-events-none flex shrink-0 items-center gap-2">
-          {wert != null && wert !== '' ? <span className={WERT_ALT}>{wert}</span> : null}
+          {wert != null && wert !== '' ? <span className={deaktiviert ? `${WERT_ALT} opacity-60` : WERT_ALT}>{wert}</span> : null}
           {rechtsAlt ? <span className="pointer-events-auto relative z-10">{rechtsAlt}</span> : null}
           {zeigePfeil ? <ChevronRight className="zeile-pfeil size-5 shrink-0 text-leise" aria-hidden /> : null}
         </span>

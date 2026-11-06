@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.": "El horario de silencio solo se puede cambiar mientras las notificaciones están activadas en este dispositivo.",
   "Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.": "Bajo Más páginas, el aviso de que todos los huecos están ocupados aparece solo una vez.",
   "Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.": "Un atributo demasiado bajo baja la XP de otros solo mientras el decaimiento de Capacidad o de Bienes está activado.",
   "Auf dem Computer sind alle Seiten gleich breit, und die Aktionen im Kopf stehen auf derselben Kante wie der Inhalt.": "En el ordenador, todas las páginas tienen el mismo ancho, y las acciones del encabezado quedan en el mismo borde que el contenido.",

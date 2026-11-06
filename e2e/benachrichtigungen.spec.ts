@@ -157,10 +157,37 @@ test('Benachrichtigungen stehen unter Mehr vor Daten', async ({ page }, testInfo
     await expect(page.getByRole('button', { name: 'Bearbeiten', exact: true })).toHaveCount(0);
     await expect(page.getByLabel('Ruhe von')).toHaveCount(0);
     await expect(page.getByLabel('Ruhe bis')).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Ruhezeit', exact: true })).toHaveCount(0);
     const ruheAus = page.locator('[data-zeile="lesen"]').filter({ hasText: 'Ruhezeit' });
+    const ruheKnopf = ruheAus.getByRole('button', { name: 'Ruhezeit', exact: true });
+    await expect(ruheKnopf).toBeDisabled();
+    await expect(ruheKnopf).toHaveAttribute('aria-disabled', 'true');
+    await expect(ruheAus).toHaveAttribute('aria-disabled', 'true');
+    await expect(ruheAus.locator('.zeile-pfeil')).toHaveCount(0);
+    await expect(ruheAus.getByRole('button', { name: /^Info/ })).toHaveCount(0);
     const ruheZeit = ((await ruheAus.innerText()).match(/\d{2}:\d{2}–\d{2}:\d{2}/) ?? [''])[0];
     expect(ruheZeit).toMatch(/\d{2}:\d{2}–\d{2}:\d{2}/);
+    const ruheTitel = ruheAus.getByText('Ruhezeit', { exact: true });
+    const ruheWert = ruheAus.getByText(ruheZeit, { exact: true });
+    await expect(ruheTitel).toHaveCSS('opacity', '0.6');
+    await expect(ruheWert).toHaveCSS('opacity', '0.6');
+    const titelKasten = await ruheTitel.boundingBox();
+    const wertKasten = await ruheWert.boundingBox();
+    const zeileKasten = await ruheAus.boundingBox();
+    const artenKasten = await page.locator('#hinweis-streak').boundingBox();
+    expect(titelKasten).not.toBeNull();
+    expect(wertKasten).not.toBeNull();
+    expect(zeileKasten).not.toBeNull();
+    expect(artenKasten).not.toBeNull();
+    if (titelKasten && wertKasten && zeileKasten && artenKasten) {
+      expect(wertKasten.x).toBeGreaterThan(titelKasten.x + titelKasten.width - 1);
+      expect(Math.abs(titelKasten.y + titelKasten.height / 2 - (wertKasten.y + wertKasten.height / 2))).toBeLessThanOrEqual(2);
+      expect(zeileKasten.y).toBeGreaterThan(artenKasten.y + artenKasten.height - 1);
+      expect(Math.abs(zeileKasten.x - artenKasten.x)).toBeLessThanOrEqual(2);
+      expect(Math.abs(zeileKasten.height - 48)).toBeLessThanOrEqual(1);
+    }
+    await ruheKnopf.click({ force: true });
+    await expect(page.getByRole('dialog', { name: 'Ruhezeit' })).toHaveCount(0);
+    await expect(page.getByLabel('Ruhe von')).toHaveCount(0);
 
     const einstellungen = await page.request.get('/api/einstellungen');
     expect(einstellungen.ok()).toBe(true);
@@ -191,8 +218,23 @@ test('Benachrichtigungen stehen unter Mehr vor Daten', async ({ page }, testInfo
     } else {
       await expect(geraet).toBeDisabled();
       await expect(page.getByText('Benachrichtigungen sind auf diesem Server nicht eingerichtet.')).toBeVisible();
+      const ruheDienst = page.locator('[data-zeile="lesen"]').filter({ hasText: 'Ruhezeit' });
+      const ruheDienstKnopf = ruheDienst.getByRole('button', { name: 'Ruhezeit', exact: true });
+      await expect(ruheDienstKnopf).toHaveAttribute('aria-disabled', 'true');
+      await expect(ruheDienst).toHaveAttribute('aria-disabled', 'true');
+      await ruheDienstKnopf.click({ force: true });
+      await expect(page.getByRole('dialog', { name: 'Ruhezeit' })).toHaveCount(0);
     }
     await bild('seite-aus');
+    if (testInfo.project.name === 'handy') {
+      const mass = page.viewportSize();
+      await page.setViewportSize({ width: 390, height: 844 });
+      fs.mkdirSync('tmp-test/ruhezeit-geraet', { recursive: true });
+      await page.screenshot({ path: 'tmp-test/ruhezeit-geraet/nachher-390-benachrichtigungen.png' });
+      if (mass) {
+        await page.setViewportSize(mass);
+      }
+    }
     await ohneSeitlichenUeberlauf(page);
 
     await zurueck.click();
@@ -228,8 +270,21 @@ test('Benachrichtigungen stehen unter Mehr vor Daten', async ({ page }, testInfo
     );
     await bild('seite-an');
 
-    const ruhe = page.locator('[data-zeile="auswahl"]').filter({ has: page.getByRole('button', { name: 'Ruhezeit', exact: true }) });
-    await page.getByRole('button', { name: 'Ruhezeit', exact: true }).click();
+    const ruheKnopfAn = page.getByRole('button', { name: 'Ruhezeit', exact: true });
+    await expect(ruheKnopfAn).toBeEnabled();
+    await expect(ruheKnopfAn).not.toHaveAttribute('aria-disabled', 'true');
+    const ruhe = page.locator('[data-zeile="auswahl"]').filter({ has: ruheKnopfAn });
+    await expect(ruhe).not.toHaveAttribute('aria-disabled', 'true');
+    const pfeilAn = ruhe.locator('.zeile-pfeil');
+    await expect(pfeilAn).toHaveCount(1);
+    const wertAn = await ruhe.getByText(ruheZeit, { exact: true }).boundingBox();
+    const pfeilKasten = await pfeilAn.boundingBox();
+    expect(wertAn).not.toBeNull();
+    expect(pfeilKasten).not.toBeNull();
+    if (wertAn && pfeilKasten) {
+      expect(pfeilKasten.x).toBeGreaterThan(wertAn.x + wertAn.width - 1);
+    }
+    await ruheKnopfAn.click();
     const dialog = page.getByRole('dialog', { name: 'Ruhezeit' });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByLabel('Ruhe von')).toBeVisible();

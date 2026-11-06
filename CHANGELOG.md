@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.87
+
+### Behoben
+
+- Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.
+
 ## 3.56.86
 
 ### Behoben

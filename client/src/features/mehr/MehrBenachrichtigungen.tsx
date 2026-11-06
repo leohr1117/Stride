@@ -250,6 +250,7 @@ function Inhalt({ stand }: { stand: HinweisStand }) {
               wert={`${stand.ruheVon}–${stand.ruheBis}`}
               onKlick={angemeldet ? oeffneRuhe : undefined}
               pfeil={angemeldet ? undefined : false}
+              deaktiviert={!angemeldet}
             />
           </ZeilenGruppe>
           <Dialog offen={ruheOffen} titel={tx('Ruhezeit')} onSchliessen={() => setRuheOffen(false)}>
