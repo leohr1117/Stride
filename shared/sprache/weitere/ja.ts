@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.": "「ほかのページ」の下では、場所がすべて埋まっているという表示は一度だけ出ます。",
   "Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.": "低すぎる属性は、能力または資産の減衰がオンのときだけ、他のXPを下げます。",
   "Auf dem Computer sind alle Seiten gleich breit, und die Aktionen im Kopf stehen auf derselben Kante wie der Inhalt.": "パソコンでは、すべてのページが同じ幅で、ヘッダーの操作は内容と同じ端に揃います。",
   "Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.": "記号は1行で選びます。グリッドはタップしてから開きます。",

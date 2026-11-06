@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.86
+
+### Behoben
+
+- Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.
+
 ## 3.56.85
 
 ### Geändert

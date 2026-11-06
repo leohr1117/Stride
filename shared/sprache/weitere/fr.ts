@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.": "Sous « D'autres pages », la mention que toutes les places sont prises n'apparaît plus qu'une fois.",
   "Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.": "Un attribut trop bas ne baisse l'XP des autres que tant que le déclin d'Aptitude ou de Biens est activé.",
   "Auf dem Computer sind alle Seiten gleich breit, und die Aktionen im Kopf stehen auf derselben Kante wie der Inhalt.": "Sur ordinateur, toutes les pages ont la même largeur, et les actions de l'en-tête sont sur le même bord que le contenu.",
   "Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.": "Le symbole se choisit sur une ligne. La grille ne s'ouvre qu'au toucher.",

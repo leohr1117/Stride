@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.86',
+    seiten: 'Leiste',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: ['Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.'],
+      },
+    ],
+  },
+  {
     version: '3.56.85',
     seiten: 'Können, Haben',
     abschnitte: [

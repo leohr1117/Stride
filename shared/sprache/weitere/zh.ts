@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.": "在“更多页面”下，位置已满的提示只出现一次。",
   "Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.": "过低的属性只有在能力或资产的衰退开启时，才会降低其他经验。",
   "Auf dem Computer sind alle Seiten gleich breit, und die Aktionen im Kopf stehen auf derselben Kante wie der Inhalt.": "在电脑上，所有页面一样宽，页眉里的操作和内容齐边。",
   "Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.": "符号在一行中选择。点按后才打开网格。",

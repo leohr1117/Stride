@@ -161,21 +161,20 @@ export function LeistenEditor({
         <h2 className="ueberschrift abschnittskopf text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case">
           {tx("Weitere Seiten")}
         </h2>
+        {voll ? <p className="text-[13px] leading-[18px] text-leise">{tx("Alle Plätze sind belegt.")}</p> : null}
         {weitereSeiten(wert, sichtbarkeit).map((seite) => (
           <button
             key={seite.pfad}
             type="button"
             disabled={deaktiviert || voll}
+            aria-disabled={deaktiviert || voll ? true : undefined}
             onClick={() => aendere(haengePlatzAn(wert, seite.pfad, aktiv))}
-            className="flex w-full items-center gap-3 rounded-2xl border border-rand bg-flaeche px-3 py-2 text-left disabled:opacity-40"
+            className="flex h-12 w-full items-center gap-3 rounded-2xl border border-rand bg-flaeche px-3 text-left disabled:opacity-40"
           >
-            <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-flaeche-2 text-haupt">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-flaeche-2 text-haupt">
               <Symbol icon={seite.icon} />
             </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-sm font-medium break-words">{tx(seite.label)}</span>
-              {voll ? <span className="block text-xs text-leise">{tx("Alle Plätze sind belegt.")}</span> : null}
-            </span>
+            <span className="min-w-0 flex-1 truncate text-sm font-medium">{tx(seite.label)}</span>
             <span className="shrink-0 text-sm font-medium text-akzent">{tx("Hinzufügen")}</span>
           </button>
         ))}
