@@ -68,30 +68,128 @@ test('Ein Vision-Vorschlag setzt das Level, ein eigener Wert bleibt gespeichert'
       await api(page, `/api/visionen/${vision.id}`, 'DELETE');
     }
   }
-  await page.goto('/ziele');
-  await page.getByRole('button', { name: 'Neu', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Vision', exact: true }).click();
-  const dialog = page.getByRole('dialog', { name: 'Vision', exact: true });
-  await expect(dialog.getByRole('button', { name: 'Beispiele', exact: true })).toHaveCount(0);
-  const chip = dialog.getByRole('button', { name: 'Finanziell frei' });
-  await chip.scrollIntoViewIfNeeded();
-  await expect(dialog.getByText(/XP beim Erreichen:/)).toBeVisible();
-  await ohneSeitlichenUeberlauf(page);
-  await page.screenshot({ path: `${BILD}/${testInfo.project.name}-vision.png` });
-  await chip.click();
-  const feld = dialog.getByRole('textbox', { name: 'Eigener' });
-  await expect(feld).toHaveValue('2000');
-  await expect(chip).toHaveAttribute('aria-pressed', 'true');
-  await feld.fill('1500');
-  await expect(chip).toHaveAttribute('aria-pressed', 'false');
-  await dialog.getByRole('textbox', { name: 'Wunsch', exact: true }).fill(titel);
-  await dialog.getByRole('button', { name: 'Speichern', exact: true }).click();
-  await expect(dialog).toBeHidden();
-  const nachher = await api<{ visionen: { id: number; titel: string; level: number | null }[] }>(page, '/api/ziele', 'GET');
-  const gespeichert = nachher.visionen.find((vision) => vision.titel === titel);
-  expect(gespeichert?.level).toBe(1500);
-  if (gespeichert) {
-    await api(page, `/api/visionen/${gespeichert.id}`, 'DELETE');
+  const hell = testInfo.project.name === 'handy';
+  let darstellung: { stil: string; glimmen: boolean; eigeneFarben: boolean; primaer: string; akzent: string; hintergrund: string } | null =
+    null;
+  try {
+    if (hell) {
+      darstellung = await api<{
+        stil: string;
+        glimmen: boolean;
+        eigeneFarben: boolean;
+        primaer: string;
+        akzent: string;
+        hintergrund: string;
+      }>(page, '/api/einstellungen', 'GET');
+      await page.emulateMedia({ colorScheme: 'light' });
+      await page.setViewportSize({ width: 390, height: 844 });
+      await api(page, '/api/einstellungen', 'PATCH', { stil: 'standard', farbenZuruecksetzen: true });
+    }
+    await page.goto('/ziele');
+    await page.getByRole('button', { name: 'Neu', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Vision', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Vision', exact: true });
+    await expect(dialog.getByRole('button', { name: 'Beispiele', exact: true })).toHaveCount(0);
+    const gruppe = dialog.getByRole('group', { name: 'Level', exact: true });
+    const chip = gruppe.getByRole('button', { name: '2.000', exact: true });
+    const feld = dialog.getByRole('textbox', { name: 'Eigenes Level', exact: true });
+    await expect(feld).toHaveAttribute('placeholder', 'Eigener');
+    await expect(dialog.getByText('Eigener', { exact: true })).toHaveCount(0);
+    await expect(gruppe.getByText('Finanziell frei')).toHaveCount(0);
+    await expect(gruppe.getByText('Gesund und fit bis ins Alter')).toHaveCount(0);
+    await expect(gruppe.getByText('Menschen auf den Mars bringen')).toHaveCount(0);
+    await stufenZeile(gruppe, ['300', '2.000', '20.000']);
+    const hoehen = await gruppe.locator('button, input').evaluateAll((knoten) =>
+      knoten.map((knoten) => knoten.getBoundingClientRect().height),
+    );
+    expect(hoehen).toHaveLength(4);
+    for (const hoehe of hoehen) {
+      expect(Math.abs(hoehe - 48)).toBeLessThan(1);
+    }
+    const texteGanz = await gruppe.locator('button span').evaluateAll((knoten) =>
+      knoten.every((knoten) => knoten.scrollWidth <= knoten.clientWidth + 1),
+    );
+    expect(texteGanz).toBe(true);
+    const platzhalterPasst = await feld.evaluate((element) => {
+      const stil = getComputedStyle(element);
+      const messer = document.createElement('span');
+      messer.style.font = `12px ${stil.fontFamily}`;
+      messer.style.position = 'absolute';
+      messer.style.visibility = 'hidden';
+      messer.textContent = element.placeholder;
+      document.body.appendChild(messer);
+      const breite = messer.getBoundingClientRect().width;
+      messer.remove();
+      const innen = element.clientWidth - parseFloat(stil.paddingLeft) - parseFloat(stil.paddingRight);
+      return breite <= innen + 1;
+    });
+    expect(platzhalterPasst).toBe(true);
+    const hinweis = dialog.getByText(/XP beim Erreichen:/);
+    await expect(hinweis).toBeVisible();
+    const hinweisKasten = await hinweis.boundingBox();
+    const gruppenKasten = await gruppe.boundingBox();
+    expect(hinweisKasten).not.toBeNull();
+    expect(gruppenKasten).not.toBeNull();
+    expect(hinweisKasten!.y).toBeGreaterThan(gruppenKasten!.y + gruppenKasten!.height - 1);
+    await ohneSeitlichenUeberlauf(page);
+    await page.screenshot({ path: `${BILD}/${testInfo.project.name}-vision.png` });
+    if (hell) {
+      await expect
+        .poll(async () =>
+          page.evaluate(() => {
+            const stil = getComputedStyle(document.documentElement);
+            return `${stil.getPropertyValue('--flaeche').trim()}|${stil.getPropertyValue('--gefahr').trim()}`;
+          }),
+        )
+        .toBe('#ffffff|#c62828');
+      await page.evaluate(
+        () => new Promise((loesen) => requestAnimationFrame(() => requestAnimationFrame(() => loesen(undefined)))),
+      );
+      await page.waitForTimeout(400);
+      fs.mkdirSync('tmp-test/vision-level', { recursive: true });
+      await page.screenshot({ path: 'tmp-test/vision-level/390-vision-anlegen.png' });
+      await dialog.screenshot({ path: 'tmp-test/vision-level/390-vision-anlegen-dialog.png' });
+      await gruppe.locator('..').screenshot({ path: 'tmp-test/vision-level/390-vision-level.png' });
+    }
+    await chip.click();
+    await expect(feld).toHaveValue('2000');
+    await expect(chip).toHaveAttribute('aria-pressed', 'true');
+    const gross = gruppe.getByRole('button', { name: '20.000', exact: true });
+    await gross.click();
+    await expect(feld).toHaveValue('20000');
+    await expect(gross).toHaveAttribute('aria-pressed', 'true');
+    await expect(chip).toHaveAttribute('aria-pressed', 'false');
+    const wertPasst = await feld.evaluate((element) => element.scrollWidth <= element.clientWidth + 1);
+    expect(wertPasst).toBe(true);
+    await feld.fill('1500');
+    await expect(gross).toHaveAttribute('aria-pressed', 'false');
+    await expect(chip).toHaveAttribute('aria-pressed', 'false');
+    await dialog.getByRole('textbox', { name: 'Wunsch', exact: true }).fill(titel);
+    await dialog.getByRole('button', { name: 'Speichern', exact: true }).click();
+    await expect(dialog).toBeHidden();
+    const nachher = await api<{ visionen: { id: number; titel: string; level: number | null }[] }>(page, '/api/ziele', 'GET');
+    const gespeichert = nachher.visionen.find((vision) => vision.titel === titel);
+    expect(gespeichert?.level).toBe(1500);
+    if (gespeichert) {
+      await api(page, `/api/visionen/${gespeichert.id}`, 'DELETE');
+    }
+  } finally {
+    if (darstellung) {
+      await api(
+        page,
+        '/api/einstellungen',
+        'PATCH',
+        darstellung.eigeneFarben
+          ? {
+              stil: darstellung.stil,
+              glimmen: darstellung.glimmen,
+              primaer: darstellung.primaer,
+              akzent: darstellung.akzent,
+              hintergrund: darstellung.hintergrund,
+            }
+          : { stil: darstellung.stil, glimmen: darstellung.glimmen, farbenZuruecksetzen: true },
+      ).catch(() => undefined);
+    }
   }
 });
 

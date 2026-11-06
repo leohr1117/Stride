@@ -82,6 +82,7 @@ export const PAARE = [
   ['Betrag', 'Amount'],
   ['Eigener', 'Custom'],
   ['Eigener Betrag', 'Custom amount'],
+  ['Eigenes Level', 'Custom level'],
   ['Eigene', 'Custom'],
   ['Bonus', 'Bonus'],
   ['fehlen {xp} XP', '{xp} XP short'],

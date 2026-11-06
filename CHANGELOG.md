@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.82
+
+### Verbessert
+
+- Das eigene Level steht in derselben Zeile wie die Vorschläge.
+
 ## 3.56.81
 
 ### Geändert

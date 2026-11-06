@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das eigene Level steht in derselben Zeile wie die Vorschläge.": "Свой уровень стоит в одной строке с подсказками.",
   "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "У ориентира имя остаётся только в заголовке страницы. Ниже стоят, чем он известен, уровень с классом и титулом и насколько он похож.",
   "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "В «Занятиях» под названием в одной строке остаётся, что занятие укрепляет. Если места не хватает, строка заканчивается на ….",
   "Auswahllisten stehen als Zeilen statt als Karten.": "Списки выбора показаны строками, а не карточками.",
@@ -79,6 +80,7 @@ export const TEXTE: Record<string, string> = {
   "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "Лист инвестиции больше не обрезается справа. Название и сумма остаются целиком на виду.",
   "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "Своя сумма стоит в одной строке с подсказками.",
   "Eigener Betrag": "Своя сумма",
+  "Eigenes Level": "Свой уровень",
   "Dir fehlen {xp} XP": "Тебе не хватает {xp} XP",
   "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "У суммы вложения три разных числа XP. Подсказки больше не называют недели или месяцы.",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "Уровень видения, спад, длительность базовой задачи и оценка уровня получают подсказки. Своё значение можно ввести.",

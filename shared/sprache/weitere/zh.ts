@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das eigene Level steht in derselben Zeile wie die Vorschläge.": "自定等级和建议等级在同一行。",
   "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "榜样的名字只留在页眉。下面是以何闻名、等级、类别和称号，以及相似度。",
   "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "在「活动」中，名称下方用一行显示这项活动强化什么。放不下时，这一行以…结尾。",
   "Auswahllisten stehen als Zeilen statt als Karten.": "选择列表以行显示，不再是卡片。",
@@ -79,6 +80,7 @@ export const TEXTE: Record<string, string> = {
   "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "投资面板的右侧不再被裁掉。名称和金额保持完整可见。",
   "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "自定金额和建议金额在同一行。",
   "Eigener Betrag": "自定金额",
+  "Eigenes Level": "自定等级",
   "Dir fehlen {xp} XP": "你还差 {xp} XP",
   "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "投入的金额给出三个不同的 XP 数额。建议不再写周或月。",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "愿景等级、衰退、基础事项的时长和估计的等级会给出建议。仍可填写自己的值。",

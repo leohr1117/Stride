@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das eigene Level steht in derselben Zeile wie die Vorschläge.": "自分のレベルは、提案と同じ行に並びます。",
   "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "お手本では、名前はページ上部の見出しだけに残ります。その下に、何で知られるか、レベルとクラスと称号、似ている度合いが並びます。",
   "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "「活動」では、名前の下に、何を伸ばすかが1行で残ります。入りきらないときは、行が…で終わります。",
   "Auswahllisten stehen als Zeilen statt als Karten.": "選択リストはカードではなく行で表示されます。",
@@ -79,6 +80,7 @@ export const TEXTE: Record<string, string> = {
   "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "投資のシートは右側で切れなくなりました。名前と金額はすべて見えたままです。",
   "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "自分の金額は、提案と同じ行に並びます。",
   "Eigener Betrag": "自分の金額",
+  "Eigenes Level": "自分のレベル",
   "Dir fehlen {xp} XP": "あと {xp} XP足りません",
   "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "投資の金額には、異なる三つの XP 額が出ます。提案に週や月は出ません。",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "ビジョンのレベル、減衰、基本タスクの時間、見積もったレベルに候補が出ます。自分の値も入力できます。",

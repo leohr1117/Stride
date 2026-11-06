@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das eigene Level steht in derselben Zeile wie die Vorschläge.": "El nivel propio está en la misma línea que las propuestas.",
   "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "En un referente, el nombre queda solo en el encabezado de la página. Debajo están para qué es conocido, el nivel con clase y título, y la similitud.",
   "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "En Actividades, lo que entrena una actividad queda en una línea bajo el nombre. Si no cabe, la línea termina con ….",
   "Auswahllisten stehen als Zeilen statt als Karten.": "Las listas de selección aparecen como filas en lugar de tarjetas.",
@@ -79,6 +80,7 @@ export const TEXTE: Record<string, string> = {
   "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "La hoja de inversión ya no se corta por la derecha. El nombre y el importe siguen visibles por completo.",
   "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "El importe propio está en la misma línea que las propuestas.",
   "Eigener Betrag": "Importe propio",
+  "Eigenes Level": "Nivel propio",
   "Dir fehlen {xp} XP": "Te faltan {xp} XP",
   "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "El importe de una inversión ofrece tres cantidades de XP distintas. Las propuestas ya no nombran semanas ni meses.",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "El nivel de una visión, el decaimiento, la duración de una tarea base y un nivel estimado ofrecen propuestas. Un valor propio sigue siendo posible.",

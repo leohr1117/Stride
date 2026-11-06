@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das eigene Level steht in derselben Zeile wie die Vorschläge.": "Le niveau personnel est sur la même ligne que les propositions.",
   "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "Pour un modèle, le nom ne reste que dans l'en-tête de la page. En dessous figurent ce pour quoi il est connu, le niveau avec la classe et le titre, puis à quel point il est semblable.",
   "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "Dans Activités, ce qu'une activité renforce tient sur une ligne sous le nom. S'il n'y a pas assez de place, la ligne se termine par ….",
   "Auswahllisten stehen als Zeilen statt als Karten.": "Les listes de choix s'affichent en lignes au lieu de cartes.",
@@ -79,6 +80,7 @@ export const TEXTE: Record<string, string> = {
   "Das Investitionsblatt wird rechts nicht mehr abgeschnitten. Name und Betrag bleiben vollständig sichtbar.": "La feuille d'un investissement n'est plus coupée à droite. Le nom et le montant restent entièrement visibles.",
   "Der eigene Betrag steht in derselben Zeile wie die Vorschläge.": "Le montant personnel est sur la même ligne que les propositions.",
   "Eigener Betrag": "Montant personnel",
+  "Eigenes Level": "Niveau personnel",
   "Dir fehlen {xp} XP": "Il te manque {xp} XP",
   "Beim Betrag einer Investition stehen drei verschiedene XP-Beträge. Wochen und Monate stehen an den Vorschlägen nicht mehr.": "Le montant d'un investissement propose trois sommes d'XP différentes. Les propositions ne citent plus de semaines ni de mois.",
   "Beim Level einer Vision, beim Verfall, bei der Dauer einer Basis-Aufgabe und beim Schätzen eines Levels stehen Vorschläge. Ein eigener Wert bleibt frei.": "Le niveau d'une vision, le déclin, la durée d'une tâche de base et un niveau estimé proposent des paliers. Une valeur personnelle reste possible.",

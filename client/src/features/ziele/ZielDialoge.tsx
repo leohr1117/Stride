@@ -216,12 +216,10 @@ function VisionFormular({ vision, onFertig }: { vision: Vision | null; onFertig:
   const [titelFehler, setTitelFehler] = useState<string | null>(null);
   const levelWert = /^\d+$/.test(level) ? Number(level) : Number.NaN;
   const levelGueltig = Number.isInteger(levelWert) && levelWert >= VISION.minLevel && levelWert <= GRENZEN.visionLevelMax;
-  const visionStufen = VISION_STUFEN.map((beispiel) => ({
-    id: String(beispiel.level),
-    wert: String(beispiel.level),
-    zeile: zahl(beispiel.level),
-    neben: tx(beispiel.titel),
-    name: `${tx(beispiel.titel)}, ${zahl(beispiel.level)}`,
+  const visionStufen = VISION_STUFEN.map((stufe) => ({
+    id: String(stufe.level),
+    wert: String(stufe.level),
+    zeile: zahl(stufe.level),
   }));
 
   const speichern = useSpeichern(() => {
@@ -266,9 +264,12 @@ function VisionFormular({ vision, onFertig }: { vision: Vision | null; onFertig:
       </Feld>
       <VorschlagFeld
         label="Level"
+        anordnung="reihe"
         text={level}
         onText={setLevel}
         optionen={visionStufen}
+        platzhalter={tx('Eigener')}
+        eigenName={tx('Eigenes Level')}
         hinweis={tx('XP beim Erreichen: {xp}', { xp: zahl(visionBeute(levelGueltig ? levelWert : null)) })}
         hinweisSchnitt={false}
         fehler={
