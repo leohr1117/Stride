@@ -276,15 +276,36 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     await expect(dialog.getByRole('switch', { name: 'Geschafft' })).toHaveCount(0);
     await dialog.getByRole('button', { name: 'Schließen' }).click();
     await expect(dialog).toBeHidden();
-    const abschliessen = page.getByRole('button', { name: 'Abschließen', exact: true });
+    const menueKnopf = page.getByRole('button', { name: `Aktionen für ${ziel.name}`, exact: true });
+    await menueKnopf.click();
+    const abschliessen = page.getByRole('menuitem', { name: 'Projekt abschließen', exact: true });
     if (await abschliessen.isVisible()) {
       await abschliessen.click();
       const frage = page.getByRole('alertdialog', { name: `"${ziel.name}" abschließen?` });
       await expect(frage.getByText('Die Investition wird aktiv.')).toBeVisible();
       await frage.getByRole('button', { name: 'Abschließen', exact: true }).click();
       await expect(frage).toBeHidden();
+      const feier = page.locator('.belohnung');
+      await feier.waitFor({ state: 'visible', timeout: 2000 }).catch(() => undefined);
+      for (let schritt = 0; schritt < 6 && (await feier.count()) > 0; schritt += 1) {
+        const schliessen = feier.getByRole('button', { name: 'Schließen', exact: true });
+        if (!(await schliessen.isVisible())) {
+          break;
+        }
+        await schliessen.click({ force: true });
+      }
+      const aufstieg = page.getByRole('dialog').filter({ hasText: 'Level aufgestiegen' });
+      await aufstieg.waitFor({ state: 'visible', timeout: 3000 }).catch(() => undefined);
+      if ((await aufstieg.count()) > 0) {
+        await aufstieg.getByRole('button', { name: 'Weiter', exact: true }).click({ force: true });
+        await expect(aufstieg).toBeHidden();
+      }
+    } else {
+      await page.keyboard.press('Escape');
     }
-    await expect(page.getByRole('button', { name: 'Wieder öffnen', exact: true })).toBeVisible();
+    await menueKnopf.click();
+    await expect(page.getByRole('menuitem', { name: 'Wieder öffnen', exact: true })).toBeVisible();
+    await page.keyboard.press('Escape');
     await expect(zeile).toContainText('+10 %');
     await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toBeVisible();
     await ohneSeitlichenUeberlauf(page);

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.77
+
+### Geändert
+
+- Projekt abschließen steht im Menü im Kopf der Projektseite.
+
 ## 3.56.76
 
 ### Verbessert

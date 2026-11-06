@@ -1,5 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Projekt abschließen steht im Menü im Kopf der Projektseite.": "«Завершить проект» стоит в меню в шапке страницы проекта.",
+  "Projekt abschließen": "Завершить проект",
   "Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.": "Ступени потери атрибута стоят в одной строке для каждой группы.",
   "Bosse öffnen sich in Laufend und auf der Projektseite durch Tippen auf die ganze Zeile.": "Боссы открываются в «Текущем» и на странице проекта при нажатии на всю строку.",
   "Kennzahlen auf Heute stehen mittig in gleich breiten Spalten.": "В «Сегодня» цифры стоят по центру в столбцах одинаковой ширины.",

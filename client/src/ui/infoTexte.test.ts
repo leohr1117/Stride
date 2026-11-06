@@ -14,7 +14,6 @@ const ERLAUBT = new Set([
   'Ein Eintrag in sieben Tagen, ohne Abzug.',
   'Trag heute etwas ein, damit der Streak bleibt.',
   'Gestern war dein freier Tag.',
-  'Einmalig Bonus-XP nach den Einträgen im Projekt. Wieder öffnen gibt den Bonus nicht noch einmal.',
   INVESTITION_INFO,
   BOSS_DATUM_INFO,
   MEILENSTEIN_INFO,

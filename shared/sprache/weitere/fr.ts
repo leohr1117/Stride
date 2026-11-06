@@ -1,5 +1,7 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Projekt abschließen steht im Menü im Kopf der Projektseite.": "Terminer le projet est dans le menu en tête de la page du projet.",
+  "Projekt abschließen": "Terminer le projet",
   "Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.": "Les paliers de perte d'un attribut tiennent sur une ligne par groupe.",
   "Bosse öffnen sich in Laufend und auf der Projektseite durch Tippen auf die ganze Zeile.": "Les boss s'ouvrent dans En cours et sur la page du projet en touchant toute la ligne.",
   "Kennzahlen auf Heute stehen mittig in gleich breiten Spalten.": "Dans Aujourd'hui, les chiffres sont centrés dans des colonnes de même largeur.",

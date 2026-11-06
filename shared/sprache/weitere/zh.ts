@@ -1,5 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Projekt abschließen steht im Menü im Kopf der Projektseite.": "「完成项目」在项目页顶部的菜单里。",
+  "Projekt abschließen": "完成项目",
   "Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.": "属性的损失档位按每组排成一行。",
   "Bosse öffnen sich in Laufend und auf der Projektseite durch Tippen auf die ganze Zeile.": "在「进行中」和项目页面上，点整行即可打开首领。",
   "Kennzahlen auf Heute stehen mittig in gleich breiten Spalten.": "在「今天」上，数字在等宽的列里居中。",

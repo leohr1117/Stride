@@ -237,6 +237,7 @@ export const PAARE = [
   ['Noch nicht abgeglichen', 'Not synced yet'],
   ['Abmelden', 'Sign out'],
   ['Abschließen', 'Finish'],
+  ['Projekt abschließen', 'Finish project'],
   ['Abschlusstätigkeit', 'Closing activity'],
   ['Beim Abschließen läuft der Bonus über diese Tätigkeit. Ohne Tätigkeit gibt es den Bonus trotzdem.', 'When you finish, the bonus goes through this activity. Without one, you still get the bonus.'],
   ['Abschluss', 'Completion'],

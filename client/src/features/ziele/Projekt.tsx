@@ -1,7 +1,7 @@
-import { tx, txMenge } from '../../text.ts';
+import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CircleCheck, CircleX, Pencil, RotateCcw, Swords, Wind, Wrench } from 'lucide-react';
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useParams } from 'react-router';
 import type { BasisAufgabe, Projekt, Vorlage, Vorhaben } from '../../../../shared/api/index.ts';
 import { GRENZEN, VORHABEN_STATUS_LABEL } from '../../../../shared/spiel/begriffe.ts';
@@ -28,7 +28,6 @@ import {
   Fehlermeldung,
   Feld,
   Formular,
-  InfoHinweis,
   Knopf,
   Ladeanzeige,
   LevelRing,
@@ -39,7 +38,7 @@ import { TaetigkeitFormular, TaetigkeitMenue } from '../taetigkeiten/TaetigkeitF
 import { ZielDialog, type ZielBearbeitung } from './ZielDialoge.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
-import { bonusProzent, kurzesDatum, stunden as stundenText, zahl } from '../../format.ts';
+import { bonusProzent, kurzesDatum, zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 
 function AbschlussMarke() {
@@ -97,18 +96,10 @@ export function ProjektSeite() {
 
   return (
     <div className="space-y-6">
-      <KopfAktion>
-        <SchnellMenueKnopf
-          ziel={{ art: 'projekt', id: projekt.id, name: projekt.name, archiviert: projekt.archiviert, loeschbar: projekt.loeschbar }}
-          davor={[
-            {
-              id: 'bearbeiten',
-              label: 'Bearbeiten',
-              onWahl: () => setBearbeitung({ art: 'projekt', projekt, visionId: null, organisationId: null }),
-            },
-          ]}
-        />
-      </KopfAktion>
+      <ProjektKopf
+        projekt={projekt}
+        onBearbeiten={() => setBearbeitung({ art: 'projekt', projekt, visionId: null, organisationId: null })}
+      />
       <div className="flex items-center gap-3">
         <LevelRing level={projekt.level.level} anteil={projekt.level.fortschritt} groesse={104} />
         <div className="min-w-0 flex-1">
@@ -150,8 +141,6 @@ export function ProjektSeite() {
           })}
         </p>
       </div>
-      <ProjektAbschluss projekt={projekt} />
-
       {ebenen.vorhaben && (
         <section className="space-y-2">
           <Ueberschrift titel={tx(zielTitel('vorhaben'))} />
@@ -200,7 +189,10 @@ export function ProjektSeite() {
   );
 }
 
-function useProjektAbschluss(projekt: Projekt): { knopf: ReactNode; fehler: ReactNode } {
+function useProjektAbschluss(projekt: Projekt): {
+  eintrag: { id: string; label: string; onWahl: () => void };
+  fehler: unknown;
+} {
   const bestaetigen = useBestaetigung();
   const feiern = useFeiern();
   const queryClient = useQueryClient();
@@ -233,6 +225,9 @@ function useProjektAbschluss(projekt: Projekt): { knopf: ReactNode; fehler: Reac
     }
   };
   const beimOeffnen = async () => {
+    if (oeffnen.isPending) {
+      return;
+    }
     if (
       await bestaetigen({
         titel: tx("Projekt wieder öffnen?"),
@@ -246,47 +241,32 @@ function useProjektAbschluss(projekt: Projekt): { knopf: ReactNode; fehler: Reac
     }
   };
 
-  const knopf = projekt.geschafftAm ? (
-    <Knopf variante="leise" className="shrink-0 px-2 py-1 text-xs" onClick={beimOeffnen} disabled={oeffnen.isPending}>
-      {tx("Wieder öffnen")}
-    </Knopf>
-  ) : (
-    <Knopf
-      variante="primaer"
-      className="shrink-0 px-3 py-1.5"
-      onClick={() => void beimAbschliessen()}
-      aria-busy={abschliessen.isPending || undefined}
-    >
-      {tx("Abschließen")}
-    </Knopf>
-  );
+  const eintrag = projekt.geschafftAm
+    ? { id: 'oeffnen', label: 'Wieder öffnen', onWahl: () => void beimOeffnen() }
+    : { id: 'abschliessen', label: 'Projekt abschließen', onWahl: () => void beimAbschliessen() };
 
-  return { knopf, fehler: <Fehlermeldung fehler={abschliessen.error ?? oeffnen.error} /> };
+  return { eintrag, fehler: abschliessen.error ?? oeffnen.error };
 }
 
-function ProjektAbschluss({ projekt }: { projekt: Projekt }) {
+function ProjektKopf({ projekt, onBearbeiten }: { projekt: Projekt; onBearbeiten: () => void }) {
   const abschluss = useProjektAbschluss(projekt);
-  const stand = projekt.geschafftAm ? projekt.abschluss : null;
   return (
-    <section aria-label={tx('Abschluss')} className="min-w-0 space-y-2">
-      {abschluss.fehler}
-      <div className="flex min-w-0 items-center">
-        <h2 className="text-sm font-medium">{tx('Abschluss')}</h2>
-        <InfoHinweis name="Abschluss" text="Einmalig Bonus-XP nach den Einträgen im Projekt. Wieder öffnen gibt den Bonus nicht noch einmal." />
-      </div>
-      {stand && (
-        <p className="flex min-w-0 flex-wrap gap-x-3 gap-y-1 text-sm text-leise">
-          <span className="zahl">{tx('{xp} XP', { xp: zahl(stand.xp) })}</span>
-          <span>{tx('Level {level}', { level: stand.level })}</span>
-          <span className="min-w-0 break-words">
-            {tx('{von} bis {bis}', { von: kurzesDatum(stand.von), bis: kurzesDatum(stand.bis) })}
-          </span>
-          <span>{txMenge(stand.eintraege, '{anzahl} Einträge', { anzahl: zahl(stand.eintraege) })}</span>
-          <span className="zahl">{stundenText(stand.stunden)}</span>
-        </p>
-      )}
-      <div className="flex flex-wrap gap-2">{abschluss.knopf}</div>
-    </section>
+    <>
+      <KopfAktion>
+        <SchnellMenueKnopf
+          ziel={{ art: 'projekt', id: projekt.id, name: projekt.name, archiviert: projekt.archiviert, loeschbar: projekt.loeschbar }}
+          davor={[
+            {
+              id: 'bearbeiten',
+              label: 'Bearbeiten',
+              onWahl: onBearbeiten,
+            },
+            abschluss.eintrag,
+          ]}
+        />
+      </KopfAktion>
+      <Fehlermeldung fehler={abschluss.fehler} />
+    </>
   );
 }
 

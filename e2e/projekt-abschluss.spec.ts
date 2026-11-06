@@ -54,7 +54,94 @@ async function ohneUeberlauf(seite: Page): Promise<void> {
   ).toBe(true);
 }
 
-test('Abschlusstätigkeit, einmaliger Bonus und Übersicht', async ({ page }, testInfo) => {
+async function kopfEintrag(seite: Page, name: string, eintrag: string): Promise<void> {
+  await seite.getByRole('button', { name: `Aktionen für ${name}`, exact: true }).click();
+  await seite.getByRole('menuitem', { name: eintrag, exact: true }).click();
+}
+
+const HELL = { stil: 'standard', primaer: '#141414', akzent: '#707070', hintergrund: '#f2f2f2' };
+
+async function speichereFarben(seite: Page, koerper: Record<string, unknown>): Promise<void> {
+  const ok = await seite.evaluate(async (daten) => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(daten),
+    });
+    return antwort.ok;
+  }, koerper);
+  expect(ok).toBe(true);
+}
+
+test('Projektseite ohne Abschluss-Abschnitt, Eintrag im Kopfmenü', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'handy', 'Vergleichsbild nur bei 390 px');
+  await anmelden(page);
+  const original = await page.evaluate(async () => {
+    const antwort = await fetch('/api/einstellungen');
+    return (await antwort.json()) as {
+      stil: string;
+      glimmen: boolean;
+      primaer: string;
+      akzent: string;
+      hintergrund: string;
+      eigeneFarben: boolean;
+    };
+  });
+  const liste = await api<{ projekte: { id: number; name: string; geschafftAm: string | null }[] }>(
+    page,
+    '/api/ziele',
+    'GET',
+  );
+  const app = liste.projekte.find((projekt) => projekt.name === 'App bauen');
+  expect(app, 'Projekt App bauen').toBeTruthy();
+  if (!app) {
+    return;
+  }
+  try {
+    await speichereFarben(page, HELL);
+    await page.goto(`/projekte/${app.id}`);
+    await expect(page.getByRole('heading', { name: 'App bauen', exact: true })).toBeVisible();
+    await expect(page.locator('html')).toHaveAttribute('data-schema', 'light');
+    await page.waitForFunction(() => {
+      const stil = getComputedStyle(document.documentElement);
+      return (
+        stil.getPropertyValue('--flaeche').trim().toLowerCase() === '#ffffff' &&
+        stil.getPropertyValue('--gefahr').trim().toLowerCase() === '#c62828'
+      );
+    });
+    await page.waitForTimeout(400);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(page.getByRole('region', { name: 'Abschluss', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Abschluss', exact: true })).toHaveCount(0);
+    fs.mkdirSync('tmp-test/projekt-abschluss', { recursive: true });
+    await page.screenshot({ path: 'tmp-test/projekt-abschluss/handy-390-projekt.png' });
+    await page.screenshot({ path: 'tmp-test/projekt-abschluss/handy-390-projekt-ganz.png', fullPage: true });
+    await page.getByRole('button', { name: 'Aktionen für App bauen', exact: true }).click();
+    const menue = page.getByRole('menu', { name: 'Aktionen', exact: true });
+    const eintrag = app.geschafftAm ? 'Wieder öffnen' : 'Projekt abschließen';
+    await expect(menue.getByRole('menuitem', { name: eintrag, exact: true })).toBeVisible();
+    const namen = await menue.getByRole('menuitem').allTextContents();
+    expect(namen[0]).toBe('Bearbeiten');
+    expect(namen[1]).toBe(eintrag);
+    await page.screenshot({ path: 'tmp-test/projekt-abschluss/handy-390-menue.png' });
+    await page.keyboard.press('Escape');
+  } finally {
+    await speichereFarben(
+      page,
+      original.eigeneFarben
+        ? {
+            stil: original.stil,
+            glimmen: original.glimmen,
+            primaer: original.primaer,
+            akzent: original.akzent,
+            hintergrund: original.hintergrund,
+          }
+        : { stil: original.stil, glimmen: original.glimmen, farbenZuruecksetzen: true },
+    );
+  }
+});
+
+test('Abschlusstätigkeit, einmaliger Bonus und Kopfmenü', async ({ page }, testInfo) => {
   const name = `Lauf80-${testInfo.project.name}`;
   const denken = `${name}-Denken`;
   const liefern = `${name}-Liefern`;
@@ -115,7 +202,7 @@ test('Abschlusstätigkeit, einmaliger Bonus und Übersicht', async ({ page }, te
   await dialog.getByRole('button', { name: 'Schließen', exact: true }).click();
   await expect(dialog).toBeHidden();
 
-  await page.getByRole('button', { name: 'Abschließen', exact: true }).click();
+  await kopfEintrag(page, name, 'Projekt abschließen');
   const frage = page.getByRole('alertdialog', { name: `"${name}" abschließen?` });
   await frage.getByRole('button', { name: 'Abschließen', exact: true }).click();
   const feier = page.locator('.belohnung');
@@ -128,14 +215,10 @@ test('Abschlusstätigkeit, einmaliger Bonus und Übersicht', async ({ page }, te
   await feier.getByRole('button', { name: 'Schließen', exact: true }).click();
   await expect(feier).toHaveCount(0);
 
-  const region = page.getByRole('region', { name: 'Abschluss', exact: true });
-  await expect(region).toBeVisible();
-  await expect(region).toContainText('XP');
-  await expect(region).toContainText('Level');
-  await expect(region).toContainText('Einträge');
-  await expect(region).toContainText('Std');
-  await region.getByRole('button', { name: /^Info/ }).click();
-  await expect(page.getByRole('tooltip')).toContainText('Wieder öffnen gibt den Bonus nicht noch einmal.');
+  await expect(page.getByRole('region', { name: 'Abschluss', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Abschluss', exact: true })).toHaveCount(0);
+  await expect(page.getByText('Einmalig Bonus-XP nach den Einträgen im Projekt.')).toHaveCount(0);
+  await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toBeVisible();
   await ohneUeberlauf(page);
   await page.screenshot({ path: `tmp-test/projekt-abschluss/${testInfo.project.name}-uebersicht.png`, fullPage: true });
   const nachAbschluss = await stand(page, angelegt.id);
@@ -143,12 +226,18 @@ test('Abschlusstätigkeit, einmaliger Bonus und Übersicht', async ({ page }, te
   expect(nachAbschluss.abschluss?.eintraege).toBe(2);
   expect(nachAbschluss.geschafftAm).not.toBeNull();
 
-  await page.getByRole('button', { name: 'Wieder öffnen', exact: true }).click();
+  await kopfEintrag(page, name, 'Wieder öffnen');
   const oeffnen = page.getByRole('alertdialog', { name: 'Projekt wieder öffnen?' });
   await oeffnen.getByRole('button', { name: 'Öffnen', exact: true }).click();
-  await expect(region).toBeVisible();
-  await expect(region.getByRole('button', { name: 'Abschließen', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Abschließen', exact: true }).click();
+  await expect(page.getByRole('region', { name: 'Abschluss', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: `Aktionen für ${name}`, exact: true }).click();
+  const menue = page.getByRole('menu', { name: 'Aktionen', exact: true });
+  const namen = await menue.getByRole('menuitem').allTextContents();
+  expect(namen[0]).toBe('Bearbeiten');
+  expect(namen[1]).toBe('Projekt abschließen');
+  await expect(menue.getByRole('menuitem', { name: 'Wieder öffnen', exact: true })).toHaveCount(0);
+  await menue.getByRole('menuitem', { name: 'Projekt abschließen', exact: true }).click();
   const nochmal = page.getByRole('alertdialog', { name: `"${name}" abschließen?` });
   await nochmal.getByRole('button', { name: 'Abschließen', exact: true }).click();
   await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toBeVisible();

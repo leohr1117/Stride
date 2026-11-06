@@ -150,7 +150,11 @@ test('Projekt abschließen aktiviert die Investition und lässt sich öffnen', a
     await page.goto(`/projekte/${ziel.id}`);
     await expect(page.getByRole('heading', { name: ziel.name, exact: true })).toBeVisible();
     await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Wieder öffnen', exact: true })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Abschluss', exact: true })).toHaveCount(0);
+    await page.getByRole('button', { name: `Aktionen für ${ziel.name}`, exact: true }).click();
+    await expect(page.getByRole('menuitem', { name: 'Wieder öffnen', exact: true })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Projekt abschließen', exact: true })).toHaveCount(0);
+    await page.keyboard.press('Escape');
     await expect(page.getByRole('button', { name: 'Abschließen', exact: true })).toHaveCount(0);
     const zeile = page.locator('#projekt-investition');
     await expect(zeile).toContainText('+10 %');
@@ -177,27 +181,30 @@ test('Projekt abschließen aktiviert die Investition und lässt sich öffnen', a
     await page.screenshot({ path: `tmp-test/ziele-erschoepfung/${testInfo.project.name}-liste.png`, fullPage: true });
 
     await page.goto(`/projekte/${ziel.id}`);
-    await page.getByRole('button', { name: 'Wieder öffnen', exact: true }).click();
+    await page.getByRole('button', { name: `Aktionen für ${ziel.name}`, exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Wieder öffnen', exact: true }).click();
     const oeffnen = page.getByRole('alertdialog', { name: 'Projekt wieder öffnen?' });
     await expect(oeffnen.getByText('Der Bonus bleibt, und die Investition wird inaktiv.')).toBeVisible();
     await oeffnen.getByRole('button', { name: 'Öffnen', exact: true }).click();
     await expect(oeffnen).toBeHidden();
     await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toHaveCount(0);
     await expect(zeile).not.toContainText('Aktiv');
-    await expect(page.getByRole('button', { name: 'Abschließen', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: `Aktionen für ${ziel.name}`, exact: true }).click();
+    await expect(page.getByRole('menuitem', { name: 'Projekt abschließen', exact: true })).toBeVisible();
     await expect.poll(async () => {
       const stand = (await projekte(page)).find((projekt) => projekt.id === ziel.id);
       return stand?.geschafftAm ?? null;
     }).toBeNull();
 
-    await page.getByRole('button', { name: 'Abschließen', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Projekt abschließen', exact: true }).click();
     const frage = page.getByRole('alertdialog', { name: `"${ziel.name}" abschließen?` });
     await expect(frage.getByText('Die Investition wird aktiv.')).toBeVisible();
     await frage.getByRole('button', { name: 'Abbrechen' }).click();
     await expect(frage).toBeHidden();
     await expect.poll(async () => (await projekte(page)).find((projekt) => projekt.id === ziel.id)?.geschafftAm ?? null).toBeNull();
 
-    await page.getByRole('button', { name: 'Abschließen', exact: true }).click();
+    await page.getByRole('button', { name: `Aktionen für ${ziel.name}`, exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Projekt abschließen', exact: true }).click();
     const nochmal = page.getByRole('alertdialog', { name: `"${ziel.name}" abschließen?` });
     await nochmal.getByRole('button', { name: 'Abschließen', exact: true }).click();
     await expect(nochmal).toBeHidden();
