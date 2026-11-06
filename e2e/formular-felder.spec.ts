@@ -244,3 +244,115 @@ test('Projekt-Investition bleibt im Blatt', async ({ page }, testInfo) => {
   await ohneSeitlichenUeberlauf(page);
   await page.screenshot({ path: `tmp-test/formular-felder/${testInfo.project.name}-projekt.png` });
 });
+
+async function symbolZeile(dialog: Locator): Promise<Locator> {
+  await expect(dialog).toHaveCSS('opacity', '1');
+  await expect(dialog.locator('.grid-cols-8')).toHaveCount(0);
+  const zeile = dialog.getByRole('combobox', { name: /^Symbol · / });
+  await expect(zeile).toBeVisible();
+  await zeile.scrollIntoViewIfNeeded();
+  const kasten = await zeile.boundingBox();
+  expect(kasten).not.toBeNull();
+  expect(Math.round(kasten?.height ?? 0)).toBe(48);
+  await expect(zeile).toContainText('Symbol');
+  await expect(zeile.locator('.lucide-chevron-right')).toBeVisible();
+  const felder = dialog.locator('.formular-felder');
+  if ((await felder.count()) > 0) {
+    await felder.evaluate((element) => {
+      element.scrollTop = 0;
+    });
+  }
+  return zeile;
+}
+
+test('Symbolwahl ist eine Zeile, das Raster liegt im Blatt', async ({ page }, testInfo) => {
+  fs.mkdirSync('tmp-test/symbolwahl', { recursive: true });
+  const breite = page.viewportSize()?.width ?? 0;
+  const bild = (dialog: Locator, name: string) => dialog.screenshot({ path: `tmp-test/symbolwahl/nachher-${breite}-${name}.png` });
+
+  await page.goto('/mehr/inhalte');
+  await page.getByRole('button', { name: '+ Tätigkeit anlegen', exact: true }).click();
+  const taetigkeit = page.getByRole('dialog', { name: 'Tätigkeit anlegen' });
+  const zeileTaetigkeit = await symbolZeile(taetigkeit);
+  await expect(zeileTaetigkeit.locator('.lucide-sparkles')).toBeVisible();
+  await bild(taetigkeit, 'd3-taetigkeit');
+  await zeileTaetigkeit.click();
+  const raster = page.getByRole('dialog', { name: 'Symbol', exact: true });
+  await expect(raster).toBeVisible();
+  await expect(raster.locator('.grid-cols-8')).toBeVisible();
+  const sparkles = raster.getByRole('gridcell', { name: 'sparkles', exact: true });
+  await expect(sparkles).toBeFocused();
+  await page.keyboard.press('ArrowRight');
+  const flame = raster.getByRole('gridcell', { name: 'flame', exact: true });
+  await expect(flame).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  const lightbulb = raster.getByRole('gridcell', { name: 'lightbulb', exact: true });
+  await expect(lightbulb).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(raster).toBeHidden();
+  await expect(zeileTaetigkeit.locator('.lucide-lightbulb')).toBeVisible();
+  await expect(taetigkeit.locator('.grid-cols-8')).toHaveCount(0);
+  await taetigkeit.getByRole('button', { name: 'Schließen' }).click();
+  await expect(taetigkeit).toBeHidden();
+
+  await page.goto('/investitionen');
+  await page.getByRole('button', { name: /Investition anlegen/ }).click();
+  const investition = page.getByRole('dialog', { name: 'Investition', exact: true });
+  const zeileInvestition = await symbolZeile(investition);
+  await expect(zeileInvestition.locator('.lucide-gem')).toBeVisible();
+  await bild(investition, 'd11-investition');
+  await investition.getByRole('button', { name: 'Schließen' }).click();
+  await expect(investition).toBeHidden();
+
+  await page.goto('/basis');
+  await page.getByRole('button', { name: '+ Basis-Aufgabe', exact: true }).click();
+  const basis = page.getByRole('dialog', { name: 'Basis-Aufgabe' });
+  const zeileBasis = await symbolZeile(basis);
+  await expect(zeileBasis.locator('.lucide-sparkles')).toBeVisible();
+  await bild(basis, 'd19-basis');
+  await zeileBasis.click();
+  const basisRaster = page.getByRole('dialog', { name: 'Symbol', exact: true });
+  await basisRaster.getByRole('gridcell', { name: 'leaf', exact: true }).click();
+  await expect(basisRaster).toBeHidden();
+  await expect(zeileBasis.locator('.lucide-leaf')).toBeVisible();
+  await basis.getByRole('button', { name: 'Schließen' }).click();
+  await expect(basis).toBeHidden();
+
+  await page.goto('/koennen');
+  const koerper = page.getByRole('button', { name: 'Körper', exact: true });
+  await koerper.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
+  await koerper.click();
+  const attribut = page.getByRole('dialog', { name: 'Körper', exact: true });
+  await symbolZeile(attribut);
+  await bild(attribut, 'd14-attribut');
+  await attribut.getByRole('button', { name: 'Schließen' }).click();
+
+  if (testInfo.project.name === 'handy') {
+    const stand = await page.request.get('/api/einstellungen');
+    expect(stand.ok()).toBe(true);
+    const daten = (await stand.json()) as { funktionen: Record<string, boolean> };
+    await page.setViewportSize({ width: 390, height: 844 });
+    try {
+      const aus = await page.request.patch('/api/einstellungen', {
+        data: { funktionen: { ...daten.funktionen, verfallKoennen: false, verfallHaben: false } },
+      });
+      expect(aus.ok()).toBe(true);
+      await page.goto('/koennen');
+      const erneut = page.getByRole('button', { name: 'Körper', exact: true });
+      await erneut.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
+      await erneut.click();
+      const ohne = page.getByRole('dialog', { name: 'Körper', exact: true });
+      await expect(ohne).toHaveCSS('opacity', '1');
+      await expect(ohne.getByRole('heading', { name: 'Verfall' })).toHaveCount(0);
+      await expect(ohne.locator('.grid-cols-8')).toHaveCount(0);
+      const felder = ohne.locator('.formular-felder');
+      const ueberhang = await felder.evaluate((element) => element.scrollHeight - element.clientHeight);
+      expect(ueberhang).toBeLessThanOrEqual(1);
+      const knopf = await ohne.getByRole('button', { name: 'Speichern' }).boundingBox();
+      expect(knopf).not.toBeNull();
+      expect((knopf?.y ?? 0) + (knopf?.height ?? 0)).toBeLessThanOrEqual(844);
+    } finally {
+      await page.request.patch('/api/einstellungen', { data: { funktionen: daten.funktionen } });
+    }
+  }
+});

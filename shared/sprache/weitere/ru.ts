@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.": "Символ выбирается в одной строке. Сетка открывается только по нажатию.",
   "Das eigene Level steht in derselben Zeile wie die Vorschläge.": "Свой уровень стоит в одной строке с подсказками.",
   "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "У ориентира имя остаётся только в заголовке страницы. Ниже стоят, чем он известен, уровень с классом и титулом и насколько он похож.",
   "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "В «Занятиях» под названием в одной строке остаётся, что занятие укрепляет. Если места не хватает, строка заканчивается на ….",

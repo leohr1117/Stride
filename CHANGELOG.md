@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.83
+
+### Geändert
+
+- Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.
+
 ## 3.56.82
 
 ### Verbessert

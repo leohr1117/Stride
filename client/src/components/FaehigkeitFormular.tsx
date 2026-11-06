@@ -71,7 +71,7 @@ export function FaehigkeitFormular({
         />
       </Feld>
       <Feld label={tx("Symbol")}>
-        <IconAuswahl wert={icon} farbe={farbe} onAendern={setIcon} />
+        <IconAuswahl wert={icon} farbe={farbe} onAendern={setIcon} raster />
       </Feld>
       <Feld label={tx("Farbe")}>
         <Farbauswahl wert={farbe} onAendern={setFarbe} />

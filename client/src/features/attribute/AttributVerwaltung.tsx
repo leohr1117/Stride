@@ -206,9 +206,7 @@ export function AttributFormular({
           onChange={(ereignis) => setBeschreibung(ereignis.target.value)}
         />
       </Feld>
-      <Feld label={tx("Symbol")}>
-        <IconAuswahl wert={icon} farbe={farbe} onAendern={setIcon} />
-      </Feld>
+      <IconAuswahl wert={icon} farbe={farbe} onAendern={setIcon} />
       <Feld label={tx("Farbe")}>
         <Farbauswahl wert={farbe} onAendern={setFarbe} />
       </Feld>

@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.": "記号は1行で選びます。グリッドはタップしてから開きます。",
   "Das eigene Level steht in derselben Zeile wie die Vorschläge.": "自分のレベルは、提案と同じ行に並びます。",
   "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "お手本では、名前はページ上部の見出しだけに残ります。その下に、何で知られるか、レベルとクラスと称号、似ている度合いが並びます。",
   "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "「活動」では、名前の下に、何を伸ばすかが1行で残ります。入りきらないときは、行が…で終わります。",

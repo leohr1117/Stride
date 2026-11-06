@@ -289,10 +289,7 @@ export function InvestitionFormular({
             }}
           />
         </ZeilenGruppe>
-        <div className="feld block space-y-2">
-          <span className="feld-label block text-sm leading-5 font-semibold">{tx('Symbol')}</span>
-          <IconAuswahl wert={icon} farbe={NEUTRAL_FARBE} onAendern={setIcon} />
-        </div>
+        <IconAuswahl wert={icon} farbe={NEUTRAL_FARBE} onAendern={setIcon} />
         <input
           ref={wahlRef}
           disabled

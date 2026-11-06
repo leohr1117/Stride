@@ -131,9 +131,7 @@ export function TaetigkeitFormular({
           autoFocus
         />
       </Feld>
-      <Feld label={tx("Symbol")}>
-        <IconAuswahl wert={icon} farbe="var(--akzent)" onAendern={setIcon} />
-      </Feld>
+      <IconAuswahl wert={icon} farbe="var(--akzent)" onAendern={setIcon} />
       {segmentSichtbar && bindungsName ? (
         <Feld label="Gilt für">
           <div className="relative">

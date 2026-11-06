@@ -323,9 +323,7 @@ export function BasisFormular({
           autoFocus
         />
       </Feld>
-      <Feld label={tx("Symbol")}>
-        <IconAuswahl wert={icon} farbe="var(--akzent)" onAendern={setIcon} />
-      </Feld>
+      <IconAuswahl wert={icon} farbe="var(--akzent)" onAendern={setIcon} />
       {ebenen.projekte && (
         <Feld label={<ZielMarke ebene="projekte" />}>
             <HierarchieWahl

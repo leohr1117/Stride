@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.83',
+    seiten: 'Tätigkeit, Investition, Attribut, Basis',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.'],
+      },
+    ],
+  },
+  {
     version: '3.56.82',
     seiten: 'Ziele',
     abschnitte: [

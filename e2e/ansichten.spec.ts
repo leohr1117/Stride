@@ -90,6 +90,21 @@ async function pruefeBedeutungen(seite: Page, trio: Farbtrio): Promise<void> {
   expect(kontrast(wache.fokus, grund)).toBeGreaterThanOrEqual(3);
 }
 
+async function ersteFaehigkeit(seite: Page): Promise<{ id: number }> {
+  const faehigkeit = await seite.evaluate(async () => {
+    const antwort = await fetch('/api/faehigkeiten');
+    if (!antwort.ok) {
+      return null;
+    }
+    const liste = (await antwort.json()) as { id: number; name: string; archiviert: boolean }[];
+    return liste.find((eintrag) => eintrag.name === 'Programmieren' && !eintrag.archiviert) ?? liste.find((eintrag) => !eintrag.archiviert) ?? null;
+  });
+  if (!faehigkeit) {
+    throw new Error('Fähigkeit fehlt.');
+  }
+  return faehigkeit;
+}
+
 async function ringKontrast(seite: Page): Promise<number> {
   const farben = await seite.evaluate(() => {
     const strich = document.querySelector('[data-kopfring]');
@@ -111,6 +126,7 @@ test('Jede Ansicht hat eine eigene Form und feste Bedeutungsfarben', async ({ pa
   const bild = (name: string) => page.screenshot({ path: `tmp-test/ansichten/${projekt}-${name}.png`, fullPage: true });
 
   try {
+    const faehigkeit = await ersteFaehigkeit(page);
     const radien = new Set<string>();
     for (const ansicht of ANSICHTEN) {
       await page.goto('/mehr/darstellung');
@@ -122,7 +138,7 @@ test('Jede Ansicht hat eine eigene Form und feste Bedeutungsfarben', async ({ pa
       await expect(page.locator('html')).toHaveAttribute('data-stil', ansicht.stil);
       const daten = await lese(page);
       await pruefeBedeutungen(page, { primaer: daten.primaer, akzent: daten.akzent, hintergrund: daten.hintergrund });
-      await page.goto('/vorbilder/ronaldo');
+      await page.goto(`/faehigkeiten/${faehigkeit.id}`);
       const stilKarte = page.locator('main .karte').first();
       await expect(stilKarte).toBeVisible();
       const radius = await stilKarte.evaluate((element) => getComputedStyle(element).borderTopLeftRadius);
