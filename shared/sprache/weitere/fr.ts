@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "Dans Activités, ce qu'une activité renforce tient sur une ligne sous le nom. S'il n'y a pas assez de place, la ligne se termine par ….",
   "Auswahllisten stehen als Zeilen statt als Karten.": "Les listes de choix s'affichent en lignes au lieu de cartes.",
   "Zweitknöpfe haben keine graue Fläche mehr.": "Les boutons secondaires n'ont plus de fond gris.",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "Terminer le projet est dans le menu en tête de la page du projet.",

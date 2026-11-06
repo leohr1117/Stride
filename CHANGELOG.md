@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.80
+
+### Verbessert
+
+- Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….
+
 ## 3.56.79
 
 ### Geändert

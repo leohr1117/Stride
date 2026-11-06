@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "В «Занятиях» под названием в одной строке остаётся, что занятие укрепляет. Если места не хватает, строка заканчивается на ….",
   "Auswahllisten stehen als Zeilen statt als Karten.": "Списки выбора показаны строками, а не карточками.",
   "Zweitknöpfe haben keine graue Fläche mehr.": "Вторичные кнопки больше не залиты серым.",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "«Завершить проект» стоит в меню в шапке страницы проекта.",

@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "En Actividades, lo que entrena una actividad queda en una línea bajo el nombre. Si no cabe, la línea termina con ….",
   "Auswahllisten stehen als Zeilen statt als Karten.": "Las listas de selección aparecen como filas en lugar de tarjetas.",
   "Zweitknöpfe haben keine graue Fläche mehr.": "Los botones secundarios ya no tienen un relleno gris.",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "Terminar proyecto está en el menú del encabezado de la página del proyecto.",

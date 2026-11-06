@@ -8,6 +8,7 @@ import { Icon } from '../../components/Icons.tsx';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
 import { AnlegeZeile, Liste, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { prozentPunkte } from '../../format.ts';
+import { GekuerzteNebenzeile, staerktFassungen } from '../taetigkeiten/Nebenzeile.tsx';
 import { ReihenfolgeKnopf } from '../taetigkeiten/Reihenfolge.tsx';
 import { Fehlermeldung, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { useFunktionen } from '../../funktionen.ts';
@@ -28,25 +29,21 @@ export function VorlagenVerwaltung({ onBearbeiten }: { onBearbeiten: (vorlage: V
   const zeile = (vorlage: Vorlage, neben: string | null) => {
     const gewichte = wirksameGewichte(vorlage);
     const prozente = anteileInProzent(gewichte.map((gewicht) => gewicht.gewicht));
-    const staerkt =
-      gewichte.length > 0
-        ? tx('Stärkt: {liste}', {
-            liste: gewichte
-              .map((gewicht, index) => {
-                const attribut = attributeNachId.get(gewicht.attributId);
-                const name = attribut ? attributName(attribut) : '?';
-                return `${name} ${prozentPunkte(prozente[index] ?? 0)}`;
-              })
-              .join(' · '),
-          })
-        : null;
+    const teile = gewichte.map((gewicht, index) => {
+      const attribut = attributeNachId.get(gewicht.attributId);
+      const name = attribut ? attributName(attribut) : '?';
+      return `${name} ${prozentPunkte(prozente[index] ?? 0)}`;
+    });
+    const fassungen = teile.length > 0 ? staerktFassungen(teile) : [];
     const anteile: ReactNode =
       gewichte.length > 0 ? (
         <>
-          {neben || !staerkt ? null : (
-            <p data-anteile-text="" className="mt-1 truncate text-[13px] leading-[18px] text-leise">
-              {staerkt}
-            </p>
+          {neben || fassungen.length === 0 ? null : (
+            <GekuerzteNebenzeile
+              fassungen={fassungen}
+              anteile
+              className="mt-1 truncate text-[13px] leading-[18px] text-leise"
+            />
           )}
           <div data-anteile="" className="mt-1 flex h-1.5 overflow-hidden rounded-full bg-flaeche-2">
             {gewichte.map((gewicht, index) => {

@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….', 'On Activities, what an activity trains stays on one line under the name. When there is not enough room, the line ends with ….'],
   ['Auswahllisten stehen als Zeilen statt als Karten.', 'Choice lists appear as rows instead of cards.'],
   ['Zweitknöpfe haben keine graue Fläche mehr.', 'Secondary buttons no longer have a grey fill.'],
   ['Projekt abschließen steht im Menü im Kopf der Projektseite.', 'Finish project sits in the menu in the header of the project page.'],

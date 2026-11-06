@@ -35,6 +35,7 @@ import {
 } from '../../ui/index.ts';
 import { bossZeile, VorhabenKennzahlen } from '../../components/VorhabenInfo.tsx';
 import { TaetigkeitFormular, TaetigkeitMenue } from '../taetigkeiten/TaetigkeitFormular.tsx';
+import { GekuerzteNebenzeile, satzFassungen } from '../taetigkeiten/Nebenzeile.tsx';
 import { ZielDialog, type ZielBearbeitung } from './ZielDialoge.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
@@ -336,9 +337,11 @@ function ProjektTaetigkeiten({
                 <Icon name={vorlage.icon} className="size-5 shrink-0 text-leise" />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-base leading-6">{vorlage.name}</span>
-                  <span className="block truncate text-[13px] leading-[18px] text-leise">
-                    {tx('Nur für {name}', { name: projektName })}
-                  </span>
+                  <GekuerzteNebenzeile
+                    als="span"
+                    fassungen={satzFassungen(tx('Nur für {name}', { name: projektName }))}
+                    className="block truncate text-[13px] leading-[18px] text-leise"
+                  />
                 </span>
                 {menue}
                 <Knopf

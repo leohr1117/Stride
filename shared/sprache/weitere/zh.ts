@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "在「活动」中，名称下方用一行显示这项活动强化什么。放不下时，这一行以…结尾。",
   "Auswahllisten stehen als Zeilen statt als Karten.": "选择列表以行显示，不再是卡片。",
   "Zweitknöpfe haben keine graue Fläche mehr.": "次要按钮不再有灰色填充。",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "「完成项目」在项目页顶部的菜单里。",

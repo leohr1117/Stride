@@ -55,9 +55,38 @@ test('Tätigkeiten zeigen Prozent, die 100 ergeben, und gleich breite gleiche Fa
     const zeile = page.locator(`[data-taetigkeit="${NAME}"]`);
     await expect(page.getByRole('button', { name: /Alle anzeigen/ })).toHaveCount(0);
     await expect(zeile).toBeVisible();
-    await expect(zeile.locator('[data-anteile-text]')).toHaveText(angelegt.text);
-    await expect(zeile.locator('[data-anteile-text]')).not.toContainText('50');
-    await expect(zeile.locator('[data-anteile-text]')).not.toContainText('30');
+    const nebenzeile = zeile.locator('[data-anteile-text]');
+    await expect(nebenzeile).toHaveAttribute('aria-label', angelegt.text);
+    await page.evaluate(() => document.fonts.ready);
+    await expect(async () => {
+      const stand = await nebenzeile.evaluate((el) => ({
+        text: (el.textContent ?? '').replace(/\s+/g, ' ').trim(),
+        ueberlauf: el.scrollWidth - el.clientWidth,
+        zeilen: el.getClientRects().length,
+        hoehe: el.getBoundingClientRect().height,
+        nowrap: getComputedStyle(el).whiteSpace,
+      }));
+      expect(stand.ueberlauf).toBeLessThanOrEqual(1);
+      expect(stand.zeilen).toBe(1);
+      expect(stand.nowrap).toBe('nowrap');
+      expect(stand.hoehe).toBeGreaterThanOrEqual(16);
+      expect(stand.hoehe).toBeLessThanOrEqual(20);
+      expect(stand.text === angelegt.text || stand.text.endsWith('…')).toBe(true);
+      if (stand.text !== angelegt.text) {
+        const stamm = stand.text.replace(/…$/, '').replace(/[\s·]+$/u, '');
+        expect(angelegt.text.startsWith(stamm)).toBe(true);
+        const danach = angelegt.text.slice(stamm.length);
+        expect(danach === '' || /^[\s·]/.test(danach)).toBe(true);
+      }
+      if (testInfo.project.name === 'handy') {
+        expect(stand.text.endsWith('…')).toBe(true);
+        expect(stand.text.length).toBeLessThan(angelegt.text.length);
+      }
+    }).toPass();
+    await expect(nebenzeile).not.toContainText('50');
+    await expect(nebenzeile).not.toContainText('30');
+    expect(angelegt.text).not.toContain('50');
+    expect(angelegt.text).not.toContain('30');
 
     const segmente = zeile.locator('[data-anteil]');
     await expect(segmente).toHaveCount(4);
