@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.84
+
+### Geändert
+
+- Auf dem Computer sind alle Seiten gleich breit, und die Aktionen im Kopf stehen auf derselben Kante wie der Inhalt.
+
 ## 3.56.83
 
 ### Geändert

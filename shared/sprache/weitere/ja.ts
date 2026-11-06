@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf dem Computer sind alle Seiten gleich breit, und die Aktionen im Kopf stehen auf derselben Kante wie der Inhalt.": "パソコンでは、すべてのページが同じ幅で、ヘッダーの操作は内容と同じ端に揃います。",
   "Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.": "記号は1行で選びます。グリッドはタップしてから開きます。",
   "Das eigene Level steht in derselben Zeile wie die Vorschläge.": "自分のレベルは、提案と同じ行に並びます。",
   "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "お手本では、名前はページ上部の見出しだけに残ります。その下に、何で知られるか、レベルとクラスと称号、似ている度合いが並びます。",

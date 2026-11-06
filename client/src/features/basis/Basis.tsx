@@ -216,7 +216,7 @@ export function BasisKarte() {
   };
 
   return (
-    <section className="md:max-w-[720px]">
+    <section className="inhalt-max">
       <EinklappKopf
         titel={tx("Basis")}
         offen={!eingeklappt}

@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 /** Fläche. Handy: Radius 12, ohne Rand. PC: 8 px Radius und 1 px Rand. */
 export const FLAECHE_INNEN = 'liste bg-flaeche rounded-[12px] md:overflow-hidden md:rounded-lg md:border md:border-rand';
 
-/** Liegt im Seitenrand der Seite. PC: höchstens 720 px. */
-export const FLAECHEN_RAHMEN = 'md:mx-0 md:max-w-[720px]';
+/** Liegt im Seitenrand der Seite. PC: höchstens die gemeinsame Inhaltsbreite. */
+export const FLAECHEN_RAHMEN = 'md:mx-0 inhalt-max';
 
 /** Handy: 16 px Seitenrand, Radius 12, ohne Rahmen. PC: 8 px Radius und 1 px Rand. */
 export const FLAECHE_KLASSE = `${FLAECHE_INNEN} ${FLAECHEN_RAHMEN}`;

@@ -189,7 +189,7 @@ export function Kopf() {
       data-kopf=""
       className="mobilkopf sticky top-0 z-30 border-b border-rand bg-grund/90 pt-[env(safe-area-inset-top)] backdrop-blur md:static md:z-auto md:bg-transparent md:pt-0 md:backdrop-blur-none"
     >
-      <div className="flex h-14 min-w-0 items-center gap-1 px-4 md:px-8">
+      <div className="inhalt-rand flex h-14 min-w-0 items-center gap-1">
         <div className="flex min-w-0 flex-1 items-center">
           {ziel && (
             <Link

@@ -197,17 +197,19 @@ function AppGeruest() {
           <div className="min-w-0 flex-1">
             <FabAbstand an={!pc && hatEintragFab(pathname)} />
             <main className="mx-auto w-full max-w-4xl pb-28 md:pb-12">
-              <Kopf />
-              <div className="px-4 pt-4 md:px-8 md:pt-6">
-                <Suspense fallback={<Ladeanzeige />}>
-                  <div key={pathname} className="seite-einblenden">
-                    {pfadAktiv(pathname, { funktionen: daten.funktionen, ebenen: daten.ebenen }) ? (
-                      <Outlet />
-                    ) : (
-                      <Navigate to="/" replace />
-                    )}
-                  </div>
-                </Suspense>
+              <div className="inhalt-spalte">
+                <Kopf />
+                <div data-inhalt="" className="pt-4 md:pt-6">
+                  <Suspense fallback={<Ladeanzeige />}>
+                    <div key={pathname} className="seite-einblenden">
+                      {pfadAktiv(pathname, { funktionen: daten.funktionen, ebenen: daten.ebenen }) ? (
+                        <Outlet />
+                      ) : (
+                        <Navigate to="/" replace />
+                      )}
+                    </div>
+                  </Suspense>
+                </div>
               </div>
             </main>
           </div>

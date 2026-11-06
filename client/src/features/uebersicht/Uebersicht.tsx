@@ -131,7 +131,7 @@ export function UebersichtSeite() {
       {karteGewaehlt('basis', karten) && funktionen.basis && <BasisKarte />}
 
       {karteGewaehlt('werte', karten) && (funktionen.koennen || funktionen.status) && (
-        <div className="md:max-w-[720px]">
+        <div className="inhalt-max">
           <Abschnitt titel={tx('Werte')} kennung="uebersicht-werte" anfangEingeklappt kopfKlasse="abschnitt-kopf">
             <Flaeche>
               <div className="grid md:grid-cols-2">
@@ -161,7 +161,7 @@ export function UebersichtSeite() {
       )}
 
       {karteGewaehlt('aktivitaet', karten) && (
-        <div className="md:max-w-[720px]">
+        <div className="inhalt-max">
           <Abschnitt titel={tx('Aktivität')} kennung="uebersicht-aktivitaet" anfangEingeklappt kopfKlasse="abschnitt-kopf">
             <Flaeche className="p-4">
               <Heatmap tage={uebersicht.heatmap} />
@@ -220,7 +220,7 @@ function Angriffe({
   laufendAn: boolean;
 }) {
   return (
-    <section className="md:max-w-[720px]">
+    <section className="inhalt-max">
       <AbschnittKopf
         titel={tx('Bosse greifen an')}
         aktion={
@@ -278,7 +278,7 @@ function Comebacks({ comebacks, projekteAn }: { comebacks: VorhabenMitProjekt[];
   });
 
   return (
-    <section className="md:max-w-[720px]">
+    <section className="inhalt-max">
       <AbschnittKopf titel={tx('Zurück aufstehen')} />
       <Flaeche>
         {comebacks.map((vorhaben) => (

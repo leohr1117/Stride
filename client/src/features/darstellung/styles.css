@@ -3,6 +3,8 @@
 
 :root {
   color-scheme: light dark;
+  --inhalt-max: 720px;
+  --inhalt-rand: 1rem;
   --sicht-oben: 0px;
   --sicht-hoehe: 100dvh;
   --tastatur: 0px;
@@ -38,6 +40,33 @@
   --prio-2: #eb8909;
   --prio-3: #246fe0;
   --prio-4: var(--leise);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --inhalt-rand: 2rem;
+  }
+
+  .inhalt-spalte {
+    max-width: calc(var(--inhalt-max) + 2 * var(--inhalt-rand));
+  }
+
+  .inhalt-max {
+    max-width: var(--inhalt-max);
+  }
+}
+
+.inhalt-rand {
+  padding-inline: var(--inhalt-rand);
+}
+
+.inhalt-spalte {
+  box-sizing: border-box;
+  padding-inline: var(--inhalt-rand);
+}
+
+.inhalt-spalte > [data-kopf] {
+  margin-inline: calc(-1 * var(--inhalt-rand));
 }
 
 :root[data-glimmen='aus'] {

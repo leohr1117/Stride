@@ -140,7 +140,7 @@ export function HeuteKarte() {
   const handlung = art !== null && art !== 'lauf' ? art : null;
 
   return (
-    <section data-heute className="md:max-w-[720px]">
+    <section data-heute className="inhalt-max">
       <AbschnittKopf titel={tx('Streak')} />
       <Flaeche>
         {abfrage.isError ? (

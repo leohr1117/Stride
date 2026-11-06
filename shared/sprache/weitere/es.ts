@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf dem Computer sind alle Seiten gleich breit, und die Aktionen im Kopf stehen auf derselben Kante wie der Inhalt.": "En el ordenador, todas las páginas tienen el mismo ancho, y las acciones del encabezado quedan en el mismo borde que el contenido.",
   "Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.": "El símbolo se elige en una fila. La cuadrícula se abre solo al tocarla.",
   "Das eigene Level steht in derselben Zeile wie die Vorschläge.": "El nivel propio está en la misma línea que las propuestas.",
   "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "En un referente, el nombre queda solo en el encabezado de la página. Debajo están para qué es conocido, el nivel con clase y título, y la similitud.",

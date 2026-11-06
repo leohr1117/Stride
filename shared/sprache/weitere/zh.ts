@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf dem Computer sind alle Seiten gleich breit, und die Aktionen im Kopf stehen auf derselben Kante wie der Inhalt.": "在电脑上，所有页面一样宽，页眉里的操作和内容齐边。",
   "Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.": "符号在一行中选择。点按后才打开网格。",
   "Das eigene Level steht in derselben Zeile wie die Vorschläge.": "自定等级和建议等级在同一行。",
   "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "榜样的名字只留在页眉。下面是以何闻名、等级、类别和称号，以及相似度。",

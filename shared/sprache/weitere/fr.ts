@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf dem Computer sind alle Seiten gleich breit, und die Aktionen im Kopf stehen auf derselben Kante wie der Inhalt.": "Sur ordinateur, toutes les pages ont la même largeur, et les actions de l'en-tête sont sur le même bord que le contenu.",
   "Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.": "Le symbole se choisit sur une ligne. La grille ne s'ouvre qu'au toucher.",
   "Das eigene Level steht in derselben Zeile wie die Vorschläge.": "Le niveau personnel est sur la même ligne que les propositions.",
   "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "Pour un modèle, le nom ne reste que dans l'en-tête de la page. En dessous figurent ce pour quoi il est connu, le niveau avec la classe et le titre, puis à quel point il est semblable.",

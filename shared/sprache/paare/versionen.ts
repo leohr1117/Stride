@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf dem Computer sind alle Seiten gleich breit, und die Aktionen im Kopf stehen auf derselben Kante wie der Inhalt.', 'On a computer, every page is the same width, and the actions in the header sit on the same edge as the content.'],
   ['Das Symbol wählt man in einer Zeile. Das Raster öffnet sich erst beim Antippen.', 'The icon is chosen on one row. The grid opens only when you tap it.'],
   ['Das eigene Level steht in derselben Zeile wie die Vorschläge.', 'The custom level sits on the same line as the suggestions.'],
   ['Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.', 'On a role model, the name stays only in the page header. Below are what they are known for, level with class and title, and the similarity.'],
