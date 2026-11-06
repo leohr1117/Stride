@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zweitknöpfe haben keine graue Fläche mehr.": "Los botones secundarios ya no tienen un relleno gris.",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "Terminar proyecto está en el menú del encabezado de la página del proyecto.",
   "Projekt abschließen": "Terminar proyecto",
   "Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.": "Los niveles de pérdida de un atributo quedan en una línea por grupo.",

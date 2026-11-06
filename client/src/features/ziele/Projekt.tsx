@@ -536,7 +536,8 @@ function OffenesVorhaben({
               </div>
               {menue}
               <Knopf
-                className="shrink-0 px-3 py-1.5"
+                variante="text"
+                className="-my-1 shrink-0"
                 data-schnell-frei=""
                 onClick={(ereignis) => {
                   ereignis.stopPropagation();

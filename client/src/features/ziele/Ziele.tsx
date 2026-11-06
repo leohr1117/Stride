@@ -670,7 +670,7 @@ function VorhabenBereich({ vorhaben }: { vorhaben: VorhabenMitProjekt[] }) {
                   titel={eintrag.titel}
                   menue={menue}
                   rechts={
-                    <Knopf data-schnell-frei="" onClick={() => eintragOeffnen({ vorhabenId: eintrag.id })}>
+                    <Knopf variante="text" className="-my-1 shrink-0" data-schnell-frei="" onClick={() => eintragOeffnen({ vorhabenId: eintrag.id })}>
                       {tx('Weiter')}
                     </Knopf>
                   }
@@ -711,7 +711,7 @@ function FreieVorhaben({ vorhaben }: { vorhaben: VorhabenMitProjekt[] }) {
                 titel={eintrag.titel}
                 menue={menue}
                 rechts={
-                  <Knopf data-schnell-frei="" onClick={() => eintragOeffnen({ vorhabenId: eintrag.id })}>
+                  <Knopf variante="text" className="-my-1 shrink-0" data-schnell-frei="" onClick={() => eintragOeffnen({ vorhabenId: eintrag.id })}>
                     {tx('Weiter')}
                   </Knopf>
                 }

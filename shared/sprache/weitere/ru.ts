@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zweitknöpfe haben keine graue Fläche mehr.": "Вторичные кнопки больше не залиты серым.",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "«Завершить проект» стоит в меню в шапке страницы проекта.",
   "Projekt abschließen": "Завершить проект",
   "Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.": "Ступени потери атрибута стоят в одной строке для каждой группы.",

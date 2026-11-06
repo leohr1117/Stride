@@ -104,7 +104,7 @@ export function LeistenEditor({
             aria-label={tx('{name} nach oben', { name: tx(platz.eintrag.label) })}
             disabled={deaktiviert || reihe === 0}
             onClick={() => aendere(tauschMitSichtbar(wert, platz.index, -1, aktiv))}
-            className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-flaeche-2 text-haupt disabled:opacity-30"
+            className="flex size-12 shrink-0 items-center justify-center bg-transparent text-haupt disabled:opacity-30"
           >
             <ChevronUp className="size-4" />
           </button>
@@ -113,7 +113,7 @@ export function LeistenEditor({
             aria-label={tx('{name} nach unten', { name: tx(platz.eintrag.label) })}
             disabled={deaktiviert || reihe === beweglich.length - 1}
             onClick={() => aendere(tauschMitSichtbar(wert, platz.index, 1, aktiv))}
-            className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-flaeche-2 text-haupt disabled:opacity-30"
+            className="flex size-12 shrink-0 items-center justify-center bg-transparent text-haupt disabled:opacity-30"
           >
             <ChevronDown className="size-4" />
           </button>
@@ -182,11 +182,11 @@ export function LeistenEditor({
       </section>
 
       <div className="flex flex-wrap gap-2">
-        <Knopf onClick={rueckgaengig} disabled={deaktiviert || schritte === 0}>
+        <Knopf variante="text" onClick={rueckgaengig} disabled={deaktiviert || schritte === 0}>
           <Undo2 className="size-4" />
           {tx("Rückgängig")}
         </Knopf>
-        <Knopf onClick={() => aendere([...LEISTE_STANDARD])} disabled={deaktiviert || standard}>
+        <Knopf variante="text" onClick={() => aendere([...LEISTE_STANDARD])} disabled={deaktiviert || standard}>
           <RotateCcw className="size-4" />
           {tx("Standard")}
         </Knopf>

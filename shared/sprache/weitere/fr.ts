@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zweitknöpfe haben keine graue Fläche mehr.": "Les boutons secondaires n'ont plus de fond gris.",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "Terminer le projet est dans le menu en tête de la page du projet.",
   "Projekt abschließen": "Terminer le projet",
   "Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.": "Les paliers de perte d'un attribut tiennent sur une ligne par groupe.",

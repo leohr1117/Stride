@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Zweitknöpfe haben keine graue Fläche mehr.', 'Secondary buttons no longer have a grey fill.'],
   ['Projekt abschließen steht im Menü im Kopf der Projektseite.', 'Finish project sits in the menu in the header of the project page.'],
   ['Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.', 'An attribute\'s loss stages sit on one line per group.'],
   ['Bosse öffnen sich in Laufend und auf der Projektseite durch Tippen auf die ganze Zeile.', 'Bosses open in Active and on the project page by tapping the whole row.'],

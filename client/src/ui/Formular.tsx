@@ -25,8 +25,8 @@ const TEXT_KNOPF =
 
 const KNOPF_STIL: Record<KnopfVariante, string> = {
   primaer: 'min-h-12 rounded-lg bg-aktion px-4 text-aktion-text hover:brightness-110',
-  sekundaer: 'min-h-12 rounded-lg border border-rand bg-flaeche-2 px-4 text-haupt hover:brightness-95 dark:hover:brightness-125',
-  leise: 'min-h-12 rounded-lg px-4 text-leise hover:bg-flaeche-2 hover:text-haupt',
+  sekundaer: 'min-h-12 rounded-lg border border-[color:var(--feldrand)] bg-transparent px-4 text-haupt hover:bg-transparent',
+  leise: 'min-h-12 rounded-lg bg-transparent px-4 text-leise hover:bg-transparent hover:text-haupt',
   gefahr: 'min-h-12 rounded-lg px-4 text-gefahr hover:bg-gefahr/10',
   warnung: 'min-h-12 rounded-lg bg-gefahr px-4 text-gefahr-text hover:brightness-110',
   text: TEXT_KNOPF,

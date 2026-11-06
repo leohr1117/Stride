@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.78
+
+### Geändert
+
+- Zweitknöpfe haben keine graue Fläche mehr.
+
 ## 3.56.77
 
 ### Geändert

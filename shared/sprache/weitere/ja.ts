@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zweitknöpfe haben keine graue Fläche mehr.": "副ボタンに灰色の塗りがなくなりました。",
   "Projekt abschließen steht im Menü im Kopf der Projektseite.": "「プロジェクトを終える」は、プロジェクトページのヘッダーのメニューにあります。",
   "Projekt abschließen": "プロジェクトを終える",
   "Die Verlust-Stufen eines Attributs stehen je Gruppe in einer Zeile.": "属性の損失段階は、グループごとに1行に並びます。",

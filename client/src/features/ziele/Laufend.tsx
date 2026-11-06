@@ -106,7 +106,7 @@ function LaufendesVorhaben({
             <VorhabenKennzahlen vorhaben={vorhaben} ohneXp />
           </div>
         </div>
-        <Knopf className="relative z-10 shrink-0" data-schnell-frei="" onClick={weiter}>
+        <Knopf variante="text" className="relative z-10 -my-1 shrink-0" data-schnell-frei="" onClick={weiter}>
           {tx('Weiter')}
         </Knopf>
       </div>
@@ -122,7 +122,7 @@ function LaufendesVorhaben({
       titel={vorhaben.titel}
       neben={projekteAn && vorhaben.projektName ? vorhaben.projektName : undefined}
       rechts={
-        <Knopf className="shrink-0" data-schnell-frei="" onClick={weiter}>
+        <Knopf variante="text" className="-my-1 shrink-0" data-schnell-frei="" onClick={weiter}>
           {tx('Weiter')}
         </Knopf>
       }
