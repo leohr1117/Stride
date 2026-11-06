@@ -19,10 +19,9 @@ import {
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { KopfAktion, useKopf } from '../../components/Kopf.tsx';
 import { Zeile } from '../../components/Zeile.tsx';
-import { KlassenBild } from '../../components/KlassenBild.tsx';
 import type { LebenswegPunkt } from '../../components/LebenswegDiagramm.tsx';
 import { LebenswegDiagramm, ProfilRadar } from '../../components/mitDiagramm.tsx';
-import { AbschnittKopf, Fehlermeldung, Flaeche, Fortschrittsbalken, Karte, Ladeanzeige } from '../../ui/index.ts';
+import { AbschnittKopf, Fehlermeldung, Flaeche, Fortschrittsbalken, Ladeanzeige } from '../../ui/index.ts';
 import { levelZahl, prozentText } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { attributName, klassenText, tx, txMenge } from '../../text.ts';
@@ -123,6 +122,10 @@ export function VorbildProfilSeite() {
   const wert = aehnlichkeit(profil.level, vorbild.profil, vorbild.unsicher);
   const name = (kennung: AttributKennung) => profil.namen.get(kennung) ?? attributVorlage(kennung).name;
   const klasse = klasseAus(vorbild.schaetzung);
+  const herkunft = [tx(vorbild.bekanntFuer), lebensdaten(vorbild)].filter((teil): teil is string => Boolean(teil)).join(' · ');
+  const stand = [tx('Lvl {level}', { level: levelZahl(vorbild.level) }), klassenText(klasse), titel ? tx(titel) : '']
+    .filter((teil) => teil !== '')
+    .join(' · ');
   const legende = [
     { name: tx(vorbild.name), farbe: 'var(--diagramm-vorbild)' },
     ...(vorbild.schluessel !== DURCHSCHNITT ? [{ name: tx('Durchschnitt'), farbe: 'var(--leise)' }] : []),
@@ -161,33 +164,24 @@ export function VorbildProfilSeite() {
           </button>
         </KopfAktion>
       )}
-      <Karte className="space-y-3">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-          <div className="min-w-0 sm:flex-1">
-            <span className="profil-name min-w-0 break-words text-[1.05rem] leading-tight font-bold sm:text-2xl">
-              {tx(vorbild.name)}
-            </span>
-            <p className="break-words text-sm text-leise">
-              {tx(vorbild.bekanntFuer)}
-              {lebensdaten(vorbild) && ` · ${lebensdaten(vorbild)}`}
-            </p>
-          </div>
-          <div className="shrink-0 self-end text-right sm:self-start">
-            <p className="text-3xl leading-tight font-bold break-words">{tx('Lvl {level}', { level: levelZahl(vorbild.level) })}</p>
-            <p className="inline-flex items-center justify-end gap-1.5 text-sm font-medium text-akzent">
-              <KlassenBild klasse={klasse} groesse="size-5" rahmen={false} />
-              {klassenText(klasse)}
-            </p>
-            {titel && <p className="text-xs text-xp">{tx(titel)}</p>}
-          </div>
-        </div>
-        {wert !== null && (
-          <p data-aehnlichkeit="" className="text-3xl leading-none font-bold text-akzent">
-            {tx('{prozent} ähnlich', { prozent: prozentText(wert) })}
+      <Flaeche className="vorbild-kopf">
+        <div className="px-4 py-3">
+          <p data-vorbild-herkunft="" className="break-words text-[13px] leading-[18px] text-leise">
+            {herkunft}
           </p>
-        )}
-        <p className="text-sm leading-relaxed">{tx(vorbild.beschreibung)}</p>
-      </Karte>
+          <p data-vorbild-stand="" className="zahl mt-1 break-words text-[15px] leading-[22px] font-semibold">
+            {stand}
+          </p>
+          {wert !== null && (
+            <p data-aehnlichkeit="" className="zahl mt-0.5 break-words text-[15px] leading-[22px] font-semibold">
+              {tx('{prozent} ähnlich', { prozent: prozentText(wert) })}
+            </p>
+          )}
+          <p data-vorbild-text="" className="mt-1 line-clamp-3 break-words text-sm leading-5">
+            {tx(vorbild.beschreibung)}
+          </p>
+        </div>
+      </Flaeche>
 
       {staerkeListe ? (
         <section>

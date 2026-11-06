@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 3.56.81
+
+### Geändert
+
+- Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.
+
 ## 3.56.80
 
 ### Verbessert

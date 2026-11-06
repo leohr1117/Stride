@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "お手本では、名前はページ上部の見出しだけに残ります。その下に、何で知られるか、レベルとクラスと称号、似ている度合いが並びます。",
   "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "「活動」では、名前の下に、何を伸ばすかが1行で残ります。入りきらないときは、行が…で終わります。",
   "Auswahllisten stehen als Zeilen statt als Karten.": "選択リストはカードではなく行で表示されます。",
   "Zweitknöpfe haben keine graue Fläche mehr.": "副ボタンに灰色の塗りがなくなりました。",

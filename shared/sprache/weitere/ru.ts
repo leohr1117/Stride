@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "У ориентира имя остаётся только в заголовке страницы. Ниже стоят, чем он известен, уровень с классом и титулом и насколько он похож.",
   "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "В «Занятиях» под названием в одной строке остаётся, что занятие укрепляет. Если места не хватает, строка заканчивается на ….",
   "Auswahllisten stehen als Zeilen statt als Karten.": "Списки выбора показаны строками, а не карточками.",
   "Zweitknöpfe haben keine graue Fläche mehr.": "Вторичные кнопки больше не залиты серым.",

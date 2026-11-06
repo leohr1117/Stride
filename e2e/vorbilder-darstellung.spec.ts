@@ -109,46 +109,99 @@ async function schriftBereit(seite: Page): Promise<void> {
 }
 
 async function pruefeKopf(seite: Page, name: string): Promise<void> {
-  const karte = seite.locator('section.karte').first();
-  const titel = karte.locator('.profil-name');
-  const level = karte.locator('p.text-3xl:not([data-aehnlichkeit])');
-  await expect(titel).toBeVisible();
-  await expect(level).toBeVisible();
+  const kopf = seite.locator('.vorbild-kopf');
+  const stand = kopf.locator('[data-vorbild-stand]');
+  await expect(kopf).toBeVisible();
+  await expect(seite.locator('section.karte')).toHaveCount(0);
+  await expect(kopf.getByText(name, { exact: true })).toHaveCount(0);
+  await expect(stand).toBeVisible();
+  await expect(stand).toContainText('Lvl');
   await schriftBereit(seite);
-  const textUeberlauf = await titel.evaluate((element) => element.scrollWidth > element.clientWidth + 1);
+  const textUeberlauf = await kopf.evaluate((element) => element.scrollWidth > element.clientWidth + 1);
   expect(textUeberlauf, name).toBe(false);
-  const kaesten = await seite.evaluate(() => {
+  const masse = await seite.evaluate(() => {
     const kasten = (element: Element | null) => {
       if (!element) {
         return null;
       }
+      const stil = getComputedStyle(element);
       const rechteck = element.getBoundingClientRect();
-      return { x: rechteck.x, y: rechteck.y, breite: rechteck.width, hoehe: rechteck.height };
+      return {
+        x: rechteck.x,
+        y: rechteck.y,
+        breite: rechteck.width,
+        hoehe: rechteck.height,
+        schrift: Number.parseFloat(stil.fontSize),
+        zeile: Number.parseFloat(stil.lineHeight),
+        gewicht: stil.fontWeight,
+      };
     };
-    const bereich = document.querySelector('section.karte');
+    const bereich = document.querySelector('.vorbild-kopf');
+    const titel = document.querySelector('h1');
+    const zuGross: string[] = [];
+    for (const element of document.body.querySelectorAll('*')) {
+      if (titel && (element === titel || titel.contains(element))) {
+        continue;
+      }
+      const stil = getComputedStyle(element);
+      if (stil.display === 'none' || stil.visibility === 'hidden') {
+        continue;
+      }
+      const schrift = Number.parseFloat(stil.fontSize);
+      if (!(schrift > 20)) {
+        continue;
+      }
+      const eigenerText = [...element.childNodes].some(
+        (knoten) => knoten.nodeType === Node.TEXT_NODE && (knoten.textContent ?? '').trim() !== '',
+      );
+      if (!eigenerText) {
+        continue;
+      }
+      zuGross.push(`${element.tagName} ${schrift} ${(element.textContent ?? '').trim().slice(0, 48)}`);
+    }
     return {
-      karte: kasten(bereich),
-      titel: kasten(bereich?.querySelector('.profil-name') ?? null),
-      level: kasten(bereich?.querySelector('p.text-3xl:not([data-aehnlichkeit])') ?? null),
-      untertitel: kasten(bereich?.querySelector('p.text-sm') ?? null),
+      kopf: kasten(bereich),
+      herkunft: kasten(bereich?.querySelector('[data-vorbild-herkunft]') ?? null),
+      stand: kasten(bereich?.querySelector('[data-vorbild-stand]') ?? null),
+      aehnlichkeit: kasten(bereich?.querySelector('[data-aehnlichkeit]') ?? null),
+      text: kasten(bereich?.querySelector('[data-vorbild-text]') ?? null),
+      zuGross,
     };
   });
-  expect(kaesten.karte && kaesten.titel && kaesten.level, name).toBeTruthy();
-  if (!kaesten.karte || !kaesten.titel || !kaesten.level) {
+  expect(masse.kopf && masse.herkunft && masse.stand && masse.text, name).toBeTruthy();
+  if (!masse.kopf || !masse.herkunft || !masse.stand || !masse.text) {
     return;
   }
-  expect(innerhalb(kaesten.titel, kaesten.karte), `${name} Titel`).toBe(true);
-  expect(innerhalb(kaesten.level, kaesten.karte), `${name} Level`).toBe(true);
-  expect(ueberlappt(kaesten.titel, kaesten.level), `${name} Titel/Level`).toBe(false);
-  if (name === 'Durchschnittsmensch') {
-    const zeilen = await titel.evaluate((element) => {
-      const hoehe = Number.parseFloat(getComputedStyle(element).lineHeight);
-      return element.getBoundingClientRect().height / hoehe;
-    });
-    expect(zeilen, name).toBeLessThan(1.4);
+  expect(masse.kopf.hoehe, `${name} Kopfblock`).toBeLessThanOrEqual(160);
+  expect(masse.zuGross, `${name} Schrift`).toEqual([]);
+  expect(masse.herkunft.schrift, `${name} Herkunft`).toBe(13);
+  expect(masse.herkunft.zeile, `${name} Herkunft`).toBe(18);
+  expect(masse.stand.schrift, `${name} Stand`).toBe(15);
+  expect(masse.stand.zeile, `${name} Stand`).toBe(22);
+  expect(masse.stand.gewicht, `${name} Stand`).toBe('600');
+  expect(innerhalb(masse.herkunft, masse.kopf), `${name} Herkunft`).toBe(true);
+  expect(innerhalb(masse.stand, masse.kopf), `${name} Stand`).toBe(true);
+  expect(innerhalb(masse.text, masse.kopf), `${name} Text`).toBe(true);
+  expect(masse.herkunft.y, `${name} Reihenfolge`).toBeLessThan(masse.stand.y);
+  expect(masse.stand.y, `${name} Reihenfolge`).toBeLessThan(masse.text.y);
+  expect(Math.abs(masse.herkunft.x - masse.stand.x), `${name} Kante`).toBeLessThanOrEqual(1);
+  expect(ueberlappt(masse.herkunft, masse.stand), `${name} Herkunft/Stand`).toBe(false);
+  expect(ueberlappt(masse.stand, masse.text), `${name} Stand/Text`).toBe(false);
+  if (masse.aehnlichkeit) {
+    expect(masse.aehnlichkeit.schrift, `${name} Ähnlichkeit`).toBe(15);
+    expect(masse.aehnlichkeit.zeile, `${name} Ähnlichkeit`).toBe(22);
+    expect(masse.aehnlichkeit.gewicht, `${name} Ähnlichkeit`).toBe('600');
+    expect(innerhalb(masse.aehnlichkeit, masse.kopf), `${name} Ähnlichkeit`).toBe(true);
+    expect(masse.stand.y, `${name} Reihenfolge`).toBeLessThan(masse.aehnlichkeit.y);
+    expect(masse.aehnlichkeit.y, `${name} Reihenfolge`).toBeLessThan(masse.text.y);
+    expect(Math.abs(masse.aehnlichkeit.x - masse.stand.x), `${name} Kante`).toBeLessThanOrEqual(1);
+    expect(ueberlappt(masse.stand, masse.aehnlichkeit), `${name} Stand/Ähnlichkeit`).toBe(false);
+    expect(ueberlappt(masse.aehnlichkeit, masse.text), `${name} Ähnlichkeit/Text`).toBe(false);
   }
-  if (kaesten.untertitel) {
-    expect(ueberlappt(kaesten.untertitel, kaesten.level), `${name} Untertitel/Level`).toBe(false);
+  const textZeilen = masse.text.hoehe / masse.text.zeile;
+  expect(textZeilen, `${name} Beschreibung`).toBeLessThanOrEqual(3.05);
+  if (name === 'Durchschnittsmensch') {
+    expect(masse.herkunft.hoehe / masse.herkunft.zeile, name).toBeLessThan(1.4);
   }
   await ohneSeitlichenUeberlauf(seite);
 }
@@ -200,7 +253,7 @@ test('Profil: langer Titel und Level überlappen sich nicht', async ({ page }, t
   expect(zeilenUeberlauf).toBe(false);
 
   await oeffneProfil(page, 'durchschnitt', 'Durchschnittsmensch');
-  const kopf = page.locator('section.karte').first();
+  const kopf = page.locator('.vorbild-kopf');
   await expect(kopf).toContainText('Lvl 800');
   await expect(kopf.getByText('Weltweit, etwa 40 Jahre')).toBeVisible();
   await expect(kopf.getByText('Ein durchschnittlicher Erwachsener weltweit: Ausbildung, Beruf, Familie und Freizeit.')).toBeVisible();
@@ -216,8 +269,8 @@ test('Profil: langer Titel und Level überlappen sich nicht', async ({ page }, t
     glimmen: original?.glimmen ?? true,
   });
   await oeffneProfil(page, 'durchschnitt', 'Durchschnittsmensch', 'antik');
-  await expect(page.locator('section.karte').first().locator('p.text-3xl:not([data-aehnlichkeit])')).toHaveText('Lvl 800');
-  await page.locator('section.karte').first().screenshot({
+  await expect(page.locator('.vorbild-kopf [data-vorbild-stand]')).toContainText('Lvl 800');
+  await page.locator('.vorbild-kopf').screenshot({
     path: `tmp-test/vorbilder-darstellung/${testInfo.project.name}-profil.png`,
   });
   await oeffneProfil(page, 'mozart', 'Wolfgang Amadeus Mozart', 'antik');
@@ -306,10 +359,10 @@ test('Darstellung: Farben anderer Designs, sofort und auf jeder Seite', async ({
   await expect(page.getByRole('heading', { name: 'Durchschnittsmensch', exact: true })).toBeVisible();
   await schriftBereit(page);
   const proben = await page.evaluate(() => {
-    const karte = document.querySelector('section.karte');
-    const titel = karte?.querySelector('.profil-name');
-    const flaeche = karte ? getComputedStyle(karte).backgroundColor : '';
-    const schrift = titel ? getComputedStyle(titel).color : '';
+    const kopf = document.querySelector('.vorbild-kopf');
+    const stand = kopf?.querySelector('[data-vorbild-stand]');
+    const flaeche = kopf ? getComputedStyle(kopf).backgroundColor : '';
+    const schrift = stand ? getComputedStyle(stand).color : '';
     return { flaeche, schrift };
   });
   expect(kontrast(proben.schrift, proben.flaeche)).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
@@ -335,4 +388,32 @@ test('Darstellung: Farben anderer Designs, sofort und auf jeder Seite', async ({
   await expect.poll(() => variable(page, '--akzent')).toBe(jade.primaer);
   await expect.poll(() => page.evaluate(() => document.documentElement.dataset.stil ?? '')).toBe('antik');
   await ohneSeitlichenUeberlauf(page);
+});
+
+test('Vorbild: Kopf ist eine Fläche ohne zweiten Namen', async ({ page }, testInfo) => {
+  const hell = standardVorlage('standard', false);
+  await speichereDarstellung(page, {
+    stil: 'standard',
+    primaer: hell.primaer,
+    akzent: hell.akzent,
+    hintergrund: hell.hintergrund,
+    glimmen: true,
+  });
+  await page.goto('/vorbilder/ronaldo');
+  await expect(page.getByRole('heading', { name: 'Cristiano Ronaldo', exact: true })).toBeVisible();
+  await expect.poll(() => variable(page, '--flaeche')).toBe('#ffffff');
+  await expect.poll(() => variable(page, '--gefahr')).toBe('#c62828');
+  await expect.poll(() => page.evaluate(() => document.documentElement.dataset.schema ?? '')).toBe('light');
+  await schriftBereit(page);
+  await page.waitForTimeout(400);
+  await pruefeKopf(page, 'Cristiano Ronaldo');
+  const kopf = page.locator('.vorbild-kopf');
+  await expect(kopf.locator('[data-vorbild-herkunft]')).toHaveText('Fußball · geboren 1985');
+  await expect(kopf.locator('[data-vorbild-stand]')).toHaveText('Lvl 8.835 · Vitaler Krieger · Ikone');
+  await expect(kopf.locator('[data-aehnlichkeit]')).toContainText(/%\s*ähnlich/);
+  const breite = testInfo.project.name === 'desktop' ? '1440' : '390';
+  const ordner = 'tmp-test/vorbild-kopf';
+  await page.screenshot({ path: `${ordner}/${breite}-vorbild-ronaldo.png` });
+  await page.screenshot({ path: `${ordner}/${breite}-vorbild-ronaldo-ganz.png`, fullPage: true });
+  await kopf.screenshot({ path: `${ordner}/${breite}-vorbild-ronaldo-kopf.png` });
 });

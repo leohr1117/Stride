@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.": "Pour un modèle, le nom ne reste que dans l'en-tête de la page. En dessous figurent ce pour quoi il est connu, le niveau avec la classe et le titre, puis à quel point il est semblable.",
   "Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….": "Dans Activités, ce qu'une activité renforce tient sur une ligne sous le nom. S'il n'y a pas assez de place, la ligne se termine par ….",
   "Auswahllisten stehen als Zeilen statt als Karten.": "Les listes de choix s'affichent en lignes au lieu de cartes.",
   "Zweitknöpfe haben keine graue Fläche mehr.": "Les boutons secondaires n'ont plus de fond gris.",

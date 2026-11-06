@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '3.56.81',
+    seiten: 'Vorbild',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.'],
+      },
+    ],
+  },
+  {
     version: '3.56.80',
     seiten: 'Tätigkeiten, Projekt',
     abschnitte: [

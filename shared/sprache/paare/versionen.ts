@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Beim Vorbild steht der Name nur noch im Seitenkopf. Darunter stehen bekannt für, Level mit Klasse und Titel und die Ähnlichkeit.', 'On a role model, the name stays only in the page header. Below are what they are known for, level with class and title, and the similarity.'],
   ['Bei Tätigkeiten bleibt unter dem Namen in einer Zeile stehen, was sie stärkt. Reicht der Platz nicht, endet die Zeile mit ….', 'On Activities, what an activity trains stays on one line under the name. When there is not enough room, the line ends with ….'],
   ['Auswahllisten stehen als Zeilen statt als Karten.', 'Choice lists appear as rows instead of cards.'],
   ['Zweitknöpfe haben keine graue Fläche mehr.', 'Secondary buttons no longer have a grey fill.'],
