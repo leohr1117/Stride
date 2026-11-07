@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.0.1',
+    seiten: 'Anmeldung',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.0.0',
     seiten: 'Was ist neu',
     abschnitte: [

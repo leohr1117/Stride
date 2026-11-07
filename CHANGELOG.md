@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.0.1
+
+### Geändert
+
+- Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.
+
 ## 4.0.0
 
 ### Geändert

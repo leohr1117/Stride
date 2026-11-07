@@ -1,5 +1,7 @@
 import fs from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
+import { SPRACHEN } from '../shared/sprache/kern.ts';
+import { zeige } from '../shared/sprache/index.ts';
 import { PASSWORT_MAX, PASSWORT_REGEL } from '../shared/spiel/passwort.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
@@ -14,7 +16,7 @@ async function bild(seite: Page, name: string): Promise<void> {
   await seite.screenshot({ path: `tmp-test/passwortmanager/${projekt}-${name}.png`, fullPage: true });
 }
 
-test('Anmeldung ist ein Formular für Passwortmanager', async ({ page }) => {
+test('Anmeldung ist ein Formular für Passwortmanager', async ({ page }, testInfo) => {
   await page.goto('/');
   const formular = page.locator('form');
   await expect(formular.locator('button[type="submit"]')).toHaveText('Anmelden');
@@ -43,6 +45,45 @@ test('Anmeldung ist ein Formular für Passwortmanager', async ({ page }) => {
   });
   expect(paste.offen).toBe(true);
   expect(paste.onpaste).toBeNull();
+  const titel = page.getByRole('heading', { level: 1 });
+  await expect(titel).toHaveCount(1);
+  await expect(titel).toHaveText('Anmelden');
+  const schrift = await titel.evaluate((element) => {
+    const stil = getComputedStyle(element);
+    const logo = document.querySelector('img[src="/logo-v2.svg"]');
+    const logoKasten = logo?.getBoundingClientRect();
+    const titelKasten = element.getBoundingClientRect();
+    return {
+      groesse: stil.fontSize,
+      hoehe: stil.lineHeight,
+      darunter: logoKasten ? titelKasten.top >= logoKasten.bottom - 1 : false,
+    };
+  });
+  expect(schrift.groesse).toBe('24px');
+  expect(schrift.hoehe).toBe('32px');
+  expect(schrift.darunter).toBe(true);
+  const gruppe = page.locator('main [data-flaeche]');
+  await expect(gruppe).toHaveCount(1);
+  await expect(gruppe.locator('[data-flaeche]')).toHaveCount(0);
+  const flaeche = await gruppe.evaluate((element) => {
+    const stil = getComputedStyle(element);
+    const kasten = element.getBoundingClientRect();
+    return { radius: stil.borderTopLeftRadius, rand: stil.borderTopWidth, breite: kasten.width, links: kasten.left };
+  });
+  expect(await formular.evaluate((element) => getComputedStyle(element).borderTopWidth)).toBe('0px');
+  if (testInfo.project.name === 'handy') {
+    expect(flaeche.rand).toBe('0px');
+    expect(flaeche.radius).toBe('12px');
+    expect(flaeche.links).toBeGreaterThanOrEqual(15);
+    expect(flaeche.links).toBeLessThanOrEqual(17);
+  } else {
+    expect(Math.round(flaeche.breite)).toBe(400);
+    expect(flaeche.rand).toBe('1px');
+  }
+  const knopfBreite = await formular.locator('button[type="submit"]').evaluate((element) => element.getBoundingClientRect().width);
+  const feldBreite = await name.evaluate((element) => element.getBoundingClientRect().width);
+  expect(Math.abs(knopfBreite - feldBreite)).toBeLessThan(1);
+  await expect(formular.locator('button[type="submit"]')).toHaveClass(/knopf-primaer/);
   await ohneSeitlichenUeberlauf(page);
   await bild(page, 'anmelden');
 
@@ -84,6 +125,8 @@ test('Das erste Konto verlangt ein neues Passwort', async ({ page }) => {
   });
   await page.goto('/');
   await expect(page.locator('form button[type="submit"]')).toHaveText('Festlegen');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Passwort festlegen');
   const name = page.locator('#username');
   const neu = page.locator('#new-password');
   const nochmal = page.locator('#new-password-repeat');
@@ -165,4 +208,52 @@ test('Passwort ändern nennt die Regel und die Wechseladresse', async ({ page })
   await expect(page.getByText('Passwort gespeichert.')).toBeVisible();
   await expect(bisher).toHaveValue('');
   await expect(neu).toHaveValue('');
+});
+
+test('Anmeldung bleibt in allen Sprachen in der Breite', async ({ page }) => {
+  await page.goto('/');
+  for (const sprache of SPRACHEN) {
+    await page.evaluate((code) => {
+      localStorage.setItem('stride-sprache', code);
+    }, sprache);
+    await page.reload();
+    const titel = page.getByRole('heading', { level: 1 });
+    await expect(titel).toHaveCount(1);
+    await expect(titel).toHaveText(zeige('Anmelden', sprache));
+    await expect(page.locator('form button[type="submit"]')).toHaveText(zeige('Anmelden', sprache));
+    await expect(page.locator('label[for="username"]')).toHaveText(zeige('Benutzername', sprache));
+    await expect(page.locator('#username')).toHaveAttribute('autocomplete', 'username');
+    await ohneSeitlichenUeberlauf(page);
+    const ueberstand = await titel.evaluate((element) => {
+      const kasten = element.getBoundingClientRect();
+      return kasten.left < -1 || kasten.right > document.documentElement.clientWidth + 1;
+    });
+    expect(ueberstand).toBe(false);
+  }
+});
+
+test('Benutzername festlegen hat eine Überschrift', async ({ page }) => {
+  await page.route('**/api/zugang', async (route) => {
+    if (route.request().method() === 'GET') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ modus: 'benutzername', benutzername: null, rolle: null, admin: false }),
+      });
+      return;
+    }
+    await route.fulfill({
+      status: 401,
+      contentType: 'application/json',
+      body: JSON.stringify({ fehler: 'Anmeldung fehlgeschlagen.' }),
+    });
+  });
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Benutzername festlegen');
+  await expect(page.locator('form button[type="submit"]')).toHaveText('Festlegen');
+  await expect(page.locator('label')).toHaveText('Benutzername');
+  await expect(page.locator('input[name="username"]')).toHaveAttribute('autocomplete', 'username');
+  await expect(page.locator('main [data-flaeche]')).toHaveCount(1);
+  await ohneSeitlichenUeberlauf(page);
 });

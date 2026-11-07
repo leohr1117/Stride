@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "En el inicio de sesión, el título está bajo el logotipo. En el teléfono el formulario es un grupo y en el ordenador mide 400 píxeles de ancho.",
   "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "Esta versión resume las funciones que ya existen: registros, metas, racha diaria, jefes, perfil, inversiones, repaso, referentes, base, conexiones y avisos. El aspecto y el comportamiento siguen igual.",
   "Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.": "El horario de silencio solo se puede cambiar mientras las notificaciones están activadas en este dispositivo.",
   "Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.": "Bajo Más páginas, el aviso de que todos los huecos están ocupados aparece solo una vez.",
@@ -807,6 +808,8 @@ export const TEXTE: Record<string, string> = {
   "Benutzername": "Usuario",
   "Passwort": "Contraseña",
   "Anmelden": "Entrar",
+  "Passwort festlegen": "Definir contraseña",
+  "Benutzername festlegen": "Definir nombre de usuario",
   "Festlegen": "Definir contraseña",
   "Abmelden": "Salir",
   "Std": "h",

@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "Sur la connexion, le titre est sous le logo. Sur le téléphone, le formulaire est un groupe, et sur l'ordinateur il fait 400 pixels de large.",
   "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "Cette version résume les fonctions déjà présentes : entrées, objectifs, chaîne du jour, boss, profil, investissements, bilan, modèles, base, connexions et notifications. L'apparence et le comportement restent les mêmes.",
   "Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.": "Les heures calmes ne peuvent être modifiées que lorsque les notifications sont activées sur cet appareil.",
   "Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.": "Sous « D'autres pages », la mention que toutes les places sont prises n'apparaît plus qu'une fois.",
@@ -807,6 +808,8 @@ export const TEXTE: Record<string, string> = {
   "Benutzername": "Nom d'utilisateur",
   "Passwort": "Mot de passe",
   "Anmelden": "Connexion",
+  "Passwort festlegen": "Définir le mot de passe",
+  "Benutzername festlegen": "Définir le nom d'utilisateur",
   "Festlegen": "Définir le mot de passe",
   "Abmelden": "Déconnexion",
   "Std": "h",

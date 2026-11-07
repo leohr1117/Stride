@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "На странице входа заголовок стоит под логотипом. На телефоне форма является группой, на компьютере её ширина 400 пикселей.",
   "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "Эта версия обобщает уже имеющиеся функции: записи, цели, цепочка дня, боссы, профиль, вложения, итоги, ориентиры, база, связи и уведомления. Внешний вид и поведение остаются прежними.",
   "Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.": "Тихие часы можно изменить только пока на этом устройстве включены уведомления.",
   "Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.": "Под «Другие страницы» подсказка о том, что все места заняты, стоит только один раз.",
@@ -807,6 +808,8 @@ export const TEXTE: Record<string, string> = {
   "Benutzername": "Имя пользователя",
   "Passwort": "Пароль",
   "Anmelden": "Войти",
+  "Passwort festlegen": "Задать пароль",
+  "Benutzername festlegen": "Задать имя пользователя",
   "Festlegen": "Задать пароль",
   "Abmelden": "Выйти",
   "Std": "ч",

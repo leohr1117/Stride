@@ -220,6 +220,8 @@ export const PAARE = [
   ['Benutzername', 'Username'],
   ['Passwort', 'Password'],
   ['Anmelden', 'Sign in'],
+  ['Passwort festlegen', 'Set password'],
+  ['Benutzername festlegen', 'Set username'],
   ['Festlegen', 'Set password'],
   ['Abmelden', 'Sign out'],
   ['Std', 'h'],
