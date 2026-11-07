@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.0.0
+
+### Geändert
+
+- Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.
+
 ## 3.56.87
 
 ### Behoben

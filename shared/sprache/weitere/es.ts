@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "Esta versión resume las funciones que ya existen: registros, metas, racha diaria, jefes, perfil, inversiones, repaso, referentes, base, conexiones y avisos. El aspecto y el comportamiento siguen igual.",
   "Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.": "El horario de silencio solo se puede cambiar mientras las notificaciones están activadas en este dispositivo.",
   "Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.": "Bajo Más páginas, el aviso de que todos los huecos están ocupados aparece solo una vez.",
   "Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.": "Un atributo demasiado bajo baja la XP de otros solo mientras el decaimiento de Capacidad o de Bienes está activado.",

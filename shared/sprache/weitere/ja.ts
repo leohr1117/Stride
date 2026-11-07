@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "この版は、すでにある機能をまとめます。記録、目標、日々の連続、ボス、プロフィール、投資、振り返り、お手本、基本、つながり、通知です。見た目と動作はそのままです。",
   "Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.": "静かな時間は、この端末で通知がオンのときだけ変更できます。",
   "Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.": "「ほかのページ」の下では、場所がすべて埋まっているという表示は一度だけ出ます。",
   "Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.": "低すぎる属性は、能力または資産の減衰がオンのときだけ、他のXPを下げます。",

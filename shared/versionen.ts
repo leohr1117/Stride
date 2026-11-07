@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.0.0',
+    seiten: 'Was ist neu',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.',
+        ],
+      },
+    ],
+  },
+  {
     version: '3.56.87',
     seiten: 'Benachrichtigungen',
     abschnitte: [

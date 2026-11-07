@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "Cette version résume les fonctions déjà présentes : entrées, objectifs, chaîne du jour, boss, profil, investissements, bilan, modèles, base, connexions et notifications. L'apparence et le comportement restent les mêmes.",
   "Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.": "Les heures calmes ne peuvent être modifiées que lorsque les notifications sont activées sur cet appareil.",
   "Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.": "Sous « D'autres pages », la mention que toutes les places sont prises n'apparaît plus qu'une fois.",
   "Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.": "Un attribut trop bas ne baisse l'XP des autres que tant que le déclin d'Aptitude ou de Biens est activé.",

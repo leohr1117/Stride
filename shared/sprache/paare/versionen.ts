@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.', 'This version sums up the functions already there: entries, goals, daily chain, bosses, profile, investments, review, role models, basics, connections, and notifications. Look and behavior stay the same.'],
   ['Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.', 'Quiet hours can be changed only while notifications are on for this device.'],
   ['Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.', 'Under More pages, the note that all slots are full appears only once.'],
   ['Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.', 'An attribute that is too low lowers other XP only while decay for Ability or Assets is on.'],

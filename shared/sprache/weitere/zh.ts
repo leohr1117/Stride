@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "此版本概括已有的功能：记录、目标、每日连续、首领、资料、投入、回顾、榜样、基础、关联和通知。外观和行为保持不变。",
   "Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.": "只有在这台设备上开启通知时，才能更改免打扰时间。",
   "Unter Weitere Seiten steht der Hinweis, dass alle Plätze belegt sind, nur noch einmal.": "在“更多页面”下，位置已满的提示只出现一次。",
   "Ein zu niedriges Attribut senkt andere XP nur, solange der Verfall für Können oder Haben an ist.": "过低的属性只有在能力或资产的衰退开启时，才会降低其他经验。",
