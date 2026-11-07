@@ -1,9 +1,9 @@
 import { expect, test, type Locator, type Page, type TestInfo } from '@playwright/test';
-import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { erschoepfungsBild } from '../shared/spiel/belastung.ts';
 import { LEVEL_KURVEN, berechneLevel, verlustBalken, type LevelKurve } from '../shared/spiel/level.ts';
+import { TEST_PASSWORT } from './testdaten.ts';
 
 interface AttributZeile {
   id: number;
@@ -26,12 +26,7 @@ interface LaufendZeile {
 }
 
 async function passwort(): Promise<string> {
-  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
-  const wert = text.match(/Benutzername: testvoll\s+Passwort:\s*(\S+)/)?.[1];
-  if (!wert) {
-    throw new Error('Testzugang fehlt.');
-  }
-  return wert;
+  return TEST_PASSWORT;
 }
 
 function verbieteBrowserFenster(seite: Page): void {

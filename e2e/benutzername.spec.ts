@@ -1,6 +1,6 @@
-import fs from 'node:fs';
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+import { TEST_PASSWORT } from './testdaten.ts';
 
 interface AdminKonto {
   id: number;
@@ -20,12 +20,10 @@ function rollenWort(konto: AdminKonto): string {
 }
 
 function passwortVon(name: string): string {
-  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
-  const wert = text.match(new RegExp(`Benutzername: ${name}\\s+Passwort:\\s*(\\S+)`))?.[1];
-  if (!wert) {
+  if (name !== 'testvoll' && name !== 'testteil') {
     throw new Error('Testzugang fehlt.');
   }
-  return wert;
+  return TEST_PASSWORT;
 }
 
 async function benutzername(api: APIRequestContext): Promise<string> {

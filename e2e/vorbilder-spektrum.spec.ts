@@ -1,9 +1,9 @@
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
-import fs from 'node:fs';
 import type { Attribut } from '../shared/api/index.ts';
 import { findeVorbild, vergleichspunkte } from '../shared/features/vorbilder/vorbilder.ts';
 import type { Funktionen } from '../shared/spiel/funktionen.ts';
 import { eigenesProfil } from '../client/src/pages/eigenesProfil.ts';
+import { TEST_PASSWORT } from './testdaten.ts';
 
 interface AttributZeile {
   id: number;
@@ -13,12 +13,7 @@ interface AttributZeile {
 }
 
 async function passwort(): Promise<string> {
-  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
-  const wert = text.match(/Benutzername: testvoll\s+Passwort:\s*(\S+)/)?.[1];
-  if (!wert) {
-    throw new Error('Testzugang fehlt.');
-  }
-  return wert;
+  return TEST_PASSWORT;
 }
 
 async function anmelden(seite: Page): Promise<void> {

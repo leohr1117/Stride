@@ -2,14 +2,10 @@ import fs from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { PASSWORT_MAX, PASSWORT_REGEL } from '../shared/spiel/passwort.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+import { TEST_PASSWORT } from './testdaten.ts';
 
 function passwort(): string {
-  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
-  const wert = text.match(/Benutzername: testvoll\s+Passwort:\s*(\S+)/)?.[1];
-  if (!wert) {
-    throw new Error('Testzugang fehlt.');
-  }
-  return wert;
+  return TEST_PASSWORT;
 }
 
 async function bild(seite: Page, name: string): Promise<void> {

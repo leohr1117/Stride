@@ -3,14 +3,10 @@ import { expect, test, type Page } from '@playwright/test';
 import { ERLAUBTE_PAUSENTAGE } from '../shared/spiel/kette.ts';
 import { RUECKKEHR, SCHUTZ } from '../shared/spiel/schutz.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+import { TEST_PASSWORT } from './testdaten.ts';
 
 async function passwort(): Promise<string> {
-  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
-  const wert = text.match(/Benutzername: testteil\s+Passwort:\s*(\S+)/)?.[1];
-  if (!wert) {
-    throw new Error('Testzugang fehlt.');
-  }
-  return wert;
+  return TEST_PASSWORT;
 }
 
 async function vorbereiten(seite: Page): Promise<void> {

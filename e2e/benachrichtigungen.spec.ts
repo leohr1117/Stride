@@ -1,10 +1,9 @@
 import fs from 'node:fs';
-import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { expect, test, type Page } from '@playwright/test';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
-import { TEST_KOPIE, TEST_URL } from './testdaten.ts';
+import { TEST_TEIL_WELT, TEST_URL, TEST_PASSWORT } from './testdaten.ts';
 
 const ENDPUNKTE = ['https://geraet.example/abo', 'https://geraet.example/abo-zwei'] as const;
 const HINWEIS = ['hinweis_streak', 'hinweis_rueckkehr', 'hinweis_boss', 'hinweis_ruhe_von', 'hinweis_ruhe_bis'] as const;
@@ -387,7 +386,7 @@ test('eine abgelehnte Erlaubnis sendet kein Abo', async ({ page }) => {
 const FRAGE = 'Benachrichtigungen auf diesem Gerät einschalten?';
 
 function teilWelt(): string {
-  return verweigereEchteDatenbank(path.join(TEST_KOPIE, 'welten', '4.db'));
+  return verweigereEchteDatenbank(TEST_TEIL_WELT);
 }
 
 function setzeNichtVor(iso: string): void {
@@ -403,12 +402,7 @@ function setzeNichtVor(iso: string): void {
 }
 
 async function passwortTeil(): Promise<string> {
-  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
-  const wert = text.match(/Benutzername: testteil\s+Passwort:\s*(\S+)/)?.[1];
-  if (!wert) {
-    throw new Error('Testzugang fehlt.');
-  }
-  return wert;
+  return TEST_PASSWORT;
 }
 
 async function profilZurueck(seite: Page): Promise<void> {

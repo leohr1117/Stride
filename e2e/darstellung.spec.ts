@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
-import fs from 'node:fs';
 import { standardVorlage } from '../shared/features/darstellung/paletten.ts';
 import type { Stil } from '../shared/features/darstellung/stile.ts';
+import { TEST_PASSWORT } from './testdaten.ts';
 
 interface Darstellung {
   stil: Stil;
@@ -35,12 +35,7 @@ let original: Darstellung | null = null;
 let spracheVorher: string | null = null;
 
 async function passwort(): Promise<string> {
-  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
-  const wert = text.match(/Benutzername: testvoll\s+Passwort:\s*(\S+)/)?.[1];
-  if (!wert) {
-    throw new Error('Testzugang fehlt.');
-  }
-  return wert;
+  return TEST_PASSWORT;
 }
 
 async function anmelden(seite: Page): Promise<void> {

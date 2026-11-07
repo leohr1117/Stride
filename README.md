@@ -44,7 +44,7 @@ Weitere Befehle:
 ```bash
 npm test               # Unit-Tests (Vitest)
 npm run typecheck      # Typprüfung
-npm run e2e            # Browser-Tests (brauchen Testkonten in data/)
+npm run e2e            # Browser-Tests; legen testvoll und testteil selbst an, ohne Dateien aus data/
 npm run beispieldaten  # Beispielwelt in data/app.db; schaltet die nötigen Bereiche ein
 npm run build          # Produktions-Build nach client/dist
 npm start              # Server; Oberfläche aus STRIDE_CLIENT_DIR, Standard client/dist-live

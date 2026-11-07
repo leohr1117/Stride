@@ -1,12 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
-import fs from 'node:fs';
+import { TEST_PASSWORT } from './testdaten.ts';
 
 async function anmelden(seite: Page): Promise<void> {
-  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
-  const wert = text.match(/Benutzername: testvoll\s+Passwort:\s*(\S+)/)?.[1];
-  if (!wert) {
-    throw new Error('Testzugang fehlt.');
-  }
+  const wert = TEST_PASSWORT;
   await seite.goto('/');
   await seite.locator('input[name="username"]').fill('testvoll');
   await seite.locator('input[name="password"]').fill(wert);

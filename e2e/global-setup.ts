@@ -1,12 +1,11 @@
 import { spawn, type ChildProcess } from 'node:child_process';
-import fs from 'node:fs';
 import net from 'node:net';
 import path from 'node:path';
 import { AKTUELLE_VERSION } from '../shared/versionen.ts';
 import { starteTodoistAttrappe, type TodoistAttrappe } from '../server/integrationen/todoistAttrappe.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { erstelleTestkopie, loescheTestkopie } from './kopie.ts';
-import { TEST_APP, TEST_PORT, TEST_URL, TEST_ZUGANG, WURZEL } from './testdaten.ts';
+import { TEST_APP, TEST_PORT, TEST_URL, TEST_ZUGANG, WURZEL, TEST_PASSWORT } from './testdaten.ts';
 
 function portFrei(port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -39,11 +38,7 @@ async function warteAufServer(kind: ChildProcess): Promise<void> {
 }
 
 async function setzeHinweisAktuell(): Promise<void> {
-  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
-  const passwort = text.match(/Benutzername: testvoll\s+Passwort:\s*(\S+)/)?.[1];
-  if (!passwort) {
-    throw new Error('Testzugang fehlt.');
-  }
+  const passwort = TEST_PASSWORT;
   const login = await fetch(`${TEST_URL}/api/zugang`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

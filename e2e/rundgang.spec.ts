@@ -1,22 +1,16 @@
 import { randomBytes } from 'node:crypto';
-import fs from 'node:fs';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { SPRACHEN, type Sprache } from '../shared/sprache/kern.ts';
 import { zeige } from '../shared/sprache/index.ts';
 import { meilensteineAus } from './helfer.ts';
-import { TEST_APP, TEST_ZUGANG } from './testdaten.ts';
+import { TEST_APP, TEST_ZUGANG, TEST_PASSWORT } from './testdaten.ts';
 
 process.env.STRIDE_TEST = '1';
 process.env.DB_PFAD ??= TEST_APP;
 process.env.ZUGANG_PFAD ??= TEST_ZUGANG;
 
 async function passwort(): Promise<string> {
-  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
-  const wert = text.match(/Benutzername: testvoll\s+Passwort:\s*(\S+)/)?.[1];
-  if (!wert) {
-    throw new Error('Testzugang fehlt.');
-  }
-  return wert;
+  return TEST_PASSWORT;
 }
 
 async function anmelden(seite: Page): Promise<void> {

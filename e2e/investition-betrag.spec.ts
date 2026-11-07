@@ -1,9 +1,8 @@
 import { DatabaseSync } from 'node:sqlite';
-import path from 'node:path';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
-import { TEST_KOPIE } from './testdaten.ts';
+import { TEST_PASSWORT, TEST_TEIL_WELT } from './testdaten.ts';
 
 const NAME = 'Betrag Vorschlag';
 
@@ -275,13 +274,7 @@ test('Ein Vorschlag setzt den Betrag, ein eigener Wert und 100 XP mit 30 % bleib
 });
 
 async function teilPasswort(): Promise<string> {
-  const fs = await import('node:fs');
-  const text = fs.readFileSync('data/testprofile-zugang.txt', 'utf8');
-  const wert = text.match(/Benutzername: testteil\s+Passwort:\s*(\S+)/)?.[1];
-  if (!wert) {
-    throw new Error('Testzugang fehlt.');
-  }
-  return wert;
+  return TEST_PASSWORT;
 }
 
 test('Ohne Verlauf bleiben die festen Beträge', async ({ page }, testInfo) => {
@@ -305,7 +298,7 @@ test('Ohne Verlauf bleiben die festen Beträge', async ({ page }, testInfo) => {
   expect(bereit).toBe(200);
   await page.goto('/investitionen');
   const stand = await ressourcen(page);
-  const datei = verweigereEchteDatenbank(path.join(TEST_KOPIE, 'welten', '4.db'));
+  const datei = verweigereEchteDatenbank(TEST_TEIL_WELT);
   const xpId = xpZeile(stand.id, 2000, datei);
   try {
     await page.goto('/investitionen');
