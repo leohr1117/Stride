@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.": "Открытые титулы легко читаются и сохраняют кубок. Ещё не достигнутые титулы остаются тише и без символа.",
   "Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.": "В профиле пропадает строка Успехи. Классы и титулы остаются, а титул по-прежнему выбирается в разделе Изменить профиль.",
   "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "На странице входа заголовок стоит под логотипом. На телефоне форма является группой, на компьютере её ширина 400 пикселей.",
   "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "Эта версия обобщает уже имеющиеся функции: записи, цели, цепочка дня, боссы, профиль, вложения, итоги, ориентиры, база, связи и уведомления. Внешний вид и поведение остаются прежними.",

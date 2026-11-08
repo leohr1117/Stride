@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.0.3',
+    seiten: 'Profil',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.0.2',
     seiten: 'Profil',
     abschnitte: [

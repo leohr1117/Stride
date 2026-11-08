@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.": "Les titres débloqués sont faciles à lire et gardent le trophée. Les titres pas encore atteints restent plus discrets et sans symbole.",
   "Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.": "Dans le profil, la ligne Succès disparaît. Les classes et les titres restent, et le titre se choisit toujours sous Modifier le profil.",
   "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "Sur la connexion, le titre est sous le logo. Sur le téléphone, le formulaire est un groupe, et sur l'ordinateur il fait 400 pixels de large.",
   "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "Cette version résume les fonctions déjà présentes : entrées, objectifs, chaîne du jour, boss, profil, investissements, bilan, modèles, base, connexions et notifications. L'apparence et le comportement restent les mêmes.",

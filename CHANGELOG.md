@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.0.3
+
+### Behoben
+
+- Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.
+
 ## 4.0.2
 
 ### Geändert

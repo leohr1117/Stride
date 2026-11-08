@@ -12,15 +12,30 @@ import { useSichtbarkeit } from '../funktionen.ts';
 import { KlassenBild } from './KlassenBild.tsx';
 import { Fehlermeldung, Ueberschrift } from '../ui/index.ts';
 
+function istKoennen(kennung: string | null): kennung is KoennenKennung {
+  return kennung !== null && (KOENNEN_KENNUNGEN as readonly string[]).includes(kennung);
+}
+
 function staerksteKennungen(attribute: Attribut[]): KoennenKennung[] {
   const koennen: { kennung: KoennenKennung; level: number }[] = [];
   for (const attribut of attribute) {
-    const kennung = attribut.kennung as KoennenKennung | null;
-    if (!attribut.archiviert && kennung !== null && (KOENNEN_KENNUNGEN as readonly string[]).includes(kennung)) {
+    const kennung = attribut.kennung;
+    if (!attribut.archiviert && istKoennen(kennung)) {
       koennen.push({ kennung, level: attribut.level.level });
     }
   }
   return koennen.sort((a, b) => b.level - a.level).map((eintrag) => eintrag.kennung);
+}
+
+function aktiveKennungen(attribute: Attribut[]): Set<KoennenKennung> {
+  const aktiv = new Set<KoennenKennung>();
+  for (const attribut of attribute) {
+    const kennung = attribut.kennung;
+    if (!attribut.archiviert && istKoennen(kennung)) {
+      aktiv.add(kennung);
+    }
+  }
+  return aktiv;
 }
 
 export function KlassenUndTitel({ attribute, klasse }: { attribute: Attribut[]; klasse: string }) {
@@ -28,6 +43,7 @@ export function KlassenUndTitel({ attribute, klasse }: { attribute: Attribut[]; 
   const koennenAn = istAn('koennen', sichtbarkeit);
   const { data: erfolge, error } = useQuery({ queryKey: SCHLUESSEL.erfolge, queryFn: api.erfolge });
   const [staerkstes, zweites] = staerksteKennungen(attribute);
+  const aktiv = aktiveKennungen(attribute);
   const namen = new Map<string, string>();
   for (const attribut of attribute) {
     if (attribut.kennung !== null) {
@@ -56,7 +72,7 @@ export function KlassenUndTitel({ attribute, klasse }: { attribute: Attribut[]; 
           </thead>
           <tbody className="divide-y divide-rand">
             {KOENNEN_KENNUNGEN.map((kennung) => (
-              <tr key={kennung} className={namen.has(kennung) ? '' : 'text-leise'}>
+              <tr key={kennung} className={aktiv.has(kennung) ? 'text-haupt' : 'text-leise'}>
                 <td className="py-1.5 break-words">
                   {attributName({ kennung, name: namen.get(kennung) ?? attributVorlage(kennung).name })}
                 </td>
@@ -99,7 +115,7 @@ export function KlassenUndTitel({ attribute, klasse }: { attribute: Attribut[]; 
                   <span
                     key={stufe.schluessel}
                     className={`flex items-center gap-1 rounded-md px-2 py-0.5 text-xs ${
-                      stufe.erreichtAm ? 'bg-xp/15 font-medium text-xp' : 'bg-flaeche-2 text-leise'
+                      stufe.erreichtAm ? 'bg-xp/15 font-medium text-haupt' : 'bg-flaeche-2 text-leise'
                     }`}
                   >
                     {stufe.erreichtAm && <Award className="size-3" />}

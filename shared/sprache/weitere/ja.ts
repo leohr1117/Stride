@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.": "解除した称号は読みやすく、トロフィーは残ります。まだ到達していない称号は控えめなままで、記号はありません。",
   "Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.": "プロフィールから成果の行がなくなります。クラスと称号はそのままで、称号は引き続きプロフィールを編集で選びます。",
   "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "ログインでは見出しがロゴの下にあります。携帯電話ではフォームはグループで、パソコンでは幅が 400 ピクセルです。",
   "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "この版は、すでにある機能をまとめます。記録、目標、日々の連続、ボス、プロフィール、投資、振り返り、お手本、基本、つながり、通知です。見た目と動作はそのままです。",

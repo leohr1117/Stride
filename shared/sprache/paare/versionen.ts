@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.', 'Unlocked titles are easy to read and keep the trophy. Titles not reached yet stay quieter and have no symbol.'],
   ['Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.', 'The profile no longer has the Achievements row. Classes and titles stay, and you still choose the title under Edit profile.'],
   ['Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.', 'On sign-in, the heading sits under the logo. On a phone the form is a group, and on a computer it is 400 pixels wide.'],
   ['Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.', 'This version sums up the functions already there: entries, goals, daily chain, bosses, profile, investments, review, role models, basics, connections, and notifications. Look and behavior stay the same.'],
