@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.0.2',
+    seiten: 'Profil',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.0.1',
     seiten: 'Anmeldung',
     abschnitte: [

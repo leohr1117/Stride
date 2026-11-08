@@ -130,11 +130,9 @@ test('Dialoge stehen in fester Reihenfolge', async ({ page }, testInfo) => {
   await anlegen.getByRole('button', { name: 'Schließen' }).click();
 
   await page.goto('/charakter');
-  await page.getByRole('button', { name: 'Erfolge', exact: true }).click();
-  const erfolge = page.getByRole('dialog', { name: /Erfolge \d+\/\d+/ });
-  await expect(erfolge.getByRole('link', { name: 'Titel wählen' })).toBeVisible();
-  await ohneSeitlichenUeberlauf(page);
-  await bild('erfolge');
-  await erfolge.getByRole('link', { name: 'Titel wählen' }).click();
+  await expect(page.getByRole('button', { name: 'Erfolge', exact: true })).toHaveCount(0);
+  await page.getByRole('link', { name: 'Profil bearbeiten', exact: true }).click();
+  await expect(page).toHaveURL(/\/mehr\/profil$/);
+  await page.getByRole('link', { name: 'Titel', exact: true }).click();
   await expect(page).toHaveURL(/\/mehr\/profil\/titel$/);
 });

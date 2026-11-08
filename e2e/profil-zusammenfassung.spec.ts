@@ -55,11 +55,8 @@ test('Profil fasst Level, Kennzahlen, Blätter und Spektren zusammen', async ({ 
   await ohneSeitlichenUeberlauf(page);
   await page.screenshot({ path: bild(info, 'profil'), fullPage: true });
 
-  await page.getByRole('button', { name: 'Erfolge', exact: true }).click();
-  const erfolge = page.getByRole('dialog', { name: 'Erfolge' });
-  await expect(erfolge).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(erfolge).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Erfolge', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('dialog', { name: /Erfolge/ })).toHaveCount(0);
 
   await page.getByRole('button', { name: 'Klassen und Titel', exact: true }).click();
   const klassen = page.getByRole('dialog', { name: 'Klassen und Titel' });
@@ -78,6 +75,28 @@ test('Profil fasst Level, Kennzahlen, Blätter und Spektren zusammen', async ({ 
   await klassen.screenshot({ path: bild(info, 'klassen') });
   await page.keyboard.press('Escape');
   await expect(klassen).toHaveCount(0);
+
+  const aus = await page.request.patch('/api/einstellungen', { data: { funktionen: { koennen: false } } });
+  expect(aus.ok()).toBe(true);
+  try {
+    await page.reload();
+    await expect(page.getByRole('heading', { name: 'Profil', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Erfolge', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Klassen und Titel', exact: true })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Titel', exact: true }).click();
+    const titelBlatt = page.getByRole('dialog', { name: 'Titel', exact: true });
+    await expect(titelBlatt).toBeVisible();
+    await expect(titelBlatt.getByRole('heading', { name: 'Klassen', exact: true })).toHaveCount(0);
+    await expect(titelBlatt.locator('table')).toHaveCount(0);
+    await expect(titelBlatt.getByRole('banner').getByRole('heading', { name: 'Titel', exact: true })).toBeVisible();
+    await expect(titelBlatt.locator('section').getByRole('heading', { name: 'Titel', exact: true })).toBeVisible();
+    await expect(titelBlatt.getByText('Charakter-Level', { exact: true })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(titelBlatt).toHaveCount(0);
+  } finally {
+    const an = await page.request.patch('/api/einstellungen', { data: { funktionen: { koennen: true } } });
+    expect(an.ok()).toBe(true);
+  }
 
   await page.getByRole('link', { name: 'Profil bearbeiten', exact: true }).click();
   await expect(page).toHaveURL(/\/mehr\/profil$/);

@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.": "En el perfil desaparece la fila Logros. Las clases y los títulos siguen, y el título se sigue eligiendo en Editar el perfil.",
   "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "En el inicio de sesión, el título está bajo el logotipo. En el teléfono el formulario es un grupo y en el ordenador mide 400 píxeles de ancho.",
   "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "Esta versión resume las funciones que ya existen: registros, metas, racha diaria, jefes, perfil, inversiones, repaso, referentes, base, conexiones y avisos. El aspecto y el comportamiento siguen igual.",
   "Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.": "El horario de silencio solo se puede cambiar mientras las notificaciones están activadas en este dispositivo.",

@@ -29,6 +29,7 @@ test('Profilzeilen öffnen Können, Haben, Fähigkeiten und Investitionen', asyn
   });
 
   await page.goto('/charakter');
+  await expect(page.getByRole('button', { name: 'Erfolge', exact: true })).toHaveCount(0);
   const profil = page.locator('main');
   for (const [pfad, anzahl] of Object.entries(zahlen)) {
     const zeile = profil.locator('[data-zeile]').filter({ has: page.locator(`a[href="${pfad}"]`) });
@@ -98,6 +99,11 @@ test('Profilzeilen öffnen Können, Haben, Fähigkeiten und Investitionen', asyn
     await setzeFunktion(page, { koennen: false });
     await page.goto('/charakter');
     await expect(page.locator('main a[href="/koennen"]')).toHaveCount(0);
+    await expect(page.locator('main a[href="/haben"]')).toBeVisible();
+    await expect(page.locator('main a[href="/faehigkeiten"]')).toBeVisible();
+    await expect(page.locator('main a[href="/investitionen"]')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Erfolge', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Titel', exact: true })).toBeVisible();
     await page.goto('/mehr');
     await expect(page.locator('[data-seitenliste] a[href="/koennen"]')).toHaveCount(0);
     if (!handy) {

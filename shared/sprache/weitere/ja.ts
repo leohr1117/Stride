@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.": "プロフィールから成果の行がなくなります。クラスと称号はそのままで、称号は引き続きプロフィールを編集で選びます。",
   "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "ログインでは見出しがロゴの下にあります。携帯電話ではフォームはグループで、パソコンでは幅が 400 ピクセルです。",
   "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "この版は、すでにある機能をまとめます。記録、目標、日々の連続、ボス、プロフィール、投資、振り返り、お手本、基本、つながり、通知です。見た目と動作はそのままです。",
   "Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.": "静かな時間は、この端末で通知がオンのときだけ変更できます。",

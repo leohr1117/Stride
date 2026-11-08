@@ -1,11 +1,11 @@
 import { klassenText, tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
-import { Check, Pencil } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
-import type { Charakter, Erfolge, ErfolgKategorie, ErfolgStufe } from '../../../../shared/api/index.ts';
+import type { Charakter } from '../../../../shared/api/index.ts';
 import type { AttributTyp } from '../../../../shared/spiel/begriffe.ts';
-import { erfolgSichtbar, istAn, pfadAktiv, type Sichtbarkeit } from '../../../../shared/spiel/sichtbarkeit.ts';
+import { istAn, pfadAktiv } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { SEITEN } from '../../../../shared/spiel/navigation.ts';
 import { MIN_RADAR_ACHSEN } from '../../../../shared/spiel/radar.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
@@ -19,16 +19,12 @@ import { Fehlermeldung, Ladeanzeige, LevelRing } from '../../ui/index.ts';
 import { zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 
-type Ansicht = 'erfolge' | 'klassen' | null;
-
 export function CharakterSeite() {
   const { data: charakter, error, isPending } = useQuery({ queryKey: SCHLUESSEL.charakter, queryFn: api.charakter });
   const { data: alleAttribute = [] } = useQuery({ queryKey: SCHLUESSEL.attribute, queryFn: api.attribute });
   const sichtbarkeit = useSichtbarkeit();
   const funktionen = sichtbarkeit.funktionen;
-  const [ansicht, setAnsicht] = useState<Ansicht>(null);
-  const { data: erfolge } = useQuery({ queryKey: SCHLUESSEL.erfolge, queryFn: api.erfolge });
-  const erfolgStand = erfolgZahlen(erfolge, sichtbarkeit);
+  const [klassenOffen, setKlassenOffen] = useState(false);
 
   if (isPending) {
     return <Ladeanzeige />;
@@ -74,58 +70,16 @@ export function CharakterSeite() {
       <Spektren charakter={charakter} />
 
       <Liste>
-        <ErfolgeZeile onClick={() => setAnsicht('erfolge')} />
-        <Zeile titel={klassenName} name={klassenName} onKlick={() => setAnsicht('klassen')} />
+        <Zeile titel={klassenName} name={klassenName} onKlick={() => setKlassenOffen(true)} />
       </Liste>
 
       <ProfilZeilen charakter={charakter} />
 
-      <Dialog
-        offen={ansicht !== null}
-        titel={
-          ansicht === 'erfolge'
-            ? erfolgStand
-              ? tx('Erfolge {erreicht}/{gesamt}', { erreicht: zahl(erfolgStand.erreicht), gesamt: zahl(erfolgStand.gesamt) })
-              : tx('Erfolge')
-            : funktionen.koennen
-              ? tx('Klassen und Titel')
-              : tx('Titel')
-        }
-        onSchliessen={() => setAnsicht(null)}
-      >
-        {ansicht === 'erfolge' && <ErfolgeListe />}
-        {ansicht === 'klassen' && <KlassenUndTitel attribute={alleAttribute} klasse={charakter.klasse} />}
+      <Dialog offen={klassenOffen} titel={klassenName} onSchliessen={() => setKlassenOffen(false)}>
+        <KlassenUndTitel attribute={alleAttribute} klasse={charakter.klasse} />
       </Dialog>
     </div>
   );
-}
-
-function sichtbareKategorien(erfolge: Erfolge | undefined, sichtbarkeit: Sichtbarkeit): ErfolgKategorie[] {
-  return (erfolge?.kategorien ?? []).filter((kategorie) => erfolgSichtbar(kategorie.kennzahl, sichtbarkeit));
-}
-
-function erfolgZahlen(erfolge: Erfolge | undefined, sichtbarkeit: Sichtbarkeit): { erreicht: number; gesamt: number } | null {
-  if (!erfolge) {
-    return null;
-  }
-  const kategorien = sichtbareKategorien(erfolge, sichtbarkeit);
-  let gesamt = 0;
-  for (const kategorie of kategorien) {
-    gesamt += kategorie.stufen.length;
-  }
-  return { erreicht: freigeschalteteStufen(kategorien).length, gesamt };
-}
-
-function freigeschalteteStufen(kategorien: ErfolgKategorie[]): ErfolgStufe[] {
-  const stufen: ErfolgStufe[] = [];
-  for (const kategorie of kategorien) {
-    for (const stufe of kategorie.stufen) {
-      if (stufe.erreichtAm !== null) {
-        stufen.push(stufe);
-      }
-    }
-  }
-  return stufen;
 }
 
 function Identitaet({ klasse, titel }: { klasse: string; titel: string | null }) {
@@ -137,18 +91,6 @@ function Identitaet({ klasse, titel }: { klasse: string; titel: string | null })
   const klasseAnzeige = klassenText(klasse);
   const text = klasseSichtbar && titel ? `${klasseAnzeige} · ${titel}` : klasseSichtbar ? klasseAnzeige : titel;
   return <p className="mt-0.5 text-sm font-medium break-words text-akzent">{text}</p>;
-}
-
-function ErfolgeZeile({ onClick }: { onClick: () => void }) {
-  const sichtbarkeit = useSichtbarkeit();
-  const { data: erfolge } = useQuery({ queryKey: SCHLUESSEL.erfolge, queryFn: api.erfolge });
-  const kategorien = sichtbareKategorien(erfolge, sichtbarkeit);
-  let gesamt = 0;
-  for (const kategorie of kategorien) {
-    gesamt += kategorie.stufen.length;
-  }
-  const stand = erfolge ? `${freigeschalteteStufen(kategorien).length}/${gesamt}` : undefined;
-  return <Zeile titel={tx("Erfolge")} name={tx("Erfolge")} wert={stand} onKlick={onClick} />;
 }
 
 function Kennzahlen({ charakter }: { charakter: Charakter }) {
@@ -194,36 +136,6 @@ function Spektren({ charakter }: { charakter: Charakter }) {
           <AttributRadar typ={eintrag.typ} werte={eintrag.werte} kompakt />
         </div>
       ))}
-    </div>
-  );
-}
-
-function ErfolgeListe() {
-  const sichtbarkeit = useSichtbarkeit();
-  const { data: erfolge, error } = useQuery({ queryKey: SCHLUESSEL.erfolge, queryFn: api.erfolge });
-  if (!erfolge) {
-    return <Fehlermeldung fehler={error} />;
-  }
-  const kategorien = sichtbareKategorien(erfolge, sichtbarkeit);
-  return (
-    <div>
-      {kategorien.map((kategorie) => (
-        <div key={kategorie.kennzahl} className="py-2">
-          <p className="text-sm font-medium">{tx(kategorie.label)}</p>
-          {kategorie.stufen.map((stufe) => (
-            <div
-              key={stufe.schluessel}
-              className={`flex min-h-12 items-center gap-3 ${stufe.erreichtAm ? '' : 'text-leise'}`}
-            >
-              {stufe.erreichtAm ? <Check className="size-4 shrink-0" aria-hidden="true" /> : <span className="size-4 shrink-0" aria-hidden="true" />}
-              <span className="min-w-0 flex-1 text-base">{tx(stufe.name)}</span>
-            </div>
-          ))}
-        </div>
-      ))}
-      <Link to="/mehr/profil/titel" className="flex min-h-12 items-center text-base">
-        {tx('Titel wählen')}
-      </Link>
     </div>
   );
 }

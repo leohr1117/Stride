@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.0.2
+
+### Geändert
+
+- Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.
+
 ## 4.0.1
 
 ### Geändert

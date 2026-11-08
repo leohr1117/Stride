@@ -221,13 +221,6 @@ test('Dichte auf Blättern', async ({ page }) => {
         },
       },
       {
-        name: 'Erfolge',
-        oeffne: async () => {
-          await seiteDicht(page, '/charakter');
-          await page.getByRole('button', { name: 'Erfolge', exact: true }).click();
-        },
-      },
-      {
         name: 'Klassen und Titel',
         oeffne: async () => {
           await seiteDicht(page, '/charakter');

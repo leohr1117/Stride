@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.": "资料页不再显示成就这一行。职业和称号保留，称号仍可在编辑档案中选择。",
   "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "在登录页，标题位于标志下方。在手机上，表单是一个分组；在电脑上，它的宽度是 400 像素。",
   "Diese Version fasst die vorhandenen Funktionen zusammen: Einträge, Ziele, Tageskette, Bosse, Profil, Investitionen, Rückblick, Vorbilder, Basis, Verbindungen und Benachrichtigungen. Aussehen und Verhalten bleiben gleich.": "此版本概括已有的功能：记录、目标、每日连续、首领、资料、投入、回顾、榜样、基础、关联和通知。外观和行为保持不变。",
   "Die Ruhezeit lässt sich nur ändern, solange Benachrichtigungen auf diesem Gerät an sind.": "只有在这台设备上开启通知时，才能更改免打扰时间。",
