@@ -49,7 +49,7 @@ self.addEventListener('fetch', (ereignis) => {
 
 // Einzig erlaubtes Ziel ist die Übersicht. Jeder andere Wert wird /.
 const ERLAUBTE_ZIELE = ['/'];
-const HINWEIS_ICON = '/icons/icon-192.png';
+const HINWEIS_ICON = '/icons/icon-192-v2.png';
 const HINWEIS_TITEL = 'Stride';
 
 function erlaubtesZiel(wert) {

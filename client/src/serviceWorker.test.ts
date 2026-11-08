@@ -206,7 +206,7 @@ describe('Service Worker', () => {
         titel: 'Stride',
         optionen: {
           body: '4 Tage sind angeschlagen. Ein Eintrag heute hält sie.',
-          icon: '/icons/icon-192.png',
+          icon: '/icons/icon-192-v2.png',
           data: { ziel: '/' },
           silent: false,
         },
