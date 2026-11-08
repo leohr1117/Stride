@@ -1,13 +1,15 @@
 import { randomBytes } from 'node:crypto';
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import type { ChronikSeite } from '../shared/api/eintraege.ts';
 import { SPRACHEN, type Sprache } from '../shared/sprache/kern.ts';
 import { zeige } from '../shared/sprache/index.ts';
+import { schreibePfadVariable } from '../server/umgebung.ts';
 import { meilensteineAus } from './helfer.ts';
 import { TEST_APP, TEST_ZUGANG, TEST_PASSWORT } from './testdaten.ts';
 
 process.env.STRIDE_TEST = '1';
-process.env.DB_PFAD ??= TEST_APP;
-process.env.ZUGANG_PFAD ??= TEST_ZUGANG;
+schreibePfadVariable('DB_PFAD', TEST_APP);
+schreibePfadVariable('ZUGANG_PFAD', TEST_ZUGANG);
 
 async function passwort(): Promise<string> {
   return TEST_PASSWORT;
@@ -83,6 +85,109 @@ async function wiederherstellen(seite: Page, vorher: Stand): Promise<void> {
   });
 }
 
+async function chronik(seite: Page): Promise<ChronikSeite['eintraege']> {
+  const eintraege: ChronikSeite['eintraege'] = [];
+  let cursor: string | null = null;
+  const gesehen = new Set<string>();
+  for (;;) {
+    const parameter = new URLSearchParams({ limit: '100' });
+    if (cursor !== null) {
+      parameter.set('cursor', cursor);
+    }
+    const daten = await api<ChronikSeite>(seite, `/api/eintraege?${parameter.toString()}`, 'GET');
+    eintraege.push(...daten.eintraege);
+    if (daten.naechsterCursor === null) {
+      return eintraege;
+    }
+    if (gesehen.has(daten.naechsterCursor)) {
+      throw new Error('Chronik-Cursor wiederholt sich.');
+    }
+    gesehen.add(daten.naechsterCursor);
+    cursor = daten.naechsterCursor;
+  }
+}
+
+function idsMitNotiz(eintraege: ChronikSeite['eintraege'], notiz: string): number[] {
+  return eintraege.flatMap((zeile) => (zeile.typ === 'eintrag' && zeile.eintrag.notiz === notiz ? [zeile.eintrag.id] : []));
+}
+
+async function loesche(seite: Page, pfad: string): Promise<void> {
+  const ergebnis = await seite.evaluate(async (ziel) => {
+    const antwort = await fetch(ziel, { method: 'DELETE' });
+    return { status: antwort.status, text: await antwort.text() };
+  }, pfad);
+  if (ergebnis.status !== 204 || ergebnis.text !== '') {
+    throw new Error(`DELETE ${pfad} ${ergebnis.status}${ergebnis.text === '' ? '' : ' mit Antwort'}`);
+  }
+}
+
+async function projektVorhanden(seite: Page, id: number): Promise<boolean> {
+  const ziele = await api<{ projekte: { id: number }[] }>(seite, '/api/ziele', 'GET');
+  return ziele.projekte.some((projekt) => projekt.id === id);
+}
+
+async function loescheEigenesProjekt(seite: Page, id: number): Promise<void> {
+  await loesche(seite, `/api/projekte/${id}`);
+  if (await projektVorhanden(seite, id)) {
+    throw new Error(`Projekt ${id} existiert noch.`);
+  }
+}
+
+async function eigenesProjektWeg(seite: Page, id: number): Promise<void> {
+  if (await projektVorhanden(seite, id)) {
+    await loescheEigenesProjekt(seite, id);
+  }
+}
+
+async function eintragVorhanden(seite: Page, id: number): Promise<boolean> {
+  const eintraege = await chronik(seite);
+  return eintraege.some((zeile) => zeile.typ === 'eintrag' && zeile.eintrag.id === id);
+}
+
+async function eigenenEintragWeg(seite: Page, id: number): Promise<void> {
+  if (!(await eintragVorhanden(seite, id))) {
+    return;
+  }
+  await loesche(seite, `/api/eintraege/${id}`);
+  if (await eintragVorhanden(seite, id)) {
+    throw new Error(`Eintrag ${id} existiert noch.`);
+  }
+}
+
+async function losesProjekt(seite: Page, name: string): Promise<number> {
+  const vorlagen = await api<{ id: number; archiviert: boolean }[]>(seite, '/api/vorlagen', 'GET');
+  const vorlageId = vorlagen.find((eintrag) => !eintrag.archiviert)?.id;
+  if (vorlageId === undefined) {
+    throw new Error('Keine Tätigkeit.');
+  }
+  const projekt = await api<{ id: number; visionId: number | null; organisationId: number | null; archiviert: boolean }>(
+    seite,
+    '/api/projekte',
+    'POST',
+    {
+      name,
+      beschreibung: '',
+      visionId: null,
+      organisationId: null,
+      standardVorlageId: vorlageId,
+    },
+  );
+  if (projekt.visionId !== null || projekt.organisationId !== null || projekt.archiviert !== false) {
+    if (!(await projektVorhanden(seite, projekt.id))) {
+      throw new Error(`Projekt ${projekt.id} fehlt vor dem Aufräumen.`);
+    }
+    await loescheEigenesProjekt(seite, projekt.id);
+    throw new Error('Projekt ist nicht lose und aktiv.');
+  }
+  return projekt.id;
+}
+
+async function nurEigeneProjekteWeg(seite: Page, ids: readonly number[]): Promise<void> {
+  for (const id of ids) {
+    await eigenesProjektWeg(seite, id);
+  }
+}
+
 async function kopieSchliessen(): Promise<void> {
   const { schliesseDatenbank } = await import('../server/db.ts');
   const { schliesseZugang } = await import('../server/features/zugang/zugang.ts');
@@ -148,7 +253,9 @@ test('Beschriftungen folgen der Sprache', async ({ page }) => {
     ebenen: { visionen: true, projekte: true, vorhaben: true, organisationen: true },
     funktionen: { statistiken: true, rueckblick: true, chronik: true, vorbilder: true },
   });
+  const eigene: number[] = [];
   try {
+    eigene.push(await losesProjekt(page, `Los-a-${test.info().project.name}`));
     await page.reload();
     await page.getByRole('button', { name: 'Log entry' }).waitFor();
     await page.goto('/ziele');
@@ -188,7 +295,11 @@ test('Beschriftungen folgen der Sprache', async ({ page }) => {
     await page.keyboard.press('Escape');
     expect(await seitenrand(page)).toEqual([]);
   } finally {
-    await wiederherstellen(page, vorher).catch(() => undefined);
+    try {
+      await nurEigeneProjekteWeg(page, eigene);
+    } finally {
+      await wiederherstellen(page, vorher).catch(() => undefined);
+    }
   }
   expect(fehler).toEqual([]);
 });
@@ -199,7 +310,10 @@ test('Eintrag anlegen und löschen', async ({ page }) => {
   await anmelden(page);
   const vorher = await stand(page);
   await setzen(page, { funktionen: { chronik: true } });
+  let fremde: Set<number> | null = null;
+  let eigeneEintragId: number | null = null;
   try {
+    fremde = new Set(idsMitNotiz(await chronik(page), notiz));
     const vorlagen = await api<{ id: number; name: string; archiviert: boolean }[]>(page, '/api/vorlagen', 'GET');
     const vorlage = vorlagen.find((eintrag) => !eintrag.archiviert);
     if (!vorlage) {
@@ -219,6 +333,11 @@ test('Eintrag anlegen und löschen', async ({ page }) => {
     await expect(dialog.getByRole('button', { name: /Eintragen · ca\. \+/ })).toBeVisible();
     await dialog.getByRole('button', { name: /Eintragen · ca\. \+/ }).click();
     await expect(dialog).toHaveCount(0);
+    const neue = idsMitNotiz(await chronik(page), notiz).filter((id) => fremde === null || !fremde.has(id));
+    if (neue.length !== 1) {
+      throw new Error('Eigener Eintrag fehlt.');
+    }
+    eigeneEintragId = neue[0] ?? null;
 
     await page.goto('/chronik');
     await meilensteineAus(page);
@@ -231,10 +350,16 @@ test('Eintrag anlegen und löschen', async ({ page }) => {
     await expect(zeile).toHaveCount(0);
   } finally {
     await setzen(page, { funktionen: { chronik: vorher.funktionen.chronik } }).catch(() => undefined);
-    const uebrig = await api<{ eintraege: { id: number; notiz: string }[] }>(page, '/api/eintraege', 'GET').catch(() => null);
-    const treffer = uebrig?.eintraege.find((eintrag) => eintrag.notiz === notiz);
-    if (treffer) {
-      await api(page, `/api/eintraege/${treffer.id}`, 'DELETE').catch(() => undefined);
+    if (eigeneEintragId === null && fremde !== null) {
+      const bekannte = fremde;
+      const neue = idsMitNotiz(await chronik(page), notiz).filter((id) => !bekannte.has(id));
+      if (neue.length > 1) {
+        throw new Error('Eigener Eintrag ist nicht eindeutig.');
+      }
+      eigeneEintragId = neue[0] ?? null;
+    }
+    if (eigeneEintragId !== null) {
+      await eigenenEintragWeg(page, eigeneEintragId);
     }
   }
   expect(fehler).toEqual([]);
@@ -285,15 +410,13 @@ test('Wischen löscht sofort und der nächste Toast ersetzt den ersten', async (
     await expect(zweiteZeile).toBeVisible();
     await expect(ersteZeile).toHaveCount(0);
   } finally {
-    const ziele = await api<{ projekte: { id: number }[] }>(page, '/api/ziele', 'GET').catch(() => null);
-    const da = new Set((ziele?.projekte ?? []).map((projekt) => projekt.id));
-    for (const id of angelegt) {
-      if (ziele && !da.has(id)) {
-        continue;
+    try {
+      for (const id of angelegt) {
+        await eigenesProjektWeg(page, id);
       }
-      await api(page, `/api/projekte/${id}`, 'DELETE').catch(() => undefined);
+    } finally {
+      await setzen(page, { ebenen: vorher.ebenen, sprache: vorher.sprache ?? 'de' }).catch(() => undefined);
     }
-    await setzen(page, { ebenen: vorher.ebenen, sprache: vorher.sprache ?? 'de' }).catch(() => undefined);
   }
   expect(fehler).toEqual([]);
 });
@@ -423,7 +546,9 @@ test('Seiten, Sprachen, Darstellung, Vorbilder und Todoist', async ({ page }) =>
     'Bester Tag ·',
     'Abgeglichen ',
   ];
+  const eigene: number[] = [];
   try {
+    eigene.push(await losesProjekt(page, `Los-b-${test.info().project.name}`));
     await page.goto('/mehr/darstellung');
     await expect(page.getByRole('heading', { name: 'Ansicht', exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Farben dieser Ansicht', exact: true })).toBeVisible();
@@ -506,7 +631,11 @@ test('Seiten, Sprachen, Darstellung, Vorbilder und Todoist', async ({ page }) =>
       expect(await page.locator('main').innerText(), sprache).not.toContain('Bester Tag ·');
     }
   } finally {
-    await wiederherstellen(page, vorher).catch(() => undefined);
+    try {
+      await nurEigeneProjekteWeg(page, eigene);
+    } finally {
+      await wiederherstellen(page, vorher).catch(() => undefined);
+    }
   }
   expect(fehler).toEqual([]);
 });

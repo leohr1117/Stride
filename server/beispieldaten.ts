@@ -2,9 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { FARBE, type AttributKennung, type IconName } from '../shared/spiel/begriffe.ts';
+import { pfadVariable, schreibePfadVariable } from './umgebung.ts';
 
 const ERSETZEN = process.argv.includes('--ersetzen');
-const DATENBANK = process.env.DB_PFAD ?? path.resolve(import.meta.dirname, '..', 'data', 'app.db');
+const DATENBANK = pfadVariable('DB_PFAD') ?? path.resolve(import.meta.dirname, '..', 'data', 'app.db');
 const SIMULIERTE_TAGE = 70;
 const STARTWERT_ZUFALL = 20261019;
 
@@ -36,7 +37,7 @@ if (fs.existsSync(DATENBANK)) {
   sichereUndEntferne(DATENBANK);
 }
 
-process.env.DB_PFAD = DATENBANK;
+schreibePfadVariable('DB_PFAD', DATENBANK);
 
 const { aktiviereAttribut, ladeAttribute } = await import('./features/attribute/attribute.ts');
 const { aendereEinstellungen } = await import('./features/einstellungen/einstellungen.ts');

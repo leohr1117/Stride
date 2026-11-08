@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
+import { mitDatenbankPfaden } from '../server/umgebung.ts';
 import { TEST_APP, TEST_KOPIE, TEST_WELT, TEST_ZUGANG, WURZEL } from './testdaten.ts';
 
 export function erstelleTestkopie(): void {
@@ -9,12 +10,10 @@ export function erstelleTestkopie(): void {
   verweigereEchteDatenbank(TEST_WELT);
   const ergebnis = spawnSync(process.execPath, ['--disable-warning=ExperimentalWarning', 'e2e/samen.ts'], {
     cwd: WURZEL,
-    env: {
+    env: mitDatenbankPfaden({
       ...process.env,
       STRIDE_TEST: '1',
-      DB_PFAD: TEST_APP,
-      ZUGANG_PFAD: TEST_ZUGANG,
-    },
+    }, TEST_APP, TEST_ZUGANG),
     stdio: 'inherit',
     windowsHide: true,
   });

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { istTestlauf, verweigereEchteDatenbank } from './testpfad.ts';
-import { strideVariable } from './umgebung.ts';
+import { pfadVariable, strideVariable } from './umgebung.ts';
 
 const PROJEKT_WURZEL = path.resolve(import.meta.dirname, '..');
 export const BAU_CLIENT_PFAD = path.join(PROJEKT_WURZEL, 'client', 'dist');
@@ -9,9 +9,9 @@ export const LIVE_CLIENT_PFAD = path.join(PROJEKT_WURZEL, 'client', 'dist-live')
 const STANDARD_PORT = 3000;
 const ECHTE_DATENBANK = path.join(PROJEKT_WURZEL, 'data', 'app.db');
 
-function datenbankPfadAufloesen(): string {
-  const gesetzt = process.env.DB_PFAD;
-  if (istTestlauf()) {
+export function datenbankPfadAus(env: NodeJS.ProcessEnv, testlauf: boolean): string {
+  const gesetzt = pfadVariable('DB_PFAD', env);
+  if (testlauf) {
     if (!gesetzt) {
       throw new Error('Abbruch: Tests brauchen DB_PFAD auf eine Kopie. Echte Dateien unter data/ sind gesperrt.');
     }
@@ -20,16 +20,17 @@ function datenbankPfadAufloesen(): string {
   return gesetzt ?? ECHTE_DATENBANK;
 }
 
-const datenbankPfad = datenbankPfadAufloesen();
-
-function zugangPfadAufloesen(): string {
-  const standard = path.join(path.dirname(datenbankPfad), 'zugang.db');
-  const gesetzt = process.env.ZUGANG_PFAD ?? standard;
-  if (istTestlauf()) {
+export function zugangPfadAus(datenbank: string, env: NodeJS.ProcessEnv, testlauf: boolean): string {
+  const standard = path.join(path.dirname(datenbank), 'zugang.db');
+  const gesetzt = pfadVariable('ZUGANG_PFAD', env) ?? standard;
+  if (testlauf) {
     return verweigereEchteDatenbank(gesetzt);
   }
   return gesetzt;
 }
+
+const testlauf = istTestlauf();
+const datenbankPfad = datenbankPfadAus(process.env, testlauf);
 
 function sauber(wert: string | undefined): string {
   return typeof wert === 'string' ? wert.trim() : '';
@@ -65,7 +66,7 @@ export const KONFIG = {
   host: '127.0.0.1',
   logLevel: process.env.LOG_LEVEL ?? 'warn',
   datenbankPfad,
-  zugangPfad: zugangPfadAufloesen(),
+  zugangPfad: zugangPfadAus(datenbankPfad, process.env, testlauf),
   clientPfad: clientPfadAus(),
   todoistApi: process.env.TODOIST_API ?? 'https://api.todoist.com/api/v1/',
 } as const;

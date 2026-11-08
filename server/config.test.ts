@@ -6,11 +6,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   BAU_CLIENT_PFAD,
   clientPfadAus,
+  datenbankPfadAus,
   KONFIG,
   kopiereDistInLeerenOrdner,
   LIVE_CLIENT_PFAD,
   stelleLiveClientBereit,
+  zugangPfadAus,
 } from './config.ts';
+import { istEchteDatenbank } from './testpfad.ts';
 
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const strideVorher = process.env.STRIDE_CLIENT_DIR;
@@ -137,6 +140,54 @@ describe('Live-Ordner beim Start', () => {
   });
 });
 
+describe('Datenbankpfade', () => {
+  const prodApp = path.join(WURZEL, 'data', 'app.db');
+  const prodZugang = path.join(WURZEL, 'data', 'zugang.db');
+  const isoliertApp = path.join(os.tmpdir(), 'stride-pfad-app.db');
+  const isoliertAlt = path.join(os.tmpdir(), 'stride-pfad-alt.db');
+  const isoliertZugang = path.join(os.tmpdir(), 'stride-pfad-zugang.db');
+  const isoliertZugangAlt = path.join(os.tmpdir(), 'stride-pfad-zugang-alt.db');
+
+  it('löst ohne Namen die Standards auf und öffnet sie nicht', () => {
+    expect(datenbankPfadAus({}, false)).toBe(prodApp);
+    expect(zugangPfadAus(prodApp, {}, false)).toBe(prodZugang);
+  });
+
+  it('nimmt jeden Namen allein und lässt den neuen gewinnen', () => {
+    expect(datenbankPfadAus({ STRIDE_DB_PFAD: isoliertApp }, true)).toBe(path.resolve(isoliertApp));
+    expect(datenbankPfadAus({ DB_PFAD: isoliertAlt }, true)).toBe(path.resolve(isoliertAlt));
+    expect(datenbankPfadAus({ STRIDE_DB_PFAD: isoliertApp, DB_PFAD: isoliertAlt }, true)).toBe(path.resolve(isoliertApp));
+    const datenbank = datenbankPfadAus({ DB_PFAD: isoliertAlt }, true);
+    expect(zugangPfadAus(datenbank, { STRIDE_ZUGANG_PFAD: isoliertZugang }, true)).toBe(path.resolve(isoliertZugang));
+    expect(zugangPfadAus(datenbank, { ZUGANG_PFAD: isoliertZugangAlt }, true)).toBe(path.resolve(isoliertZugangAlt));
+    expect(zugangPfadAus(datenbank, { STRIDE_ZUGANG_PFAD: isoliertZugang, ZUGANG_PFAD: isoliertZugangAlt }, true)).toBe(path.resolve(isoliertZugang));
+  });
+
+  it('lässt den Zugang neben der Datenbank, wenn nur die Datenbank gesetzt ist', () => {
+    const datenbank = datenbankPfadAus({ STRIDE_DB_PFAD: isoliertApp, ZUGANG_PFAD: isoliertZugangAlt }, false);
+    expect(datenbank).toBe(isoliertApp);
+    expect(zugangPfadAus(datenbank, { DB_PFAD: isoliertAlt }, false)).toBe(path.join(path.dirname(isoliertApp), 'zugang.db'));
+  });
+
+  it('verweigert Produktionspfade im Test, bevor eine Datei geöffnet wird', () => {
+    expect(istEchteDatenbank(prodApp)).toBe(true);
+    expect(() => datenbankPfadAus({}, true)).toThrow('DB_PFAD');
+    expect(() => datenbankPfadAus({ STRIDE_DB_PFAD: prodApp }, true)).toThrow(path.resolve(prodApp));
+    expect(() => datenbankPfadAus({ DB_PFAD: prodApp }, true)).toThrow(path.resolve(prodApp));
+    const datenbank = datenbankPfadAus({ STRIDE_DB_PFAD: isoliertApp }, true);
+    expect(() => zugangPfadAus(datenbank, { STRIDE_ZUGANG_PFAD: prodZugang }, true)).toThrow(path.resolve(prodZugang));
+    expect(() => zugangPfadAus(datenbank, { ZUGANG_PFAD: prodZugang }, true)).toThrow(path.resolve(prodZugang));
+    expect(() => zugangPfadAus(prodApp, {}, true)).toThrow(path.resolve(prodZugang));
+  });
+
+  it('bindet KONFIG an die isolierten Namen dieses Laufs', () => {
+    expect(KONFIG.datenbankPfad).toBe(process.env.STRIDE_DB_PFAD);
+    expect(KONFIG.zugangPfad).toBe(process.env.STRIDE_ZUGANG_PFAD);
+    expect(istEchteDatenbank(KONFIG.datenbankPfad)).toBe(false);
+    expect(istEchteDatenbank(KONFIG.zugangPfad)).toBe(false);
+  });
+});
+
 describe('Doku zum Client-Pfad', () => {
   it('nennt STRIDE_CLIENT_DIR in README und .env.example', () => {
     const readme = fs.readFileSync(path.join(WURZEL, 'README.md'), 'utf8');
@@ -148,5 +199,23 @@ describe('Doku zum Client-Pfad', () => {
     expect(beispiel).toContain('STRIDE_CLIENT_DIR');
     expect(beispiel).toContain('ASCEND_CLIENT_DIR');
     expect(beispiel).toContain('client/dist-live');
+  });
+
+  it('nennt die neuen Datenbanknamen vor den alten', () => {
+    const readme = fs.readFileSync(path.join(WURZEL, 'README.md'), 'utf8');
+    const beispiel = fs.readFileSync(path.join(WURZEL, '.env.example'), 'utf8');
+    const setup = fs.readFileSync(path.join(WURZEL, 'vitest.setup.ts'), 'utf8');
+    const start = fs.readFileSync(path.join(WURZEL, 'e2e', 'global-setup.ts'), 'utf8');
+    expect(readme).toContain('STRIDE_DB_PFAD');
+    expect(readme).toContain('STRIDE_ZUGANG_PFAD');
+    expect(readme).toContain('DB_PFAD');
+    expect(readme).toContain('ZUGANG_PFAD');
+    expect(beispiel).toContain('STRIDE_DB_PFAD=data/app.db');
+    expect(beispiel).toContain('STRIDE_ZUGANG_PFAD=data/zugang.db');
+    expect(beispiel).not.toMatch(/^DB_PFAD=/m);
+    expect(beispiel).not.toMatch(/^ZUGANG_PFAD=/m);
+    expect(setup).toContain("schreibePfadVariable('DB_PFAD'");
+    expect(setup).toContain("schreibePfadVariable('ZUGANG_PFAD'");
+    expect(start).toContain('mitDatenbankPfaden(');
   });
 });

@@ -57,8 +57,8 @@ Die Daten liegen in `data/` (`app.db` und `zugang.db`). Liegt `app.db` schon vor
 | Variable | Zweck |
 |---|---|
 | `PORT` | Port des Servers, Standard 3000 |
-| `DB_PFAD` | Pfad der Datenbank, Standard `data/app.db` |
-| `ZUGANG_PFAD` | Pfad der Zugangsdatenbank, Standard `data/zugang.db` |
+| `STRIDE_DB_PFAD` | Pfad der Datenbank, Standard `data/app.db`. Dieser Name gilt vor dem alten Namen `DB_PFAD`. |
+| `STRIDE_ZUGANG_PFAD` | Pfad der Zugangsdatenbank, Standard `data/zugang.db`. Dieser Name gilt vor dem alten Namen `ZUGANG_PFAD`. |
 | `LOG_LEVEL` | Log-Stufe, Standard `warn` |
 | `STRIDE_CLIENT_DIR` | Ordner, aus dem der laufende Server die Oberfläche ausliefert. Standard ist `client/dist-live`. Ist der Ordner beim ersten Start noch leer, wird `client/dist` hineinkopiert. `npm run build` und die Browser-Tests schreiben und lesen weiter `client/dist`. Der alte Name `ASCEND_CLIENT_DIR` wird weiter gelesen. |
 | `STRIDE_ADMIN` | Benutzername des Admin-Kontos (der alte Name `ASCEND_ADMIN` wird weiter gelesen) |

@@ -4,6 +4,7 @@ import path from 'node:path';
 import { AKTUELLE_VERSION } from '../shared/versionen.ts';
 import { starteTodoistAttrappe, type TodoistAttrappe } from '../server/integrationen/todoistAttrappe.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
+import { mitDatenbankPfaden } from '../server/umgebung.ts';
 import { erstelleTestkopie, loescheTestkopie } from './kopie.ts';
 import { TEST_APP, TEST_PORT, TEST_URL, TEST_ZUGANG, WURZEL, TEST_PASSWORT } from './testdaten.ts';
 
@@ -109,16 +110,14 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
 
   const kind = spawn(process.execPath, ['--disable-warning=ExperimentalWarning', 'server/index.ts'], {
     cwd: WURZEL,
-    env: {
+    env: mitDatenbankPfaden({
       ...process.env,
       STRIDE_TEST: '1',
       STRIDE_ADMIN: 'testvoll',
       STRIDE_CLIENT_DIR: path.join(WURZEL, 'client', 'dist'),
       PORT: String(TEST_PORT),
-      DB_PFAD: TEST_APP,
-      ZUGANG_PFAD: TEST_ZUGANG,
       TODOIST_API: attrappe.basis,
-    },
+    }, TEST_APP, TEST_ZUGANG),
     stdio: 'inherit',
     windowsHide: true,
   });
