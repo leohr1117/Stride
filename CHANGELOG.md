@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.2
+
+### Geändert
+
+- Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser.
+
 ## 4.1.1
 
 ### Geändert

@@ -6,6 +6,7 @@ import { aktiviereAnfrageSprache } from './anfrageSprache.ts';
 import { KONFIG, stelleLiveClientBereit } from './config.ts';
 import { mitWelt, schliesseDatenbank } from './db.ts';
 import { registriereAnfrageGrenze } from './anfrageGrenze.ts';
+import { registriereSicherheitsKoepfe } from './sicherheitsKoepfe.ts';
 import { AppFehler, ungueltig } from './fehler.ts';
 import { attributRouten } from './features/attribute/routen.ts';
 import { basisRouten } from './features/basis/routen.ts';
@@ -36,6 +37,8 @@ const API_PREFIX = '/api';
 const INTERNER_FEHLER = 500;
 
 const app = Fastify({ logger: { level: KONFIG.logLevel }, trustProxy: true });
+
+registriereSicherheitsKoepfe(app);
 
 app.setErrorHandler((fehler: FastifyError | Error, anfrage, antwort) => {
   if (fehler instanceof ZodError) {

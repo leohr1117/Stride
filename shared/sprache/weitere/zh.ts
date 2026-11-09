@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser.": "Stride 现在会向浏览器发送额外的安全信息。",
   "Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.": "Stride 现在会限制短时间内过多的请求，并更好地保护注册。",
   "Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.": "自行托管 Stride 时，现在可以允许使用 Google 登录。",
   "Über Google anmelden": "使用 Google 账号登录",

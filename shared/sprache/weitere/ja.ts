@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser.": "Strideはブラウザに追加のセキュリティ情報を送るようになりました。",
   "Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.": "Strideは短時間の過剰なリクエストを抑え、登録をより確実に守るようになりました。",
   "Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.": "Strideを自分で運用している場合、Googleでのログインを許可できるようになりました。",
   "Über Google anmelden": "Google でログイン",

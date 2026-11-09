@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser.": "Stride ahora envía información de seguridad adicional al navegador.",
   "Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.": "Stride ahora frena demasiadas solicitudes en poco tiempo y protege mejor el registro.",
   "Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.": "Si alojas Stride tú mismo, ahora puedes permitir el inicio de sesión con Google.",
   "Über Google anmelden": "Iniciar sesión con Google",

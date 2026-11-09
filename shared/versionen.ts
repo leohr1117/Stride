@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.2',
+    seiten: 'Alle',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser.'],
+      },
+    ],
+  },
+  {
     version: '4.1.1',
     seiten: 'Anmeldung',
     abschnitte: [
