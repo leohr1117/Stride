@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.0.6
+
+### Geändert
+
+- Die zwölf Klassenzeichen sind feiner und sauberer gezeichnet.
+
 ## 4.0.5
 
 ### Geändert

@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die zwölf Klassenzeichen sind feiner und sauberer gezeichnet.": "十二个职业标志画得更精细、更干净。",
   "Die zwölf Klassen haben neue Zeichen: Hantel, Mondsichel mit Stern, Helm, Buch, Sprechblasen, Palette, Achtelnote, Bergspitze, Triskele, Krone, Keimling und Waage.": "十二个职业有了新的标志：哑铃、新月与星星、头盔、书、对话气泡、调色板、八分音符、山峰、三曲枝、王冠、新芽和天平。",
   "Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.": "在目标里，愿景下的直接项目和组织会缩进。组织里的项目只在名称上再缩进一级。等级和菜单仍对齐在右侧同一条边上。",
   "Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.": "已解锁的称号清晰可读，并保留奖杯。尚未达成的称号更淡，而且没有符号。",

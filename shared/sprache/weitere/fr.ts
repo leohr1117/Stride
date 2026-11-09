@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die zwölf Klassenzeichen sind feiner und sauberer gezeichnet.": "Les douze signes des classes sont dessinés plus finement et plus proprement.",
   "Die zwölf Klassen haben neue Zeichen: Hantel, Mondsichel mit Stern, Helm, Buch, Sprechblasen, Palette, Achtelnote, Bergspitze, Triskele, Krone, Keimling und Waage.": "Les douze classes ont de nouveaux signes : haltère, croissant de lune et étoile, casque, livre, bulles, palette, croche, sommet, triskèle, couronne, pousse et balance.",
   "Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.": "Dans Objectifs, les projets directs et les organisations sont décalés sous la vision. Les projets d'une organisation le sont un cran de plus, seulement sur le nom. Le niveau et le menu restent sur le même bord à droite.",
   "Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.": "Les titres débloqués sont faciles à lire et gardent le trophée. Les titres pas encore atteints restent plus discrets et sans symbole.",

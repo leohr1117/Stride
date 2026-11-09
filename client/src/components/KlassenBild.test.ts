@@ -1,7 +1,10 @@
+import { createHash } from 'node:crypto';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { KlassenBild } from './KlassenBild.tsx';
+
+const ENTWURF_SHA256 = 'd864f6179839d59f6ab4111856326dc3c8d31294f3c3a7d9c12a3f94796aa5bf';
 
 const KLASSEN = [
   'Athlet',
@@ -66,5 +69,16 @@ describe('KlassenBild', () => {
     expect(frei).not.toContain('bg-akzent');
     expect(frei).not.toContain('rounded-full');
     expect(frei).not.toContain('profilbild');
+  });
+
+  it('übernimmt die zwölf Entwurfspfade unverändert', () => {
+    const pfadListe = KLASSEN.map((klasse) => {
+      const html = markup(klasse);
+      expect(html).toContain('fill-rule="evenodd"');
+      const treffer = [...html.matchAll(/ d="([^"]+)"/g)];
+      expect(treffer).toHaveLength(1);
+      return treffer[0]?.[1] ?? '';
+    });
+    expect(createHash('sha256').update(pfadListe.join('\n')).digest('hex')).toBe(ENTWURF_SHA256);
   });
 });

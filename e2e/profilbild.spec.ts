@@ -184,6 +184,10 @@ test('Profilbild bleibt in jeder Ansicht rund', async ({ page }, testInfo) => {
           expect(eintrag.breite).toBe(32);
           expect(eintrag.zeichen).toBe(18);
         }
+        const kopfPfad = page.locator('[data-kopf] [data-profilbild] svg path').first();
+        await expect(kopfPfad).toHaveAttribute('fill-rule', 'evenodd');
+        const quellPfade = klassenSvgs().map((svg) => / d="([^"]+)"/.exec(svg)?.[1] ?? '');
+        expect(quellPfade).toContain((await kopfPfad.getAttribute('d')) ?? '');
         await page.locator('[data-zeichenprobe]').screenshot({ path: `tmp-test/profilbild/${projekt}-klassenzeichen-32.png` });
         await page.evaluate(() => document.querySelector('[data-zeichenprobe]')?.remove());
       }
