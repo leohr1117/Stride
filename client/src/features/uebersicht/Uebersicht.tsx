@@ -30,6 +30,7 @@ import {
   Ladeanzeige,
   LevelRing,
 } from '../../ui/index.ts';
+import { InstallBanner } from '../../installHinweis.tsx';
 import { BewertungKarte } from './Bewertung.tsx';
 import { HeuteKarte } from './Heute.tsx';
 import { HinweisAngebot } from './HinweisAngebot.tsx';
@@ -112,6 +113,7 @@ export function UebersichtSeite() {
 
         <BewertungKarte />
         <HinweisAngebot />
+        <InstallBanner />
       </div>
 
       <HeuteKarte />

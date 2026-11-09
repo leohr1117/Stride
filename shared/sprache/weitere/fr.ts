@@ -1,5 +1,10 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die App lässt sich jetzt direkt aus der App heraus installieren.": "L'application peut désormais être installée directement depuis l'application.",
+  "Als App installieren": "Installer comme application",
+  "Installieren": "Installer",
+  "Teilen → Zum Home-Bildschirm.": "Partager → Sur l'écran d'accueil.",
+  "Ablage → Zum Dock hinzufügen.": "Fichier → Ajouter au Dock.",
   "Die zwölf Klassenzeichen sind feiner und sauberer gezeichnet.": "Les douze signes des classes sont dessinés plus finement et plus proprement.",
   "Die zwölf Klassen haben neue Zeichen: Hantel, Mondsichel mit Stern, Helm, Buch, Sprechblasen, Palette, Achtelnote, Bergspitze, Triskele, Krone, Keimling und Waage.": "Les douze classes ont de nouveaux signes : haltère, croissant de lune et étoile, casque, livre, bulles, palette, croche, sommet, triskèle, couronne, pousse et balance.",
   "Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.": "Dans Objectifs, les projets directs et les organisations sont décalés sous la vision. Les projets d'une organisation le sont un cran de plus, seulement sur le nom. Le niveau et le menu restent sur le même bord à droite.",

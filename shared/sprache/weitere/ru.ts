@@ -1,5 +1,10 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die App lässt sich jetzt direkt aus der App heraus installieren.": "Теперь приложение можно установить прямо из самого приложения.",
+  "Als App installieren": "Установить как приложение",
+  "Installieren": "Установить",
+  "Teilen → Zum Home-Bildschirm.": "Поделиться → На экран «Домой».",
+  "Ablage → Zum Dock hinzufügen.": "Файл → Добавить в Dock.",
   "Die zwölf Klassenzeichen sind feiner und sauberer gezeichnet.": "Двенадцать знаков классов нарисованы тоньше и аккуратнее.",
   "Die zwölf Klassen haben neue Zeichen: Hantel, Mondsichel mit Stern, Helm, Buch, Sprechblasen, Palette, Achtelnote, Bergspitze, Triskele, Krone, Keimling und Waage.": "У двенадцати классов новые знаки: гантель, полумесяц со звездой, шлем, книга, облачка речи, палитра, восьмая нота, вершина, трискель, корона, росток и весы.",
   "Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.": "В Целях прямые проекты и организации сдвинуты под видением. Проекты организации сдвинуты ещё на шаг, только у имени. Уровень и меню остаются на одном крае справа.",

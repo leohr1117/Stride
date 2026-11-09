@@ -10,7 +10,7 @@ import { SchnellProvider } from './components/SchnellAktion.tsx';
 import { beobachteAngebotAbmeldung } from './features/uebersicht/angebotStand.ts';
 import { beobachteFokusArt } from './fokus.ts';
 import { beobachteSichtfeld } from './sichtfeld.ts';
-import { ladeBeiVeraltetenDateienNeu, registriereServiceWorker } from './pwa.ts';
+import { beobachteInstallation, ladeBeiVeraltetenDateienNeu, registriereServiceWorker } from './pwa.ts';
 import { standardVorlage } from '../../shared/features/darstellung/paletten.ts';
 import { SpracheProvider } from './sprache.tsx';
 import { gespeicherteFarben, gespeicherterStil, gespeichertesGlimmen, wendeErscheinung, wendeStilAn } from './features/darstellung/stil.ts';
@@ -35,6 +35,7 @@ if (!wurzel) {
   throw new Error('Element #root fehlt in index.html.');
 }
 
+beobachteInstallation();
 beobachteFokusArt();
 beobachteAngebotAbmeldung();
 beobachteSichtfeld();

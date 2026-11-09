@@ -1,6 +1,6 @@
 import { tx } from '../../text.ts';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useState, type ReactNode } from 'react';
 import { STIL_INFO } from '../../../../shared/features/darstellung/stile.ts';
 import { sichtbareMehrBereiche, type MehrBereichId } from '../../../../shared/spiel/mehrBereiche.ts';
 import { neuereVersionen } from '../../../../shared/spiel/updateHinweis.ts';
@@ -13,6 +13,7 @@ import { useSichtbarkeit } from '../../funktionen.ts';
 import { sichtbareGruppen, type NavEintrag } from '../../navigation.ts';
 import { AbschnittKopf, Flaeche, Ladeanzeige } from '../../ui/index.ts';
 import { useNeuMarkierung, verbindeVersionsstand } from '../../updateHinweis.tsx';
+import { InstallZeile } from '../../installHinweis.tsx';
 import { kachelText } from './hinweisGeraet.ts';
 import { bereicheAn, kartenStand, verbindungsKurz } from './mehrWerte.ts';
 
@@ -75,7 +76,10 @@ export function MehrSeite() {
         <AbschnittKopf titel={tx('Einstellungen')} />
         <Liste>
           {sichtbareMehrBereiche().map((bereich) => (
-            <Zeile key={bereich.id} titel={tx(bereich.label)} wert={werte.get(bereich.id)} nach={bereich.pfad} />
+            <Fragment key={bereich.id}>
+              <Zeile titel={tx(bereich.label)} wert={werte.get(bereich.id)} nach={bereich.pfad} />
+              {bereich.id === 'benachrichtigungen' ? <InstallZeile /> : null}
+            </Fragment>
           ))}
         </Liste>
       </section>

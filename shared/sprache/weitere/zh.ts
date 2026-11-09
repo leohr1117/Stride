@@ -1,5 +1,10 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die App lässt sich jetzt direkt aus der App heraus installieren.": "现在可以直接在应用内安装应用。",
+  "Als App installieren": "安装为应用",
+  "Installieren": "安装",
+  "Teilen → Zum Home-Bildschirm.": "共享 → 添加到主屏幕。",
+  "Ablage → Zum Dock hinzufügen.": "文件 → 添加到程序坞。",
   "Die zwölf Klassenzeichen sind feiner und sauberer gezeichnet.": "十二个职业标志画得更精细、更干净。",
   "Die zwölf Klassen haben neue Zeichen: Hantel, Mondsichel mit Stern, Helm, Buch, Sprechblasen, Palette, Achtelnote, Bergspitze, Triskele, Krone, Keimling und Waage.": "十二个职业有了新的标志：哑铃、新月与星星、头盔、书、对话气泡、调色板、八分音符、山峰、三曲枝、王冠、新芽和天平。",
   "Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.": "在目标里，愿景下的直接项目和组织会缩进。组织里的项目只在名称上再缩进一级。等级和菜单仍对齐在右侧同一条边上。",

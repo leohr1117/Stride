@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.0.7',
+    seiten: 'Heute, Mehr',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Die App lässt sich jetzt direkt aus der App heraus installieren.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.0.6',
     seiten: 'Profil',
     abschnitte: [

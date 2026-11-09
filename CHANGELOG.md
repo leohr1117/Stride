@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.0.7
+
+### Hinzugefügt
+
+- Die App lässt sich jetzt direkt aus der App heraus installieren.
+
 ## 4.0.6
 
 ### Geändert

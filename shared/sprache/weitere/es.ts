@@ -1,5 +1,10 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die App lässt sich jetzt direkt aus der App heraus installieren.": "Ahora la app se puede instalar directamente desde la propia app.",
+  "Als App installieren": "Instalar como app",
+  "Installieren": "Instalar",
+  "Teilen → Zum Home-Bildschirm.": "Compartir → Añadir a la pantalla de inicio.",
+  "Ablage → Zum Dock hinzufügen.": "Archivo → Añadir al Dock.",
   "Die zwölf Klassenzeichen sind feiner und sauberer gezeichnet.": "Los doce signos de las clases están dibujados con más detalle y limpieza.",
   "Die zwölf Klassen haben neue Zeichen: Hantel, Mondsichel mit Stern, Helm, Buch, Sprechblasen, Palette, Achtelnote, Bergspitze, Triskele, Krone, Keimling und Waage.": "Las doce clases tienen signos nuevos: mancuerna, luna creciente con estrella, casco, libro, bocadillos, paleta, corchea, cima, trisquel, corona, brote y balanza.",
   "Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.": "En Metas, los proyectos directos y las organizaciones se sangran bajo la visión. Los proyectos de una organización se sangran un paso más, solo en el nombre. El nivel y el menú siguen en el mismo borde a la derecha.",

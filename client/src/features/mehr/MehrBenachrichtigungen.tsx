@@ -10,6 +10,7 @@ import { Zeile, ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
 import { EINGABE_STIL, Fehlermeldung, Feld, Formular, Knopf, Ladeanzeige } from '../../ui/index.ts';
+import { laeuftAlsApp } from '../../pwa.ts';
 import { einschaltKlick, iosOhneApp, schluesselBytes, type HinweisBerechtigung, type HinweisGeraet } from './hinweisGeraet.ts';
 import { Bereich } from './rahmen.tsx';
 
@@ -19,13 +20,11 @@ function schliessenWieEsc(): void {
 }
 
 function leseGeraet(): HinweisGeraet {
-  const nav = navigator as Navigator & { standalone?: boolean };
-  const standalone = window.matchMedia('(display-mode: standalone)').matches || nav.standalone === true;
   const berechtigung: HinweisBerechtigung = typeof Notification === 'undefined' ? 'fehlt' : Notification.permission;
   return {
     userAgent: navigator.userAgent,
     maxTouchPoints: navigator.maxTouchPoints ?? 0,
-    standalone,
+    standalone: laeuftAlsApp(),
     berechtigung,
   };
 }

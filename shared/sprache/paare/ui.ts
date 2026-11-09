@@ -1,5 +1,9 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Als App installieren', 'Install as an app'],
+  ['Installieren', 'Install'],
+  ['Teilen → Zum Home-Bildschirm.', 'Share → Add to Home Screen.'],
+  ['Ablage → Zum Dock hinzufügen.', 'File → Add to Dock.'],
   ['Schutz: alle {tage} Tag, unter Heute einsetzen', 'Protection: every {tage} day, use it under Today'],
   ['Rückkehr: {frist} Tag, wenn kein Schutz', 'Return: {frist} day if there is no protection'],
   [
