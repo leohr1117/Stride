@@ -7,6 +7,7 @@ import { AppFehler } from '../../fehler.ts';
 import { GOOGLE_COOKIE, GOOGLE_TOKEN } from './google.ts';
 import { leereGoogleAblage } from './google.ts';
 import { SITZUNG_COOKIE, zugangRouten } from './routen.ts';
+import { setzeRegistrierungenZurueck } from '../../anfrageGrenzen.ts';
 import { legeBenutzerAn, setzeSperrenZurueck, verwendeZugang } from './zugang.ts';
 
 const ordner = mkdtempSync(path.join(tmpdir(), 'stride-google-'));
@@ -55,6 +56,7 @@ export function bereit(): void {
   aktuell = path.join(ordner, `${nummer}.db`);
   verwendeZugang(aktuell);
   setzeSperrenZurueck();
+  setzeRegistrierungenZurueck();
   leereGoogleAblage();
   globalThis.fetch = originalFetch;
   aufrufe = 0;

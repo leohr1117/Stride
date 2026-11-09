@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.": "Stride теперь ограничивает слишком частые запросы и лучше защищает регистрацию.",
   "Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.": "Если вы размещаете Stride у себя, теперь можно разрешить вход через Google.",
   "Über Google anmelden": "Войти через Google",
   "oder": "или",
@@ -1085,6 +1086,7 @@ export const TEXTE: Record<string, string> = {
   "Nur der Inhaber legt Accounts an.": "Аккаунты создаёт только владелец.",
   "Nur der Inhaber entfernt Accounts.": "Аккаунты убирает только владелец.",
   "Zu viele Versuche. Bitte später erneut versuchen.": "Слишком много попыток. Попробуй позже.",
+  "Zu viele Anfragen. Bitte warte kurz und versuch es noch einmal.": "Слишком много запросов. Подождите немного и попробуйте снова.",
   "Das Passwort muss mindestens {min} Zeichen haben.": "В пароле должно быть не меньше {min} символов.",
   "Das Passwort darf höchstens {max} Zeichen haben.": "В пароле должно быть не больше {max} символов.",
   "Das Passwort muss mindestens 10 Zeichen haben.": "В пароле должно быть не меньше 10 символов.",

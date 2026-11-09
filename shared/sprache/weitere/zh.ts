@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.": "Stride 现在会限制短时间内过多的请求，并更好地保护注册。",
   "Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.": "自行托管 Stride 时，现在可以允许使用 Google 登录。",
   "Über Google anmelden": "使用 Google 账号登录",
   "oder": "或",
@@ -1085,6 +1086,7 @@ export const TEXTE: Record<string, string> = {
   "Nur der Inhaber legt Accounts an.": "只有所有者能建账号。",
   "Nur der Inhaber entfernt Accounts.": "只有所有者能移除账号。",
   "Zu viele Versuche. Bitte später erneut versuchen.": "尝试太多。请稍后再试。",
+  "Zu viele Anfragen. Bitte warte kurz und versuch es noch einmal.": "请求过多。请稍等片刻再试。",
   "Das Passwort muss mindestens {min} Zeichen haben.": "密码至少 {min} 个字符。",
   "Das Passwort darf höchstens {max} Zeichen haben.": "密码最多 {max} 个字符。",
   "Das Passwort muss mindestens 10 Zeichen haben.": "密码至少 10 个字符。",

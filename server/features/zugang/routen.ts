@@ -22,6 +22,7 @@ import {
   zugangStatus,
   ZUGANG,
 } from './zugang.ts';
+import { registrierungErlaubt } from '../../anfrageGrenzen.ts';
 import { anmeldeSchema, benutzernameSchema, idParameter, kontoSchema, passwortAenderungSchema } from '../../validierung.ts';
 import { anlageVon, FREMD, googleSchluessel, leeresGoogleCookie, nimmAnlage, verknuepfeGoogle } from './google.ts';
 import { registriereGoogleRouten } from './googleRouten.ts';
@@ -192,11 +193,7 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
       throw new AppFehler(404, `Unbekannter Pfad: ${anfrage.method} ${anfrage.url}`);
     }
     const adresse = adresseVon(anfrage);
-    if (istGesperrt(adresse)) {
-      throw new AppFehler(429, ZU_VIELE_VERSUCHE);
-    }
-    merkeFehlversuch(adresse);
-    if (istGesperrt(adresse)) {
+    if (!registrierungErlaubt(adresse)) {
       throw new AppFehler(429, ZU_VIELE_VERSUCHE);
     }
     const roh = anfrage.body;

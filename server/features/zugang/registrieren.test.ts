@@ -4,6 +4,7 @@ import path from 'node:path';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { REGISTRIERUNG_GRENZE, setzeRegistrierungenZurueck } from '../../anfrageGrenzen.ts';
 import { AppFehler } from '../../fehler.ts';
 import { istOeffentlicherZugang, leseSitzungsToken, zugangRouten } from './routen.ts';
 import {
@@ -38,6 +39,7 @@ beforeEach(() => {
   nummer += 1;
   verwendeZugang(path.join(ordner, `${nummer}.db`));
   setzeSperrenZurueck();
+  setzeRegistrierungenZurueck();
 });
 
 afterAll(() => {
@@ -155,40 +157,142 @@ describe('registrieren', () => {
     expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada']);
   });
 
-  it('sperrt dieselbe Adresse nach genug Versuchen und zählt auch eine gelungene Anlage', async () => {
+  it('begrenzt die Registrierung je Adresse, eine Anmeldung setzt sie nicht zurück', async () => {
+    const vorher = process.env.STRIDE_TEST;
+    delete process.env.STRIDE_TEST;
     inhaber();
     schalter('1');
-    await mitRouten(async (app) => {
-      const angelegt = await app.inject({
-        method: 'POST',
-        url: '/api/zugang/registrieren',
-        payload: { benutzername: 'Neu', passwort: PASSWORT },
-      });
-      expect(angelegt.statusCode).toBe(200);
-      for (let versuch = 0; versuch < ZUGANG.versucheMax - 2; versuch += 1) {
-        const falsch = await app.inject({
+    const adresse = { 'x-forwarded-for': '198.51.100.10' };
+    try {
+      await mitRouten(async (app) => {
+        const angelegt = await app.inject({
           method: 'POST',
           url: '/api/zugang/registrieren',
-          payload: { benutzername: 'Weiter', passwort: 'kurz' },
+          headers: adresse,
+          payload: { benutzername: 'Neu', passwort: PASSWORT },
         });
-        expect(falsch.statusCode).toBe(400);
+        expect(angelegt.statusCode).toBe(200);
+        for (let versuch = 1; versuch < REGISTRIERUNG_GRENZE.jeStunde; versuch += 1) {
+          const falsch = await app.inject({
+            method: 'POST',
+            url: '/api/zugang/registrieren',
+            headers: adresse,
+            payload: { benutzername: `Weiter${versuch}`, passwort: 'kurz' },
+          });
+          expect(falsch.statusCode).toBe(400);
+        }
+        const stopp = await app.inject({
+          method: 'POST',
+          url: '/api/zugang/registrieren',
+          headers: adresse,
+          payload: { benutzername: 'Noch', passwort: PASSWORT },
+        });
+        expect(stopp.statusCode).toBe(429);
+        expect(stopp.json()).toEqual({ fehler: 'Zu viele Versuche. Bitte später erneut versuchen.' });
+        const login = await app.inject({
+          method: 'POST',
+          url: '/api/zugang',
+          headers: adresse,
+          payload: { benutzername: 'Ada', passwort: PASSWORT },
+        });
+        expect(login.statusCode).toBe(200);
+        const danach = await app.inject({
+          method: 'POST',
+          url: '/api/zugang/registrieren',
+          headers: adresse,
+          payload: { benutzername: 'ImmerNoch', passwort: PASSWORT },
+        });
+        expect(danach.statusCode).toBe(429);
+        const andere = await app.inject({
+          method: 'POST',
+          url: '/api/zugang/registrieren',
+          headers: { 'x-forwarded-for': '198.51.100.11' },
+          payload: { benutzername: 'Fremd', passwort: 'kurz' },
+        });
+        expect(andere.statusCode).toBe(400);
+        const falsch = await app.inject({
+          method: 'POST',
+          url: '/api/zugang',
+          headers: adresse,
+          payload: { benutzername: 'Ada', passwort: 'falsch-falsch' },
+        });
+        expect(falsch.statusCode).toBe(401);
+      });
+    } finally {
+      if (vorher === undefined) {
+        delete process.env.STRIDE_TEST;
+      } else {
+        process.env.STRIDE_TEST = vorher;
+      }
+    }
+    expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada', 'Neu']);
+  });
+
+  it('bremst die Registrierung im Testmodus nicht', async () => {
+    const vorher = process.env.STRIDE_TEST;
+    process.env.STRIDE_TEST = '1';
+    inhaber();
+    schalter('1');
+    try {
+      await mitRouten(async (app) => {
+        for (let versuch = 0; versuch < REGISTRIERUNG_GRENZE.jeStunde + 1; versuch += 1) {
+          const antwort = await app.inject({
+            method: 'POST',
+            url: '/api/zugang/registrieren',
+            headers: { 'x-forwarded-for': '198.51.100.40' },
+            payload: { benutzername: `Test${versuch}`, passwort: 'kurz' },
+          });
+          expect(antwort.statusCode).toBe(400);
+        }
+      });
+    } finally {
+      if (vorher === undefined) {
+        delete process.env.STRIDE_TEST;
+      } else {
+        process.env.STRIDE_TEST = vorher;
+      }
+    }
+  });
+
+  it('sperrt die Anmeldung nach Fehlversuchen und ignoriert Registrierungen', async () => {
+    inhaber();
+    schalter('1');
+    const adresse = { 'x-forwarded-for': '198.51.100.20' };
+    await mitRouten(async (app) => {
+      for (let versuch = 0; versuch < REGISTRIERUNG_GRENZE.jeStunde; versuch += 1) {
+        const registriert = await app.inject({
+          method: 'POST',
+          url: '/api/zugang/registrieren',
+          headers: adresse,
+          payload: { benutzername: `Gast${versuch}`, passwort: 'kurz' },
+        });
+        expect(registriert.statusCode).toBe(400);
+      }
+      for (let versuch = 0; versuch < ZUGANG.versucheMax - 1; versuch += 1) {
+        const falsch = await app.inject({
+          method: 'POST',
+          url: '/api/zugang',
+          headers: adresse,
+          payload: { benutzername: 'Ada', passwort: 'falsch-falsch' },
+        });
+        expect(falsch.statusCode).toBe(401);
       }
       const stopp = await app.inject({
         method: 'POST',
-        url: '/api/zugang/registrieren',
-        payload: { benutzername: 'Weiter', passwort: PASSWORT },
+        url: '/api/zugang',
+        headers: adresse,
+        payload: { benutzername: 'Ada', passwort: 'falsch-falsch' },
       });
       expect(stopp.statusCode).toBe(429);
       expect(stopp.json()).toEqual({ fehler: 'Zu viele Versuche. Bitte später erneut versuchen.' });
       const andere = await app.inject({
         method: 'POST',
-        url: '/api/zugang/registrieren',
-        headers: { 'x-forwarded-for': '203.0.113.9' },
-        payload: { benutzername: 'Weiter', passwort: 'kurz' },
+        url: '/api/zugang',
+        headers: { 'x-forwarded-for': '198.51.100.21' },
+        payload: { benutzername: 'Ada', passwort: 'falsch-falsch' },
       });
-      expect(andere.statusCode).toBe(400);
+      expect(andere.statusCode).toBe(401);
     });
-    expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada', 'Neu']);
   });
 
   it('antwortet mit 404, wenn der Modus nicht anmelden ist', async () => {

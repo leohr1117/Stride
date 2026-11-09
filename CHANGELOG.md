@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.1
+
+### Geändert
+
+- Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.
+
 ## 4.1.0
 
 ### Hinzugefügt

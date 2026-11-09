@@ -211,6 +211,21 @@ async function stilZurueck(seite: Page, stil: string): Promise<void> {
   }, stil);
 }
 
+async function setzeStil(seite: Page, stil: string): Promise<void> {
+  const ok = await seite.evaluate(async (name) => {
+    const antwort = await fetch('/api/einstellungen', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stil: name }),
+    });
+    return antwort.ok;
+  }, stil);
+  expect(ok).toBe(true);
+  await seite.reload();
+  await expect(seite.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
+  await expect.poll(() => seite.evaluate(() => document.documentElement.dataset.stil ?? '')).toBe(stil);
+}
+
 test('die Install-Zeile ist schmal, die Tastatur trifft Aktion und Schließen', async ({ page }, testInfo) => {
   mkdirSync('tmp-test/hinweiszeile', { recursive: true });
   await anmelden(page);
@@ -363,8 +378,18 @@ test('Bewertung und Angebot zugleich zeigen eine Zeile, Bewerten speichert Nicht
     if (testInfo.project.name === 'handy') {
       await page.screenshot({ path: 'tmp-test/hinweiszeile/handy-bewertung-offen.png' });
     }
-    await karte.getByRole('button', { name: 'Nicht fragen', exact: true }).click();
-    await expect(karte).toHaveCount(0);
+    await setzeStil(page, 'standard');
+    await tragEin(page);
+    const standardKarte = zeile(page, BEWERTUNG);
+    await expect(standardKarte).toBeVisible();
+    const bewertenStandard = standardKarte.getByRole('button', { name: 'Bewerten', exact: true });
+    await bewertenStandard.click();
+    await expect(bewertenStandard).toHaveAttribute('aria-expanded', 'true');
+    if (testInfo.project.name === 'handy') {
+      await page.screenshot({ path: 'tmp-test/hinweiszeile/handy-bewertung-standard.png' });
+    }
+    await standardKarte.getByRole('button', { name: 'Nicht fragen', exact: true }).click();
+    await expect(standardKarte).toHaveCount(0);
     await tragEin(page);
     await expect(zeile(page, BEWERTUNG)).toHaveCount(0);
   } finally {
@@ -372,7 +397,7 @@ test('Bewertung und Angebot zugleich zeigen eine Zeile, Bewerten speichert Nicht
   }
 });
 
-test('Ansehen merkt das Angebot nicht, Schließen bleibt nach dem Neuladen weg', async ({ page }) => {
+test('Ansehen merkt das Angebot nicht, Schließen bleibt nach dem Neuladen weg', async ({ page }, testInfo) => {
   test.setTimeout(180_000);
   let posts = 0;
   page.on('request', (anfrage) => {
@@ -389,6 +414,12 @@ test('Ansehen merkt das Angebot nicht, Schließen bleibt nach dem Neuladen weg',
     await tragEin(page);
     const karte = zeile(page, FRAGE);
     await expect(karte).toBeVisible();
+    await setzeStil(page, 'standard');
+    await expect(karte).toBeVisible();
+    if (testInfo.project.name === 'handy') {
+      mkdirSync('tmp-test/hinweiszeile', { recursive: true });
+      await page.screenshot({ path: 'tmp-test/hinweiszeile/handy-benachrichtigung-standard.png' });
+    }
     await karte.getByRole('button', { name: 'Ansehen', exact: true }).click();
     await expect(page).toHaveURL(/\/mehr\/benachrichtigungen$/);
     expect(posts).toBe(0);

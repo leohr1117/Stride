@@ -15,6 +15,7 @@ export const PAARE = [
   ['Nur der Inhaber legt Accounts an.', 'Only the owner can create accounts.'],
   ['Nur der Inhaber entfernt Accounts.', 'Only the owner can remove accounts.'],
   ['Zu viele Versuche. Bitte später erneut versuchen.', 'Too many attempts. Try again later.'],
+  ['Zu viele Anfragen. Bitte warte kurz und versuch es noch einmal.', 'Too many requests. Please wait a moment and try again.'],
   ['Das Passwort muss mindestens {min} Zeichen haben.', 'The password must be at least {min} characters.'],
   ['Das Passwort darf höchstens {max} Zeichen haben.', 'The password can’t be longer than {max} characters.'],
   ['Das Passwort muss mindestens 10 Zeichen haben.', 'The password must be at least 10 characters.'],

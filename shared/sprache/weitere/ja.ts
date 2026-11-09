@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.": "Strideは短時間の過剰なリクエストを抑え、登録をより確実に守るようになりました。",
   "Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.": "Strideを自分で運用している場合、Googleでのログインを許可できるようになりました。",
   "Über Google anmelden": "Google でログイン",
   "oder": "または",
@@ -1085,6 +1086,7 @@ export const TEXTE: Record<string, string> = {
   "Nur der Inhaber legt Accounts an.": "アカウントを作れるのは所有者だけです。",
   "Nur der Inhaber entfernt Accounts.": "アカウントを外せるのは所有者だけです。",
   "Zu viele Versuche. Bitte später erneut versuchen.": "試行が多すぎます。あとでもう一度。",
+  "Zu viele Anfragen. Bitte warte kurz und versuch es noch einmal.": "リクエストが多すぎます。少し待ってからもう一度お試しください。",
   "Das Passwort muss mindestens {min} Zeichen haben.": "パスワードは{min}文字以上です。",
   "Das Passwort darf höchstens {max} Zeichen haben.": "パスワードは{max}文字までです。",
   "Das Passwort muss mindestens 10 Zeichen haben.": "パスワードは10文字以上です。",

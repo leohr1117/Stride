@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.": "Stride freine désormais les requêtes trop nombreuses en peu de temps et protège mieux l'inscription.",
   "Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.": "Si vous hébergez Stride vous-même, vous pouvez désormais autoriser la connexion avec Google.",
   "Über Google anmelden": "Se connecter avec Google",
   "oder": "ou",
@@ -1085,6 +1086,7 @@ export const TEXTE: Record<string, string> = {
   "Nur der Inhaber legt Accounts an.": "Seul le titulaire crée des comptes.",
   "Nur der Inhaber entfernt Accounts.": "Seul le titulaire retire des comptes.",
   "Zu viele Versuche. Bitte später erneut versuchen.": "Trop de tentatives. Réessaie plus tard.",
+  "Zu viele Anfragen. Bitte warte kurz und versuch es noch einmal.": "Trop de requêtes. Patientez un instant et réessayez.",
   "Das Passwort muss mindestens {min} Zeichen haben.": "Le mot de passe doit avoir au moins {min} caractères.",
   "Das Passwort darf höchstens {max} Zeichen haben.": "Le mot de passe peut avoir au plus {max} caractères.",
   "Das Passwort muss mindestens 10 Zeichen haben.": "Le mot de passe doit avoir au moins 10 caractères.",

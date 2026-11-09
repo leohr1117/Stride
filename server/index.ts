@@ -5,6 +5,7 @@ import { ZodError } from 'zod';
 import { aktiviereAnfrageSprache } from './anfrageSprache.ts';
 import { KONFIG, stelleLiveClientBereit } from './config.ts';
 import { mitWelt, schliesseDatenbank } from './db.ts';
+import { registriereAnfrageGrenze } from './anfrageGrenze.ts';
 import { AppFehler, ungueltig } from './fehler.ts';
 import { attributRouten } from './features/attribute/routen.ts';
 import { basisRouten } from './features/basis/routen.ts';
@@ -53,6 +54,7 @@ app.setErrorHandler((fehler: FastifyError | Error, anfrage, antwort) => {
 
 await app.register(
   async (api) => {
+    await registriereAnfrageGrenze(api);
     api.addHook('onRequest', (anfrage, antwort, fertig) => {
       const pfad = anfrage.url.split('?')[0];
       if (process.env.STRIDE_TEST === '1' && (pfad === '/api/test/heute' || pfad === '/test/heute')) {
