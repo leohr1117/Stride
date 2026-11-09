@@ -383,7 +383,7 @@ test('eine abgelehnte Erlaubnis sendet kein Abo', async ({ page }) => {
   expect(posts).toBe(0);
 });
 
-const FRAGE = 'Benachrichtigungen auf diesem Gerät einschalten?';
+const FRAGE = 'Benachrichtigungen einschalten?';
 
 function teilWelt(): string {
   return verweigereEchteDatenbank(TEST_TEIL_WELT);
@@ -535,7 +535,7 @@ async function erlaubnisZaehler(seite: Page): Promise<number> {
   });
 }
 
-test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt merkt gesehen', async ({ page }, testInfo) => {
+test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Schließen merkt gesehen', async ({ page }, testInfo) => {
   test.setTimeout(180_000);
   await page.addInitScript(() => {
     const fenster = window as Window & { __erlaubnis?: number };
@@ -570,7 +570,7 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
     await expect(karte).toBeVisible();
     await expect(karte.getByRole('button', { name: /^Info/ })).toHaveCount(0);
     await expect(karte.getByRole('button', { name: 'Ansehen', exact: true })).toBeVisible();
-    await expect(karte.getByRole('button', { name: 'Nicht jetzt', exact: true })).toBeVisible();
+    await expect(karte.getByRole('button', { name: 'Hinweis ausblenden', exact: true })).toBeVisible();
     const ident = page.locator('[data-flaeche]').filter({ has: page.locator('[data-levelring]') }).first();
     const oben = await ident.boundingBox();
     const kasten = await karte.boundingBox();
@@ -608,14 +608,14 @@ test('Angebotskarte nur mit Testschlüssel, Ansehen fragt nicht, Nicht jetzt mer
       }
       await route.continue();
     });
-    await karte.getByRole('button', { name: 'Nicht jetzt', exact: true }).click();
+    await karte.getByRole('button', { name: 'Hinweis ausblenden', exact: true }).click();
     await expect(karte).toBeVisible();
     await expect(karte.getByText('Etwas ist schiefgelaufen.')).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
     await bild('angebot-fehler');
     await page.unroute('**/api/hinweise/angebot');
 
-    await karte.getByRole('button', { name: 'Nicht jetzt', exact: true }).click();
+    await karte.getByRole('button', { name: 'Hinweis ausblenden', exact: true }).click();
     await expect(karte).toHaveCount(0);
     await tragEin(page);
     await expect(karte).toHaveCount(0);
@@ -710,30 +710,38 @@ async function pruefeKnopfZeile(seite: Page, breite: number): Promise<void> {
   await karte.scrollIntoViewIfNeeded();
   await expect(karte).toBeVisible();
   const frage = karte.getByText(FRAGE, { exact: true });
-  const nicht = karte.getByRole('button', { name: 'Nicht jetzt', exact: true });
+  const schliessen = karte.getByRole('button', { name: 'Hinweis ausblenden', exact: true });
   const ansehen = karte.getByRole('button', { name: 'Ansehen', exact: true });
-  const nichtKlassen = ((await nicht.getAttribute('class')) ?? '').split(/\s+/);
+  const schliessenKlassen = ((await schliessen.getAttribute('class')) ?? '').split(/\s+/);
   const ansehenKlassen = ((await ansehen.getAttribute('class')) ?? '').split(/\s+/);
-  expect(nichtKlassen).toContain('knopf');
-  expect(nichtKlassen).toContain('knopf-leise');
-  expect(ansehenKlassen).toContain('knopf');
-  expect(ansehenKlassen).toContain('knopf-primaer');
+  expect(schliessenKlassen).toContain('size-11');
+  expect(ansehenKlassen).toContain('text-akzent');
+  expect(ansehenKlassen).toContain('min-h-11');
+  expect(ansehenKlassen).toContain('font-medium');
   const frageKasten = await frage.boundingBox();
-  const nichtKasten = await nicht.boundingBox();
+  const schliessenKasten = await schliessen.boundingBox();
   const ansehenKasten = await ansehen.boundingBox();
+  const kartenKasten = await karte.boundingBox();
   expect(frageKasten).not.toBeNull();
-  expect(nichtKasten).not.toBeNull();
+  expect(schliessenKasten).not.toBeNull();
   expect(ansehenKasten).not.toBeNull();
-  if (!frageKasten || !nichtKasten || !ansehenKasten) {
-    return;
+  expect(kartenKasten).not.toBeNull();
+  if (!frageKasten || !schliessenKasten || !ansehenKasten || !kartenKasten) {
+    throw new Error('Maße der Hinweiszeile fehlen.');
   }
   const mitte = (kasten: { y: number; height: number }) => kasten.y + kasten.height / 2;
-  expect(Math.abs(mitte(nichtKasten) - mitte(ansehenKasten))).toBeLessThanOrEqual(2);
-  expect(ansehenKasten.x).toBeGreaterThan(nichtKasten.x);
-  expect(ansehenKasten.x - (nichtKasten.x + nichtKasten.width)).toBeGreaterThanOrEqual(4);
-  expect(Math.abs(ansehenKasten.x + ansehenKasten.width - (frageKasten.x + frageKasten.width))).toBeLessThanOrEqual(2);
-  expect(nichtKasten.x).toBeGreaterThanOrEqual(frageKasten.x + 8);
-  expect(nichtKasten.y).toBeGreaterThanOrEqual(frageKasten.y + frageKasten.height - 2);
+  expect(Math.abs(mitte(schliessenKasten) - mitte(ansehenKasten))).toBeLessThanOrEqual(2);
+  expect(Math.abs(mitte(frageKasten) - mitte(ansehenKasten))).toBeLessThanOrEqual(2);
+  expect(ansehenKasten.x).toBeGreaterThanOrEqual(frageKasten.x + frageKasten.width - 1);
+  expect(schliessenKasten.x).toBeGreaterThanOrEqual(ansehenKasten.x + ansehenKasten.width - 1);
+  expect(schliessenKasten.width).toBeGreaterThanOrEqual(44);
+  expect(schliessenKasten.height).toBeGreaterThanOrEqual(44);
+  expect(ansehenKasten.height).toBeGreaterThanOrEqual(44);
+  expect(kartenKasten.height).toBeLessThanOrEqual(56);
+  const abstand = kartenKasten.x + kartenKasten.width - (schliessenKasten.x + schliessenKasten.width);
+  expect(abstand).toBeGreaterThanOrEqual(0);
+  expect(abstand).toBeLessThan(4);
+  expect(frageKasten.x).toBeGreaterThan(kartenKasten.x);
   await ohneSeitlichenUeberlauf(seite);
 }
 

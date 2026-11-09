@@ -111,9 +111,7 @@ export function UebersichtSeite() {
           </Flaeche>
         )}
 
-        <BewertungKarte />
-        <HinweisAngebot />
-        <InstallBanner />
+        <div data-hinweis-platz className="empty:hidden"><BewertungKarte /><HinweisAngebot /><InstallBanner /></div>
       </div>
 
       <HeuteKarte />

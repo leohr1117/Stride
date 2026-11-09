@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.0.9
+
+### Geändert
+
+- Die Hinweise auf Heute zum Installieren, zu Benachrichtigungen und zur Bewertung sind jetzt eine schmale Zeile.
+
 ## 4.0.8
 
 ### Hinzugefügt

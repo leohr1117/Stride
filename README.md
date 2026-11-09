@@ -18,7 +18,7 @@ Stride ist eine Web-App, die den eigenen Alltag wie ein Rollenspiel führt: Du t
 - **Verbindungen:** Erledigte Aufgaben aus Todoist und Termine aus einem Kalender (iCal-Adresse, z. B. Google oder iCloud) werden zu Einträgen.
 - **Benachrichtigungen:** Web-Push, wenn der Streak in Gefahr ist, ein Boss ansteht oder eine Rückkehr möglich ist, mit Ruhezeit.
 - **Anpassen:** Bereiche lassen sich einzeln abschalten. Ansichten, Farbpaletten und eigene Farben.
-- **Sonstiges:** Installierbar als PWA, mit einem Banner auf Heute nach der Anmeldung und einem Eintrag unter den Einstellungen. Sieben Sprachen (Deutsch, Englisch, Spanisch, Französisch, Japanisch, Russisch, Chinesisch). Ohne gewählte Sprache gilt die des Geräts, sonst Englisch. Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter. Export und Import der Daten, mehrere Konten, auf Wunsch mit Selbst-Registrierung, Anmeldung mit Passwortmanagern, Handbuch in der App.
+- **Sonstiges:** Installierbar als PWA, mit einem Hinweis auf Heute nach der Anmeldung und einem Eintrag unter den Einstellungen. Sieben Sprachen (Deutsch, Englisch, Spanisch, Französisch, Japanisch, Russisch, Chinesisch). Ohne gewählte Sprache gilt die des Geräts, sonst Englisch. Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter. Export und Import der Daten, mehrere Konten, auf Wunsch mit Selbst-Registrierung, Anmeldung mit Passwortmanagern, Handbuch in der App.
 
 Änderungen je Version stehen in [CHANGELOG.md](CHANGELOG.md).
 

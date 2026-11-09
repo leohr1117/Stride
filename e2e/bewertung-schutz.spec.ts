@@ -140,6 +140,7 @@ test('zehnter Eintrag mit bewertung_testen zeigt die Karte, Nicht fragen schlie√
   const karte = page.getByRole('region', { name: 'Wie hilfreich ist Stride gerade?' });
   await expect(karte).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Willkommen bei Stride' })).toHaveCount(0);
+  await karte.getByRole('button', { name: 'Bewerten', exact: true }).click();
   await expect(karte.getByRole('button', { name: '1', exact: true })).toBeVisible();
   await expect(karte.getByRole('button', { name: 'Nicht fragen', exact: true })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
@@ -150,6 +151,7 @@ test('zehnter Eintrag mit bewertung_testen zeigt die Karte, Nicht fragen schlie√
   await expect(karte).toHaveCount(0);
   await tragEin(page);
   await expect(karte).toBeVisible();
+  await karte.getByRole('button', { name: 'Bewerten', exact: true }).click();
 
   await page.route('**/api/bewertung', async (route) => {
     if (route.request().method() === 'POST') {
@@ -161,6 +163,7 @@ test('zehnter Eintrag mit bewertung_testen zeigt die Karte, Nicht fragen schlie√
   await karte.getByRole('button', { name: '3', exact: true }).click();
   await expect(karte).toBeVisible();
   await expect(karte.getByText('Etwas ist schiefgelaufen.')).toBeVisible();
+  await karte.getByRole('button', { name: 'Bewerten', exact: true }).click();
   await expect(karte.getByRole('button', { name: '3', exact: true })).not.toHaveAttribute('aria-pressed', 'true');
   await ohneSeitlichenUeberlauf(page);
   await bildBewertung(page, 'bewertung-fehler');

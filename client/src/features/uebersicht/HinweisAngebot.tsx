@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { tx } from '../../text.ts';
-import { Fehlermeldung, Karte, Knopf } from '../../ui/index.ts';
+import { HinweisZeile } from '../../ui/index.ts';
 import { bewertungIstFaellig } from './bewertungStand.ts';
 import { angebotFehler, angebotGespeichert, angebotIstFaellig, angebotSchlugFehl, beginneAngebot } from './angebotStand.ts';
 
@@ -25,7 +25,7 @@ export function HinweisAngebot() {
     return null;
   }
 
-  const frage = tx('Benachrichtigungen auf diesem Gerät einschalten?');
+  const frage = tx('Benachrichtigungen einschalten?');
   const weglegen = () => {
     if (!beginneAngebot(client)) {
       return;
@@ -37,17 +37,11 @@ export function HinweisAngebot() {
   };
 
   return (
-    <Karte label={frage} className="space-y-3">
-      <p className="text-base">{frage}</p>
-      <div className="flex justify-end gap-2">
-        <Knopf variante="leise" onClick={weglegen}>
-          {tx('Nicht jetzt')}
-        </Knopf>
-        <Knopf variante="primaer" onClick={() => navigiere('/mehr/benachrichtigungen')}>
-          {tx('Ansehen')}
-        </Knopf>
-      </div>
-      <Fehlermeldung fehler={angebotFehler()} />
-    </Karte>
+    <HinweisZeile
+      text={frage}
+      aktion={{ label: tx('Ansehen'), onClick: () => navigiere('/mehr/benachrichtigungen') }}
+      onSchliessen={weglegen}
+      fehler={angebotFehler()}
+    />
   );
 }

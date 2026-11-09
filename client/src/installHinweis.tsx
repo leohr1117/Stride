@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Share } from 'lucide-react';
 import { useState, useSyncExternalStore } from 'react';
 import { SCHLUESSEL } from './api/index.ts';
 import { Dialog } from './components/Dialog.tsx';
@@ -19,7 +20,7 @@ import {
   type InstallStand,
 } from './pwa.ts';
 import { tx } from './text.ts';
-import { Karte, Knopf } from './ui/index.ts';
+import { HinweisZeile } from './ui/index.ts';
 
 function useStand(): InstallStand {
   return useSyncExternalStore(abonniereInstallation, liesInstallStand, liesInstallStand);
@@ -54,6 +55,27 @@ function hinweisSatz(fall: InstallFall): string | null {
   return null;
 }
 
+function InstallSchritte({ fall }: { fall: 'ios' | 'mac' }) {
+  if (fall === 'ios') {
+    return (
+      <ol className="list-inside list-decimal space-y-1 text-sm">
+        <li>
+          {tx('Tippe auf Teilen.')} <Share className="inline size-4 align-text-bottom" aria-hidden="true" />
+        </li>
+        <li>{tx('Wähle „Zum Home-Bildschirm“.')}</li>
+        <li>{tx('Tippe auf „Hinzufügen“.')}</li>
+      </ol>
+    );
+  }
+  return (
+    <ol className="list-inside list-decimal space-y-1 text-sm">
+      <li>{tx('Öffne in Safari das Menü Ablage.')}</li>
+      <li>{tx('Wähle „Zum Dock hinzufügen“.')}</li>
+      <li>{tx('Klicke auf „Hinzufügen“.')}</li>
+    </ol>
+  );
+}
+
 export function InstallBanner() {
   const stand = useStand();
   const [weg, setWeg] = useState(() => installHinweisWeg());
@@ -76,28 +98,28 @@ export function InstallBanner() {
     return null;
   }
 
-  const titel = tx('Als App installieren');
-  const satz = hinweisSatz(anzeige.fall);
+  const text = tx('Stride als App installieren');
   const weglegen = () => {
     wegklickenInstallHinweis();
     setWeg(true);
   };
 
+  if (anzeige.fall === 'ereignis') {
+    return (
+      <HinweisZeile
+        text={text}
+        aktion={{ label: tx('Installieren'), onClick: () => void installationAnbieten() }}
+        onSchliessen={weglegen}
+      />
+    );
+  }
+
   return (
-    <Karte label={titel} className="space-y-3">
-      <p className="text-base">{titel}</p>
-      {satz ? <p className="text-base">{satz}</p> : null}
-      <div className="flex justify-end gap-2">
-        <Knopf variante="leise" onClick={weglegen}>
-          {tx('Nicht jetzt')}
-        </Knopf>
-        {anzeige.fall === 'ereignis' ? (
-          <Knopf variante="primaer" onClick={() => void installationAnbieten()}>
-            {tx('Installieren')}
-          </Knopf>
-        ) : null}
-      </div>
-    </Karte>
+    <HinweisZeile
+      text={text}
+      detail={{ label: tx('So geht’s'), inhalt: <InstallSchritte fall={anzeige.fall} /> }}
+      onSchliessen={weglegen}
+    />
   );
 }
 

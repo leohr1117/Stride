@@ -4,12 +4,14 @@ import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { TEST_URL } from './testdaten.ts';
 
 const BANNER = 'Als App installieren';
+const HINWEIS = 'Stride als App installieren';
+const SCHLIESSEN = 'Hinweis ausblenden';
 const HINWEIS_IOS = 'Teilen → Zum Home-Bildschirm.';
 const IPHONE =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Version/17.0 Mobile/15E148 Safari/604.1';
 
 function bannerVon(seite: Page) {
-  return seite.locator('main section[aria-label="Als App installieren"]');
+  return seite.locator(`main section[aria-label="${HINWEIS}"]`);
 }
 
 function aufnahmen(): void {
@@ -49,8 +51,8 @@ async function oeffne(seite: Page, name: 'Heute' | 'Mehr', ueberschrift: string)
 
 async function knopfRechts(kasten: { x: number; width: number }, knopf: { x: number; width: number }): Promise<void> {
   const abstand = kasten.x + kasten.width - (knopf.x + knopf.width);
-  expect(abstand).toBeGreaterThan(8);
-  expect(abstand).toBeLessThan(28);
+  expect(abstand).toBeGreaterThanOrEqual(0);
+  expect(abstand).toBeLessThan(4);
 }
 
 test('nach der Anmeldung liegt das Banner auf Heute und die Zeile installiert', async ({ page }, testInfo) => {
@@ -66,25 +68,25 @@ test('nach der Anmeldung liegt das Banner auf Heute und die Zeile installiert', 
 
   const banner = bannerVon(page);
   await expect(banner).toBeVisible();
-  const nicht = banner.getByRole('button', { name: 'Nicht jetzt', exact: true });
+  const schliessen = banner.getByRole('button', { name: SCHLIESSEN, exact: true });
   const installieren = banner.getByRole('button', { name: 'Installieren', exact: true });
-  await expect(nicht).toBeVisible();
+  await expect(schliessen).toBeVisible();
   await expect(installieren).toBeVisible();
   const lageBanner = await banner.boundingBox();
-  const lageNicht = await nicht.boundingBox();
+  const lageSchliessen = await schliessen.boundingBox();
   const lageInstall = await installieren.boundingBox();
   const lageOben = await page.locator('.identitaets-flaeche').boundingBox();
   expect(lageBanner).not.toBeNull();
-  expect(lageNicht).not.toBeNull();
+  expect(lageSchliessen).not.toBeNull();
   expect(lageInstall).not.toBeNull();
   expect(lageOben).not.toBeNull();
-  if (!lageBanner || !lageNicht || !lageInstall || !lageOben) {
+  if (!lageBanner || !lageSchliessen || !lageInstall || !lageOben) {
     throw new Error('Maße des Banners fehlen.');
   }
   expect(lageBanner.y).toBeGreaterThan(lageOben.y);
-  expect(lageNicht.x + lageNicht.width).toBeLessThanOrEqual(lageInstall.x);
-  expect(Math.abs(lageNicht.y - lageInstall.y)).toBeLessThan(4);
-  await knopfRechts(lageBanner, lageInstall);
+  expect(lageInstall.x + lageInstall.width).toBeLessThanOrEqual(lageSchliessen.x + 1);
+  expect(Math.abs(lageInstall.y - lageSchliessen.y)).toBeLessThan(4);
+  await knopfRechts(lageBanner, lageSchliessen);
   expect(await banner.evaluate((element) => getComputedStyle(element).position)).not.toBe('fixed');
   await ohneSeitlichenUeberlauf(page);
   if (testInfo.project.name === 'handy') {
@@ -115,7 +117,7 @@ test('nach der Anmeldung liegt das Banner auf Heute und die Zeile installiert', 
   }
 
   await oeffne(page, 'Heute', 'Heute');
-  await banner.getByRole('button', { name: 'Nicht jetzt', exact: true }).click();
+  await banner.getByRole('button', { name: SCHLIESSEN, exact: true }).click();
   await expect(bannerVon(page)).toHaveCount(0);
   await page.reload();
   await expect(page.getByRole('button', { name: 'Eintrag loggen', exact: true })).toBeVisible();
@@ -149,17 +151,26 @@ test('ein iPhone zeigt nur den Hinweis ohne Installieren', async ({ browser }, t
     await anmelden(seite);
     const banner = bannerVon(seite);
     await expect(banner).toBeVisible();
-    await expect(banner.getByText(HINWEIS_IOS, { exact: true })).toBeVisible();
+    await expect(banner.getByText(HINWEIS_IOS, { exact: true })).toHaveCount(0);
+    const so = banner.getByRole('button', { name: 'So geht’s', exact: true });
+    await expect(so).toHaveAttribute('aria-expanded', 'false');
     await expect(banner.getByRole('button', { name: 'Installieren', exact: true })).toHaveCount(0);
-    await expect(banner.getByRole('button', { name: 'Nicht jetzt', exact: true })).toBeVisible();
+    const schliessen = banner.getByRole('button', { name: SCHLIESSEN, exact: true });
+    await expect(schliessen).toBeVisible();
     const lageBanner = await banner.boundingBox();
-    const lageNicht = await banner.getByRole('button', { name: 'Nicht jetzt', exact: true }).boundingBox();
+    const lageSchliessen = await schliessen.boundingBox();
     expect(lageBanner).not.toBeNull();
-    expect(lageNicht).not.toBeNull();
-    if (!lageBanner || !lageNicht) {
+    expect(lageSchliessen).not.toBeNull();
+    if (!lageBanner || !lageSchliessen) {
       throw new Error('Maße des Hinweises fehlen.');
     }
-    await knopfRechts(lageBanner, lageNicht);
+    await knopfRechts(lageBanner, lageSchliessen);
+    await so.click();
+    await expect(so).toHaveAttribute('aria-expanded', 'true');
+    await expect(banner.getByText('Tippe auf Teilen.', { exact: true })).toBeVisible();
+    await expect(banner.getByText('Wähle „Zum Home-Bildschirm“.', { exact: true })).toBeVisible();
+    await expect(banner.getByText('Tippe auf „Hinzufügen“.', { exact: true })).toBeVisible();
+    await expect(seite.getByRole('dialog')).toHaveCount(0);
     await ohneSeitlichenUeberlauf(seite);
 
     await oeffne(seite, 'Mehr', 'Mehr');
