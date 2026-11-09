@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.0.5',
+    seiten: 'Profil',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Die zwölf Klassen haben neue Zeichen: Hantel, Mondsichel mit Stern, Helm, Buch, Sprechblasen, Palette, Achtelnote, Bergspitze, Triskele, Krone, Keimling und Waage.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.0.4',
     seiten: 'Ziele',
     abschnitte: [

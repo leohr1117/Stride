@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.0.5
+
+### Geändert
+
+- Die zwölf Klassen haben neue Zeichen: Hantel, Mondsichel mit Stern, Helm, Buch, Sprechblasen, Palette, Achtelnote, Bergspitze, Triskele, Krone, Keimling und Waage.
+
 ## 4.0.4
 
 ### Geändert

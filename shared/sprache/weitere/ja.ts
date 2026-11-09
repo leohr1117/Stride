@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die zwölf Klassen haben neue Zeichen: Hantel, Mondsichel mit Stern, Helm, Buch, Sprechblasen, Palette, Achtelnote, Bergspitze, Triskele, Krone, Keimling und Waage.": "12のクラスに新しい印が付きます。ダンベル、星のある三日月、兜、本、吹き出し、パレット、八分音符、山頂、三つ巴、王冠、芽、天秤です。",
   "Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.": "目標では、ビジョンの下にある直接のプロジェクトと組織が字下げされます。組織のプロジェクトは名前だけ、もう一段字下げされます。レベルとメニューは右の同じ端に揃ったままです。",
   "Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.": "解除した称号は読みやすく、トロフィーは残ります。まだ到達していない称号は控えめなままで、記号はありません。",
   "Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.": "プロフィールから成果の行がなくなります。クラスと称号はそのままで、称号は引き続きプロフィールを編集で選びます。",

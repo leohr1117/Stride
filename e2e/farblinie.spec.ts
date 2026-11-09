@@ -75,7 +75,7 @@ test('Farbpunkt statt Linie und Balken', async ({ page }, testInfo) => {
   await punktIst(orgPunkt, 8);
   await punktBuendig(orgPunkt, org.locator('h3 span:not([data-farbpunkt])'));
   const orgKasten = await orgPunkt.boundingBox();
-  expect(punktKasten && orgKasten && Math.abs(punktKasten.x - orgKasten.x)).toBeLessThanOrEqual(1);
+  expect(punktKasten && orgKasten && Math.abs((orgKasten.x - punktKasten.x) - 16) <= 1).toBe(true);
   await keineFarbLinie(org);
   await ohneSeitlichenUeberlauf(page);
   await bild('ziele', true);
