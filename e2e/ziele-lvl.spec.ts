@@ -110,29 +110,60 @@ test('Die rechte Kante aller Level auf Ziele liegt auf einer Linie', async ({ pa
     const rechte = kanten.map((kante) => kante.rechts);
     const spanne = Math.max(...rechte) - Math.min(...rechte);
     expect(spanne, kanten.map((kante) => `${kante.text} ${kante.rechts.toFixed(2)}`).join(', ')).toBeLessThanOrEqual(0.5);
+    const letzteVision = page.locator('main section').filter({ has: page.locator('[data-zeile] h2') }).last();
+    await expect(letzteVision.getByRole('heading', { name: VISION, level: 2 })).toBeVisible();
+    const letzteRechts = await letzteVision.locator('[data-zeile-wert]').evaluate((knoten) => knoten.getBoundingClientRect().right);
+    const soll = kanten.find((kante) => kante.text === `Lvl ${LEVEL}` && kante.vision);
+    expect(soll).toBeTruthy();
+    expect(Math.abs(letzteRechts - (soll?.rechts ?? 0))).toBeLessThanOrEqual(0.5);
+    const menueRechts = await page.locator('main .zeile-menue > button').evaluateAll((knoten) =>
+      knoten
+        .map((knoten) => knoten.getBoundingClientRect())
+        .filter((kasten) => kasten.width > 1 && kasten.height > 1)
+        .map((kasten) => kasten.right),
+    );
+    expect(menueRechts.length).toBeGreaterThan(0);
+    expect(Math.max(...menueRechts) - Math.min(...menueRechts)).toBeLessThanOrEqual(0.5);
 
-    if (testInfo.project.name === 'handy') {
-      fs.mkdirSync('tmp-test/ziele-lvl', { recursive: true });
-      const aufnahme = async (name: string, breite: number, dunkel: boolean) => {
-        await page.setViewportSize({ width: breite, height: 844 });
-        await page.emulateMedia({ colorScheme: dunkel ? 'dark' : 'light' });
-        if (original.eigeneFarben || original.stil !== 'standard') {
-          await stelleFarben(page, { ...original, stil: 'standard' }, true);
-          farbenGeaendert = true;
-        }
-        await page.goto('/ziele');
-        await expect(page.locator('html')).toHaveAttribute('data-schema', dunkel ? 'dark' : 'light');
-        await expect(page.getByRole('heading', { name: VISION, level: 2 })).toBeVisible();
-        await page.evaluate(() => window.scrollTo(0, 0));
-        await page.screenshot({ path: `tmp-test/ziele-lvl/${name}-oben.png` });
-        const ziel = page.getByRole('heading', { name: VISION, level: 2 });
-        await ziel.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
-        await page.screenshot({ path: `tmp-test/ziele-lvl/${name}-vision.png` });
-      };
-      await aufnahme('390-hell', 390, false);
-      await aufnahme('390-dunkel', 390, true);
-      await aufnahme('360-hell', 360, false);
-      await aufnahme('360-dunkel', 360, true);
+    fs.mkdirSync('tmp-test/ziele-lvl', { recursive: true });
+    const aufnahme = async (name: string, breite: number, dunkel: boolean) => {
+      await page.setViewportSize({ width: breite, height: breite >= 1440 ? 900 : 844 });
+      await page.emulateMedia({ colorScheme: dunkel ? 'dark' : 'light' });
+      if (original.eigeneFarben || original.stil !== 'standard') {
+        await stelleFarben(page, { ...original, stil: 'standard' }, true);
+        farbenGeaendert = true;
+      }
+      await page.goto('/ziele');
+      await expect(page.locator('html')).toHaveAttribute('data-schema', dunkel ? 'dark' : 'light');
+      await expect
+        .poll(() =>
+          page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--flaeche').trim().toLowerCase()),
+        )
+        .toBe(dunkel ? '#202020' : '#ffffff');
+      await expect(page.getByRole('heading', { name: VISION, level: 2 })).toBeVisible();
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.screenshot({ path: `tmp-test/ziele-lvl/${name}-oben.png` });
+      if (breite >= 1440) {
+        await page.screenshot({ path: `tmp-test/ziele-lvl/${name}-seite.png`, fullPage: true });
+      }
+      const ziel = page.getByRole('heading', { name: VISION, level: 2 });
+      await ziel.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
+      await page.screenshot({ path: `tmp-test/ziele-lvl/${name}-vision.png` });
+    };
+    const bilder: ReadonlyArray<readonly [string, number, boolean]> =
+      testInfo.project.name === 'handy'
+        ? [
+            ['390-hell', 390, false],
+            ['390-dunkel', 390, true],
+            ['360-hell', 360, false],
+            ['360-dunkel', 360, true],
+          ]
+        : [
+            ['1440-hell', 1440, false],
+            ['1440-dunkel', 1440, true],
+          ];
+    for (const [name, breite, dunkel] of bilder) {
+      await aufnahme(name, breite, dunkel);
     }
   } finally {
     if (visionId !== null) {

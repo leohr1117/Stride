@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.', 'On Goals, direct projects and organizations sit indented under the vision. Projects of an organization indent one step further, on the name only. Level and menu stay on one edge at the right.'],
   ['Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.', 'Unlocked titles are easy to read and keep the trophy. Titles not reached yet stay quieter and have no symbol.'],
   ['Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.', 'The profile no longer has the Achievements row. Classes and titles stay, and you still choose the title under Edit profile.'],
   ['Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.', 'On sign-in, the heading sits under the logo. On a phone the form is a group, and on a computer it is 400 pixels wide.'],

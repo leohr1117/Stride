@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.0.4',
+    seiten: 'Ziele',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.0.3',
     seiten: 'Profil',
     abschnitte: [

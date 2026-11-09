@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.": "В Целях прямые проекты и организации сдвинуты под видением. Проекты организации сдвинуты ещё на шаг, только у имени. Уровень и меню остаются на одном крае справа.",
   "Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.": "Открытые титулы легко читаются и сохраняют кубок. Ещё не достигнутые титулы остаются тише и без символа.",
   "Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.": "В профиле пропадает строка Успехи. Классы и титулы остаются, а титул по-прежнему выбирается в разделе Изменить профиль.",
   "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "На странице входа заголовок стоит под логотипом. На телефоне форма является группой, на компьютере её ширина 400 пикселей.",

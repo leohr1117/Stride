@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.": "在目标里，愿景下的直接项目和组织会缩进。组织里的项目只在名称上再缩进一级。等级和菜单仍对齐在右侧同一条边上。",
   "Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.": "已解锁的称号清晰可读，并保留奖杯。尚未达成的称号更淡，而且没有符号。",
   "Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.": "资料页不再显示成就这一行。职业和称号保留，称号仍可在编辑档案中选择。",
   "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "在登录页，标题位于标志下方。在手机上，表单是一个分组；在电脑上，它的宽度是 400 像素。",

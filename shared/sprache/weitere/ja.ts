@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.": "目標では、ビジョンの下にある直接のプロジェクトと組織が字下げされます。組織のプロジェクトは名前だけ、もう一段字下げされます。レベルとメニューは右の同じ端に揃ったままです。",
   "Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.": "解除した称号は読みやすく、トロフィーは残ります。まだ到達していない称号は控えめなままで、記号はありません。",
   "Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.": "プロフィールから成果の行がなくなります。クラスと称号はそのままで、称号は引き続きプロフィールを編集で選びます。",
   "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "ログインでは見出しがロゴの下にあります。携帯電話ではフォームはグループで、パソコンでは幅が 400 ピクセルです。",

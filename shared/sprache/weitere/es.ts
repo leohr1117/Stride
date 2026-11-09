@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Auf Ziele rücken direkte Projekte und Organisationen unter der Vision ein. Projekte einer Organisation rücken nur am Namen eine Stufe weiter ein. Level und Menü bleiben rechts auf einer Kante.": "En Metas, los proyectos directos y las organizaciones se sangran bajo la visión. Los proyectos de una organización se sangran un paso más, solo en el nombre. El nivel y el menú siguen en el mismo borde a la derecha.",
   "Freigeschaltete Titel sind klar lesbar und behalten den Pokal. Noch nicht erreichte Titel bleiben dezenter und ohne Symbol.": "Los títulos desbloqueados se leen con claridad y conservan el trofeo. Los títulos que aún no se han alcanzado siguen más discretos y sin símbolo.",
   "Im Profil entfällt die Zeile Erfolge. Klassen und Titel bleiben, und den Titel wählst du weiter unter Profil bearbeiten.": "En el perfil desaparece la fila Logros. Las clases y los títulos siguen, y el título se sigue eligiendo en Editar el perfil.",
   "Auf der Anmeldung steht die Überschrift unter dem Logo. Auf dem Handy ist das Formular eine Gruppe, auf dem Computer ist es 400 Pixel breit.": "En el inicio de sesión, el título está bajo el logotipo. En el teléfono el formulario es un grupo y en el ordenador mide 400 píxeles de ancho.",

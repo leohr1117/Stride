@@ -157,19 +157,20 @@ export function ZieleSeite() {
             <VisionKopf vision={ast.vision} onOeffnen={() => setDetailId(ast.vision.id)} />
             {ast.direkte.map((projekt) => (
               <div key={projekt.id} data-ast="vision">
-                <ProjektZeile projekt={projekt} />
+                <ProjektZeile projekt={projekt} namensEinzug={16} />
               </div>
             ))}
             {ast.organisationen.map((gruppe) => (
               <div key={gruppe.organisation.id} data-ast="organisation">
                 <OrganisationsKopf
                   organisation={gruppe.organisation}
+                  namensEinzug={16}
                   onBearbeiten={() => setBearbeitung({ art: 'organisation', organisation: gruppe.organisation })}
                 />
                 {gruppe.projekte.length > 0 && (
-                  <div className="liste organisation-einzug">
+                  <div className="liste">
                     {gruppe.projekte.map((projekt) => (
-                      <ProjektZeile key={projekt.id} projekt={projekt} />
+                      <ProjektZeile key={projekt.id} projekt={projekt} namensEinzug={32} />
                     ))}
                   </div>
                 )}
@@ -407,7 +408,26 @@ function VisionKopf({ vision, onOeffnen }: { vision: Vision; onOeffnen: () => vo
   );
 }
 
-function OrganisationsKopf({ organisation, onBearbeiten }: { organisation: Organisation; onBearbeiten: () => void }) {
+function namensEinzugKlasse(einzug: 0 | 16 | 32): string {
+  if (einzug === 16) {
+    return '[&_.zeilen-text]:ps-[16px]';
+  }
+  if (einzug === 32) {
+    return '[&_.zeilen-text]:ps-[32px]';
+  }
+  return '';
+}
+
+function OrganisationsKopf({
+  organisation,
+  onBearbeiten,
+  namensEinzug = 0,
+}: {
+  organisation: Organisation;
+  onBearbeiten: () => void;
+  namensEinzug?: 0 | 16;
+}) {
+  const einzug = namensEinzugKlasse(namensEinzug);
   return (
     <SchnellZeile
       hintergrund="bg-flaeche"
@@ -424,7 +444,7 @@ function OrganisationsKopf({ organisation, onBearbeiten }: { organisation: Organ
       {(menue) => (
         <Zeile
           typ="lesen"
-          className={`organisation-kopf${organisation.archiviert ? ' opacity-50' : ''}`}
+          className={`organisation-kopf${organisation.archiviert ? ' opacity-50' : ''}${einzug ? ` ${einzug}` : ''}`}
           name={organisation.name}
           titel={organisationsTitel(organisation)}
           menue={menue}
@@ -434,7 +454,8 @@ function OrganisationsKopf({ organisation, onBearbeiten }: { organisation: Organ
   );
 }
 
-function ProjektZeile({ projekt }: { projekt: Projekt }) {
+function ProjektZeile({ projekt, namensEinzug = 0 }: { projekt: Projekt; namensEinzug?: 0 | 16 | 32 }) {
+  const einzug = namensEinzugKlasse(namensEinzug);
   const zaehlung = `${txMenge(projekt.anzahlEintraege, '{anzahl} Einträge', { anzahl: zahl(projekt.anzahlEintraege) })} · ${txMenge(projekt.offeneVorhaben, '{anzahl} Vorhaben offen', { anzahl: zahl(projekt.offeneVorhaben) })}`;
   const neben = projekt.geschafftAm ? `${tx('Abgeschlossen')} · ${zaehlung}` : zaehlung;
   const mitKette = projekt.kette.laenge >= 2;
@@ -448,7 +469,7 @@ function ProjektZeile({ projekt }: { projekt: Projekt }) {
           typ="lesen"
           nach={`/projekte/${projekt.id}`}
           name={projekt.name}
-          className={projekt.archiviert ? 'opacity-50' : ''}
+          className={`${projekt.archiviert ? 'opacity-50' : ''}${einzug ? ` ${einzug}` : ''}`}
           neben={
             mitKette ? (
               <span className="flex min-w-0 items-center">
