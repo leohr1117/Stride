@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.0
+
+### Hinzugefügt
+
+- Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.
+
 ## 4.0.9
 
 ### Geändert

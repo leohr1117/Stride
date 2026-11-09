@@ -18,7 +18,7 @@ Stride ist eine Web-App, die den eigenen Alltag wie ein Rollenspiel führt: Du t
 - **Verbindungen:** Erledigte Aufgaben aus Todoist und Termine aus einem Kalender (iCal-Adresse, z. B. Google oder iCloud) werden zu Einträgen.
 - **Benachrichtigungen:** Web-Push, wenn der Streak in Gefahr ist, ein Boss ansteht oder eine Rückkehr möglich ist, mit Ruhezeit.
 - **Anpassen:** Bereiche lassen sich einzeln abschalten. Ansichten, Farbpaletten und eigene Farben.
-- **Sonstiges:** Installierbar als PWA, mit einem Hinweis auf Heute nach der Anmeldung und einem Eintrag unter den Einstellungen. Sieben Sprachen (Deutsch, Englisch, Spanisch, Französisch, Japanisch, Russisch, Chinesisch). Ohne gewählte Sprache gilt die des Geräts, sonst Englisch. Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter. Export und Import der Daten, mehrere Konten, auf Wunsch mit Selbst-Registrierung, Anmeldung mit Passwortmanagern, Handbuch in der App.
+- **Sonstiges:** Installierbar als PWA, mit einem Hinweis auf Heute nach der Anmeldung und einem Eintrag unter den Einstellungen. Sieben Sprachen (Deutsch, Englisch, Spanisch, Französisch, Japanisch, Russisch, Chinesisch). Ohne gewählte Sprache gilt die des Geräts, sonst Englisch. Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter. Export und Import der Daten, mehrere Konten, auf Wunsch mit Selbst-Registrierung oder Anmeldung über Google, Anmeldung mit Passwortmanagern, Handbuch in der App.
 
 Änderungen je Version stehen in [CHANGELOG.md](CHANGELOG.md).
 
@@ -63,8 +63,13 @@ Die Daten liegen in `data/` (`app.db` und `zugang.db`). Liegt `app.db` schon vor
 | `STRIDE_CLIENT_DIR` | Ordner, aus dem der laufende Server die Oberfläche ausliefert. Standard ist `client/dist-live`. Ist der Ordner beim ersten Start noch leer, wird `client/dist` hineinkopiert. `npm run build` und die Browser-Tests schreiben und lesen weiter `client/dist`. Der alte Name `ASCEND_CLIENT_DIR` wird weiter gelesen. |
 | `STRIDE_ADMIN` | Benutzername des Admin-Kontos (der alte Name `ASCEND_ADMIN` wird weiter gelesen) |
 | `STRIDE_REGISTRIERUNG` | `1` erlaubt neuen Nutzern, selbst ein Konto zu erstellen. Standard aus. |
+| `STRIDE_GOOGLE` | `1` erlaubt die Anmeldung über Google. Standard aus. Wirkt nur mit Client-ID und Secret. |
+| `STRIDE_GOOGLE_CLIENT_ID` | Client-ID der Google-Cloud-Anmeldung. |
+| `STRIDE_GOOGLE_CLIENT_SECRET` | Client-Geheimnis der Google-Cloud-Anmeldung. |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Schlüssel für Web-Push |
 | `STRIDE_TEST` | Nur für Tests: `1` schaltet den Testmodus ein (alter Name `ASCEND_TEST`). Dann setzt `POST /api/test/heute` mit `{ datum }` die Uhr für Kette und Einträge. `datum: null` stellt die echte Uhr wieder her. |
+
+In der Google Cloud Console muss die Weiterleitungs-URI `https://<host>/api/zugang/google/zurueck` eingetragen sein.
 
 Eine Vorlage mit allen Variablen steht in `.env.example`. Die Werte werden als Umgebungsvariablen gesetzt, zum Beispiel mit `node --env-file=.env`.
 

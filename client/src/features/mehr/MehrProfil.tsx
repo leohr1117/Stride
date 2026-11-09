@@ -10,6 +10,7 @@ import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { DichteZeilen, Liste, Zeile } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
+import { GoogleKonto } from './GoogleKonto.tsx';
 import { AccountsBereich } from './MehrAccounts.tsx';
 import { FokusSeite, PasswortSeite } from './MehrProfilZugang.tsx';
 import { JahrSeite, NameSeite, ZielSeite } from './MehrProfilName.tsx';
@@ -133,6 +134,7 @@ function ProfilListe() {
                 />
               ) : null}
               <Zeile titel={tx("Passwort")} nach="/mehr/profil/passwort" />
+              <GoogleKonto zugang={zugang} />
               {inhaber || admin ? (
                 <Zeile titel={tx("Accounts")} wert={accountZahl === undefined ? undefined : String(accountZahl)} nach="/mehr/profil/accounts" />
               ) : null}

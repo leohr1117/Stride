@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.', 'If you host Stride yourself, you can now allow signing in with Google.'],
   ['Die Hinweise auf Heute zum Installieren, zu Benachrichtigungen und zur Bewertung sind jetzt eine schmale Zeile.', 'The tips on Today about installing, notifications and rating are now a slim line.'],
   ['Wer Stride selbst betreibt, kann jetzt erlauben, dass neue Nutzer selbst ein Konto erstellen.', 'If you host Stride yourself, you can now let new users create their own account.'],
   ['Die App lässt sich jetzt direkt aus der App heraus installieren.', 'The app can now be installed directly from within the app.'],

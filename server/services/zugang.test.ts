@@ -80,6 +80,12 @@ beforeEach(() => {
   delete process.env.ASCEND_ADMIN;
   delete process.env.STRIDE_REGISTRIERUNG;
   delete process.env.ASCEND_REGISTRIERUNG;
+  delete process.env.STRIDE_GOOGLE;
+  delete process.env.ASCEND_GOOGLE;
+  delete process.env.STRIDE_GOOGLE_CLIENT_ID;
+  delete process.env.ASCEND_GOOGLE_CLIENT_ID;
+  delete process.env.STRIDE_GOOGLE_CLIENT_SECRET;
+  delete process.env.ASCEND_GOOGLE_CLIENT_SECRET;
   datenbankNummer += 1;
   verwendeZugang(path.join(ordner, `${datenbankNummer}.db`));
   setzeSperrenZurueck();
@@ -126,6 +132,10 @@ describe('accounts', () => {
       rolle: 'inhaber',
       admin: false,
       registrierung: false,
+      google: false,
+      googleEmail: null,
+      googleAnlage: null,
+      googleLoesen: false,
     });
     expect(passwortStimmt(PASSWORT)).toBe(false);
     expect(benutzerPasswortStimmt('ada', PASSWORT)?.benutzername).toBe('Ada');

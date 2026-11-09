@@ -7,6 +7,7 @@ export const zugangApi = {
   registrieren: (daten: { benutzername: string; passwort: string }) =>
     anfrage<ZugangStatus>('/zugang/registrieren', 'POST', daten),
   abmelden: () => anfrage<void>('/zugang/abmelden', 'POST', {}),
+  loeseGoogle: () => anfrage<void>('/zugang/google', 'DELETE'),
   aenderePasswort: (bisher: string, neu: string) => anfrage<ZugangStatus>('/zugang/passwort', 'POST', { bisher, neu }),
   setzeBenutzername: (benutzername: string) => anfrage<ZugangStatus>('/zugang/benutzername', 'POST', { benutzername }),
   konten: () => anfrage<Konto[]>('/zugang/konten'),

@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.0',
+    seiten: 'Anmeldung, Mehr',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: ['Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.'],
+      },
+    ],
+  },
+  {
     version: '4.0.9',
     seiten: 'Heute',
     abschnitte: [

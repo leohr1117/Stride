@@ -10,6 +10,14 @@ export interface ZugangStatus {
   admin: boolean;
   /** Wahr, wenn STRIDE_REGISTRIERUNG auf 1 steht. */
   registrierung: boolean;
+  /** Wahr, wenn die Anmeldung über Google erlaubt ist. */
+  google: boolean;
+  /** Gespeicherte Adresse der Verknüpfung. Null, wenn keine besteht. */
+  googleEmail: string | null;
+  /** Adresse aus einem offenen Google-Vorgang zum Anlegen. */
+  googleAnlage: string | null;
+  /** Wahr, wenn die Verknüpfung gelöst werden darf. */
+  googleLoesen: boolean;
 }
 
 export interface Konto {

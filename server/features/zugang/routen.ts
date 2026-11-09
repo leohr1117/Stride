@@ -23,10 +23,19 @@ import {
   ZUGANG,
 } from './zugang.ts';
 import { anmeldeSchema, benutzernameSchema, idParameter, kontoSchema, passwortAenderungSchema } from '../../validierung.ts';
+import { anlageVon, FREMD, googleSchluessel, leeresGoogleCookie, nimmAnlage, verknuepfeGoogle } from './google.ts';
+import { registriereGoogleRouten } from './googleRouten.ts';
 
 export const SITZUNG_COOKIE = 'ascend_sitzung';
 
-const OEFFENTLICH = new Set(['GET /zugang', 'POST /zugang', 'POST /zugang/abmelden', 'POST /zugang/registrieren']);
+const OEFFENTLICH = new Set([
+  'GET /zugang',
+  'POST /zugang',
+  'POST /zugang/abmelden',
+  'POST /zugang/registrieren',
+  'GET /zugang/google/start',
+  'GET /zugang/google/zurueck',
+]);
 const ZU_VIELE_VERSUCHE = 'Zu viele Versuche. Bitte später erneut versuchen.';
 const NAME_VERGEBEN = 'Der Benutzername ist schon vergeben. Wähle einen anderen.';
 
@@ -131,7 +140,11 @@ function fordereAdmin(token: string | undefined): void {
 }
 
 export async function zugangRouten(app: FastifyInstance): Promise<void> {
-  app.get('/zugang', async (anfrage) => zugangStatus(leseSitzungsToken(anfrage.headers.cookie)));
+  registriereGoogleRouten(app);
+
+  app.get('/zugang', async (anfrage) =>
+    zugangStatus(leseSitzungsToken(anfrage.headers.cookie), new Date(), googleSchluessel(anfrage.headers.cookie)),
+  );
 
   app.post('/zugang', async (anfrage, antwort) => {
     const { benutzername, passwort } = anmeldeSchema.parse(anfrage.body);
@@ -202,6 +215,8 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
     if (istAdminName(benutzername)) {
       throw ungueltig(NAME_VERGEBEN);
     }
+    const schluessel = googleSchluessel(anfrage.headers.cookie);
+    const anlage = anlageVon(schluessel);
     let konto: ReturnType<typeof erstelleMitglied>;
     try {
       konto = erstelleMitglied({ benutzername, passwort });
@@ -211,8 +226,18 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
       }
       throw fehler;
     }
+    if (anlage && verknuepfeGoogle(konto.id, anlage.sub, anlage.email) !== 'ok') {
+      entferneKonto(konto.id);
+      throw new AppFehler(409, FREMD);
+    }
     const token = oeffneSitzung(new Date(), konto.id);
-    setzeSitzung(anfrage, antwort, token);
+    const sicher = sicherVon(anfrage);
+    const cookies = [sitzungsCookie(token, sicher)];
+    if (anlage) {
+      nimmAnlage(schluessel);
+      cookies.push(leeresGoogleCookie(sicher));
+    }
+    antwort.header('set-cookie', cookies);
     return zugangStatus(token);
   });
 

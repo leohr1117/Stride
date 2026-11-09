@@ -8,6 +8,7 @@ import { ungueltig } from '../../fehler.ts';
 import { sperreEchteDatenbankImTest } from '../../testpfad.ts';
 import { strideVariable } from '../../umgebung.ts';
 import { BENUTZER_MAX, PASSWORT_MAX, PASSWORT_MIN } from '../../validierung.ts';
+import { entferneGoogle, googleTeil, migriereGoogle, verbindeGoogle } from './google.ts';
 
 const SCRYPT = { N: 16384, r: 8, p: 1, maxmem: 32 * 1024 * 1024 } as const;
 const GLOBAL = 'global';
@@ -71,6 +72,7 @@ function oeffne(pfad: string): DatabaseSync {
     datenbank.exec('ALTER TABLE sitzungen ADD COLUMN benutzer_id INTEGER REFERENCES benutzer(id)');
   }
   sichereNamensindex(datenbank);
+  migriereGoogle(datenbank);
   return datenbank;
 }
 
@@ -106,6 +108,8 @@ function datenbank(): DatabaseSync {
   }
   return geoffnet;
 }
+
+verbindeGoogle(() => datenbank());
 
 export function setzeSperrenZurueck(): void {
   sperren.clear();
@@ -378,6 +382,7 @@ export function loescheBenutzer(id: number): { weltdatei: string; rolle: Rolle }
   db.exec('BEGIN');
   try {
     db.prepare('DELETE FROM sitzungen WHERE benutzer_id = ?').run(id);
+    entferneGoogle(db, id);
     db.prepare('DELETE FROM benutzer WHERE id = ?').run(id);
     db.exec('COMMIT');
   } catch (fehler) {
@@ -566,10 +571,11 @@ export function anzahlKonten(): number {
   return anzahlBenutzer();
 }
 
-export function zugangStatus(token: string | undefined, jetzt = new Date()): ZugangStatus {
+export function zugangStatus(token: string | undefined, jetzt = new Date(), schluessel?: string): ZugangStatus {
   const registrierung = strideVariable('REGISTRIERUNG') === '1';
   const sitzung = leseSitzung(token, jetzt);
   const benutzer = sitzung?.benutzerId ? holeBenutzer(sitzung.benutzerId) : undefined;
+  const google = googleTeil(benutzer?.id ?? null, schluessel);
   if (benutzer) {
     return {
       modus: 'bereit',
@@ -577,11 +583,12 @@ export function zugangStatus(token: string | undefined, jetzt = new Date()): Zug
       rolle: benutzer.rolle,
       admin: istAdminName(benutzer.benutzername),
       registrierung,
+      ...google,
     };
   }
   const hatBenutzer = anzahlBenutzer() > 0;
   const hatPasswort = hatAltesPasswort();
-  const ohneAdmin = { benutzername: null, rolle: null, admin: false, registrierung } as const;
+  const ohneAdmin = { benutzername: null, rolle: null as Rolle | null, admin: false, registrierung, ...google };
   if (sitzung && hatPasswort && !hatBenutzer) {
     return { modus: 'benutzername', ...ohneAdmin };
   }

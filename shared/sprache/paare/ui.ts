@@ -1,5 +1,31 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Über Google anmelden', 'Sign in with Google'],
+  ['oder', 'or'],
+  [
+    'Dieses Google-Konto ist mit keinem Stride-Konto verknüpft. Melde dich mit Passwort an und verknüpfe es unter Mehr → Konto.',
+    'This Google account isn’t linked to a Stride account. Sign in with your password and link it under More → Account.',
+  ],
+  ['Anmeldung mit Google abgebrochen.', 'Google sign-in was canceled.'],
+  [
+    'Anmeldung mit Google hat nicht geklappt. Versuche es erneut oder melde dich mit Passwort an.',
+    'Google sign-in didn’t work. Try again or sign in with your password.',
+  ],
+  ['Mit Google: {email}', 'With Google: {email}'],
+  ['Mit Google verknüpfen', 'Link Google'],
+  ['Google · {email} · Lösen', 'Google · {email} · Unlink'],
+  ['Lösen', 'Unlink'],
+  ['Google lösen?', 'Unlink Google?'],
+  ['Danach meldest du dich nur noch mit Passwort an.', 'After this you sign in with your password only.'],
+  [
+    'Lösen geht erst, wenn das Konto ein Passwort hat. Sonst kommst du nicht mehr hinein.',
+    'You can unlink only once the account has a password. Otherwise you’d be locked out.',
+  ],
+  [
+    'Dieses Google-Konto ist schon mit einem anderen Stride-Konto verknüpft.',
+    'This Google account is already linked to another Stride account.',
+  ],
+  ['Verknüpfen abgebrochen.', 'Linking canceled.'],
   ['Stride als App installieren', 'Install Stride as an app'],
   ['Benachrichtigungen einschalten?', 'Turn on notifications?'],
   ['So geht’s', 'How to'],

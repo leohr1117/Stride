@@ -5,42 +5,26 @@ import type { ZugangModus, ZugangStatus } from '../../../../shared/api/index.ts'
 import { PASSWORT_MAX } from '../../../../shared/spiel/passwort.ts';
 import { ApiFehler, api, beobachteAnmeldung } from '../../api/index.ts';
 import { SpracheAbgleich } from '../../sprache.tsx';
-import { Fehlermeldung, Feld, Flaeche, Formular, Knopf, Ladeanzeige, EINGABE_STIL, PasswortFeld } from '../../ui/index.ts';
+import { Fehlermeldung, Feld, Knopf, Ladeanzeige, EINGABE_STIL, PasswortFeld } from '../../ui/index.ts';
+import { AnmeldeRahmen } from './AnmeldeRahmen.tsx';
 import { seitenwechsel } from './anmeldungFelder.ts';
-
-function AnmeldeRahmen({
-  onAbsenden,
-  titel,
-  children,
-}: {
-  onAbsenden: (ereignis: FormEvent) => void;
-  titel: string;
-  children: ReactNode;
-}) {
-  return (
-    <main className="flex sicht-mitte items-center justify-center px-4">
-      <Flaeche className="w-full p-6 md:w-[400px]">
-        <Formular onAbsenden={onAbsenden} className="w-full">
-          <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
-            <img src="/logo-v2.svg" alt="" className="size-7" />
-            Stride
-          </div>
-          <h1 className="text-2xl leading-8 font-semibold break-words">{tx(titel)}</h1>
-          {children}
-        </Formular>
-      </Flaeche>
-    </main>
-  );
-}
+import { BenutzernameFestlegen } from './BenutzernameFestlegen.tsx';
+import { GoogleAnlage, GoogleKnopf, GoogleOder, googleHinweis, useGoogleRueckkehr } from './GoogleAnmeldung.tsx';
 
 function Anmeldung({
   modus,
   onErfolg,
   onKonto,
+  google = false,
+  hinweis = null,
+  onHinweisWeg,
 }: {
   modus: Exclude<ZugangModus, 'bereit' | 'benutzername'>;
   onErfolg: (status: ZugangStatus) => void;
   onKonto?: () => void;
+  google?: boolean;
+  hinweis?: string | null;
+  onHinweisWeg?: () => void;
 }) {
   const [benutzername, setBenutzername] = useState('');
   const [passwort, setPasswort] = useState('');
@@ -92,6 +76,11 @@ function Anmeldung({
 
   return (
     <AnmeldeRahmen onAbsenden={(ereignis) => void senden(ereignis)} titel={neu ? 'Passwort festlegen' : 'Anmelden'}>
+        {hinweis ? (
+          <p role="status" className="text-leise">
+            {tx(hinweis)}
+          </p>
+        ) : null}
         {mitName && (
           <Feld label={tx("Benutzername")} fehler={nameFehler}>
             <input
@@ -107,6 +96,7 @@ function Anmeldung({
               onChange={(ereignis) => {
                 setBenutzername(ereignis.target.value);
                 setNameFehler(null);
+                onHinweisWeg?.();
               }}
             />
           </Feld>
@@ -123,6 +113,7 @@ function Anmeldung({
           onChange={(ereignis) => {
             setPasswort(ereignis.target.value);
             setPasswortFehler(null);
+            onHinweisWeg?.();
           }}
         />
         {neu && (
@@ -149,6 +140,8 @@ function Anmeldung({
             {tx('Konto erstellen')}
           </Knopf>
         ) : null}
+        {google && modus === 'anmelden' ? <GoogleOder /> : null}
+        {google && modus === 'anmelden' ? <GoogleKnopf /> : null}
     </AnmeldeRahmen>
   );
 }
@@ -164,7 +157,17 @@ function fehlerZuordnung(fehler: unknown): { name: string | null; passwort: stri
   return { name: null, passwort: null, allgemein: fehler };
 }
 
-function KontoErstellen({ onErfolg, onZurueck }: { onErfolg: (status: ZugangStatus) => void; onZurueck: () => void }) {
+function KontoErstellen({
+  onErfolg,
+  onZurueck,
+  googleEmail = null,
+  onAbgelaufen,
+}: {
+  onErfolg: (status: ZugangStatus) => void;
+  onZurueck: () => void;
+  googleEmail?: string | null;
+  onAbgelaufen?: () => void;
+}) {
   const [benutzername, setBenutzername] = useState('');
   const [passwort, setPasswort] = useState('');
   const [fehler, setFehler] = useState<unknown>(null);
@@ -191,6 +194,13 @@ function KontoErstellen({ onErfolg, onZurueck }: { onErfolg: (status: ZugangStat
     setLaeuft(true);
     setFehler(null);
     try {
+      if (googleEmail) {
+        const aktuell = await api.zugang();
+        if (!aktuell.googleAnlage) {
+          onAbgelaufen?.();
+          return;
+        }
+      }
       const status = await api.registrieren({ benutzername: benutzername.trim(), passwort });
       onErfolg(status);
       seitenwechsel(window);
@@ -207,6 +217,7 @@ function KontoErstellen({ onErfolg, onZurueck }: { onErfolg: (status: ZugangStat
 
   return (
     <AnmeldeRahmen onAbsenden={(ereignis) => void senden(ereignis)} titel="Konto erstellen">
+      {googleEmail ? <GoogleAnlage email={googleEmail} /> : null}
       <Feld label={tx('Benutzername')} fehler={nameFehler}>
         <input
           id="username"
@@ -249,65 +260,12 @@ function KontoErstellen({ onErfolg, onZurueck }: { onErfolg: (status: ZugangStat
   );
 }
 
-function BenutzernameFestlegen({ onErfolg }: { onErfolg: (status: ZugangStatus) => void }) {
-  const [benutzername, setBenutzername] = useState('');
-  const [fehler, setFehler] = useState<unknown>(null);
-  const [nameFehler, setNameFehler] = useState<string | null>(null);
-  const [laeuft, setLaeuft] = useState(false);
-
-  const senden = async (ereignis: FormEvent) => {
-    ereignis.preventDefault();
-    if (laeuft) {
-      return;
-    }
-    if (benutzername.trim() === '') {
-      setNameFehler('Der Benutzername fehlt.');
-      setFehler(null);
-      return;
-    }
-    setNameFehler(null);
-    setLaeuft(true);
-    setFehler(null);
-    try {
-      onErfolg(await api.setzeBenutzername(benutzername.trim()));
-    } catch (namensFehler) {
-      setFehler(namensFehler);
-    } finally {
-      setLaeuft(false);
-    }
-  };
-
-  return (
-    <AnmeldeRahmen onAbsenden={(ereignis) => void senden(ereignis)} titel="Benutzername festlegen">
-        <Feld label={tx("Benutzername")} fehler={nameFehler}>
-          <input
-            className={EINGABE_STIL}
-            name="username"
-            autoComplete="username"
-            autoCapitalize="none"
-            autoCorrect="off"
-            spellCheck={false}
-            autoFocus
-            value={benutzername}
-            onChange={(ereignis) => {
-              setBenutzername(ereignis.target.value);
-              setNameFehler(null);
-            }}
-          />
-        </Feld>
-        <Fehlermeldung fehler={fehler} />
-        <Knopf type="submit" variante="primaer" className="w-full" aria-busy={laeuft || undefined}>
-          {tx("Festlegen")}
-        </Knopf>
-    </AnmeldeRahmen>
-  );
-}
-
 export function ZugangTor({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const [status, setStatus] = useState<ZugangStatus | null>(null);
   const [fehler, setFehler] = useState<unknown>(null);
   const [kontoOffen, setKontoOffen] = useState(false);
+  const rueckkehr = useGoogleRueckkehr(status !== null && status.modus !== 'bereit');
 
   const lade = useCallback(async () => {
     try {
@@ -352,12 +310,28 @@ export function ZugangTor({ children }: { children: ReactNode }) {
     return <BenutzernameFestlegen onErfolg={setStatus} />;
   }
   if (status.modus !== 'bereit') {
-    if (status.modus === 'anmelden' && kontoOffen && status.registrierung) {
-      return <KontoErstellen onErfolg={setStatus} onZurueck={() => setKontoOffen(false)} />;
+    const abgelaufen = rueckkehr.code === 'b' && !status.googleAnlage;
+    const fallB = rueckkehr.code === 'b' && Boolean(status.googleAnlage) && status.registrierung && status.modus === 'anmelden';
+    const hinweis = googleHinweis(abgelaufen ? 'd' : rueckkehr.code);
+    if (status.modus === 'anmelden' && status.registrierung && (kontoOffen || fallB) && !abgelaufen) {
+      return (
+        <KontoErstellen
+          googleEmail={status.googleAnlage}
+          onAbgelaufen={() => {
+            setKontoOffen(false);
+            rueckkehr.setze('d');
+          }}
+          onErfolg={setStatus}
+          onZurueck={() => setKontoOffen(false)}
+        />
+      );
     }
     return (
       <Anmeldung
         modus={status.modus}
+        google={status.google === true}
+        hinweis={hinweis}
+        onHinweisWeg={rueckkehr.weg}
         onErfolg={setStatus}
         onKonto={status.modus === 'anmelden' && status.registrierung ? () => setKontoOffen(true) : undefined}
       />
