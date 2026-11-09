@@ -1,5 +1,9 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Wer Stride selbst betreibt, kann jetzt erlauben, dass neue Nutzer selbst ein Konto erstellen.": "Strideを自分で運用している場合、新しいユーザーが自分でアカウントを作成できるように設定できるようになりました。",
+  "Konto erstellen": "アカウントを作成",
+  "Ich habe schon ein Konto": "すでにアカウントを持っています",
+  "Der Benutzername ist schon vergeben. Wähle einen anderen.": "そのユーザー名は使われています。別の名前を選んでください。",
   "Die App lässt sich jetzt direkt aus der App heraus installieren.": "アプリ内から直接アプリをインストールできるようになりました。",
   "Als App installieren": "アプリとしてインストール",
   "Installieren": "インストール",

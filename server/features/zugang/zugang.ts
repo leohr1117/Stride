@@ -567,6 +567,7 @@ export function anzahlKonten(): number {
 }
 
 export function zugangStatus(token: string | undefined, jetzt = new Date()): ZugangStatus {
+  const registrierung = strideVariable('REGISTRIERUNG') === '1';
   const sitzung = leseSitzung(token, jetzt);
   const benutzer = sitzung?.benutzerId ? holeBenutzer(sitzung.benutzerId) : undefined;
   if (benutzer) {
@@ -575,11 +576,12 @@ export function zugangStatus(token: string | undefined, jetzt = new Date()): Zug
       benutzername: benutzer.benutzername,
       rolle: benutzer.rolle,
       admin: istAdminName(benutzer.benutzername),
+      registrierung,
     };
   }
   const hatBenutzer = anzahlBenutzer() > 0;
   const hatPasswort = hatAltesPasswort();
-  const ohneAdmin = { benutzername: null, rolle: null, admin: false } as const;
+  const ohneAdmin = { benutzername: null, rolle: null, admin: false, registrierung } as const;
   if (sitzung && hatPasswort && !hatBenutzer) {
     return { modus: 'benutzername', ...ohneAdmin };
   }

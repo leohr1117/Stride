@@ -1,5 +1,9 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Wer Stride selbst betreibt, kann jetzt erlauben, dass neue Nutzer selbst ein Konto erstellen.": "Si vous hébergez Stride vous-même, vous pouvez désormais permettre aux nouveaux utilisateurs de créer leur propre compte.",
+  "Konto erstellen": "Créer un compte",
+  "Ich habe schon ein Konto": "J'ai déjà un compte",
+  "Der Benutzername ist schon vergeben. Wähle einen anderen.": "Ce nom d'utilisateur est déjà pris. Choisis-en un autre.",
   "Die App lässt sich jetzt direkt aus der App heraus installieren.": "L'application peut désormais être installée directement depuis l'application.",
   "Als App installieren": "Installer comme application",
   "Installieren": "Installer",

@@ -1,5 +1,9 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Wer Stride selbst betreibt, kann jetzt erlauben, dass neue Nutzer selbst ein Konto erstellen.": "Si alojas Stride tú mismo, ahora puedes permitir que los nuevos usuarios creen su propia cuenta.",
+  "Konto erstellen": "Crear cuenta",
+  "Ich habe schon ein Konto": "Ya tengo una cuenta",
+  "Der Benutzername ist schon vergeben. Wähle einen anderen.": "Ese usuario ya está ocupado. Elige otro.",
   "Die App lässt sich jetzt direkt aus der App heraus installieren.": "Ahora la app se puede instalar directamente desde la propia app.",
   "Als App installieren": "Instalar como app",
   "Installieren": "Instalar",

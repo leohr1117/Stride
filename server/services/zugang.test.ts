@@ -78,6 +78,8 @@ function hatNamensindex(pfad: string): boolean {
 beforeEach(() => {
   delete process.env.STRIDE_ADMIN;
   delete process.env.ASCEND_ADMIN;
+  delete process.env.STRIDE_REGISTRIERUNG;
+  delete process.env.ASCEND_REGISTRIERUNG;
   datenbankNummer += 1;
   verwendeZugang(path.join(ordner, `${datenbankNummer}.db`));
   setzeSperrenZurueck();
@@ -118,7 +120,13 @@ describe('accounts', () => {
     legePasswortAn(PASSWORT);
     const token = oeffneSitzung();
     uebernimmAltesPasswort('Ada', 'app.db');
-    expect(zugangStatus(token)).toEqual({ modus: 'bereit', benutzername: 'Ada', rolle: 'inhaber', admin: false });
+    expect(zugangStatus(token)).toEqual({
+      modus: 'bereit',
+      benutzername: 'Ada',
+      rolle: 'inhaber',
+      admin: false,
+      registrierung: false,
+    });
     expect(passwortStimmt(PASSWORT)).toBe(false);
     expect(benutzerPasswortStimmt('ada', PASSWORT)?.benutzername).toBe('Ada');
   });

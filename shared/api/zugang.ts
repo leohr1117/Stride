@@ -8,6 +8,8 @@ export interface ZugangStatus {
   rolle: Rolle | null;
   /** Wahr nur, wenn der angemeldete Name STRIDE_ADMIN entspricht. */
   admin: boolean;
+  /** Wahr, wenn STRIDE_REGISTRIERUNG auf 1 steht. */
+  registrierung: boolean;
 }
 
 export interface Konto {

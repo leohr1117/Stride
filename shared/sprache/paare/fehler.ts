@@ -1,5 +1,6 @@
 /** Fehlermeldungen, wortgenau wie der Server sie ausgibt. */
 export const PAARE = [
+  ['Der Benutzername ist schon vergeben. Wähle einen anderen.', 'That username is already taken. Choose another one.'],
   ['Der Name darf höchstens 80 Zeichen haben.', 'The name can’t be longer than 80 characters.'],
   ['Das erste Ziel passt nicht zur Auswahl.', 'The first goal does not match the choice.'],
   ['Für ein Projekt braucht es eine Tätigkeit.', 'A project needs an activity.'],

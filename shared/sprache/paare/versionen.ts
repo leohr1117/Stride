@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Wer Stride selbst betreibt, kann jetzt erlauben, dass neue Nutzer selbst ein Konto erstellen.', 'If you host Stride yourself, you can now let new users create their own account.'],
   ['Die App lässt sich jetzt direkt aus der App heraus installieren.', 'The app can now be installed directly from within the app.'],
   ['Die zwölf Klassenzeichen sind feiner und sauberer gezeichnet.', 'The twelve class signs are drawn more finely and cleanly.'],
   ['Die zwölf Klassen haben neue Zeichen: Hantel, Mondsichel mit Stern, Helm, Buch, Sprechblasen, Palette, Achtelnote, Bergspitze, Triskele, Krone, Keimling und Waage.', 'The twelve classes have new signs: a dumbbell, a crescent with a star, a helmet, a book, speech bubbles, a palette, an eighth note, a mountain peak, a triskele, a crown, a seedling, and scales.'],

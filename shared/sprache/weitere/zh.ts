@@ -1,5 +1,9 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Wer Stride selbst betreibt, kann jetzt erlauben, dass neue Nutzer selbst ein Konto erstellen.": "自行托管 Stride 时，现在可以允许新用户自行创建账户。",
+  "Konto erstellen": "创建账户",
+  "Ich habe schon ein Konto": "我已有账户",
+  "Der Benutzername ist schon vergeben. Wähle einen anderen.": "这个用户名已被使用。请另选一个。",
   "Die App lässt sich jetzt direkt aus der App heraus installieren.": "现在可以直接在应用内安装应用。",
   "Als App installieren": "安装为应用",
   "Installieren": "安装",

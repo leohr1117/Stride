@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.0.8
+
+### Hinzugefügt
+
+- Wer Stride selbst betreibt, kann jetzt erlauben, dass neue Nutzer selbst ein Konto erstellen.
+
 ## 4.0.7
 
 ### Hinzugefügt

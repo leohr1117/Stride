@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { AppFehler } from '../../fehler.ts';
+import { AppFehler, ungueltig } from '../../fehler.ts';
 import { entferneKonto, erstelleMitglied, hauptweltdatei, konten } from './konten.ts';
 import {
   aenderePasswort,
@@ -26,8 +26,9 @@ import { anmeldeSchema, benutzernameSchema, idParameter, kontoSchema, passwortAe
 
 export const SITZUNG_COOKIE = 'ascend_sitzung';
 
-const OEFFENTLICH = new Set(['GET /zugang', 'POST /zugang', 'POST /zugang/abmelden']);
+const OEFFENTLICH = new Set(['GET /zugang', 'POST /zugang', 'POST /zugang/abmelden', 'POST /zugang/registrieren']);
 const ZU_VIELE_VERSUCHE = 'Zu viele Versuche. Bitte später erneut versuchen.';
+const NAME_VERGEBEN = 'Der Benutzername ist schon vergeben. Wähle einen anderen.';
 
 export function istOeffentlicherZugang(methode: string, url: string): boolean {
   const ohneQuery = url.split('?')[0] ?? url;
@@ -168,6 +169,49 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
       token = oeffneSitzung(new Date(), konto.id);
     }
     setzeFehlversucheZurueck(adresse);
+    setzeSitzung(anfrage, antwort, token);
+    return zugangStatus(token);
+  });
+
+  app.post('/zugang/registrieren', async (anfrage, antwort) => {
+    const gast = zugangStatus(undefined);
+    if (!gast.registrierung || gast.modus !== 'anmelden') {
+      throw new AppFehler(404, `Unbekannter Pfad: ${anfrage.method} ${anfrage.url}`);
+    }
+    const adresse = adresseVon(anfrage);
+    if (istGesperrt(adresse)) {
+      throw new AppFehler(429, ZU_VIELE_VERSUCHE);
+    }
+    merkeFehlversuch(adresse);
+    if (istGesperrt(adresse)) {
+      throw new AppFehler(429, ZU_VIELE_VERSUCHE);
+    }
+    const roh = anfrage.body;
+    const nurPflicht =
+      roh !== null && typeof roh === 'object'
+        ? {
+            benutzername: (roh as { benutzername?: unknown }).benutzername,
+            passwort: (roh as { passwort?: unknown }).passwort,
+          }
+        : roh;
+    const geprueft = kontoSchema.safeParse(nurPflicht);
+    if (!geprueft.success) {
+      throw ungueltig(geprueft.error.issues[0]?.message ?? 'Ungültige Eingabe.');
+    }
+    const { benutzername, passwort } = geprueft.data;
+    if (istAdminName(benutzername)) {
+      throw ungueltig(NAME_VERGEBEN);
+    }
+    let konto: ReturnType<typeof erstelleMitglied>;
+    try {
+      konto = erstelleMitglied({ benutzername, passwort });
+    } catch (fehler) {
+      if (fehler instanceof AppFehler && fehler.message === 'Der Benutzername ist schon vergeben.') {
+        throw ungueltig(NAME_VERGEBEN);
+      }
+      throw fehler;
+    }
+    const token = oeffneSitzung(new Date(), konto.id);
     setzeSitzung(anfrage, antwort, token);
     return zugangStatus(token);
   });

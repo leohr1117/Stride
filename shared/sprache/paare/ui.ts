@@ -1,5 +1,7 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Konto erstellen', 'Create account'],
+  ['Ich habe schon ein Konto', 'I already have an account'],
   ['Als App installieren', 'Install as an app'],
   ['Installieren', 'Install'],
   ['Teilen → Zum Home-Bildschirm.', 'Share → Add to Home Screen.'],

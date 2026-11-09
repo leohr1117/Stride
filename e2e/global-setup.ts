@@ -113,6 +113,7 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
     env: mitDatenbankPfaden({
       ...process.env,
       STRIDE_TEST: '1',
+      STRIDE_REGISTRIERUNG: '1',
       STRIDE_ADMIN: 'testvoll',
       STRIDE_CLIENT_DIR: path.join(WURZEL, 'client', 'dist'),
       PORT: String(TEST_PORT),

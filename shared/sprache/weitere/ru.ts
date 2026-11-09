@@ -1,5 +1,9 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Wer Stride selbst betreibt, kann jetzt erlauben, dass neue Nutzer selbst ein Konto erstellen.": "Если вы размещаете Stride у себя, теперь можно разрешить новым пользователям самим создавать аккаунт.",
+  "Konto erstellen": "Создать аккаунт",
+  "Ich habe schon ein Konto": "У меня уже есть аккаунт",
+  "Der Benutzername ist schon vergeben. Wähle einen anderen.": "Это имя уже занято. Выберите другое.",
   "Die App lässt sich jetzt direkt aus der App heraus installieren.": "Теперь приложение можно установить прямо из самого приложения.",
   "Als App installieren": "Установить как приложение",
   "Installieren": "Установить",
