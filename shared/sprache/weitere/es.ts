@@ -1,5 +1,18 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Konto löschen": "Eliminar cuenta",
+  "Konto löschen?": "¿Eliminar cuenta?",
+  "Alle Daten dieses Kontos werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.": "Todos los datos de esta cuenta se eliminan de forma definitiva. Esto no se puede deshacer.",
+  "Du bist das einzige Konto. Danach hat diese Stride-Instanz kein Konto mehr; wer sie als Nächstes öffnet, legt ein neues Inhaber-Konto an.": "Eres la única cuenta. Después, esta instancia de Stride no tiene ninguna cuenta; quien la abra a continuación crea una nueva cuenta de titular.",
+  "Gib zur Bestätigung dein Passwort ein.": "Escribe tu contraseña para confirmar.",
+  "Endgültig löschen": "Eliminar definitivamente",
+  "Konto gelöscht.": "Cuenta eliminada.",
+  "Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.": "Después, esta instancia de Stride no tiene administrador hasta que quien la opera nombre uno nuevo.",
+  "Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.": "Eres el único titular. Mientras existan otras cuentas, no puedes eliminar la tuya.",
+  "Passwort darf nicht leer sein.": "La contraseña no puede estar vacía.",
+  "Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.": "Ahora puedes eliminar tu cuenta de forma definitiva. Se quitan todos los datos de esa cuenta.",
+  "Bist du das einzige Konto, kannst du die Daten vorher exportieren. Danach ist die Instanz leer.": "Si eres la única cuenta, puedes exportar los datos antes. Después, la instancia queda vacía.",
+  "Die Admin-Rolle bleibt an dem einmal vergebenen Konto, auch wenn der Name sich ändert.": "El rol de administrador sigue en la cuenta a la que se dio, aunque cambie el nombre.",
   "Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser.": "Stride ahora envía información de seguridad adicional al navegador.",
   "Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.": "Stride ahora frena demasiadas solicitudes en poco tiempo y protege mejor el registro.",
   "Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.": "Si alojas Stride tú mismo, ahora puedes permitir el inicio de sesión con Google.",

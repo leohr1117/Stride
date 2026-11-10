@@ -1,12 +1,13 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { AppFehler, ungueltig } from '../../fehler.ts';
-import { entferneKonto, erstelleMitglied, hauptweltdatei, konten } from './konten.ts';
+import { entferneKonto, erstelleMitglied, hauptweltdatei, konten, loescheEigenesKonto } from './konten.ts';
 import {
   aenderePasswort,
   anzahlKonten,
   benenneBenutzer,
   benutzerPasswortStimmt,
   hatKeinKonto,
+  istAdmin,
   istAdminName,
   istGesperrt,
   kontenSichtbar,
@@ -23,7 +24,7 @@ import {
   ZUGANG,
 } from './zugang.ts';
 import { registrierungErlaubt } from '../../anfrageGrenzen.ts';
-import { anmeldeSchema, benutzernameSchema, idParameter, kontoSchema, passwortAenderungSchema } from '../../validierung.ts';
+import { anmeldeSchema, benutzernameSchema, idParameter, kontoLoeschenSchema, kontoSchema, passwortAenderungSchema } from '../../validierung.ts';
 import { anlageVon, FREMD, googleSchluessel, leeresGoogleCookie, nimmAnlage, verknuepfeGoogle } from './google.ts';
 import { registriereGoogleRouten } from './googleRouten.ts';
 
@@ -135,7 +136,7 @@ function fordereAdmin(token: string | undefined): void {
   if (!selbst) {
     throw new AppFehler(401, 'Anmeldung erforderlich.');
   }
-  if (!istAdminName(selbst.benutzername)) {
+  if (!istAdmin(selbst.id)) {
     throw new AppFehler(403, 'Nur der Admin ändert Benutzernamen.');
   }
 }
@@ -240,6 +241,34 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
 
   app.post('/zugang/abmelden', async (anfrage, antwort) => {
     schliesseSitzung(leseSitzungsToken(anfrage.headers.cookie));
+    antwort.header('set-cookie', abmeldeCookie(sicherVon(anfrage)));
+    return antwort.status(204).send();
+  });
+
+  app.post('/zugang/konto/loeschen', async (anfrage, antwort) => {
+    const token = leseSitzungsToken(anfrage.headers.cookie);
+    if (!token) {
+      throw new AppFehler(401, 'Anmeldung erforderlich.');
+    }
+    const adresse = adresseVon(anfrage);
+    if (istGesperrt(adresse)) {
+      throw new AppFehler(429, ZU_VIELE_VERSUCHE);
+    }
+    const geprueft = kontoLoeschenSchema.safeParse(anfrage.body ?? {});
+    if (!geprueft.success) {
+      throw ungueltig(geprueft.error.issues[0]?.message ?? 'Ungültige Eingabe.');
+    }
+    if (!passwortDerSitzungStimmt(token, geprueft.data.passwort)) {
+      merkeFehlversuch(adresse);
+      throw new AppFehler(401, 'Das Passwort ist falsch.');
+    }
+    const selbst = sitzungsBenutzer(token);
+    if (!selbst) {
+      merkeFehlversuch(adresse);
+      throw new AppFehler(401, 'Das Passwort ist falsch.');
+    }
+    setzeFehlversucheZurueck(adresse);
+    loescheEigenesKonto(selbst.id);
     antwort.header('set-cookie', abmeldeCookie(sicherVon(anfrage)));
     return antwort.status(204).send();
   });

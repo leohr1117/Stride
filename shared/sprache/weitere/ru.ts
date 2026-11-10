@@ -1,5 +1,18 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Konto löschen": "Удалить аккаунт",
+  "Konto löschen?": "Удалить аккаунт?",
+  "Alle Daten dieses Kontos werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.": "Все данные этого аккаунта будут удалены безвозвратно. Это нельзя отменить.",
+  "Du bist das einzige Konto. Danach hat diese Stride-Instanz kein Konto mehr; wer sie als Nächstes öffnet, legt ein neues Inhaber-Konto an.": "Ты единственный аккаунт. После этого у этого экземпляра Stride не останется аккаунтов; кто откроет его следующим, создаст новый аккаунт владельца.",
+  "Gib zur Bestätigung dein Passwort ein.": "Введи пароль для подтверждения.",
+  "Endgültig löschen": "Удалить безвозвратно",
+  "Konto gelöscht.": "Аккаунт удалён.",
+  "Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.": "После этого у этого экземпляра Stride не будет администратора, пока оператор не назначит нового.",
+  "Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.": "Ты единственный владелец. Пока есть другие аккаунты, свой аккаунт удалить нельзя.",
+  "Passwort darf nicht leer sein.": "Пароль не может быть пустым.",
+  "Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.": "Теперь можно безвозвратно удалить свой аккаунт. Все данные этого аккаунта при этом удаляются.",
+  "Bist du das einzige Konto, kannst du die Daten vorher exportieren. Danach ist die Instanz leer.": "Если ты единственный аккаунт, данные можно сначала экспортировать. После этого экземпляр пуст.",
+  "Die Admin-Rolle bleibt an dem einmal vergebenen Konto, auch wenn der Name sich ändert.": "Роль администратора остаётся у того аккаунта, которому её однажды дали, даже если имя изменится.",
   "Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser.": "Stride теперь отправляет браузеру дополнительные сведения о безопасности.",
   "Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.": "Stride теперь ограничивает слишком частые запросы и лучше защищает регистрацию.",
   "Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.": "Если вы размещаете Stride у себя, теперь можно разрешить вход через Google.",

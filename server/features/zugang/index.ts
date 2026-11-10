@@ -17,7 +17,9 @@ export {
   setzeWeltdatei,
   loescheBenutzer,
   benenneBenutzer,
+  istAdmin,
   istAdminName,
+  setzeZugangsWarnung,
   uebernimmAltesPasswort,
   benutzerPasswortStimmt,
   passwortDerSitzungStimmt,
@@ -33,7 +35,7 @@ export {
   merkeFehlversuch,
   setzeFehlversucheZurueck,
 } from './zugang.ts';
-export { hauptweltdatei, konten, erstelleMitglied, entferneKonto } from './konten.ts';
+export { hauptweltdatei, konten, erstelleMitglied, entferneKonto, loescheEigenesKonto } from './konten.ts';
 export {
   SITZUNG_COOKIE,
   istOeffentlicherZugang,

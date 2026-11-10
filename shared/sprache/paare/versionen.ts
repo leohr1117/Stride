@@ -1,5 +1,17 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  [
+    'Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.',
+    'You can now permanently delete your own account. All data in that account is removed.',
+  ],
+  [
+    'Bist du das einzige Konto, kannst du die Daten vorher exportieren. Danach ist die Instanz leer.',
+    'If you’re the only account, you can export the data first. Afterwards the instance is empty.',
+  ],
+  [
+    'Die Admin-Rolle bleibt an dem einmal vergebenen Konto, auch wenn der Name sich ändert.',
+    'The admin role stays with the account it was given to, even if the name changes.',
+  ],
   ['Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser.', 'Stride now sends additional security information to the browser.'],
   ['Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.', 'Stride now slows down too many requests in a short time and protects sign-up better.'],
   ['Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.', 'If you host Stride yourself, you can now allow signing in with Google.'],

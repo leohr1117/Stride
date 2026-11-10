@@ -25,8 +25,10 @@ import {
   benenneBenutzer,
   benutzerPasswortStimmt,
   ersetzeZugangspasswort,
+  istAdmin,
   legeBenutzerAn,
   listeKonten,
+  loescheBenutzer,
   oeffneSitzung,
   passwortStimmt,
   schliesseZugang,
@@ -34,6 +36,7 @@ import {
   setzeFehlversucheZurueck,
   setzeSperrenZurueck,
   sitzungGueltig,
+  setzeZugangsWarnung,
   uebernimmAltesPasswort,
   verwendeZugang,
   zugangStatus,
@@ -42,7 +45,25 @@ import {
 
 const ordner = mkdtempSync(path.join(tmpdir(), 'stride-zugang-'));
 const PASSWORT = 'geheimes-passwort';
+const warnungen: string[] = [];
 let datenbankNummer = 0;
+
+function zugangPfad(): string {
+  return path.join(ordner, `${datenbankNummer}.db`);
+}
+
+function starte(): void {
+  verwendeZugang(zugangPfad());
+}
+
+function adminZeile(): { benutzer_id: number | null; name_norm: string } | undefined {
+  const db = new DatabaseSync(zugangPfad());
+  const zeile = db.prepare('SELECT benutzer_id, name_norm FROM admin_konto WHERE id = 1').get() as
+    | { benutzer_id: number | null; name_norm: string }
+    | undefined;
+  db.close();
+  return zeile;
+}
 
 function schreibeAlteBenutzer(pfad: string, namen: string[]): void {
   const db = new DatabaseSync(pfad);
@@ -76,6 +97,10 @@ function hatNamensindex(pfad: string): boolean {
 }
 
 beforeEach(() => {
+  warnungen.length = 0;
+  setzeZugangsWarnung((text) => {
+    warnungen.push(text);
+  });
   delete process.env.STRIDE_ADMIN;
   delete process.env.ASCEND_ADMIN;
   delete process.env.STRIDE_REGISTRIERUNG;
@@ -87,11 +112,14 @@ beforeEach(() => {
   delete process.env.STRIDE_GOOGLE_CLIENT_SECRET;
   delete process.env.ASCEND_GOOGLE_CLIENT_SECRET;
   datenbankNummer += 1;
-  verwendeZugang(path.join(ordner, `${datenbankNummer}.db`));
+  starte();
   setzeSperrenZurueck();
 });
 
 afterAll(() => {
+  setzeZugangsWarnung((text) => {
+    console.warn(text);
+  });
   schliesseZugang();
 });
 
@@ -338,6 +366,7 @@ describe('admin', () => {
     process.env.STRIDE_ADMIN = 'Ada';
     const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
     const bob = legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'welten/2.db' });
+    starte();
     const token = oeffneSitzung(new Date(), bob.id);
     await mitRouten(async (app) => {
       const liste = await app.inject({ method: 'GET', url: '/api/zugang/admin/konten', headers: cookie(token) });
@@ -361,6 +390,7 @@ describe('admin', () => {
     process.env.STRIDE_ADMIN = 'ADA';
     const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
     const bob = legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/3.db' });
+    starte();
     const token = oeffneSitzung(new Date(), ada.id);
     expect(zugangStatus(token).admin).toBe(true);
     await mitRouten(async (app) => {
@@ -397,5 +427,84 @@ describe('admin', () => {
     });
     expect(listeKonten().find((konto) => konto.id === ada.id)?.benutzername).toBe('Ada');
     expect(listeKonten().find((konto) => konto.id === bob.id)?.benutzername).toBe('Berta');
+  });
+
+  it('bindet beim Start die ID und lässt einen anderen Namen daneben ohne Rechte', () => {
+    process.env.ASCEND_ADMIN = 'Ada';
+    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
+    starte();
+    expect(istAdmin(ada.id)).toBe(true);
+    expect(adminZeile()).toEqual({ benutzer_id: ada.id, name_norm: 'ada' });
+    benenneBenutzer(ada.id, 'Anders');
+    const neu = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/9.db' });
+    starte();
+    expect(istAdmin(ada.id)).toBe(true);
+    expect(istAdmin(neu.id)).toBe(false);
+    expect(adminZeile()?.benutzer_id).toBe(ada.id);
+    expect(warnungen).toEqual([]);
+  });
+
+  it('bindet denselben Namen nach dem Löschen nie wieder, auch bei wiedervergebener ID', () => {
+    process.env.STRIDE_ADMIN = 'Ada';
+    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
+    starte();
+    loescheBenutzer(ada.id);
+    expect(adminZeile()).toEqual({ benutzer_id: null, name_norm: 'ada' });
+    const db = new DatabaseSync(zugangPfad());
+    db.prepare(
+      `INSERT INTO benutzer (id, benutzername, name_norm, salt, hash, rolle, weltdatei, geaendert_am)
+       VALUES (?, 'Ada', 'ada', 'salt', 'hash', 'mitglied', 'app.db', '2026-01-01T00:00:00.000Z')`,
+    ).run(ada.id);
+    db.close();
+    starte();
+    expect(istAdmin(ada.id)).toBe(false);
+    expect(adminZeile()).toEqual({ benutzer_id: null, name_norm: 'ada' });
+    expect(warnungen).toEqual([]);
+  });
+
+  it('hängt nur einen anderen, beim Start vorhandenen Namen um', () => {
+    process.env.STRIDE_ADMIN = 'Ada';
+    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
+    const berta = legeBenutzerAn({ benutzername: 'Berta', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/8.db' });
+    starte();
+    loescheBenutzer(ada.id);
+    process.env.STRIDE_ADMIN = 'Berta';
+    starte();
+    expect(istAdmin(berta.id)).toBe(true);
+    expect(adminZeile()).toEqual({ benutzer_id: berta.id, name_norm: 'berta' });
+    expect(warnungen).toEqual([]);
+  });
+
+  it('warnt ohne Konto und bindet eine spätere Registrierung nicht von selbst', () => {
+    process.env.STRIDE_ADMIN = 'Ada';
+    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
+    starte();
+    loescheBenutzer(ada.id);
+    process.env.STRIDE_ADMIN = 'Berta';
+    starte();
+    expect(adminZeile()).toEqual({ benutzer_id: null, name_norm: 'ada' });
+    expect(warnungen).toEqual([
+      'Admin-Konto nicht gebunden: zum Namen „berta“ gibt es kein Konto. Es wird auch später nicht automatisch gebunden.',
+    ]);
+    expect(warnungen[0]).not.toContain('STRIDE');
+    expect(warnungen[0]).not.toContain('ASCEND');
+    const berta = legeBenutzerAn({ benutzername: 'Berta', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/8.db' });
+    expect(istAdmin(berta.id)).toBe(false);
+    expect(adminZeile()?.benutzer_id).toBeNull();
+    starte();
+    expect(istAdmin(berta.id)).toBe(true);
+    expect(adminZeile()).toEqual({ benutzer_id: berta.id, name_norm: 'berta' });
+  });
+
+  it('versucht das erste Binden beim nächsten Start erneut, ohne zu warnen', () => {
+    process.env.STRIDE_ADMIN = 'Ada';
+    starte();
+    expect(adminZeile()).toBeUndefined();
+    expect(warnungen).toEqual([]);
+    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    expect(istAdmin(ada.id)).toBe(false);
+    starte();
+    expect(istAdmin(ada.id)).toBe(true);
+    expect(warnungen).toEqual([]);
   });
 });

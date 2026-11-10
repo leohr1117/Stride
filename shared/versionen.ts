@@ -17,6 +17,23 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.3',
+    seiten: 'Mehr, Anmeldung',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.',
+          'Bist du das einzige Konto, kannst du die Daten vorher exportieren. Danach ist die Instanz leer.',
+        ],
+      },
+      {
+        titel: 'Geändert',
+        punkte: ['Die Admin-Rolle bleibt an dem einmal vergebenen Konto, auch wenn der Name sich ändert.'],
+      },
+    ],
+  },
+  {
     version: '4.1.2',
     seiten: 'Alle',
     abschnitte: [

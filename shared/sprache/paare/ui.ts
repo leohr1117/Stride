@@ -1,5 +1,22 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Konto löschen', 'Delete account'],
+  ['Konto löschen?', 'Delete account?'],
+  [
+    'Alle Daten dieses Kontos werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.',
+    'All data in this account will be permanently deleted. This can’t be undone.',
+  ],
+  [
+    'Du bist das einzige Konto. Danach hat diese Stride-Instanz kein Konto mehr; wer sie als Nächstes öffnet, legt ein neues Inhaber-Konto an.',
+    'You’re the only account. Afterwards this Stride instance has no accounts; whoever opens it next creates a new owner account.',
+  ],
+  ['Gib zur Bestätigung dein Passwort ein.', 'Enter your password to confirm.'],
+  ['Endgültig löschen', 'Delete permanently'],
+  ['Konto gelöscht.', 'Account deleted.'],
+  [
+    'Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.',
+    'Afterwards this Stride instance has no admin until the operator appoints a new one.',
+  ],
   ['Über Google anmelden', 'Sign in with Google'],
   ['oder', 'or'],
   [

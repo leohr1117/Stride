@@ -1,5 +1,18 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Konto löschen": "アカウントを削除",
+  "Konto löschen?": "アカウントを削除しますか？",
+  "Alle Daten dieses Kontos werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.": "このアカウントのすべてのデータが完全に削除されます。元に戻すことはできません。",
+  "Du bist das einzige Konto. Danach hat diese Stride-Instanz kein Konto mehr; wer sie als Nächstes öffnet, legt ein neues Inhaber-Konto an.": "このアカウントが唯一です。その後、この Stride インスタンスにアカウントはなくなります。次に開いた人が新しい所有者アカウントを作ります。",
+  "Gib zur Bestätigung dein Passwort ein.": "確認のため、パスワードを入力してください。",
+  "Endgültig löschen": "完全に削除",
+  "Konto gelöscht.": "アカウントを削除しました。",
+  "Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.": "その後、運営者が新しい管理者を決めるまで、この Stride インスタンスに管理者はいません。",
+  "Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.": "所有者が自分ひとりです。他のアカウントがある間は、自分のアカウントを削除できません。",
+  "Passwort darf nicht leer sein.": "パスワードは空にできません。",
+  "Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.": "自分のアカウントを完全に削除できるようになりました。そのアカウントのすべてのデータも削除されます。",
+  "Bist du das einzige Konto, kannst du die Daten vorher exportieren. Danach ist die Instanz leer.": "唯一のアカウントなら、先にデータを書き出せます。その後、インスタンスは空になります。",
+  "Die Admin-Rolle bleibt an dem einmal vergebenen Konto, auch wenn der Name sich ändert.": "管理者の役割は、一度割り当てたアカウントに残ります。名前が変わっても同じです。",
   "Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser.": "Strideはブラウザに追加のセキュリティ情報を送るようになりました。",
   "Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.": "Strideは短時間の過剰なリクエストを抑え、登録をより確実に守るようになりました。",
   "Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.": "Strideを自分で運用している場合、Googleでのログインを許可できるようになりました。",

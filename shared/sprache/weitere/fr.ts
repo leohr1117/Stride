@@ -1,5 +1,18 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Konto löschen": "Supprimer le compte",
+  "Konto löschen?": "Supprimer le compte ?",
+  "Alle Daten dieses Kontos werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.": "Toutes les données de ce compte sont supprimées définitivement. C'est irréversible.",
+  "Du bist das einzige Konto. Danach hat diese Stride-Instanz kein Konto mehr; wer sie als Nächstes öffnet, legt ein neues Inhaber-Konto an.": "Tu es le seul compte. Ensuite, cette instance de Stride n'a plus de compte ; la prochaine personne qui l'ouvre crée un nouveau compte titulaire.",
+  "Gib zur Bestätigung dein Passwort ein.": "Saisis ton mot de passe pour confirmer.",
+  "Endgültig löschen": "Supprimer définitivement",
+  "Konto gelöscht.": "Compte supprimé.",
+  "Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.": "Ensuite, cette instance de Stride n'a pas d'administrateur tant que l'opérateur n'en désigne pas un nouveau.",
+  "Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.": "Tu es le seul titulaire. Tant qu'il existe d'autres comptes, tu ne peux pas supprimer le tien.",
+  "Passwort darf nicht leer sein.": "Le mot de passe ne peut pas être vide.",
+  "Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.": "Tu peux maintenant supprimer définitivement ton compte. Toutes les données de ce compte sont alors retirées.",
+  "Bist du das einzige Konto, kannst du die Daten vorher exportieren. Danach ist die Instanz leer.": "Si tu es le seul compte, tu peux d'abord exporter les données. Ensuite, l'instance est vide.",
+  "Die Admin-Rolle bleibt an dem einmal vergebenen Konto, auch wenn der Name sich ändert.": "Le rôle d'administrateur reste sur le compte auquel il a été donné, même si le nom change.",
   "Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser.": "Stride envoie désormais des informations de sécurité supplémentaires au navigateur.",
   "Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.": "Stride freine désormais les requêtes trop nombreuses en peu de temps et protège mieux l'inscription.",
   "Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.": "Si vous hébergez Stride vous-même, vous pouvez désormais autoriser la connexion avec Google.",

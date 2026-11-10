@@ -621,3 +621,7 @@ export const passwortAenderungSchema = z.object({
   bisher: z.string().min(1, 'Das bisherige Passwort fehlt.'),
   neu: passwortText,
 });
+
+export const kontoLoeschenSchema = z.object({
+  passwort: z.string().min(1, 'Passwort darf nicht leer sein.'),
+});

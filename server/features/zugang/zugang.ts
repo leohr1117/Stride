@@ -38,6 +38,17 @@ const sperren = new Map<string, Sperre>();
 let geoffnet: DatabaseSync | null = null;
 let zugangDatei = KONFIG.zugangPfad;
 
+type ZugangsWarnung = (text: string) => void;
+
+let warne: ZugangsWarnung = (text) => {
+  console.warn(text);
+};
+
+/** Dieselbe Warnung wie das Start-Log. Der Server setzt sie auf seinen Logger. */
+export function setzeZugangsWarnung(fn: ZugangsWarnung): void {
+  warne = fn;
+}
+
 function oeffne(pfad: string): DatabaseSync {
   sperreEchteDatenbankImTest(pfad);
   if (pfad !== ':memory:') {
@@ -73,6 +84,7 @@ function oeffne(pfad: string): DatabaseSync {
   }
   sichereNamensindex(datenbank);
   migriereGoogle(datenbank);
+  bindeAdminEinmal(datenbank);
   return datenbank;
 }
 
@@ -272,13 +284,72 @@ function nameNorm(benutzername: string): string {
   return benutzername.trim().toLocaleLowerCase('de-DE');
 }
 
-/** Admin ist der Benutzername aus STRIDE_ADMIN (Ersatz: ASCEND_ADMIN). Keine Rolle, kein Passwort im Code. */
+/** Sperrt nur die Selbst-Registrierung des Namens aus der Umgebung. Vergibt keine Rechte. */
 export function istAdminName(benutzername: string | null | undefined): boolean {
-  const erwartet = (strideVariable('ADMIN') ?? '').trim();
-  if (erwartet.length === 0 || !benutzername) {
+  const erwartet = adminNameNorm();
+  if (!erwartet || !benutzername) {
     return false;
   }
-  return nameNorm(erwartet) === nameNorm(benutzername);
+  return erwartet === nameNorm(benutzername);
+}
+
+function adminNameNorm(): string | null {
+  const roh = (strideVariable('ADMIN') ?? '').trim();
+  return roh.length === 0 ? null : nameNorm(roh);
+}
+
+function kontoIdZuName(db: DatabaseSync, name: string): number | null {
+  const zeile = db.prepare('SELECT id FROM benutzer WHERE name_norm = ?').get(name) as { id: number } | undefined;
+  return zeile?.id ?? null;
+}
+
+/** Bindet den Admin einmal an die Konto-ID. Ein späterer Aufruf hängt nur nach den festen Regeln um. */
+function bindeAdminEinmal(db: DatabaseSync): void {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS admin_konto (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      benutzer_id INTEGER,
+      name_norm TEXT NOT NULL
+    );
+  `);
+  const zeile = db.prepare('SELECT benutzer_id, name_norm FROM admin_konto WHERE id = 1').get() as
+    | { benutzer_id: number | null; name_norm: string }
+    | undefined;
+  const name = adminNameNorm();
+  if (!zeile) {
+    if (!name) {
+      return;
+    }
+    const id = kontoIdZuName(db, name);
+    if (id === null) {
+      return;
+    }
+    db.prepare('INSERT INTO admin_konto (id, benutzer_id, name_norm) VALUES (1, ?, ?)').run(id, name);
+    return;
+  }
+  const gebunden = zeile.benutzer_id;
+  if (gebunden !== null && db.prepare('SELECT id FROM benutzer WHERE id = ?').get(gebunden) !== undefined) {
+    return;
+  }
+  if (!name || name === zeile.name_norm) {
+    return;
+  }
+  const id = kontoIdZuName(db, name);
+  if (id === null) {
+    warne(
+      `Admin-Konto nicht gebunden: zum Namen „${name}“ gibt es kein Konto. Es wird auch später nicht automatisch gebunden.`,
+    );
+    return;
+  }
+  db.prepare('UPDATE admin_konto SET benutzer_id = ?, name_norm = ? WHERE id = 1').run(id, name);
+}
+
+/** Wahr nur, wenn die gespeicherte Admin-ID dieses Konto ist. */
+export function istAdmin(id: number | null | undefined): boolean {
+  if (id === null || id === undefined) {
+    return false;
+  }
+  return datenbank().prepare('SELECT 1 AS da FROM admin_konto WHERE id = 1 AND benutzer_id = ?').get(id) !== undefined;
 }
 
 function nameVergeben(benutzername: string, ausserId?: number): boolean {
@@ -383,6 +454,7 @@ export function loescheBenutzer(id: number): { weltdatei: string; rolle: Rolle }
   try {
     db.prepare('DELETE FROM sitzungen WHERE benutzer_id = ?').run(id);
     entferneGoogle(db, id);
+    db.prepare('UPDATE admin_konto SET benutzer_id = NULL WHERE benutzer_id = ?').run(id);
     db.prepare('DELETE FROM benutzer WHERE id = ?').run(id);
     db.exec('COMMIT');
   } catch (fehler) {
@@ -581,7 +653,7 @@ export function zugangStatus(token: string | undefined, jetzt = new Date(), schl
       modus: 'bereit',
       benutzername: benutzer.benutzername,
       rolle: benutzer.rolle,
-      admin: istAdminName(benutzer.benutzername),
+      admin: istAdmin(benutzer.id),
       registrierung,
       ...google,
     };

@@ -1,5 +1,16 @@
 # Änderungsprotokoll
 
+## 4.1.3
+
+### Hinzugefügt
+
+- Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.
+- Bist du das einzige Konto, kannst du die Daten vorher exportieren. Danach ist die Instanz leer.
+
+### Geändert
+
+- Die Admin-Rolle bleibt an dem einmal vergebenen Konto, auch wenn der Name sich ändert.
+
 ## 4.1.2
 
 ### Geändert

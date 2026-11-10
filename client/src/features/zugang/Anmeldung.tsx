@@ -1,3 +1,5 @@
+import { KONTO_GELOESCHT_SCHLUESSEL } from '../mehr/KontoLoeschen.tsx';
+import { leseSitzung, merkeSitzung } from '../../speicher.ts';
 import { feldLeer, tx } from '../../text.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react';
@@ -265,7 +267,16 @@ export function ZugangTor({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<ZugangStatus | null>(null);
   const [fehler, setFehler] = useState<unknown>(null);
   const [kontoOffen, setKontoOffen] = useState(false);
+  const [kontoGeloescht, setKontoGeloescht] = useState(false);
   const rueckkehr = useGoogleRueckkehr(status !== null && status.modus !== 'bereit');
+
+  const nimmGeloescht = useCallback(() => {
+    if (!leseSitzung(KONTO_GELOESCHT_SCHLUESSEL)) {
+      return;
+    }
+    merkeSitzung(KONTO_GELOESCHT_SCHLUESSEL, false);
+    setKontoGeloescht(true);
+  }, []);
 
   const lade = useCallback(async () => {
     try {
@@ -277,8 +288,9 @@ export function ZugangTor({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    nimmGeloescht();
     void lade();
-  }, [lade]);
+  }, [lade, nimmGeloescht]);
 
   useEffect(
     () =>
@@ -286,9 +298,10 @@ export function ZugangTor({ children }: { children: ReactNode }) {
         queryClient.clear();
         setStatus(null);
         setKontoOffen(false);
+        nimmGeloescht();
         void lade();
       }),
-    [queryClient, lade],
+    [queryClient, lade, nimmGeloescht],
   );
 
   if (!status && fehler) {
@@ -312,7 +325,8 @@ export function ZugangTor({ children }: { children: ReactNode }) {
   if (status.modus !== 'bereit') {
     const abgelaufen = rueckkehr.code === 'b' && !status.googleAnlage;
     const fallB = rueckkehr.code === 'b' && Boolean(status.googleAnlage) && status.registrierung && status.modus === 'anmelden';
-    const hinweis = googleHinweis(abgelaufen ? 'd' : rueckkehr.code);
+    const googleText = googleHinweis(abgelaufen ? 'd' : rueckkehr.code);
+    const hinweis = kontoGeloescht ? 'Konto gelöscht.' : googleText;
     if (status.modus === 'anmelden' && status.registrierung && (kontoOffen || fallB) && !abgelaufen) {
       return (
         <KontoErstellen

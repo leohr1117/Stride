@@ -3,9 +3,10 @@ import path from 'node:path';
 import type { Konto } from '../../../shared/api/index.ts';
 import { KONFIG } from '../../config.ts';
 import { mitWelt, schliesseWelt } from '../../db.ts';
-import { nichtGefunden, ungueltig } from '../../fehler.ts';
+import { AppFehler, nichtGefunden, ungueltig } from '../../fehler.ts';
 import { aendereEinstellungen } from '../einstellungen/einstellungen.ts';
-import { istAdminName, legeBenutzerAn, listeKonten, loescheBenutzer, loeseWeltdatei, setzeWeltdatei } from './zugang.ts';
+import { setzeProfilZurueck } from '../../services/profilZurueck.ts';
+import { istAdmin, legeBenutzerAn, listeKonten, loescheBenutzer, loeseWeltdatei, setzeWeltdatei } from './zugang.ts';
 
 const NEBEN_DATEIEN = ['', '-wal', '-shm', '-journal'];
 
@@ -18,7 +19,7 @@ function zeigeKonto(konto: { id: number; benutzername: string; rolle: Konto['rol
     id: konto.id,
     benutzername: konto.benutzername,
     rolle: konto.rolle,
-    admin: istAdminName(konto.benutzername),
+    admin: istAdmin(konto.id),
   };
 }
 
@@ -69,5 +70,48 @@ export function entferneKonto(id: number): void {
     throw ungueltig('Die Hauptwelt bleibt.');
   }
   entferneDatei(absolut);
+  loescheBenutzer(id);
+}
+
+let loeschabbruchEinmal = false;
+
+/** Der nächste Aufruf leert die Welt und bricht vor dem Löschen des Kontos ab. */
+export function setzeLoeschabbruchEinmal(an: boolean): void {
+  loeschabbruchEinmal = an;
+}
+
+function gleicheDatei(links: string, rechts: string): boolean {
+  return path.resolve(links) === path.resolve(rechts);
+}
+
+function raeumeWelt(relativ: string, einziges: boolean): void {
+  const eigene = loeseWeltdatei(relativ);
+  const haupt = loeseWeltdatei(hauptweltdatei());
+  const istHaupt = gleicheDatei(eigene, haupt) || gleicheDatei(eigene, KONFIG.datenbankPfad);
+  if (!istHaupt) {
+    entferneDatei(eigene);
+  }
+  if (einziges) {
+    mitWelt(haupt, () => {
+      setzeProfilZurueck();
+    });
+  }
+}
+
+export function loescheEigenesKonto(id: number): void {
+  const alle = listeKonten();
+  const konto = alle.find((eintrag) => eintrag.id === id);
+  if (!konto) {
+    throw nichtGefunden('Der Account');
+  }
+  const inhaber = alle.filter((eintrag) => eintrag.rolle === 'inhaber').length;
+  if (konto.rolle === 'inhaber' && alle.length > 1 && inhaber < 2) {
+    throw new AppFehler(409, 'Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.');
+  }
+  raeumeWelt(konto.weltdatei, alle.length === 1);
+  if (loeschabbruchEinmal) {
+    loeschabbruchEinmal = false;
+    throw new Error('Löschen abgebrochen');
+  }
   loescheBenutzer(id);
 }

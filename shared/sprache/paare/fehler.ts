@@ -1,5 +1,10 @@
 /** Fehlermeldungen, wortgenau wie der Server sie ausgibt. */
 export const PAARE = [
+  [
+    'Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.',
+    'You’re the only owner. While other accounts exist, you can’t delete yours.',
+  ],
+  ['Passwort darf nicht leer sein.', 'Password can’t be empty.'],
   ['Der Benutzername ist schon vergeben. Wähle einen anderen.', 'That username is already taken. Choose another one.'],
   ['Der Name darf höchstens 80 Zeichen haben.', 'The name can’t be longer than 80 characters.'],
   ['Das erste Ziel passt nicht zur Auswahl.', 'The first goal does not match the choice.'],

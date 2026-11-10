@@ -26,7 +26,7 @@ import { registrierePasswortAdresse } from './features/zugang/passwortAdresse.ts
 import { zugangRouten } from './features/zugang/routen.ts';
 import { rechneBossangriffeAb } from './features/bosse/bossangriffe.ts';
 import { schalteErfolgeFrei } from './features/erfolge/erfolge.ts';
-import { loeseWeltdatei, schliesseZugang, sitzungGueltig, weltdateiDerSitzung, weltenPfade } from './features/zugang/zugang.ts';
+import { loeseWeltdatei, schliesseZugang, setzeZugangsWarnung, sitzungGueltig, weltdateiDerSitzung, weltenPfade } from './features/zugang/zugang.ts';
 import { starteRegelmaessigenAbgleich } from './features/verbindungen/abgleich.ts';
 import { rechneZeitverfallAb } from './features/verfall/verfall.ts';
 import { DATUM_HINWEIS } from '../shared/spiel/datum.ts';
@@ -37,6 +37,9 @@ const API_PREFIX = '/api';
 const INTERNER_FEHLER = 500;
 
 const app = Fastify({ logger: { level: KONFIG.logLevel }, trustProxy: true });
+setzeZugangsWarnung((text) => {
+  app.log.warn(text);
+});
 
 registriereSicherheitsKoepfe(app);
 

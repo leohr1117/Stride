@@ -1,5 +1,18 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Konto löschen": "删除账户",
+  "Konto löschen?": "删除账户？",
+  "Alle Daten dieses Kontos werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.": "此账户的所有数据将被永久删除。此操作无法撤销。",
+  "Du bist das einzige Konto. Danach hat diese Stride-Instanz kein Konto mehr; wer sie als Nächstes öffnet, legt ein neues Inhaber-Konto an.": "你是唯一的账户。之后，这个 Stride 实例将没有任何账户；下一个打开它的人会创建新的所有者账户。",
+  "Gib zur Bestätigung dein Passwort ein.": "请输入密码以确认。",
+  "Endgültig löschen": "永久删除",
+  "Konto gelöscht.": "账户已删除。",
+  "Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.": "之后，这个 Stride 实例将没有管理员，直到运营者指定新的管理员。",
+  "Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.": "你是唯一的所有者。只要还有其他账户，你就不能删除自己的账户。",
+  "Passwort darf nicht leer sein.": "密码不能为空。",
+  "Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.": "现在可以永久删除自己的账户。该账户的所有数据会一并移除。",
+  "Bist du das einzige Konto, kannst du die Daten vorher exportieren. Danach ist die Instanz leer.": "如果你是唯一的账户，可以先导出数据。之后这个实例是空的。",
+  "Die Admin-Rolle bleibt an dem einmal vergebenen Konto, auch wenn der Name sich ändert.": "管理员身份会留在最初获得它的账户上，即使用户名改变。",
   "Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser.": "Stride 现在会向浏览器发送额外的安全信息。",
   "Stride bremst jetzt zu viele Anfragen in kurzer Zeit und schützt die Registrierung besser.": "Stride 现在会限制短时间内过多的请求，并更好地保护注册。",
   "Wer Stride selbst betreibt, kann jetzt die Anmeldung über Google erlauben.": "自行托管 Stride 时，现在可以允许使用 Google 登录。",

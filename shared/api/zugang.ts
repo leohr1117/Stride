@@ -6,7 +6,7 @@ export interface ZugangStatus {
   modus: ZugangModus;
   benutzername: string | null;
   rolle: Rolle | null;
-  /** Wahr nur, wenn der angemeldete Name STRIDE_ADMIN entspricht. */
+  /** Wahr nur für das einmal gebundene Admin-Konto. */
   admin: boolean;
   /** Wahr, wenn STRIDE_REGISTRIERUNG auf 1 steht. */
   registrierung: boolean;
@@ -24,7 +24,7 @@ export interface Konto {
   id: number;
   benutzername: string;
   rolle: Rolle;
-  /** Wahr, wenn der Benutzername der Admin aus der Umgebung ist. */
+  /** Wahr, wenn dieses Konto der gebundene Admin ist. */
   admin: boolean;
 }
 

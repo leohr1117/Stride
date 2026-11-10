@@ -10,6 +10,7 @@ import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { DichteZeilen, Liste, Zeile } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { tx } from '../../text.ts';
+import { KontoLoeschen } from './KontoLoeschen.tsx';
 import { GoogleKonto } from './GoogleKonto.tsx';
 import { AccountsBereich } from './MehrAccounts.tsx';
 import { FokusSeite, PasswortSeite } from './MehrProfilZugang.tsx';
@@ -141,6 +142,12 @@ function ProfilListe() {
               <Zeile titel={tx("Abmelden")} gefahr pfeil={false} onKlick={() => void abmelden()} />
             </Liste>
           </section>
+          <KontoLoeschen
+            benutzername={zugang?.benutzername ?? null}
+            admin={admin}
+            inhaber={inhaber}
+            konten={konten}
+          />
           <Fehlermeldung fehler={abmeldeFehler} />
         </>
         </DichteZeilen>

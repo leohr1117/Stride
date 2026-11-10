@@ -61,7 +61,7 @@ Die Daten liegen in `data/` (`app.db` und `zugang.db`). Liegt `app.db` schon vor
 | `STRIDE_ZUGANG_PFAD` | Pfad der Zugangsdatenbank, Standard `data/zugang.db`. Dieser Name gilt vor dem alten Namen `ZUGANG_PFAD`. |
 | `LOG_LEVEL` | Log-Stufe, Standard `warn` |
 | `STRIDE_CLIENT_DIR` | Ordner, aus dem der laufende Server die Oberfläche ausliefert. Standard ist `client/dist-live`. Ist der Ordner beim ersten Start noch leer, wird `client/dist` hineinkopiert. `npm run build` und die Browser-Tests schreiben und lesen weiter `client/dist`. Der alte Name `ASCEND_CLIENT_DIR` wird weiter gelesen. |
-| `STRIDE_ADMIN` | Benutzername des Admin-Kontos (der alte Name `ASCEND_ADMIN` wird weiter gelesen) |
+| `STRIDE_ADMIN` | Admin wird einmal vergeben: Das Konto muss schon existieren, die Variable steht auf diesen Namen, nach dem Neustart zählt die gespeicherte Konto-ID. Ein späteres Konto mit demselben Namen ist kein Admin. Die Selbst-Registrierung dieses Namens bleibt gesperrt. `ASCEND_ADMIN` wird weiter gelesen. Fehlt das Konto beim ersten Start, wird nichts gespeichert und der nächste Start versucht es erneut. Nach dem Löschen des Admin-Kontos bindet beim nächsten Start nur ein anderer Name, und nur wenn dieses Konto schon existiert. Sonst warnt das Log, und eine spätere Registrierung bindet nicht. Derselbe Name bindet nie wieder. |
 | `STRIDE_REGISTRIERUNG` | `1` erlaubt neuen Nutzern, selbst ein Konto zu erstellen. Standard aus. |
 | `STRIDE_GOOGLE` | `1` erlaubt die Anmeldung über Google. Standard aus. Wirkt nur mit Client-ID und Secret. |
 | `STRIDE_GOOGLE_CLIENT_ID` | Client-ID der Google-Cloud-Anmeldung. |

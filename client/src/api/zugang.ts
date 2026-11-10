@@ -14,6 +14,7 @@ export const zugangApi = {
   erstelleKonto: (daten: { benutzername: string; passwort: string; profilname?: string }) =>
     anfrage<Konto>('/zugang/konten', 'POST', daten),
   loescheKonto: (id: number) => anfrage<void>(`/zugang/konten/${id}`, 'DELETE'),
+  loescheEigenesKonto: (passwort: string) => anfrage<void>('/zugang/konto/loeschen', 'POST', { passwort }),
   adminKonten: () => anfrage<AdminKonto[]>('/zugang/admin/konten'),
   aendereAdminBenutzername: (id: number, benutzername: string) =>
     anfrage<AdminKonto>(`/zugang/admin/konten/${id}/benutzername`, 'POST', { benutzername }),
