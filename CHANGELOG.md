@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.11
+
+### Geändert
+
+- Vorbilder zeigt nur noch Personen, die seit mindestens zehn Jahren verstorben sind.
+
 ## 4.1.10
 
 ### Verbessert

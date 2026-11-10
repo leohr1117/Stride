@@ -1,9 +1,9 @@
 import { ATTRIBUT_KENNUNGEN, KOENNEN_KENNUNGEN, type AttributKennung } from '../../spiel/begriffe.ts';
 import { bestimmeKlasse } from '../../spiel/klassen.ts';
 import { berechneLevel, LEVEL_KURVEN, levelAusXpStetig, xpBisLevel, xpBisLevelStetig, type LevelKurve } from '../../spiel/level.ts';
-import { BEISPIEL_SCHLUESSEL, PERSONEN, RICHTUNGEN, type PersonRoh, type Richtung } from './vorbildKatalog.ts';
+import { BEISPIEL_SCHLUESSEL, PERSONEN, RICHTUNGEN, richtungenMitPersonen, type PersonRoh, type Richtung } from './vorbildKatalog.ts';
 
-export { BEISPIEL_SCHLUESSEL, RICHTUNGEN };
+export { BEISPIEL_SCHLUESSEL, RICHTUNGEN, richtungenMitPersonen };
 export type { Richtung };
 
 export type KennungsLevel = Record<AttributKennung, number>;
@@ -350,7 +350,7 @@ export function findeVorbild(schluessel: string): Vorbild | undefined {
   return VORBILDER.find((vorbild) => vorbild.schluessel === schluessel);
 }
 
-/** Durchschnittsmensch und je Richtung ein bis zwei bekannte Beispiele. */
+/** Durchschnittsmensch und die Beispiele je Richtung. Eine Richtung ohne Person fehlt. */
 export function beispielVorbilder(): Vorbild[] {
   const massstab = findeVorbild(DURCHSCHNITT);
   const beispiele = RICHTUNGEN.flatMap((richtung) =>

@@ -76,9 +76,9 @@ describe('eigenesProfil', () => {
   });
 
   it('ändert die Ähnlichkeit nicht durch archivierte Werte', () => {
-    const ronaldo = findeVorbild('ronaldo');
-    if (!ronaldo) {
-      throw new Error('Ronaldo fehlt');
+    const ali = findeVorbild('ali');
+    if (!ali) {
+      throw new Error('Ali fehlt');
     }
     const sichtbar: AttributKennung[] = ['koerper', 'geist', 'disziplin', 'intellekt', 'soziales'];
     const attribute = ATTRIBUT_KENNUNGEN.map((kennung, index) => {
@@ -89,14 +89,14 @@ describe('eigenesProfil', () => {
         kennung,
         typ,
         archiviert: !offen,
-        stufe: offen ? ronaldo.profil[kennung] : 1,
+        stufe: offen ? ali.profil[kennung] : 1,
       });
     });
     const profil = eigenesProfil(attribute);
     expect(profil.kennungen).toEqual(sichtbar);
-    expect(aehnlichkeit(profil.level, ronaldo.profil, ronaldo.unsicher)).toBe(1);
+    expect(aehnlichkeit(profil.level, ali.profil, ali.unsicher)).toBe(1);
     const mitArchiv: Partial<KennungsLevel> = { ...profil.level, ressourcen: 1 };
-    expect(aehnlichkeit(mitArchiv, ronaldo.profil, ronaldo.unsicher) ?? 1).toBeLessThan(1);
+    expect(aehnlichkeit(mitArchiv, ali.profil, ali.unsicher) ?? 1).toBeLessThan(1);
   });
 });
 
@@ -107,5 +107,8 @@ describe('Vorbild-Filter', () => {
     expect(auswahlAus('unbekannt', 'Wettkampf')).toBe('alle');
     expect(auswahlAus(null, null)).toBe('alle');
     expect(auswahlAus(null, 'erfunden')).toBe('alle');
+    expect(auswahlAus('Strategie', 'Wettkampf')).toBe('alle');
+    expect(auswahlAus(null, 'Esports/Gaming')).toBe('alle');
+    expect(auswahlAus('Finanzen/Investing/Crypto', null)).toBe('alle');
   });
 });

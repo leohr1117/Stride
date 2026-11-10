@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Vorbilder zeigt nur noch Personen, die seit mindestens zehn Jahren verstorben sind.',
+    'Role models now only shows people who have been dead for at least ten years.',
+  ],
+  [
     'Scheitert eine Verbindung, steht der Grund mit einer Lösung an der Zeile. Trennen und Entfernen sagen vorher, was bleibt.',
     'When a connection fails, the reason and a fix show on the row. Disconnect and Remove say beforehand what stays.',
   ],

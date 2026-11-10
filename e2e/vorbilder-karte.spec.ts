@@ -61,15 +61,17 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   const richtungen = [
     'Körper',
     'Wettkampf',
-    'Strategie',
-    'Esports/Gaming',
     'Kunst',
-    'Content/Creator',
     'Innovation/Technik',
-    'Business/Unternehmertum',
-    'Finanzen/Investing/Crypto',
     'Wissenschaft/Genies',
     'Führung/Wandel',
+  ];
+  const ohnePerson = [
+    'Strategie',
+    'Esports/Gaming',
+    'Content/Creator',
+    'Business/Unternehmertum',
+    'Finanzen/Investing/Crypto',
   ];
   const kaesten: { x: number; y: number; width: number; height: number }[] = [];
   for (const name of ['Alle', ...richtungen]) {
@@ -82,6 +84,9 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
     if (kasten) {
       kaesten.push(kasten);
     }
+  }
+  for (const name of ohnePerson) {
+    await expect(page.getByRole('button', { name: new RegExp(`^${name}`) })).toHaveCount(0);
   }
   const rolle = page.locator('div.overflow-x-auto').filter({ has: page.getByRole('button', { name: /^Alle/ }) });
   const rollKasten = await rolle.boundingBox();
@@ -171,9 +176,9 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   await wettkampf.click();
   await expect(wettkampf.locator('svg')).toHaveCount(1);
   await expect(alle.locator('svg')).toHaveCount(0);
-  await expect(page.getByRole('link', { name: /Elon Musk/ })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: /Cristiano Ronaldo/ })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Lionel Messi/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Wolfgang Amadeus Mozart/ })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Muhammad Ali/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Muhammad Ali/ })).toHaveCount(1);
   const aehnlich = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Ähnlich', exact: true }) });
   const ersteZeile = aehnlich.locator('[data-zeile]').first();
   await expect(ersteZeile).toContainText(`${chipZahl} %`);
@@ -181,23 +186,24 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   expect(zeileLaeuftUeber).toBe(false);
   await ohneSeitlichenUeberlauf(page);
 
-  await page.getByRole('button', { name: /^Content/ }).click();
-  await expect(page.getByRole('link', { name: /MrBeast/ })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Khaby Lame/ })).toBeVisible();
+  await page.getByRole('button', { name: /^Kunst/ }).click();
+  await expect(page.getByRole('link', { name: /Wolfgang Amadeus Mozart/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Wolfgang Amadeus Mozart/ })).toHaveCount(1);
+  await expect(page.getByRole('link', { name: /Muhammad Ali/ })).toHaveCount(0);
 
   await page.getByRole('button', { name: /^Wissenschaft/ }).click();
   await expect(page.getByRole('link', { name: /Albert Einstein/ })).toBeVisible();
   await expect(page.getByRole('link', { name: /Leonardo da Vinci/ })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Cristiano Ronaldo/ })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Muhammad Ali/ })).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
 
   await page.getByRole('button', { name: /^Führung/ }).click();
   await expect(page.getByRole('link', { name: /Nelson Mandela/ })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Barack Obama/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Mahatma Gandhi/ })).toBeVisible();
 
   await page.getByRole('button', { name: /^Alle/ }).click();
-  await page.getByRole('link', { name: /Cristiano Ronaldo/ }).click();
-  await expect(page.getByRole('heading', { name: 'Cristiano Ronaldo', exact: true })).toBeVisible();
+  await page.getByRole('link', { name: /Muhammad Ali/ }).click();
+  await expect(page.getByRole('heading', { name: 'Muhammad Ali', exact: true })).toBeVisible();
   await expect(page.locator('.recharts-wrapper').first()).toBeVisible();
   const prozentZeile = page.locator('[data-aehnlichkeit]');
   await expect(prozentZeile).toContainText(/%\s*ähnlich/);
@@ -226,18 +232,25 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   await page.goto('/handbuch');
   const liste = page.locator('#vorbilder');
   await expect(liste.getByRole('columnheader')).toHaveCount(0);
-  const zeile = liste.locator('.zeile').filter({ hasText: 'Cristiano Ronaldo' });
+  const zeile = liste.locator('.zeile').filter({ hasText: 'Muhammad Ali' });
   await expect(zeile.locator('.zeile-neben')).toHaveText('Wettkampf');
   await expect(zeile.locator('.zeile-wert')).toContainText('Lvl');
   const nebenTexte = await liste.locator('.zeile-neben').allTextContents();
-  expect(nebenTexte.filter((text) => text === 'Körper')).toHaveLength(2);
+  expect(nebenTexte.filter((text) => text === 'Körper')).toHaveLength(1);
+  expect(nebenTexte.filter((text) => text === 'Wettkampf')).toHaveLength(1);
+  expect(nebenTexte.filter((text) => text === 'Kunst')).toHaveLength(1);
+  expect(nebenTexte.filter((text) => text === 'Innovation/Technik')).toHaveLength(1);
   expect(nebenTexte.filter((text) => text === 'Wissenschaft/Genies')).toHaveLength(2);
-  expect(nebenTexte.filter((text) => text === 'Finanzen/Investing/Crypto')).toHaveLength(1);
   expect(nebenTexte.filter((text) => text === 'Führung/Wandel')).toHaveLength(2);
+  expect(nebenTexte.filter((text) => text === 'Finanzen/Investing/Crypto')).toHaveLength(0);
+  expect(nebenTexte.filter((text) => text === 'Strategie')).toHaveLength(0);
+  expect(nebenTexte.filter((text) => text === 'Esports/Gaming')).toHaveLength(0);
+  expect(nebenTexte.filter((text) => text === 'Content/Creator')).toHaveLength(0);
+  expect(nebenTexte.filter((text) => text === 'Business/Unternehmertum')).toHaveLength(0);
   await expect(liste.locator('.zeile-titel', { hasText: 'Albert Einstein' })).toBeVisible();
   await expect(liste.getByText('Graham Stephan', { exact: true })).toHaveCount(0);
   await expect(liste.getByText('donk', { exact: true })).toHaveCount(0);
-  const langeRichtung = liste.locator('.zeile').filter({ hasText: 'Warren Buffett' }).locator('.zeile-neben');
+  const langeRichtung = liste.locator('.zeile').filter({ hasText: 'Albert Einstein' }).locator('.zeile-neben');
   const langGequetscht = await langeRichtung.evaluate((element) => element.scrollWidth > element.clientWidth + 1);
   expect(langGequetscht).toBe(false);
   await ohneSeitlichenUeberlauf(page);

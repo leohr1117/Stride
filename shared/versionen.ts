@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.11',
+    seiten: 'Vorbilder, Handbuch',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Vorbilder zeigt nur noch Personen, die seit mindestens zehn Jahren verstorben sind.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.10',
     seiten: 'Mehr',
     abschnitte: [

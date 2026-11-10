@@ -62,6 +62,7 @@ async function waehleErsteTaetigkeit(seite: Page): Promise<void> {
 test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert werden', async ({ page }, info) => {
   const name = `E2E ${info.project.name}`;
   const server = await icsServer(kalenderText(testJetzt(), name));
+  let kalenderId: number | null = null;
   try {
     await anmelden(page);
     await oeffneDialog(page);
@@ -121,7 +122,20 @@ test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert w
     await ohneSeitlichenUeberlauf(page);
 
     await waehleErsteTaetigkeit(page);
+    const gespeichert = page.waitForResponse((antwort) => {
+      if (antwort.request().method() !== 'POST') {
+        return false;
+      }
+      const pfad = new URL(antwort.url()).pathname.replace(/\/$/, '');
+      return pfad === '/api/verbindungen/kalender';
+    });
     await dialog.getByRole('button', { name: 'Speichern' }).click();
+    const antwort = await gespeichert;
+    const koerper = (await antwort.json()) as { id?: number };
+    if (!antwort.ok() || typeof koerper.id !== 'number') {
+      throw new Error(`Kalender ${name} fehlt.`);
+    }
+    kalenderId = koerper.id;
     await expect(dialog).toBeHidden();
     const zeile = page.getByRole('button', { name: `Termine in ${name}` });
     await expect(zeile).toBeVisible();
@@ -137,6 +151,9 @@ test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert w
     await expect(bearbeiten.getByRole('button', { name: `Aktionen für ${name}`, exact: true })).toBeVisible();
     await bearbeiten.getByRole('button', { name: 'Schließen' }).click();
   } finally {
+    if (kalenderId !== null) {
+      await page.request.delete(`/api/verbindungen/kalender/${kalenderId}`).catch(() => undefined);
+    }
     await server.stop();
   }
 });

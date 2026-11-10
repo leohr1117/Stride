@@ -48,7 +48,7 @@ const SEITEN: { name: string; pfad: string }[] = [
   { name: 'Bereiche', pfad: '/mehr/funktionen' },
   { name: 'Benachrichtigungen', pfad: '/mehr/benachrichtigungen' },
   { name: 'Daten', pfad: '/mehr/daten' },
-  { name: 'Vorbild', pfad: '/vorbilder/ronaldo' },
+  { name: 'Vorbild', pfad: '/vorbilder/einstein' },
 ];
 
 test.describe.configure({ timeout: 180_000 });

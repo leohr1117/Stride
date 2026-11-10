@@ -70,24 +70,24 @@ describe('laengsteKette', () => {
 });
 
 describe('Vorbilder', () => {
-  const musk = VORBILDER.find((vorbild) => vorbild.schluessel === 'musk');
+  const king = VORBILDER.find((vorbild) => vorbild.schluessel === 'king');
 
   it('leiten die Klasse aus der Schätzung ab', () => {
-    expect(musk && klasseAus(musk.schaetzung)).toBe('Disziplinierter Abenteurer');
-    expect(musk && musk.level).toBeLessThan(10000);
+    expect(king && klasseAus(king.schaetzung)).toBe('Charismatischer Abenteurer');
+    expect(king && king.level).toBeLessThan(10000);
   });
 
   it('vergleicht die Form und bleibt bei gleicher Form eins', () => {
-    if (!musk) {
+    if (!king) {
       return;
     }
-    expect(aehnlichkeit(musk.profil, musk.profil, musk.unsicher)).toBe(1);
+    expect(aehnlichkeit(king.profil, king.profil, king.unsicher)).toBe(1);
     const flach = { koerper: 5, geist: 5, disziplin: 5 };
-    const wert = aehnlichkeit(flach, musk.profil);
+    const wert = aehnlichkeit(flach, king.profil);
     expect(wert).not.toBeNull();
     expect(wert ?? 0).toBeGreaterThan(0.4);
-    expect(aehnlichkeit({ koerper: 3, geist: 3 }, musk.profil)).not.toBeNull();
-    const { koerper, geist, disziplin, intellekt, kreativitaet } = musk.schaetzung;
+    expect(aehnlichkeit({ koerper: 3, geist: 3 }, king.profil)).not.toBeNull();
+    const { koerper, geist, disziplin, intellekt, kreativitaet } = king.schaetzung;
     const verkleinert = {
       koerper: koerper / 10,
       geist: geist / 10,
@@ -95,8 +95,8 @@ describe('Vorbilder', () => {
       intellekt: intellekt / 10,
       kreativitaet: kreativitaet / 10,
     };
-    expect(aehnlichkeit(verkleinert, musk.schaetzung)).toBeCloseTo(1);
-    expect(aehnlichkeit(musk.schaetzung, musk.schaetzung)).toBe(1);
+    expect(aehnlichkeit(verkleinert, king.schaetzung)).toBeCloseTo(1);
+    expect(aehnlichkeit(king.schaetzung, king.schaetzung)).toBe(1);
   });
 });
 

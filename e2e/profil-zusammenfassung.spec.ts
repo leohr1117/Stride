@@ -581,14 +581,14 @@ test('Vorbilder sind eine Liste mit seitlichen Richtungen', async ({ page }, inf
   await ohneSeitlichenUeberlauf(page);
   await page.screenshot({ path: bild(info, 'vorbilder'), fullPage: true });
 
-  await page.getByRole('link', { name: 'Cristiano Ronaldo', exact: true }).click();
-  await expect(page).toHaveURL(/\/vorbilder\/ronaldo$/);
-  await expect(page.getByRole('heading', { name: 'Cristiano Ronaldo', exact: true })).toBeVisible();
+  await page.getByRole('link', { name: 'Muhammad Ali', exact: true }).click();
+  await expect(page).toHaveURL(/\/vorbilder\/ali$/);
+  await expect(page.getByRole('heading', { name: 'Muhammad Ali', exact: true })).toBeVisible();
   const kopf = page.locator('.vorbild-kopf');
   await expect(kopf).toBeVisible();
   await expect(kopf.locator('[data-vorbild-herkunft]')).toBeVisible();
   await expect(kopf.locator('[data-vorbild-stand]')).toContainText('Lvl');
-  await expect(kopf.getByText('Cristiano Ronaldo', { exact: true })).toHaveCount(0);
+  await expect(kopf.getByText('Muhammad Ali', { exact: true })).toHaveCount(0);
   await expect(page.locator('.profil-name')).toHaveCount(0);
   await expect(page.locator('main .karte')).toHaveCount(0);
   const vergleich = page.getByRole('heading', { name: 'Profil im Vergleich', exact: true });

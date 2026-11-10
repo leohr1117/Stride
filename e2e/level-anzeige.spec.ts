@@ -292,7 +292,59 @@ test('Levelring: Verlauf, Spitze und Glühen in den Ansichten', async ({ page },
     return daten;
   });
   const projekt = testInfo.project.name;
+  let eintragId: number | null = null;
   try {
+    const liesFortschritt = () => page.evaluate(async () => {
+      const antwort = await fetch('/api/uebersicht');
+      if (!antwort.ok) {
+        return null;
+      }
+      const daten = (await antwort.json()) as { level: { fortschritt: number } };
+      return daten.level.fortschritt;
+    });
+    let fortschritt = await liesFortschritt();
+    if (fortschritt === 0) {
+      eintragId = await page.evaluate(async () => {
+        const vorlagen = (await fetch('/api/vorlagen').then((antwort) => antwort.json())) as {
+          id: number;
+          archiviert: boolean;
+          projektId: number | null;
+          gewichte: { attributId: number }[];
+        }[];
+        const vorlage = vorlagen.find((eintrag) => !eintrag.archiviert && eintrag.gewichte.length > 0);
+        if (!vorlage) {
+          return null;
+        }
+        const antwort = await fetch('/api/eintraege', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            projektId: vorlage.projektId,
+            vorlageId: vorlage.id,
+            vorhaben: null,
+            abschluss: null,
+            erkenntnis: '',
+            stunden: 1,
+            notiz: '',
+            meilenstein: false,
+            faehigkeitId: null,
+            datum: null,
+          }),
+        });
+        if (!antwort.ok) {
+          return null;
+        }
+        const daten = (await antwort.json()) as { eintrag: { id: number } };
+        return daten.eintrag.id;
+      });
+      if (eintragId === null) {
+        throw new Error('Eintrag für den Levelring fehlt.');
+      }
+      fortschritt = await liesFortschritt();
+    }
+    if (fortschritt === null || fortschritt <= 0) {
+      throw new Error('Der Fortschritt liegt nicht über 0.');
+    }
     for (const ansicht of RING_ANSICHTEN) {
       const ok = await page.evaluate(async (koerper) => {
         const antwort = await fetch('/api/einstellungen', {
@@ -335,6 +387,9 @@ test('Levelring: Verlauf, Spitze und Glühen in den Ansichten', async ({ page },
       }
     }
   } finally {
+    if (eintragId !== null) {
+      await page.request.delete(`/api/eintraege/${eintragId}`).catch(() => undefined);
+    }
     const wieder = await page.evaluate(async (koerper) => {
       const antwort = await fetch('/api/einstellungen', {
         method: 'PATCH',

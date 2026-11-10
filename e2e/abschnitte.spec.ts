@@ -5,7 +5,7 @@ import { anmelden } from './helfer.ts';
 const SEITEN = [
   ['/chronik', 'verlauf', true],
   ['/vorbilder', 'vorbilder', true],
-  ['/vorbilder/ronaldo', 'vorbild', true],
+  ['/vorbilder/einstein', 'vorbild', true],
   ['/mehr/inhalte/verbindungen', 'verbindungen', false],
   ['/mehr/inhalte/verbindungen/todoist', 'verbindungen-todoist', true],
   ['/mehr/inhalte/verbindungen/kalender', 'verbindungen-kalender', true],

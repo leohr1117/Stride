@@ -11,7 +11,7 @@ import {
   aehnlichkeit,
   besteAehnlichkeit,
   DURCHSCHNITT,
-  RICHTUNGEN,
+  richtungenMitPersonen,
   VORBILDER,
   type Vorbild,
 } from '../../../../shared/features/vorbilder/index.ts';
@@ -141,7 +141,7 @@ export function VorbilderSeite() {
             prozent={besteAehnlichkeit(personen.map((eintrag) => eintrag.aehnlichkeit))}
             onClick={() => setzeAuswahl(ALLE)}
           />
-          {RICHTUNGEN.map((richtung) => {
+          {richtungenMitPersonen().map((richtung) => {
             const gruppe = personen.filter((eintrag) => eintrag.vorbild.richtung === richtung);
             return (
               <RichtungsChip

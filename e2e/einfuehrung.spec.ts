@@ -222,7 +222,7 @@ test('Weg A legt ein Projekt an und Fertig öffnet Heute', async ({ page }) => {
     return antwort.ok;
   });
   expect(vorbilderAn).toBe(true);
-  await page.goto('/vorbilder/kipchoge');
+  await page.goto('/vorbilder/einstein');
   await expect(page.getByRole('heading', { name: 'Lebensweg', exact: true })).toBeVisible();
   await expect(page.getByText('Jahr eintragen', { exact: true })).toBeVisible();
   await merkbild(page, 'a-jahr');

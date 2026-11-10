@@ -394,21 +394,21 @@ test('Vorbild: Kopf ist eine Fläche ohne zweiten Namen', async ({ page }, testI
     hintergrund: hell.hintergrund,
     glimmen: true,
   });
-  await page.goto('/vorbilder/ronaldo');
-  await expect(page.getByRole('heading', { name: 'Cristiano Ronaldo', exact: true })).toBeVisible();
+  await page.goto('/vorbilder/davinci');
+  await expect(page.getByRole('heading', { name: 'Leonardo da Vinci', exact: true })).toBeVisible();
   await expect.poll(() => variable(page, '--flaeche')).toBe('#ffffff');
   await expect.poll(() => variable(page, '--gefahr')).toBe('#c62828');
   await expect.poll(() => page.evaluate(() => document.documentElement.dataset.schema ?? '')).toBe('light');
   await schriftBereit(page);
   await page.waitForTimeout(400);
-  await pruefeKopf(page, 'Cristiano Ronaldo');
+  await pruefeKopf(page, 'Leonardo da Vinci');
   const kopf = page.locator('.vorbild-kopf');
-  await expect(kopf.locator('[data-vorbild-herkunft]')).toHaveText('Fußball · geboren 1985');
-  await expect(kopf.locator('[data-vorbild-stand]')).toHaveText('Lvl 8.835 · Vitaler Krieger · Ikone');
+  await expect(kopf.locator('[data-vorbild-herkunft]')).toHaveText('Renaissance · 1452 bis 1519');
+  await expect(kopf.locator('[data-vorbild-stand]')).toHaveText('Lvl 7.917 · Kreativer Gelehrter · Ikone');
   await expect(kopf.locator('[data-aehnlichkeit]')).toContainText(/%\s*ähnlich/);
   const breite = testInfo.project.name === 'desktop' ? '1440' : '390';
   const ordner = 'tmp-test/vorbild-kopf';
-  await page.screenshot({ path: `${ordner}/${breite}-vorbild-ronaldo.png` });
-  await page.screenshot({ path: `${ordner}/${breite}-vorbild-ronaldo-ganz.png`, fullPage: true });
-  await kopf.screenshot({ path: `${ordner}/${breite}-vorbild-ronaldo-kopf.png` });
+  await page.screenshot({ path: `${ordner}/${breite}-vorbild-davinci.png` });
+  await page.screenshot({ path: `${ordner}/${breite}-vorbild-davinci-ganz.png`, fullPage: true });
+  await kopf.screenshot({ path: `${ordner}/${breite}-vorbild-davinci-kopf.png` });
 });

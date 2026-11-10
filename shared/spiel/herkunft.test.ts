@@ -90,7 +90,7 @@ describe('elternZiel', () => {
     expect(elternZiel('/faehigkeiten/2')).toEqual({ pfad: '/faehigkeiten', label: 'Fähigkeiten' });
     expect(elternZiel('/mehr/inhalte')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/mehr/inhalte', { leiste: ['/', '/mehr/inhalte'] })).toBeNull();
-    expect(elternZiel('/vorbilder/ronaldo')).toEqual({ pfad: '/vorbilder', label: 'Vorbilder' });
+    expect(elternZiel('/vorbilder/einstein')).toEqual({ pfad: '/vorbilder', label: 'Vorbilder' });
     expect(elternZiel('/training')).toBeNull();
   });
 });
@@ -157,11 +157,11 @@ describe('stapel', () => {
 
   it('setzt beim Direktaufruf nur den passenden Platz zurück', () => {
     const alt = oeffneImStapel(leererStapel('/', '/'), '/projekte/3');
-    const neu = stapelNachLaden(alt, '/vorbilder/ronaldo', '/mehr');
+    const neu = stapelNachLaden(alt, '/vorbilder/einstein', '/mehr');
     expect(neu.aktiv).toBe('/mehr');
-    expect(neu.orte['/mehr']).toEqual(['/vorbilder/ronaldo']);
+    expect(neu.orte['/mehr']).toEqual(['/vorbilder/einstein']);
     expect(neu.orte['/']).toEqual(['/', '/projekte/3']);
-    expect(stapelNachLaden(neu, '/vorbilder/ronaldo', '/')).toBe(neu);
+    expect(stapelNachLaden(neu, '/vorbilder/einstein', '/')).toBe(neu);
   });
 });
 

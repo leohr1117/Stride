@@ -18,10 +18,12 @@ import {
   RICHTUNGEN,
   uebereinstimmung,
   UNSICHER_GEWICHT,
+  richtungenMitPersonen,
   vergleichspunkte,
   VORBILDER,
   type KennungsLevel,
 } from '../features/vorbilder/vorbilder.ts';
+import { bereinigeFavoriten } from '../features/vorbilder/favoriten.ts';
 
 const ERLAUBTE_LEVEL_ABWEICHUNG = 0.01;
 
@@ -75,12 +77,12 @@ describe('Vorbild-Profile', () => {
 
   it('halten Schwächen nahe am Durchschnittsmenschen', () => {
     const durchschnitt = findeVorbild(DURCHSCHNITT);
-    const buffett = findeVorbild('buffett');
-    if (!durchschnitt || !buffett) {
+    const king = findeVorbild('king');
+    if (!durchschnitt || !king) {
       throw new Error('Vorbild fehlt');
     }
-    expect(buffett.profil.koerper).toBeLessThan(durchschnitt.profil.koerper * 2);
-    expect(buffett.profil.motorik).toBeLessThan(durchschnitt.profil.motorik * 2);
+    expect(king.profil.koerper).toBeLessThan(durchschnitt.profil.koerper * 2);
+    expect(king.profil.motorik).toBeLessThan(durchschnitt.profil.motorik * 2);
   });
 
   it('stecken das Außergewöhnliche in die stärkste Bewertung', () => {
@@ -89,8 +91,8 @@ describe('Vorbild-Profile', () => {
       const maxima = KOENNEN_KENNUNGEN.filter((kennung) => vorbild.bewertung[kennung] === hoechste);
       expect(maxima).toContain(staerkstesKoennen(vorbild.profil));
     }
-    const musk = findeVorbild('musk');
-    expect(musk && klasseAus(musk.schaetzung)).toBe('Disziplinierter Abenteurer');
+    const king = findeVorbild('king');
+    expect(king && klasseAus(king.schaetzung)).toBe('Charismatischer Abenteurer');
   });
 });
 
@@ -125,11 +127,10 @@ describe('Lebensweg', () => {
 
   it('rechnet das Level aus der Schätzung und bleibt unter der Obergrenze', () => {
     expect(findeVorbild(DURCHSCHNITT)?.level).toBe(800);
-    for (const schluessel of ['bezos', 'trump', 'winfrey', 'schwarzenegger', 'federer', 'graf', 'serena', 'sulek', 'haaland', 'mbappe', 'kehl']) {
+    for (const schluessel of ['bezos', 'trump', 'winfrey', 'schwarzenegger', 'federer', 'graf', 'serena', 'sulek', 'haaland', 'mbappe', 'kehl', 'ronaldo']) {
       expect(findeVorbild(schluessel)).toBeUndefined();
     }
     expect(findeVorbild('einstein')?.gestorben).toBe(1955);
-    expect(findeVorbild('ronaldo')?.gestorben).toBeNull();
     for (const vorbild of VORBILDER) {
       expect(vorbild.level).toBeLessThanOrEqual(10000);
       if (vorbild.schluessel === DURCHSCHNITT) {
@@ -141,11 +142,16 @@ describe('Lebensweg', () => {
   });
 
   it('nennt im Handbuch je Richtung höchstens zwei Beispiele', () => {
+    const mitPerson = new Set(richtungenMitPersonen());
     let anzahl = 0;
     for (const richtung of RICHTUNGEN) {
       const schluessel = BEISPIEL_SCHLUESSEL[richtung];
-      expect(schluessel.length).toBeGreaterThanOrEqual(1);
-      expect(schluessel.length).toBeLessThanOrEqual(2);
+      if (mitPerson.has(richtung)) {
+        expect(schluessel.length).toBeGreaterThanOrEqual(1);
+        expect(schluessel.length).toBeLessThanOrEqual(2);
+      } else {
+        expect(schluessel).toHaveLength(0);
+      }
       anzahl += schluessel.length;
       for (const schluesselEintrag of schluessel) {
         expect(findeVorbild(schluesselEintrag)?.richtung).toBe(richtung);
@@ -156,31 +162,31 @@ describe('Lebensweg', () => {
     expect(zeilen).toHaveLength(anzahl + 1);
     expect(zeilen.some((vorbild) => vorbild.schluessel === 'donk')).toBe(false);
     expect(zeilen.some((vorbild) => vorbild.schluessel === 'einstein')).toBe(true);
-    expect(zeilen.some((vorbild) => vorbild.schluessel === 'ronaldo')).toBe(true);
+    expect(zeilen.some((vorbild) => vorbild.schluessel === 'ali')).toBe(true);
   });
 
   it('ändert die Ähnlichkeit, sobald abweichende Werte dazukommen', () => {
-    const ronaldo = findeVorbild('ronaldo');
-    if (!ronaldo) {
-      throw new Error('Ronaldo fehlt');
+    const ali = findeVorbild('ali');
+    if (!ali) {
+      throw new Error('Ali fehlt');
     }
-    expect(aehnlichkeit(ronaldo.schaetzung, ronaldo.schaetzung)).toBeCloseTo(1);
+    expect(aehnlichkeit(ali.schaetzung, ali.schaetzung)).toBeCloseTo(1);
     const sichtbar: Partial<KennungsLevel> = {
-      koerper: ronaldo.schaetzung.koerper,
-      geist: ronaldo.schaetzung.geist,
-      disziplin: ronaldo.schaetzung.disziplin,
-      intellekt: ronaldo.schaetzung.intellekt,
-      soziales: ronaldo.schaetzung.soziales,
+      koerper: ali.schaetzung.koerper,
+      geist: ali.schaetzung.geist,
+      disziplin: ali.schaetzung.disziplin,
+      intellekt: ali.schaetzung.intellekt,
+      soziales: ali.schaetzung.soziales,
     };
-    const voll = { ...ronaldo.schaetzung };
+    const voll = { ...ali.schaetzung };
     for (const kennung of ATTRIBUT_KENNUNGEN) {
       if (sichtbar[kennung] !== undefined) {
         continue;
       }
-      voll[kennung] = 100 - ronaldo.schaetzung[kennung];
+      voll[kennung] = 100 - ali.schaetzung[kennung];
     }
-    const nurSichtbar = aehnlichkeit(sichtbar, ronaldo.schaetzung, ronaldo.unsicher);
-    const mitAbweichung = aehnlichkeit(voll, ronaldo.schaetzung, ronaldo.unsicher);
+    const nurSichtbar = aehnlichkeit(sichtbar, ali.schaetzung, ali.unsicher);
+    const mitAbweichung = aehnlichkeit(voll, ali.schaetzung, ali.unsicher);
     expect(nurSichtbar).toBeCloseTo(1);
     expect(mitAbweichung).not.toBeNull();
     expect(mitAbweichung ?? 1).toBeLessThan(nurSichtbar ?? 0);
@@ -203,9 +209,9 @@ describe('Lebensweg', () => {
     const mitStatus = aehnlichkeit(statusAnders, basis, { koerper: true, ressourcen: true });
     expect(mitStatus).not.toBeNull();
     expect(mitStatus ?? 0).not.toBeCloseTo(halb ?? 0);
-    const ronaldo = findeVorbild('ronaldo');
-    expect(ronaldo && aehnlichkeit(ronaldo.schaetzung, ronaldo.schaetzung, ronaldo.unsicher)).toBeCloseTo(1);
-    const sicher = aehnlichkeit(ronaldo?.schaetzung ?? basis, ronaldo?.schaetzung ?? basis);
+    const ali = findeVorbild('ali');
+    expect(ali && aehnlichkeit(ali.schaetzung, ali.schaetzung, ali.unsicher)).toBeCloseTo(1);
+    const sicher = aehnlichkeit(ali?.schaetzung ?? basis, ali?.schaetzung ?? basis);
     expect(sicher).toBeCloseTo(1);
   });
 
@@ -222,6 +228,44 @@ describe('Lebensweg', () => {
     expect(Math.round(xp / xpAmTag / 365)).toBe(40);
     const level = berechneLevel(xpAmTag * 40 * 365, LEVEL_KURVEN.charakter).level;
     expect(Math.abs(level - 800)).toBeLessThan(15);
+  });
+});
+
+describe('Katalog ohne lebende Personen', () => {
+  it('behält genau die Personen, die seit mindestens zehn Jahren tot sind', () => {
+    const grenze = new Date().getFullYear() - 10;
+    const personen = VORBILDER.filter((vorbild) => vorbild.schluessel !== DURCHSCHNITT);
+    expect(personen.map((vorbild) => vorbild.schluessel)).toEqual([
+      'lee',
+      'ali',
+      'mozart',
+      'jobs',
+      'davinci',
+      'newton',
+      'einstein',
+      'tesla',
+      'curie',
+      'aurelius',
+      'gandhi',
+      'king',
+      'mandela',
+    ]);
+    for (const vorbild of personen) {
+      expect(vorbild.gestorben).not.toBeNull();
+      expect(vorbild.gestorben ?? grenze + 1).toBeLessThanOrEqual(grenze);
+    }
+    for (const schluessel of Object.values(BEISPIEL_SCHLUESSEL).flat()) {
+      expect(findeVorbild(schluessel)?.schluessel).toBe(schluessel);
+    }
+    expect(richtungenMitPersonen()).toEqual([
+      'Körper',
+      'Wettkampf',
+      'Kunst',
+      'Innovation/Technik',
+      'Wissenschaft/Genies',
+      'Führung/Wandel',
+    ]);
+    expect(bereinigeFavoriten(['einstein', 'ronaldo', 'einstein'])).toEqual(['einstein']);
   });
 });
 

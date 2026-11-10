@@ -98,21 +98,21 @@ test('Vorbilder zeigen die Ähnlichkeit und behalten den Filter', async ({ page 
   await wettkampf.click();
   await expect(wettkampf).toHaveAttribute('aria-pressed', 'true');
   await expect(page).toHaveURL(/richtung=Wettkampf/);
-  await expect(page.getByRole('link', { name: /Elon Musk/ })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: /Cristiano Ronaldo/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Wolfgang Amadeus Mozart/ })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Muhammad Ali/ })).toBeVisible();
 
-  await page.getByRole('link', { name: /Cristiano Ronaldo/ }).click();
-  await expect(page).toHaveURL(/\/vorbilder\/ronaldo$/);
-  await expect(page.getByRole('heading', { name: 'Cristiano Ronaldo', exact: true })).toBeVisible();
+  await page.getByRole('link', { name: /Muhammad Ali/ }).click();
+  await expect(page).toHaveURL(/\/vorbilder\/ali$/);
+  await expect(page.getByRole('heading', { name: 'Muhammad Ali', exact: true })).toBeVisible();
   await expect(page.getByText(/\d+\s*%\s*ähnlich/)).toHaveCount(1);
   await expect(page.getByText(/\d+\s*%\s*ähnlich/)).toBeVisible();
   await page.locator('[data-zurueck]').click();
   await expect(page).toHaveURL(/\/vorbilder\?richtung=Wettkampf/);
   await expect(wettkampf).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByRole('link', { name: /Lionel Messi/ })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Elon Musk/ })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Muhammad Ali/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Wolfgang Amadeus Mozart/ })).toHaveCount(0);
 
-  await page.getByRole('link', { name: /Cristiano Ronaldo/ }).click();
+  await page.getByRole('link', { name: /Muhammad Ali/ }).click();
   await page.goBack();
   await expect(page).toHaveURL(/richtung=Wettkampf/);
   await expect(wettkampf).toHaveAttribute('aria-pressed', 'true');

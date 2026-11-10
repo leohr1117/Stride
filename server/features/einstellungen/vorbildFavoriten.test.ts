@@ -42,16 +42,16 @@ describe('Vorbild-Favoriten', () => {
       expect(ladeEinstellungen().vorbildFavoriten).toEqual([]);
       expect(aendereEinstellungen({ vorbildFavoritDazu: 'einstein' }).vorbildFavoriten).toEqual(['einstein']);
       expect(aendereEinstellungen({ vorbildFavoritDazu: 'einstein' }).vorbildFavoriten).toEqual(['einstein']);
-      expect(aendereEinstellungen({ vorbildFavoritDazu: 'ronaldo' }).vorbildFavoriten).toEqual(['einstein', 'ronaldo']);
-      expect(aendereEinstellungen({ vorbildFavoritWeg: 'einstein' }).vorbildFavoriten).toEqual(['ronaldo']);
-      expect(aendereEinstellungen({ vorbildFavoritWeg: 'einstein' }).vorbildFavoriten).toEqual(['ronaldo']);
+      expect(aendereEinstellungen({ vorbildFavoritDazu: 'ali' }).vorbildFavoriten).toEqual(['einstein', 'ali']);
+      expect(aendereEinstellungen({ vorbildFavoritWeg: 'einstein' }).vorbildFavoriten).toEqual(['ali']);
+      expect(aendereEinstellungen({ vorbildFavoritWeg: 'einstein' }).vorbildFavoriten).toEqual(['ali']);
       expect(aendereEinstellungen({ vorbildFavoritDazu: 'einstein', vorbildFavoritIndex: 0 }).vorbildFavoriten).toEqual([
         'einstein',
-        'ronaldo',
+        'ali',
       ]);
       expect(aendereEinstellungen({ vorbildFavoritDazu: 'einstein', vorbildFavoritIndex: 5 }).vorbildFavoriten).toEqual([
         'einstein',
-        'ronaldo',
+        'ali',
       ]);
     });
   });
@@ -66,7 +66,7 @@ describe('Vorbild-Favoriten', () => {
       expect(einstellungenAenderungSchema.safeParse({ vorbildFavoritDazu: '' }).success).toBe(false);
       expect(einstellungenAenderungSchema.safeParse({ vorbildFavoritIndex: -1 }).success).toBe(false);
       expect(einstellungenAenderungSchema.parse({ vorbildFavoritDazu: ' einstein ' }).vorbildFavoritDazu).toBe('einstein');
-      expect(einstellungenAenderungSchema.parse({ vorbildFavoriten: ['ronaldo'] })).not.toHaveProperty('vorbildFavoriten');
+      expect(einstellungenAenderungSchema.parse({ vorbildFavoriten: ['ali'] })).not.toHaveProperty('vorbildFavoriten');
     });
   });
 
@@ -74,9 +74,9 @@ describe('Vorbild-Favoriten', () => {
     const datei = welt();
     mitWelt(datei, () => {
       setzeRoh('vorbildFavoriten', ['einstein', 'geist', 'durchschnitt', 'einstein', 'ronaldo']);
-      expect(ladeEinstellungen().vorbildFavoriten).toEqual(['einstein', 'ronaldo']);
+      expect(ladeEinstellungen().vorbildFavoriten).toEqual(['einstein']);
       const roh = eine<{ wert: string }>('SELECT wert FROM einstellungen WHERE schluessel = ?', 'vorbildFavoriten');
-      expect(JSON.parse(roh?.wert ?? '[]')).toEqual(['einstein', 'ronaldo']);
+      expect(JSON.parse(roh?.wert ?? '[]')).toEqual(['einstein']);
     });
   });
 
@@ -84,9 +84,9 @@ describe('Vorbild-Favoriten', () => {
     const anna = welt();
     const ben = welt();
     mitWelt(anna, () => aendereEinstellungen({ vorbildFavoritDazu: 'einstein' }));
-    mitWelt(ben, () => aendereEinstellungen({ vorbildFavoritDazu: 'ronaldo' }));
+    mitWelt(ben, () => aendereEinstellungen({ vorbildFavoritDazu: 'ali' }));
     expect(mitWelt(anna, () => ladeEinstellungen().vorbildFavoriten)).toEqual(['einstein']);
-    expect(mitWelt(ben, () => ladeEinstellungen().vorbildFavoriten)).toEqual(['ronaldo']);
+    expect(mitWelt(ben, () => ladeEinstellungen().vorbildFavoriten)).toEqual(['ali']);
   });
 
   it('geht in Sicherung und Import mit und verschwindet beim Zurücksetzen', () => {

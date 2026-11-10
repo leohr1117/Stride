@@ -1,4 +1,4 @@
-import { RICHTUNGEN, type Richtung } from '../../../../shared/features/vorbilder/index.ts';
+import { RICHTUNGEN, richtungenMitPersonen, type Richtung } from '../../../../shared/features/vorbilder/index.ts';
 import { leseSitzungstext, merkeSitzungstext, vergissSitzung } from '../../speicher.ts';
 
 const SPEICHER = 'stride.vorbilder.richtung';
@@ -10,14 +10,18 @@ export function istRichtung(wert: string | null): wert is Richtung {
   return wert !== null && (RICHTUNGEN as readonly string[]).includes(wert);
 }
 
+function richtungMitPersonen(wert: string | null): wert is Richtung {
+  return istRichtung(wert) && (richtungenMitPersonen() as readonly string[]).includes(wert);
+}
+
 export function auswahlAus(parameter: string | null, gespeichert: string | null): VorbildAuswahl {
-  if (istRichtung(parameter)) {
+  if (richtungMitPersonen(parameter)) {
     return parameter;
   }
   if (parameter) {
     return ALLE;
   }
-  return istRichtung(gespeichert) ? gespeichert : ALLE;
+  return richtungMitPersonen(gespeichert) ? gespeichert : ALLE;
 }
 
 export function speichereRichtung(auswahl: VorbildAuswahl): void {
@@ -34,5 +38,5 @@ export function gespeicherteRichtung(): string | null {
 
 export function vorbilderListePfad(): string {
   const richtung = gespeicherteRichtung();
-  return istRichtung(richtung) ? `/vorbilder?richtung=${encodeURIComponent(richtung)}` : '/vorbilder';
+  return richtungMitPersonen(richtung) ? `/vorbilder?richtung=${encodeURIComponent(richtung)}` : '/vorbilder';
 }

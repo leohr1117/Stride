@@ -25,7 +25,7 @@ const FEST = [
   '/faehigkeiten',
   '/investitionen',
   '/vorbilder',
-  '/vorbilder/ronaldo',
+  '/vorbilder/einstein',
   '/vorbilder/durchschnitt',
   '/handbuch',
   '/mehr',
