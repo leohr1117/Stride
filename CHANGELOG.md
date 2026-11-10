@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.4
+
+### Geändert
+
+- Ein angemeldetes Konto sieht nur die eigenen Daten.
+
 ## 4.1.3
 
 ### Hinzugefügt

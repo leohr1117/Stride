@@ -17,6 +17,16 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.4',
+    seiten: 'Alle',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: ['Ein angemeldetes Konto sieht nur die eigenen Daten.'],
+      },
+    ],
+  },
+  {
     version: '4.1.3',
     seiten: 'Mehr, Anmeldung',
     abschnitte: [

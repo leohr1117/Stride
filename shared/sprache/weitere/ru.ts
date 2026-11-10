@@ -10,6 +10,7 @@ export const TEXTE: Record<string, string> = {
   "Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.": "После этого у этого экземпляра Stride не будет администратора, пока оператор не назначит нового.",
   "Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.": "Ты единственный владелец. Пока есть другие аккаунты, свой аккаунт удалить нельзя.",
   "Passwort darf nicht leer sein.": "Пароль не может быть пустым.",
+  "Ein angemeldetes Konto sieht nur die eigenen Daten.": "Вошедший аккаунт видит только свои данные.",
   "Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.": "Теперь можно безвозвратно удалить свой аккаунт. Все данные этого аккаунта при этом удаляются.",
   "Bist du das einzige Konto, kannst du die Daten vorher exportieren. Danach ist die Instanz leer.": "Если ты единственный аккаунт, данные можно сначала экспортировать. После этого экземпляр пуст.",
   "Die Admin-Rolle bleibt an dem einmal vergebenen Konto, auch wenn der Name sich ändert.": "Роль администратора остаётся у того аккаунта, которому её однажды дали, даже если имя изменится.",

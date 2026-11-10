@@ -1,5 +1,6 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  ['Ein angemeldetes Konto sieht nur die eigenen Daten.', 'A signed-in account sees only its own data.'],
   [
     'Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.',
     'You can now permanently delete your own account. All data in that account is removed.',

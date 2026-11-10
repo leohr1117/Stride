@@ -10,6 +10,7 @@ export const TEXTE: Record<string, string> = {
   "Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.": "その後、運営者が新しい管理者を決めるまで、この Stride インスタンスに管理者はいません。",
   "Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.": "所有者が自分ひとりです。他のアカウントがある間は、自分のアカウントを削除できません。",
   "Passwort darf nicht leer sein.": "パスワードは空にできません。",
+  "Ein angemeldetes Konto sieht nur die eigenen Daten.": "ログインしたアカウントには自分のデータだけが表示されます。",
   "Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.": "自分のアカウントを完全に削除できるようになりました。そのアカウントのすべてのデータも削除されます。",
   "Bist du das einzige Konto, kannst du die Daten vorher exportieren. Danach ist die Instanz leer.": "唯一のアカウントなら、先にデータを書き出せます。その後、インスタンスは空になります。",
   "Die Admin-Rolle bleibt an dem einmal vergebenen Konto, auch wenn der Name sich ändert.": "管理者の役割は、一度割り当てたアカウントに残ります。名前が変わっても同じです。",
