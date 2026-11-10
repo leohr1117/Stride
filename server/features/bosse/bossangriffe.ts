@@ -6,7 +6,7 @@ import { schalteErfolgeFrei } from '../erfolge/erfolge.ts';
 import { istAn } from '../../../shared/spiel/sichtbarkeit.ts';
 import { bucheAttributXp } from '../../services/fortschritt.ts';
 import { KONTEXT_JOINS, PROJEKT_ODER_FREI } from '../ziele/kontext.ts';
-import { lokalesDatum } from '../../services/zeit.ts';
+import { leseJetzt, lokalesDatum } from '../../services/zeit.ts';
 
 interface UeberfaelligerBoss {
   id: number;
@@ -14,7 +14,7 @@ interface UeberfaelligerBoss {
   angriffBis: string | null;
 }
 
-export function rechneBossangriffeAb(jetzt = new Date()): void {
+export function rechneBossangriffeAb(jetzt = leseJetzt()): void {
   const einstellungen = ladeEinstellungen();
   const heute = lokalesDatum(jetzt);
   const bosseAn = istAn('bossAngriffe', einstellungen);

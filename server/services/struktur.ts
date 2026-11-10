@@ -27,7 +27,7 @@ import { ladeVorhabenAlle, ladeVorhabenFuerProjekt } from '../features/ziele/vor
 import { istInvestitionsArt, ladeBoniJeProjekt, normalisiereInvestition } from '../features/investitionen/ausruestung.ts';
 import { pruefeAktiveVorlage, pruefeVorlageZumProjekt } from '../features/taetigkeiten/vorlagen.ts';
 import { schliesseProjekt } from '../features/ziele/projektAbschluss.ts';
-import { lokalesDatum } from './zeit.ts';
+import { leseJetzt, lokalesDatum } from './zeit.ts';
 
 interface VisionZeile {
   id: number;
@@ -226,7 +226,7 @@ function zuProjekt(zeile: ProjektZeile, aktiveTage: Map<number, string[]>, heute
   };
 }
 
-export function ladeProjekte(jetzt = new Date()): Projekt[] {
+export function ladeProjekte(jetzt = leseJetzt()): Projekt[] {
   const aktiveTage = ladeAktiveTage();
   const heute = lokalesDatum(jetzt);
   const boni = ladeBoniJeProjekt();
@@ -235,7 +235,7 @@ export function ladeProjekte(jetzt = new Date()): Projekt[] {
   );
 }
 
-export function ladeProjekt(id: number, jetzt = new Date()): Projekt {
+export function ladeProjekt(id: number, jetzt = leseJetzt()): Projekt {
   const zeile = eine<ProjektZeile>(`${PROJEKT_ABFRAGE} WHERE p.id = ?`, id);
   if (!zeile) {
     throw nichtGefunden('Das Projekt');
@@ -243,11 +243,11 @@ export function ladeProjekt(id: number, jetzt = new Date()): Projekt {
   return zuProjekt(zeile, ladeAktiveTage(id), lokalesDatum(jetzt), ladeBoniJeProjekt());
 }
 
-export function ladeProjektDetail(id: number, jetzt = new Date()): ProjektDetail {
+export function ladeProjektDetail(id: number, jetzt = leseJetzt()): ProjektDetail {
   return { projekt: ladeProjekt(id, jetzt), vorhaben: ladeVorhabenFuerProjekt(id, jetzt) };
 }
 
-export function ladeZiele(jetzt = new Date()): Ziele {
+export function ladeZiele(jetzt = leseJetzt()): Ziele {
   return {
     visionen: alle<VisionZeile>(`${VISION_ABFRAGE} ORDER BY v.archiviert, v.id`).map(zuVision),
     organisationen: alle<OrganisationZeile>(`${ORGANISATION_ABFRAGE} ORDER BY o.archiviert, o.name COLLATE NOCASE`).map(
@@ -409,7 +409,7 @@ export function erstelleProjekt(daten: ProjektDaten): Projekt {
   return ladeProjekt(id);
 }
 
-export function aendereProjekt(id: number, aenderung: ProjektAenderung, jetzt = new Date()): ProjektMitBelohnung {
+export function aendereProjekt(id: number, aenderung: ProjektAenderung, jetzt = leseJetzt()): ProjektMitBelohnung {
   const projekt = ladeProjekt(id);
   const zuordnungGeaendert = aenderung.visionId !== undefined || aenderung.organisationId !== undefined;
   const visionId = aenderung.visionId !== undefined ? aenderung.visionId : projekt.visionId;

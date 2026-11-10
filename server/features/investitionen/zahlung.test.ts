@@ -7,6 +7,7 @@ import { ladeAttribut, ladeAttributXp, ladeCharakterLevel } from '../attribute/a
 import { erstelleEintrag } from '../eintraege/eintraege.ts';
 import { erstelleVorlage } from '../taetigkeiten/vorlagen.ts';
 import { bucheAttributXp } from '../../services/fortschritt.ts';
+import { leseJetzt, lokalesDatum, setzeTestzeit } from '../../services/zeit.ts';
 import { aendereInvestition, erstelleInvestition, loescheInvestition } from './ausruestung.ts';
 
 const ordner = mkdtempSync(path.join(tmpdir(), 'stride-zahlung-'));
@@ -20,7 +21,28 @@ function welt(): string {
   return datei;
 }
 
+function kuenftigerTesttag(): string {
+  return `${new Date().getFullYear() + 1}-06-15`;
+}
+
+function mitTesttag(datum: string, lauf: () => void): void {
+  const vorher = process.env.STRIDE_TEST;
+  process.env.STRIDE_TEST = '1';
+  try {
+    setzeTestzeit(datum);
+    lauf();
+  } finally {
+    setzeTestzeit(null);
+    if (vorher === undefined) {
+      delete process.env.STRIDE_TEST;
+    } else {
+      process.env.STRIDE_TEST = vorher;
+    }
+  }
+}
+
 afterEach(() => {
+  setzeTestzeit(null);
   for (const datei of offen) {
     schliesseWelt(datei);
   }
@@ -259,6 +281,50 @@ describe('Investition bezahlen', () => {
       expect(eine<{ id: number }>('SELECT id FROM investitionen WHERE id = ?', angelegt.id)?.id).toBe(angelegt.id);
       expect(buchungen().map((zeile) => zeile.xp)).toEqual([-20]);
       expect(ladeAttributXp(ressourcen)).toBe(60);
+    });
+  });
+
+  it('bucht die Zahlung auf den Testtag und ohne Testtag auf die echte Uhr', () => {
+    const datum = kuenftigerTesttag();
+    mitTesttag(datum, () => {
+      mitWelt(welt(), () => {
+        const ressourcen = attributId('ressourcen');
+        gutschrift(ressourcen, 100);
+        erstelleInvestition({
+          name: 'Lager',
+          icon: 'gem',
+          groesse: 1,
+          attributId: attributId('koerper'),
+          bezahltAttributId: ressourcen,
+          betrag: 10,
+        });
+        const zeit = eine<{ erstelltAm: string }>(
+          `SELECT erstellt_am AS erstelltAm FROM xp_ereignisse WHERE quelle = 'investition'`,
+        )?.erstelltAm;
+        expect(zeit).toBe(leseJetzt().toISOString());
+        expect(lokalesDatum(new Date(zeit ?? ''))).toBe(datum);
+      });
+    });
+
+    mitWelt(welt(), () => {
+      const ressourcen = attributId('ressourcen');
+      gutschrift(ressourcen, 100);
+      const vor = Date.now();
+      erstelleInvestition({
+        name: 'Lager',
+        icon: 'gem',
+        groesse: 1,
+        attributId: attributId('koerper'),
+        bezahltAttributId: ressourcen,
+        betrag: 10,
+      });
+      const nach = Date.now();
+      const zeit = eine<{ erstelltAm: string }>(
+        `SELECT erstellt_am AS erstelltAm FROM xp_ereignisse WHERE quelle = 'investition'`,
+      )?.erstelltAm;
+      const millis = Date.parse(zeit ?? '');
+      expect(millis).toBeGreaterThanOrEqual(vor);
+      expect(millis).toBeLessThanOrEqual(nach);
     });
   });
 });

@@ -3,6 +3,7 @@ import { aktiverPfad, mitWeltAsync } from '../../db.ts';
 import type { HinweisLog } from '../hinweise/sender.ts';
 import { pruefeHinweise } from '../../integrationen/webPush.ts';
 import { istTodoistFaellig, stundeInZone } from '../../services/todoistRegeln.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { gleicheKalenderAb } from './kalender.ts';
 import { leseWert, setzeWert } from './gemeinsam.ts';
 import { gleicheTodoistAb } from './todoistAbgleich.ts';
@@ -31,7 +32,7 @@ function nutzerZone(): string {
   return zone;
 }
 
-function starteAbgleich(voll: boolean, jetzt = new Date()): Promise<AbgleichErgebnis> {
+function starteAbgleich(voll: boolean, jetzt = leseJetzt()): Promise<AbgleichErgebnis> {
   const pfad = aktiverPfad();
   const laufend = laufendeAbgleiche.get(pfad);
   if (laufend && (laufend.voll || !voll)) {
@@ -60,7 +61,7 @@ export function gleicheAllesAb(): Promise<AbgleichErgebnis> {
   return starteAbgleich(true);
 }
 
-export function gleicheGeplantAb(jetzt = new Date()): Promise<AbgleichErgebnis> {
+export function gleicheGeplantAb(jetzt = leseJetzt()): Promise<AbgleichErgebnis> {
   return starteAbgleich(false, jetzt);
 }
 

@@ -1,6 +1,6 @@
 import { strideVariable } from '../../umgebung.ts';
 import type { BewertungStand } from '../../../shared/api/index.ts';
-import { lokalesDatum } from '../../services/zeit.ts';
+import { leseJetzt, lokalesDatum } from '../../services/zeit.ts';
 import { eine, inTransaktion } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
 import { ladeKennzahlen } from '../erfolge/erfolge.ts';
@@ -58,7 +58,7 @@ function erfolgErreicht(): boolean {
   return (einheiten?.n ?? 0) >= 1;
 }
 
-export function bewertungFaellig(jetzt = new Date(), profilGeradeAngelegt = false): boolean {
+export function bewertungFaellig(jetzt = leseJetzt(), profilGeradeAngelegt = false): boolean {
   if (profilGeradeAngelegt || leseBewertungNie() || leseBewertungWert() !== null) {
     return false;
   }
@@ -72,7 +72,7 @@ export function bewertungFaellig(jetzt = new Date(), profilGeradeAngelegt = fals
 }
 
 /** Dieselben Erfolge wie die Bewertung. Die erste Minute nach der Anlage wartet `hinweis_nicht_vor` ab. */
-export function angebotFaellig(jetzt = new Date(), profilGeradeAngelegt = false): boolean {
+export function angebotFaellig(jetzt = leseJetzt(), profilGeradeAngelegt = false): boolean {
   if (profilGeradeAngelegt || leseHinweisAngebotGesehen()) {
     return false;
   }
@@ -91,7 +91,7 @@ export function angebotFaellig(jetzt = new Date(), profilGeradeAngelegt = false)
 
 export function mitBewertung<T extends object>(
   ergebnis: T,
-  jetzt = new Date(),
+  jetzt = leseJetzt(),
   profilGeradeAngelegt = false,
 ): T & { bewertungFaellig?: true; angebotFaellig?: true } {
   if (bewertungFaellig(jetzt, profilGeradeAngelegt)) {
@@ -103,7 +103,7 @@ export function mitBewertung<T extends object>(
   return { ...ergebnis, angebotFaellig: true };
 }
 
-export function speichereBewertung(eingabe: { wert: number } | { nie: true }, jetzt = new Date()): BewertungStand {
+export function speichereBewertung(eingabe: { wert: number } | { nie: true }, jetzt = leseJetzt()): BewertungStand {
   return inTransaktion(() => {
     if (leseBewertungNie() || leseBewertungWert() !== null) {
       throw ungueltig(BEWERTUNG_SCHON);

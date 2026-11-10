@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { alle, eine, migriere, mitWeltAsync, schliesseWelt } from '../../db.ts';
 import { MIGRATIONEN } from '../../migrationen.ts';
 import { erstelleProjekt, erstelleVision } from '../../services/struktur.ts';
+import { setzeTestzeit } from '../../services/zeit.ts';
 import { erstelleVorlage } from '../taetigkeiten/vorlagen.ts';
 import { aendereKalender, erstelleKalender, gleicheKalenderAb, loescheKalender, pruefeKalender } from './kalender.ts';
 
@@ -24,6 +25,33 @@ function welt(): string {
   const datei = path.join(ordner, `${nummer}.db`);
   offen.push(datei);
   return datei;
+}
+
+function kuenftigerJuni(): { datum: string; seit: Date } {
+  const jahr = new Date().getFullYear() + 1;
+  return { datum: `${jahr}-06-15`, seit: new Date(jahr, 5, 15, 8, 0, 0, 0) };
+}
+
+function textAmTag(datum: string): string {
+  const kompakt = datum.replaceAll('-', '');
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'X-WR-CALNAME:Arbeit',
+    'BEGIN:VEVENT',
+    'UID:vormittag',
+    'SUMMARY:VorMittag',
+    'DTSTART:' + kompakt + 'T100000',
+    'DTEND:' + kompakt + 'T111500',
+    'END:VEVENT',
+    'BEGIN:VEVENT',
+    'UID:nachmittag',
+    'SUMMARY:NachMittag',
+    'DTSTART:' + kompakt + 'T120000',
+    'DTEND:' + kompakt + 'T130000',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
 }
 
 function kalenderText(): string {
@@ -263,6 +291,45 @@ describe('Kalenderprüfung und Abgleich', () => {
       ).toEqual({ projektId: null, vorlageId });
       expect(() => aendereKalender(kalender.id, { projektId: null, vorlageId: null })).toThrow(/Tätigkeit/);
       expect(eine<{ vorlageId: number }>('SELECT vorlage_id AS vorlageId FROM kalender WHERE id = ?', kalender.id)?.vorlageId).toBe(vorlageId);
+    });
+  });
+
+  it('übernimmt einen Termin, der am Testtag um 11:15 endet, und lässt 13:00 liegen', async () => {
+    const { datum, seit } = kuenftigerJuni();
+    const adresse = await icsServer(textAmTag(datum));
+    const vorher = process.env.STRIDE_TEST;
+    process.env.STRIDE_TEST = '1';
+    setzeTestzeit(datum);
+    try {
+      await mitWeltAsync(welt(), async () => {
+        const { projektId, vorlageId } = ziel();
+        await erstelleKalender({ name: 'Arbeit', adresse, projektId, vorlageId, filter: '' }, seit);
+        const ergebnis = await gleicheKalenderAb();
+        expect(ergebnis.fehler).toEqual([]);
+        expect(ergebnis.neu).toBe(1);
+        expect(notizen()).toEqual(['VorMittag']);
+      });
+    } finally {
+      setzeTestzeit(null);
+      if (vorher === undefined) {
+        delete process.env.STRIDE_TEST;
+      } else {
+        process.env.STRIDE_TEST = vorher;
+      }
+    }
+  });
+
+  it('lässt denselben Termin ohne Testtag liegen', async () => {
+    setzeTestzeit(null);
+    const { datum, seit } = kuenftigerJuni();
+    const adresse = await icsServer(textAmTag(datum));
+    await mitWeltAsync(welt(), async () => {
+      const { projektId, vorlageId } = ziel();
+      await erstelleKalender({ name: 'Arbeit', adresse, projektId, vorlageId, filter: '' }, seit);
+      const ergebnis = await gleicheKalenderAb();
+      expect(ergebnis.fehler).toEqual([]);
+      expect(ergebnis.neu).toBe(0);
+      expect(notizen()).toEqual([]);
     });
   });
 });

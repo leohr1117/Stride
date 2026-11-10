@@ -17,7 +17,7 @@ import { aktivesAttribut } from '../attribute/attribute.ts';
 import { ladeEinstellungen, pruefeFunktion } from '../einstellungen/einstellungen.ts';
 import { bucheAttributXp, erstelleBelohnung, ladeLevelStand, type AttributBuchung } from '../../services/fortschritt.ts';
 import { KONTEXT_JOINS, PROJEKT_AKTIV, PROJEKT_FARBE, PROJEKT_ODER_FREI } from './kontext.ts';
-import { datumPlus, lokalesDatum, tagesbeginn } from '../../services/zeit.ts';
+import { datumPlus, leseJetzt, lokalesDatum, tagesbeginn } from '../../services/zeit.ts';
 
 interface VorhabenZeile {
   id: number;
@@ -123,7 +123,7 @@ function ladeVorhabenListe(bedingung: string, parameter: Parameter[], jetzt: Dat
   ).map((zeile) => zuVorhaben(zeile, jetzt));
 }
 
-export function ladeVorhaben(id: number, jetzt = new Date()): VorhabenMitProjekt {
+export function ladeVorhaben(id: number, jetzt = leseJetzt()): VorhabenMitProjekt {
   const [vorhaben] = ladeVorhabenListe('vh.id = ?', [id], jetzt);
   if (!vorhaben) {
     throw nichtGefunden('Das Vorhaben');
@@ -131,11 +131,11 @@ export function ladeVorhaben(id: number, jetzt = new Date()): VorhabenMitProjekt
   return vorhaben;
 }
 
-export function ladeVorhabenFuerProjekt(projektId: number, jetzt = new Date()): Vorhaben[] {
+export function ladeVorhabenFuerProjekt(projektId: number, jetzt = leseJetzt()): Vorhaben[] {
   return ladeVorhabenListe('vh.projekt_id = ?', [projektId], jetzt);
 }
 
-export function ladeComebacks(limit: number, jetzt = new Date()): VorhabenMitProjekt[] {
+export function ladeComebacks(limit: number, jetzt = leseJetzt()): VorhabenMitProjekt[] {
   if (!ladeEinstellungen().ebenen.vorhaben) {
     return [];
   }
@@ -181,11 +181,11 @@ export function legeVorhabenAn(projektId: number | null, titel: string, zeitpunk
   ).id;
 }
 
-export function erstelleVorhaben(projektId: number | null, titel: string, jetzt = new Date()): Vorhaben {
+export function erstelleVorhaben(projektId: number | null, titel: string, jetzt = leseJetzt()): Vorhaben {
   return ladeVorhaben(legeVorhabenAn(projektId, titel, jetzt), jetzt);
 }
 
-export function ladeVorhabenAlle(jetzt = new Date()): VorhabenMitProjekt[] {
+export function ladeVorhabenAlle(jetzt = leseJetzt()): VorhabenMitProjekt[] {
   if (!ladeEinstellungen().ebenen.vorhaben) {
     return [];
   }
@@ -207,7 +207,7 @@ function nachDeadline(a: VorhabenMitProjekt, b: VorhabenMitProjekt): number {
   return deadlineA.localeCompare(deadlineB);
 }
 
-export function ladeLaufendes(jetzt = new Date()): Laufendes {
+export function ladeLaufendes(jetzt = leseJetzt()): Laufendes {
   if (!ladeEinstellungen().ebenen.vorhaben) {
     return { bosse: [], vorhaben: [] };
   }
@@ -218,11 +218,11 @@ export function ladeLaufendes(jetzt = new Date()): Laufendes {
   };
 }
 
-export function ladeAngreifendeBosse(jetzt = new Date()): VorhabenMitProjekt[] {
+export function ladeAngreifendeBosse(jetzt = leseJetzt()): VorhabenMitProjekt[] {
   return ladeLaufendes(jetzt).bosse.filter((vorhaben) => vorhaben.boss?.phase === 'erwacht');
 }
 
-export function aendereVorhaben(id: number, aenderung: VorhabenAenderung, jetzt = new Date()): Vorhaben {
+export function aendereVorhaben(id: number, aenderung: VorhabenAenderung, jetzt = leseJetzt()): Vorhaben {
   const vorhaben = ladeVorhaben(id, jetzt);
   if (aenderung.boss !== undefined && aenderung.boss !== null) {
     pruefeFunktion('bossAngriffe');
@@ -252,7 +252,7 @@ export function aendereVorhaben(id: number, aenderung: VorhabenAenderung, jetzt 
   return ladeVorhaben(id);
 }
 
-export function lasseVorhabenLos(id: number, jetzt = new Date()): Vorhaben {
+export function lasseVorhabenLos(id: number, jetzt = leseJetzt()): Vorhaben {
   const vorhaben = ladeVorhaben(id, jetzt);
   if (vorhaben.status !== 'offen') {
     throw ungueltig('Nur offene Vorhaben können losgelassen werden.');
@@ -265,7 +265,7 @@ export function lasseVorhabenLos(id: number, jetzt = new Date()): Vorhaben {
   return ladeVorhaben(id, jetzt);
 }
 
-export function starteNeuenAnlauf(id: number, jetzt = new Date()): AnlaufErgebnis {
+export function starteNeuenAnlauf(id: number, jetzt = leseJetzt()): AnlaufErgebnis {
   const alt = ladeVorhaben(id, jetzt);
   if (alt.status !== 'gescheitert') {
     throw ungueltig('Einen neuen Anlauf gibt es nur für gescheiterte Vorhaben.');

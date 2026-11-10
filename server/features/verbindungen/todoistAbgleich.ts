@@ -6,6 +6,7 @@ import { BOSS, GEGNER } from '../../../shared/spiel/xp.ts';
 import { alle, ausfuehren } from '../../db.ts';
 import { ladeErledigungen, ladeLabels, ladeProjekte, type TodoistErledigung } from '../../integrationen/todoist.ts';
 import { bucheAttributXp } from '../../services/fortschritt.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { fuehreRegelnZusammen, notizFuerEintrag, stundenAusDauer, type RegelErgebnis } from '../../services/todoistRegeln.ts';
 import { aktivesAttribut, ladeAttributXp } from '../attribute/attribute.ts';
 import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
@@ -267,7 +268,7 @@ function uebernimmErledigungen(erledigungen: TodoistErledigung[], jetzt: Date): 
   return { neu, fehler: [...fehler] };
 }
 
-export async function gleicheTodoistAb(jetzt = new Date()): Promise<AbgleichErgebnis> {
+export async function gleicheTodoistAb(jetzt = leseJetzt()): Promise<AbgleichErgebnis> {
   const token = leseWert(SCHLUESSEL.token);
   if (token === null) {
     return { neu: 0, fehler: [] };

@@ -1,6 +1,7 @@
 import type { TodoistLabel, TodoistOhne, TodoistStatus, TodoistZuordnung } from '../../../shared/api/index.ts';
 import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { ladeLabels, ladeNutzername, ladeProjekte, type TodoistLabelQuelle, type TodoistProjekt } from '../../integrationen/todoist.ts';
 import { KONTEXT_JOINS, PROJEKT_AKTIV } from '../ziele/kontext.ts';
 import { pruefeAktiveVorlage } from '../taetigkeiten/vorlagen.ts';
@@ -267,7 +268,7 @@ export function speichereLabels(labels: TodoistLabelQuelle[]): void {
   });
 }
 
-export async function verbindeTodoist(token: string, jetzt = new Date()): Promise<TodoistStatus> {
+export async function verbindeTodoist(token: string, jetzt = leseJetzt()): Promise<TodoistStatus> {
   const nutzer = await ladeNutzername(token);
   const projekte = await ladeProjekte(token);
   const labels = await ladeLabels(token);

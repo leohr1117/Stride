@@ -13,7 +13,7 @@ import { aktualisiere, alle, alsZahl, ausfuehren, eine, inTransaktion, platzhalt
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { istLoeschbar } from '../../services/loeschen.ts';
 import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
-import { lokalesDatum } from '../../services/zeit.ts';
+import { leseJetzt, lokalesDatum } from '../../services/zeit.ts';
 
 interface AttributZeile {
   id: number;
@@ -244,7 +244,7 @@ export function aktiviereAttribut(
   kennung: AttributKennung,
   modus: AktivierungsModus,
   level: number | null,
-  jetzt = new Date(),
+  jetzt = leseJetzt(),
 ): Attribut {
   const vorhanden = eine<{ id: number; archiviert: number; archivAnteil: number | null }>(
     'SELECT id, archiviert, archiv_anteil AS archivAnteil FROM attribute WHERE kennung = ?',
@@ -301,7 +301,7 @@ function pruefeErschoepfungsZiel(attributId: number, zielId: number | null | und
 export function aendereAttribut(
   id: number,
   aenderung: Partial<AttributAenderung> & { archiviert?: boolean },
-  jetzt = new Date(),
+  jetzt = leseJetzt(),
 ): Attribut {
   const bisher = ladeAttribut(id);
   const wirdArchiviert = aenderung.archiviert === true && !bisher.archiviert;

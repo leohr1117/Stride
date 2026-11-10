@@ -4,6 +4,7 @@ import { HINWEIS_REIHENFOLGE, waehleHinweis, type HinweisAnlass } from '../../..
 import { kettenStand } from '../../../shared/spiel/kette.ts';
 import { istAn } from '../../../shared/spiel/sichtbarkeit.ts';
 import { alle, eine } from '../../db.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
 import { leseHinweisNichtVor, leseHinweisRuhe, leseHinweisSchalter } from '../einstellungen/hinweisSchluessel.ts';
 
@@ -129,7 +130,7 @@ function anlaesseNeben(
 }
 
 /** Höchstens ein Hinweis. Liest nur, schreibt keine Zeile und sendet nicht. */
-export function sammleHinweise(jetzt = new Date()): HinweisSammlung {
+export function sammleHinweise(jetzt = leseJetzt()): HinweisSammlung {
   if (!tabelleDa('protokoll')) {
     return leer();
   }

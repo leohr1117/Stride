@@ -7,7 +7,7 @@ import { istAn } from '../../../shared/spiel/sichtbarkeit.ts';
 import { erstelleEintrag } from '../eintraege/eintraege.ts';
 import { KONTEXT_JOINS, PROJEKT_AKTIV, PROJEKT_FARBE, PROJEKT_ODER_FREI } from '../ziele/kontext.ts';
 import { pruefeAktiveVorlage, pruefeVorlageZumProjekt } from '../taetigkeiten/vorlagen.ts';
-import { lokalesDatum } from '../../services/zeit.ts';
+import { leseJetzt, lokalesDatum } from '../../services/zeit.ts';
 
 interface AufgabeZeile {
   id: number;
@@ -60,7 +60,7 @@ function ladeAufgabeZeile(id: number, heute: string): AufgabeZeile {
   return zeile;
 }
 
-export function ladeBasisAufgaben(jetzt = new Date()): BasisAufgabe[] {
+export function ladeBasisAufgaben(jetzt = leseJetzt()): BasisAufgabe[] {
   return alle<AufgabeZeile>(
     `${AUFGABE_ABFRAGE} WHERE ${PROJEKT_ODER_FREI} ORDER BY b.archiviert, p.name COLLATE NOCASE, b.name COLLATE NOCASE`,
     lokalesDatum(jetzt),
@@ -89,7 +89,7 @@ export function pruefeProjektUndVorlage(projektId: number | null, vorlageId: num
   }
 }
 
-export function erstelleBasisAufgabe(daten: BasisAufgabeDaten, jetzt = new Date()): BasisAufgabe {
+export function erstelleBasisAufgabe(daten: BasisAufgabeDaten, jetzt = leseJetzt()): BasisAufgabe {
   pruefeFunktion('basis');
   if (daten.projektId !== null) {
     pruefeEbene('projekte');
@@ -109,7 +109,7 @@ export function erstelleBasisAufgabe(daten: BasisAufgabeDaten, jetzt = new Date(
 export function aendereBasisAufgabe(
   id: number,
   aenderung: Partial<BasisAufgabeDaten> & { archiviert?: boolean },
-  jetzt = new Date(),
+  jetzt = leseJetzt(),
 ): BasisAufgabe {
   pruefeFunktion('basis');
   const heute = lokalesDatum(jetzt);
@@ -138,7 +138,7 @@ export function aendereBasisAufgabe(
   return zuAufgabe(ladeAufgabeZeile(id, heute));
 }
 
-export function erledigeBasisAufgabe(id: number, jetzt = new Date(), datum: string | null = null): EintragErgebnis {
+export function erledigeBasisAufgabe(id: number, jetzt = leseJetzt(), datum: string | null = null): EintragErgebnis {
   pruefeFunktion('basis');
   const tag = datum ?? lokalesDatum(jetzt);
   const aufgabe = ladeAufgabeZeile(id, tag);

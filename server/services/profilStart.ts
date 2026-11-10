@@ -6,7 +6,7 @@ import { gleicherKatalogtext, zeige, zeigeKatalogname } from '../../shared/sprac
 import { anfrageSprache } from '../anfrageSprache.ts';
 import { alle, ausfuehren, eine } from '../db.ts';
 import { ungueltig } from '../fehler.ts';
-import { lokalesDatum } from './zeit.ts';
+import { leseJetzt, lokalesDatum } from './zeit.ts';
 
 const INHALT = [
   'eintraege',
@@ -45,7 +45,7 @@ export function istWeltLeer(): boolean {
 
 export function wendeFokusAn(
   fokus: readonly FokusId[],
-  jetzt = new Date(),
+  jetzt = leseJetzt(),
   sprache: Sprache = anfrageSprache(),
   katalogUmbenennen = false,
 ): { koennen: boolean; status: boolean } {

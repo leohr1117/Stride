@@ -3,6 +3,7 @@ import { sperrtext } from '../../../shared/spiel/ebenen.ts';
 import { verteileNachGewichten, visionBeute, type Gewicht } from '../../../shared/spiel/xp.ts';
 import { alle, ausfuehren, inTransaktion } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { ladeWirksameAttribute, nurWirksameGewichte } from '../attribute/attribute.ts';
 import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
 import { bucheAttributXp, erstelleBelohnung, ladeLevelStand, type AttributBuchung } from '../../services/fortschritt.ts';
@@ -37,7 +38,7 @@ function ladeGewichteDerVision(visionId: number): Gewicht[] {
   }));
 }
 
-export function erreicheVision(id: number, jetzt = new Date()): VisionErgebnis {
+export function erreicheVision(id: number, jetzt = leseJetzt()): VisionErgebnis {
   if (!ladeEinstellungen().ebenen.visionen) {
     throw ungueltig(sperrtext('visionen'));
   }

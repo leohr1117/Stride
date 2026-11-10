@@ -5,6 +5,7 @@ import { ausruestungsBonus, investitionsBonus } from '../../../shared/spiel/xp.t
 import { aktualisiere, alle, alsZahl, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { istLoeschbar } from '../../services/loeschen.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { aktivesAttribut } from '../attribute/attribute.ts';
 import { funktionAktiv, ladeEinstellungen, pruefeEbene } from '../einstellungen/einstellungen.ts';
 import { KONTEXT_JOINS, PROJEKT_AKTIV } from '../ziele/kontext.ts';
@@ -277,7 +278,7 @@ export function erstelleInvestition(daten: InvestitionDaten): Investition {
     );
     const investitionId = Number(id);
     anlageHinterAltenBuchungen(investitionId);
-    bucheZahlungsDifferenz(investitionId, KEINE_ZAHLUNG, zahlung, new Date().toISOString());
+    bucheZahlungsDifferenz(investitionId, KEINE_ZAHLUNG, zahlung, leseJetzt().toISOString());
     return ladeInvestition(investitionId);
   });
 }
@@ -314,7 +315,7 @@ export function aendereInvestition(id: number, aenderung: InvestitionAenderung):
       );
     }
     if (zahlungNeu) {
-      bucheZahlungsDifferenz(id, bisher, zahlung, new Date().toISOString());
+      bucheZahlungsDifferenz(id, bisher, zahlung, leseJetzt().toISOString());
     }
     return ladeInvestition(id);
   });
@@ -326,7 +327,7 @@ export function loescheInvestition(id: number): void {
     if (!istLoeschbar('investition', id)) {
       throw ungueltig('Das ist schon genutzt und kann nur archiviert werden.');
     }
-    bucheZahlungsDifferenz(id, bisher, KEINE_ZAHLUNG, new Date().toISOString());
+    bucheZahlungsDifferenz(id, bisher, KEINE_ZAHLUNG, leseJetzt().toISOString());
     ausfuehren('DELETE FROM investitionen WHERE id = ?', id);
   });
 }

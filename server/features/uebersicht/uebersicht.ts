@@ -6,7 +6,7 @@ import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
 import { ladeTitel } from '../erfolge/erfolge.ts';
 import { ladeAktiveTage, ladeSerie } from '../../services/serie.ts';
 import { ladeAngreifendeBosse, ladeComebacks } from '../ziele/vorhaben.ts';
-import { lokalesDatum, wochenbeginn } from '../../services/zeit.ts';
+import { leseJetzt, lokalesDatum, wochenbeginn } from '../../services/zeit.ts';
 
 const HEATMAP_WOCHEN = 13;
 const ANZAHL_COMEBACKS = 3;
@@ -65,7 +65,7 @@ function ladeSichtbareErschoepfungen(): Erschoepfung[] {
     }));
 }
 
-export function ladeUebersicht(jetzt = new Date()): Uebersicht {
+export function ladeUebersicht(jetzt = leseJetzt()): Uebersicht {
   const serie = ladeSerie(lokalesDatum(jetzt));
   return {
     ...ladeIdentitaet(),

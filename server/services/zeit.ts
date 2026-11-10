@@ -45,6 +45,17 @@ export function leseJetzt(): Date {
   return new Date();
 }
 
+const TESTMODUS_TEXT =
+  'Testmodus (STRIDE_TEST=1): POST /api/test/heute kann die Spieluhr setzen. Nur für Tests, nie im Betrieb.';
+
+/** Startlog, wenn STRIDE_TEST=1 ist. Sonst kein Text. */
+export function testmodusWarnung(env: { STRIDE_TEST?: string }): string | null {
+  if (env.STRIDE_TEST === '1') {
+    return TESTMODUS_TEXT;
+  }
+  return null;
+}
+
 export function datumPlus(datum: string, tage: number): string {
   if (!DATUM_FORMAT.test(datum)) {
     throw ungueltig(DATUM_HINWEIS);

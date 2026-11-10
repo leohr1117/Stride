@@ -3,7 +3,7 @@ import { TAGE_PRO_WOCHE } from '../../../shared/spiel/datum.ts';
 import { laengsteKette } from '../../../shared/spiel/kette.ts';
 import { alle, eine } from '../../db.ts';
 import { KONTEXT_JOINS } from '../ziele/kontext.ts';
-import { ausTagesSchluessel, lokalesDatum, monatsbeginn, plusTage, wochenbeginn } from '../../services/zeit.ts';
+import { ausTagesSchluessel, leseJetzt, lokalesDatum, monatsbeginn, plusTage, wochenbeginn } from '../../services/zeit.ts';
 
 const WOCHEN_FUER_3_MONATE = 13;
 const MONATE_FUER_12_MONATE = 12;
@@ -72,7 +72,7 @@ function baueWochentage(tagesXp: Map<string, number>): Statistiken['wochentage']
   return summen.map((xp, tag) => ({ tag, xp }));
 }
 
-export function ladeStatistiken(zeitraum: Zeitraum, jetzt = new Date()): Statistiken {
+export function ladeStatistiken(zeitraum: Zeitraum, jetzt = leseJetzt()): Statistiken {
   const rahmen = bestimmeRahmen(zeitraum, jetzt);
   const seit = rahmen.seit.toISOString();
   const tagesXp = ladeTagesXp(seit);

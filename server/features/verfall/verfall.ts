@@ -7,7 +7,7 @@ import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { aktiveTypen, ladeAttributXp } from '../attribute/attribute.ts';
 import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
 import { bucheAttributXp } from '../../services/fortschritt.ts';
-import { lokalesDatum } from '../../services/zeit.ts';
+import { leseJetzt, lokalesDatum } from '../../services/zeit.ts';
 
 interface VerfallKandidat {
   id: number;
@@ -26,7 +26,7 @@ function zaehleAktiveTage(attributId: number, von: string, bis: string): number 
   )?.tage ?? 0;
 }
 
-export function rechneZeitverfallAb(jetzt = new Date()): void {
+export function rechneZeitverfallAb(jetzt = leseJetzt()): void {
   const heute = lokalesDatum(jetzt);
   const kandidaten = alle<VerfallKandidat>(
     `SELECT id, typ, verfall_zeit AS stufe, verfall_bis AS abgerechnetBis FROM attribute

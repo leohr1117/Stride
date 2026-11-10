@@ -8,7 +8,7 @@ import { ungueltig } from '../../fehler.ts';
 import { ladeEinstellungen, pruefeFunktion } from '../einstellungen/einstellungen.ts';
 import { aktiveTypen, aktivesAttribut } from '../attribute/attribute.ts';
 import { bucheAttributXp, erstelleBelohnung, ladeLevelStand } from '../../services/fortschritt.ts';
-import { ausTagesSchluessel, lokalesDatum, plusTage, wochenbeginn } from '../../services/zeit.ts';
+import { ausTagesSchluessel, leseJetzt, lokalesDatum, plusTage, wochenbeginn } from '../../services/zeit.ts';
 
 const MONTAG = 1;
 
@@ -21,7 +21,7 @@ interface Zeitfenster {
   bis: string;
 }
 
-export function aktuelleWoche(jetzt = new Date()): string {
+export function aktuelleWoche(jetzt = leseJetzt()): string {
   return lokalesDatum(wochenbeginn(jetzt));
 }
 
@@ -52,7 +52,7 @@ function istBonusMoeglich(woche: string, jetzt: Date): boolean {
   return woche >= lokalesDatum(wochenbeginn(jetzt, RUECKBLICK.bonusWochenZurueck));
 }
 
-export function ladeRueckblick(woche: string, jetzt = new Date()): Rueckblick {
+export function ladeRueckblick(woche: string, jetzt = leseJetzt()): Rueckblick {
   const beginn = pruefeWoche(woche, jetzt);
   const zeitraum = fenster(beginn);
   const { von, bis } = zeitraum;
@@ -130,7 +130,7 @@ function hatInhalt(antworten: RueckblickAntworten): boolean {
   return antworten.gut.trim() !== '' || antworten.lernen.trim() !== '' || antworten.fokus.trim() !== '';
 }
 
-export function speichereRueckblick(woche: string, antworten: RueckblickAntworten, jetzt = new Date()): RueckblickErgebnis {
+export function speichereRueckblick(woche: string, antworten: RueckblickAntworten, jetzt = leseJetzt()): RueckblickErgebnis {
   pruefeFunktion('rueckblick');
   pruefeWoche(woche, jetzt);
   const bisher = eine<{ belohnt: number }>('SELECT belohnt FROM rueckblicke WHERE woche = ?', woche);

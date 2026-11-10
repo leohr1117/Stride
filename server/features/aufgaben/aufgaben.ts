@@ -6,6 +6,7 @@ import { datumInZone } from '../../../shared/spiel/datum.ts';
 import { istAn } from '../../../shared/spiel/sichtbarkeit.ts';
 import { alle, ausfuehren, eine, inTransaktion, platzhalter } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { loeschbareMenge, loescheAufgabe as loescheAufgabenZeile } from '../../services/loeschen.ts';
 import { pruefeProjektUndVorlage } from '../basis/basis.ts';
 import { ladeEinstellungen, pruefeEbene } from '../einstellungen/einstellungen.ts';
@@ -280,17 +281,17 @@ function speichern(id: number | null, aenderung: AufgabeAenderung, jetzt: Date):
   return liefere(schreibe(id, bezug, festlegung.termin), heute);
 }
 
-export function ladeAufgaben(archiv = false, jetzt = new Date()): Aufgabe[] {
+export function ladeAufgaben(archiv = false, jetzt = leseJetzt()): Aufgabe[] {
   const loeschbar = loeschbareMenge('aufgabe');
   const zeilen = alle<AufgabeZeile>(`${AUFGABE_ABFRAGE} WHERE a.archiviert = ?`, heuteVon(jetzt), Number(archiv));
   return sortiereAufgaben(zeilen.map((zeile) => zuAufgabe(zeile, loeschbar)));
 }
 
-export function erstelleAufgabe(daten: AufgabeDaten, jetzt = new Date()): Aufgabe {
+export function erstelleAufgabe(daten: AufgabeDaten, jetzt = leseJetzt()): Aufgabe {
   return speichern(null, daten, jetzt);
 }
 
-export function aendereAufgabe(id: number, aenderung: AufgabeAenderung, jetzt = new Date()): Aufgabe {
+export function aendereAufgabe(id: number, aenderung: AufgabeAenderung, jetzt = leseJetzt()): Aufgabe {
   return speichern(id, aenderung, jetzt);
 }
 
@@ -298,7 +299,7 @@ export function loescheAufgabe(id: number): void {
   loescheAufgabenZeile(id);
 }
 
-export function erledigeAufgabe(id: number, jetzt = new Date()): EintragErgebnis {
+export function erledigeAufgabe(id: number, jetzt = leseJetzt()): EintragErgebnis {
   const einstellungen = ladeEinstellungen();
   const heute = datumInZone(jetzt, einstellungen.zeitzone);
   const zeile = ladeZeile(id, heute);

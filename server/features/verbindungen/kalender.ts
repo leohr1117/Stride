@@ -3,6 +3,7 @@ import { GRENZEN } from '../../../shared/spiel/begriffe.ts';
 import { titelPasstZumFilter } from '../../../shared/spiel/kalender.ts';
 import { aktualisiere, alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { kalenderName, liesEreignisse, termineDieEnden, type Termin } from '../../integrationen/ical.ts';
 import { fasseFehler, fehlertext, legeEintragAn, pruefeZiel } from './gemeinsam.ts';
 
@@ -92,7 +93,7 @@ async function ladeKalenderText(adresse: string): Promise<string> {
   return text;
 }
 
-export async function erstelleKalender(daten: KalenderDaten, jetzt = new Date()): Promise<Kalender> {
+export async function erstelleKalender(daten: KalenderDaten, jetzt = leseJetzt()): Promise<Kalender> {
   const adresse = normalisiereAdresse(daten.adresse);
   pruefeZiel(daten.projektId, daten.vorlageId);
   liesEreignisse(await ladeKalenderText(adresse));
@@ -209,7 +210,7 @@ export async function pruefeKalender(adresseEingabe: string): Promise<KalenderPr
   return { name: kalenderName(text).slice(0, GRENZEN.nameMax) };
 }
 
-export async function gleicheKalenderAb(jetzt = new Date()): Promise<AbgleichErgebnis> {
+export async function gleicheKalenderAb(jetzt = leseJetzt()): Promise<AbgleichErgebnis> {
   const ergebnis: AbgleichErgebnis = { neu: 0, fehler: [] };
   for (const kalender of alle<KalenderZeile>(KALENDER_ABFRAGE)) {
     const teil = await gleicheEinenKalenderAb(kalender, jetzt);

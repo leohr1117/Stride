@@ -10,6 +10,7 @@ import {
 } from '../../../shared/spiel/training.ts';
 import { ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { mitBewertung } from '../bewertung/bewertung.ts';
 import { erstelleEintrag, loescheEintrag } from '../eintraege/eintraege.ts';
 import { ersterBestwert } from './bestwerte.ts';
@@ -18,7 +19,7 @@ import { bucheNeu, gespeichertesErgebnis } from './neubuchung.ts';
 import { ladeTrainingsplan } from './plaene.ts';
 import { gewichtePassen, projektFuerPlan, vorlageFuerPlan } from './zuordnung.ts';
 
-export function starteEinheit(planId: number, jetzt = new Date()): Trainingseinheit {
+export function starteEinheit(planId: number, jetzt = leseJetzt()): Trainingseinheit {
   const plan = ladeTrainingsplan(planId);
   const offen = eine<{ id: number; planId: number }>(
     `SELECT id, plan_id AS planId FROM trainingseinheiten WHERE status = 'offen' ORDER BY id LIMIT 1`,
@@ -110,7 +111,7 @@ export function bucheEinheit(einheitId: number, meilenstein: boolean): EintragEr
   return bucheNeu(einheit.eintragId, einheitId, stunden, meilenstein);
 }
 
-export function schliesseEinheitAb(id: number, jetzt = new Date()): EintragErgebnis {
+export function schliesseEinheitAb(id: number, jetzt = leseJetzt()): EintragErgebnis {
   const roh = ladeRohEinheit(id);
   if (roh.status === 'fertig' && roh.eintragId !== null) {
     return gespeichertesErgebnis(roh.eintragId);

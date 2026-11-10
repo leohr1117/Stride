@@ -2,6 +2,7 @@ import type { Trainingseinheit } from '../../../shared/api/training.ts';
 import { NUR_ABHAKEN } from '../../../shared/spiel/training.ts';
 import { ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { schreibeBestwerte } from './bestwerte.ts';
 import { bucheEinheit, legeEintragAn, loeseEintrag } from './einheiten.ts';
 import { ladeEinheit, ladeRohEinheit, pruefeAenderbar } from './lesen.ts';
@@ -18,7 +19,7 @@ export function pruefeSatzKoerper(body: unknown): boolean {
   return erledigt;
 }
 
-export function hakeSatzAb(id: number, erledigt: boolean, jetzt = new Date()): Trainingseinheit {
+export function hakeSatzAb(id: number, erledigt: boolean, jetzt = leseJetzt()): Trainingseinheit {
   return inTransaktion(() => {
     const satz = eine<{ id: number; einheitId: number; erledigt: number }>(
       'SELECT id, einheit_id AS einheitId, erledigt FROM trainingssaetze WHERE id = ?',

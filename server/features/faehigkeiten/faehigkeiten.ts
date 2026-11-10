@@ -4,6 +4,7 @@ import { berechneLevel, LEVEL_KURVEN } from '../../../shared/spiel/level.ts';
 import { skillXp } from '../../../shared/spiel/xp.ts';
 import { aktualisiere, alle, alsZahl, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { istLoeschbar, loeschbareMenge, pruefeKnotenLoeschbar } from '../../services/loeschen.ts';
 import { pruefeFunktion } from '../einstellungen/einstellungen.ts';
 import { erstelleBelohnung, ladeLevelStand } from '../../services/fortschritt.ts';
@@ -190,7 +191,7 @@ export function loescheKnoten(id: number): Faehigkeit {
   return ladeFaehigkeit(knoten.faehigkeitId);
 }
 
-export function schalteSkillFrei(id: number, jetzt = new Date()): SkillErgebnis {
+export function schalteSkillFrei(id: number, jetzt = leseJetzt()): SkillErgebnis {
   pruefeFunktion('faehigkeiten');
   const knoten = ladeSkillKnoten(id);
   const faehigkeitId = ladeKnoten(id).faehigkeitId;

@@ -32,7 +32,7 @@ import { loeseWeltdatei, schliesseZugang, setzeZugangsWarnung, sitzungGueltig, w
 import { starteRegelmaessigenAbgleich } from './features/verbindungen/abgleich.ts';
 import { rechneZeitverfallAb } from './features/verfall/verfall.ts';
 import { DATUM_HINWEIS } from '../shared/spiel/datum.ts';
-import { setzeTestzeit } from './services/zeit.ts';
+import { setzeTestzeit, testmodusWarnung } from './services/zeit.ts';
 import { beschreibeValidierungsfehler } from './validierung.ts';
 
 const API_PREFIX = '/api';
@@ -172,6 +172,11 @@ async function beende(signal: string): Promise<void> {
 
 process.on('SIGINT', () => void beende('SIGINT'));
 process.on('SIGTERM', () => void beende('SIGTERM'));
+
+const testmodusHinweis = testmodusWarnung(process.env);
+if (testmodusHinweis !== null) {
+  app.log.warn(testmodusHinweis);
+}
 
 try {
   await app.listen({ port: KONFIG.port, host: KONFIG.host });

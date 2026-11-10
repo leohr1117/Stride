@@ -3,6 +3,7 @@ import { datumInZone } from '../../../shared/spiel/datum.ts';
 import { ART_UNBEKANNT, EINHEIT_GESPERRT, einheitStunden, istUebungsArt, planLiegtAmTag } from '../../../shared/spiel/training.ts';
 import { alle, eine, platzhalter } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
 import { ladeTrainingsplaene } from './plaene.ts';
 
@@ -67,7 +68,7 @@ export function einheitAenderbar(einheit: RohEinheit, jetzt: Date): boolean {
   return datumInZone(new Date(einheit.begonnenAm), zone) === datumInZone(jetzt, zone);
 }
 
-export function pruefeAenderbar(id: number, jetzt = new Date()): void {
+export function pruefeAenderbar(id: number, jetzt = leseJetzt()): void {
   if (!einheitAenderbar(ladeRohEinheit(id), jetzt)) {
     throw ungueltig(EINHEIT_GESPERRT);
   }
@@ -131,13 +132,13 @@ function zuEinheit(zeile: EinheitZeile, uebungen: EinheitUebung[], jetzt: Date):
   };
 }
 
-export function ladeEinheiten(jetzt = new Date()): Trainingseinheit[] {
+export function ladeEinheiten(jetzt = leseJetzt()): Trainingseinheit[] {
   const zeilen = alle<EinheitZeile>(`${EINHEIT_SQL} ORDER BY e.begonnen_am DESC, e.id DESC`);
   const saetze = ladeSatzGruppen(zeilen.map((zeile) => zeile.id));
   return zeilen.map((zeile) => zuEinheit(zeile, saetze.get(zeile.id) ?? [], jetzt));
 }
 
-export function ladeEinheit(id: number, jetzt = new Date()): Trainingseinheit {
+export function ladeEinheit(id: number, jetzt = leseJetzt()): Trainingseinheit {
   const zeile = eine<EinheitZeile>(`${EINHEIT_SQL} WHERE e.id = ?`, id);
   if (!zeile) {
     throw nichtGefunden('Die Einheit');
@@ -145,7 +146,7 @@ export function ladeEinheit(id: number, jetzt = new Date()): Trainingseinheit {
   return zuEinheit(zeile, ladeSatzGruppen([id]).get(id) ?? [], jetzt);
 }
 
-export function ladeTrainingHeute(jetzt = new Date()): TrainingHeute[] {
+export function ladeTrainingHeute(jetzt = leseJetzt()): TrainingHeute[] {
   const zone = ladeEinstellungen().zeitzone;
   const heute = datumInZone(jetzt, zone);
   const plaene = ladeTrainingsplaene(false).filter((plan) => planLiegtAmTag(plan.wochentage, heute));

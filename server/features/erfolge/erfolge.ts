@@ -4,6 +4,7 @@ import { erfolgSichtbar } from '../../../shared/spiel/sichtbarkeit.ts';
 import { laengsteKette } from '../../../shared/spiel/kette.ts';
 import { alle, ausfuehren, eine } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
+import { leseJetzt } from '../../services/zeit.ts';
 import { ladeCharakterLevel } from '../attribute/attribute.ts';
 import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
 import { ladeAktiveTage } from '../../services/serie.ts';
@@ -44,7 +45,7 @@ function ladeErreichte(): Map<string, string> {
   return erreicht;
 }
 
-export function schalteErfolgeFrei(zeitpunkt = new Date()): string[] {
+export function schalteErfolgeFrei(zeitpunkt = leseJetzt()): string[] {
   const vorhanden = ladeErreichte();
   const sichtbarkeit = ladeEinstellungen();
   const neu: string[] = [];
