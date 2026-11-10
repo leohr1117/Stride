@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.8',
+    seiten: 'Anmeldung, Mehr',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: [
+          'Unter der Anmeldung und unten in Mehr und Konto steht jetzt, von wem Stride ist, mit Link zu leohr.de.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.7',
     seiten: 'Mehr',
     abschnitte: [

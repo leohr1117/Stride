@@ -80,4 +80,4 @@ GNU Affero General Public License v3.0, siehe [LICENSE](LICENSE).
 
 ## Autor
 
-Leonardo Hramzow, [leohr.de](https://leohr.de), [GitHub](https://github.com/leohr1117)
+Stride von leohr: Leonardo Hramzow, [leohr.de](https://leohr.de), [GitHub](https://github.com/leohr1117)

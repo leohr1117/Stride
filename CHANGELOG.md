@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.8
+
+### Verbessert
+
+- Unter der Anmeldung und unten in Mehr und Konto steht jetzt, von wem Stride ist, mit Link zu leohr.de.
+
 ## 4.1.7
 
 ### Verbessert

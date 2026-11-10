@@ -7,6 +7,7 @@ import { neuereVersionen } from '../../../../shared/spiel/updateHinweis.ts';
 import type { Einstellungen } from '../../../../shared/api/einstellungen.ts';
 import { AKTUELLE_VERSION, VERSIONEN, type Versionseintrag } from '../../../../shared/versionen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
+import { Absender } from '../../components/Absender.tsx';
 import { ProfilBild } from '../../components/ProfilBild.tsx';
 import { DichteZeilen, Liste, Zeile } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
@@ -84,6 +85,7 @@ export function MehrSeite() {
         </Liste>
       </section>
       <WasNeuZeile />
+      <Absender className="mt-6" />
     </div>
     </DichteZeilen>
   );

@@ -6,6 +6,7 @@ import { FOKUS_LISTE, ZIEL_FRAGE, ZIELSTREBIGKEIT_INFO, type FokusId } from '../
 import { erfolgSichtbar, type Sichtbarkeit } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL, meldeAnmeldungAbgelaufen } from '../../api/index.ts';
 import { AbschnittKopf, Fehlermeldung, Ladeanzeige, Optionsliste } from '../../ui/index.ts';
+import { Absender } from '../../components/Absender.tsx';
 import { useBestaetigung } from '../../components/Bestaetigung.tsx';
 import { DichteZeilen, Liste, Zeile } from '../../components/Zeile.tsx';
 import { useSichtbarkeit } from '../../funktionen.ts';
@@ -149,6 +150,7 @@ function ProfilListe() {
             konten={konten}
           />
           <Fehlermeldung fehler={abmeldeFehler} />
+          <Absender className="mt-6" />
         </>
         </DichteZeilen>
       }

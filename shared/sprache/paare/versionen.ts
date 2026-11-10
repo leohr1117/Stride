@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Unter der Anmeldung und unten in Mehr und Konto steht jetzt, von wem Stride ist, mit Link zu leohr.de.',
+    'Under sign-in and at the bottom of More and Account, Stride now says who it is from, with a link to leohr.de.',
+  ],
+  [
     'Todoist und Kalender haben unter Verbindungen jeweils eine eigene Seite, der Status steht als Text daneben.',
     'Todoist and Calendar each have their own page under Connections, and the status is written next to them as text.',
   ],

@@ -813,4 +813,5 @@ export const PAARE = [
   ['Plan', 'Plan'],
   ['Stärkt', 'Trains'],
   ['XP', 'XP'],
+  ['von', 'by'],
 ] as const;
