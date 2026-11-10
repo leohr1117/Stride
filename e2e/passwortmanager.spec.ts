@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import { SPRACHEN } from '../shared/sprache/kern.ts';
 import { zeige } from '../shared/sprache/index.ts';
 import { PASSWORT_MAX, PASSWORT_REGEL } from '../shared/spiel/passwort.ts';

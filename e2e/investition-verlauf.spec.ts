@@ -1,6 +1,6 @@
 import { DatabaseSync } from 'node:sqlite';
 import fs from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { anmelden } from './helfer.ts';
 

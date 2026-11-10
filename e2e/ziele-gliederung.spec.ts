@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from './uhr.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 function nah(wert: number, ziel: number): boolean {

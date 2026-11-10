@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test } from '@playwright/test';
+import { expect, test } from './uhr.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 test('Daten zeigt Export, Import und den Gefahrenbereich', async ({ page }, testInfo) => {

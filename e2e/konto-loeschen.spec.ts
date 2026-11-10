@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test } from '@playwright/test';
+import { expect, test } from './uhr.ts';
 import { anmelden } from './helfer.ts';
 
 test('Ein frisches Konto löscht sich und die anderen Konten bleiben', async ({ page }, testInfo) => {

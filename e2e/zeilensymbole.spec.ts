@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test } from '@playwright/test';
+import { expect, test } from './uhr.ts';
 import { anmelden } from './helfer.ts';
 
 const TOLERANZ = 0.5;

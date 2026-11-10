@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from './uhr.ts';
 import { abzugNebenNamen, erschoepfungsBild, erschoepfungsFaktor } from '../shared/spiel/belastung.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
 

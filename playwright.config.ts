@@ -18,6 +18,7 @@ export default defineConfig({
     baseURL: TEST_URL,
     serviceWorkers: 'block',
     locale: 'de-DE',
+    timezoneId: 'Europe/Berlin',
   },
   projects: [
     {

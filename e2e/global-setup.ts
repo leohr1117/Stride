@@ -7,6 +7,7 @@ import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { mitDatenbankPfaden } from '../server/umgebung.ts';
 import { erstelleTestkopie, loescheTestkopie } from './kopie.ts';
 import { TEST_APP, TEST_PORT, TEST_URL, TEST_ZUGANG, WURZEL, TEST_PASSWORT } from './testdaten.ts';
+import { testJetzt } from './uhr.ts';
 
 function portFrei(port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -98,7 +99,7 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
       {
         id: 'e-alt',
         aufgabeId: 'a-alt',
-        datum: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        datum: new Date(testJetzt().getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(),
         projektId: 'p-post',
         inhalt: 'Alte Aufgabe',
         labels: [],

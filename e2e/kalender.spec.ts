@@ -1,5 +1,5 @@
 import { createServer, type Server } from 'node:http';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, testJetzt, type Page } from './uhr.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 const GOOGLE = 'https://calendar.google.com/calendar/r/settings';
@@ -61,7 +61,7 @@ async function waehleErsteTaetigkeit(seite: Page): Promise<void> {
 
 test('Kalender von Google und Apple lassen sich prüfen, bevor sie gespeichert werden', async ({ page }, info) => {
   const name = `E2E ${info.project.name}`;
-  const server = await icsServer(kalenderText(new Date(), name));
+  const server = await icsServer(kalenderText(testJetzt(), name));
   try {
     await anmelden(page);
     await oeffneDialog(page);

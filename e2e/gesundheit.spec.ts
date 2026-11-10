@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './uhr.ts';
 import { AKTUELLE_VERSION } from '../shared/versionen.ts';
 
 test('Gesundheit nennt ohne Anmeldung nur die Version', async ({ request }) => {

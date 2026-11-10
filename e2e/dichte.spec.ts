@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import { hatEintragFab, LEISTEN_SEITEN } from '../shared/spiel/leiste.ts';
 import { anmelden } from './helfer.ts';
 import {

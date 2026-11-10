@@ -1,5 +1,5 @@
 import { inflateSync } from 'node:zlib';
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from './uhr.ts';
 import fs from 'node:fs';
 import { TEST_PASSWORT } from './testdaten.ts';
 

@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from './uhr.ts';
 import { ATTRIBUT_KATALOG } from '../shared/features/attribute/attributKatalog.ts';
 import type { AttributKennung } from '../shared/spiel/begriffe.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';

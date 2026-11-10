@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from './uhr.ts';
 import { LevelRing } from '../client/src/ui/Anzeige.tsx';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 

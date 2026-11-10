@@ -7,8 +7,9 @@ import { aendereEinstellungen } from '../../server/features/einstellungen/einste
 import { erstelleKnoten } from '../../server/features/faehigkeiten/faehigkeiten.ts';
 import { ladeVorlagen } from '../../server/features/taetigkeiten/vorlagen.ts';
 import { lokalesDatum, tagesbeginn } from '../../server/services/zeit.ts';
+import { testJetzt } from '../uhr.ts';
 
-export const JETZT = new Date();
+export const JETZT = testJetzt();
 export const TAGE_VOLL = 35;
 export const TAGE_TEIL = 14;
 export const ZUFALL_VOLL = 20261022;

@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import type { Stil } from '../shared/features/darstellung/stile.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 

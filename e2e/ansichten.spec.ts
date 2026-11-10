@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import { bedeutungsfarben } from '../shared/features/darstellung/bedeutung.ts';
 import { wacheKontrast } from '../shared/features/darstellung/kontrastWaechter.ts';
 import { erscheinungAus, type Farbtrio } from '../shared/features/darstellung/paletten.ts';

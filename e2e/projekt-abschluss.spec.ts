@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import fs from 'node:fs';
 import { TEST_PASSWORT } from './testdaten.ts';
 

@@ -1,9 +1,9 @@
 import fs from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, testJetzt, type Page } from './uhr.ts';
 import { anmelden, auswahlZeilen, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 function altersText(jahr: number): string {
-  const alter = new Date().getFullYear() - jahr;
+  const alter = testJetzt().getFullYear() - jahr;
   if (alter <= 0) {
     return 'Du bist in diesem Jahr geboren.';
   }
@@ -135,7 +135,7 @@ test('Konto gruppiert Profil und Anmeldung', async ({ page }, testInfo) => {
     await expect(page.getByRole('alert')).toContainText('außerhalb des erlaubten Bereichs');
     await expect(page.getByText(altersText(1990))).toHaveCount(0);
     await expect(page.getByText('Du bist in diesem Jahr geboren.')).toHaveCount(0);
-    await jahr.fill(String(new Date().getFullYear()));
+    await jahr.fill(String(testJetzt().getFullYear()));
     await expect(page.getByText('Du bist in diesem Jahr geboren.')).toBeVisible();
     await page.locator('a[data-zurueck]').click();
     await expect(page).toHaveURL(/\/mehr\/profil$/);

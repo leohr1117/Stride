@@ -1,7 +1,7 @@
 import { createServer, type Server } from 'node:http';
 import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, testJetzt, type Page } from './uhr.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { anmelden, meilensteineAus, ohneSeitlichenUeberlauf } from './helfer.ts';
 
@@ -55,7 +55,7 @@ function weltDb(): DatabaseSync {
 function setzeSeit(name: string): void {
   const db = weltDb();
   try {
-    const seit = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    const seit = new Date(testJetzt().getTime() - 2 * 60 * 60 * 1000).toISOString();
     const ergebnis = db.prepare('UPDATE kalender SET seit = ? WHERE name = ?').run(seit, name);
     if (Number(ergebnis.changes) !== 1) {
       throw new Error(`Kalender ${name} nicht gefunden.`);
@@ -68,7 +68,7 @@ function setzeSeit(name: string): void {
 function hebeEintrag(notiz: string): void {
   const db = weltDb();
   try {
-    db.prepare('UPDATE eintraege SET erstellt_am = ? WHERE notiz = ?').run(new Date().toISOString(), notiz);
+    db.prepare('UPDATE eintraege SET erstellt_am = ? WHERE notiz = ?').run(testJetzt().toISOString(), notiz);
   } finally {
     db.close();
   }
@@ -141,7 +141,7 @@ test('Abgleich zeigt den Stand, behält Einträge und importiert nicht doppelt',
   fs.mkdirSync('tmp-test', { recursive: true });
   const name = `V3 ${info.project.name}`;
   const termin = `V3 Termin ${info.project.name}`;
-  const ende = new Date(Date.now() - 45 * 60 * 1000);
+  const ende = new Date(testJetzt().getTime() - 45 * 60 * 1000);
   const server = await icsServer(kalenderText(ende, name, termin));
   let kalenderId: number | null = null;
   try {

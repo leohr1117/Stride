@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from './uhr.ts';
 import { kompakt } from '../client/src/format.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
 

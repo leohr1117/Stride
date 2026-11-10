@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { TEST_PASSWORT } from './testdaten.ts';
+import { testJetzt } from './uhr.ts';
 
 async function passwort(): Promise<string> {
   return TEST_PASSWORT;
@@ -59,7 +60,7 @@ export async function heuteDerWelt(seite: Page): Promise<string> {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-  }).format(new Date());
+  }).format(testJetzt());
 }
 
 export async function auswahlZeilen(

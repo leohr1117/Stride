@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import { PASSWORT_MAX } from '../shared/spiel/passwort.ts';
 
 const NAME_VERGEBEN = 'Der Benutzername ist schon vergeben. Wähle einen anderen.';

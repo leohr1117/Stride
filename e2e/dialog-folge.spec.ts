@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from './uhr.ts';
 import { ATTRIBUT_KATALOG } from '../shared/features/attribute/attributKatalog.ts';
 import { erscheinungAus } from '../shared/features/darstellung/paletten.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';

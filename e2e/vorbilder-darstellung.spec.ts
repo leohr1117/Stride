@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import { kontrast, MINDEST_KONTRAST } from '../shared/spiel/farben.ts';
 import { standardVorlage, vorlagen } from '../shared/features/darstellung/paletten.ts';
 import { TEST_PASSWORT } from './testdaten.ts';

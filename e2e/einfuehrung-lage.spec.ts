@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
 
 async function passwort(): Promise<string> {

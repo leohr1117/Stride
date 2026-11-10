@@ -1,4 +1,4 @@
-import { expect, test, type Page, type TestInfo } from '@playwright/test';
+import { expect, test, type Page, type TestInfo } from './uhr.ts';
 import { attributVorlage } from '../shared/features/attribute/attributKatalog.ts';
 import { KOENNEN_KENNUNGEN } from '../shared/spiel/begriffe.ts';
 import { kontrast, MINDEST_KONTRAST } from '../shared/spiel/farben.ts';
@@ -273,7 +273,17 @@ async function liesD13(seite: Page): Promise<D13Probe> {
   });
 }
 
+async function warteAufTitelChips(seite: Page): Promise<void> {
+  const dialog = seite.getByRole('dialog', { name: 'Klassen und Titel' });
+  const chips = dialog
+    .locator('section')
+    .filter({ has: seite.getByRole('heading', { name: 'Titel', exact: true }) })
+    .locator('.space-y-3 span');
+  await expect.poll(async () => chips.count()).toBeGreaterThan(0);
+}
+
 async function pruefeD13(seite: Page, schema: 'light' | 'dark', liste: AttributZeile[]): Promise<D13Probe> {
+  await warteAufTitelChips(seite);
   const probe = await liesD13(seite);
   expect(probe.schema).toBe(schema);
   expect(probe.flaeche).toBe(schema === 'light' ? '#ffffff' : '#202020');

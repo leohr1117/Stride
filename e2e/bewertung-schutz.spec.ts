@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import { ERLAUBTE_PAUSENTAGE } from '../shared/spiel/kette.ts';
 import { RUECKKEHR, SCHUTZ } from '../shared/spiel/schutz.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';

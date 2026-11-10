@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import { standardVorlage } from '../shared/features/darstellung/paletten.ts';
 import type { Farbtrio } from '../shared/features/darstellung/paletten.ts';
 import type { Stil } from '../shared/features/darstellung/stile.ts';

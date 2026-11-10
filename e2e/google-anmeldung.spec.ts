@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import { anmelden } from './helfer.ts';
 
 const HELL = { primaer: '#141414', akzent: '#707070', hintergrund: '#f2f2f2' };

@@ -1,6 +1,8 @@
+import { DatabaseSync } from 'node:sqlite';
 import { expect, test, type Page, type Route } from '@playwright/test';
 import { meilensteineAus } from './helfer.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
+import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 
 interface ZielRef {
   art: string;
@@ -142,6 +144,61 @@ async function stufeTippen(seite: Page, anteil: number): Promise<void> {
   await regler.click({ position: { x, y: kasten.height / 2 } });
 }
 
+function weltDatei(): string {
+  const datei = process.env.PLAYWRIGHT_WELT;
+  if (!datei) {
+    throw new Error('Abbruch: PLAYWRIGHT_WELT fehlt.');
+  }
+  return verweigereEchteDatenbank(datei);
+}
+
+// Gelöschte Investitionen hinterlassen Buchungen, und die Id wird wiederverwendet.
+function entferneVerwaisteBuchungen(): void {
+  const db = new DatabaseSync(weltDatei(), { timeout: 5_000 });
+  try {
+    db.prepare(
+      'DELETE FROM xp_ereignisse WHERE investition_id IS NOT NULL AND investition_id NOT IN (SELECT id FROM investitionen)',
+    ).run();
+  } finally {
+    db.close();
+  }
+}
+
+async function aktiveInvestitionenArchivieren(seite: Page, titel: string): Promise<void> {
+  await seite.evaluate(async (titel) => {
+    const antwort = await fetch('/api/investitionen');
+    if (!antwort.ok) {
+      return;
+    }
+    const liste = (await antwort.json()) as { id: number; name: string; archiviert: boolean }[];
+    for (const eintrag of liste) {
+      if ((eintrag.name === titel || eintrag.name === `${titel}b`) && !eintrag.archiviert) {
+        await fetch(`/api/investitionen/${eintrag.id}`, {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ archiviert: true }),
+        });
+      }
+    }
+  }, titel);
+}
+
+async function einzelnAusfuehren(schritte: (() => Promise<void>)[]): Promise<void> {
+  let ersterFehler: unknown = null;
+  for (const schritt of schritte) {
+    try {
+      await schritt();
+    } catch (grund) {
+      if (ersterFehler === null) {
+        ersterFehler = grund;
+      }
+    }
+  }
+  if (ersterFehler !== null) {
+    throw ersterFehler;
+  }
+}
+
 test('Investition am Projekt und als eigene Investition', async ({ page }, testInfo) => {
   test.setTimeout(120_000);
   page.on('dialog', (dialog) => {
@@ -149,7 +206,11 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     void dialog.dismiss();
     throw new Error(`Unerwartetes Browser-Fenster: ${art}`);
   });
+  const name = 'Prüfbank 63';
+  const nameNeu = 'Prüfbank 63b';
   await anmelden(page);
+  entferneVerwaisteBuchungen();
+  await aktiveInvestitionenArchivieren(page, name);
   const liste = await projekte(page);
   const aktive = liste.filter((projekt) => projekt.aktiv).sort((a, b) => a.ausruestungBonus - b.ausruestungBonus);
   const ziel = aktive[0];
@@ -160,8 +221,6 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
 
   const halt = await anfragenHalten(page);
   const eintragIds: number[] = [];
-  const name = 'Prüfbank 63';
-  const nameNeu = 'Prüfbank 63b';
 
   try {
     await page.goto(`/projekte/${ziel.id}`);
@@ -464,29 +523,16 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     await ohneSeitlichenUeberlauf(page);
     await page.screenshot({ path: `tmp-test/investition/${testInfo.project.name}-charakter.png`, fullPage: true });
   } finally {
-    await halt.weg();
-    await wiederherstellen(page, ziel);
-    await page.evaluate(
-      async ({ ids, titel }) => {
-        for (const id of ids) {
-          await fetch(`/api/eintraege/${id}`, { method: 'DELETE' });
-        }
-        const antwort = await fetch('/api/investitionen');
-        if (!antwort.ok) {
-          return;
-        }
-        const liste = (await antwort.json()) as { id: number; name: string; archiviert: boolean }[];
-        for (const eintrag of liste) {
-          if ((eintrag.name === titel || eintrag.name === `${titel}b`) && !eintrag.archiviert) {
-            await fetch(`/api/investitionen/${eintrag.id}`, {
-              method: 'PATCH',
-              headers: { 'content-type': 'application/json' },
-              body: JSON.stringify({ archiviert: true }),
-            });
+    await einzelnAusfuehren([
+      () => halt.weg(),
+      () => wiederherstellen(page, ziel),
+      () =>
+        page.evaluate(async (ids) => {
+          for (const id of ids) {
+            await fetch(`/api/eintraege/${id}`, { method: 'DELETE' });
           }
-        }
-      },
-      { ids: eintragIds, titel: name },
-    );
+        }, eintragIds),
+      () => aktiveInvestitionenArchivieren(page, name),
+    ]);
   }
 });

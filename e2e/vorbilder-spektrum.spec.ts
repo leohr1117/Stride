@@ -1,4 +1,4 @@
-import { expect, test, type Page, type TestInfo } from '@playwright/test';
+import { expect, test, type Page, type TestInfo } from './uhr.ts';
 import type { Attribut } from '../shared/api/index.ts';
 import { findeVorbild, vergleichspunkte } from '../shared/features/vorbilder/vorbilder.ts';
 import type { Funktionen } from '../shared/spiel/funktionen.ts';
