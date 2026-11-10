@@ -2,6 +2,7 @@ import rateLimit from '@fastify/rate-limit';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 import { ANFRAGE_GRENZE, ZU_VIELE } from './anfrageGrenzen.ts';
 import { AppFehler } from './fehler.ts';
+import { istGesundheitsanfrage } from './gesundheit.ts';
 import { clientAdresse, leseSitzungsToken } from './features/zugang/routen.ts';
 import { sitzungsBenutzer } from './features/zugang/zugang.ts';
 
@@ -33,5 +34,11 @@ export async function registriereAnfrageGrenze(api: FastifyInstance): Promise<vo
     keyGenerator: (anfrage) => anfrageSchluessel(anfrage),
     errorResponseBuilder: () => new AppFehler(429, ZU_VIELE),
   });
-  api.addHook('onRequest', api.rateLimit());
+  const begrenze = api.rateLimit();
+  api.addHook('onRequest', async (anfrage, antwort) => {
+    if (istGesundheitsanfrage(anfrage.method, anfrage.url)) {
+      return;
+    }
+    await begrenze.call(api, anfrage, antwort);
+  });
 }

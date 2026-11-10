@@ -5,6 +5,7 @@ import Fastify, { type FastifyInstance, type InjectOptions, type LightMyRequestR
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { ANFRAGE_GRENZE, ZU_VIELE, setzeRegistrierungenZurueck } from './anfrageGrenzen.ts';
 import { registriereAnfrageGrenze } from './anfrageGrenze.ts';
+import { registriereGesundheit } from './gesundheit.ts';
 import { AppFehler } from './fehler.ts';
 import { SITZUNG_COOKIE } from './features/zugang/routen.ts';
 import { legeBenutzerAn, oeffneSitzung, schliesseZugang, setzeSperrenZurueck, verwendeZugang } from './features/zugang/zugang.ts';
@@ -51,6 +52,7 @@ async function baueApp(): Promise<FastifyInstance> {
   await app.register(
     async (api) => {
       await registriereAnfrageGrenze(api);
+      await registriereGesundheit(api);
       api.get('/ping', async () => ({ ok: true }));
     },
     { prefix: '/api' },
@@ -166,6 +168,26 @@ describe('Anfragegrenze', () => {
       const letzte = await fuelle(app, '/api/ping', ANFRAGE_GRENZE.jeMinuteAdresse + 1, adresse);
       expect(letzte.statusCode).toBe(200);
       expect(Number(kopfWert(letzte, 'x-ratelimit-limit'))).toBe(ANFRAGE_GRENZE.testJeMinute);
+    } finally {
+      await app.close();
+      zurueck();
+    }
+  }, 60_000);
+
+  it('zählt Gesundheitsabfragen nicht und lässt sie nach der Grenze durch', async () => {
+    const zurueck = stelleTestmodus(undefined);
+    const app = await baueApp();
+    const adresse = { 'x-forwarded-for': '203.0.113.90' };
+    try {
+      await fuelle(app, '/api/ping', ANFRAGE_GRENZE.jeMinuteAdresse - 1, adresse);
+      for (let index = 0; index < 25; index += 1) {
+        expect((await hole(app, '/api/gesundheit', adresse)).statusCode).toBe(200);
+      }
+      expect((await hole(app, '/api/ping', adresse)).statusCode).toBe(200);
+      expect((await hole(app, '/api/ping', adresse)).statusCode).toBe(429);
+      for (let index = 0; index < 25; index += 1) {
+        expect((await hole(app, '/api/gesundheit', adresse)).statusCode).toBe(200);
+      }
     } finally {
       await app.close();
       zurueck();

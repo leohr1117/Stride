@@ -1,5 +1,9 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
+  [
+    'Die laufende Version lässt sich ohne Anmeldung abrufen. Der Server kann ein Tagesprotokoll führen und Dateien entfernen, die älter als 14 Tage sind.',
+    'The running version can be read without signing in. The server can keep a daily log and remove files older than 14 days.',
+  ],
   ['Ein angemeldetes Konto sieht nur die eigenen Daten.', 'A signed-in account sees only its own data.'],
   [
     'Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.',

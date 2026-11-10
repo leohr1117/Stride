@@ -10,6 +10,7 @@ export const TEXTE: Record<string, string> = {
   "Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.": "Después, esta instancia de Stride no tiene administrador hasta que quien la opera nombre uno nuevo.",
   "Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.": "Eres el único titular. Mientras existan otras cuentas, no puedes eliminar la tuya.",
   "Passwort darf nicht leer sein.": "La contraseña no puede estar vacía.",
+  "Die laufende Version lässt sich ohne Anmeldung abrufen. Der Server kann ein Tagesprotokoll führen und Dateien entfernen, die älter als 14 Tage sind.": "La versión en ejecución se puede consultar sin iniciar sesión. El servidor puede llevar un registro diario y eliminar los archivos de más de 14 días.",
   "Ein angemeldetes Konto sieht nur die eigenen Daten.": "Una cuenta con sesión iniciada ve solo sus propios datos.",
   "Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.": "Ahora puedes eliminar tu cuenta de forma definitiva. Se quitan todos los datos de esa cuenta.",
   "Bist du das einzige Konto, kannst du die Daten vorher exportieren. Danach ist die Instanz leer.": "Si eres la única cuenta, puedes exportar los datos antes. Después, la instancia queda vacía.",

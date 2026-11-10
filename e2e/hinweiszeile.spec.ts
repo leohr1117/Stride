@@ -385,6 +385,7 @@ test('Bewertung und Angebot zugleich zeigen eine Zeile, Bewerten speichert Nicht
     const bewertenStandard = standardKarte.getByRole('button', { name: 'Bewerten', exact: true });
     await bewertenStandard.click();
     await expect(bewertenStandard).toHaveAttribute('aria-expanded', 'true');
+    await expect(standardKarte.getByRole('button', { name: 'Nicht fragen', exact: true })).toBeInViewport({ ratio: 1 });
     if (testInfo.project.name === 'handy') {
       await page.screenshot({ path: 'tmp-test/hinweiszeile/handy-bewertung-standard.png' });
     }

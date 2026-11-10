@@ -6,6 +6,8 @@ import { aktiviereAnfrageSprache } from './anfrageSprache.ts';
 import { KONFIG, stelleLiveClientBereit } from './config.ts';
 import { mitWelt, schliesseDatenbank } from './db.ts';
 import { registriereAnfrageGrenze } from './anfrageGrenze.ts';
+import { istGesundheitsanfrage, registriereGesundheit } from './gesundheit.ts';
+import { bereiteLoggerVor, schliesseLogStrom } from './logDatei.ts';
 import { registriereSicherheitsKoepfe } from './sicherheitsKoepfe.ts';
 import { AppFehler, ungueltig } from './fehler.ts';
 import { attributRouten } from './features/attribute/routen.ts';
@@ -36,7 +38,7 @@ import { beschreibeValidierungsfehler } from './validierung.ts';
 const API_PREFIX = '/api';
 const INTERNER_FEHLER = 500;
 
-const app = Fastify({ logger: { level: KONFIG.logLevel }, trustProxy: true });
+const app = Fastify({ logger: bereiteLoggerVor(KONFIG.logLevel), trustProxy: true });
 setzeZugangsWarnung((text) => {
   app.log.warn(text);
 });
@@ -62,6 +64,10 @@ await app.register(
   async (api) => {
     await registriereAnfrageGrenze(api);
     api.addHook('onRequest', (anfrage, antwort, fertig) => {
+      if (istGesundheitsanfrage(anfrage.method, anfrage.url)) {
+        fertig();
+        return;
+      }
       const pfad = anfrage.url.split('?')[0];
       if (process.env.STRIDE_TEST === '1' && (pfad === '/api/test/heute' || pfad === '/test/heute')) {
         fertig();
@@ -92,6 +98,9 @@ await app.register(
       weiter();
     });
     api.addHook('onSend', async (anfrage, antwort, payload) => {
+      if (istGesundheitsanfrage(anfrage.method, anfrage.url)) {
+        return payload;
+      }
       if (!antwort.getHeader('set-cookie') && anfrage.headers.cookie) {
         const token = leseSitzungsToken(anfrage.headers.cookie);
         if (token && sitzungGueltig(token)) {
@@ -101,6 +110,7 @@ await app.register(
       }
       return payload;
     });
+    await registriereGesundheit(api);
     await api.register(uebersichtRouten);
     await api.register(ketteRouten);
     await api.register(hinweiseRouten);
@@ -156,6 +166,7 @@ async function beende(signal: string): Promise<void> {
   await app.close();
   schliesseDatenbank();
   schliesseZugang();
+  await schliesseLogStrom();
   process.exit(0);
 }
 
@@ -165,9 +176,15 @@ process.on('SIGTERM', () => void beende('SIGTERM'));
 try {
   await app.listen({ port: KONFIG.port, host: KONFIG.host });
   console.log(`Stride läuft auf http://localhost:${KONFIG.port}`);
-  stoppeAbgleich = starteRegelmaessigenAbgleich(weltenPfade, (fehler) => app.log.error({ err: fehler }, 'Abgleich fehlgeschlagen'));
+  stoppeAbgleich = starteRegelmaessigenAbgleich(
+    weltenPfade,
+    (fehler) => app.log.error({ err: fehler }, 'Abgleich fehlgeschlagen'),
+    app.log.warn.bind(app.log),
+  );
 } catch (fehler) {
   app.log.error({ err: fehler }, 'Server konnte nicht gestartet werden');
   schliesseDatenbank();
-  process.exit(1);
+  void schliesseLogStrom().finally(() => {
+    process.exit(1);
+  });
 }

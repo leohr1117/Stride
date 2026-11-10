@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.6
+
+### Hinzugefügt
+
+- Die laufende Version lässt sich ohne Anmeldung abrufen. Der Server kann ein Tagesprotokoll führen und Dateien entfernen, die älter als 14 Tage sind.
+
 ## 4.1.4
 
 ### Geändert

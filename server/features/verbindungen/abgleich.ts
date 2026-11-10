@@ -1,5 +1,6 @@
 import { ABGLEICH_MINUTEN, type AbgleichErgebnis } from '../../../shared/api/index.ts';
 import { aktiverPfad, mitWeltAsync } from '../../db.ts';
+import type { HinweisLog } from '../hinweise/sender.ts';
 import { pruefeHinweise } from '../../integrationen/webPush.ts';
 import { istTodoistFaellig, stundeInZone } from '../../services/todoistRegeln.ts';
 import { gleicheKalenderAb } from './kalender.ts';
@@ -63,13 +64,17 @@ export function gleicheGeplantAb(jetzt = new Date()): Promise<AbgleichErgebnis> 
   return starteAbgleich(false, jetzt);
 }
 
-export function starteRegelmaessigenAbgleich(welten: () => string[], beiFehler: (fehler: unknown) => void): () => void {
+export function starteRegelmaessigenAbgleich(
+  welten: () => string[],
+  beiFehler: (fehler: unknown) => void,
+  log?: HinweisLog,
+): () => void {
   const abgleichen = () => {
     void (async () => {
       for (const pfad of welten()) {
         await mitWeltAsync(pfad, async () => {
           await gleicheGeplantAb();
-          await pruefeHinweise();
+          await pruefeHinweise(new Date(), log);
         });
       }
     })().catch(beiFehler);

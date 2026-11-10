@@ -3,6 +3,7 @@ import { leseVapid, oeffentlicherVapidSchluessel } from '../config.ts';
 import {
   ergebnisFuerFehler,
   sendeHinweiseWennBereit,
+  type HinweisLog,
   type PushErgebnis,
   type PushNutzlast,
   type PushZiel,
@@ -36,6 +37,10 @@ export async function sendeWebPush(abo: PushZiel, nutzlast: PushNutzlast): Promi
   }
 }
 
-export function pruefeHinweise(jetzt = new Date()): Promise<number> {
-  return sendeHinweiseWennBereit(oeffentlicherVapidSchluessel() !== null, sendeWebPush, jetzt);
+export function pruefeHinweise(jetzt = new Date(), log?: HinweisLog): Promise<number> {
+  const bereit = oeffentlicherVapidSchluessel() !== null;
+  if (log) {
+    return sendeHinweiseWennBereit(bereit, sendeWebPush, jetzt, log);
+  }
+  return sendeHinweiseWennBereit(bereit, sendeWebPush, jetzt);
 }

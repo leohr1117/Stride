@@ -10,6 +10,7 @@ export const TEXTE: Record<string, string> = {
   "Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.": "之后，这个 Stride 实例将没有管理员，直到运营者指定新的管理员。",
   "Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.": "你是唯一的所有者。只要还有其他账户，你就不能删除自己的账户。",
   "Passwort darf nicht leer sein.": "密码不能为空。",
+  "Die laufende Version lässt sich ohne Anmeldung abrufen. Der Server kann ein Tagesprotokoll führen und Dateien entfernen, die älter als 14 Tage sind.": "无需登录即可查看当前版本。服务器可以按天写记录，并删除超过 14 天的文件。",
   "Ein angemeldetes Konto sieht nur die eigenen Daten.": "已登录的账户只看到自己的数据。",
   "Du kannst dein eigenes Konto jetzt endgültig löschen. Alle Daten dieses Kontos werden dabei entfernt.": "现在可以永久删除自己的账户。该账户的所有数据会一并移除。",
   "Bist du das einzige Konto, kannst du die Daten vorher exportieren. Danach ist die Instanz leer.": "如果你是唯一的账户，可以先导出数据。之后这个实例是空的。",

@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.6',
+    seiten: 'Mehr',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Die laufende Version lässt sich ohne Anmeldung abrufen. Der Server kann ein Tagesprotokoll führen und Dateien entfernen, die älter als 14 Tage sind.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.4',
     seiten: 'Alle',
     abschnitte: [

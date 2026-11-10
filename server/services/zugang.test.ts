@@ -293,6 +293,10 @@ describe('cookie', () => {
     expect(istOeffentlicherZugang('POST', '/api/zugang/abmelden?x=1')).toBe(true);
     expect(istOeffentlicherZugang('GET', '/api/uebersicht')).toBe(false);
     expect(istOeffentlicherZugang('POST', '/api/zugang/passwort')).toBe(false);
+    expect(istOeffentlicherZugang('GET', '/api/gesundheit')).toBe(true);
+    expect(istOeffentlicherZugang('GET', '/api/gesundheit?x=1')).toBe(true);
+    expect(istOeffentlicherZugang('POST', '/api/gesundheit')).toBe(false);
+    expect(istOeffentlicherZugang('GET', '/api/gesundheit/extra')).toBe(false);
     expect(verbindungIstSicher('http', 'https')).toBe(true);
     expect(verbindungIstSicher('http', 'http, https')).toBe(false);
     expect(verbindungIstSicher('https', undefined)).toBe(true);

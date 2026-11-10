@@ -24,6 +24,7 @@ import {
   ZUGANG,
 } from './zugang.ts';
 import { registrierungErlaubt } from '../../anfrageGrenzen.ts';
+import { istGesundheitsanfrage } from '../../gesundheit.ts';
 import { anmeldeSchema, benutzernameSchema, idParameter, kontoLoeschenSchema, kontoSchema, passwortAenderungSchema } from '../../validierung.ts';
 import { anlageVon, FREMD, googleSchluessel, leeresGoogleCookie, nimmAnlage, verknuepfeGoogle } from './google.ts';
 import { registriereGoogleRouten } from './googleRouten.ts';
@@ -42,6 +43,9 @@ const ZU_VIELE_VERSUCHE = 'Zu viele Versuche. Bitte später erneut versuchen.';
 const NAME_VERGEBEN = 'Der Benutzername ist schon vergeben. Wähle einen anderen.';
 
 export function istOeffentlicherZugang(methode: string, url: string): boolean {
+  if (istGesundheitsanfrage(methode, url)) {
+    return true;
+  }
   const ohneQuery = url.split('?')[0] ?? url;
   const ohneApi = ohneQuery.startsWith('/api/') ? ohneQuery.slice('/api'.length) : ohneQuery;
   const pfad = ohneApi.length > 1 && ohneApi.endsWith('/') ? ohneApi.slice(0, -1) : ohneApi;
