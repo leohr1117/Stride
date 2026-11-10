@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Scheitert eine Verbindung, steht der Grund mit einer Lösung an der Zeile. Trennen und Entfernen sagen vorher, was bleibt.',
+    'When a connection fails, the reason and a fix show on the row. Disconnect and Remove say beforehand what stays.',
+  ],
+  [
     'Im hellen Modus passt die Farbe der Browserleiste jetzt zum Hintergrund, und installierte Apps holen nach einem Update das aktuelle Manifest.',
     'In light mode, the browser bar color now matches the background, and installed apps fetch the current manifest after an update.',
   ],

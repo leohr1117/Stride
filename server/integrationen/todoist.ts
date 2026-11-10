@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { KONFIG } from '../config.ts';
-import { AppFehler } from '../fehler.ts';
+import { AppFehler, type VerbindungsFehlerArt } from '../fehler.ts';
 import type { TodoistDauer } from '../services/todoistRegeln.ts';
 
 const ZEITLIMIT_MS = 15_000;
@@ -17,8 +17,8 @@ const GEGENSTELLE_STATUS = 502;
 const FENSTER_MS = 89 * 24 * 60 * 60 * 1000;
 
 export class TodoistFehler extends AppFehler {
-  constructor(nachricht: string, optionen: { cause?: unknown; status?: number } = {}) {
-    super(optionen.status ?? GEGENSTELLE_STATUS, nachricht);
+  constructor(nachricht: string, optionen: { cause?: unknown; status?: number; art: VerbindungsFehlerArt }) {
+    super(optionen.status ?? GEGENSTELLE_STATUS, nachricht, optionen.art);
     this.name = 'TodoistFehler';
     this.cause = optionen.cause;
   }
@@ -156,19 +156,19 @@ async function anfrage(
     if (still) {
       return null;
     }
-    throw new TodoistFehler('Todoist ist gerade nicht erreichbar.', { cause: fehler });
+    throw new TodoistFehler('Todoist ist gerade nicht erreichbar.', { cause: fehler, art: 'netz' });
   }
   if (ABGELEHNT.includes(antwort.status)) {
-    throw new TodoistFehler('Todoist lehnt den Token ab. Prüfe ihn in den Todoist-Einstellungen.', { status: ABGELEHNT_STATUS });
+    throw new TodoistFehler('Todoist lehnt den Token ab. Prüfe ihn in den Todoist-Einstellungen.', { status: ABGELEHNT_STATUS, art: 'abgelehnt' });
   }
   if (antwort.status === ZU_VIELE_ANFRAGEN) {
-    throw new TodoistFehler('Todoist bremst gerade zu viele Anfragen. Der nächste Abgleich versucht es erneut.');
+    throw new TodoistFehler('Todoist bremst gerade zu viele Anfragen. Der nächste Abgleich versucht es erneut.', { art: 'bremse' });
   }
   if (!antwort.ok) {
     if (still) {
       return null;
     }
-    throw new TodoistFehler('Todoist hat die Anfrage abgelehnt. Der nächste Abgleich versucht es erneut.');
+    throw new TodoistFehler('Todoist hat die Anfrage abgelehnt. Der nächste Abgleich versucht es erneut.', { art: 'gegenstelle' });
   }
   try {
     return await antwort.json();
@@ -176,14 +176,14 @@ async function anfrage(
     if (still) {
       return null;
     }
-    throw new TodoistFehler('Todoist hat keine lesbare Antwort geschickt.', { cause: fehler });
+    throw new TodoistFehler('Todoist hat keine lesbare Antwort geschickt.', { cause: fehler, art: 'gegenstelle' });
   }
 }
 
 function lies<T extends z.ZodType>(schema: T, daten: unknown): z.infer<T> {
   const ergebnis = schema.safeParse(daten);
   if (!ergebnis.success) {
-    throw new TodoistFehler('Todoist hat in einem unerwarteten Format geantwortet.', { cause: ergebnis.error });
+    throw new TodoistFehler('Todoist hat in einem unerwarteten Format geantwortet.', { cause: ergebnis.error, art: 'gegenstelle' });
   }
   return ergebnis.data;
 }

@@ -101,9 +101,14 @@ describe('bestaetigungFuer', () => {
     expect(bestaetigungFuer({ art: 'eintrag', id: 1, name: 'Notiz' })).toBeNull();
     expect(bestaetigungFuer({ art: 'vision', id: 5, name: 'Meer' })).toBeNull();
     expect(sofortRueckgaengig('kalender')).toBe(false);
-    expect(bestaetigungFuer({ art: 'kalender', id: 2, name: 'Arbeit' })?.knopf).toBe('Entfernen');
-    expect(bestaetigungFuer({ art: 'todoist', id: 0, name: 'Todoist' })).toMatchObject({
+    expect(bestaetigungFuer({ art: 'kalender', id: 2, name: 'Arbeit' })).toEqual({
+      titel: 'Arbeit entfernen?',
+      text: 'Bereits übernommene Einträge bleiben. Fügst du ihn später neu hinzu, zählen nur Termine ab dann.',
+      knopf: 'Entfernen',
+    });
+    expect(bestaetigungFuer({ art: 'todoist', id: 0, name: 'Todoist' })).toEqual({
       titel: 'Todoist trennen?',
+      text: 'Der Token und deine Todoist-Zuordnungen werden gelöscht. Bereits übernommene Einträge bleiben.',
       knopf: 'Trennen',
     });
     expect(bestaetigungFuer({ art: 'konto', id: 3, name: 'mia' })?.text).toBe('Die Welt dieses Accounts wird mitgelöscht.');

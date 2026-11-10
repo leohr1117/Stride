@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
+import { CircleAlert } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import type { Kalender } from '../../../../shared/api/index.ts';
+import { kurzgrund } from '../../../../shared/verbindungsFehler.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { Dialog } from '../../components/Dialog.tsx';
 import { SchnellMenueKnopf } from '../../components/SchnellAktion.tsx';
@@ -24,17 +26,21 @@ function Spaltenkopf({ className = '' }: { className?: string }) {
   );
 }
 
-function satz(name: string, wert: string, fehler: boolean): string {
-  const basis = `${tx('Termine in')} ${name}, ${tx('zählen als')} ${wert}`;
-  return fehler ? `${basis}, ${tx('Fehler')}` : basis;
+function fehlerLabel(eintrag: Kalender): string {
+  return eintrag.fehlerArt ? tx(kurzgrund(eintrag.fehlerArt)) : tx('Fehler');
 }
 
-function wertKnoten(anzeige: KalenderAnzeige, fehler: boolean): ReactNode {
+function satz(name: string, wert: string, fehler: string | null): string {
+  const basis = `${tx('Termine in')} ${name}, ${tx('zählen als')} ${wert}`;
+  return fehler ? `${basis}, ${fehler}` : basis;
+}
+
+function wertKnoten(anzeige: KalenderAnzeige, fehler: string | null): ReactNode {
   if (fehler) {
     return (
       <span className="inline-flex items-center gap-1 text-gefahr">
-        <span aria-hidden="true">⚠</span>
-        {tx('Fehler')}
+        <CircleAlert aria-hidden="true" className="size-4 shrink-0" />
+        {fehler}
       </span>
     );
   }
@@ -71,15 +77,15 @@ export function KalenderAbschnitt({ kalender }: { kalender: Kalender[] }) {
                       projektId: eintrag.projektId,
                       standardName: nameVon(projekt?.standardVorlageId ?? null),
                     });
-                    const fehler = eintrag.fehler !== null;
+                    const label = eintrag.fehler !== null ? fehlerLabel(eintrag) : null;
                     const archiviert = zeigeProjektArchiviert(eintrag.projektId, projekt ? projekt.aktiv : null);
                     return (
                       <Zeile
                         key={eintrag.id}
                         titel={eintrag.name}
-                        name={satz(eintrag.name, anzeige.text, fehler)}
-                        neben={archiviert ? tx('Projekt archiviert') : fehler ? anzeige.text : undefined}
-                        wert={wertKnoten(anzeige, fehler)}
+                        name={satz(eintrag.name, anzeige.text, label)}
+                        neben={archiviert ? tx('Projekt archiviert') : label ? anzeige.text : undefined}
+                        wert={wertKnoten(anzeige, label)}
                         onKlick={() => setDialog({ kalender: eintrag })}
                       />
                     );

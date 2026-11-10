@@ -1,4 +1,5 @@
 import type { TodoistLabel, TodoistOhne, TodoistStatus, TodoistZuordnung } from '../../../shared/api/index.ts';
+import { artAusSpeicher } from '../../../shared/verbindungsFehler.ts';
 import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { leseJetzt } from '../../services/zeit.ts';
@@ -14,6 +15,7 @@ export const SCHLUESSEL = {
   seit: 'todoistSeit',
   abgleich: 'todoistAbgleich',
   fehler: 'todoistFehler',
+  fehlerArt: 'todoistFehlerArt',
   ohne: 'todoistOhne',
   standard: 'todoistStandard',
 } as const;
@@ -201,6 +203,7 @@ export function ladeTodoistStatus(): TodoistStatus {
     seit: leseWert(SCHLUESSEL.seit),
     letzterAbgleich: leseWert(SCHLUESSEL.abgleich),
     fehler: leseWert(SCHLUESSEL.fehler),
+    fehlerArt: artAusSpeicher(leseWert(SCHLUESSEL.fehlerArt), leseWert(SCHLUESSEL.fehler)),
     uebernommen: zaehleUebernommen(),
     ohneZuordnung: ohne.art,
     standardVorlageId: ohne.vorlageId,
@@ -277,6 +280,7 @@ export async function verbindeTodoist(token: string, jetzt = leseJetzt()): Promi
     setzeWert(SCHLUESSEL.nutzer, nutzer);
     setzeWert(SCHLUESSEL.seit, jetzt.toISOString());
     setzeWert(SCHLUESSEL.fehler, null);
+    setzeWert(SCHLUESSEL.fehlerArt, null);
   });
   speichereProjekte(projekte);
   speichereLabels(labels);

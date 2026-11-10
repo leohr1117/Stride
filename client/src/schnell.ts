@@ -111,10 +111,18 @@ export function sofortRueckgaengig(art: SchnellArt): boolean {
 
 export function bestaetigungFuer(ziel: SchnellZiel): Bestaetigungstext | null {
   if (ziel.art === 'kalender') {
-    return { titel: `${ziel.name} entfernen?`, text: 'Bereits übernommene Einträge bleiben.', knopf: 'Entfernen' };
+    return {
+      titel: `${ziel.name} entfernen?`,
+      text: 'Bereits übernommene Einträge bleiben. Fügst du ihn später neu hinzu, zählen nur Termine ab dann.',
+      knopf: 'Entfernen',
+    };
   }
   if (ziel.art === 'todoist') {
-    return { titel: 'Todoist trennen?', text: 'Bereits übernommene Einträge bleiben.', knopf: 'Trennen' };
+    return {
+      titel: 'Todoist trennen?',
+      text: 'Der Token und deine Todoist-Zuordnungen werden gelöscht. Bereits übernommene Einträge bleiben.',
+      knopf: 'Trennen',
+    };
   }
   if (ziel.art === 'konto') {
     return { titel: `${ziel.name} löschen?`, text: 'Die Welt dieses Accounts wird mitgelöscht.', knopf: 'Löschen' };

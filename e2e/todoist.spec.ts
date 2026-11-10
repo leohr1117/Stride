@@ -1,17 +1,62 @@
-import { expect, test, type Page } from './uhr.ts';
-import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+import { DatabaseSync } from 'node:sqlite';
+import { verweigereEchteDatenbank } from '../server/testpfad.ts';
+import { expect, test, testJetzt, type Page } from './uhr.ts';
+import { anmelden, meilensteineAus, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 const TOKEN_SEITE = 'https://app.todoist.com/app/settings/integrations/developer';
 
+function weltDb(): DatabaseSync {
+  const datei = process.env.PLAYWRIGHT_WELT;
+  if (!datei) {
+    throw new Error('Abbruch: PLAYWRIGHT_WELT fehlt.');
+  }
+  return new DatabaseSync(verweigereEchteDatenbank(datei), { timeout: 5_000 });
+}
+
+function setzeTodoistSeit(): void {
+  const db = weltDb();
+  try {
+    const seit = JSON.stringify(new Date(testJetzt().getTime() - 3 * 24 * 60 * 60 * 1000).toISOString());
+    const ergebnis = db.prepare(`UPDATE einstellungen SET wert = ? WHERE schluessel = 'todoistSeit'`).run(seit);
+    if (Number(ergebnis.changes) !== 1) {
+      throw new Error('todoistSeit fehlt.');
+    }
+  } finally {
+    db.close();
+  }
+}
+
+function hebeEintrag(notiz: string): void {
+  const db = weltDb();
+  try {
+    db.prepare('UPDATE eintraege SET erstellt_am = ? WHERE notiz = ?').run(testJetzt().toISOString(), notiz);
+  } finally {
+    db.close();
+  }
+}
+
+function zelleAnzahl(sql: string): number {
+  const db = weltDb();
+  try {
+    const zeile = db.prepare(sql).get() as { anzahl: number } | undefined;
+    return Number(zeile?.anzahl ?? 0);
+  } finally {
+    db.close();
+  }
+}
+
 async function trennenFallsVerbunden(seite: Page): Promise<void> {
   await seite.getByRole('heading', { name: 'Todoist', level: 2 }).waitFor();
-  const trennen = seite.getByRole('button', { name: 'Aktionen für Todoist' });
+  const trennen = seite.locator('#todoist').getByRole('button', { name: 'Trennen', exact: true });
   if ((await trennen.count()) === 0) {
     return;
   }
   await trennen.click();
-  await seite.getByRole('menuitem', { name: 'Trennen' }).click();
-  await seite.getByRole('button', { name: 'Trennen' }).click();
+  const dialog = seite.getByRole('alertdialog', { name: 'Todoist trennen?' });
+  await expect(dialog).toContainText(
+    'Der Token und deine Todoist-Zuordnungen werden gelöscht. Bereits übernommene Einträge bleiben.',
+  );
+  await dialog.getByRole('button', { name: 'Trennen', exact: true }).click();
   await seite.getByRole('textbox', { name: 'API-Token' }).waitFor();
 }
 
@@ -239,4 +284,84 @@ test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, i
   expect(vorschauAufrufe).toEqual([]);
   await ohneSeitlichenUeberlauf(page);
   await page.screenshot({ path: `tmp-test/todoist/todoist-${info.project.name}.png`, fullPage: true });
+});
+
+test('Todoist nennt den Kurzgrund unter dem Verbinden-Knopf', async ({ page }) => {
+  await anmelden(page);
+  await page.goto('/mehr/inhalte/verbindungen/todoist');
+  await trennenFallsVerbunden(page);
+  const token = page.getByRole('textbox', { name: 'API-Token' });
+  await token.fill('kurz');
+  await page.getByRole('button', { name: 'Verbinden', exact: true }).click();
+  await expect(token).toHaveValue('kurz');
+  const status = page.locator('#todoist [role="status"]');
+  await expect(status).toContainText('Token unvollständig');
+  await expect(status).toContainText('Kopiere den ganzen Token aus Todoist.');
+  await expect(status).not.toContainText('(token)');
+  await expect(page.locator('#todoist [role="alert"]').filter({ hasText: 'Token unvollständig' })).toHaveCount(0);
+
+  await token.fill('abgelehnt-e2e-token');
+  await page.getByRole('button', { name: 'Verbinden', exact: true }).click();
+  await expect(token).toHaveValue('abgelehnt-e2e-token');
+  await expect(status).toContainText('Token abgelehnt');
+  await expect(status).toContainText('Token neu eingeben');
+  await expect(page.locator('#todoist [role="alert"]').filter({ hasText: 'Token abgelehnt' })).toHaveCount(0);
+});
+
+test('Trennen löscht die Zuordnung und behält den übernommenen Eintrag', async ({ page }) => {
+  test.setTimeout(60_000);
+  await anmelden(page);
+  await page.goto('/mehr/inhalte/verbindungen/todoist');
+  await trennenFallsVerbunden(page);
+  try {
+    await page.getByRole('textbox', { name: 'API-Token' }).fill('e2e-todoist-token');
+    await page.getByRole('button', { name: 'Verbinden', exact: true }).click();
+    await expect(page.getByText('Verbunden als Todoist Test')).toBeVisible();
+
+    const vorlagen = await page.request.get('/api/vorlagen');
+    expect(vorlagen.ok()).toBe(true);
+    const liste = (await vorlagen.json()) as { id: number; archiviert: boolean }[];
+    const vorlage = liste.find((eintrag) => !eintrag.archiviert);
+    expect(vorlage).toBeTruthy();
+    const zuordnung = await page.request.patch('/api/verbindungen/todoist/projekte/p-post', {
+      data: { vorlageId: vorlage?.id, projektId: null, stunden: null, aktiv: true },
+    });
+    expect(zuordnung.ok()).toBe(true);
+
+    setzeTodoistSeit();
+    const schonBekannt = zelleAnzahl("SELECT COUNT(*) AS anzahl FROM todoist_erledigt WHERE ereignis_id = 'e-alt'") > 0;
+    const abgleich = await page.request.post('/api/verbindungen/abgleichen');
+    expect(abgleich.ok()).toBe(true);
+    const ergebnis = (await abgleich.json()) as { neu: number; fehler: string[] };
+    expect(ergebnis.fehler).toEqual([]);
+    expect(ergebnis.neu).toBe(schonBekannt ? 0 : 1);
+    expect(zelleAnzahl("SELECT COUNT(*) AS anzahl FROM eintraege WHERE notiz = 'Alte Aufgabe'")).toBe(1);
+    expect(zelleAnzahl("SELECT COUNT(*) AS anzahl FROM todoist_erledigt WHERE ereignis_id = 'e-alt'")).toBe(1);
+    hebeEintrag('Alte Aufgabe');
+
+    await page.reload();
+    await expect(page.getByRole('button', { name: /^Erledigt in Posteingang/ })).toBeVisible();
+    await page.goto('/chronik');
+    await meilensteineAus(page);
+    await expect(page.getByText('Alte Aufgabe').first()).toBeVisible();
+
+    await page.goto('/mehr/inhalte/verbindungen/todoist');
+    await page.locator('#todoist').getByRole('button', { name: 'Trennen', exact: true }).click();
+    const dialog = page.getByRole('alertdialog', { name: 'Todoist trennen?' });
+    await expect(dialog).toContainText(
+      'Der Token und deine Todoist-Zuordnungen werden gelöscht. Bereits übernommene Einträge bleiben.',
+    );
+    await dialog.getByRole('button', { name: 'Trennen', exact: true }).click();
+    await expect(page.getByRole('textbox', { name: 'API-Token' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Erledigt in Posteingang/ })).toHaveCount(0);
+
+    await page.goto('/mehr/inhalte/verbindungen');
+    await expect(page.locator('main .zeile').nth(0).locator('[data-zeile-wert]')).toHaveText('Aus');
+    await page.goto('/chronik');
+    await meilensteineAus(page);
+    await expect(page.getByText('Alte Aufgabe').first()).toBeVisible();
+  } finally {
+    await page.goto('/mehr/inhalte/verbindungen/todoist');
+    await trennenFallsVerbunden(page);
+  }
 });

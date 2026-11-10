@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.10
+
+### Verbessert
+
+- Scheitert eine Verbindung, steht der Grund mit einer Lösung an der Zeile. Trennen und Entfernen sagen vorher, was bleibt.
+
 ## 4.1.9
 
 ### Verbessert

@@ -67,6 +67,9 @@ function seite<T>(liste: T[], url: URL, schluessel: 'results' | 'items'): Record
 function tokenOk(anfrage: IncomingMessage): boolean {
   const kopf = anfrage.headers.authorization ?? '';
   const token = kopf.startsWith('Bearer ') ? kopf.slice('Bearer '.length) : '';
+  if (token.startsWith('abgelehnt-')) {
+    return false;
+  }
   return token.length >= 8;
 }
 

@@ -18,6 +18,7 @@ import {
   ordneTodoistLabelReihenfolge,
   ordneTodoistProjektZu,
 } from '../features/verbindungen/todoistZuordnung.ts';
+import { ungueltig } from '../fehler.ts';
 import {
   idParameter,
   kalenderAenderungSchema,
@@ -35,8 +36,11 @@ export async function verbindungsRouten(app: FastifyInstance): Promise<void> {
   app.get('/verbindungen', async () => ({ todoist: ladeTodoistStatus(), kalender: ladeKalenderListe() }));
 
   app.put('/verbindungen/todoist', async (anfrage) => {
-    const { token } = todoistTokenSchema.parse(anfrage.body);
-    return verbindeTodoist(token);
+    const geprueft = todoistTokenSchema.safeParse(anfrage.body);
+    if (!geprueft.success) {
+      throw ungueltig(geprueft.error.issues[0]?.message ?? 'Ungültige Eingabe.', 'eingabe');
+    }
+    return verbindeTodoist(geprueft.data.token);
   });
 
   app.delete('/verbindungen/todoist', async (_anfrage, antwort) => {

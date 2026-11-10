@@ -3,8 +3,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CircleAlert, CircleCheck, CircleMinus, RefreshCw } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { type TodoistStatus, type Verbindungen } from '../../../shared/api/index.ts';
+import { artAusSatz, kurzgrund, loesung } from '../../../shared/verbindungsFehler.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
-import { SchnellZeile, useSchnellAktion } from '../components/SchnellAktion.tsx';
+import { useBestaetigung } from '../components/Bestaetigung.tsx';
+import { useSchnellAktion } from '../components/SchnellAktion.tsx';
+import { bestaetigungFuer } from '../schnell.ts';
 import { DichteZeilen, Zeile, ZeilenGruppe } from '../components/Zeile.tsx';
 import { fehlerAnzeige, kalenderLage, todoistLage, type VerbindungsLage } from '../features/mehr/verbindungsStand.ts';
 import { AbschnittKopf, Fehlermeldung, Flaeche, Formular, InfoHinweis, Knopf, Ladeanzeige, PasswortFeld } from '../ui/index.ts';
@@ -38,16 +41,25 @@ const LAGE_TEXT = {
 
 const SYMBOL_KLASSE = 'pointer-events-none flex size-5 shrink-0 items-center justify-center [&_svg]:size-5';
 
-function nebenzeile(lage: VerbindungsLage, iso: string | null): string | null {
+function nebenzeile(lage: VerbindungsLage, iso: string | null, grund: string | null): string | null {
+  if (lage === 'fehler') {
+    return grund;
+  }
   if (lage !== 'verbunden') {
     return null;
   }
   return iso ? tx('{zeit} abgeglichen', { zeit: relativeZeit(iso) }) : tx('Noch nicht abgeglichen');
 }
 
-function statusZeile(titel: 'Todoist' | 'Kalender', lage: VerbindungsLage, iso: string | null, nach: string) {
+function statusZeile(
+  titel: 'Todoist' | 'Kalender',
+  lage: VerbindungsLage,
+  iso: string | null,
+  nach: string,
+  grund: string | null,
+) {
   const text = tx(LAGE_TEXT[lage]);
-  const neben = nebenzeile(lage, iso);
+  const neben = nebenzeile(lage, iso, grund);
   const Icon = SYMBOL[lage];
   const name = neben ? `${tx(titel)}, ${text}, ${neben}` : `${tx(titel)}, ${text}`;
   return (
@@ -63,18 +75,30 @@ function statusZeile(titel: 'Todoist' | 'Kalender', lage: VerbindungsLage, iso: 
   );
 }
 
+function grundText(art: TodoistStatus['fehlerArt']): string | null {
+  return art ? tx(kurzgrund(art)) : null;
+}
+
 function Uebersicht({ daten }: { daten: Verbindungen }) {
   const todoist = todoistLage(daten.todoist);
   const kalender = kalenderLage(daten.kalender);
+  const ersterFehler = daten.kalender.find((eintrag) => eintrag.fehler);
   return (
     <DichteZeilen>
       <ZeilenGruppe>
-        {statusZeile('Todoist', todoist, daten.todoist.letzterAbgleich, '/mehr/inhalte/verbindungen/todoist')}
+        {statusZeile(
+          'Todoist',
+          todoist,
+          daten.todoist.letzterAbgleich,
+          '/mehr/inhalte/verbindungen/todoist',
+          grundText(daten.todoist.fehlerArt),
+        )}
         {statusZeile(
           'Kalender',
           kalender,
           letzterAbgleich(daten.kalender.map((eintrag) => eintrag.letzterAbgleich)),
           '/mehr/inhalte/verbindungen/kalender',
+          grundText(ersterFehler?.fehlerArt ?? null),
         )}
       </ZeilenGruppe>
     </DichteZeilen>
@@ -141,6 +165,20 @@ export function VerbindungenBereich({ ansicht }: { ansicht: 'uebersicht' | 'todo
   return <Uebersicht daten={data} />;
 }
 
+function verbindungsStatus(fehler: unknown, ausstehend: boolean) {
+  if (ausstehend || !(fehler instanceof Error) || fehler.message === '') {
+    return null;
+  }
+  const art = artAusSatz(fehler.message);
+  return (
+    <p className="break-words text-[13px] leading-[18px] text-gefahr" role="status">
+      {art ? <span className="block">{tx(kurzgrund(art))}</span> : null}
+      <span className="block">{tx(fehler.message)}</span>
+      {art ? <span className="block">{tx(loesung(art))}</span> : null}
+    </p>
+  );
+}
+
 function TodoistBereich({
   status,
   abgleichLaeuft,
@@ -151,6 +189,7 @@ function TodoistBereich({
   onAbgleich: () => void;
 }) {
   const queryClient = useQueryClient();
+  const bestaetigen = useBestaetigung();
   const [token, setToken] = useState('');
   const [tokenFehler, setTokenFehler] = useState<string | null>(null);
   const aktualisieren = () => void queryClient.invalidateQueries({ queryKey: SCHLUESSEL.verbindungen });
@@ -166,6 +205,7 @@ function TodoistBereich({
     ereignis.preventDefault();
     if (token.trim() === '') {
       setTokenFehler(feldLeer('API-Token'));
+      verbinden.reset();
       return;
     }
     if (verbinden.isPending) {
@@ -174,8 +214,48 @@ function TodoistBereich({
     setTokenFehler(null);
     verbinden.mutate();
   };
+  const tokenAendern = (wert: string) => {
+    setToken(wert);
+    setTokenFehler(null);
+    verbinden.reset();
+  };
+  const trennen = async () => {
+    const satz = bestaetigungFuer({ art: 'todoist', id: 0, name: 'Todoist' });
+    if (!satz) {
+      return;
+    }
+    const ja = await bestaetigen({ ...satz, gefahr: true });
+    if (!ja) {
+      return;
+    }
+    await api.trenneTodoist();
+    setToken('');
+    setTokenFehler(null);
+    verbinden.reset();
+    aktualisieren();
+  };
   const zeit = zeitpunktText(status.letzterAbgleich);
   const fehlerZeilen = status.fehler ? fehlerAnzeige(status.fehler).split('\n') : [];
+  const tokenKarte = (schritte: boolean) => (
+    <Formular onAbsenden={absenden} abstand={schritte ? 'space-y-3' : 'mt-3 space-y-3'}>
+      <Flaeche>
+        <div className="space-y-3 px-4 py-3">
+          {schritte ? <TodoistTokenSchritte /> : null}
+          <PasswortFeld
+            label={tx('API-Token')}
+            autoComplete="off"
+            value={token}
+            fehler={tokenFehler}
+            onChange={(ereignis) => tokenAendern(ereignis.target.value)}
+          />
+          <Knopf type="submit" variante="primaer" className="w-full" aria-busy={verbinden.isPending || undefined}>
+            {verbinden.isPending ? tx('Prüfe …') : tx('Verbinden')}
+          </Knopf>
+          {verbindungsStatus(verbinden.error, verbinden.isPending)}
+        </div>
+      </Flaeche>
+    </Formular>
+  );
 
   return (
     <section id="todoist">
@@ -183,61 +263,45 @@ function TodoistBereich({
       {status.verbunden ? (
         <>
           <Flaeche>
-            <SchnellZeile ziel={{ art: 'todoist', id: 0, name: tx('Todoist') }}>
-              {(menue) => (
-                <div className="flex items-center gap-2 px-4 py-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium">{tx('Verbunden als {name}', { name: status.nutzer ?? '' })}</p>
-                    <p className="flex items-center text-[13px] leading-[18px] text-leise">
-                      <span className="min-w-0">{zeit ? tx('Zuletzt abgeglichen {zeit}', { zeit }) : tx('Noch nicht abgeglichen')}</span>
-                      <InfoHinweis name="Zuletzt abgeglichen" text="Beim Öffnen und alle 15 Minuten, nachts alle 3 Stunden." />
-                    </p>
-                    {fehlerZeilen.map((zeile) => (
-                      <p key={zeile} className="break-words text-xs text-gefahr">
-                        {zeile}
-                      </p>
-                    ))}
-                  </div>
-                  <div className="flex shrink-0 items-center">
-                    <button
-                      type="button"
-                      data-schnell-frei=""
-                      className="min-h-12 px-1 text-haupt disabled:opacity-50"
-                      disabled={abgleichLaeuft}
-                      onClick={onAbgleich}
-                    >
-                      {tx('Jetzt abgleichen')}
-                    </button>
-                    {menue}
-                  </div>
-                </div>
-              )}
-            </SchnellZeile>
-          </Flaeche>
-          <TodoistZuordnungen status={status} />
-        </>
-      ) : (
-        <Formular onAbsenden={absenden} abstand="space-y-3">
-          <Flaeche>
-            <div className="space-y-3 px-4 py-3">
-              <TodoistTokenSchritte />
-              <PasswortFeld
-                label={tx('API-Token')}
-                autoComplete="off"
-                value={token}
-                fehler={tokenFehler}
-                onChange={(ereignis) => {
-                  setToken(ereignis.target.value);
-                  setTokenFehler(null);
-                }}
-              />
-              <Knopf type="submit" variante="primaer" className="w-full" aria-busy={verbinden.isPending || undefined}>
-                {verbinden.isPending ? tx('Prüfe …') : tx('Verbinden')}
-              </Knopf>
+            <div className="flex items-center gap-2 px-4 py-3">
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium">{tx('Verbunden als {name}', { name: status.nutzer ?? '' })}</p>
+                <p className="flex items-center text-[13px] leading-[18px] text-leise">
+                  <span className="min-w-0">{zeit ? tx('Zuletzt abgeglichen {zeit}', { zeit }) : tx('Noch nicht abgeglichen')}</span>
+                  <InfoHinweis name="Zuletzt abgeglichen" text="Beim Öffnen und alle 15 Minuten, nachts alle 3 Stunden." />
+                </p>
+                {fehlerZeilen.map((zeile) => (
+                  <p key={zeile} className="break-words text-xs text-gefahr">
+                    {zeile}
+                  </p>
+                ))}
+                {status.fehlerArt ? (
+                  <p className="break-words text-xs text-gefahr">{tx(loesung(status.fehlerArt))}</p>
+                ) : null}
+              </div>
+              <div className="flex shrink-0 items-center">
+                <button
+                  type="button"
+                  data-schnell-frei=""
+                  className="min-h-12 px-1 text-haupt disabled:opacity-50"
+                  disabled={abgleichLaeuft}
+                  onClick={onAbgleich}
+                >
+                  {tx('Jetzt abgleichen')}
+                </button>
+              </div>
             </div>
           </Flaeche>
-          <Fehlermeldung fehler={verbinden.error} />
-        </Formular>
+          {status.fehlerArt === 'abgelehnt' ? tokenKarte(false) : null}
+          <TodoistZuordnungen status={status} />
+          <div className="mt-8">
+            <Knopf variante="warnung" onClick={() => void trennen()}>
+              {tx('Trennen')}
+            </Knopf>
+          </div>
+        </>
+      ) : (
+        tokenKarte(true)
       )}
     </section>
   );

@@ -160,7 +160,8 @@ test('Abgleich zeigt den Stand, behält Einträge und importiert nicht doppelt',
 
     server.lage.status = 500;
     await gleicherNeu(page);
-    await expect(kasten).toContainText('Fehler');
+    await expect(kasten).toContainText('Antwort fehlerhaft');
+    await expect(kasten).not.toContainText('⚠');
     await expect(kasten).not.toContainText('Der Kalender hat die Anfrage abgelehnt.');
     await zeile.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `tmp-test/abgleich/fehler-${info.project.name}.png` });
@@ -176,7 +177,11 @@ test('Abgleich zeigt den Stand, behält Einträge und importiert nicht doppelt',
     await zeile.click();
     await page.getByRole('dialog', { name }).getByRole('button', { name: `Aktionen für ${name}`, exact: true }).click();
     await page.getByRole('menuitem', { name: 'Entfernen' }).click();
-    await page.getByRole('alertdialog', { name: `${name} entfernen?` }).getByRole('button', { name: 'Entfernen' }).click();
+    const dialog = page.getByRole('alertdialog', { name: `${name} entfernen?` });
+    await expect(dialog).toContainText(
+      'Bereits übernommene Einträge bleiben. Fügst du ihn später neu hinzu, zählen nur Termine ab dann.',
+    );
+    await dialog.getByRole('button', { name: 'Entfernen' }).click();
     await expect(zeile).toHaveCount(0);
     kalenderId = null;
     await verlaufLeer(page);

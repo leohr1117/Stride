@@ -1,3 +1,5 @@
+import type { VerbindungsFehlerArt } from '../verbindungsFehler.ts';
+
 export type TodoistZielArt = 'vision' | 'projekt' | 'vorhaben';
 export type TodoistAbschluss = 'geschafft' | 'gescheitert' | 'offen';
 
@@ -70,6 +72,7 @@ export interface TodoistStatus {
   seit: string | null;
   letzterAbgleich: string | null;
   fehler: string | null;
+  fehlerArt: VerbindungsFehlerArt | null;
   uebernommen: number;
   /** Erledigte Aufgaben ohne Projekt- oder Label-Zuordnung. */
   ohneZuordnung: TodoistOhne;

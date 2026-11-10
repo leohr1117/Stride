@@ -1,8 +1,9 @@
 import type { AbgleichErgebnis, Kalender, KalenderAenderung, KalenderDaten, KalenderPruefung } from '../../../shared/api/index.ts';
+import { artAusSpeicher } from '../../../shared/verbindungsFehler.ts';
 import { GRENZEN } from '../../../shared/spiel/begriffe.ts';
 import { titelPasstZumFilter } from '../../../shared/spiel/kalender.ts';
 import { aktualisiere, alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
-import { nichtGefunden, ungueltig } from '../../fehler.ts';
+import { artVon, nichtGefunden, ungueltig } from '../../fehler.ts';
 import { leseJetzt } from '../../services/zeit.ts';
 import { kalenderName, liesEreignisse, termineDieEnden, type Termin } from '../../integrationen/ical.ts';
 import { fasseFehler, fehlertext, legeEintragAn, pruefeZiel } from './gemeinsam.ts';
@@ -24,18 +25,19 @@ interface KalenderZeile {
   seit: string;
   letzterAbgleich: string | null;
   fehler: string | null;
+  fehlerArt: string | null;
   uebernommen: number;
 }
 
 const KALENDER_ABFRAGE = `
   SELECT k.id, k.name, k.adresse, k.projekt_id AS projektId, k.vorlage_id AS vorlageId, k.filter, k.seit,
-         k.letzter_abgleich AS letzterAbgleich, k.fehler,
+         k.letzter_abgleich AS letzterAbgleich, k.fehler, k.fehler_art AS fehlerArt,
          (SELECT COUNT(*) FROM kalender_termine t WHERE t.kalender_id = k.id AND t.eintrag_id IS NOT NULL) AS uebernommen
   FROM kalender k
 `;
 
-function zuKalender({ adresse: _adresse, ...zeile }: KalenderZeile): Kalender {
-  return zeile;
+function zuKalender({ adresse: _adresse, fehlerArt: gespeichert, ...zeile }: KalenderZeile): Kalender {
+  return { ...zeile, fehlerArt: artAusSpeicher(gespeichert, zeile.fehler) };
 }
 
 export function ladeKalenderListe(): Kalender[] {
@@ -56,10 +58,10 @@ function normalisiereAdresse(eingabe: string): string {
   try {
     adresse = new URL(roh);
   } catch {
-    throw ungueltig('Die Kalender-Adresse ist keine gültige Internetadresse.');
+    throw ungueltig('Die Kalender-Adresse ist keine gültige Internetadresse.', 'adresse');
   }
   if (!ERLAUBTE_PROTOKOLLE.includes(adresse.protocol)) {
-    throw ungueltig('Die Kalender-Adresse muss mit https:// oder webcal:// beginnen.');
+    throw ungueltig('Die Kalender-Adresse muss mit https:// oder webcal:// beginnen.', 'adresse');
   }
   return adresse.toString();
 }
@@ -69,26 +71,26 @@ async function ladeKalenderText(adresse: string): Promise<string> {
   try {
     antwort = await fetch(adresse, { signal: AbortSignal.timeout(ZEITLIMIT_MS) });
   } catch {
-    throw ungueltig('Der Kalender ist gerade nicht erreichbar.');
+    throw ungueltig('Der Kalender ist gerade nicht erreichbar.', 'netz');
   }
   if (antwort.status === 401 || antwort.status === 403) {
-    throw ungueltig('Der Kalender lehnt den Zugriff ab. Prüfe die Adresse.');
+    throw ungueltig('Der Kalender lehnt den Zugriff ab. Prüfe die Adresse.', 'zugriff');
   }
   if (antwort.status === 404) {
-    throw ungueltig('Unter dieser Adresse liegt kein Kalender.');
+    throw ungueltig('Unter dieser Adresse liegt kein Kalender.', 'fehlt');
   }
   if (antwort.status === 429) {
-    throw ungueltig('Der Kalender bremst gerade zu viele Anfragen. Der nächste Abgleich versucht es erneut.');
+    throw ungueltig('Der Kalender bremst gerade zu viele Anfragen. Der nächste Abgleich versucht es erneut.', 'bremse');
   }
   if (!antwort.ok) {
-    throw ungueltig('Der Kalender hat die Anfrage abgelehnt.');
+    throw ungueltig('Der Kalender hat die Anfrage abgelehnt.', 'gegenstelle');
   }
   const text = await antwort.text();
   if (text.length > KALENDER_MAX_BYTES) {
-    throw ungueltig('Der Kalender ist zu groß.');
+    throw ungueltig('Der Kalender ist zu groß.', 'zu_gross');
   }
   if (!text.includes(KALENDER_KENNUNG)) {
-    throw ungueltig('Unter dieser Adresse liegt kein Kalender im iCal-Format.');
+    throw ungueltig('Unter dieser Adresse liegt kein Kalender im iCal-Format.', 'kein_ics');
   }
   return text;
 }
@@ -151,6 +153,7 @@ async function gleicheEinenKalenderAb(kalender: KalenderZeile, jetzt: Date): Pro
       (termin) => !termin.ganztags && titelPasstZumFilter(termin.titel, kalender.filter) && stundenVon(termin) !== null,
     );
     const fehler = new Set<string>();
+    let ersteArt: ReturnType<typeof artVon> = null;
     const bekannt = new Set(
       alle<{ terminId: string }>(
         `SELECT termin_id AS terminId FROM kalender_termine WHERE kalender_id = ?
@@ -191,15 +194,22 @@ async function gleicheEinenKalenderAb(kalender: KalenderZeile, jetzt: Date): Pro
         bekannt.add(termin.id);
         neu++;
       } catch (ausnahme) {
+        if (fehler.size === 0) {
+          ersteArt = artVon(ausnahme);
+        }
         fehler.add(fehlertext(ausnahme, 'dem Kalender'));
       }
     }
     const hinweis = fasseFehler([...fehler]);
-    aktualisiere('kalender', kalender.id, { letzter_abgleich: jetzt.toISOString(), fehler: hinweis });
+    aktualisiere('kalender', kalender.id, {
+      letzter_abgleich: jetzt.toISOString(),
+      fehler: hinweis,
+      fehler_art: hinweis ? ersteArt : null,
+    });
     return { neu, fehler: [...fehler] };
   } catch (ausnahme) {
     const nachricht = fehlertext(ausnahme, 'dem Kalender');
-    aktualisiere('kalender', kalender.id, { fehler: nachricht });
+    aktualisiere('kalender', kalender.id, { fehler: nachricht, fehler_art: artVon(ausnahme) });
     return { neu: 0, fehler: [nachricht] };
   }
 }

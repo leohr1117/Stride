@@ -26,6 +26,21 @@ test('Übersicht nennt den Status und öffnet Todoist und Kalender', async ({ pa
     const neben = zeile.locator('.zeile-neben');
     if (status === 'Verbunden') {
       await expect(neben).toContainText('abgeglichen');
+    } else if (status === 'Fehler') {
+      await expect(wert).toHaveText('Fehler');
+      if ((await neben.count()) > 0) {
+        expect([
+          'Token abgelehnt',
+          'Nicht erreichbar',
+          'Zu viele Anfragen',
+          'Antwort fehlerhaft',
+          'Adresse ungültig',
+          'Kein Zugriff',
+          'Nicht gefunden',
+          'Kein iCal',
+          'Zu groß',
+        ]).toContain((await neben.innerText()).trim());
+      }
     } else {
       await expect(neben).toHaveCount(0);
     }

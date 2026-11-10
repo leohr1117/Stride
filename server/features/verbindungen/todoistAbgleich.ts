@@ -4,6 +4,7 @@ import { datumInZone } from '../../../shared/spiel/datum.ts';
 import { tageZwischen } from '../../../shared/spiel/kette.ts';
 import { BOSS, GEGNER } from '../../../shared/spiel/xp.ts';
 import { alle, ausfuehren } from '../../db.ts';
+import { artVon } from '../../fehler.ts';
 import { ladeErledigungen, ladeLabels, ladeProjekte, type TodoistErledigung } from '../../integrationen/todoist.ts';
 import { bucheAttributXp } from '../../services/fortschritt.ts';
 import { leseJetzt } from '../../services/zeit.ts';
@@ -216,10 +217,14 @@ function zieheNachDeadlineAb(plan: TodoistPlan, erledigtAm: Date, eintragId: num
   );
 }
 
-function uebernimmErledigungen(erledigungen: TodoistErledigung[], jetzt: Date): AbgleichErgebnis {
+function uebernimmErledigungen(
+  erledigungen: TodoistErledigung[],
+  jetzt: Date,
+): { neu: number; fehler: string[]; art: ReturnType<typeof artVon> } {
   const projekte = new Map(ladeProjektZeilen().map((zeile) => [zeile.todoistId, zeile]));
   const labels = ladeLabelZeilen();
   const fehler = new Set<string>();
+  let art: ReturnType<typeof artVon> = null;
   const bekannt = new Set(
     alle<{ ereignisId: string }>('SELECT ereignis_id AS ereignisId FROM todoist_erledigt').map((zeile) => zeile.ereignisId),
   );
@@ -262,10 +267,13 @@ function uebernimmErledigungen(erledigungen: TodoistErledigung[], jetzt: Date): 
       bekannt.add(erledigung.ereignisId);
       neu++;
     } catch (ausnahme) {
+      if (fehler.size === 0) {
+        art = artVon(ausnahme);
+      }
       fehler.add(`${entscheidung.name}: ${fehlertext(ausnahme, 'Todoist')}`);
     }
   }
-  return { neu, fehler: [...fehler] };
+  return { neu, fehler: [...fehler], art };
 }
 
 export async function gleicheTodoistAb(jetzt = leseJetzt()): Promise<AbgleichErgebnis> {
@@ -281,12 +289,15 @@ export async function gleicheTodoistAb(jetzt = leseJetzt()): Promise<AbgleichErg
     speichereProjekte(projekte);
     speichereLabels(labels);
     const ergebnis = uebernimmErledigungen(erledigungen, jetzt);
+    const hinweis = fasseFehler(ergebnis.fehler);
     setzeWert(SCHLUESSEL.abgleich, jetzt.toISOString());
-    setzeWert(SCHLUESSEL.fehler, fasseFehler(ergebnis.fehler));
-    return ergebnis;
+    setzeWert(SCHLUESSEL.fehler, hinweis);
+    setzeWert(SCHLUESSEL.fehlerArt, hinweis ? ergebnis.art : null);
+    return { neu: ergebnis.neu, fehler: ergebnis.fehler };
   } catch (ausnahme) {
     const nachricht = fehlertext(ausnahme, 'Todoist');
     setzeWert(SCHLUESSEL.fehler, nachricht);
+    setzeWert(SCHLUESSEL.fehlerArt, artVon(ausnahme));
     return { neu: 0, fehler: [nachricht] };
   }
 }

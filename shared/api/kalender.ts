@@ -1,3 +1,5 @@
+import type { VerbindungsFehlerArt } from '../verbindungsFehler.ts';
+
 export interface Kalender {
   id: number;
   name: string;
@@ -7,6 +9,7 @@ export interface Kalender {
   seit: string;
   letzterAbgleich: string | null;
   fehler: string | null;
+  fehlerArt: VerbindungsFehlerArt | null;
   uebernommen: number;
 }
 
