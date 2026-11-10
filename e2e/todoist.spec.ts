@@ -4,7 +4,7 @@ import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 const TOKEN_SEITE = 'https://app.todoist.com/app/settings/integrations/developer';
 
 async function trennenFallsVerbunden(seite: Page): Promise<void> {
-  await seite.getByRole('heading', { name: 'Todoist' }).waitFor();
+  await seite.getByRole('heading', { name: 'Todoist', level: 2 }).waitFor();
   const trennen = seite.getByRole('button', { name: 'Aktionen für Todoist' });
   if ((await trennen.count()) === 0) {
     return;
@@ -87,14 +87,16 @@ async function fertig(seite: Page, dialogName: string): Promise<void> {
 
 test('Todoist-Zuordnung bleibt auf Handy und Desktop lesbar', async ({ page }, info) => {
   await anmelden(page);
-  await page.goto('/mehr/inhalte/verbindungen');
+  await page.goto('/mehr/inhalte/verbindungen/todoist');
   await trennenFallsVerbunden(page);
 
   await expect(page.getByText('Öffne die Entwicklerseite in Todoist.')).toBeVisible();
   await expect(page.getByText('Kopiere den API-Token.')).toBeVisible();
   await expect(page.getByText('Füge ihn hier ein und tippe auf Verbinden.')).toBeVisible();
   await ueberschrift(page, 'todoist', 'Todoist', 'Jede erledigte Aufgabe wird ein Eintrag mit XP.');
+  await page.goto('/mehr/inhalte/verbindungen/kalender');
   await ueberschrift(page, 'kalender', 'Kalender', 'Jeder vergangene Termin wird ein Eintrag mit XP.');
+  await page.goto('/mehr/inhalte/verbindungen/todoist');
   const link = page.getByRole('link', { name: 'Token in Todoist öffnen' });
   await expect(link).toHaveAttribute('href', TOKEN_SEITE);
   const linkKasten = await link.boundingBox();

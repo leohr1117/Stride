@@ -296,6 +296,8 @@ export const PAARE = [
   ['Abgeschlossen ({anzahl})', 'Finished ({anzahl})'],
   ['Abgeglichen {zeit}', 'Synced {zeit}'],
   ['Noch nicht abgeglichen', 'Not synced yet'],
+  ['Verbunden', 'Connected'],
+  ['{zeit} abgeglichen', 'Synced {zeit}'],
   ['Abmelden', 'Sign out'],
   ['Abschließen', 'Finish'],
   ['Projekt abschließen', 'Finish project'],

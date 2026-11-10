@@ -74,6 +74,8 @@ describe('elternZiel', () => {
     expect(schiebeHerkunft(['/mehr/profil'], '/mehr/profil/benutzernamen')).toEqual(['/mehr/profil']);
     expect(schiebeHerkunft(['/mehr/profil'], '/mehr/profil/benutzernamen/4')).toEqual(['/mehr/profil']);
     expect(elternZiel('/mehr/inhalte/verbindungen')).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/mehr/inhalte/verbindungen/todoist')).toEqual({ pfad: '/mehr/inhalte/verbindungen', label: 'Verbindungen' });
+    expect(elternZiel('/mehr/inhalte/verbindungen/kalender')).toEqual({ pfad: '/mehr/inhalte/verbindungen', label: 'Verbindungen' });
     expect(elternZiel('/mehr/uebersicht')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/mehr/neu')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/projekte/4')).toEqual({ pfad: '/ziele', label: 'Ziele' });
@@ -107,6 +109,9 @@ describe('herkunftsLabel', () => {
     expect(herkunftsLabel('/koennen')).toBe('Können');
     expect(herkunftsLabel('/haben')).toBe('Haben');
     expect(herkunftsLabel('/investitionen')).toBe('Investitionen');
+    expect(herkunftsLabel('/mehr/inhalte/verbindungen/todoist')).toBe('Todoist');
+    expect(herkunftsLabel('/mehr/inhalte/verbindungen/kalender')).toBe('Kalender');
+    expect(herkunftsLabel('/mehr/inhalte/verbindungen')).toBe('Verbindungen');
   });
 });
 

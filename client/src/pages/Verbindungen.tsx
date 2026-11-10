@@ -1,22 +1,98 @@
 import { feldLeer, tx, txMenge } from '../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { RefreshCw } from 'lucide-react';
+import { CircleAlert, CircleCheck, CircleMinus, RefreshCw } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
-import { type TodoistStatus } from '../../../shared/api/index.ts';
+import { type TodoistStatus, type Verbindungen } from '../../../shared/api/index.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { SchnellZeile, useSchnellAktion } from '../components/SchnellAktion.tsx';
-import { fehlerAnzeige } from '../features/mehr/verbindungsStand.ts';
+import { DichteZeilen, Zeile, ZeilenGruppe } from '../components/Zeile.tsx';
+import { fehlerAnzeige, kalenderLage, todoistLage, type VerbindungsLage } from '../features/mehr/verbindungsStand.ts';
 import { AbschnittKopf, Fehlermeldung, Flaeche, Formular, InfoHinweis, Knopf, Ladeanzeige, PasswortFeld } from '../ui/index.ts';
 import { KalenderAbschnitt } from '../features/kalender/Liste.tsx';
+import { letzterAbgleich } from '../features/kalender/stand.ts';
 import { TodoistTokenSchritte } from '../features/todoist/Einrichtung.tsx';
 import { TodoistZuordnungen } from '../features/todoist/Zuordnungen.tsx';
-import { kurzesDatum, uhrzeit, zahl } from '../format.ts';
+import { kurzesDatum, relativeZeit, uhrzeit, zahl } from '../format.ts';
 
 function zeitpunktText(iso: string | null): string | null {
   return iso ? `${kurzesDatum(iso)}, ${uhrzeit(iso)}` : null;
 }
 
-export function VerbindungenBereich() {
+const SYMBOL: Record<VerbindungsLage, typeof CircleCheck> = {
+  verbunden: CircleCheck,
+  fehler: CircleAlert,
+  aus: CircleMinus,
+};
+
+const SYMBOL_FARBE: Record<VerbindungsLage, string> = {
+  verbunden: 'text-haupt',
+  fehler: 'text-gefahr',
+  aus: 'text-leise',
+};
+
+const LAGE_TEXT = {
+  verbunden: 'Verbunden',
+  fehler: 'Fehler',
+  aus: 'Aus',
+} as const;
+
+const SYMBOL_KLASSE = 'pointer-events-none flex size-5 shrink-0 items-center justify-center [&_svg]:size-5';
+
+function nebenzeile(lage: VerbindungsLage, iso: string | null): string | null {
+  if (lage !== 'verbunden') {
+    return null;
+  }
+  return iso ? tx('{zeit} abgeglichen', { zeit: relativeZeit(iso) }) : tx('Noch nicht abgeglichen');
+}
+
+function statusZeile(titel: 'Todoist' | 'Kalender', lage: VerbindungsLage, iso: string | null, nach: string) {
+  const text = tx(LAGE_TEXT[lage]);
+  const neben = nebenzeile(lage, iso);
+  const Icon = SYMBOL[lage];
+  const name = neben ? `${tx(titel)}, ${text}, ${neben}` : `${tx(titel)}, ${text}`;
+  return (
+    <Zeile
+      titel={tx(titel)}
+      name={name}
+      nach={nach}
+      symbol={<Icon aria-hidden="true" />}
+      symbolKlasse={`${SYMBOL_KLASSE} ${SYMBOL_FARBE[lage]}`}
+      wert={text}
+      neben={neben ?? undefined}
+    />
+  );
+}
+
+function Uebersicht({ daten }: { daten: Verbindungen }) {
+  const todoist = todoistLage(daten.todoist);
+  const kalender = kalenderLage(daten.kalender);
+  return (
+    <DichteZeilen>
+      <ZeilenGruppe>
+        {statusZeile('Todoist', todoist, daten.todoist.letzterAbgleich, '/mehr/inhalte/verbindungen/todoist')}
+        {statusZeile(
+          'Kalender',
+          kalender,
+          letzterAbgleich(daten.kalender.map((eintrag) => eintrag.letzterAbgleich)),
+          '/mehr/inhalte/verbindungen/kalender',
+        )}
+      </ZeilenGruppe>
+    </DichteZeilen>
+  );
+}
+
+function AbgleichKnopf({ laeuft, onAbgleich }: { laeuft: boolean; onAbgleich: () => void }) {
+  return (
+    <div className="flex justify-end">
+      <Knopf onClick={onAbgleich} disabled={laeuft}>
+        <RefreshCw className={`size-4 ${laeuft ? 'animate-spin' : ''}`} />
+        {tx('Jetzt abgleichen')}
+      </Knopf>
+    </div>
+  );
+}
+
+export function VerbindungenBereich({ ansicht }: { ansicht: 'uebersicht' | 'todoist' | 'kalender' }) {
   const queryClient = useQueryClient();
   const schnell = useSchnellAktion();
   const { data, error, isPending } = useQuery({ queryKey: SCHLUESSEL.verbindungen, queryFn: api.verbindungen });
@@ -35,31 +111,34 @@ export function VerbindungenBereich() {
   if (isPending) {
     return <Ladeanzeige />;
   }
-  if (error) {
-    return <Fehlermeldung fehler={error} />;
+  if (error || !data) {
+    return error ? <Fehlermeldung fehler={error} /> : <Ladeanzeige />;
   }
 
-  const nurKalender = !data.todoist.verbunden && data.kalender.length > 0;
-
-  return (
-    <div>
-      {nurKalender ? (
-        <div className="flex justify-end">
-          <Knopf onClick={() => abgleichen.mutate()} disabled={abgleichen.isPending}>
-            <RefreshCw className={`size-4 ${abgleichen.isPending ? 'animate-spin' : ''}`} />
-            {tx('Jetzt abgleichen')}
-          </Knopf>
-        </div>
-      ) : null}
-      <Fehlermeldung fehler={abgleichen.error} />
-      <TodoistBereich
-        status={data.todoist}
-        abgleichLaeuft={abgleichen.isPending}
-        onAbgleich={() => abgleichen.mutate()}
-      />
-      <KalenderAbschnitt kalender={data.kalender} />
-    </div>
-  );
+  if (ansicht === 'todoist') {
+    return (
+      <div>
+        <Fehlermeldung fehler={abgleichen.error} />
+        <TodoistBereich
+          status={data.todoist}
+          abgleichLaeuft={abgleichen.isPending}
+          onAbgleich={() => abgleichen.mutate()}
+        />
+      </div>
+    );
+  }
+  if (ansicht === 'kalender') {
+    return (
+      <div>
+        {data.kalender.length > 0 ? (
+          <AbgleichKnopf laeuft={abgleichen.isPending} onAbgleich={() => abgleichen.mutate()} />
+        ) : null}
+        <Fehlermeldung fehler={abgleichen.error} />
+        <KalenderAbschnitt kalender={data.kalender} />
+      </div>
+    );
+  }
+  return <Uebersicht daten={data} />;
 }
 
 function TodoistBereich({

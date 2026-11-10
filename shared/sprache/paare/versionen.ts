@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Todoist und Kalender haben unter Verbindungen jeweils eine eigene Seite, der Status steht als Text daneben.',
+    'Todoist and Calendar each have their own page under Connections, and the status is written next to them as text.',
+  ],
+  [
     'Die laufende Version lässt sich ohne Anmeldung abrufen. Der Server kann ein Tagesprotokoll führen und Dateien entfernen, die älter als 14 Tage sind.',
     'The running version can be read without signing in. The server can keep a daily log and remove files older than 14 days.',
   ],

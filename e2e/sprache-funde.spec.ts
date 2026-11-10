@@ -100,7 +100,7 @@ test('übersetzte Funde sind in jeder Sprache sichtbar', async ({ page }, info) 
       await expect(page.getByRole('radio', { name: zeige('Erwacht', code), exact: true })).toBeVisible();
       await page.screenshot({ path: bild(info, code, 'titel') });
 
-      await page.goto('/mehr/inhalte/verbindungen');
+      await page.goto('/mehr/inhalte/verbindungen/kalender');
       await page.getByRole('button', { name: `+ ${zeige('Kalender verbinden', code)}`, exact: true }).click();
       const kalender = page.getByRole('dialog');
       await kalender.getByRole('button', { name: zeige('Google', code), exact: true }).click();

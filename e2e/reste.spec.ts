@@ -33,7 +33,7 @@ test('Handbuch und Einführung nennen die Bereiche nicht mehr', async ({ page },
   await ohneSeitlichenUeberlauf(page);
   await bild('fokus-zurueck');
 
-  await page.goto('/mehr/inhalte/verbindungen');
+  await page.goto('/mehr/inhalte/verbindungen/todoist');
   await expect(page.getByRole('heading', { name: 'Todoist', level: 2 })).toBeVisible();
   await expect(page.getByText('Jede erledigte Aufgabe wird ein Eintrag mit XP.')).toBeVisible();
 

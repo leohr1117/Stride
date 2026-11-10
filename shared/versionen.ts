@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.7',
+    seiten: 'Mehr',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: [
+          'Todoist und Kalender haben unter Verbindungen jeweils eine eigene Seite, der Status steht als Text daneben.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.6',
     seiten: 'Mehr',
     abschnitte: [

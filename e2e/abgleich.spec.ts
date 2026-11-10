@@ -97,7 +97,7 @@ function standKasten(seite: Page, name: string) {
 }
 
 async function speichereKalender(seite: Page, url: string, name: string): Promise<number> {
-  await seite.goto('/mehr/inhalte/verbindungen');
+  await seite.goto('/mehr/inhalte/verbindungen/kalender');
   await seite.getByRole('button', { name: '+ Kalender verbinden', exact: true }).click();
   const dialog = seite.getByRole('dialog', { name: 'Kalender verbinden' });
   await dialog.getByRole('button', { name: 'Andere', exact: true }).click();

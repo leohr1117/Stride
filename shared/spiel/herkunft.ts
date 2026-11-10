@@ -27,6 +27,8 @@ const HAUPTSEITEN = new Set(LEISTEN_SEITEN.map((seite) => seite.pfad));
 const FEST = new Map<string, string>([
   ['/mehr/profil', 'Konto'],
   ['/mehr/inhalte/verbindungen', 'Verbindungen'],
+  ['/mehr/inhalte/verbindungen/todoist', 'Todoist'],
+  ['/mehr/inhalte/verbindungen/kalender', 'Kalender'],
   ['/mehr/darstellung', 'Darstellung'],
   ['/mehr/darstellung/leiste', 'Leiste'],
   ['/mehr/darstellung/ansicht', 'Ansicht'],
@@ -171,6 +173,9 @@ export function elternZiel(pfad: string, lage: NavLage = { leiste: [], verlaufAn
   }
   if (rein === '/mehr/inhalte/verbindungen') {
     return ziel('/mehr');
+  }
+  if (rein === '/mehr/inhalte/verbindungen/todoist' || rein === '/mehr/inhalte/verbindungen/kalender') {
+    return ziel('/mehr/inhalte/verbindungen');
   }
   if (rein.startsWith('/mehr/inhalte/')) {
     return ziel('/mehr/inhalte');

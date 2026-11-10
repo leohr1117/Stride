@@ -46,7 +46,7 @@ function icsServer(text: string): Promise<{ url: string; stop: () => Promise<voi
 }
 
 async function oeffneDialog(seite: Page): Promise<void> {
-  await seite.goto('/mehr/inhalte/verbindungen');
+  await seite.goto('/mehr/inhalte/verbindungen/kalender');
   await seite.getByRole('button', { name: '+ Kalender verbinden', exact: true }).click();
   await expect(seite.getByRole('dialog', { name: 'Kalender verbinden' })).toBeVisible();
 }

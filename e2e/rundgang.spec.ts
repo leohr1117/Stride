@@ -584,8 +584,8 @@ test('Seiten, Sprachen, Darstellung, Vorbilder und Todoist', async ({ page }) =>
       await page.goBack();
     }
 
-    await page.goto('/mehr/inhalte/verbindungen');
-    await expect(page.getByRole('heading', { name: 'Todoist' })).toBeVisible();
+    await page.goto('/mehr/inhalte/verbindungen/todoist');
+    await expect(page.getByRole('heading', { name: 'Todoist', level: 2 })).toBeVisible();
     const token = page.getByRole('textbox', { name: 'API-Token' });
     if (await token.count()) {
       await token.fill('e2e-todoist-token');

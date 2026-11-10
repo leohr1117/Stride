@@ -94,6 +94,7 @@ const router = createBrowserRouter([
       { path: 'mehr/profil/benutzernamen', element: <Navigate to="/mehr/profil/accounts" replace /> },
       { path: 'mehr/profil/:teil', element: <MehrProfilSeite /> },
       { path: 'mehr/inhalte', element: <MehrInhalteSeite /> },
+      { path: 'mehr/inhalte/:teil/:verbinder', element: <MehrInhalteSeite /> },
       { path: 'mehr/inhalte/:teil', element: <MehrInhalteSeite /> },
       { path: 'mehr/darstellung', element: <MehrDarstellungSeite /> },
       { path: 'mehr/darstellung/:teil', element: <MehrDarstellungSeite /> },

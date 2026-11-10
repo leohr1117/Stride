@@ -21,6 +21,28 @@ export function fehlerAnzeige(fehler: string): string {
     .join('\n');
 }
 
+export type VerbindungsLage = 'verbunden' | 'fehler' | 'aus';
+
+export function todoistLage(status: { verbunden: boolean; fehler: string | null }): VerbindungsLage {
+  if (status.fehler) {
+    return 'fehler';
+  }
+  if (status.verbunden) {
+    return 'verbunden';
+  }
+  return 'aus';
+}
+
+export function kalenderLage(kalender: readonly { fehler: string | null }[]): VerbindungsLage {
+  if (kalender.some((eintrag) => eintrag.fehler)) {
+    return 'fehler';
+  }
+  if (kalender.length > 0) {
+    return 'verbunden';
+  }
+  return 'aus';
+}
+
 export function verbindungsStand(daten: Verbindungen): { text: string; fehler: boolean } | null {
   const fehler = daten.todoist.fehler ?? daten.kalender.find((kalender) => kalender.fehler)?.fehler ?? null;
   if (fehler) {

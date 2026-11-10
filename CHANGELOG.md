@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.7
+
+### Verbessert
+
+- Todoist und Kalender haben unter Verbindungen jeweils eine eigene Seite, der Status steht als Text daneben.
+
 ## 4.1.6
 
 ### Hinzugefügt

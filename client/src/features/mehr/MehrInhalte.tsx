@@ -7,7 +7,7 @@ import { TAETIGKEITEN_GESEHEN, merke } from '../../speicher.ts';
 import { tx } from '../../text.ts';
 import { VerbindungenBereich } from '../../pages/Verbindungen.tsx';
 import { VorlagenVerwaltung } from './MehrVorlagen.tsx';
-import { Bereich, FUNKTIONEN_ZURUECK, INHALTE_HASH, useHashWeiter } from './rahmen.tsx';
+import { Bereich, INHALTE_HASH, useHashWeiter } from './rahmen.tsx';
 
 function InhalteListe() {
   const [bearbeitung, setBearbeitung] = useState<{ vorlage: Vorlage | null } | null>(null);
@@ -57,13 +57,20 @@ function InhalteListe() {
 }
 
 export function MehrInhalteSeite() {
-  const { teil } = useParams();
+  const { teil, verbinder } = useParams();
   useHashWeiter(INHALTE_HASH);
   if (teil === 'taetigkeiten') {
     return <Navigate to="/mehr/inhalte" replace />;
   }
   if (teil === 'verbindungen') {
-    return <Bereich titel={tx("Verbindungen")} zurueck={FUNKTIONEN_ZURUECK} kinder={<VerbindungenBereich />} />;
+    if (verbinder === 'todoist' || verbinder === 'kalender') {
+      const titel = verbinder === 'todoist' ? tx('Todoist') : tx('Kalender');
+      return <Bereich titel={titel} kinder={<VerbindungenBereich ansicht={verbinder} />} />;
+    }
+    if (verbinder) {
+      return <Navigate to="/mehr/inhalte/verbindungen" replace />;
+    }
+    return <Bereich titel={tx('Verbindungen')} kinder={<VerbindungenBereich ansicht="uebersicht" />} />;
   }
   if (teil) {
     return <Navigate to="/mehr/inhalte" replace />;

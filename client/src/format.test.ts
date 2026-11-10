@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import type { Sprache } from '../../shared/sprache/kern.ts';
 import { setzeAktiveSprache } from '../../shared/sprache/index.ts';
 import { zeigeMenge } from '../../shared/sprache/menge.ts';
-import { eineNachkommastelle, hoechstensEineStelle, kompakt, levelZahl, prozentText, stunden, zahl, zeitspanne } from './format.ts';
+import { eineNachkommastelle, hoechstensEineStelle, kompakt, levelZahl, prozentText, relativeZeit, stunden, zahl, zeitspanne } from './format.ts';
 
 describe('kompakt', () => {
   afterEach(() => {
@@ -130,5 +130,26 @@ describe('Gewichtsanzeige', () => {
     expect(eineNachkommastelle(176.4)).toBe('176.4');
     expect(hoechstensEineStelle(80)).toBe('80');
     expect(hoechstensEineStelle(176.4)).toBe('176.4');
+  });
+});
+
+describe('relativeZeit', () => {
+  afterEach(() => {
+    setzeAktiveSprache('de');
+  });
+
+  it('nennt fünf Minuten auf Deutsch und Englisch und bleibt in den anderen Sprachen lesbar', () => {
+    const jetzt = new Date('2026-11-10T12:00:00.000Z');
+    const iso = new Date(jetzt.getTime() - 5 * 60 * 1000).toISOString();
+    setzeAktiveSprache('de');
+    expect(relativeZeit(iso, jetzt)).toBe('vor 5 Minuten');
+    setzeAktiveSprache('en');
+    expect(relativeZeit(iso, jetzt)).toBe('5 minutes ago');
+    for (const sprache of ['es', 'fr', 'ru', 'zh', 'ja'] as const) {
+      setzeAktiveSprache(sprache);
+      const text = relativeZeit(iso, jetzt);
+      expect(text.length, sprache).toBeGreaterThan(0);
+      expect(text, sprache).not.toBe(iso);
+    }
   });
 });

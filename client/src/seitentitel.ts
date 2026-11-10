@@ -15,6 +15,8 @@ const UNTERSEITE: Record<string, string> = {
   '/mehr/profil/accounts': 'Accounts',
   '/mehr/profil/stufen': 'Ziel-Stufen',
   '/mehr/inhalte/verbindungen': 'Verbindungen',
+  '/mehr/inhalte/verbindungen/todoist': 'Todoist',
+  '/mehr/inhalte/verbindungen/kalender': 'Kalender',
   '/mehr/darstellung': 'Darstellung',
   '/mehr/darstellung/leiste': 'Leiste',
   '/mehr/darstellung/paletten': 'Paletten',

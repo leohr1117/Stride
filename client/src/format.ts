@@ -193,3 +193,31 @@ export function zeitspanne(tage: number): string {
   }
   return zeitText(Math.round(tage / TAGE_PRO_JAHR), 'jahr');
 }
+
+const RELATIV: readonly { einheit: Intl.RelativeTimeFormatUnit; sekunden: number; grenze: number }[] = [
+  { einheit: 'second', sekunden: 1, grenze: 60 },
+  { einheit: 'minute', sekunden: 60, grenze: 60 },
+  { einheit: 'hour', sekunden: 3600, grenze: 24 },
+  { einheit: 'day', sekunden: 86400, grenze: Number.POSITIVE_INFINITY },
+];
+
+export function relativeZeit(iso: string, jetzt: Date = new Date()): string {
+  const zeit = new Date(iso).getTime();
+  if (Number.isNaN(zeit)) {
+    return '';
+  }
+  const sekunden = Math.round((zeit - jetzt.getTime()) / 1000);
+  let einheit: Intl.RelativeTimeFormatUnit = 'day';
+  let teiler = 86400;
+  for (const einheitEintrag of RELATIV) {
+    einheit = einheitEintrag.einheit;
+    teiler = einheitEintrag.sekunden;
+    if (Math.abs(Math.round(sekunden / einheitEintrag.sekunden)) < einheitEintrag.grenze) {
+      break;
+    }
+  }
+  return new Intl.RelativeTimeFormat(localeFuer(aktiveSprache()), { numeric: 'auto' }).format(
+    Math.round(sekunden / teiler),
+    einheit,
+  );
+}
