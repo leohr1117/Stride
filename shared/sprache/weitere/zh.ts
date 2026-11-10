@@ -10,6 +10,7 @@ export const TEXTE: Record<string, string> = {
   "Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.": "之后，这个 Stride 实例将没有管理员，直到运营者指定新的管理员。",
   "Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.": "你是唯一的所有者。只要还有其他账户，你就不能删除自己的账户。",
   "Passwort darf nicht leer sein.": "密码不能为空。",
+  "Im hellen Modus passt die Farbe der Browserleiste jetzt zum Hintergrund, und installierte Apps holen nach einem Update das aktuelle Manifest.": "在浅色模式下，浏览器栏的颜色现在与背景一致，已安装的应用会在更新后获取当前的应用清单。",
   "Unter der Anmeldung und unten in Mehr und Konto steht jetzt, von wem Stride ist, mit Link zu leohr.de.": "在登录下方，以及「更多」和账户的底部，现在会写明 Stride 来自谁，并带有指向 leohr.de 的链接。",
   "Todoist und Kalender haben unter Verbindungen jeweils eine eigene Seite, der Status steht als Text daneben.": "Todoist 和日历在「关联」下各有自己的页面，状态以文字显示在旁边。",
   "Die laufende Version lässt sich ohne Anmeldung abrufen. Der Server kann ein Tagesprotokoll führen und Dateien entfernen, die älter als 14 Tage sind.": "无需登录即可查看当前版本。服务器可以按天写记录，并删除超过 14 天的文件。",

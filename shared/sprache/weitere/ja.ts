@@ -10,6 +10,7 @@ export const TEXTE: Record<string, string> = {
   "Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.": "その後、運営者が新しい管理者を決めるまで、この Stride インスタンスに管理者はいません。",
   "Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.": "所有者が自分ひとりです。他のアカウントがある間は、自分のアカウントを削除できません。",
   "Passwort darf nicht leer sein.": "パスワードは空にできません。",
+  "Im hellen Modus passt die Farbe der Browserleiste jetzt zum Hintergrund, und installierte Apps holen nach einem Update das aktuelle Manifest.": "ライトモードでは、ブラウザのバーの色が背景に合うようになり、インストールしたアプリは更新後に最新のマニフェストを取得します。",
   "Unter der Anmeldung und unten in Mehr und Konto steht jetzt, von wem Stride ist, mit Link zu leohr.de.": "ログインの下と、「その他」とアカウントの一番下に、Stride が誰のものかが表示され、leohr.de へのリンクがあります。",
   "Todoist und Kalender haben unter Verbindungen jeweils eine eigene Seite, der Status steht als Text daneben.": "Todoist とカレンダーは「つながり」でそれぞれ専用のページになり、状態は横に文字で表示されます。",
   "Die laufende Version lässt sich ohne Anmeldung abrufen. Der Server kann ein Tagesprotokoll führen und Dateien entfernen, die älter als 14 Tage sind.": "ログインなしで、今のバージョンを確認できます。サーバーは日ごとの記録を残し、14日より古いファイルを削除できます。",

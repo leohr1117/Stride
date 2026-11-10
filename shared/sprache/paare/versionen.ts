@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Im hellen Modus passt die Farbe der Browserleiste jetzt zum Hintergrund, und installierte Apps holen nach einem Update das aktuelle Manifest.',
+    'In light mode, the browser bar color now matches the background, and installed apps fetch the current manifest after an update.',
+  ],
+  [
     'Unter der Anmeldung und unten in Mehr und Konto steht jetzt, von wem Stride ist, mit Link zu leohr.de.',
     'Under sign-in and at the bottom of More and Account, Stride now says who it is from, with a link to leohr.de.',
   ],

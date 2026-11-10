@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.9',
+    seiten: 'Alle',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: [
+          'Im hellen Modus passt die Farbe der Browserleiste jetzt zum Hintergrund, und installierte Apps holen nach einem Update das aktuelle Manifest.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.8',
     seiten: 'Anmeldung, Mehr',
     abschnitte: [

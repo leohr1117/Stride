@@ -10,6 +10,7 @@ export const TEXTE: Record<string, string> = {
   "Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.": "После этого у этого экземпляра Stride не будет администратора, пока оператор не назначит нового.",
   "Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.": "Ты единственный владелец. Пока есть другие аккаунты, свой аккаунт удалить нельзя.",
   "Passwort darf nicht leer sein.": "Пароль не может быть пустым.",
+  "Im hellen Modus passt die Farbe der Browserleiste jetzt zum Hintergrund, und installierte Apps holen nach einem Update das aktuelle Manifest.": "В светлом режиме цвет панели браузера теперь совпадает с фоном, а установленные приложения после обновления получают актуальный манифест.",
   "Unter der Anmeldung und unten in Mehr und Konto steht jetzt, von wem Stride ist, mit Link zu leohr.de.": "Под входом и внизу разделов «Ещё» и «Аккаунт» теперь указано, от кого Stride, со ссылкой на leohr.de.",
   "Todoist und Kalender haben unter Verbindungen jeweils eine eigene Seite, der Status steht als Text daneben.": "У Todoist и Календаря в разделе «Связи» теперь своя страница, а статус написан рядом текстом.",
   "Die laufende Version lässt sich ohne Anmeldung abrufen. Der Server kann ein Tagesprotokoll führen und Dateien entfernen, die älter als 14 Tage sind.": "Текущую версию можно узнать без входа. Сервер может вести ежедневный журнал и удалять файлы старше 14 дней.",

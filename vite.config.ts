@@ -88,9 +88,34 @@ function serviceWorker(): Plugin {
   };
 }
 
+function strideVersion(): Plugin {
+  return {
+    name: 'stride-version',
+    transformIndexHtml(html) {
+      const datei = path.resolve(import.meta.dirname, 'package.json');
+      let paket: { version?: unknown };
+      try {
+        paket = JSON.parse(fs.readFileSync(datei, 'utf8')) as { version?: unknown };
+      } catch (fehler) {
+        const grund = fehler instanceof Error ? fehler.message : String(fehler);
+        throw new Error(
+          `stride-version: package.json ließ sich nicht lesen (${grund}). Der Platzhalter __STRIDE_VERSION__ wird nicht ausgeliefert.`,
+        );
+      }
+      const version = paket.version;
+      if (typeof version !== 'string' || version.trim() === '') {
+        throw new Error(
+          'stride-version: package.json enthält keine version. Der Platzhalter __STRIDE_VERSION__ wird nicht ausgeliefert.',
+        );
+      }
+      return html.replaceAll('__STRIDE_VERSION__', version);
+    },
+  };
+}
+
 export default defineConfig({
   root: 'client',
-  plugins: [palettenModul(), react(), tailwindcss(), serviceWorker()],
+  plugins: [palettenModul(), react(), tailwindcss(), serviceWorker(), strideVersion()],
   server: {
     host: 'localhost',
     proxy: {

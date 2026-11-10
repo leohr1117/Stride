@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.9
+
+### Verbessert
+
+- Im hellen Modus passt die Farbe der Browserleiste jetzt zum Hintergrund, und installierte Apps holen nach einem Update das aktuelle Manifest.
+
 ## 4.1.8
 
 ### Verbessert
