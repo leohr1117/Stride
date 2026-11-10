@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Der Todoist-Token wird verschlüsselt gespeichert. Neu verbinden geht nur, wenn der Betreiber es freigeschaltet hat; verbundene Konten laufen weiter.',
+    'The Todoist token is stored encrypted. Connecting again works only after the operator has enabled it; connected accounts keep working.',
+  ],
+  [
     'Vorbilder zeigt nur noch Personen, die seit mindestens zehn Jahren verstorben sind.',
     'Role models now only shows people who have been dead for at least ten years.',
   ],

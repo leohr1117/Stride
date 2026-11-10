@@ -122,6 +122,8 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
       STRIDE_CLIENT_DIR: path.join(WURZEL, 'client', 'dist'),
       PORT: String(TEST_PORT),
       TODOIST_API: attrappe.basis,
+      STRIDE_TOKEN_SCHLUESSEL: Buffer.from('stride-test-token-schluessel-v3!').toString('base64'),
+      ASCEND_TOKEN_SCHLUESSEL: '',
     }, TEST_APP, TEST_ZUGANG),
     stdio: 'inherit',
     windowsHide: true,

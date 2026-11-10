@@ -1,5 +1,11 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Nicht verfügbar": "不可用",
+  "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "此服务器上尚未设置 Todoist。运营者需要启用它。",
+  "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "已保存的令牌无法再读取。请重新输入。",
+  "Token nicht lesbar": "令牌无法读取",
+  "Gib ihn neu ein.": "请重新输入。",
+  "Der Todoist-Token wird verschlüsselt gespeichert. Neu verbinden geht nur, wenn der Betreiber es freigeschaltet hat; verbundene Konten laufen weiter.": "Todoist 令牌会加密保存。只有运营者启用之后才能重新连接；已连接的账户会继续运行。",
   "Konto löschen": "删除账户",
   "Konto löschen?": "删除账户？",
   "Alle Daten dieses Kontos werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.": "此账户的所有数据将被永久删除。此操作无法撤销。",

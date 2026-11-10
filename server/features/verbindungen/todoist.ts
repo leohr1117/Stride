@@ -1,5 +1,5 @@
 import type { TodoistLabel, TodoistOhne, TodoistStatus, TodoistZuordnung } from '../../../shared/api/index.ts';
-import { artAusSpeicher } from '../../../shared/verbindungsFehler.ts';
+import { SATZ_BETREIBER, SATZ_UNLESBAR, artAusSpeicher } from '../../../shared/verbindungsFehler.ts';
 import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { leseJetzt } from '../../services/zeit.ts';
@@ -8,6 +8,7 @@ import { KONTEXT_JOINS, PROJEKT_AKTIV } from '../ziele/kontext.ts';
 import { pruefeAktiveVorlage } from '../taetigkeiten/vorlagen.ts';
 import { type RegelAbschluss, type RegelQuelle, type ZielArt } from '../../services/todoistRegeln.ts';
 import { leseWert, pruefeProjekt, setzeWert } from './gemeinsam.ts';
+import { liesToken, packeToken, schluesselBrauchbar, verlangeSchluessel } from './tokenGeheim.ts';
 
 export const SCHLUESSEL = {
   token: 'todoistToken',
@@ -195,15 +196,24 @@ export function liesTodoistOhne(): { art: TodoistOhne; vorlageId: number | null 
 }
 
 export function ladeTodoistStatus(): TodoistStatus {
-  const verbunden = leseWert(SCHLUESSEL.token) !== null;
+  const gespeichert = leseWert(SCHLUESSEL.token);
+  const lage = liesToken(gespeichert);
+  const verbunden = lage.art !== 'keiner';
   const ohne = liesTodoistOhne();
+  let fehler = leseWert(SCHLUESSEL.fehler);
+  let fehlerArt = artAusSpeicher(leseWert(SCHLUESSEL.fehlerArt), fehler);
+  if (lage.art === 'unlesbar') {
+    fehler = lage.grund === 'kein-schluessel' ? SATZ_BETREIBER : SATZ_UNLESBAR;
+    fehlerArt = 'schluessel';
+  }
   return {
     verbunden,
+    verfuegbar: schluesselBrauchbar() || verbunden,
     nutzer: leseWert(SCHLUESSEL.nutzer),
     seit: leseWert(SCHLUESSEL.seit),
     letzterAbgleich: leseWert(SCHLUESSEL.abgleich),
-    fehler: leseWert(SCHLUESSEL.fehler),
-    fehlerArt: artAusSpeicher(leseWert(SCHLUESSEL.fehlerArt), leseWert(SCHLUESSEL.fehler)),
+    fehler,
+    fehlerArt,
     uebernommen: zaehleUebernommen(),
     ohneZuordnung: ohne.art,
     standardVorlageId: ohne.vorlageId,
@@ -272,11 +282,12 @@ export function speichereLabels(labels: TodoistLabelQuelle[]): void {
 }
 
 export async function verbindeTodoist(token: string, jetzt = leseJetzt()): Promise<TodoistStatus> {
+  verlangeSchluessel();
   const nutzer = await ladeNutzername(token);
   const projekte = await ladeProjekte(token);
   const labels = await ladeLabels(token);
   inTransaktion(() => {
-    setzeWert(SCHLUESSEL.token, token);
+    setzeWert(SCHLUESSEL.token, packeToken(token));
     setzeWert(SCHLUESSEL.nutzer, nutzer);
     setzeWert(SCHLUESSEL.seit, jetzt.toISOString());
     setzeWert(SCHLUESSEL.fehler, null);

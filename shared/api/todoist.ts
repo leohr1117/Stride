@@ -68,6 +68,7 @@ export type TodoistOhne = 'keine' | 'standard';
 
 export interface TodoistStatus {
   verbunden: boolean;
+  verfuegbar: boolean;
   nutzer: string | null;
   seit: string | null;
   letzterAbgleich: string | null;

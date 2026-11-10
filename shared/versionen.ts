@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.12',
+    seiten: 'Verbindungen',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: [
+          'Der Todoist-Token wird verschlüsselt gespeichert. Neu verbinden geht nur, wenn der Betreiber es freigeschaltet hat; verbundene Konten laufen weiter.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.11',
     seiten: 'Vorbilder, Handbuch',
     abschnitte: [

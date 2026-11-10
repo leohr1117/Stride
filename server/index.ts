@@ -30,6 +30,7 @@ import { rechneBossangriffeAb } from './features/bosse/bossangriffe.ts';
 import { schalteErfolgeFrei } from './features/erfolge/erfolge.ts';
 import { loeseWeltdatei, schliesseZugang, setzeZugangsWarnung, sitzungGueltig, weltdateiDerSitzung, weltenPfade } from './features/zugang/zugang.ts';
 import { starteRegelmaessigenAbgleich } from './features/verbindungen/abgleich.ts';
+import { meldeTokenSchluessel, verschluesseleVorhandeneTodoistTokens } from './features/verbindungen/tokenGeheim.ts';
 import { rechneZeitverfallAb } from './features/verfall/verfall.ts';
 import { DATUM_HINWEIS } from '../shared/spiel/datum.ts';
 import { setzeTestzeit, testmodusWarnung } from './services/zeit.ts';
@@ -179,6 +180,12 @@ if (testmodusHinweis !== null) {
 }
 
 try {
+  meldeTokenSchluessel((text) => {
+    app.log.warn(text);
+  });
+  verschluesseleVorhandeneTodoistTokens(weltenPfade, (text) => {
+    app.log.warn(text);
+  });
   await app.listen({ port: KONFIG.port, host: KONFIG.host });
   console.log(`Stride läuft auf http://localhost:${KONFIG.port}`);
   stoppeAbgleich = starteRegelmaessigenAbgleich(

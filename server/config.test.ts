@@ -201,6 +201,19 @@ describe('Doku zum Client-Pfad', () => {
     expect(beispiel).toContain('client/dist-live');
   });
 
+  it('nennt STRIDE_TOKEN_SCHLUESSEL in README und .env.example', () => {
+    const readme = fs.readFileSync(path.join(WURZEL, 'README.md'), 'utf8');
+    const beispiel = fs.readFileSync(path.join(WURZEL, '.env.example'), 'utf8');
+    expect(readme).toContain('STRIDE_TOKEN_SCHLUESSEL');
+    expect(readme).toContain('ASCEND_TOKEN_SCHLUESSEL');
+    expect(readme).toContain('unverschlüsselt');
+    expect(beispiel).toContain('STRIDE_TOKEN_SCHLUESSEL');
+    expect(beispiel).toContain('ASCEND_TOKEN_SCHLUESSEL');
+    expect(beispiel).toContain('unverschlüsselt');
+    expect(beispiel).not.toMatch(/^STRIDE_TOKEN_SCHLUESSEL=\S/m);
+    expect(beispiel).not.toMatch(/^ASCEND_TOKEN_SCHLUESSEL=\S/m);
+  });
+
   it('nennt die neuen Datenbanknamen vor den alten', () => {
     const readme = fs.readFileSync(path.join(WURZEL, 'README.md'), 'utf8');
     const beispiel = fs.readFileSync(path.join(WURZEL, '.env.example'), 'utf8');

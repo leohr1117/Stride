@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.12
+
+### Verbessert
+
+- Der Todoist-Token wird verschlüsselt gespeichert. Neu verbinden geht nur, wenn der Betreiber es freigeschaltet hat; verbundene Konten laufen weiter.
+
 ## 4.1.11
 
 ### Geändert

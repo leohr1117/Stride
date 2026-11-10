@@ -91,9 +91,9 @@ describe('Rückfall über den Altsatz', () => {
     expect(artAusSatz('Unerwarteter Fehler beim Abgleich mit dem Kalender.')).toBeNull();
     expect(artAusSpeicher('bremse', 'Todoist ist gerade nicht erreichbar.')).toBe('bremse');
     expect(artAusSpeicher(null, 'Todoist ist gerade nicht erreichbar.')).toBe('netz');
-    expect(artAusSpeicher('schluessel', 'Todoist ist gerade nicht erreichbar.')).toBe('netz');
+    expect(artAusSpeicher('schluessel', 'Todoist ist gerade nicht erreichbar.')).toBe('schluessel');
     expect(artAusSpeicher('foo', 'keine bekannte Meldung')).toBeNull();
-    expect(istVerbindungsFehlerArt('schluessel')).toBe(false);
+    expect(istVerbindungsFehlerArt('schluessel')).toBe(true);
     expect(istVerbindungsFehlerArt('foo')).toBe(false);
     expect(istVerbindungsFehlerArt('netz')).toBe(true);
   });

@@ -1,5 +1,11 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Nicht verfügbar": "Недоступно",
+  "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "Todoist на этом сервере не настроен. Оператор должен его включить.",
+  "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "Сохранённый токен больше нельзя прочитать. Введи его снова.",
+  "Token nicht lesbar": "Токен не читается",
+  "Gib ihn neu ein.": "Введи его снова.",
+  "Der Todoist-Token wird verschlüsselt gespeichert. Neu verbinden geht nur, wenn der Betreiber es freigeschaltet hat; verbundene Konten laufen weiter.": "Токен Todoist хранится в зашифрованном виде. Подключиться заново можно, только если оператор это разрешил; уже подключённые аккаунты продолжают работать.",
   "Konto löschen": "Удалить аккаунт",
   "Konto löschen?": "Удалить аккаунт?",
   "Alle Daten dieses Kontos werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.": "Все данные этого аккаунта будут удалены безвозвратно. Это нельзя отменить.",

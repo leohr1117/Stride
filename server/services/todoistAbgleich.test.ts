@@ -1,7 +1,7 @@
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ausfuehren, eine, mitWeltAsync, schliesseWelt } from '../db.ts';
 import { starteTodoistAttrappe, type AttrappenDaten, type AttrappenEreignis, type TodoistAttrappe } from '../integrationen/todoistAttrappe.ts';
 import type { TodoistLabelDaten, TodoistZuordnungDaten } from '../../shared/api/index.ts';
@@ -19,6 +19,9 @@ import { tageZwischen } from '../../shared/spiel/kette.ts';
 import { BOSS, eintragXp, GEGNER, meilensteinBonus } from '../../shared/spiel/xp.ts';
 
 const TOKEN = 'test-token-1234';
+const TEST_SCHLUESSEL = Buffer.from('stride-test-token-schluessel-v3!').toString('base64');
+const vorherStride = process.env.STRIDE_TOKEN_SCHLUESSEL;
+const vorherAscend = process.env.ASCEND_TOKEN_SCHLUESSEL;
 const ordner = mkdtempSync(path.join(tmpdir(), 'stride-todoist-'));
 const offen: string[] = [];
 const server: TodoistAttrappe[] = [];
@@ -31,7 +34,30 @@ function welt(): string {
   return datei;
 }
 
+function setzeTestschluessel(): void {
+  process.env.STRIDE_TOKEN_SCHLUESSEL = TEST_SCHLUESSEL;
+  delete process.env.ASCEND_TOKEN_SCHLUESSEL;
+}
+
+function stelleSchluesselHer(): void {
+  if (vorherStride === undefined) {
+    delete process.env.STRIDE_TOKEN_SCHLUESSEL;
+  } else {
+    process.env.STRIDE_TOKEN_SCHLUESSEL = vorherStride;
+  }
+  if (vorherAscend === undefined) {
+    delete process.env.ASCEND_TOKEN_SCHLUESSEL;
+  } else {
+    process.env.ASCEND_TOKEN_SCHLUESSEL = vorherAscend;
+  }
+}
+
+beforeEach(() => {
+  setzeTestschluessel();
+});
+
 afterEach(async () => {
+  stelleSchluesselHer();
   delete process.env.TODOIST_API;
   while (server.length > 0) {
     await server.pop()?.stop();

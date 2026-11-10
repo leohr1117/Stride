@@ -1,5 +1,11 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Nicht verfügbar": "Indisponible",
+  "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "Todoist n'est pas configuré sur ce serveur. La personne qui l'exploite doit l'activer.",
+  "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "Le jeton enregistré n'est plus lisible. Saisis-le à nouveau.",
+  "Token nicht lesbar": "Jeton illisible",
+  "Gib ihn neu ein.": "Saisis-le à nouveau.",
+  "Der Todoist-Token wird verschlüsselt gespeichert. Neu verbinden geht nur, wenn der Betreiber es freigeschaltet hat; verbundene Konten laufen weiter.": "Le jeton Todoist est enregistré de façon chiffrée. Se reconnecter n'est possible que si la personne qui exploite le serveur l'a activé ; les comptes déjà connectés continuent.",
   "Konto löschen": "Supprimer le compte",
   "Konto löschen?": "Supprimer le compte ?",
   "Alle Daten dieses Kontos werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.": "Toutes les données de ce compte sont supprimées définitivement. C'est irréversible.",

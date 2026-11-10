@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CircleAlert, CircleCheck, CircleMinus, RefreshCw } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { type TodoistStatus, type Verbindungen } from '../../../shared/api/index.ts';
-import { artAusSatz, kurzgrund, loesung } from '../../../shared/verbindungsFehler.ts';
+import { SATZ_BETREIBER, SATZ_UNLESBAR, artAusSatz, kurzgrund, loesung } from '../../../shared/verbindungsFehler.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useBestaetigung } from '../components/Bestaetigung.tsx';
 import { useSchnellAktion } from '../components/SchnellAktion.tsx';
@@ -57,8 +57,9 @@ function statusZeile(
   iso: string | null,
   nach: string,
   grund: string | null,
+  ersatz?: string,
 ) {
-  const text = tx(LAGE_TEXT[lage]);
+  const text = tx(ersatz ?? LAGE_TEXT[lage]);
   const neben = nebenzeile(lage, iso, grund);
   const Icon = SYMBOL[lage];
   const name = neben ? `${tx(titel)}, ${text}, ${neben}` : `${tx(titel)}, ${text}`;
@@ -92,6 +93,7 @@ function Uebersicht({ daten }: { daten: Verbindungen }) {
           daten.todoist.letzterAbgleich,
           '/mehr/inhalte/verbindungen/todoist',
           grundText(daten.todoist.fehlerArt),
+          daten.todoist.verfuegbar ? undefined : 'Nicht verfügbar',
         )}
         {statusZeile(
           'Kalender',
@@ -235,7 +237,21 @@ function TodoistBereich({
     aktualisieren();
   };
   const zeit = zeitpunktText(status.letzterAbgleich);
+  const fehlerRoh = status.fehler?.split('\n')[0]?.trim() ?? '';
   const fehlerZeilen = status.fehler ? fehlerAnzeige(status.fehler).split('\n') : [];
+  if (!status.verfuegbar) {
+    return (
+      <section id="todoist">
+        <AbschnittKopf titel={tx('Todoist')} hinweis={tx('Jede erledigte Aufgabe wird ein Eintrag mit XP.')} />
+        <Flaeche>
+          <div className="space-y-1 px-4 py-3">
+            <p className="font-medium">{tx('Nicht verfügbar')}</p>
+            <p className="break-words text-[13px] leading-[18px] text-leise">{tx(SATZ_BETREIBER)}</p>
+          </div>
+        </Flaeche>
+      </section>
+    );
+  }
   const tokenKarte = (schritte: boolean) => (
     <Formular onAbsenden={absenden} abstand={schritte ? 'space-y-3' : 'mt-3 space-y-3'}>
       <Flaeche>
@@ -275,7 +291,7 @@ function TodoistBereich({
                     {zeile}
                   </p>
                 ))}
-                {status.fehlerArt ? (
+                {status.fehlerArt && fehlerRoh !== SATZ_BETREIBER ? (
                   <p className="break-words text-xs text-gefahr">{tx(loesung(status.fehlerArt))}</p>
                 ) : null}
               </div>
@@ -292,7 +308,7 @@ function TodoistBereich({
               </div>
             </div>
           </Flaeche>
-          {status.fehlerArt === 'abgelehnt' ? tokenKarte(false) : null}
+          {status.fehlerArt === 'abgelehnt' || fehlerRoh === SATZ_UNLESBAR ? tokenKarte(false) : null}
           <TodoistZuordnungen status={status} />
           <div className="mt-8">
             <Knopf variante="warnung" onClick={() => void trennen()}>

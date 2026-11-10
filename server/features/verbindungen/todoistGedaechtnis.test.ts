@@ -1,6 +1,6 @@
 import { mkdirSync, mkdtempSync } from 'node:fs';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { eine, mitWeltAsync, schliesseWelt } from '../../db.ts';
 import { starteTodoistAttrappe, type AttrappenEreignis, type TodoistAttrappe } from '../../integrationen/todoistAttrappe.ts';
 import { erstelleProjekt, erstelleVision } from '../../services/struktur.ts';
@@ -10,6 +10,9 @@ import { ordneTodoistProjektZu } from './todoistZuordnung.ts';
 import { ladeTodoistStatus, trenneTodoist, verbindeTodoist } from './todoist.ts';
 
 const TOKEN = 'test-token-1234';
+const TEST_SCHLUESSEL = Buffer.from('stride-test-token-schluessel-v3!').toString('base64');
+const vorherStride = process.env.STRIDE_TOKEN_SCHLUESSEL;
+const vorherAscend = process.env.ASCEND_TOKEN_SCHLUESSEL;
 const basis = path.join('tmp-test', 'todoist-gedaechtnis');
 mkdirSync(basis, { recursive: true });
 const ordner = mkdtempSync(path.join(basis, 'lauf-'));
@@ -24,7 +27,30 @@ function welt(): string {
   return datei;
 }
 
+function setzeTestschluessel(): void {
+  process.env.STRIDE_TOKEN_SCHLUESSEL = TEST_SCHLUESSEL;
+  delete process.env.ASCEND_TOKEN_SCHLUESSEL;
+}
+
+function stelleSchluesselHer(): void {
+  if (vorherStride === undefined) {
+    delete process.env.STRIDE_TOKEN_SCHLUESSEL;
+  } else {
+    process.env.STRIDE_TOKEN_SCHLUESSEL = vorherStride;
+  }
+  if (vorherAscend === undefined) {
+    delete process.env.ASCEND_TOKEN_SCHLUESSEL;
+  } else {
+    process.env.ASCEND_TOKEN_SCHLUESSEL = vorherAscend;
+  }
+}
+
+beforeEach(() => {
+  setzeTestschluessel();
+});
+
 afterEach(async () => {
+  stelleSchluesselHer();
   delete process.env.TODOIST_API;
   while (server.length > 0) {
     await server.pop()?.stop();

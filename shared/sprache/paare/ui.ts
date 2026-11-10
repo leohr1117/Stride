@@ -298,6 +298,17 @@ export const PAARE = [
   ['Noch nicht abgeglichen', 'Not synced yet'],
   ['Verbunden', 'Connected'],
   ['Token abgelehnt', 'Token rejected'],
+  ['Token nicht lesbar', 'Token unreadable'],
+  ['Gib ihn neu ein.', 'Enter it again.'],
+  ['Nicht verfügbar', 'Not available'],
+  [
+    'Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.',
+    'Todoist is not set up on this server. The operator has to enable it.',
+  ],
+  [
+    'Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.',
+    'The saved token can no longer be read. Enter it again.',
+  ],
   ['Token unvollständig', 'Token incomplete'],
   ['Nicht erreichbar', 'Unreachable'],
   ['Zu viele Anfragen', 'Too many requests'],

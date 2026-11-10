@@ -13,6 +13,7 @@ import { aktivesAttribut, ladeAttributXp } from '../attribute/attribute.ts';
 import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
 import { ladeVorlage } from '../taetigkeiten/vorlagen.ts';
 import { fasseFehler, fehlertext, legeEintragAn, leseWert, pruefeProjekt, setzeWert } from './gemeinsam.ts';
+import { tokenFuerAufruf } from './tokenGeheim.ts';
 import {
   alsZiel,
   ladeLabelZeilen,
@@ -277,12 +278,13 @@ function uebernimmErledigungen(
 }
 
 export async function gleicheTodoistAb(jetzt = leseJetzt()): Promise<AbgleichErgebnis> {
-  const token = leseWert(SCHLUESSEL.token);
-  if (token === null) {
+  const gespeichert = leseWert(SCHLUESSEL.token);
+  if (gespeichert === null) {
     return { neu: 0, fehler: [] };
   }
   const seit = new Date(leseWert(SCHLUESSEL.seit) ?? jetzt.toISOString());
   try {
+    const token = tokenFuerAufruf(gespeichert);
     const projekte = await ladeProjekte(token);
     const labels = await ladeLabels(token);
     const erledigungen = await ladeErledigungen(token, seit);

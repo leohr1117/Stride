@@ -1,5 +1,11 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Nicht verfügbar": "No disponible",
+  "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "Todoist no está configurado en este servidor. Quien lo opera tiene que activarlo.",
+  "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "El token guardado ya no se puede leer. Vuelve a introducirlo.",
+  "Token nicht lesbar": "Token ilegible",
+  "Gib ihn neu ein.": "Vuelve a introducirlo.",
+  "Der Todoist-Token wird verschlüsselt gespeichert. Neu verbinden geht nur, wenn der Betreiber es freigeschaltet hat; verbundene Konten laufen weiter.": "El token de Todoist se guarda cifrado. Volver a conectar solo es posible si quien opera el servidor lo ha habilitado; las cuentas ya conectadas siguen funcionando.",
   "Konto löschen": "Eliminar cuenta",
   "Konto löschen?": "¿Eliminar cuenta?",
   "Alle Daten dieses Kontos werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.": "Todos los datos de esta cuenta se eliminan de forma definitiva. Esto no se puede deshacer.",

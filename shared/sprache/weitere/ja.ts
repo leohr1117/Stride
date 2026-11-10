@@ -1,5 +1,11 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Nicht verfügbar": "利用できません",
+  "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "このサーバーでは Todoist が設定されていません。運営者が有効にする必要があります。",
+  "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "保存されたトークンは読み取れなくなりました。もう一度入力してください。",
+  "Token nicht lesbar": "トークンを読み取れない",
+  "Gib ihn neu ein.": "もう一度入力してください。",
+  "Der Todoist-Token wird verschlüsselt gespeichert. Neu verbinden geht nur, wenn der Betreiber es freigeschaltet hat; verbundene Konten laufen weiter.": "Todoist のトークンは暗号化して保存されます。再接続できるのは、運営者が有効にした場合だけです。接続済みのアカウントはそのまま動きます。",
   "Konto löschen": "アカウントを削除",
   "Konto löschen?": "アカウントを削除しますか？",
   "Alle Daten dieses Kontos werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.": "このアカウントのすべてのデータが完全に削除されます。元に戻すことはできません。",

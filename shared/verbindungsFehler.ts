@@ -9,7 +9,12 @@ export const VERBINDUNGS_ARTEN = [
   'kein_ics',
   'zu_gross',
   'eingabe',
+  'schluessel',
 ] as const;
+
+export const SATZ_BETREIBER =
+  'Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.';
+export const SATZ_UNLESBAR = 'Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.';
 
 export type VerbindungsFehlerArt = (typeof VERBINDUNGS_ARTEN)[number];
 
@@ -26,6 +31,7 @@ const KURZGRUND: Record<VerbindungsFehlerArt, string> = {
   kein_ics: 'Kein iCal',
   zu_gross: 'Zu groß',
   eingabe: 'Token unvollständig',
+  schluessel: 'Token nicht lesbar',
 };
 
 const LOESUNG: Record<VerbindungsFehlerArt, string> = {
@@ -39,10 +45,13 @@ const LOESUNG: Record<VerbindungsFehlerArt, string> = {
   kein_ics: 'Nimm die Adresse im iCal-Format.',
   zu_gross: 'Nimm einen kleineren Kalender.',
   eingabe: 'Kopiere den ganzen Token aus Todoist.',
+  schluessel: 'Gib ihn neu ein.',
 };
 
 /** Altsätze, erste Zeile. Ein umformulierter Satz verliert die Art nicht, solange sie gespeichert ist. */
 const SATZ_ZU_ART: Record<string, VerbindungsFehlerArt> = {
+  [SATZ_BETREIBER]: 'schluessel',
+  [SATZ_UNLESBAR]: 'schluessel',
   'Todoist lehnt den Token ab. Prüfe ihn in den Todoist-Einstellungen.': 'abgelehnt',
   'Todoist ist gerade nicht erreichbar.': 'netz',
   'Der Kalender ist gerade nicht erreichbar.': 'netz',
