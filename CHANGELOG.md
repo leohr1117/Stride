@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.19
+
+### Verbessert
+
+- Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.
+
 ## 4.1.18
 
 ### Hinzugefügt

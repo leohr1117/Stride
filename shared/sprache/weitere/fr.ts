@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "Dans le formulaire des activités, un glissement vertical sur les curseurs fait défiler la page au lieu de déplacer la valeur.",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "Les activités répartissent des pourcentages fixes. Sous 100 %, le reste ne va à aucun attribut. Un moins retire de l'XP, jamais sous 0.",
   "Wirkung auf Attribute": "Effet sur les attributs",
   "Anteil {name}": "Part {name}",

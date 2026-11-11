@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "В форме занятия вертикальное движение по регуляторам прокручивает страницу и не сдвигает значение.",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "Занятия распределяют фиксированные проценты. Ниже 100 % остаток не идёт ни одному атрибуту. Минус снимает опыт, но не ниже 0.",
   "Wirkung auf Attribute": "Действие на атрибуты",
   "Anteil {name}": "Доля {name}",

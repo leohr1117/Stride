@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "活動のフォームでは、スライダー上を縦にスワイプすると値が変わらず、ページがスクロールします。",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "活動は固定の割合で配分します。100%未満の残りはどの属性にも入りません。マイナスはXPを引き、0未満にはなりません。",
   "Wirkung auf Attribute": "属性への効果",
   "Anteil {name}": "割合 {name}",

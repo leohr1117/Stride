@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.',
+    'In the activities form, a vertical swipe over the sliders scrolls the page instead of moving the value.',
+  ],
+  [
     'Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.',
     'Activities assign fixed percentages. Below 100%, the rest goes to no attribute. A minus subtracts XP, never below 0.',
   ],

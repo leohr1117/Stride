@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.19',
+    seiten: 'Tätigkeiten',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: [
+          'Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.18',
     seiten: 'Tätigkeiten',
     abschnitte: [

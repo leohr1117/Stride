@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "En el formulario de actividades, un deslizamiento vertical sobre los reguladores desplaza la página en lugar de cambiar el valor.",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "Las actividades reparten porcentajes fijos. Por debajo del 100 %, el resto no va a ningún atributo. Un menos resta XP, nunca por debajo de 0.",
   "Wirkung auf Attribute": "Efecto en los atributos",
   "Anteil {name}": "Porcentaje {name}",

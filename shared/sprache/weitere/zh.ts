@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "在活动表单里，在滑块上垂直滑动会滚动页面，而不会改动数值。",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "活动按固定百分比分配。低于 100% 的剩余部分不计入任何属性。减号会扣掉经验，但不会低于 0。",
   "Wirkung auf Attribute": "对属性的作用",
   "Anteil {name}": "份额 {name}",
