@@ -1,4 +1,4 @@
-import { expect, test, type Page } from './uhr.ts';
+import { expect, test, type Locator, type Page } from './uhr.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 const NAME = 'Anteile Test';
@@ -142,6 +142,168 @@ test('Tätigkeiten zeigen Prozent, die 100 ergeben, und gleich breite gleiche Fa
     await expect(ansehenProzent).toBeVisible();
     await ohneSeitlichenUeberlauf(page);
     await page.screenshot({ path: `tmp-test/taetigkeit-anteile/${testInfo.project.name}-dialog.png` });
+  } finally {
+    if (id !== null) {
+      await page.request.delete(`/api/vorlagen/${id}`);
+    }
+  }
+});
+
+interface AttributZeile {
+  id: number;
+  name: string;
+  typ: string;
+  archiviert: boolean;
+}
+
+async function koennen(seite: Page): Promise<AttributZeile[]> {
+  const attribute = (await (await seite.request.get('/api/attribute')).json()) as AttributZeile[];
+  return attribute.filter((attribut) => attribut.typ === 'attribut' && !attribut.archiviert);
+}
+
+async function setzeRegler(regler: Locator, wert: number): Promise<void> {
+  await regler.evaluate((element, ziel) => {
+    if (!(element instanceof HTMLInputElement)) {
+      return;
+    }
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+    setter?.call(element, String(ziel));
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  }, wert);
+  await expect(regler).toHaveValue(String(wert));
+}
+
+test('Plus und Abzug zeigen die Summe, speichern und öffnen sich wieder', async ({ page }, testInfo) => {
+  const name = 'Feste Anteile';
+  let id: number | null = null;
+  try {
+    await anmelden(page);
+    await page.goto('/mehr/inhalte');
+    const attribute = await koennen(page);
+    const plus = attribute[0];
+    const minus = attribute[1];
+    const ruhend = attribute[2];
+    if (!plus || !minus || !ruhend) {
+      throw new Error('Zu wenige Attribute.');
+    }
+    await page.getByRole('button', { name: 'Tätigkeit anlegen' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Tätigkeit anlegen' });
+    await dialog.getByRole('textbox', { name: 'Name' }).fill(name);
+    const plusRegler = dialog.getByRole('slider', { name: `Anteil ${plus.name}` });
+    const minusRegler = dialog.getByRole('slider', { name: `Anteil ${minus.name}` });
+    const ruheRegler = dialog.getByRole('slider', { name: `Anteil ${ruhend.name}` });
+    await expect(plusRegler).toBeVisible();
+    await setzeRegler(plusRegler, 40);
+    await setzeRegler(minusRegler, -30);
+    await expect(plusRegler).toHaveAttribute('aria-valuetext', 'Plus 40 Prozent');
+    await expect(minusRegler).toHaveAttribute('aria-valuetext', 'Abzug 30 Prozent');
+    await expect(ruheRegler).toHaveAttribute('aria-valuetext', 'keine Wirkung');
+    await expect(dialog.locator('span.zahl', { hasText: '−30 %' })).toBeVisible();
+    const summe = dialog.locator('[data-summe]');
+    await expect(summe).toContainText('Plus 40 % · Abzug 30 % · Rest 60 % ohne Attribut');
+
+    const lage = await plusRegler.evaluate((element) => {
+      const block = element.parentElement?.parentElement;
+      const nameZeile = block?.querySelector('span.flex-1');
+      const nameKasten = nameZeile?.getBoundingClientRect();
+      const reglerKasten = element.getBoundingClientRect();
+      return {
+        breite: reglerKasten.width,
+        hoehe: reglerKasten.height,
+        reglerY: reglerKasten.y,
+        nameUnten: nameKasten?.bottom ?? reglerKasten.y,
+      };
+    });
+    expect(lage.breite).toBeGreaterThanOrEqual(240);
+    expect(lage.hoehe).toBeGreaterThanOrEqual(48);
+    expect(lage.reglerY).toBeGreaterThanOrEqual(lage.nameUnten - 1);
+    await dialog.screenshot({ path: `tmp-test/taetigkeit-anteile/${testInfo.project.name}-formular.png` });
+
+    await setzeRegler(plusRegler, 60);
+    await setzeRegler(minusRegler, 50);
+    const speichern = dialog.getByRole('button', { name: 'Speichern', exact: true });
+    await expect(speichern).toBeEnabled();
+    await speichern.click();
+    await expect(dialog).toBeVisible();
+    await expect(summe).toBeFocused();
+    await expect(summe).toContainText('Zusammen höchstens 100 %.');
+
+    await setzeRegler(plusRegler, 40);
+    await setzeRegler(minusRegler, -30);
+    await speichern.click();
+    await expect(dialog).toBeHidden();
+
+    const zeile = page.locator(`[data-taetigkeit="${name}"]`);
+    await expect(zeile.locator('[data-rest="60"]')).toBeVisible();
+    await expect(zeile.locator('[data-anteil="40"]')).toHaveCount(1);
+    await expect(zeile).toContainText('−30 %');
+    const liste = (await (await page.request.get('/api/vorlagen')).json()) as { id: number; name: string }[];
+    id = liste.find((eintrag) => eintrag.name === name)?.id ?? null;
+    expect(id).not.toBeNull();
+
+    await zeile.getByRole('button', { name, exact: true }).click();
+    const erneut = page.getByRole('dialog', { name: 'Tätigkeit bearbeiten' });
+    await expect(erneut.getByRole('slider', { name: `Anteil ${plus.name}` })).toHaveValue('40');
+    await expect(erneut.getByRole('slider', { name: `Anteil ${minus.name}` })).toHaveValue('-30');
+    await expect(erneut.locator('[data-summe]')).toContainText('Rest 60 % ohne Attribut');
+  } finally {
+    if (id !== null) {
+      await page.request.delete(`/api/vorlagen/${id}`);
+    }
+  }
+});
+
+test('Alte Tätigkeit bleibt im Verhältnis, wenn kein Regler sich bewegt', async ({ page }) => {
+  let id: number | null = null;
+  try {
+    await anmelden(page);
+    const attribute = await koennen(page);
+    const erste = attribute[0];
+    const zweite = attribute[1];
+    const dritte = attribute[2];
+    if (!erste || !zweite || !dritte) {
+      throw new Error('Zu wenige Attribute.');
+    }
+    const gewichte = [
+      { attributId: erste.id, gewicht: 39 },
+      { attributId: zweite.id, gewicht: 38 },
+      { attributId: dritte.id, gewicht: 23 },
+    ];
+    const antwort = await page.request.post('/api/vorlagen', {
+      data: { name: 'Alte Anteile', icon: 'rocket', gewichte },
+    });
+    expect(antwort.ok()).toBe(true);
+    const angelegt = (await antwort.json()) as { id: number; festeAnteile: boolean };
+    id = angelegt.id;
+    expect(angelegt.festeAnteile).toBe(false);
+
+    await page.goto('/mehr/inhalte');
+    await page.locator('[data-taetigkeit="Alte Anteile"]').getByRole('button', { name: 'Alte Anteile', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Tätigkeit bearbeiten' });
+    await expect(dialog.getByRole('slider', { name: `Anteil ${erste.name}` })).toHaveValue('39');
+    await expect(dialog.getByRole('slider', { name: `Anteil ${zweite.name}` })).toHaveValue('38');
+    await expect(dialog.getByRole('slider', { name: `Anteil ${dritte.name}` })).toHaveValue('23');
+    await expect(dialog.locator('span.zahl', { hasText: '+39 %' })).toHaveCount(1);
+    await expect(dialog.locator('span.zahl', { hasText: '+40 %' })).toHaveCount(0);
+    await dialog.getByRole('button', { name: 'Speichern', exact: true }).click();
+    await expect(dialog).toBeHidden();
+
+    const listeAntwort = await page.request.get('/api/vorlagen');
+    expect(listeAntwort.ok()).toBe(true);
+    const liste = (await listeAntwort.json()) as {
+      id: number;
+      festeAnteile: boolean;
+      gewichte: { attributId: number; gewicht: number }[];
+      abzuege: unknown[];
+    }[];
+    const geladen = liste.find((eintrag) => eintrag.id === id);
+    if (!geladen) {
+      throw new Error('Die Tätigkeit fehlt in der Liste.');
+    }
+    expect(geladen.festeAnteile).toBe(false);
+    expect(geladen.abzuege).toEqual([]);
+    expect(geladen.gewichte.map((gewicht) => gewicht.gewicht).sort((a, b) => b - a)).toEqual([39, 38, 23]);
   } finally {
     if (id !== null) {
       await page.request.delete(`/api/vorlagen/${id}`);

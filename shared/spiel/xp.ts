@@ -224,6 +224,21 @@ export function verteileNachGewichten(xp: number, gewichte: Gewicht[]): XpAnteil
   return roh.filter((anteil) => anteil.xp > 0).map(({ attributId, xp: anteilXp }) => ({ attributId, xp: anteilXp }));
 }
 
+/** Feste Prozent: nur die Summe der aktiven Gewichte, höchstens 100, geht an Attribute. Sonst das heutige Verhältnis. */
+export function verteileTaetigkeit(xp: number, gewichte: Gewicht[], fest: boolean): XpAnteil[] {
+  if (!fest) {
+    return verteileNachGewichten(xp, gewichte);
+  }
+  let summe = 0;
+  for (const eintrag of gewichte) {
+    if (eintrag.gewicht > 0) {
+      summe += eintrag.gewicht;
+    }
+  }
+  const gesamt = Math.round((xp * Math.min(100, summe)) / 100);
+  return verteileNachGewichten(gesamt, gewichte);
+}
+
 export const RUECKBLICK = {
   geistXp: 50,
   bonusWochenZurueck: 1,

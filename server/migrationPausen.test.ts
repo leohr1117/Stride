@@ -51,19 +51,29 @@ function einfuegen(db: DatabaseSync, werte: Record<string, SQLInputValue>): numb
   return Number(ergebnis.lastInsertRowid);
 }
 
+function pausenStand(): number {
+  const index = MIGRATIONEN.findIndex((sql) => sql.includes('CREATE TABLE streak_pausen'));
+  if (index < 0) {
+    throw new Error('streak_pausen fehlt.');
+  }
+  return index;
+}
+
 describe('streak_pausen', () => {
-  it('hängt die Tabelle nur an die letzte Migration', () => {
-    const sql = MIGRATIONEN[MIGRATIONEN.length - 1];
+  it('legt die Pausentabelle in genau einer Migration an', () => {
+    const index = pausenStand();
+    const sql = MIGRATIONEN[index] ?? '';
     expect(sql).toContain('CREATE TABLE streak_pausen');
     expect(sql).not.toContain('IF NOT EXISTS');
     expect(sql).not.toContain('REFERENCES');
-    expect(MIGRATIONEN.slice(0, -1).some((eintrag) => eintrag.includes('streak_pausen'))).toBe(false);
+    expect(MIGRATIONEN.filter((eintrag) => eintrag.includes('streak_pausen'))).toHaveLength(1);
   });
 
   it('legt die Tabelle in zwei Dateien an und lässt den zweiten Lauf stehen', () => {
     const erste = datenbank();
-    migriere(erste, MIGRATIONEN.length - 1);
-    expect(version(erste)).toBe(MIGRATIONEN.length - 1);
+    const davor = pausenStand();
+    migriere(erste, davor);
+    expect(version(erste)).toBe(davor);
     expect(tabelleDa(erste, 'streak_pausen')).toBe(false);
 
     migriere(erste);

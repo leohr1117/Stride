@@ -75,3 +75,89 @@ export function Regler({
     />
   );
 }
+
+const ANTEIL_STIL = `
+.anteil-regler {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 48px;
+  margin: 0;
+  cursor: pointer;
+}
+.anteil-regler::-webkit-slider-runnable-track {
+  height: 48px;
+  background: transparent;
+  border: 0;
+}
+.anteil-regler::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--anteil-farbe, var(--akzent));
+}
+.anteil-regler::-moz-range-track {
+  height: 48px;
+  background: transparent;
+  border: 0;
+}
+.anteil-regler::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--anteil-farbe, var(--akzent));
+}
+`;
+
+export function AnteilReglerStil() {
+  return <style>{ANTEIL_STIL}</style>;
+}
+
+export function AnteilRegler({
+  wert,
+  farbe,
+  schritt,
+  beschreibung,
+  onAendern,
+  ...rest
+}: {
+  wert: number;
+  farbe: string;
+  schritt: number;
+  beschreibung: string;
+  onAendern: (wert: number) => void;
+} & Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'inputMode' | 'value' | 'onChange' | 'min' | 'max' | 'step'>) {
+  const breite = Math.abs(wert) / 2;
+  const links = wert >= 0 ? 50 : 50 - breite;
+  return (
+    <div className="relative flex h-12 w-full items-center">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-flaeche-2">
+        <span
+          className="absolute top-0 h-full rounded-full"
+          style={{ left: `${links}%`, width: `${breite}%`, backgroundColor: farbe }}
+        />
+      </div>
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute top-1/2 left-1/2 h-3 w-px -translate-x-1/2 -translate-y-1/2"
+        style={{ backgroundColor: 'var(--leise)' }}
+      />
+      <Regler
+        {...rest}
+        min={-100}
+        max={100}
+        step={schritt}
+        value={wert}
+        aria-valuetext={beschreibung}
+        onChange={(ereignis) => onAendern(Number(ereignis.target.value))}
+        className="anteil-regler relative w-full"
+        style={{ ['--anteil-farbe' as string]: farbe }}
+      />
+    </div>
+  );
+}

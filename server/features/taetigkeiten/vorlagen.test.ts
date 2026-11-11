@@ -3,7 +3,8 @@ import path from 'node:path';
 import { afterAll, afterEach, describe, expect, it } from 'vitest';
 import { eine, mitWelt, schliesseWelt } from '../../db.ts';
 import { erstelleProjekt } from '../../services/struktur.ts';
-import { aendereVorlage, erstelleVorlage, ladeVorlagen, ordneVorlagen } from './vorlagen.ts';
+import { vorlageSchema } from '../../validierung.ts';
+import { aendereVorlage, erstelleVorlage, ladeVorlage, ladeVorlagen, ordneVorlagen } from './vorlagen.ts';
 
 const wurzel = path.join(process.cwd(), 'tmp-test', 'vorlagen');
 mkdirSync(wurzel, { recursive: true });
@@ -102,6 +103,105 @@ describe('ordneVorlagen', () => {
       const danach = vorlage('Danach');
       expect(aktivIds()[0]).toBe(oben);
       expect(aktivIds().at(-1)).toBe(danach);
+    });
+  });
+});
+
+function geistId(): number {
+  const id = eine<{ id: number }>(`SELECT id FROM attribute WHERE kennung = 'geist'`)?.id;
+  if (id === undefined) {
+    throw new Error('Geist fehlt.');
+  }
+  return id;
+}
+
+function meldungen(daten: unknown): string[] {
+  const ergebnis = vorlageSchema.safeParse(daten);
+  if (ergebnis.success) {
+    return [];
+  }
+  return ergebnis.error.issues.map((issue) => issue.message);
+}
+
+describe('feste Anteile', () => {
+  it('weist Summe über 100, ein doppeltes Attribut und Plus mit Abzug ab', () => {
+    expect(meldungen({
+      name: 'Viel',
+      icon: 'rocket',
+      festeAnteile: true,
+      gewichte: [
+        { attributId: 1, gewicht: 60 },
+        { attributId: 2, gewicht: 50 },
+      ],
+    }).some((text) => text.includes('Zusammen höchstens 100'))).toBe(true);
+    expect(meldungen({
+      name: 'Doppelt',
+      icon: 'rocket',
+      gewichte: [
+        { attributId: 1, gewicht: 10 },
+        { attributId: 1, gewicht: 10 },
+      ],
+    }).some((text) => text.includes('nur einmal'))).toBe(true);
+    expect(meldungen({
+      name: 'Beides',
+      icon: 'rocket',
+      festeAnteile: true,
+      gewichte: [{ attributId: 1, gewicht: 40 }],
+      abzuege: [{ attributId: 1, prozent: 10 }],
+    }).some((text) => text.includes('nicht zugleich'))).toBe(true);
+  });
+
+  it('speichert Abzug nur mit festen Prozent und lässt alte Tätigkeiten im Verhältnis', () => {
+    mitWelt(welt(), () => {
+      const koerper = koerperId();
+      const geist = geistId();
+      expect(() =>
+        erstelleVorlage({
+          name: 'Nur Abzug',
+          icon: 'star',
+          festeAnteile: true,
+          gewichte: [],
+          abzuege: [{ attributId: geist, prozent: 10 }],
+        }),
+      ).toThrow(/Mindestens ein Attribut mit Plus/);
+      expect(() =>
+        erstelleVorlage({
+          name: 'Beides',
+          icon: 'star',
+          festeAnteile: true,
+          gewichte: [{ attributId: koerper, gewicht: 40 }],
+          abzuege: [{ attributId: koerper, prozent: 10 }],
+        }),
+      ).toThrow(/nicht zugleich/);
+
+      const fest = erstelleVorlage({
+        name: 'Fest',
+        icon: 'star',
+        festeAnteile: true,
+        gewichte: [{ attributId: koerper, gewicht: 40 }],
+        abzuege: [{ attributId: geist, prozent: 30 }],
+      });
+      expect(fest.festeAnteile).toBe(true);
+      expect(fest.abzuege).toEqual([{ attributId: geist, prozent: 30 }]);
+      expect(eine<{ fest: number }>('SELECT feste_anteile AS fest FROM vorlagen WHERE id = ?', fest.id)?.fest).toBe(1);
+
+      const alt = erstelleVorlage({
+        name: 'Alt',
+        icon: 'star',
+        gewichte: [
+          { attributId: koerper, gewicht: 80 },
+          { attributId: geist, gewicht: 50 },
+        ],
+      });
+      expect(alt.festeAnteile).toBe(false);
+      expect(eine<{ fest: number }>('SELECT feste_anteile AS fest FROM vorlagen WHERE id = ?', alt.id)?.fest).toBe(0);
+      expect(aendereVorlage(alt.id, { name: 'Alt zwei' }).festeAnteile).toBe(false);
+      expect(() => aendereVorlage(alt.id, { festeAnteile: true })).toThrow(/Zusammen höchstens 100/);
+      expect(ladeVorlage(alt.id).festeAnteile).toBe(false);
+      expect(aendereVorlage(alt.id, {
+        festeAnteile: true,
+        gewichte: [{ attributId: koerper, gewicht: 40 }],
+      }).festeAnteile).toBe(true);
     });
   });
 });

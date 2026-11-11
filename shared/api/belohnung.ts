@@ -50,4 +50,6 @@ export interface Belohnung {
   boni: Bonus[];
   aufstiege: LevelAufstieg[];
   erfolge: string[];
+  /** Nur wenn ein Abzug anfiel, das Attribut aber schon bei 0 XP war. */
+  abzugBeiNull?: { name: string; farbe: string }[];
 }

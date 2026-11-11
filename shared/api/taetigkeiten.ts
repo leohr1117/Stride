@@ -3,6 +3,11 @@ export interface VorlageGewicht {
   gewicht: number;
 }
 
+export interface VorlageAbzug {
+  attributId: number;
+  prozent: number;
+}
+
 export interface Vorlage {
   id: number;
   name: string;
@@ -11,7 +16,9 @@ export interface Vorlage {
   loeschbar: boolean;
   projektId: number | null;
   projektName: string | null;
+  festeAnteile: boolean;
   gewichte: VorlageGewicht[];
+  abzuege: VorlageAbzug[];
 }
 
 export interface VorlageDaten {
@@ -19,4 +26,6 @@ export interface VorlageDaten {
   icon: string;
   gewichte: VorlageGewicht[];
   projektId?: number | null;
+  festeAnteile?: boolean;
+  abzuege?: VorlageAbzug[];
 }

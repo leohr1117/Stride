@@ -1,5 +1,18 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "活動は固定の割合で配分します。100%未満の残りはどの属性にも入りません。マイナスはXPを引き、0未満にはなりません。",
+  "Wirkung auf Attribute": "属性への効果",
+  "Anteil {name}": "割合 {name}",
+  "Plus {prozent} Prozent": "プラス {prozent} パーセント",
+  "Abzug {prozent} Prozent": "マイナス {prozent} パーセント",
+  "keine Wirkung": "効果なし",
+  "zieht {prozent} % der Grund-XP ab": "基本XPの {prozent} %を引く",
+  "Plus {plus} % · Abzug {abzug} % · Rest {rest} % ohne Attribut": "プラス {plus} % · マイナス {abzug} % · 残り {rest} %は属性なし",
+  "Zusammen höchstens 100 %.": "合計は100%までです。",
+  "Mindestens ein Attribut mit Plus.": "プラスの属性が少なくとも1つ必要です。",
+  "schon bei 0": "すでに0",
+  "Ein Plus ist dieser Anteil der Eintrags-XP, ein Minus zieht diesen Anteil der Grund-XP ab, und der Rest geht an kein Attribut.": "プラスはその割合の記録XPです。マイナスは基本XPのその割合を引きます。残りはどの属性にも入りません。",
+  "Ein Attribut steht nicht zugleich bei Plus und Abzug.": "同じ属性をプラスとマイナスの両方にはできません。",
   "Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.": "連続記録は「領域」で一時停止できます。その間、「今日」と「統計」には出ません。再びオンにすると、それまでの長さが戻ります。",
   "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "毎日の連続が一時停止しているあいだ、長さはそのままです。その間の新しい記録に勢いは付きません。保護と、開いている復帰は止まります。",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "実績、称号、「今日」のヒントを非表示にできます。ヒントはこの端末だけに適用されます。",

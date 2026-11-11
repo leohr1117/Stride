@@ -1,13 +1,13 @@
 import type { Belohnung, Bonus, EintragErgebnis } from '../../../shared/api/index.ts';
 import { lokalesDatum } from '../../../shared/spiel/datum.ts';
-import { belastungXp, istBelastend } from '../../../shared/spiel/belastung.ts';
+import { abzugXp, belastungXp, istBelastend } from '../../../shared/spiel/belastung.ts';
 import { kettenLaenge } from '../../../shared/spiel/kette.ts';
 import {
   bestaendigkeitsBonus,
   eintragXp,
   meilensteinBonus,
   verteileNachGewichten,
-  type Gewicht,
+  verteileTaetigkeit,
   type Multiplikator,
   type XpAnteil,
 } from '../../../shared/spiel/xp.ts';
@@ -28,12 +28,13 @@ import {
   erstelleBelohnung,
   ladeLevelStand,
   type AttributBuchung,
+  type LevelStand,
   type XpQuelle,
 } from '../../services/fortschritt.ts';
-import { ladeAktiveGewichte } from '../taetigkeiten/vorlagen.ts';
-import { gewichteFuerPlan, type PlanBezug } from './zuordnung.ts';
+import { ladeAktiveVerteilung, type AktiveVerteilung } from '../taetigkeiten/vorlagen.ts';
+import { verteilungFuerPlan, type PlanBezug } from './zuordnung.ts';
 
-const NEU_QUELLEN = ['eintrag', 'belastung', 'bestaendigkeit', 'meilenstein'] as const;
+const NEU_QUELLEN = ['eintrag', 'belastung', 'bestaendigkeit', 'meilenstein', 'abzug'] as const;
 
 interface RohBuchung {
   projektId: number | null;
@@ -87,9 +88,9 @@ function bezugDerEinheit(einheitId: number): PlanBezug | null {
   );
 }
 
-function gewichteDerEinheit(einheitId: number, vorlageId: number): Gewicht[] {
+function verteilungDerEinheit(einheitId: number, vorlageId: number): AktiveVerteilung {
   const plan = bezugDerEinheit(einheitId);
-  return plan ? gewichteFuerPlan(plan) : ladeAktiveGewichte(vorlageId);
+  return plan ? verteilungFuerPlan(plan) : ladeAktiveVerteilung(vorlageId);
 }
 
 function loescheBuchungen(eintragId: number): void {
@@ -105,7 +106,8 @@ function istQuelle(wert: string): wert is XpQuelle {
     wert === 'belastung' ||
     wert === 'bestaendigkeit' ||
     wert === 'meilenstein' ||
-    wert === 'weitermachen'
+    wert === 'weitermachen' ||
+    wert === 'abzug'
   );
 }
 
@@ -138,9 +140,39 @@ function bucheAnteile(
   return summe;
 }
 
+function bucheAbzuege(
+  abzuege: { attributId: number; prozent: number }[],
+  grund: number,
+  eintragId: number,
+  iso: string,
+  buchungen: AttributBuchung[],
+  stand: LevelStand,
+): { name: string; farbe: string }[] {
+  const beiNull: { name: string; farbe: string }[] = [];
+  for (const abzug of abzuege) {
+    const offen = abzugXp(grund, abzug.prozent, Number.POSITIVE_INFINITY);
+    if (offen <= 0) {
+      continue;
+    }
+    const betrag = abzugXp(grund, abzug.prozent, ladeAttributXp(abzug.attributId));
+    if (betrag > 0) {
+      buchungen.push(
+        bucheAttributXp({ quelle: 'abzug', attributId: abzug.attributId, xp: -betrag, eintragId, vorhabenId: null }, iso),
+      );
+    } else {
+      const attribut = stand.attribute.get(abzug.attributId);
+      if (attribut) {
+        beiNull.push({ name: attribut.name, farbe: attribut.farbe ?? '' });
+      }
+    }
+  }
+  return beiNull;
+}
+
 export function bucheNeu(eintragId: number, einheitId: number, stunden: number, meilenstein: boolean): EintragErgebnis {
   const roh = ladeRohBuchung(eintragId);
-  const gewichte = gewichteDerEinheit(einheitId, roh.vorlageId);
+  const verteilung = verteilungDerEinheit(einheitId, roh.vorlageId);
+  const gewichte = verteilung.gewichte;
   const vorher = ladeLevelStand(roh.projektId, null);
   const gebucht = inTransaktion(() => {
     ausfuehren('UPDATE eintraege SET stunden = ?, meilenstein = ? WHERE id = ?', stunden, Number(meilenstein), eintragId);
@@ -151,7 +183,7 @@ export function bucheNeu(eintragId: number, einheitId: number, stunden: number, 
     const zeitpunkt = roh.erstelltAm;
     const buchungen: AttributBuchung[] = [];
     const boni: Bonus[] = [];
-    const anteile = mindereGezielt(verteileNachGewichten(xp, gewichte), gezielte).map((anteil) => ({
+    const anteile = mindereGezielt(verteileTaetigkeit(xp, gewichte, verteilung.fest), gezielte).map((anteil) => ({
       attributId: anteil.attributId,
       xp: Math.round(anteil.xp * (1 + bonusAufAttribut(anteil.attributId, zeitpunkt))),
     }));
@@ -162,7 +194,7 @@ export function bucheNeu(eintragId: number, einheitId: number, stunden: number, 
       bucheProjektXp({ quelle: 'eintrag', projektId: roh.projektId, xp: betrag, eintragId, vorhabenId: null }, zeitpunkt);
       projektXp += betrag;
     }
-    const vorlageIds = gewichte.map((gewicht) => gewicht.attributId);
+    const vorlageIds = [...gewichte.map((gewicht) => gewicht.attributId), ...verteilung.abzuege.map((abzug) => abzug.attributId)];
     for (const attribut of ladeBelastendeAttribute().filter((eintrag) => istBelastend(vorlageIds, eintrag.id))) {
       const abzug = belastungXp(xp, ladeAttributXp(attribut.id), attribut.stufe);
       if (abzug > 0) {
@@ -171,6 +203,9 @@ export function bucheNeu(eintragId: number, einheitId: number, stunden: number, 
         );
       }
     }
+    const abzugBeiNull = verteilung.fest
+      ? bucheAbzuege(verteilung.abzuege, eintragXp(stunden), eintragId, zeitpunkt, buchungen, vorher)
+      : [];
     const disziplinId = aktivesAttribut('disziplin');
     const tag = lokalesDatum(new Date(zeitpunkt));
     const tageVorher = ladeAktiveTageDesProjekts(roh.projektId, eintragId);
@@ -218,9 +253,19 @@ export function bucheNeu(eintragId: number, einheitId: number, stunden: number, 
         label: `Erschöpfung: ${regel.quelleName} → ${regel.zielName ?? ''}`,
       });
     }
-    return { buchungen, boni, projektXp, multiplikatoren };
+    return { buchungen, boni, projektXp, multiplikatoren, abzugBeiNull };
   });
-  return belohnungFuer(eintragId, roh.projektId, gebucht.projektXp, gebucht.buchungen, gebucht.boni, meilenstein, gebucht.multiplikatoren, vorher);
+  return belohnungFuer(
+    eintragId,
+    roh.projektId,
+    gebucht.projektXp,
+    gebucht.buchungen,
+    gebucht.boni,
+    meilenstein,
+    gebucht.multiplikatoren,
+    vorher,
+    gebucht.abzugBeiNull,
+  );
 }
 
 function belohnungFuer(
@@ -232,6 +277,7 @@ function belohnungFuer(
   meilenstein: boolean,
   multiplikatoren: Multiplikator[],
   vorher: ReturnType<typeof ladeLevelStand>,
+  abzugBeiNull: { name: string; farbe: string }[],
 ): EintragErgebnis {
   const nachher = ladeLevelStand(projektId, null);
   const name = projektId === null ? null : eine<{ name: string }>('SELECT name FROM projekte WHERE id = ?', projektId)?.name ?? null;
@@ -243,6 +289,7 @@ function belohnungFuer(
     multiplikatoren,
     vorher,
     nachher,
+    abzugBeiNull,
   });
   return { eintrag: ladeEintrag(eintragId), belohnung };
 }
@@ -278,5 +325,5 @@ export function gespeichertesErgebnis(eintragId: number): EintragErgebnis {
   const projektXp =
     eine<{ xp: number }>('SELECT COALESCE(SUM(xp), 0) AS xp FROM projekt_xp WHERE eintrag_id = ?', eintragId)?.xp ?? 0;
   const stand = ladeLevelStand(eintrag.projektId, null);
-  return belohnungFuer(eintragId, eintrag.projektId, projektXp, buchungen, boni, eintrag.meilenstein, [], stand);
+  return belohnungFuer(eintragId, eintrag.projektId, projektXp, buchungen, boni, eintrag.meilenstein, [], stand, []);
 }

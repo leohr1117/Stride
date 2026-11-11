@@ -77,6 +77,7 @@ const MENGE: Record<LoeschArt, string> = {
     WHERE a.archiv_anteil IS NULL
       AND NOT EXISTS (SELECT 1 FROM xp_ereignisse x WHERE x.attribut_id = a.id)
       AND NOT EXISTS (SELECT 1 FROM vorlage_gewichte g WHERE g.attribut_id = a.id)
+      AND NOT EXISTS (SELECT 1 FROM vorlage_abzuege z WHERE z.attribut_id = a.id)
       AND NOT EXISTS (
         SELECT 1 FROM investitionen n
         WHERE n.attribut_id = a.id

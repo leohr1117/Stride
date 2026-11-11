@@ -15,7 +15,7 @@ import type {
 } from '../../../shared/api/index.ts';
 import { BONUS_QUELLEN, PROTOKOLL_ARTEN } from '../../../shared/api/index.ts';
 import type { Abschluss, AttributTyp } from '../../../shared/spiel/begriffe.ts';
-import { belastungXp, istBelastend } from '../../../shared/spiel/belastung.ts';
+import { abzugXp, belastungXp, istBelastend } from '../../../shared/spiel/belastung.ts';
 import { kettenLaenge } from '../../../shared/spiel/kette.ts';
 import {
   basisDisziplinBonus,
@@ -27,6 +27,7 @@ import {
   gesamtFaktor,
   meilensteinBonus,
   verteileNachGewichten,
+  verteileTaetigkeit,
   WEITERMACHEN,
   type Gewicht,
   type Multiplikator,
@@ -54,6 +55,7 @@ import {
   erstelleBelohnung,
   ladeLevelStand,
   type AttributBuchung,
+  type LevelStand,
   type XpQuelle,
 } from '../../services/fortschritt.ts';
 import { KONTEXT_JOINS, KONTEXT_SPALTEN, PROJEKT_AKTIV, zuKontext, type KontextZeile } from '../ziele/kontext.ts';
@@ -62,7 +64,7 @@ import { mitBewertung } from '../bewertung/bewertung.ts';
 import { verdieneSchutz } from '../kette/kette.ts';
 import { erfuelleRueckkehr, haengeRueckkehrUm, pflegeRueckkehr } from '../kette/rueckkehr.ts';
 import { ladeVorhaben, legeVorhabenAn } from '../ziele/vorhaben.ts';
-import { ladeAktiveGewichte, pruefeVorlageZumProjekt } from '../taetigkeiten/vorlagen.ts';
+import { ladeAktiveVerteilung, pruefeVorlageZumProjekt } from '../taetigkeiten/vorlagen.ts';
 import { leseJetzt, lokalesDatum, tagesbeginn, zeitpunktFuerEintrag } from '../../services/zeit.ts';
 
 interface EintragZeile extends KontextZeile {
@@ -451,6 +453,8 @@ interface BossStand {
 interface Vorbereitung {
   projekt: { id: number; name: string; visionId: number | null } | null;
   gewichte: Gewicht[];
+  fest: boolean;
+  abzuege: { attributId: number; prozent: number }[];
   bestehendesVorhaben: { id: number; anlauf: number; boss: BossStand | null } | null;
   istMeilenstein: boolean;
   faehigkeit: { id: number; name: string } | null;
@@ -511,7 +515,7 @@ function bereiteVor(daten: EintragDaten): Vorbereitung {
   }
 
   const projekt = projektId === null ? null : ladeProjektFuerEintrag(projektId);
-  const gewichte = ladeAktiveGewichte(daten.vorlageId);
+  const verteilung = ladeAktiveVerteilung(daten.vorlageId);
   pruefeVorlageZumProjekt(daten.vorlageId, projektId);
 
   const istMeilenstein = daten.abschluss === 'geschafft' || (daten.abschluss === null && daten.meilenstein);
@@ -520,7 +524,44 @@ function bereiteVor(daten: EintragDaten): Vorbereitung {
       ? null
       : { id: daten.faehigkeitId, name: pruefeAktiveFaehigkeit(daten.faehigkeitId).name };
 
-  return { projekt, gewichte, bestehendesVorhaben, istMeilenstein, faehigkeit };
+  return {
+    projekt,
+    gewichte: verteilung.gewichte,
+    fest: verteilung.fest,
+    abzuege: verteilung.abzuege,
+    bestehendesVorhaben,
+    istMeilenstein,
+    faehigkeit,
+  };
+}
+
+function bucheAbzuege(
+  abzuege: { attributId: number; prozent: number }[],
+  grund: number,
+  eintragId: number,
+  iso: string,
+  buchungen: AttributBuchung[],
+  stand: LevelStand,
+): { name: string; farbe: string }[] {
+  const beiNull: { name: string; farbe: string }[] = [];
+  for (const abzug of abzuege) {
+    const offen = abzugXp(grund, abzug.prozent, Number.POSITIVE_INFINITY);
+    if (offen <= 0) {
+      continue;
+    }
+    const betrag = abzugXp(grund, abzug.prozent, ladeAttributXp(abzug.attributId));
+    if (betrag > 0) {
+      buchungen.push(
+        bucheAttributXp({ quelle: 'abzug', attributId: abzug.attributId, xp: -betrag, eintragId, vorhabenId: null }, iso),
+      );
+    } else {
+      const attribut = stand.attribute.get(abzug.attributId);
+      if (attribut) {
+        beiNull.push({ name: attribut.name, farbe: attribut.farbe ?? '' });
+      }
+    }
+  }
+  return beiNull;
 }
 
 export function ladeAktiveTageDesProjekts(projektId: number | null, ohneEintragId: number): string[] {
@@ -560,7 +601,7 @@ export function erstelleEintrag(
   jetzt = leseJetzt(),
   sonder: EintragSonder = {},
 ): EintragErgebnis {
-  const { projekt, gewichte, bestehendesVorhaben, istMeilenstein, faehigkeit } = bereiteVor(daten);
+  const { projekt, gewichte, fest, abzuege, bestehendesVorhaben, istMeilenstein, faehigkeit } = bereiteVor(daten);
   const zeitpunkt = zeitpunktFuerEintrag(daten.datum, jetzt);
   const iso = zeitpunkt.toISOString();
   const tag = lokalesDatum(zeitpunkt);
@@ -577,7 +618,7 @@ export function erstelleEintrag(
   const schaden = boss ? xp : null;
   const disziplinId = aktivesAttribut('disziplin');
   const geistId = aktivesAttribut('geist');
-  const vorlageAttributIds = gewichte.map((gewicht) => gewicht.attributId);
+  const vorlageAttributIds = [...gewichte.map((gewicht) => gewicht.attributId), ...abzuege.map((abzug) => abzug.attributId)];
   const belastete = ladeBelastendeAttribute().filter((attribut) => istBelastend(vorlageAttributIds, attribut.id));
   const vorher = ladeLevelStand(projekt?.id ?? null, faehigkeit?.id ?? null);
 
@@ -636,7 +677,7 @@ export function erstelleEintrag(
       }
     };
 
-    const eintragAnteile = mindereGezielt(verteileNachGewichten(xp, gewichte), gezielteErschoepfung).map((anteil) => ({
+    const eintragAnteile = mindereGezielt(verteileTaetigkeit(xp, gewichte, fest), gezielteErschoepfung).map((anteil) => ({
       attributId: anteil.attributId,
       xp: Math.round(anteil.xp * (1 + bonusAufAttribut(anteil.attributId, iso))),
     }));
@@ -651,6 +692,10 @@ export function erstelleEintrag(
         );
       }
     }
+
+    const abzugBeiNull = fest
+      ? bucheAbzuege(abzuege, eintragXp(daten.stunden), eintragId, iso, buchungen, vorher)
+      : [];
 
     const tageVorher = ladeAktiveTageDesProjekts(projekt?.id ?? null, eintragId);
     if (disziplinId !== null && !tageVorher.includes(tag)) {
@@ -784,7 +829,7 @@ export function erstelleEintrag(
       boni.push({ quelle: 'rueckkehr', label: 'Rückkehr', xp: rueckkehr.xp });
     }
 
-    return { eintragId, buchungen, boni, projektXp, faehigkeitXp, bossSieg };
+    return { eintragId, buchungen, boni, projektXp, faehigkeitXp, bossSieg, abzugBeiNull };
   });
 
   const bossBelohnung: Belohnung['boss'] =
@@ -813,6 +858,7 @@ export function erstelleEintrag(
       ],
       vorher,
       nachher,
+      abzugBeiNull: ergebnis.abzugBeiNull,
     }),
   }, jetzt);
 }

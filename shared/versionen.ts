@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.18',
+    seiten: 'Tätigkeiten',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.17',
     seiten: 'Bereiche, Heute, Statistik',
     abschnitte: [

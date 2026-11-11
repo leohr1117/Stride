@@ -74,6 +74,12 @@ export function belastungXp(eintragXp: number, vorhandeneXp: number, stufe: Verf
   return Math.min(betrag, Math.max(0, vorhandeneXp));
 }
 
+/** Anteil der Grund-XP, gekappt auf die vorhandene XP. Nie unter 0. */
+export function abzugXp(grundXp: number, prozent: number, vorhandeneXp: number): number {
+  const betrag = Math.round((Math.max(0, grundXp) * prozent) / 100);
+  return Math.min(betrag, Math.max(0, vorhandeneXp));
+}
+
 export function zeitverfallXp(
   inaktiveTage: number,
   xpFuerAufstieg: number,

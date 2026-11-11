@@ -6,7 +6,7 @@ import { ausfuehren, eine } from '../db.ts';
 import { ladeAttribute, ladeCharakterLevel } from '../features/attribute/attribute.ts';
 import { schalteErfolgeFrei } from '../features/erfolge/erfolge.ts';
 
-export type XpQuelle = 'eintrag' | 'bossangriff' | 'investition' | 'belastung' | 'verfall' | BonusQuelle;
+export type XpQuelle = 'eintrag' | 'bossangriff' | 'investition' | 'belastung' | 'verfall' | 'abzug' | BonusQuelle;
 
 export interface AttributBuchung {
   quelle: XpQuelle;
@@ -235,12 +235,13 @@ export function erstelleBelohnung(daten: {
   multiplikatoren?: Multiplikator[];
   vorher: LevelStand;
   nachher: LevelStand;
+  abzugBeiNull?: { name: string; farbe: string }[];
 }): Belohnung {
   let xp = 0;
   for (const buchung of daten.buchungen) {
     xp += buchung.xp;
   }
-  return {
+  const belohnung: Belohnung = {
     xp,
     meilenstein: daten.meilenstein,
     anteile: fasseAnteileZusammen(daten.buchungen, daten.nachher),
@@ -252,4 +253,8 @@ export function erstelleBelohnung(daten: {
     aufstiege: ermittleAufstiege(daten.vorher, daten.nachher),
     erfolge: schalteErfolgeFrei(),
   };
+  if (daten.abzugBeiNull && daten.abzugBeiNull.length > 0) {
+    belohnung.abzugBeiNull = daten.abzugBeiNull;
+  }
+  return belohnung;
 }

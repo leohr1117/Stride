@@ -1,5 +1,18 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "Les activités répartissent des pourcentages fixes. Sous 100 %, le reste ne va à aucun attribut. Un moins retire de l'XP, jamais sous 0.",
+  "Wirkung auf Attribute": "Effet sur les attributs",
+  "Anteil {name}": "Part {name}",
+  "Plus {prozent} Prozent": "Plus {prozent} pour cent",
+  "Abzug {prozent} Prozent": "Retrait {prozent} pour cent",
+  "keine Wirkung": "aucun effet",
+  "zieht {prozent} % der Grund-XP ab": "retire {prozent} % de l'XP de base",
+  "Plus {plus} % · Abzug {abzug} % · Rest {rest} % ohne Attribut": "Plus {plus} % · Retrait {abzug} % · Reste {rest} % sans attribut",
+  "Zusammen höchstens 100 %.": "Ensemble, 100 % au plus.",
+  "Mindestens ein Attribut mit Plus.": "Au moins un attribut avec un plus.",
+  "schon bei 0": "déjà à 0",
+  "Ein Plus ist dieser Anteil der Eintrags-XP, ein Minus zieht diesen Anteil der Grund-XP ab, und der Rest geht an kein Attribut.": "Un plus est cette part de l'XP de l'entrée, un moins retire cette part de l'XP de base, et le reste ne va à aucun attribut.",
+  "Ein Attribut steht nicht zugleich bei Plus und Abzug.": "Un attribut n'est pas à la fois un plus et un retrait.",
   "Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.": "La série se met en pause dans Zones. Aujourd’hui et Statistique ne l’affichent plus. Une fois activée, la longueur d’avant est de nouveau là.",
   "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "Quand la série du jour est en pause, sa longueur reste. Les nouvelles entrées n’ont alors pas d’élan. La protection et un retour ouvert restent en pause.",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "Les succès, les titres et les conseils sur Aujourd’hui peuvent être masqués. Les conseils ne valent que pour cet appareil.",

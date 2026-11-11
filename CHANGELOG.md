@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.18
+
+### Hinzugefügt
+
+- Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.
+
 ## 4.1.17
 
 ### Hinzugefügt

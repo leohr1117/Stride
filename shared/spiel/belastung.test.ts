@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   abzugNebenNamen,
+  abzugXp,
   belastungXp,
   erschoepfungsBild,
   erschoepfungsFaktor,
@@ -34,6 +35,21 @@ describe('belastungXp', () => {
   it('zieht nie mehr ab als vorhanden ist', () => {
     expect(belastungXp(40, 2, 'mittel')).toBe(2);
     expect(belastungXp(40, -5, 'mittel')).toBe(0);
+  });
+});
+
+describe('abzugXp', () => {
+  it('nimmt den Prozentanteil der Grund-XP', () => {
+    expect(abzugXp(40, 30, 1000)).toBe(12);
+    expect(abzugXp(10, 33, 1000)).toBe(3);
+  });
+
+  it('kappt bei 0 und bei der vorhandenen XP', () => {
+    expect(abzugXp(40, 30, 0)).toBe(0);
+    expect(abzugXp(40, 30, -5)).toBe(0);
+    expect(abzugXp(40, 30, 5)).toBe(5);
+    expect(abzugXp(0, 30, 100)).toBe(0);
+    expect(abzugXp(-8, 30, 100)).toBe(0);
   });
 });
 

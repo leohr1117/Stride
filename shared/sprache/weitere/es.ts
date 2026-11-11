@@ -1,5 +1,18 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "Las actividades reparten porcentajes fijos. Por debajo del 100 %, el resto no va a ningún atributo. Un menos resta XP, nunca por debajo de 0.",
+  "Wirkung auf Attribute": "Efecto en los atributos",
+  "Anteil {name}": "Porcentaje {name}",
+  "Plus {prozent} Prozent": "Más {prozent} por ciento",
+  "Abzug {prozent} Prozent": "Resta {prozent} por ciento",
+  "keine Wirkung": "sin efecto",
+  "zieht {prozent} % der Grund-XP ab": "resta el {prozent} % de la XP base",
+  "Plus {plus} % · Abzug {abzug} % · Rest {rest} % ohne Attribut": "Más {plus} % · Resta {abzug} % · Resto {rest} % sin atributo",
+  "Zusammen höchstens 100 %.": "Juntos, como máximo el 100 %.",
+  "Mindestens ein Attribut mit Plus.": "Al menos un atributo con más.",
+  "schon bei 0": "ya en 0",
+  "Ein Plus ist dieser Anteil der Eintrags-XP, ein Minus zieht diesen Anteil der Grund-XP ab, und der Rest geht an kein Attribut.": "Un más es ese porcentaje de la XP de la entrada, un menos resta ese porcentaje de la XP base, y el resto no va a ningún atributo.",
+  "Ein Attribut steht nicht zugleich bei Plus und Abzug.": "Un atributo no está a la vez en más y en resta.",
   "Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.": "La racha se puede pausar en Áreas. Hoy y Estadística ya no la muestran. Al activarla, vuelve la longitud anterior.",
   "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "Mientras la racha diaria está en pausa, la longitud se mantiene. Las entradas nuevas no reciben impulso mientras tanto. La protección y un regreso abierto quedan en pausa.",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "Los logros, los títulos y los avisos en Hoy se pueden ocultar. Los avisos solo valen para este dispositivo.",

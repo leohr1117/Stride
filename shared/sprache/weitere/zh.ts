@@ -1,5 +1,18 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "活动按固定百分比分配。低于 100% 的剩余部分不计入任何属性。减号会扣掉经验，但不会低于 0。",
+  "Wirkung auf Attribute": "对属性的作用",
+  "Anteil {name}": "份额 {name}",
+  "Plus {prozent} Prozent": "加 {prozent} 个百分点",
+  "Abzug {prozent} Prozent": "减 {prozent} 个百分点",
+  "keine Wirkung": "没有作用",
+  "zieht {prozent} % der Grund-XP ab": "扣掉基础经验的 {prozent}%",
+  "Plus {plus} % · Abzug {abzug} % · Rest {rest} % ohne Attribut": "加 {plus}% · 减 {abzug}% · 剩余 {rest}% 不计入属性",
+  "Zusammen höchstens 100 %.": "合计最多 100%。",
+  "Mindestens ein Attribut mit Plus.": "至少要有一个加分的属性。",
+  "schon bei 0": "已经是 0",
+  "Ein Plus ist dieser Anteil der Eintrags-XP, ein Minus zieht diesen Anteil der Grund-XP ab, und der Rest geht an kein Attribut.": "加号是这笔记录经验的该份额，减号扣掉基础经验的该份额，剩下的不计入任何属性。",
+  "Ein Attribut steht nicht zugleich bei Plus und Abzug.": "同一个属性不能既加又减。",
   "Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.": "连续记录可以在「领域」里暂停。此后「今天」和「统计」不再显示它。重新打开后，原来的长度会回来。",
   "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "每日连续记录处于暂停时，长度保持不变。其间的新记录不会获得势头。保护和尚未结束的回归一并暂停。",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "可以隐藏成就、称号和“今天”页上的提示。这些提示仅适用于此设备。",

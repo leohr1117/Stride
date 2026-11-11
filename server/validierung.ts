@@ -89,13 +89,83 @@ const gewichteSchema = z
     'Jedes Attribut darf nur einmal vorkommen.',
   );
 
-export const vorlageSchema = z.object({
+const abzuegeSchema = z
+  .array(
+    z.object({
+      attributId: z.number().int().positive(),
+      prozent: z.number().int().min(1).max(GRENZEN.vorlageGewichtMax),
+    }),
+  )
+  .max(GRENZEN.vorlageAttributeMax, `Eine Tätigkeit darf höchstens ${GRENZEN.vorlageAttributeMax} Attribute haben.`)
+  .refine(
+    (abzuege) => new Set(abzuege.map((abzug) => abzug.attributId)).size === abzuege.length,
+    'Jedes Attribut darf nur einmal vorkommen.',
+  );
+
+export const ANTEIL_SUMME = 'Zusammen höchstens 100 %.';
+export const ANTEIL_PLUS = 'Mindestens ein Attribut mit Plus.';
+export const ANTEIL_BEIDES = 'Ein Attribut steht nicht zugleich bei Plus und Abzug.';
+
+export function anteileFehler(daten: {
+  festeAnteile: boolean;
+  gewichte: { attributId: number; gewicht: number }[];
+  abzuege: { attributId: number; prozent: number }[];
+}): string | null {
+  const plus = new Set(daten.gewichte.map((gewicht) => gewicht.attributId));
+  if (daten.abzuege.some((abzug) => plus.has(abzug.attributId))) {
+    return ANTEIL_BEIDES;
+  }
+  if (daten.gewichte.length + daten.abzuege.length > GRENZEN.vorlageAttributeMax) {
+    return `Eine Tätigkeit darf höchstens ${GRENZEN.vorlageAttributeMax} Attribute haben.`;
+  }
+  if (!daten.festeAnteile) {
+    return null;
+  }
+  if (!daten.gewichte.some((gewicht) => gewicht.gewicht > 0)) {
+    return ANTEIL_PLUS;
+  }
+  let summe = 0;
+  for (const gewicht of daten.gewichte) {
+    summe += gewicht.gewicht;
+  }
+  if (summe > GRENZEN.vorlageGewichtMax) {
+    return ANTEIL_SUMME;
+  }
+  return null;
+}
+
+const vorlageObjekt = z.object({
   name: pflichtText('Der Name', GRENZEN.nameMax),
   icon: z.enum(ICONS),
   gewichte: gewichteSchema,
   projektId: optionaleId.nullish(),
+  festeAnteile: z.boolean().optional(),
+  abzuege: abzuegeSchema.optional(),
 });
-export const vorlageAenderungSchema = vorlageSchema.partial().extend(archiviert);
+
+function pruefeVorlageAnteile(
+  daten: {
+    festeAnteile?: boolean;
+    gewichte?: { attributId: number; gewicht: number }[];
+    abzuege?: { attributId: number; prozent: number }[];
+  },
+  ctx: { addIssue: (fehler: string) => void },
+): void {
+  if (daten.gewichte === undefined) {
+    return;
+  }
+  const fehler = anteileFehler({
+    festeAnteile: daten.festeAnteile === true,
+    gewichte: daten.gewichte,
+    abzuege: daten.abzuege ?? [],
+  });
+  if (fehler) {
+    ctx.addIssue(fehler);
+  }
+}
+
+export const vorlageSchema = vorlageObjekt.superRefine(pruefeVorlageAnteile);
+export const vorlageAenderungSchema = vorlageObjekt.partial().extend(archiviert).superRefine(pruefeVorlageAnteile);
 export const vorlageReihenfolgeSchema = z.object({
   ids: z.array(z.number().int().positive()).max(500),
 });

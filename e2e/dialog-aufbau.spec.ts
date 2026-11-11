@@ -73,7 +73,7 @@ test('Dialoge stehen in fester Reihenfolge', async ({ page }, testInfo) => {
   await page.getByRole('button', { name: '+ Tätigkeit nur für dieses Projekt', exact: true }).click();
   const taetigkeit = page.getByRole('dialog', { name: 'Tätigkeit anlegen' });
   await expect(taetigkeit.getByText('Gilt für', { exact: true })).toBeVisible();
-  await expect(taetigkeit.getByText('Stärkt', { exact: true })).toBeVisible();
+  await expect(taetigkeit.getByText('Wirkung auf Attribute', { exact: true })).toBeVisible();
   await taetigkeit.getByRole('button', { name: 'Alle Projekte', exact: true }).click();
   await ohneSeitlichenUeberlauf(page);
   await bild('taetigkeit');

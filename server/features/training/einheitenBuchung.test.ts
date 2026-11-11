@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { EINHEIT_GESPERRT, NUR_OFFEN_VERWERFEN } from '../../../shared/spiel/training.ts';
 import { ausfuehren, eine, mitWelt } from '../../db.ts';
 import { aendereAttribut, aktiviereAttribut } from '../attribute/attribute.ts';
+import { aendereVorlage } from '../taetigkeiten/vorlagen.ts';
 import { aendereEinstellungen } from '../einstellungen/einstellungen.ts';
 import { ladeBestwerte } from './bestwerte.ts';
 import {
@@ -183,6 +184,30 @@ describe('Einheiten Buchung', () => {
       expect(ladeEinheiten().length).toBe(einheiten);
       expect(ladeTrainingHeute(freitagZeit).map((zeile) => zeile.planId)).toEqual(heuteVorher);
       expect(ladeBestwerte(freitag.uebungen[0]?.uebungId ?? 0).length).toBe(bestwerte);
+    });
+  });
+
+  it('ersetzt einen Abzug und lässt ihn bei der nächsten Buchung einmal stehen', () => {
+    mitWelt(welt(), () => {
+      an();
+      const geist = attributId('geist');
+      const vorlageId = vorlage('Kraft');
+      aendereVorlage(vorlageId, {
+        festeAnteile: true,
+        gewichte: [{ attributId: attributId('koerper'), gewicht: 40 }],
+        abzuege: [{ attributId: geist, prozent: 30 }],
+      });
+      ausfuehren(
+        `INSERT INTO xp_ereignisse (quelle, attribut_id, xp, erstellt_am) VALUES ('umverteilung', ?, 500, ?)`,
+        geist,
+        START.toISOString(),
+      );
+      const einheit = starteEinheit(plan('Unterkörper', [kraft('Kniebeuge', { zielSaetze: 2 })], vorlageId).id, START);
+      const [erster, zweiter] = saetze(einheit);
+      const eintragId = hakeSatzAb(erster?.id ?? 0, true, START).eintragId ?? 0;
+      expect(quellen(eintragId, 'abzug')).toBe(1);
+      hakeSatzAb(zweiter?.id ?? 0, true, START);
+      expect(quellen(eintragId, 'abzug')).toBe(1);
     });
   });
 });

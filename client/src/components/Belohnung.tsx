@@ -238,6 +238,12 @@ function MeldungInhalt({ belohnung }: { belohnung: Belohnung }) {
             {attributName({ name: anteil.name })} {mitVorzeichen(anteil.xp)}
           </span>
         ))}
+        {belohnung.abzugBeiNull?.map((eintrag) => (
+          <span key={`null-${eintrag.name}`} className="flex items-center gap-1 text-leise">
+            <span className="size-2 rounded-full" style={{ backgroundColor: eintrag.farbe }} />
+            {attributName({ name: eintrag.name })} {tx('schon bei 0')}
+          </span>
+        ))}
       </div>
 
       {belohnung.boss && <BossTreffer boss={belohnung.boss} />}

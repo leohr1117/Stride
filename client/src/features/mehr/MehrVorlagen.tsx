@@ -28,7 +28,12 @@ export function VorlagenVerwaltung({ onBearbeiten }: { onBearbeiten: (vorlage: V
 
   const zeile = (vorlage: Vorlage, neben: string | null) => {
     const gewichte = wirksameGewichte(vorlage);
-    const prozente = anteileInProzent(gewichte.map((gewicht) => gewicht.gewicht));
+    const prozente = vorlage.festeAnteile
+      ? gewichte.map((gewicht) => gewicht.gewicht)
+      : anteileInProzent(gewichte.map((gewicht) => gewicht.gewicht));
+    const plusSumme = prozente.reduce((summe, wert) => summe + wert, 0);
+    const rest = vorlage.festeAnteile ? Math.max(0, 100 - plusSumme) : 0;
+    const abzugZeilen = vorlage.abzuege.filter((abzug) => attributeNachId.has(abzug.attributId));
     const teile = gewichte.map((gewicht, index) => {
       const attribut = attributeNachId.get(gewicht.attributId);
       const name = attribut ? attributName(attribut) : '?';
@@ -45,6 +50,17 @@ export function VorlagenVerwaltung({ onBearbeiten }: { onBearbeiten: (vorlage: V
               className="mt-1 truncate text-[13px] leading-[18px] text-leise"
             />
           )}
+          {abzugZeilen.length > 0 ? (
+            <span className="mt-1 block truncate text-[13px] leading-[18px] text-leise">
+              {abzugZeilen
+                .map((abzug) => {
+                  const attribut = attributeNachId.get(abzug.attributId);
+                  const abzugName = attribut ? attributName(attribut) : '?';
+                  return `${abzugName} \u2212${prozentPunkte(abzug.prozent)}`;
+                })
+                .join(' · ')}
+            </span>
+          ) : null}
           <div data-anteile="" className="mt-1 flex h-1.5 overflow-hidden rounded-full bg-flaeche-2">
             {gewichte.map((gewicht, index) => {
               const attribut = attributeNachId.get(gewicht.attributId);
@@ -67,6 +83,18 @@ export function VorlagenVerwaltung({ onBearbeiten }: { onBearbeiten: (vorlage: V
                 />
               );
             })}
+            {rest > 0 ? (
+              <span
+                data-rest={rest}
+                style={{
+                  width: `${rest}%`,
+                  flexGrow: 0,
+                  flexShrink: 0,
+                  minWidth: 0,
+                  backgroundColor: 'color-mix(in srgb, var(--leise) 45%, transparent)',
+                }}
+              />
+            ) : null}
           </div>
         </>
       ) : null;

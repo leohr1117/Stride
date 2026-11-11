@@ -5,7 +5,7 @@ import { alle, eine } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
 import { aktivesAttribut } from '../attribute/attribute.ts';
 import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
-import { ladeAktiveGewichte } from '../taetigkeiten/vorlagen.ts';
+import { ladeAktiveVerteilung, type AktiveVerteilung } from '../taetigkeiten/vorlagen.ts';
 
 export interface PlanBezug {
   projektId: number | null;
@@ -58,27 +58,33 @@ function festeGewichte(): Gewicht[] {
   return gewichte;
 }
 
-export function gewichteFuerPlan(plan: PlanBezug): Gewicht[] {
+export function verteilungFuerPlan(plan: PlanBezug): AktiveVerteilung {
   if (plan.vorlageId !== null) {
-    return ladeAktiveGewichte(plan.vorlageId);
+    return ladeAktiveVerteilung(plan.vorlageId);
   }
   const training = trainingVorlageId();
   if (training !== null) {
-    return ladeAktiveGewichte(training);
+    return ladeAktiveVerteilung(training);
   }
   const fest = festeGewichte();
   if (fest.length > 0) {
-    return fest;
+    return { gewichte: fest, fest: false, abzuege: [] };
   }
   const standard = standardVorlageId(plan.projektId);
   if (standard !== null) {
-    return ladeAktiveGewichte(standard);
+    return ladeAktiveVerteilung(standard);
   }
   throw ungueltig(OHNE_TAETIGKEIT);
 }
 
+export function gewichteFuerPlan(plan: PlanBezug): Gewicht[] {
+  return verteilungFuerPlan(plan).gewichte;
+}
+
 export function gewichtePassen(vorlageId: number, plan: PlanBezug): boolean {
-  return gleicheGewichte(ladeAktiveGewichte(vorlageId), gewichteFuerPlan(plan));
+  const links = ladeAktiveVerteilung(vorlageId);
+  const rechts = verteilungFuerPlan(plan);
+  return links.fest === rechts.fest && gleicheGewichte(links.gewichte, rechts.gewichte) && gleicheAbzuege(links.abzuege, rechts.abzuege);
 }
 
 export function projektFuerPlan(projektId: number | null): number | null {
@@ -86,6 +92,20 @@ export function projektFuerPlan(projektId: number | null): number | null {
     return null;
   }
   return projektId;
+}
+
+function gleicheAbzuege(
+  links: readonly { attributId: number; prozent: number }[],
+  rechts: readonly { attributId: number; prozent: number }[],
+): boolean {
+  if (links.length !== rechts.length) {
+    return false;
+  }
+  const sortiert = (liste: readonly { attributId: number; prozent: number }[]) =>
+    [...liste].sort((a, b) => a.attributId - b.attributId);
+  const a = sortiert(links);
+  const b = sortiert(rechts);
+  return a.every((abzug, index) => abzug.attributId === b[index]?.attributId && abzug.prozent === b[index]?.prozent);
 }
 
 function gleicheGewichte(links: readonly Gewicht[], rechts: readonly Gewicht[]): boolean {

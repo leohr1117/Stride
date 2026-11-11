@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.',
+    'Activities assign fixed percentages. Below 100%, the rest goes to no attribute. A minus subtracts XP, never below 0.',
+  ],
+  [
     'Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.',
     'The streak can be paused under Areas. Today and Statistics then do not show it. Turned back on, the previous length is there again.',
   ],

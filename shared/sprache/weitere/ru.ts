@@ -1,5 +1,18 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "Занятия распределяют фиксированные проценты. Ниже 100 % остаток не идёт ни одному атрибуту. Минус снимает опыт, но не ниже 0.",
+  "Wirkung auf Attribute": "Действие на атрибуты",
+  "Anteil {name}": "Доля {name}",
+  "Plus {prozent} Prozent": "Плюс {prozent} процентов",
+  "Abzug {prozent} Prozent": "Вычет {prozent} процентов",
+  "keine Wirkung": "без эффекта",
+  "zieht {prozent} % der Grund-XP ab": "снимает {prozent} % базового опыта",
+  "Plus {plus} % · Abzug {abzug} % · Rest {rest} % ohne Attribut": "Плюс {plus} % · Вычет {abzug} % · Остаток {rest} % без атрибута",
+  "Zusammen höchstens 100 %.": "Вместе не больше 100 %.",
+  "Mindestens ein Attribut mit Plus.": "Нужен хотя бы один атрибут с плюсом.",
+  "schon bei 0": "уже на 0",
+  "Ein Plus ist dieser Anteil der Eintrags-XP, ein Minus zieht diesen Anteil der Grund-XP ab, und der Rest geht an kein Attribut.": "Плюс — эта доля опыта записи, минус снимает эту долю базового опыта, а остаток не идёт ни одному атрибуту.",
+  "Ein Attribut steht nicht zugleich bei Plus und Abzug.": "Атрибут не может быть сразу и плюсом, и вычетом.",
   "Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.": "Серию можно поставить на паузу в «Области». «Сегодня» и «Статистика» тогда её не показывают. После включения снова видна прежняя длина.",
   "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "Пока дневная серия на паузе, длина сохраняется. Новые записи при этом не получают импульс. Защита и открытое возвращение приостановлены.",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "Достижения, титулы и подсказки на «Сегодня» можно скрыть. Подсказки действуют только на этом устройстве.",

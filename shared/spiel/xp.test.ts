@@ -10,6 +10,7 @@ import {
   meilensteinBonus,
   projektAbschlussBonus,
   verteileNachGewichten,
+  verteileTaetigkeit,
 } from './xp.ts';
 
 describe('basisXp', () => {
@@ -141,5 +142,44 @@ describe('verteileNachGewichten', () => {
         { attributId: 2, gewicht: 10 },
       ]),
     ).toEqual([{ attributId: 1, xp: 1 }]);
+  });
+});
+
+describe('verteileTaetigkeit', () => {
+  it('gibt bei festen 40 Prozent von 25 XP zehn Punkte', () => {
+    expect(verteileTaetigkeit(25, [{ attributId: 1, gewicht: 40 }], true)).toEqual([{ attributId: 1, xp: 10 }]);
+  });
+
+  it('verteilt bei Summe 100 wie das Verhältnis', () => {
+    const gewichte = [
+      { attributId: 1, gewicht: 40 },
+      { attributId: 2, gewicht: 30 },
+      { attributId: 3, gewicht: 30 },
+    ];
+    expect(verteileTaetigkeit(25, gewichte, true)).toEqual(verteileNachGewichten(25, gewichte));
+  });
+
+  it('lässt den Verhältnis-Modus auch bei Summe 130 unverändert', () => {
+    const gewichte = [
+      { attributId: 1, gewicht: 80 },
+      { attributId: 2, gewicht: 50 },
+    ];
+    const anteile = verteileTaetigkeit(25, gewichte, false);
+    expect(anteile).toEqual(verteileNachGewichten(25, gewichte));
+    expect(anteile.reduce((summe, anteil) => summe + anteil.xp, 0)).toBe(25);
+  });
+
+  it('rundet drei feste Anteile und lässt den Rest liegen', () => {
+    const anteile = verteileTaetigkeit(10, [
+      { attributId: 1, gewicht: 30 },
+      { attributId: 2, gewicht: 30 },
+      { attributId: 3, gewicht: 30 },
+    ], true);
+    expect(anteile).toEqual([
+      { attributId: 1, xp: 3 },
+      { attributId: 2, xp: 3 },
+      { attributId: 3, xp: 3 },
+    ]);
+    expect(anteile.reduce((summe, anteil) => summe + anteil.xp, 0)).toBe(9);
   });
 });
