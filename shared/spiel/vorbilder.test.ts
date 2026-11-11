@@ -23,6 +23,7 @@ import {
   VORBILDER,
   type KennungsLevel,
 } from '../features/vorbilder/vorbilder.ts';
+import { PERSONEN } from '../features/vorbilder/vorbildKatalog.ts';
 import { bereinigeFavoriten } from '../features/vorbilder/favoriten.ts';
 
 const ERLAUBTE_LEVEL_ABWEICHUNG = 0.01;
@@ -143,14 +144,22 @@ describe('Lebensweg', () => {
 
   it('nennt im Handbuch je Richtung höchstens zwei Beispiele', () => {
     const mitPerson = new Set(richtungenMitPersonen());
+    const mitBeispiel = new Set([
+      'Körper',
+      'Wettkampf',
+      'Kunst',
+      'Innovation/Technik',
+      'Wissenschaft/Genies',
+      'Führung/Wandel',
+    ]);
     let anzahl = 0;
     for (const richtung of RICHTUNGEN) {
       const schluessel = BEISPIEL_SCHLUESSEL[richtung];
-      if (mitPerson.has(richtung)) {
-        expect(schluessel.length).toBeGreaterThanOrEqual(1);
-        expect(schluessel.length).toBeLessThanOrEqual(2);
-      } else {
+      expect(schluessel.length).toBeLessThanOrEqual(2);
+      if (!mitPerson.has(richtung) || !mitBeispiel.has(richtung)) {
         expect(schluessel).toHaveLength(0);
+      } else {
+        expect(schluessel.length).toBeGreaterThanOrEqual(1);
       }
       anzahl += schluessel.length;
       for (const schluesselEintrag of schluessel) {
@@ -249,6 +258,37 @@ describe('Katalog ohne lebende Personen', () => {
       'gandhi',
       'king',
       'mandela',
+      'lalanne',
+      'owens',
+      'griffithjoyner',
+      'bikila',
+      'cruyff',
+      'senna',
+      'gibson',
+      'capablanca',
+      'tal',
+      'menchik',
+      'baer',
+      'yokoi',
+      'iwata',
+      'marley',
+      'mercury',
+      'hepburn',
+      'bobross',
+      'irwin',
+      'henson',
+      'lovelace',
+      'turing',
+      'hopper',
+      'disney',
+      'walker',
+      'honda',
+      'graham',
+      'templeton',
+      'finney',
+      'ramanujan',
+      'lincoln',
+      'maathai',
     ]);
     for (const vorbild of personen) {
       expect(vorbild.gestorben).not.toBeNull();
@@ -260,12 +300,37 @@ describe('Katalog ohne lebende Personen', () => {
     expect(richtungenMitPersonen()).toEqual([
       'Körper',
       'Wettkampf',
+      'Strategie',
+      'Esports/Gaming',
       'Kunst',
+      'Content/Creator',
       'Innovation/Technik',
+      'Business/Unternehmertum',
+      'Finanzen/Investing/Crypto',
       'Wissenschaft/Genies',
       'Führung/Wandel',
     ]);
     expect(bereinigeFavoriten(['einstein', 'ronaldo', 'einstein'])).toEqual(['einstein']);
+  });
+
+  it('hat höchstens acht Personen je Richtung und lässt unsichere Werte nur von 45 bis 75', () => {
+    const jeRichtung = new Map<string, number>();
+    for (const person of PERSONEN) {
+      expect(person.werte).toHaveLength(20);
+      jeRichtung.set(person.richtung, (jeRichtung.get(person.richtung) ?? 0) + 1);
+      for (const wert of person.werte) {
+        if (typeof wert !== 'string') {
+          continue;
+        }
+        expect(wert.endsWith('°')).toBe(true);
+        const zahl = Number(wert.slice(0, -1));
+        expect(zahl).toBeGreaterThanOrEqual(45);
+        expect(zahl).toBeLessThanOrEqual(75);
+      }
+    }
+    for (const anzahl of jeRichtung.values()) {
+      expect(anzahl).toBeLessThanOrEqual(8);
+    }
   });
 });
 

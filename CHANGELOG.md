@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.14
+
+### Hinzugefügt
+
+- 31 neue Vorbilder aus Sport, Kunst, Technik, Wirtschaft und Geschichte.
+
 ## 4.1.13
 
 ### Verbessert

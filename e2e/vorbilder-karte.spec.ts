@@ -63,18 +63,17 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   const richtungen = [
     'Körper',
     'Wettkampf',
+    'Strategie',
+    'Esports/Gaming',
     'Kunst',
+    'Content/Creator',
     'Innovation/Technik',
+    'Business/Unternehmertum',
+    'Finanzen/Investing/Crypto',
     'Wissenschaft/Genies',
     'Führung/Wandel',
   ];
-  const ohnePerson = [
-    'Strategie',
-    'Esports/Gaming',
-    'Content/Creator',
-    'Business/Unternehmertum',
-    'Finanzen/Investing/Crypto',
-  ];
+  const ohnePerson: string[] = [];
   const kaesten: { x: number; y: number; width: number; height: number }[] = [];
   for (const name of ['Alle', ...richtungen]) {
     const chip = page.getByRole('button', { name: new RegExp(`^${name}`) });

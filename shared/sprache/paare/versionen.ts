@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    '31 neue Vorbilder aus Sport, Kunst, Technik, Wirtschaft und Geschichte.',
+    '31 new role models from sport, art, technology, business and history.',
+  ],
+  [
     'Vorbild-Werte sind sichtbar als Schätzung gekennzeichnet. Unsichere Werte tragen ein ~, im Radar einen hohlen Punkt.',
     'Role model values are visibly marked as an estimate. Uncertain values carry a ~ and a hollow dot on the radar.',
   ],

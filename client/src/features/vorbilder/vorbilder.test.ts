@@ -107,8 +107,8 @@ describe('Vorbild-Filter', () => {
     expect(auswahlAus('unbekannt', 'Wettkampf')).toBe('alle');
     expect(auswahlAus(null, null)).toBe('alle');
     expect(auswahlAus(null, 'erfunden')).toBe('alle');
-    expect(auswahlAus('Strategie', 'Wettkampf')).toBe('alle');
-    expect(auswahlAus(null, 'Esports/Gaming')).toBe('alle');
-    expect(auswahlAus('Finanzen/Investing/Crypto', null)).toBe('alle');
+    expect(auswahlAus('Strategie', 'Wettkampf')).toBe('Strategie');
+    expect(auswahlAus(null, 'Esports/Gaming')).toBe('Esports/Gaming');
+    expect(auswahlAus('Finanzen/Investing/Crypto', null)).toBe('Finanzen/Investing/Crypto');
   });
 });
