@@ -2,41 +2,12 @@ import { describe, expect, it } from 'vitest';
 import {
   abzugNebenNamen,
   abzugXp,
-  belastungXp,
   erschoepfungsBild,
   erschoepfungsFaktor,
-  istBelastend,
   verfallAlsText,
   verfallAusText,
   zeitverfallXp,
 } from './belastung.ts';
-
-const KOERPER = 1;
-const GEIST = 2;
-
-describe('istBelastend', () => {
-  it('belastet ein Attribut, wenn die Vorlage es nicht stärkt', () => {
-    expect(istBelastend([3, 4], GEIST)).toBe(true);
-    expect(istBelastend([KOERPER, 3], GEIST)).toBe(true);
-  });
-
-  it('schont ein Attribut, das die Vorlage stärkt', () => {
-    expect(istBelastend([GEIST, KOERPER], GEIST)).toBe(false);
-  });
-});
-
-describe('belastungXp', () => {
-  it('kostet je nach Stufe einen Anteil der Eintrags-XP', () => {
-    expect(belastungXp(40, 1000, 'mittel')).toBe(4);
-    expect(belastungXp(40, 1000, 'stark')).toBe(8);
-    expect(belastungXp(40, 1000, 'aus')).toBe(0);
-  });
-
-  it('zieht nie mehr ab als vorhanden ist', () => {
-    expect(belastungXp(40, 2, 'mittel')).toBe(2);
-    expect(belastungXp(40, -5, 'mittel')).toBe(0);
-  });
-});
 
 describe('abzugXp', () => {
   it('nimmt den Prozentanteil der Grund-XP', () => {
@@ -55,16 +26,14 @@ describe('abzugXp', () => {
 
 describe('verfallAusText', () => {
   it('liest die heutigen Prozentwerte als Stufe und 0 als Aus', () => {
-    expect(verfallAlsText('belastung', 'leicht')).toBe('5');
-    expect(verfallAlsText('belastung', 'mittel')).toBe('10');
-    expect(verfallAlsText('belastung', 'stark')).toBe('20');
+    expect(verfallAlsText('zeit', 'leicht')).toBe('5');
+    expect(verfallAlsText('zeit', 'mittel')).toBe('10');
     expect(verfallAlsText('zeit', 'stark')).toBe('25');
-    expect(verfallAusText('belastung', '20')).toBe('stark');
     expect(verfallAusText('zeit', '20')).toBeNull();
     expect(verfallAusText('zeit', '25')).toBe('stark');
-    expect(verfallAusText('belastung', '0')).toBe('aus');
-    expect(verfallAusText('belastung', '')).toBe('aus');
-    expect(verfallAusText('belastung', '7')).toBeNull();
+    expect(verfallAusText('zeit', '0')).toBe('aus');
+    expect(verfallAusText('zeit', '')).toBe('aus');
+    expect(verfallAusText('zeit', '7')).toBeNull();
   });
 });
 

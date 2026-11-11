@@ -67,7 +67,6 @@ export const attributAenderungSchema = z
     beschreibung: freiText('Die Beschreibung', GRENZEN.beschreibungMax),
     farbe,
     icon: z.enum(ICONS),
-    verfallBelastung: z.enum(VERFALL_STUFEN),
     verfallZeit: z.enum(VERFALL_STUFEN),
     erschoepfung: z.boolean(),
     erschoepfungZiel: optionaleId,

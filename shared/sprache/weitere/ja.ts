@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "使わないときの損失はなくなります。属性がXPを失うのは、記録がないときの時間の経過だけです。",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "活動のフォームでは、スライダー上を縦にスワイプすると値が変わらず、ページがスクロールします。",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "活動は固定の割合で配分します。100%未満の残りはどの属性にも入りません。マイナスはXPを引き、0未満にはなりません。",
   "Wirkung auf Attribute": "属性への効果",
@@ -1797,8 +1798,7 @@ export const TEXTE: Record<string, string> = {
   "Titel enthält": "称号に含む",
   "Todoist": "Todoist",
   "Unter Ziele anlegen": "目標で作る",
-  "Ungenutzte Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.": "使わない属性はXPを失います。強さは属性ごとに決めます。",
-  "Verlust bei Nichtnutzung": "使わないときの損失",
+  "Attribute ohne Einträge verlieren mit der Zeit XP. Wie stark, stellst du pro Attribut ein.": "記録のない属性は、時間とともにXPを失います。強さは属性ごとに決めます。",
   "Verlust über Zeit": "時間による損失",
   "Vision anlegen": "ビジョンを作る",
   "Vision bearbeiten": "ビジョンを編集",

@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "Потеря без использования исчезает. Атрибуты теряют XP только со временем, если записей нет.",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "В форме занятия вертикальное движение по регуляторам прокручивает страницу и не сдвигает значение.",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "Занятия распределяют фиксированные проценты. Ниже 100 % остаток не идёт ни одному атрибуту. Минус снимает опыт, но не ниже 0.",
   "Wirkung auf Attribute": "Действие на атрибуты",
@@ -1797,8 +1798,7 @@ export const TEXTE: Record<string, string> = {
   "Titel enthält": "В титуле есть",
   "Todoist": "Todoist",
   "Unter Ziele anlegen": "Создать в целях",
-  "Ungenutzte Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.": "Неиспользуемые атрибуты теряют XP. Силу задаёшь у каждого атрибута.",
-  "Verlust bei Nichtnutzung": "Потеря без использования",
+  "Attribute ohne Einträge verlieren mit der Zeit XP. Wie stark, stellst du pro Attribut ein.": "Атрибуты без записей теряют XP со временем. Силу задаёшь у каждого атрибута.",
   "Verlust über Zeit": "Потеря со временем",
   "Vision anlegen": "Создать видение",
   "Vision bearbeiten": "Изменить видение",

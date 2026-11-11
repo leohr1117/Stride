@@ -30,7 +30,6 @@ function attribut(teil: {
     loeschbar: false,
     level: level(teil.stufe ?? 10),
     hoechstXp: 0,
-    verfallBelastung: 'aus',
     verfallZeit: 'aus',
     erschoepfung: false,
     erschoepfungZiel: null,

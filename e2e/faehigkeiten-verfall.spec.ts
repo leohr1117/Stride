@@ -335,7 +335,7 @@ test('XP-Verlust ist für Können und Haben getrennt', async ({ page }) => {
     await page.getByRole('button', { name: koennenAttribut.name, exact: true }).click();
     const koennenDialog = page.getByRole('dialog', { name: koennenAttribut.name, exact: true });
     await expect(koennenDialog.getByRole('heading', { name: 'Verfall', exact: true })).toBeVisible();
-    await expect(koennenDialog.getByText('Verlust bei Nichtnutzung')).toBeVisible();
+    await expect(koennenDialog.getByText('Verlust bei Nichtnutzung')).toHaveCount(0);
     await expect(koennenDialog.getByText('Verlust über Zeit')).toBeVisible();
     await pruefeErschoepfungsSchalter(koennenDialog, true);
     await koennenDialog.getByRole('button', { name: 'Schließen' }).click();

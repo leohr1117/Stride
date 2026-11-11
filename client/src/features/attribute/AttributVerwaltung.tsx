@@ -155,14 +155,12 @@ export function AttributFormular({
   const [beschreibung, setBeschreibung] = useState(attribut.beschreibung);
   const [farbe, setFarbe] = useState(attribut.farbe);
   const [icon, setIcon] = useState<IconName>(attribut.icon as IconName);
-  const [belastungText, setBelastungText] = useState(verfallFeld('belastung', attribut.verfallBelastung));
   const [zeitText, setZeitText] = useState(verfallFeld('zeit', attribut.verfallZeit));
   const [erschoepfung, setErschoepfung] = useState(attribut.erschoepfung);
   const [erschoepfungZiel, setErschoepfungZiel] = useState<number | null>(attribut.erschoepfungZiel);
   const verfallAn = Boolean(funktionen[verfallFunktion(attribut.typ)]);
-  const belastungStufe = verfallAusText('belastung', belastungText);
   const zeitStufe = verfallAusText('zeit', zeitText);
-  const verfallOk = !verfallAn || (belastungStufe !== null && zeitStufe !== null);
+  const verfallOk = !verfallAn || zeitStufe !== null;
 
   const speichern = useMutation({
     mutationFn: () =>
@@ -170,7 +168,6 @@ export function AttributFormular({
         beschreibung,
         farbe,
         icon,
-        verfallBelastung: belastungStufe ?? attribut.verfallBelastung,
         verfallZeit: zeitStufe ?? attribut.verfallZeit,
         erschoepfung,
         erschoepfungZiel,
@@ -213,17 +210,6 @@ export function AttributFormular({
       {verfallAn && (
         <section className="space-y-4">
           <h3 className={ABSCHNITT}>{tx('Verfall')}</h3>
-          <VorschlagFeld
-            label="Verlust bei Nichtnutzung"
-            anordnung="reihe"
-            text={belastungText}
-            onText={setBelastungText}
-            optionen={verfallOptionen('belastung')}
-            eigenName={`${tx('Verlust bei Nichtnutzung')}, ${tx('Eigener')}`}
-            einheit="%"
-            fehler={belastungStufe === null ? tx('Nur Aus, Leicht, Mittel oder Stark.') : null}
-            bereinige={ziffern(3)}
-          />
           <VorschlagFeld
             label="Verlust über Zeit"
             anordnung="reihe"

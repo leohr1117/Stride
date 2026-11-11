@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.',
+    'Loss when unused is gone. Attributes now lose XP only over time, when they get no entries.',
+  ],
+  [
     'Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.',
     'In the activities form, a vertical swipe over the sliders scrolls the page instead of moving the value.',
   ],

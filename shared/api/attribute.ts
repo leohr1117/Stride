@@ -15,7 +15,6 @@ export interface Attribut {
   level: LevelInfo;
   /** Höchster XP-Stand, den das Attribut je hatte. */
   hoechstXp: number;
-  verfallBelastung: VerfallStufe;
   verfallZeit: VerfallStufe;
   erschoepfung: boolean;
   erschoepfungZiel: number | null;
@@ -27,7 +26,6 @@ export interface AttributDaten {
   beschreibung: string;
   farbe: string;
   icon: string;
-  verfallBelastung: VerfallStufe;
   verfallZeit: VerfallStufe;
   erschoepfung: boolean;
   erschoepfungZiel: number | null;

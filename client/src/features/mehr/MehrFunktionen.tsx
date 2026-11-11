@@ -33,7 +33,7 @@ const GERAETE_SCHALTER = [
   },
 ] as const;
 
-const VERFALL_INFO = 'Ungenutzte Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.';
+const VERFALL_INFO = 'Attribute ohne Einträge verlieren mit der Zeit XP. Wie stark, stellst du pro Attribut ein.';
 
 const FUNKTION_INFO: Partial<Record<Funktion, string>> = {
   basis: 'Tägliche Aufgaben zum Abhaken.',

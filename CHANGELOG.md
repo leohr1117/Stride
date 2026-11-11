@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.20
+
+### Geändert
+
+- Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.
+
 ## 4.1.19
 
 ### Verbessert

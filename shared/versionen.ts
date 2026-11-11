@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.20',
+    seiten: 'Können, Haben, Mehr',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.19',
     seiten: 'Tätigkeiten',
     abschnitte: [

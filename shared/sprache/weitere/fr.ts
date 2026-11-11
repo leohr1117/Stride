@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "La perte si inutilisé disparaît. Les attributs ne perdent des XP qu'avec le temps, lorsqu'ils ne reçoivent pas d'entrées.",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "Dans le formulaire des activités, un glissement vertical sur les curseurs fait défiler la page au lieu de déplacer la valeur.",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "Les activités répartissent des pourcentages fixes. Sous 100 %, le reste ne va à aucun attribut. Un moins retire de l'XP, jamais sous 0.",
   "Wirkung auf Attribute": "Effet sur les attributs",
@@ -1797,8 +1798,7 @@ export const TEXTE: Record<string, string> = {
   "Titel enthält": "Le titre contient",
   "Todoist": "Todoist",
   "Unter Ziele anlegen": "Le créer sous Objectifs",
-  "Ungenutzte Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.": "Les attributs inutilisés perdent des XP. Tu règles la force sur chaque attribut.",
-  "Verlust bei Nichtnutzung": "Perte si inutilisé",
+  "Attribute ohne Einträge verlieren mit der Zeit XP. Wie stark, stellst du pro Attribut ein.": "Les attributs sans entrées perdent des XP avec le temps. Tu règles la force sur chaque attribut.",
   "Verlust über Zeit": "Perte avec le temps",
   "Vision anlegen": "Créer une vision",
   "Vision bearbeiten": "Modifier la vision",

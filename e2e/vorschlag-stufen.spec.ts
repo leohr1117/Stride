@@ -12,7 +12,6 @@ interface AttributZeile {
   name: string;
   kennung: AttributKennung | null;
   archiviert: boolean;
-  verfallBelastung: string;
   verfallZeit: string;
   level: { level: number };
 }
@@ -228,15 +227,15 @@ test('Verfall-Stufen setzen das Feld, ein eigener Prozentwert wird als Stufe ges
     await page.getByRole('button', { name: `Aktionen für ${ziel.name}`, exact: true }).click();
     await page.getByRole('menuitem', { name: 'Bearbeiten', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: ziel.name, exact: true });
-    const nicht = dialog.getByRole('group', { name: 'Verlust bei Nichtnutzung' });
+    await expect(dialog.getByText('Verlust bei Nichtnutzung', { exact: true })).toHaveCount(0);
     const zeit = dialog.getByRole('group', { name: 'Verlust über Zeit' });
-    await nicht.scrollIntoViewIfNeeded();
+    await zeit.scrollIntoViewIfNeeded();
     await ohneSeitlichenUeberlauf(page);
-    await stufenZeile(nicht, ['Aus', '5 %', '10 %', '20 %']);
     await stufenZeile(zeit, ['Aus', '5 %', '10 %', '25 %']);
-    await expect(nicht.getByText('Eigener', { exact: true })).toHaveCount(0);
-    await expect(nicht.getByRole('button', { name: 'Leicht', exact: true })).toHaveCount(0);
     await page.screenshot({ path: `${BILD}/${testInfo.project.name}-verfall.png` });
+    const breite = testInfo.project.name === 'desktop' ? '1440' : '390';
+    fs.mkdirSync('tmp-test/attribut-verfall', { recursive: true });
+    await dialog.screenshot({ path: `tmp-test/attribut-verfall/${breite}-dialog.png` });
     if (hell) {
       await expect
         .poll(async () =>
@@ -246,7 +245,7 @@ test('Verfall-Stufen setzen das Feld, ein eigener Prozentwert wird als Stufe ges
           }),
         )
         .toBe('#ffffff|#c62828');
-      const abschnitt = dialog.locator('section').filter({ hasText: 'Verlust bei Nichtnutzung' });
+      const abschnitt = dialog.locator('section').filter({ hasText: 'Verlust über Zeit' });
       await abschnitt.scrollIntoViewIfNeeded();
       await page.evaluate(
         () => new Promise((loesen) => requestAnimationFrame(() => requestAnimationFrame(() => loesen(undefined)))),
@@ -255,18 +254,6 @@ test('Verfall-Stufen setzen das Feld, ein eigener Prozentwert wird als Stufe ges
       await page.screenshot({ path: `${VERLUST_BILD}/390-verlust-ganz.png`, fullPage: true });
       await abschnitt.screenshot({ path: `${VERLUST_BILD}/390-verlust-abschnitt.png` });
     }
-    const aus = nicht.getByRole('button', { name: 'Aus', exact: true });
-    await aus.click();
-    const feld = nicht.getByRole('textbox');
-    await expect(feld).toHaveValue('');
-    await expect(aus).toHaveAttribute('aria-pressed', 'true');
-    const mittel = nicht.getByRole('button', { name: '10 %', exact: true });
-    await mittel.click();
-    await expect(feld).toHaveValue('10');
-    await expect(mittel).toHaveAttribute('aria-pressed', 'true');
-    await expect(aus).toHaveAttribute('aria-pressed', 'false');
-    await feld.fill('20');
-    await expect(mittel).toHaveAttribute('aria-pressed', 'false');
     const leicht = zeit.getByRole('button', { name: '5 %', exact: true });
     await leicht.click();
     const zeitFeld = zeit.getByRole('textbox');
@@ -281,11 +268,9 @@ test('Verfall-Stufen setzen das Feld, ein eigener Prozentwert wird als Stufe ges
     await expect(dialog).toBeHidden();
     const nachher = await api<AttributZeile[]>(page, '/api/attribute', 'GET');
     const gespeichert = nachher.find((eintrag) => eintrag.id === ziel.id);
-    expect(gespeichert?.verfallBelastung).toBe('stark');
     expect(gespeichert?.verfallZeit).toBe('stark');
   } finally {
     await api(page, `/api/attribute/${ziel.id}`, 'PATCH', {
-      verfallBelastung: ziel.verfallBelastung,
       verfallZeit: ziel.verfallZeit,
     }).catch(() => undefined);
     if (!verfallWarAn) {

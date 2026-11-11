@@ -138,10 +138,9 @@ test('Weitere Dialoge folgen der festen Reihenfolge', async ({ page }, testInfo)
     await page.getByRole('menuitem', { name: 'Bearbeiten', exact: true }).click();
     const koennenDialog = page.getByRole('dialog', { name: koennen.name, exact: true });
     const verfall = koennenDialog.getByRole('heading', { name: 'Verfall', exact: true });
-    const nichtnutzung = koennenDialog.getByText('Verlust bei Nichtnutzung', { exact: true });
     const zeit = koennenDialog.getByText('Verlust über Zeit', { exact: true });
-    expect(await oben(verfall)).toBeLessThan(await oben(nichtnutzung));
-    expect(await oben(nichtnutzung)).toBeLessThan(await oben(zeit));
+    await expect(koennenDialog.getByText('Verlust bei Nichtnutzung', { exact: true })).toHaveCount(0);
+    expect(await oben(verfall)).toBeLessThan(await oben(zeit));
     await expect(koennenDialog.getByRole('textbox', { name: 'Name' })).toHaveCount(0);
     const schalterZiel = koennenDialog.getByRole('switch', { name: 'Zu niedrig senkt XP anderer Attribute' });
     const zielWarAn = (await schalterZiel.getAttribute('aria-checked')) === 'true';

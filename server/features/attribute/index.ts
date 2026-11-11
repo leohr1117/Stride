@@ -6,7 +6,6 @@ export {
   ladeAttribut,
   ladeAttributXp,
   ladeAttribute,
-  ladeBelastendeAttribute,
   ladeCharakterLevel,
   ladeErschoepfungen,
   ladeKlasse,

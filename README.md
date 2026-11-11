@@ -10,7 +10,7 @@ Stride ist eine Web-App, die den eigenen Alltag wie ein Rollenspiel führt: Du t
 - **Ziele:** Visionen, Organisationen und Projekte mit eigenem Level, dazu offene Vorhaben.
 - **Tageskette:** Ein Streak für jeden aktiven Tag, mit Schutz bei Pausen und einer Rückkehr nach einer Unterbrechung. Unter Bereiche lässt sich der Streak aussetzen; die Länge bleibt, neue Einträge haben dabei Momentum 1,0.
 - **Gegner und Bosse:** Vorhaben können als Gegner oder Boss mit Deadline laufen. Ist die Deadline verpasst, kostet das XP.
-- **Profil:** Können und Haben als Attribute, ein Baum aus Fähigkeiten, Investitionen, Klassen und Titel. Optional verlieren Attribute ohne Einträge an Wert.
+- **Profil:** Können und Haben als Attribute, ein Baum aus Fähigkeiten, Investitionen, Klassen und Titel. Optional verlieren Attribute ohne Einträge mit der Zeit an Wert.
 - **Investitionen:** Eine Investition kann XP eines Attributs kosten. Beim Betrag gibt es Vorschläge, Betrag und Bonus-Stufe bleiben frei wählbar. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.
 - **Rückschau:** Verlauf aller Einträge, Rückblick und Statistik.
 - **Vorbilder:** Vergleich des eigenen Profils mit bekannten Personen.

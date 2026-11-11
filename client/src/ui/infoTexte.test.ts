@@ -20,7 +20,7 @@ const ERLAUBT = new Set([
   WERTE_HINWEIS,
   'Tägliche Aufgaben zum Abhaken.',
   BOSS_SCHALTER,
-  'Ungenutzte Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.',
+  'Attribute ohne Einträge verlieren mit der Zeit XP. Wie stark, stellst du pro Attribut ein.',
   'Gilt für die Oberfläche. Namen und Einträge bleiben, wie du sie geschrieben hast.',
   'Primär: Knöpfe. Akzent: Hervorhebungen. Hintergrund: Fläche. Streak, Ring und Schalter haben feste Farben.',
   'Die Palette dieser Ansicht, danach die anderen.',

@@ -103,7 +103,7 @@ test('Bereiche → Toast Öffnen → Fähigkeiten → Zurück = Bereiche', async
     await page.keyboard.press('Escape');
     for (const id of ['verfallKoennen', 'verfallHaben'] as const) {
       await page.locator(`#funktion-${id}`).getByRole('button', { name: /^Info/ }).click();
-      await expect(page.getByRole('tooltip')).toHaveText('Ungenutzte Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.');
+      await expect(page.getByRole('tooltip')).toHaveText('Attribute ohne Einträge verlieren mit der Zeit XP. Wie stark, stellst du pro Attribut ein.');
       await page.keyboard.press('Escape');
     }
     for (const id of ['chronik', 'rueckblick', 'statistiken', 'vorbilder', 'handbuch', 'koennen', 'status', 'faehigkeiten', 'ausruestung']) {

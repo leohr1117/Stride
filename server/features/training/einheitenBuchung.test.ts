@@ -84,11 +84,46 @@ describe('Einheiten Buchung', () => {
         krit: 0,
       });
       expect(quellen(eintragId, 'eintrag')).toBe(1);
-      expect(quellen(eintragId, 'belastung')).toBe(1);
+      expect(quellen(eintragId, 'belastung')).toBe(0);
       expect(quellen(eintragId, 'bestaendigkeit')).toBe(1);
       expect(quellen(eintragId, 'meilenstein')).toBe(1);
       expect(quellen(eintragId, 'weitermachen')).toBe(2);
       expect(anzahl('eintraege')).toBe(2);
+    });
+  });
+
+  it('behält eine alte belastung-Buchung beim Neubuchen und schreibt nichts gut', () => {
+    mitWelt(welt(), () => {
+      an();
+      const vorlageId = vorlage('Kraft');
+      const einheit = starteEinheit(plan('Unterkörper', [kraft('Kniebeuge', { zielSaetze: 2 })], vorlageId).id, START);
+      const [erster, zweiter] = saetze(einheit);
+      const gehakt = hakeSatzAb(erster?.id ?? 0, true, START);
+      const eintragId = gehakt.eintragId ?? 0;
+      const geist = attributId('geist');
+      ausfuehren(
+        `INSERT INTO xp_ereignisse (quelle, attribut_id, xp, eintrag_id, erstellt_am) VALUES ('belastung', ?, -8, ?, ?)`,
+        geist,
+        eintragId,
+        START.toISOString(),
+      );
+      const davor = eine<{ id: number; xp: number }>(
+        `SELECT id, xp FROM xp_ereignisse WHERE eintrag_id = ? AND quelle = 'belastung'`,
+        eintragId,
+      );
+      const summeDavor =
+        eine<{ xp: number }>('SELECT COALESCE(SUM(xp), 0) AS xp FROM xp_ereignisse WHERE attribut_id = ?', geist)?.xp ?? 0;
+      hakeSatzAb(zweiter?.id ?? 0, true, START);
+      const danach = eine<{ id: number; xp: number }>(
+        `SELECT id, xp FROM xp_ereignisse WHERE eintrag_id = ? AND quelle = 'belastung'`,
+        eintragId,
+      );
+      const summeDanach =
+        eine<{ xp: number }>('SELECT COALESCE(SUM(xp), 0) AS xp FROM xp_ereignisse WHERE attribut_id = ?', geist)?.xp ?? 0;
+      expect(quellen(eintragId, 'belastung')).toBe(1);
+      expect(danach).toEqual(davor);
+      expect(danach?.xp).toBe(-8);
+      expect(summeDanach).toBe(summeDavor);
     });
   });
 

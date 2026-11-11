@@ -15,7 +15,7 @@ import type {
 } from '../../../shared/api/index.ts';
 import { BONUS_QUELLEN, PROTOKOLL_ARTEN } from '../../../shared/api/index.ts';
 import type { Abschluss, AttributTyp } from '../../../shared/spiel/begriffe.ts';
-import { abzugXp, belastungXp, istBelastend } from '../../../shared/spiel/belastung.ts';
+import { abzugXp } from '../../../shared/spiel/belastung.ts';
 import { kettenLaenge } from '../../../shared/spiel/kette.ts';
 import {
   basisDisziplinBonus,
@@ -40,7 +40,6 @@ import { bonusAufAttribut, bonusAufProjekt } from '../investitionen/ausruestung.
 import {
   aktivesAttribut,
   ladeAttributXp,
-  ladeBelastendeAttribute,
   ladeErschoepfungen,
   nurWirksameGewichte,
   type ErschoepfungRegel,
@@ -618,8 +617,6 @@ export function erstelleEintrag(
   const schaden = boss ? xp : null;
   const disziplinId = aktivesAttribut('disziplin');
   const geistId = aktivesAttribut('geist');
-  const vorlageAttributIds = [...gewichte.map((gewicht) => gewicht.attributId), ...abzuege.map((abzug) => abzug.attributId)];
-  const belastete = ladeBelastendeAttribute().filter((attribut) => istBelastend(vorlageAttributIds, attribut.id));
   const vorher = ladeLevelStand(projekt?.id ?? null, faehigkeit?.id ?? null);
 
   const ergebnis = inTransaktion(() => {
@@ -683,15 +680,6 @@ export function erstelleEintrag(
     }));
     bucheAttribute('eintrag', eintragAnteile, vorhabenId);
     bucheErfahrung('eintrag', Math.round(xp * (1 + projektBonus)));
-
-    for (const attribut of belastete) {
-      const abzug = belastungXp(xp, ladeAttributXp(attribut.id), attribut.stufe);
-      if (abzug > 0) {
-        buchungen.push(
-          bucheAttributXp({ quelle: 'belastung', attributId: attribut.id, xp: -abzug, eintragId, vorhabenId: null }, iso),
-        );
-      }
-    }
 
     const abzugBeiNull = fest
       ? bucheAbzuege(abzuege, eintragXp(daten.stunden), eintragId, iso, buchungen, vorher)

@@ -1,6 +1,6 @@
 import type { Belohnung, Bonus, EintragErgebnis } from '../../../shared/api/index.ts';
 import { lokalesDatum } from '../../../shared/spiel/datum.ts';
-import { abzugXp, belastungXp, istBelastend } from '../../../shared/spiel/belastung.ts';
+import { abzugXp } from '../../../shared/spiel/belastung.ts';
 import { kettenLaenge } from '../../../shared/spiel/kette.ts';
 import {
   bestaendigkeitsBonus,
@@ -18,7 +18,6 @@ import { bonusAufAttribut } from '../investitionen/ausruestung.ts';
 import {
   aktivesAttribut,
   ladeAttributXp,
-  ladeBelastendeAttribute,
   ladeErschoepfungen,
   type ErschoepfungRegel,
 } from '../attribute/attribute.ts';
@@ -34,7 +33,7 @@ import {
 import { ladeAktiveVerteilung, type AktiveVerteilung } from '../taetigkeiten/vorlagen.ts';
 import { verteilungFuerPlan, type PlanBezug } from './zuordnung.ts';
 
-const NEU_QUELLEN = ['eintrag', 'belastung', 'bestaendigkeit', 'meilenstein', 'abzug'] as const;
+const NEU_QUELLEN = ['eintrag', 'bestaendigkeit', 'meilenstein', 'abzug'] as const;
 
 interface RohBuchung {
   projektId: number | null;
@@ -193,15 +192,6 @@ export function bucheNeu(eintragId: number, einheitId: number, stunden: number, 
       const betrag = Math.round(xp * (1 + roh.ausruestungBonus));
       bucheProjektXp({ quelle: 'eintrag', projektId: roh.projektId, xp: betrag, eintragId, vorhabenId: null }, zeitpunkt);
       projektXp += betrag;
-    }
-    const vorlageIds = [...gewichte.map((gewicht) => gewicht.attributId), ...verteilung.abzuege.map((abzug) => abzug.attributId)];
-    for (const attribut of ladeBelastendeAttribute().filter((eintrag) => istBelastend(vorlageIds, eintrag.id))) {
-      const abzug = belastungXp(xp, ladeAttributXp(attribut.id), attribut.stufe);
-      if (abzug > 0) {
-        buchungen.push(
-          bucheAttributXp({ quelle: 'belastung', attributId: attribut.id, xp: -abzug, eintragId, vorhabenId: null }, zeitpunkt),
-        );
-      }
     }
     const abzugBeiNull = verteilung.fest
       ? bucheAbzuege(verteilung.abzuege, eintragXp(stunden), eintragId, zeitpunkt, buchungen, vorher)

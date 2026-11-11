@@ -99,8 +99,7 @@ describe('feste Anteile beim Eintrag', () => {
       const koerper = attributId('koerper');
       const geist = attributId('geist');
       const soziales = attributId('soziales');
-      aendereAttribut(geist, { erschoepfung: false, verfallBelastung: 'mittel' });
-      aendereAttribut(soziales, { verfallBelastung: 'mittel' });
+      aendereAttribut(geist, { erschoepfung: false });
       setzeXp(geist, 5);
       setzeXp(soziales, 80);
 
@@ -145,7 +144,7 @@ describe('feste Anteile beim Eintrag', () => {
       expect(ergebnis.belohnung.projekt?.xp).toBe(voll);
       expect(xpQuelle(ergebnis.eintrag.id, geist, 'abzug')).toBe(-abzug);
       expect(anzahlQuelle(ergebnis.eintrag.id, geist, 'belastung')).toBe(0);
-      expect(anzahlQuelle(ergebnis.eintrag.id, soziales, 'belastung')).toBe(1);
+      expect(anzahlQuelle(ergebnis.eintrag.id, soziales, 'belastung')).toBe(0);
       expect(ergebnis.belohnung.abzugBeiNull).toBeUndefined();
 
       loescheEintrag(ergebnis.eintrag.id);

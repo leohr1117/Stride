@@ -8,13 +8,6 @@ export const VERFALL_STUFE_LABEL: Record<VerfallStufe, string> = {
   stark: 'Stark',
 };
 
-export const BELASTUNG_ANTEIL: Record<VerfallStufe, number> = {
-  aus: 0,
-  leicht: 0.05,
-  mittel: 0.1,
-  stark: 0.2,
-};
-
 export const ZEITVERFALL_ANTEIL: Record<VerfallStufe, number> = {
   aus: 0,
   leicht: 0.05,
@@ -22,10 +15,10 @@ export const ZEITVERFALL_ANTEIL: Record<VerfallStufe, number> = {
   stark: 0.25,
 };
 
-export type VerfallArt = 'belastung' | 'zeit';
+export type VerfallArt = 'zeit';
 
-export function verfallAnteil(art: VerfallArt, stufe: VerfallStufe): number {
-  return art === 'belastung' ? BELASTUNG_ANTEIL[stufe] : ZEITVERFALL_ANTEIL[stufe];
+export function verfallAnteil(_art: VerfallArt, stufe: VerfallStufe): number {
+  return ZEITVERFALL_ANTEIL[stufe];
 }
 
 /** Ganze Prozentpunkte der heutigen Voreinstellung. Aus ist 0. */
@@ -64,15 +57,6 @@ export const ERSCHOEPFUNG = {
   abHoechstemLevel: 10,
   rundung: 100,
 } as const;
-
-export function istBelastend(vorlageAttributIds: number[], attributId: number): boolean {
-  return !vorlageAttributIds.includes(attributId);
-}
-
-export function belastungXp(eintragXp: number, vorhandeneXp: number, stufe: VerfallStufe): number {
-  const betrag = Math.round(Math.max(0, eintragXp) * BELASTUNG_ANTEIL[stufe]);
-  return Math.min(betrag, Math.max(0, vorhandeneXp));
-}
 
 /** Anteil der Grund-XP, gekappt auf die vorhandene XP. Nie unter 0. */
 export function abzugXp(grundXp: number, prozent: number, vorhandeneXp: number): number {

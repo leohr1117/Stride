@@ -24,7 +24,6 @@ interface AttributZeile {
   farbe: string;
   icon: string;
   archiviert: number;
-  verfallBelastung: VerfallStufe;
   verfallZeit: VerfallStufe;
   erschoepfung: number;
   erschoepfungZiel: number | null;
@@ -54,7 +53,6 @@ function zuAttribut(zeile: AttributZeile): Attribut {
     loeschbar: istLoeschbar('attribut', zeile.id),
     level: berechneLevel(zeile.xp, LEVEL_KURVEN[zeile.typ]),
     hoechstXp: Math.max(0, zeile.xp, zeile.hoechstXp),
-    verfallBelastung: zeile.verfallBelastung,
     verfallZeit: zeile.verfallZeit,
     erschoepfung: zeile.erschoepfung === 1,
     erschoepfungZiel: zeile.erschoepfungZiel,
@@ -64,7 +62,7 @@ function zuAttribut(zeile: AttributZeile): Attribut {
 
 const ATTRIBUT_ABFRAGE = `
   SELECT a.id, a.typ, a.kennung, a.name, a.beschreibung, a.farbe, a.icon, a.archiviert,
-         a.verfall_belastung AS verfallBelastung, a.verfall_zeit AS verfallZeit,
+         a.verfall_zeit AS verfallZeit,
          a.erschoepfung, a.erschoepfung_ziel AS erschoepfungZiel, a.archiv_anteil AS archivAnteil,
          COALESCE(SUM(x.xp), 0) AS xp,
          COALESCE(MAX(spitze.hoechstXp), 0) AS hoechstXp
@@ -184,14 +182,6 @@ export function aktivesAttribut(kennung: AttributKennung): number | null {
     kennung,
   );
   return zeile && typen.includes(zeile.typ) ? zeile.id : null;
-}
-
-export function ladeBelastendeAttribute(): { id: number; stufe: VerfallStufe }[] {
-  const typen = aktiveTypen();
-  const funktionen = ladeEinstellungen().funktionen;
-  return alle<{ id: number; typ: AttributTyp; stufe: VerfallStufe }>(
-    `SELECT id, typ, verfall_belastung AS stufe FROM attribute WHERE archiviert = 0 AND verfall_belastung <> 'aus'`,
-  ).filter((attribut) => typen.includes(attribut.typ) && funktionen[verfallFunktion(attribut.typ)]);
 }
 
 function zaehleAktive(typ: AttributTyp): number {
@@ -324,7 +314,6 @@ export function aendereAttribut(
     beschreibung: aenderung.beschreibung,
     farbe: aenderung.farbe,
     icon: aenderung.icon,
-    verfall_belastung: aenderung.verfallBelastung,
     verfall_zeit: aenderung.verfallZeit,
     verfall_bis: zeitverfallStartet ? lokalesDatum(jetzt) : undefined,
     erschoepfung: alsZahl(aenderung.erschoepfung),

@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "不用时的损失取消。属性只在没有记录时随时间失去 XP。",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "在活动表单里，在滑块上垂直滑动会滚动页面，而不会改动数值。",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "活动按固定百分比分配。低于 100% 的剩余部分不计入任何属性。减号会扣掉经验，但不会低于 0。",
   "Wirkung auf Attribute": "对属性的作用",
@@ -1797,8 +1798,7 @@ export const TEXTE: Record<string, string> = {
   "Titel enthält": "称号包含",
   "Todoist": "Todoist",
   "Unter Ziele anlegen": "在目标里新建",
-  "Ungenutzte Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.": "不用的属性会失去 XP。强度在每个属性上设置。",
-  "Verlust bei Nichtnutzung": "不用时的损失",
+  "Attribute ohne Einträge verlieren mit der Zeit XP. Wie stark, stellst du pro Attribut ein.": "没有记录的属性会随时间失去 XP。强度在每个属性上设置。",
   "Verlust über Zeit": "随时间的损失",
   "Vision anlegen": "新建愿景",
   "Vision bearbeiten": "编辑愿景",
