@@ -11,7 +11,7 @@ import {
 } from '../spiel/begriffe.ts';
 import { ZIEL_MARKE } from '../spiel/ebenen.ts';
 import { ERFOLGE } from '../spiel/erfolge.ts';
-import { FUNKTION_BLOECKE } from '../spiel/funktionen.ts';
+import { BEREICH_SCHALTER, FUNKTION_BLOECKE } from '../spiel/funktionen.ts';
 import { MEHR_BEREICHE } from '../spiel/mehrBereiche.ts';
 import { UEBERSICHT_KARTEN } from '../spiel/uebersichtKarten.ts';
 import { ARCHETYP, KLASSE } from '../spiel/klassen.ts';
@@ -104,6 +104,11 @@ function katalogTexte(): string[] {
       texte.push(eintrag.label);
     }
   }
+  for (const eintrag of BEREICH_SCHALTER) {
+    if (eintrag.untertitel) {
+      texte.push(eintrag.untertitel);
+    }
+  }
   texte.push(ZIEL_FRAGE, FOKUS_PFLICHT);
   for (const id of ZIELSTREBIGKEITEN) {
     texte.push(ZIELSTREBIGKEIT_INFO[id].titel, ZIELSTREBIGKEIT_INFO[id].text);
@@ -164,6 +169,7 @@ function katalogTexte(): string[] {
     verfallKoennen: true,
     verfallHaben: true,
     erfolge: true,
+    streak: true,
   };
   const ebenen = { visionen: true, organisationen: true, projekte: false, vorhaben: false };
   for (const funktion of Object.keys(funktionen) as (keyof typeof funktionen)[]) {

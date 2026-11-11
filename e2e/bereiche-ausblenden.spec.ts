@@ -73,10 +73,15 @@ test('Bereiche zeigt Erfolge und Hinweise zuletzt, Ausblenden lässt den Titel w
     const gruppen = page.locator('main h2');
     await expect(gruppen).toHaveText(['Seiten', 'Seiten im Profil', 'Auf Ziele', 'Regeln', 'Funktionen']);
     const schalter = page.locator('[data-zeile="schalter"]');
-    await expect(schalter).toHaveCount(ALT_IDS.length + 2);
+    await expect(schalter).toHaveCount(ALT_IDS.length + 3);
     const ids = await schalter.evaluateAll((zeilen) => zeilen.map((zeile) => zeile.id));
     expect(new Set(ids).size).toBe(ids.length);
-    expect(ids).toEqual([...ALT_IDS, 'funktion-erfolge', 'geraet-hinweise']);
+    expect(ids).toEqual([...ALT_IDS, 'funktion-streak', 'funktion-erfolge', 'geraet-hinweise']);
+    const streakSchalter = page.locator('#funktion-streak').getByRole('switch', { name: 'Streak', exact: true });
+    await expect(streakSchalter).toHaveAttribute('aria-checked', 'true');
+    await expect(streakSchalter).toBeEnabled();
+    await expect(page.locator('#funktion-streak')).toContainText('Aus pausiert die Kette. Momentum bleibt solange bei 1,0.');
+    await expect(page.locator('#funktion-streak .lucide-flame')).toHaveCount(1);
     const erfolgeSchalter = page.locator('#funktion-erfolge').getByRole('switch', { name: 'Erfolge und Titel', exact: true });
     const hinweiseSchalter = page.locator('#geraet-hinweise').getByRole('switch', { name: 'Hinweise auf Heute', exact: true });
     await expect(erfolgeSchalter).toHaveAttribute('aria-checked', 'true');

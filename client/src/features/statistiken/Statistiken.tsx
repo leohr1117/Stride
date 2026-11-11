@@ -75,7 +75,9 @@ export function StatistikenSeite() {
               <Kennzahl label={tx("Einträge")} wert={zahl(statistiken.kennzahlen.eintraege)} />
               <Kennzahl label={tx("Stunden")} wert={zahl(Math.round(statistiken.kennzahlen.stunden))} />
               <Kennzahl label={tx("Aktive Tage")} wert={zahl(statistiken.kennzahlen.aktiveTage)} />
-              <Kennzahl label={tx("Längster Streak")} wert={zahl(statistiken.kennzahlen.laengsterStreak)} />
+              {sichtbarkeit.funktionen.streak ? (
+                <Kennzahl label={tx("Längster Streak")} wert={zahl(statistiken.kennzahlen.laengsterStreak)} />
+              ) : null}
               <Kennzahl label={tx("Meilensteine")} wert={zahl(statistiken.kennzahlen.meilensteine)} />
               {bosseAn && <Kennzahl label={tx("Bosse besiegt")} wert={zahl(statistiken.kennzahlen.bosseBesiegt)} />}
             </div>

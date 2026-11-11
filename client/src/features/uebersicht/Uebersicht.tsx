@@ -85,30 +85,37 @@ export function UebersichtSeite() {
                   </p>
                 </div>
               </div>
-              <div className="grid min-w-0" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+              <div
+                className="grid min-w-0"
+                style={{ gridTemplateColumns: `repeat(${funktionen.streak ? 3 : 1}, 1fr)` }}
+              >
                 <Wochenwert label={tx('XP diese Woche')} wert={`+${zahl(uebersicht.wocheXp)}`} hervorheben="fortschritt" />
-                <Wochenwert
-                  label={tx('Streak')}
-                  info={
-                    <InfoHinweis
-                      name="Streak"
-                      text="Ein Tag Pause ist frei. Danach ist der Streak angeschlagen."
-                      abstand={false}
-                      amKasten
-                      knopfKlasse={INFO_NEBEN_WORT}
+                {funktionen.streak ? (
+                  <>
+                    <Wochenwert
+                      label={tx('Streak')}
+                      info={
+                        <InfoHinweis
+                          name="Streak"
+                          text="Ein Tag Pause ist frei. Danach ist der Streak angeschlagen."
+                          abstand={false}
+                          amKasten
+                          knopfKlasse={INFO_NEBEN_WORT}
+                        />
+                      }
+                      wert={
+                        <span
+                          className={`flex items-center justify-center gap-1 ${kette.data?.rueckkehr || uebersicht.serie.angeknackst ? 'text-leise' : uebersicht.serie.laenge > 0 ? 'text-streak' : ''}`}
+                          title={uebersicht.serie.angeknackst ? tx('Gestern ausgesetzt') : undefined}
+                        >
+                          <Flame className="size-4" />
+                          {uebersicht.serie.laenge}
+                        </span>
+                      }
                     />
-                  }
-                  wert={
-                    <span
-                      className={`flex items-center justify-center gap-1 ${kette.data?.rueckkehr || uebersicht.serie.angeknackst ? 'text-leise' : uebersicht.serie.laenge > 0 ? 'text-streak' : ''}`}
-                      title={uebersicht.serie.angeknackst ? tx('Gestern ausgesetzt') : undefined}
-                    >
-                      <Flame className="size-4" />
-                      {uebersicht.serie.laenge}
-                    </span>
-                  }
-                />
-                <Wochenwert label={tx('Momentum')} wert={faktorText(uebersicht.momentum)} />
+                    <Wochenwert label={tx('Momentum')} wert={faktorText(uebersicht.momentum)} />
+                  </>
+                ) : null}
               </div>
             </div>
           </Flaeche>

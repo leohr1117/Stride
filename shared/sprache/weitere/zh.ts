@@ -1,10 +1,12 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.": "连续记录可以在「领域」里暂停。此后「今天」和「统计」不再显示它。重新打开后，原来的长度会回来。",
   "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "每日连续记录处于暂停时，长度保持不变。其间的新记录不会获得势头。保护和尚未结束的回归一并暂停。",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "可以隐藏成就、称号和“今天”页上的提示。这些提示仅适用于此设备。",
   "Erfolge und Titel": "成就与称号",
   "Hinweise auf Heute": "“今天”页提示",
   "Gilt nur auf diesem Gerät.": "仅限此设备。",
+  "Aus pausiert die Kette. Momentum bleibt solange bei 1,0.": "关闭后连续记录暂停，期间动量保持 1.0。",
   "Nicht verfügbar": "不可用",
   "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "此服务器上尚未设置 Todoist。运营者需要启用它。",
   "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "已保存的令牌无法再读取。请重新输入。",

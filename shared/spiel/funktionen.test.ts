@@ -63,16 +63,23 @@ function ohneGeraet<T extends { schalter: string }>(eintraege: readonly T[]): T[
 describe('BEREICH_SCHALTER', () => {
   it('hält die 17 alten Schalter vorn und hängt Erfolge in der letzten Gruppe an', () => {
     const konto = ohneGeraet(BEREICH_SCHALTER);
-    const alt = konto.filter((eintrag) => eintrag.schalter !== 'erfolge');
+    const alt = konto.filter((eintrag) => eintrag.schalter !== 'erfolge' && eintrag.schalter !== 'streak');
     expect(alt).toHaveLength(17);
     expect(alt.map((eintrag) => eintrag.schalter)).toEqual([...ALT_SCHALTER]);
     expect(alt.map((eintrag) => eintrag.gruppe)).toEqual([...ALT_GRUPPEN]);
-    expect(konto.map((eintrag) => eintrag.schalter)).toEqual([...ALT_SCHALTER, 'erfolge']);
+    expect(konto.map((eintrag) => eintrag.schalter)).toEqual([...ALT_SCHALTER, 'streak', 'erfolge']);
+    expect(konto.at(-2)).toEqual({
+      schalter: 'streak',
+      label: 'Streak',
+      gruppe: 'Funktionen',
+      untertitel: 'Aus pausiert die Kette. Momentum bleibt solange bei 1,0.',
+    });
     expect(konto.at(-1)).toEqual({ schalter: 'erfolge', label: 'Erfolge und Titel', gruppe: 'Funktionen' });
     expect(new Set(konto.map((eintrag) => eintrag.schalter)).size).toBe(konto.length);
     expect(BEREICH_GRUPPEN).toEqual(['Seiten', 'Seiten im Profil', 'Auf Ziele', 'Regeln', 'Funktionen']);
     expect(BEREICH_GRUPPEN.at(-1)).toBe('Funktionen');
     expect(FUNKTIONEN).toContain('erfolge');
+    expect(FUNKTIONEN).toContain('streak');
     expect(new Set<string>(FUNKTIONEN).has('hinweise')).toBe(false);
     expect(istFunktion('hinweise')).toBe(false);
     expect(BEREICH_SCHALTER.some((eintrag) => istGeraeteZeile(eintrag.schalter))).toBe(false);
@@ -113,6 +120,7 @@ describe('FUNKTION_BLOECKE', () => {
       'verfallHaben',
     ]);
     expect(FUNKTION_BLOECKE.find((block) => block.seite === 'Funktionen')?.eintraege.map((eintrag) => eintrag.funktion)).toEqual([
+      'streak',
       'erfolge',
     ]);
     expect(FUNKTION_BLOECKE.every((block) => block.eintraege.every((eintrag) => !('ort' in eintrag)))).toBe(true);
@@ -120,7 +128,7 @@ describe('FUNKTION_BLOECKE', () => {
 });
 
 describe('standardFunktionen', () => {
-  it('lässt für neue Welten Handbuch, Können, Haben, Verlauf und Erfolge an', () => {
+  it('lässt für neue Welten Handbuch, Können, Haben, Verlauf, Erfolge und Streak an', () => {
     const funktionen = standardFunktionen();
     expect(Object.keys(funktionen).sort()).toEqual([...FUNKTIONEN].sort());
     expect(funktionen.handbuch).toBe(true);
@@ -128,13 +136,15 @@ describe('standardFunktionen', () => {
     expect(funktionen.status).toBe(true);
     expect(funktionen.chronik).toBe(true);
     expect(funktionen.erfolge).toBe(true);
+    expect(funktionen.streak).toBe(true);
     for (const funktion of FUNKTIONEN) {
       if (
         funktion === 'handbuch' ||
         funktion === 'koennen' ||
         funktion === 'status' ||
         funktion === 'chronik' ||
-        funktion === 'erfolge'
+        funktion === 'erfolge' ||
+        funktion === 'streak'
       ) {
         continue;
       }
@@ -179,6 +189,10 @@ describe('funktionenAusSpeicher', () => {
     expect(funktionenAusSpeicher({}).erfolge).toBe(true);
     expect(funktionenAusSpeicher({ basis: true }).erfolge).toBe(true);
     expect(funktionenAusSpeicher({ erfolge: false }).erfolge).toBe(false);
+    expect(funktionenAusSpeicher(null).streak).toBe(true);
+    expect(funktionenAusSpeicher({}).streak).toBe(true);
+    expect(funktionenAusSpeicher({ basis: true }).streak).toBe(true);
+    expect(funktionenAusSpeicher({ streak: false }).streak).toBe(false);
     expect('hinweise' in funktionenAusSpeicher({ hinweise: false })).toBe(false);
     expect(standardFunktionen().erfolge).toBe(true);
   });

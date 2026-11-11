@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.',
+    'The streak can be paused under Areas. Today and Statistics then do not show it. Turned back on, the previous length is there again.',
+  ],
+  [
     'Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.',
     'While the daily streak is paused, its length stays. New entries get no momentum during that time. Protection and an open return stay on hold.',
   ],

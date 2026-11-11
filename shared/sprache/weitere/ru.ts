@@ -1,10 +1,12 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.": "Серию можно поставить на паузу в «Области». «Сегодня» и «Статистика» тогда её не показывают. После включения снова видна прежняя длина.",
   "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "Пока дневная серия на паузе, длина сохраняется. Новые записи при этом не получают импульс. Защита и открытое возвращение приостановлены.",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "Достижения, титулы и подсказки на «Сегодня» можно скрыть. Подсказки действуют только на этом устройстве.",
   "Erfolge und Titel": "Достижения и титулы",
   "Hinweise auf Heute": "Подсказки на «Сегодня»",
   "Gilt nur auf diesem Gerät.": "Только на этом устройстве.",
+  "Aus pausiert die Kette. Momentum bleibt solange bei 1,0.": "Выключение ставит серию на паузу. Импульс пока остаётся 1,0.",
   "Nicht verfügbar": "Недоступно",
   "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "Todoist на этом сервере не настроен. Оператор должен его включить.",
   "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "Сохранённый токен больше нельзя прочитать. Введи его снова.",

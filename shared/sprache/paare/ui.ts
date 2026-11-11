@@ -794,6 +794,7 @@ export const PAARE = [
   ['Erfolge und Titel', 'Achievements and titles'],
   ['Hinweise auf Heute', 'Tips on Today'],
   ['Gilt nur auf diesem Gerät.', 'Applies to this device only.'],
+  ['Aus pausiert die Kette. Momentum bleibt solange bei 1,0.', 'Off pauses your streak. Momentum stays at 1.0 meanwhile.'],
   ['Karten', 'Cards'],
   ['Benachrichtigungen', 'Notifications'],
   ['Identität', 'Identity'],

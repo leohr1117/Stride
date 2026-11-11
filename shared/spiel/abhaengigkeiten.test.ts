@@ -16,6 +16,7 @@ describe('sperren', () => {
     expect(funktionsSperre('verfallHaben', funktionen, EBENEN)).toBeNull();
     expect(funktionsSperre('bossAngriffe', funktionen, EBENEN)).toBeNull();
     expect(funktionsSperre('erfolge', funktionen, EBENEN)).toBeNull();
+    expect(funktionsSperre('streak', funktionen, EBENEN)).toBeNull();
     expect(ebenenSperre('visionen', EBENEN)).toBeNull();
     expect(ebenenSperre('projekte', EBENEN)).toBeNull();
     expect(ebenenSperre('vorhaben', EBENEN)).toBeNull();

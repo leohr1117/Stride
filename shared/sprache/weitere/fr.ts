@@ -1,10 +1,12 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.": "La série se met en pause dans Zones. Aujourd’hui et Statistique ne l’affichent plus. Une fois activée, la longueur d’avant est de nouveau là.",
   "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "Quand la série du jour est en pause, sa longueur reste. Les nouvelles entrées n’ont alors pas d’élan. La protection et un retour ouvert restent en pause.",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "Les succès, les titres et les conseils sur Aujourd’hui peuvent être masqués. Les conseils ne valent que pour cet appareil.",
   "Erfolge und Titel": "Succès et titres",
   "Hinweise auf Heute": "Conseils sur Aujourd’hui",
   "Gilt nur auf diesem Gerät.": "Uniquement sur cet appareil.",
+  "Aus pausiert die Kette. Momentum bleibt solange bei 1,0.": "Désactivé, la série est en pause. L’élan reste à 1,0 en attendant.",
   "Nicht verfügbar": "Indisponible",
   "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "Todoist n'est pas configuré sur ce serveur. La personne qui l'exploite doit l'activer.",
   "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "Le jeton enregistré n'est plus lisible. Saisis-le à nouveau.",

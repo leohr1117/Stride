@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.17',
+    seiten: 'Bereiche, Heute, Statistik',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.16',
     seiten: 'Heute',
     abschnitte: [

@@ -4,6 +4,7 @@ import {
   Brain,
   CalendarCheck,
   ChartColumn,
+  Flame,
   Gem,
   Layers,
   Route,
@@ -30,5 +31,6 @@ export const FUNKTION_BILD: Record<Funktion, { icon: LucideIcon; pfad?: string }
   verfallKoennen: { icon: TrendingDown },
   verfallHaben: { icon: TrendingDown },
   bossAngriffe: { icon: Swords, pfad: '/laufend' },
+  streak: { icon: Flame },
   erfolge: { icon: Award },
 };

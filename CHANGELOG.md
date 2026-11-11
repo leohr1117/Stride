@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.17
+
+### Hinzugefügt
+
+- Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.
+
 ## 4.1.16
 
 ### Hinzugefügt

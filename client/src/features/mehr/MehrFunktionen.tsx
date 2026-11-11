@@ -70,7 +70,7 @@ function zeileFelder(
       sperre,
       Icon: FUNKTION_BILD[schalter].icon,
       an: istAn(schalter, einstellungen),
-      untertitel: sperre ? tx(sperre) : undefined,
+      untertitel: sperre ? tx(sperre) : eintrag.untertitel ? tx(eintrag.untertitel) : undefined,
       info: sperre ? undefined : FUNKTION_INFO[schalter],
     };
   }
@@ -80,7 +80,7 @@ function zeileFelder(
     sperre,
     Icon: EBENEN_ICON[schalter],
     an: einstellungen.ebenen[schalter],
-    untertitel: sperre ? tx(sperre) : undefined,
+    untertitel: sperre ? tx(sperre) : eintrag.untertitel ? tx(eintrag.untertitel) : undefined,
     info: undefined,
   };
 }

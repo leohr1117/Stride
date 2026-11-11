@@ -1,10 +1,12 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.": "La racha se puede pausar en Áreas. Hoy y Estadística ya no la muestran. Al activarla, vuelve la longitud anterior.",
   "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "Mientras la racha diaria está en pausa, la longitud se mantiene. Las entradas nuevas no reciben impulso mientras tanto. La protección y un regreso abierto quedan en pausa.",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "Los logros, los títulos y los avisos en Hoy se pueden ocultar. Los avisos solo valen para este dispositivo.",
   "Erfolge und Titel": "Logros y títulos",
   "Hinweise auf Heute": "Avisos en Hoy",
   "Gilt nur auf diesem Gerät.": "Solo en este dispositivo.",
+  "Aus pausiert die Kette. Momentum bleibt solange bei 1,0.": "Desactivarlo pausa la racha. El impulso se queda en 1,0 mientras tanto.",
   "Nicht verfügbar": "No disponible",
   "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "Todoist no está configurado en este servidor. Quien lo opera tiene que activarlo.",
   "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "El token guardado ya no se puede leer. Vuelve a introducirlo.",

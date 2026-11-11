@@ -118,6 +118,7 @@ const TOAST_ZIEL: Record<string, string> = {
   verfallKoennen: '/koennen',
   verfallHaben: '/haben',
   erfolge: '/',
+  streak: '/',
 };
 
 function istGeraeteZeile(schalter: string): boolean {
@@ -127,10 +128,12 @@ function istGeraeteZeile(schalter: string): boolean {
 describe('Bereich-Schalter', () => {
   it('liest das Toast-Ziel der Kontoschalter und lässt die Gerätezeile aus', () => {
     const konto = BEREICH_SCHALTER.filter((eintrag) => !istGeraeteZeile(eintrag.schalter));
-    expect(konto.filter((eintrag) => eintrag.schalter !== 'erfolge')).toHaveLength(17);
-    expect(konto).toHaveLength(18);
+    expect(konto.filter((eintrag) => eintrag.schalter !== 'erfolge' && eintrag.schalter !== 'streak')).toHaveLength(17);
+    expect(konto).toHaveLength(19);
     expect(konto.some((eintrag) => istGeraeteZeile(eintrag.schalter))).toBe(false);
+    expect(SEITEN.some((seite) => seite.schalter === 'streak')).toBe(false);
     expect(toastZielFuer('erfolge')).toBe('/');
+    expect(toastZielFuer('streak')).toBe('/');
     for (const eintrag of konto) {
       const seite = SEITEN.find((kandidat) => kandidat.schalter === eintrag.schalter);
       if (seite) {
@@ -140,6 +143,9 @@ describe('Bereich-Schalter', () => {
       expect(toastZielFuer(eintrag.schalter)).toBe(TOAST_ZIEL[eintrag.schalter]);
       expect(hatSchluessel(eintrag.label)).toBe(true);
       expect(hatSchluessel(eintrag.gruppe)).toBe(true);
+      if (eintrag.untertitel) {
+        expect(hatSchluessel(eintrag.untertitel)).toBe(true);
+      }
     }
   });
 

@@ -11,7 +11,7 @@ describe('versionen', () => {
   it('ist absteigend nach Semantic Versioning und nennt Änderungen', () => {
     const paket = JSON.parse(readFileSync(join(WURZEL, 'package.json'), 'utf8')) as { version: string };
     expect(VERSIONEN.length).toBeGreaterThan(0);
-    expect(AKTUELLE_VERSION).toBe('4.1.16');
+    expect(AKTUELLE_VERSION).toBe('4.1.17');
     expect(AKTUELLE_VERSION).toBe(paket.version);
     expect(AKTUELLE_VERSION).toBe(VERSIONEN[0].version);
     const gesehen = new Set<string>();

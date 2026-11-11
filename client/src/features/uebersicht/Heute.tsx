@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, type ReactNode } from 'react';
 import type { KetteHeute } from '../../../../shared/api/kette.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
+import { useSichtbarkeit } from '../../funktionen.ts';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { ausTagesSchluessel, kurzesDatum, zahl } from '../../format.ts';
 import { AbschnittKopf, Fehlermeldung, Flaeche, InfoHinweis, Knopf } from '../../ui/index.ts';
@@ -111,6 +112,7 @@ function Handlungszeile({
 }
 
 export function HeuteKarte() {
+  const sichtbarkeit = useSichtbarkeit();
   const queryClient = useQueryClient();
   const eintragOeffnen = useEintragOeffnen();
   const eng = useStreakZeileEng();
@@ -125,6 +127,10 @@ export function HeuteKarte() {
       void queryClient.invalidateQueries();
     },
   });
+
+  if (!sichtbarkeit.funktionen.streak) {
+    return null;
+  }
 
   if (abfrage.isPending) {
     return null;

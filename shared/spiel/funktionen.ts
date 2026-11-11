@@ -16,6 +16,7 @@ export const FUNKTIONEN = [
   'bossAngriffe',
   'verfallKoennen',
   'verfallHaben',
+  'streak',
   'erfolge',
 ] as const;
 export type Funktion = (typeof FUNKTIONEN)[number];
@@ -45,6 +46,7 @@ export interface BereichEintrag {
   schalter: BereichSchalter;
   label: string;
   gruppe: BereichGruppe;
+  untertitel?: string;
 }
 
 const FUNKTION_SATZ = new Set<string>(FUNKTIONEN);
@@ -67,6 +69,7 @@ const FUNKTION_LABEL: Record<Funktion, string> = {
   bossAngriffe: 'Bosse',
   verfallKoennen: 'Verfall Können',
   verfallHaben: 'Verfall Haben',
+  streak: 'Streak',
   erfolge: 'Erfolge und Titel',
 };
 
@@ -89,6 +92,7 @@ export const BEREICH_SCHALTER: readonly BereichEintrag[] = [
   { schalter: 'bossAngriffe', label: FUNKTION_LABEL.bossAngriffe, gruppe: 'Auf Ziele' },
   { schalter: 'verfallKoennen', label: FUNKTION_LABEL.verfallKoennen, gruppe: 'Regeln' },
   { schalter: 'verfallHaben', label: FUNKTION_LABEL.verfallHaben, gruppe: 'Regeln' },
+  { schalter: 'streak', label: FUNKTION_LABEL.streak, gruppe: 'Funktionen', untertitel: 'Aus pausiert die Kette. Momentum bleibt solange bei 1,0.' },
   { schalter: 'erfolge', label: FUNKTION_LABEL.erfolge, gruppe: 'Funktionen' },
 ];
 
@@ -99,7 +103,7 @@ export const FUNKTION_BLOECKE: readonly FunktionsBlock[] = BEREICH_GRUPPEN.map((
   ),
 })).filter((block) => block.eintraege.length > 0);
 
-const STANDARD_AN = new Set<Funktion>(['koennen', 'status', 'chronik', 'handbuch', 'erfolge']);
+const STANDARD_AN = new Set<Funktion>(['koennen', 'status', 'chronik', 'handbuch', 'erfolge', 'streak']);
 
 export function standardFunktionen(): Funktionen {
   const funktionen = {} as Funktionen;

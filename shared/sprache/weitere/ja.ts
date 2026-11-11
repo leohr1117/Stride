@@ -1,10 +1,12 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Streak lässt sich unter Bereiche aussetzen. Heute und die Statistik zeigen ihn dann nicht. Eingeschaltet ist die bisherige Länge wieder da.": "連続記録は「領域」で一時停止できます。その間、「今日」と「統計」には出ません。再びオンにすると、それまでの長さが戻ります。",
   "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "毎日の連続が一時停止しているあいだ、長さはそのままです。その間の新しい記録に勢いは付きません。保護と、開いている復帰は止まります。",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "実績、称号、「今日」のヒントを非表示にできます。ヒントはこの端末だけに適用されます。",
   "Erfolge und Titel": "実績と称号",
   "Hinweise auf Heute": "「今日」のヒント",
   "Gilt nur auf diesem Gerät.": "この端末のみ。",
+  "Aus pausiert die Kette. Momentum bleibt solange bei 1,0.": "オフにすると連続記録は一時停止し、その間モメンタムは 1.0 のままです。",
   "Nicht verfügbar": "利用できません",
   "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "このサーバーでは Todoist が設定されていません。運営者が有効にする必要があります。",
   "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "保存されたトークンは読み取れなくなりました。もう一度入力してください。",

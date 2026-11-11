@@ -45,6 +45,8 @@ import {
 import { istSprache, type Sprache } from '../../../shared/sprache/kern.ts';
 import { anfrageSprache } from '../../anfrageSprache.ts';
 import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
+import { pausiereStreak, setzeStreakFort } from '../../services/serie.ts';
+import { leseJetzt, lokalesDatum } from '../../services/zeit.ts';
 import { ungueltig } from '../../fehler.ts';
 import { istWeltLeer, wendeFokusAn } from '../../services/profilStart.ts';
 import { wendeStartZielAn, type StartZielArt } from '../../services/startAnlage.ts';
@@ -615,6 +617,12 @@ export function aendereEinstellungen(
     }
     if (aenderung.funktionen !== undefined || aenderung.fokus !== undefined || Object.keys(stufeFunktionen).length > 0) {
       speichere(FUNKTIONEN_SCHLUESSEL, funktionenAusSpeicher(funktionen));
+      const heute = lokalesDatum(leseJetzt());
+      if (bisher.funktionen.streak && !funktionen.streak) {
+        pausiereStreak(heute);
+      } else if (!bisher.funktionen.streak && funktionen.streak) {
+        setzeStreakFort(heute);
+      }
     }
     if (aenderung.profilAngelegt !== undefined) {
       speichere('profilAngelegt', aenderung.profilAngelegt);

@@ -19,7 +19,7 @@ function sicht(teil: {
 
 describe('Werte unter Mehr', () => {
   it('zählt eingeschaltete Funktionen und gespeicherte Ebenen', () => {
-    expect(bereicheAn(sicht())).toBe(9);
+    expect(bereicheAn(sicht())).toBe(10);
     expect(
       bereicheAn(
         sicht({
@@ -27,7 +27,7 @@ describe('Werte unter Mehr', () => {
           attribute: { disziplin: true, ressourcen: false },
         }),
       ),
-    ).toBe(10);
+    ).toBe(11);
     expect(
       bereicheAn(
         sicht({
@@ -36,8 +36,8 @@ describe('Werte unter Mehr', () => {
           attribute: { disziplin: false, ressourcen: false },
         }),
       ),
-    ).toBe(8);
-    expect(bereicheAn(sicht({ ebenen: { projekte: false, organisationen: true } }))).toBe(8);
+    ).toBe(9);
+    expect(bereicheAn(sicht({ ebenen: { projekte: false, organisationen: true } }))).toBe(9);
   });
 
   it('zählt gewählte Karten von sechs', () => {
