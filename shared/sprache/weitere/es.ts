@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "Mientras la racha diaria está en pausa, la longitud se mantiene. Las entradas nuevas no reciben impulso mientras tanto. La protección y un regreso abierto quedan en pausa.",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "Los logros, los títulos y los avisos en Hoy se pueden ocultar. Los avisos solo valen para este dispositivo.",
   "Erfolge und Titel": "Logros y títulos",
   "Hinweise auf Heute": "Avisos en Hoy",

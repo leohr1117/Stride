@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "毎日の連続が一時停止しているあいだ、長さはそのままです。その間の新しい記録に勢いは付きません。保護と、開いている復帰は止まります。",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "実績、称号、「今日」のヒントを非表示にできます。ヒントはこの端末だけに適用されます。",
   "Erfolge und Titel": "実績と称号",
   "Hinweise auf Heute": "「今日」のヒント",

@@ -2,6 +2,7 @@ import type { Statistiken, Zeitraum } from '../../../shared/api/index.ts';
 import { TAGE_PRO_WOCHE } from '../../../shared/spiel/datum.ts';
 import { laengsteKette } from '../../../shared/spiel/kette.ts';
 import { alle, eine } from '../../db.ts';
+import { ladePausen } from '../../services/serie.ts';
 import { KONTEXT_JOINS } from '../ziele/kontext.ts';
 import { ausTagesSchluessel, leseJetzt, lokalesDatum, monatsbeginn, plusTage, wochenbeginn } from '../../services/zeit.ts';
 
@@ -111,7 +112,7 @@ export function ladeStatistiken(zeitraum: Zeitraum, jetzt = leseJetzt()): Statis
   );
 
   return {
-    kennzahlen: { ...zaehlungen, laengsterStreak: laengsteKette(aktiveTage) },
+    kennzahlen: { ...zaehlungen, laengsterStreak: laengsteKette(aktiveTage, [], ladePausen()) },
     verlaufEinheit: rahmen.einheit,
     verlauf: baueVerlauf(rahmen, tagesXp, jetzt),
     vorlagen,

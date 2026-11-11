@@ -1,10 +1,18 @@
 import type { KetteHeute, SchutzErgebnis } from '../../../shared/api/index.ts';
-import { ERLAUBTE_PAUSENTAGE, brueckentag, kettenLaenge, kettenStand, tageZwischen } from '../../../shared/spiel/kette.ts';
-import { schutzHeuteMoeglich, schwelleFuerEintrag } from '../../../shared/spiel/schutz.ts';
+import {
+  ERLAUBTE_PAUSENTAGE,
+  brueckentag,
+  kettenLaenge,
+  kettenStand,
+  pausentageZwischen,
+  tageZwischen,
+  tagInPause,
+} from '../../../shared/spiel/kette.ts';
+import { ruhendeFrist, schutzHeuteMoeglich, schwelleFuerEintrag } from '../../../shared/spiel/schutz.ts';
 import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { ungueltig } from '../../fehler.ts';
 import { leseSchutzSchwelle, leseSchutzVorrat, schreibeSchutzSchwelle, schreibeSchutzVorrat } from '../einstellungen/einstellungen.ts';
-import { ladeAktiveTage, ladeBrueckentage, ladeSerie } from '../../services/serie.ts';
+import { ladeAktiveTage, ladeBrueckentage, ladePausen, ladeSerie } from '../../services/serie.ts';
 import { leseJetzt, lokalesDatum } from '../../services/zeit.ts';
 
 export const SCHUTZ_HEUTE_NEIN = 'Der Schutz kann heute nicht eingesetzt werden.';
@@ -32,17 +40,26 @@ export function ladeKetteHeute(jetzt = leseJetzt()): KetteHeute {
   const heute = lokalesDatum(jetzt);
   const tage = ladeAktiveTage();
   const bruecken = ladeBrueckentage();
-  const serie = kettenStand(tage, heute, bruecken);
+  const pausen = ladePausen();
+  const serie = kettenStand(tage, heute, bruecken, pausen);
   const vorrat = leseSchutzVorrat();
-  const schutz = schutzHeuteMoeglich(tage, heute, bruecken, vorrat);
-  const letzter = letzterBis(tage, heute);
-  const offen = eine<{ fristAm: string }>(
-    `SELECT frist_am AS fristAm FROM rueckkehr WHERE status = 'offen' ORDER BY id DESC LIMIT 1`,
+  const schutz = schutzHeuteMoeglich(tage, heute, bruecken, vorrat, pausen);
+  const letzter = letzterBis(
+    pausen.length === 0 ? tage : tage.filter((tag) => !tagInPause(tag, pausen)),
+    heute,
   );
+  const offen = eine<{ geoeffnetAm: string; fristAm: string }>(
+    `SELECT geoeffnet_am AS geoeffnetAm, frist_am AS fristAm FROM rueckkehr WHERE status = 'offen' ORDER BY id DESC LIMIT 1`,
+  );
+  const rueckkehr = !offen
+    ? null
+    : pausen.length === 0 || heute <= ruhendeFrist(offen.geoeffnetAm, offen.fristAm, heute, pausen)
+      ? { fristAm: offen.fristAm }
+      : null;
   return {
     schutz,
-    schutzLaenge: schutz && letzter !== null ? kettenLaenge(tage, letzter, bruecken) : null,
-    rueckkehr: offen ? { fristAm: offen.fristAm } : null,
+    schutzLaenge: schutz && letzter !== null ? kettenLaenge(tage, letzter, bruecken, pausen) : null,
+    rueckkehr,
     angeschlagen: serie.angeknackst && serie.laenge >= 2 ? { laenge: serie.laenge } : null,
     serie,
     heuteErfasst: letzter === heute,
@@ -53,18 +70,25 @@ export function setzeSchutzEin(jetzt = leseJetzt()): SchutzErgebnis {
   const heute = lokalesDatum(jetzt);
   const tage = ladeAktiveTage();
   const bruecken = ladeBrueckentage();
-  const letzter = letzterBis(tage, heute);
+  const pausen = ladePausen();
+  if (tagInPause(heute, pausen)) {
+    throw ungueltig(SCHUTZ_HEUTE_NEIN);
+  }
+  const letzter = letzterBis(
+    pausen.length === 0 ? tage : tage.filter((tag) => !tagInPause(tag, pausen)),
+    heute,
+  );
   if (
     letzter !== null &&
-    tageZwischen(letzter, heute) === BRUCH_ABSTAND &&
-    bruecken.includes(brueckentag(letzter))
+    tageZwischen(letzter, heute) - pausentageZwischen(letzter, heute, pausen) === BRUCH_ABSTAND &&
+    bruecken.includes(brueckentag(letzter, pausen))
   ) {
     return schutzAntwort(heute);
   }
-  if (letzter === null || !schutzHeuteMoeglich(tage, heute, bruecken, leseSchutzVorrat())) {
+  if (letzter === null || !schutzHeuteMoeglich(tage, heute, bruecken, leseSchutzVorrat(), pausen)) {
     throw ungueltig(SCHUTZ_HEUTE_NEIN);
   }
-  const bruecke = brueckentag(letzter);
+  const bruecke = brueckentag(letzter, pausen);
   inTransaktion(() => {
     const vorhanden = eine<{ id: number }>('SELECT id FROM streak_bruecken WHERE tag = ?', bruecke);
     if (vorhanden) {
@@ -98,9 +122,10 @@ export function verdieneSchutz(tag: string, eintragId: number): void {
       eintragId,
       tag,
     )?.anzahl ?? 0;
-  const laengeNachher = kettenLaenge(tage, tag, bruecken);
+  const pausen = ladePausen();
+  const laengeNachher = kettenLaenge(tage, tag, bruecken, pausen);
   const laengeVorher =
-    andere > 0 ? laengeNachher : kettenStand(tage.filter((eintrag) => eintrag !== tag), tag, bruecken).laenge;
+    andere > 0 ? laengeNachher : kettenStand(tage.filter((eintrag) => eintrag !== tag), tag, bruecken, pausen).laenge;
   const schwelle = leseSchutzSchwelle();
   const vorrat = leseSchutzVorrat();
   const entscheid = schwelleFuerEintrag({ laengeVorher, laengeNachher, vorrat, schwelle });

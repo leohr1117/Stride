@@ -98,3 +98,44 @@ describe('kettenStand mit Brücke', () => {
     });
   });
 });
+
+describe('Kette mit Pause', () => {
+  const tage = ['2026-04-28', '2026-04-29', '2026-04-30'];
+  const pause = [{ von: '2026-05-01', bis: '2026-05-05' as string | null }];
+  const laenge = 3;
+
+  it('lässt fünf Pausentage die Länge stehen, ohne angeschlagen zu sein', () => {
+    expect(kettenStand(tage, '2026-05-06', [], pause)).toEqual({ laenge, angeknackst: false });
+    expect(kettenStand(tage, '2026-05-03', [], pause)).toEqual({ laenge, angeknackst: false });
+    expect(kettenStand(tage, '2026-05-03', [], [{ von: '2026-05-01', bis: null }])).toEqual({
+      laenge,
+      angeknackst: false,
+    });
+  });
+
+  it('zählt einen Eintrag in der Pause nicht und setzt am Tag danach fort', () => {
+    const mitPauseeintrag = [...tage, '2026-05-03'];
+    expect(kettenLaenge(mitPauseeintrag, '2026-05-03', [], pause)).toBe(0);
+    expect(kettenStand(mitPauseeintrag, '2026-05-03', [], pause)).toEqual({ laenge, angeknackst: false });
+    expect(kettenStand(mitPauseeintrag, '2026-05-06', [], pause)).toEqual({ laenge, angeknackst: false });
+    expect(laengsteKette(mitPauseeintrag, [], pause)).toBe(laenge);
+    const danach = [...tage, '2026-05-06'];
+    expect(kettenLaenge(danach, '2026-05-06', [], pause)).toBe(laenge + 1);
+    expect(kettenStand(danach, '2026-05-06', [], pause)).toEqual({ laenge: laenge + 1, angeknackst: false });
+    expect(laengsteKette(danach, [], pause)).toBe(laenge + 1);
+    expect(laengsteKette([...mitPauseeintrag, '2026-05-06'], [], pause)).toBe(laenge + 1);
+  });
+
+  it('lässt leere Pausen die bisherigen Fälle gleich', () => {
+    const kette = ['2026-10-15', '2026-10-16', '2026-10-17'];
+    const mitBruecke = ['2026-10-15', '2026-10-16', '2026-10-17', '2026-10-18', '2026-10-19', '2026-10-22'];
+    expect(kettenStand(kette, '2026-10-19', [], [])).toEqual(kettenStand(kette, '2026-10-19'));
+    expect(kettenStand(kette, '2026-10-20', [], [])).toEqual(kettenStand(kette, '2026-10-20'));
+    expect(kettenLaenge(['2026-10-15', '2026-10-17', '2026-10-18'], '2026-10-18', [], [])).toBe(
+      kettenLaenge(['2026-10-15', '2026-10-17', '2026-10-18'], '2026-10-18'),
+    );
+    expect(laengsteKette(mitBruecke, ['2026-10-21'], [])).toBe(laengsteKette(mitBruecke, ['2026-10-21']));
+    expect(laengsteKette(mitBruecke, [], [])).toBe(laengsteKette(mitBruecke));
+    expect(tageZwischen('2026-04-30', '2026-05-06')).toBe(6);
+  });
+});

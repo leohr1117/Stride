@@ -7,7 +7,7 @@ import { ungueltig } from '../../fehler.ts';
 import { leseJetzt } from '../../services/zeit.ts';
 import { ladeCharakterLevel } from '../attribute/attribute.ts';
 import { ladeEinstellungen } from '../einstellungen/einstellungen.ts';
-import { ladeAktiveTage } from '../../services/serie.ts';
+import { ladeAktiveTage, ladePausen } from '../../services/serie.ts';
 
 const TITEL_EINSTELLUNG = 'titel';
 
@@ -32,7 +32,7 @@ export function ladeKennzahlen(): Kennzahlen {
     throw new Error('Die Kennzahlen für Erfolge konnten nicht geladen werden.');
   }
   const tage = ladeAktiveTage();
-  return { ...zaehlungen, aktiveTage: tage.length, streak: laengsteKette(tage), level: ladeCharakterLevel().level };
+  return { ...zaehlungen, aktiveTage: tage.length, streak: laengsteKette(tage, [], ladePausen()), level: ladeCharakterLevel().level };
 }
 
 function ladeErreichte(): Map<string, string> {

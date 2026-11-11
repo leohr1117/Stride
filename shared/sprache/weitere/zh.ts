@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "每日连续记录处于暂停时，长度保持不变。其间的新记录不会获得势头。保护和尚未结束的回归一并暂停。",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "可以隐藏成就、称号和“今天”页上的提示。这些提示仅适用于此设备。",
   "Erfolge und Titel": "成就与称号",
   "Hinweise auf Heute": "“今天”页提示",

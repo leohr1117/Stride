@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ERLAUBTE_PAUSENTAGE, kettenStand } from './kette.ts';
+import { ERLAUBTE_PAUSENTAGE, kettenStand, type Pause } from './kette.ts';
 import {
   RUECKKEHR,
   SCHUTZ,
@@ -7,6 +7,7 @@ import {
   brueckeVerbindet,
   brueckentag,
   rueckkehrFaellig,
+  ruhendeFrist,
   schutzHeuteMoeglich,
   schwelleFuerEintrag,
   type RueckkehrLage,
@@ -216,5 +217,63 @@ describe('rueckkehrFaellig', () => {
         }),
       ).faellig,
     ).toBe(false);
+  });
+});
+
+describe('Pause von Schutz und Rückkehr', () => {
+  const tage = ['2026-04-26', '2026-04-27', '2026-04-28', '2026-04-29', '2026-04-30'];
+  const pause: Pause[] = [{ von: '2026-05-01', bis: '2026-05-05' }];
+
+  it('legt den Brückentag auf den zweiten Tag, der keine Pause ist', () => {
+    expect(brueckentag('2026-04-30', pause)).toBe('2026-05-07');
+    expect(bruchtag('2026-04-30', pause)).toBe('2026-05-08');
+    expect(brueckentag('2026-04-30', [])).toBe(brueckentag('2026-04-30'));
+    expect(bruchtag('2026-04-30', [])).toBe(bruchtag('2026-04-30'));
+  });
+
+  it('erlaubt keinen Schutz in der Pause und rechnet danach den komprimierten Abstand', () => {
+    expect(schutzHeuteMoeglich(tage, '2026-05-03', [], 1, pause)).toBe(false);
+    expect(schutzHeuteMoeglich(tage, '2026-05-06', [], 1, pause)).toBe(false);
+    expect(schutzHeuteMoeglich(tage, '2026-05-08', [], 1, pause)).toBe(true);
+    expect(schutzHeuteMoeglich(tage, '2026-05-08', ['2026-05-07'], 1, pause)).toBe(false);
+    expect(kettenStand(tage, '2026-05-08', [], pause)).toEqual({ laenge: 0, angeknackst: false });
+    expect(kettenStand(tage, '2026-05-08', ['2026-05-07'], pause)).toEqual({ laenge: 5, angeknackst: false });
+  });
+
+  it('öffnet nach fünf Pausentagen keine Rückkehr und lässt einen Bruch ohne Pause wie bisher', () => {
+    expect(
+      rueckkehrFaellig({
+        aktiveTage: tage,
+        heute: '2026-05-03',
+        bruecken: [],
+        rueckkehrAb: '2026-04-01',
+        offen: false,
+        schlussAm: null,
+        pausen: pause,
+      }).faellig,
+    ).toBe(false);
+    expect(
+      rueckkehrFaellig({
+        aktiveTage: tage,
+        heute: '2026-05-06',
+        bruecken: [],
+        rueckkehrAb: '2026-04-01',
+        offen: false,
+        schlussAm: null,
+        pausen: pause,
+      }).faellig,
+    ).toBe(false);
+    expect(rueckkehrFaellig(lage(DONNERSTAG))).toEqual({
+      faellig: true,
+      status: 'offen',
+      bruchtag: DONNERSTAG,
+      fristAm: FRIST,
+    });
+  });
+
+  it('schiebt die offene Frist um die Pausentage, die nicht nach heute liegen', () => {
+    expect(ruhendeFrist('2026-04-26', '2026-05-03', '2026-05-06', pause)).toBe('2026-05-08');
+    expect(ruhendeFrist('2026-04-26', '2026-05-03', '2026-05-06', [])).toBe('2026-05-03');
+    expect('2026-05-06' <= ruhendeFrist('2026-04-26', '2026-05-03', '2026-05-06', pause)).toBe(true);
   });
 });

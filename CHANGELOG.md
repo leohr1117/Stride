@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.16
+
+### Hinzugefügt
+
+- Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.
+
 ## 4.1.15
 
 ### Hinzugefügt

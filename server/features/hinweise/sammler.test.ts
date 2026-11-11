@@ -438,4 +438,26 @@ describe('Sammler', () => {
       });
     });
   });
+
+  it('erzeugt aus einem Pausentag keinen Streak-Anlass und lässt eine offene Rückkehr stehen', () => {
+    mitWelt(welt(), () => {
+      zone('UTC');
+      schalter({ streak: true, rueckkehr: true });
+      kette(vorlage(), ['2026-07-12', '2026-07-13']);
+      ausfuehren(`INSERT INTO streak_pausen (von, bis) VALUES ('2026-07-14', '2026-07-14')`);
+      const ohne = unberuehrt(() => sammleHinweise(zeit('2026-07-15', '10:00')));
+      expect(ohne.gewinner).toBeNull();
+      expect(ohne.daneben).toEqual([]);
+    });
+    mitWelt(welt(), () => {
+      zone('UTC');
+      schalter({ streak: true, rueckkehr: true });
+      kette(vorlage(), ['2026-07-12', '2026-07-13']);
+      ausfuehren(`INSERT INTO streak_pausen (von, bis) VALUES ('2026-07-14', '2026-07-14')`);
+      const id = rueckkehrOffen('2026-07-10', '2026-07-20');
+      const mit = unberuehrt(() => sammleHinweise(zeit('2026-07-15', '10:00')));
+      expect(mit.gewinner).toEqual({ art: 'rueckkehr', name: '2026-07-20', ziel: '/', bezugId: id });
+      expect(mit.daneben).toEqual([]);
+    });
+  });
 });

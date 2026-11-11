@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.16',
+    seiten: 'Heute',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.15',
     seiten: 'Bereiche, Heute, Konto, Profil',
     abschnitte: [

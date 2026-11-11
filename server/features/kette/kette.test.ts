@@ -14,7 +14,10 @@ import { erstelleEintrag } from '../eintraege/eintraege.ts';
 import { aendereEinstellungen, ladeEinstellungen } from '../einstellungen/einstellungen.ts';
 import { leseSchutzSchwelle, leseSchutzVorrat, schreibeSchutzSchwelle, schreibeSchutzVorrat } from '../einstellungen/einstellungen.ts';
 import { erstelleVorlage } from '../taetigkeiten/vorlagen.ts';
-import { momentumFuerTag } from '../../services/serie.ts';
+import { momentumFuerTag, pausiereStreak, setzeStreakFort } from '../../services/serie.ts';
+import { ladeKennzahlen } from '../erfolge/erfolge.ts';
+import { ladeStatistiken } from '../statistiken/statistiken.ts';
+import { pflegeRueckkehr } from './rueckkehr.ts';
 import { schutzSchema } from '../../validierung.ts';
 import { ladeKetteHeute, SCHUTZ_HEUTE_NEIN, setzeSchutzEin } from './kette.ts';
 import { ketteRouten } from './routen.ts';
@@ -410,6 +413,121 @@ describe('Momentum mit Brücke', () => {
       roh(vorlageId(), MONTAG);
       expect(momentumFuerTag(DIENSTAG)).toBe(momentumFuerSerie(2));
       expect(ladeKetteHeute(mittag(DIENSTAG)).angeschlagen).toBeNull();
+    });
+  });
+});
+
+describe('Pause der Tageskette', () => {
+  it('lässt fünf Tage ohne Eintrag die Länge stehen und öffnet keine Rückkehr', () => {
+    mitWelt(welt(), () => {
+      const vorlage = vorlageId();
+      roh(vorlage, '2026-04-28');
+      roh(vorlage, '2026-04-29');
+      roh(vorlage, '2026-04-30');
+      pausiereStreak('2026-05-01');
+      setzeStreakFort('2026-05-06');
+      expect(ladeKetteHeute(mittag('2026-05-03')).serie).toEqual({ laenge: 3, angeknackst: false });
+      expect(ladeKetteHeute(mittag('2026-05-06')).serie).toEqual({ laenge: 3, angeknackst: false });
+      expect(momentumFuerTag('2026-05-03')).toBe(1);
+      roh(vorlage, '2026-05-03');
+      expect(ladeKetteHeute(mittag('2026-05-06')).serie).toEqual({ laenge: 3, angeknackst: false });
+      pflegeRueckkehr(mittag('2026-05-06'));
+      expect(alle('SELECT id FROM rueckkehr')).toEqual([]);
+      const gebucht = logge(vorlage, '2026-05-06');
+      expect(gebucht.eintrag.faktor).toBe(momentumFuerSerie(4));
+      expect(ladeKetteHeute(mittag('2026-05-06')).serie).toEqual({ laenge: 4, angeknackst: false });
+      expect(alle('SELECT id FROM rueckkehr')).toEqual([]);
+    });
+  });
+
+  it('behält Faktor und XP der Buchung vor der Pause', () => {
+    mitWelt(welt(), () => {
+      const vorlage = vorlageId();
+      roh(vorlage, '2026-04-28');
+      roh(vorlage, '2026-04-29');
+      const erste = logge(vorlage, '2026-04-30');
+      const faktor = erste.eintrag.faktor;
+      const xp = eine<{ xp: number }>(
+        'SELECT COALESCE(SUM(xp), 0) AS xp FROM xp_ereignisse WHERE eintrag_id = ?',
+        erste.eintrag.id,
+      )?.xp;
+      expect(faktor).toBe(momentumFuerSerie(3));
+      pausiereStreak('2026-04-30');
+      expect(momentumFuerTag('2026-04-30')).toBe(1);
+      expect(momentumFuerTag('2026-05-01')).toBe(1);
+      const zweite = logge(vorlage, '2026-05-01');
+      expect(zweite.eintrag.faktor).toBe(1);
+      expect(eine<{ faktor: number }>('SELECT faktor FROM eintraege WHERE id = ?', erste.eintrag.id)?.faktor).toBe(faktor);
+      expect(
+        eine<{ xp: number }>('SELECT COALESCE(SUM(xp), 0) AS xp FROM xp_ereignisse WHERE eintrag_id = ?', erste.eintrag.id)?.xp,
+      ).toBe(xp);
+    });
+  });
+
+  it('wirft den Schutz in der Pause und schreibt keine Brücke', () => {
+    mitWelt(welt(), () => {
+      kette(vorlageId(), '2026-04-30', 5);
+      schreibeSchutzVorrat(1);
+      pausiereStreak('2026-05-01');
+      expect(() => setzeSchutzEin(mittag('2026-05-03'))).toThrow(SCHUTZ_HEUTE_NEIN);
+      expect(bruecken()).toEqual([]);
+      expect(leseSchutzVorrat()).toBe(1);
+      expect(protokolle('schutz_eingesetzt')).toEqual([]);
+    });
+  });
+
+  it('lässt eine offene Frist über die Pause offen, ohne frist_am umzuschreiben', () => {
+    mitWelt(welt(), () => {
+      roh(vorlageId(), '2026-04-30');
+      pausiereStreak('2026-05-01');
+      setzeStreakFort('2026-05-06');
+      ausfuehren(`INSERT INTO rueckkehr (status, geoeffnet_am, frist_am) VALUES ('offen', '2026-04-26', '2026-05-03')`);
+      pflegeRueckkehr(mittag('2026-05-06'));
+      expect(
+        alle<{ status: string; geoeffnetAm: string; fristAm: string }>(
+          'SELECT status, geoeffnet_am AS geoeffnetAm, frist_am AS fristAm FROM rueckkehr',
+        ),
+      ).toEqual([{ status: 'offen', geoeffnetAm: '2026-04-26', fristAm: '2026-05-03' }]);
+      expect(ladeKetteHeute(mittag('2026-05-06')).rueckkehr).toEqual({ fristAm: '2026-05-03' });
+    });
+  });
+
+  it('löscht die offene Zeile am selben Tag und lässt den zweiten Aufruf stehen', () => {
+    mitWelt(welt(), () => {
+      pausiereStreak('2026-05-06');
+      pausiereStreak('2026-05-06');
+      expect(eine<{ anzahl: number }>('SELECT COUNT(*) AS anzahl FROM streak_pausen')?.anzahl).toBe(1);
+      setzeStreakFort('2026-05-06');
+      expect(eine<{ anzahl: number }>('SELECT COUNT(*) AS anzahl FROM streak_pausen')?.anzahl).toBe(0);
+      setzeStreakFort('2026-05-06');
+      expect(eine<{ anzahl: number }>('SELECT COUNT(*) AS anzahl FROM streak_pausen')?.anzahl).toBe(0);
+      pausiereStreak('2026-05-01');
+      setzeStreakFort('2026-05-06');
+      expect(alle<{ von: string; bis: string }>('SELECT von, bis FROM streak_pausen')).toEqual([
+        { von: '2026-05-01', bis: '2026-05-05' },
+      ]);
+      setzeStreakFort('2026-05-08');
+      expect(alle<{ von: string; bis: string }>('SELECT von, bis FROM streak_pausen')).toEqual([
+        { von: '2026-05-01', bis: '2026-05-05' },
+      ]);
+    });
+  });
+
+  it('lässt die Streak-Kennzahl ruhen und zählt den Pausentag bei den aktiven Tagen', () => {
+    mitWelt(welt(), () => {
+      const vorlage = vorlageId();
+      roh(vorlage, '2026-04-28');
+      roh(vorlage, '2026-04-29');
+      roh(vorlage, '2026-04-30');
+      roh(vorlage, '2026-05-03');
+      pausiereStreak('2026-05-01');
+      setzeStreakFort('2026-05-06');
+      const kennzahlen = ladeKennzahlen();
+      expect(kennzahlen.streak).toBe(3);
+      expect(kennzahlen.aktiveTage).toBe(4);
+      const statistik = ladeStatistiken('gesamt', mittag('2026-05-06')).kennzahlen;
+      expect(statistik.laengsterStreak).toBe(3);
+      expect(statistik.aktiveTage).toBe(4);
     });
   });
 });

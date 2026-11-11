@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.',
+    'While the daily streak is paused, its length stays. New entries get no momentum during that time. Protection and an open return stay on hold.',
+  ],
+  [
     'Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.',
     'Achievements, titles and the tips on Today can be hidden. The tips apply to this device only.',
   ],

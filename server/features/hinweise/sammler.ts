@@ -1,7 +1,7 @@
 import type { Einstellungen } from '../../../shared/api/einstellungen.ts';
 import { datumInZone, tagPlus, uhrInZone } from '../../../shared/spiel/datum.ts';
 import { HINWEIS_REIHENFOLGE, waehleHinweis, type HinweisAnlass } from '../../../shared/spiel/hinweis.ts';
-import { kettenStand } from '../../../shared/spiel/kette.ts';
+import { kettenStand, type Pause } from '../../../shared/spiel/kette.ts';
 import { istAn } from '../../../shared/spiel/sichtbarkeit.ts';
 import { alle, eine } from '../../db.ts';
 import { leseJetzt } from '../../services/zeit.ts';
@@ -10,7 +10,7 @@ import { leseHinweisNichtVor, leseHinweisRuhe, leseHinweisSchalter } from '../ei
 
 const MINDESTLAENGE = 2;
 
-const TABELLEN = ['eintraege', 'streak_bruecken', 'rueckkehr', 'vorhaben', 'protokoll'] as const;
+const TABELLEN = ['eintraege', 'streak_bruecken', 'streak_pausen', 'rueckkehr', 'vorhaben', 'protokoll'] as const;
 type Sammeltabelle = (typeof TABELLEN)[number];
 
 /** Gewinner und die übrigen angeschalteten Anlässe. Beide leer heißt: nichts schreiben. */
@@ -56,8 +56,18 @@ function bruecken(): string[] {
   return alle<{ tag: string }>('SELECT tag FROM streak_bruecken').map((zeile) => zeile.tag);
 }
 
+function pausen(): Pause[] {
+  if (!tabelleDa('streak_pausen')) {
+    return [];
+  }
+  return alle<{ von: string; bis: string | null }>('SELECT von, bis FROM streak_pausen').map((zeile) => ({
+    von: zeile.von,
+    bis: zeile.bis,
+  }));
+}
+
 function streakAnlass(heute: string, zone: string | null): HinweisAnlass | null {
-  const stand = kettenStand(aktiveTage(zone), heute, bruecken());
+  const stand = kettenStand(aktiveTage(zone), heute, bruecken(), pausen());
   if (!stand.angeknackst || stand.laenge < MINDESTLAENGE) {
     return null;
   }

@@ -1,11 +1,11 @@
 import type { AttributKennung } from '../../../shared/spiel/begriffe.ts';
-import { rueckkehrFaellig } from '../../../shared/spiel/schutz.ts';
+import { rueckkehrFaellig, ruhendeFrist } from '../../../shared/spiel/schutz.ts';
 import { NEUER_ANLAUF } from '../../../shared/spiel/xp.ts';
-import { ausfuehren, eine, inTransaktion } from '../../db.ts';
+import { alle, ausfuehren, eine, inTransaktion } from '../../db.ts';
 import { aktivesAttribut } from '../attribute/attribute.ts';
 import { leseRueckkehrAb, schreibeRueckkehrAb } from '../einstellungen/einstellungen.ts';
 import { bucheAttributXp, type AttributBuchung } from '../../services/fortschritt.ts';
-import { ladeAktiveTage, ladeBrueckentage } from '../../services/serie.ts';
+import { ladeAktiveTage, ladeBrueckentage, ladePausen } from '../../services/serie.ts';
 import { leseJetzt, lokalesDatum } from '../../services/zeit.ts';
 
 export interface RueckkehrBuchung {
@@ -21,6 +21,7 @@ interface GeschlosseneRueckkehr {
 
 interface OffeneRueckkehr {
   id: number;
+  geoeffnetAm: string;
   fristAm: string;
   eintragId: number | null;
 }
@@ -63,12 +64,12 @@ function loescheProtokoll(art: string, rueckkehrId: number): void {
 }
 
 /** Eine offene Rückkehr nach der Frist wird zu, ohne XP und ohne offene Zeile. */
-function verstreicheOffene(heute: string): void {
+function verstreicheOffene(heute: string, pausen: ReturnType<typeof ladePausen>): void {
   const offen = eine<OffeneRueckkehr>(
-    `SELECT id, frist_am AS fristAm, eintrag_id AS eintragId
+    `SELECT id, geoeffnet_am AS geoeffnetAm, frist_am AS fristAm, eintrag_id AS eintragId
      FROM rueckkehr WHERE status = 'offen' ORDER BY id DESC LIMIT 1`,
   );
-  if (!offen || offen.eintragId !== null || heute <= offen.fristAm) {
+  if (!offen || offen.eintragId !== null || heute <= ruhendeFrist(offen.geoeffnetAm, offen.fristAm, heute, pausen)) {
     return;
   }
   ausfuehren(`UPDATE rueckkehr SET status = 'zu' WHERE id = ?`, offen.id);
@@ -115,7 +116,8 @@ export function pflegeRueckkehr(jetzt = leseJetzt()): void {
     if (leseRueckkehrAb() === null) {
       schreibeRueckkehrAb(heute);
     }
-    verstreicheOffene(heute);
+    const pausen = ladePausen();
+    verstreicheOffene(heute, pausen);
     const entscheid = rueckkehrFaellig({
       aktiveTage: ladeAktiveTage(),
       heute,
@@ -123,6 +125,7 @@ export function pflegeRueckkehr(jetzt = leseJetzt()): void {
       rueckkehrAb: leseRueckkehrAb(),
       offen: esGibtOffene(),
       schlussAm: letzterSchluss(),
+      pausen,
     });
     if (!entscheid.faellig || entscheid.status === null || entscheid.bruchtag === null || entscheid.fristAm === null) {
       return;
@@ -140,13 +143,15 @@ export function pflegeRueckkehr(jetzt = leseJetzt()): void {
 /** Nur aus erstelleEintrag, nachdem die anderen Boni des Eintrags geschrieben sind. */
 export function erfuelleRueckkehr(eintragId: number, tag: string, zeitpunkt: string): RueckkehrBuchung {
   return inTransaktion(() => {
-    const offen = eine<{ id: number }>(
-      `SELECT id FROM rueckkehr
-       WHERE status = 'offen' AND geoeffnet_am <= ? AND frist_am >= ?
-       ORDER BY id LIMIT 1`,
-      tag,
+    const pausen = ladePausen();
+    const kandidaten = alle<{ id: number; geoeffnetAm: string; fristAm: string }>(
+      `SELECT id, geoeffnet_am AS geoeffnetAm, frist_am AS fristAm
+       FROM rueckkehr
+       WHERE status = 'offen' AND geoeffnet_am <= ?
+       ORDER BY id`,
       tag,
     );
+    const offen = kandidaten.find((zeile) => tag <= ruhendeFrist(zeile.geoeffnetAm, zeile.fristAm, tag, pausen));
     if (!offen) {
       return LEER;
     }
@@ -161,13 +166,14 @@ export function erfuelleRueckkehr(eintragId: number, tag: string, zeitpunkt: str
  * Keine negative XP: entweder neu buchen oder nichts.
  */
 export function haengeRueckkehrUm(rueckkehrId: number, geoeffnetAm: string, fristAm: string, heute: string): void {
+  const wirksam = ruhendeFrist(geoeffnetAm, fristAm, heute, ladePausen());
   const anderer = eine<{ id: number; erstelltAm: string }>(
     `SELECT id, erstellt_am AS erstelltAm FROM eintraege
      WHERE date(erstellt_am, 'localtime') >= ? AND date(erstellt_am, 'localtime') <= ?
      ORDER BY date(erstellt_am, 'localtime'), id
      LIMIT 1`,
     geoeffnetAm,
-    fristAm,
+    wirksam,
   );
   if (anderer) {
     ausfuehren(`UPDATE rueckkehr SET status = 'geschafft', eintrag_id = ? WHERE id = ?`, anderer.id, rueckkehrId);
@@ -175,7 +181,7 @@ export function haengeRueckkehrUm(rueckkehrId: number, geoeffnetAm: string, fris
     return;
   }
   loescheProtokoll('rueckkehr_geschafft', rueckkehrId);
-  if (heute <= fristAm) {
+  if (heute <= wirksam) {
     ausfuehren(`UPDATE rueckkehr SET status = 'offen', eintrag_id = NULL WHERE id = ?`, rueckkehrId);
     return;
   }

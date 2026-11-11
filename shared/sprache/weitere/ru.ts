@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "Пока дневная серия на паузе, длина сохраняется. Новые записи при этом не получают импульс. Защита и открытое возвращение приостановлены.",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "Достижения, титулы и подсказки на «Сегодня» можно скрыть. Подсказки действуют только на этом устройстве.",
   "Erfolge und Titel": "Достижения и титулы",
   "Hinweise auf Heute": "Подсказки на «Сегодня»",

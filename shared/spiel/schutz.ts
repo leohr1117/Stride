@@ -6,7 +6,10 @@ import {
   brueckentag,
   kettenLaenge,
   kettenStand,
+  pausentageZwischen,
   tageZwischen,
+  tagInPause,
+  type Pause,
 } from './kette.ts';
 
 export { bruchtag, brueckeVerbindet, brueckentag };
@@ -43,6 +46,7 @@ export interface RueckkehrLage {
   rueckkehrAb: string | null;
   offen: boolean;
   schlussAm: string | null;
+  pausen?: readonly Pause[];
 }
 
 export interface RueckkehrEntscheid {
@@ -89,24 +93,28 @@ export function schutzHeuteMoeglich(
   heute: string,
   bruecken: readonly string[],
   vorrat: number,
+  pausen: readonly Pause[] = [],
 ): boolean {
-  if (vorrat !== SCHUTZ.vorratMax) {
+  if (vorrat !== SCHUTZ.vorratMax || tagInPause(heute, pausen)) {
     return false;
   }
-  const letzter = letzterTag(aktiveTage, heute);
+  const letzter = letzterTag(
+    pausen.length === 0 ? aktiveTage : aktiveTage.filter((tag) => !tagInPause(tag, pausen)),
+    heute,
+  );
   if (letzter === null || letzter === heute) {
     return false;
   }
-  if (tageZwischen(letzter, heute) !== BRUECKE_ABSTAND) {
+  if (tageZwischen(letzter, heute) - pausentageZwischen(letzter, heute, pausen) !== BRUECKE_ABSTAND) {
     return false;
   }
-  const bruecke = brueckentag(letzter);
+  const bruecke = brueckentag(letzter, pausen);
   if (bruecken.includes(bruecke)) {
     return false;
   }
-  const ohne = kettenStand(aktiveTage, heute, bruecken);
-  const mit = kettenStand(aktiveTage, heute, [...bruecken, bruecke]);
-  const alteLaenge = kettenLaenge(aktiveTage, letzter, bruecken);
+  const ohne = kettenStand(aktiveTage, heute, bruecken, pausen);
+  const mit = kettenStand(aktiveTage, heute, [...bruecken, bruecke], pausen);
+  const alteLaenge = kettenLaenge(aktiveTage, letzter, bruecken, pausen);
   return ohne.laenge === 0 && mit.laenge === alteLaenge && alteLaenge > 0;
 }
 
@@ -123,17 +131,51 @@ export function schwelleFuerEintrag(lage: SchwelleLage): SchwelleEntscheid {
   return { schwelle: gesehen, vorrat: 1, verdient: true };
 }
 
+function pauseTageBis(geoeffnetAm: string, frist: string, heute: string, pausen: readonly Pause[]): number {
+  const ende = frist < heute ? frist : heute;
+  if (ende <= geoeffnetAm) {
+    return 0;
+  }
+  return pausentageZwischen(geoeffnetAm, tagPlus(ende, 1), pausen);
+}
+
+export function ruhendeFrist(
+  geoeffnetAm: string,
+  fristAm: string,
+  heute: string,
+  pausen: readonly Pause[] = [],
+): string {
+  if (pausen.length === 0) {
+    return fristAm;
+  }
+  let frist = fristAm;
+  const schritte = Math.max(tageZwischen(geoeffnetAm, heute), 0) + 1;
+  for (let index = 0; index <= schritte; index += 1) {
+    const neu = tagPlus(fristAm, pauseTageBis(geoeffnetAm, frist, heute, pausen));
+    if (neu === frist) {
+      return frist;
+    }
+    frist = neu;
+  }
+  return frist;
+}
+
 export function rueckkehrFaellig(lage: RueckkehrLage): RueckkehrEntscheid {
-  const letzter = letzterTag(lage.aktiveTage, lage.heute);
+  const pausen = lage.pausen ?? [];
+  if (tagInPause(lage.heute, pausen)) {
+    return nichtFaellig();
+  }
+  const tage = pausen.length === 0 ? lage.aktiveTage : lage.aktiveTage.filter((tag) => !tagInPause(tag, pausen));
+  const letzter = letzterTag(tage, lage.heute);
   if (letzter === null) {
     return nichtFaellig();
   }
-  const bruch = bruchtag(letzter);
+  const bruch = bruchtag(letzter, pausen);
   const ab = lage.rueckkehrAb ?? lage.heute;
   if (bruch < ab || bruch > lage.heute) {
     return nichtFaellig();
   }
-  if (lage.bruecken.includes(brueckentag(letzter))) {
+  if (lage.bruecken.includes(brueckentag(letzter, pausen))) {
     return nichtFaellig();
   }
   if (lage.offen) {

@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Liegt die Tageskette in einer Pause, bleibt die Länge stehen. Neue Einträge bekommen dabei kein Momentum. Schutz und eine offene Rückkehr ruhen.": "Quand la série du jour est en pause, sa longueur reste. Les nouvelles entrées n’ont alors pas d’élan. La protection et un retour ouvert restent en pause.",
   "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "Les succès, les titres et les conseils sur Aujourd’hui peuvent être masqués. Les conseils ne valent que pour cet appareil.",
   "Erfolge und Titel": "Succès et titres",
   "Hinweise auf Heute": "Conseils sur Aujourd’hui",
