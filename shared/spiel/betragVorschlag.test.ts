@@ -77,6 +77,9 @@ describe('betragVorschlaege', () => {
     expect(wochenXp(posten, 2, { art: 'attribut', id: 1 })).toBe(60);
     expect(wochenXp(posten, 1, { art: 'attribut', id: 1 })).toBe(60);
     expect(wochenXp(posten, 2, { art: 'projekt', id: 9 })).toBe(130);
+    expect(wochenXp(posten, null, { art: 'projekt', id: 9 })).toBe(130);
+    expect(wochenXp(posten, null, { art: 'vision', id: 4 })).toBe(20);
+    expect(betragVorschlaege(posten, null, { art: 'projekt', id: 9 }, 4)).toEqual([150, 500, 1700]);
     expect(betragVorschlaege(posten, 2, { art: 'vision', id: 4 }, 4)).toEqual(fest);
     expect(betragVorschlaege(posten, 1, { art: 'projekt', id: 9 }, 1)).toEqual(fest);
     expect(betragVorschlaege(posten, 2, { art: 'projekt', id: 9 }, 4)).toEqual([150, 500, 1700]);

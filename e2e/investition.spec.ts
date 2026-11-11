@@ -1,5 +1,5 @@
 import { DatabaseSync } from 'node:sqlite';
-import { expect, test, type Page, type Route } from '@playwright/test';
+import { expect, test, type Locator, type Page, type Route } from '@playwright/test';
 import { meilensteineAus } from './helfer.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
@@ -432,11 +432,11 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
     const zahlWahl = page.getByRole('dialog', { name: 'Bezahlt mit' });
     await zahlWahl.getByRole('option', { name: 'Nichts', exact: true }).click();
     await expect(zahlWahl).toBeHidden();
-    await neu.getByRole('button', { name: 'Auch für · Keins' }).click();
-    const zielWahl = page.getByRole('dialog', { name: 'Auch für' });
+    await neu.getByRole('button', { name: 'Projekt · Keins' }).click();
+    const zielWahl = page.getByRole('dialog', { name: 'Projekt' });
     await zielWahl.getByRole('option', { name: ziel.name, exact: true }).click();
     await expect(zielWahl).toBeHidden();
-    await expect(neu.getByRole('button', { name: 'Bonus für · Ressourcen' })).toBeVisible();
+    await expect(neu.getByRole('button', { name: 'Attribut · Ressourcen' })).toBeVisible();
     await neu.getByRole('button', { name: 'Speichern' }).click();
     await expect(neu).toBeHidden();
     await expect(listeBereich.getByRole('button', { name, exact: true })).toBeVisible();
@@ -534,5 +534,268 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
         }, eintragIds),
       () => aktiveInvestitionenArchivieren(page, name),
     ]);
+  }
+});
+
+interface ZielWahl {
+  attribut: string | null;
+  projekt: string | null;
+}
+
+async function waehleOption(seite: Page, dialog: Locator, feld: string, jetzt: string, option: string): Promise<string> {
+  await dialog.getByRole('button', { name: `${feld} · ${jetzt}` }).click();
+  const wahl = seite.getByRole('dialog', { name: feld });
+  await wahl.getByRole('option', { name: option, exact: true }).click();
+  await expect(wahl).toBeHidden();
+  return option;
+}
+
+async function oeffneNeu(seite: Page): Promise<Locator> {
+  await seite.goto('/investitionen');
+  await seite.getByRole('button', { name: /Investition anlegen/ }).click();
+  const dialog = seite.getByRole('dialog', { name: 'Investition', exact: true });
+  await expect(dialog.getByRole('button', { name: 'Attribut · Ressourcen' })).toBeVisible();
+  return dialog;
+}
+
+async function legeEigene(seite: Page, name: string, ziel: ZielWahl): Promise<void> {
+  const dialog = await oeffneNeu(seite);
+  await dialog.getByRole('textbox', { name: 'Name' }).fill(name);
+  await dialog.getByRole('button', { name: 'Bezahlt mit · Ressourcen' }).click();
+  const zahl = seite.getByRole('dialog', { name: 'Bezahlt mit' });
+  await zahl.getByRole('option', { name: 'Nichts', exact: true }).click();
+  await expect(zahl).toBeHidden();
+  let attribut = 'Ressourcen';
+  if (ziel.attribut !== attribut) {
+    attribut = await waehleOption(seite, dialog, 'Attribut', attribut, ziel.attribut ?? 'Keins');
+  }
+  if (ziel.projekt) {
+    await waehleOption(seite, dialog, 'Projekt', 'Keins', ziel.projekt);
+  }
+  await dialog.getByRole('button', { name: 'Speichern' }).click();
+  await expect(dialog).toBeHidden();
+}
+
+function zeileVon(seite: Page, name: string): Locator {
+  return seite.locator('[data-zeile]').filter({ has: seite.getByRole('button', { name, exact: true }) });
+}
+
+async function kasten(ziel: Locator): Promise<{ x: number; y: number; width: number; height: number }> {
+  const box = await ziel.boundingBox();
+  expect(box).not.toBeNull();
+  if (!box) {
+    throw new Error('Element ohne Fläche');
+  }
+  return box;
+}
+
+async function liegtLinksDavor(links: Locator, rechts: Locator): Promise<void> {
+  const a = await kasten(links);
+  const b = await kasten(rechts);
+  expect(a.x + a.width).toBeLessThanOrEqual(b.x + 2);
+  const mitte = a.y + a.height / 2;
+  expect(mitte).toBeGreaterThanOrEqual(b.y - 2);
+  expect(mitte).toBeLessThanOrEqual(b.y + b.height + 2);
+}
+
+async function markeBeginntMitIcon(marke: Locator): Promise<void> {
+  const icon = marke.locator('svg');
+  const schrift = marke.locator('span');
+  await expect(icon).toHaveCount(1);
+  await liegtLinksDavor(icon, schrift);
+}
+
+async function entferneNamen(seite: Page, namen: string[]): Promise<void> {
+  await seite.evaluate(async (titel) => {
+    const antwort = await fetch('/api/investitionen');
+    if (!antwort.ok) {
+      return;
+    }
+    const liste = (await antwort.json()) as { id: number; name: string; archiviert: boolean; loeschbar: boolean }[];
+    for (const eintrag of liste) {
+      if (eintrag.archiviert || !titel.includes(eintrag.name)) {
+        continue;
+      }
+      if (eintrag.loeschbar) {
+        await fetch(`/api/investitionen/${eintrag.id}`, { method: 'DELETE' });
+      } else {
+        await fetch(`/api/investitionen/${eintrag.id}`, {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ archiviert: true }),
+        });
+      }
+    }
+  }, namen);
+  const db = new DatabaseSync(weltDatei(), { timeout: 5_000 });
+  try {
+    const loescheBuchung = db.prepare(
+      'DELETE FROM xp_ereignisse WHERE investition_id IN (SELECT id FROM investitionen WHERE name = ?)',
+    );
+    const loesche = db.prepare('DELETE FROM investitionen WHERE name = ?');
+    for (const name of namen) {
+      loescheBuchung.run(name);
+      loesche.run(name);
+    }
+  } finally {
+    db.close();
+  }
+}
+
+function zielDerZeile(name: string): { ziel_art: string | null; ziel_id: number | null } {
+  const db = new DatabaseSync(weltDatei(), { timeout: 5_000 });
+  try {
+    const zeile = db.prepare('SELECT ziel_art, ziel_id FROM investitionen WHERE name = ?').get(name) as
+      | { ziel_art: string | null; ziel_id: number | null }
+      | undefined;
+    if (!zeile) {
+      throw new Error('Investition fehlt');
+    }
+    return zeile;
+  } finally {
+    db.close();
+  }
+}
+
+test('Investition zielt auf Attribut, Projekt, Vision oder beides', async ({ page }) => {
+  const namen = ['Nur Attribut', 'Nur Projekt', 'Nur Vision', 'Beides'];
+  await anmelden(page);
+  await entferneNamen(page, namen);
+  try {
+    const dialog = await oeffneNeu(page);
+    await dialog.getByRole('heading', { name: 'Wirkung' }).scrollIntoViewIfNeeded();
+    const attributKnopf = dialog.getByRole('button', { name: 'Attribut · Ressourcen' });
+    const projektKnopf = dialog.getByRole('button', { name: 'Projekt · Keins' });
+    const attributLage = await kasten(attributKnopf);
+    const projektLage = await kasten(projektKnopf);
+    expect(attributLage.y + attributLage.height).toBeLessThanOrEqual(projektLage.y + 1);
+    expect(Math.abs(attributLage.x - projektLage.x)).toBeLessThan(4);
+
+    await attributKnopf.click();
+    const attributWahl = page.getByRole('dialog', { name: 'Attribut' });
+    await expect(attributWahl.getByRole('option').first()).toHaveText('Keins');
+    await attributWahl.getByRole('option', { name: 'Ressourcen', exact: true }).click();
+    await expect(attributWahl).toBeHidden();
+    await projektKnopf.click();
+    const projektWahl = page.getByRole('dialog', { name: 'Projekt' });
+    await expect(projektWahl.getByRole('option').first()).toHaveText('Keins');
+    await projektWahl.getByRole('option', { name: 'Keins', exact: true }).click();
+    await expect(projektWahl).toBeHidden();
+
+    await dialog.getByRole('button', { name: 'Bezahlt mit · Ressourcen' }).click();
+    const zahl = page.getByRole('dialog', { name: 'Bezahlt mit' });
+    await zahl.getByRole('option', { name: 'Nichts', exact: true }).click();
+    await expect(zahl).toBeHidden();
+    await waehleOption(page, dialog, 'Attribut', 'Ressourcen', 'Keins');
+    const speichern = dialog.getByRole('button', { name: 'Speichern' });
+    await expect(speichern).toBeEnabled();
+    await speichern.click();
+    const fehler = dialog.locator('[data-feld="attribut"] [role="alert"]');
+    await expect(fehler).toHaveText('Wähle ein Attribut oder ein Projekt.');
+    await expect(speichern).toBeEnabled();
+    await expect(dialog).toBeVisible();
+    const fehlerLage = await kasten(fehler);
+    const oben = await kasten(dialog.getByRole('button', { name: 'Attribut · Keins' }));
+    const unten = await kasten(dialog.getByRole('button', { name: 'Projekt · Keins' }));
+    expect(oben.y + oben.height).toBeLessThanOrEqual(fehlerLage.y + 1);
+    expect(fehlerLage.y).toBeLessThan(unten.y);
+    expect(fehlerLage.x).toBeGreaterThanOrEqual(oben.x - 2);
+    await expect(dialog.locator('[data-feld="attribut"] button').first()).toBeFocused();
+
+    await dialog.getByRole('textbox', { name: 'Name' }).fill('Nur Attribut');
+    await waehleOption(page, dialog, 'Attribut', 'Keins', 'Körper');
+    await speichern.click();
+    await expect(dialog).toBeHidden();
+    const nurAttribut = zeileVon(page, 'Nur Attribut').locator('[data-investition-neben]');
+    await expect(nurAttribut.getByText('Körper', { exact: true })).toBeVisible();
+    await expect(nurAttribut.locator('[data-ziel]')).toHaveCount(0);
+    await expect(nurAttribut.locator('svg')).toHaveCount(0);
+
+    await legeEigene(page, 'Nur Projekt', { attribut: null, projekt: 'Ausdauer' });
+    const nurProjekt = zeileVon(page, 'Nur Projekt').locator('[data-investition-neben]');
+    const projektMarke = nurProjekt.locator('[data-ziel="projekt"]');
+    await expect(projektMarke).toHaveAttribute('data-icon', 'target');
+    await expect(nurProjekt).not.toContainText('Körper');
+    await expect(nurProjekt).not.toContainText('Ressourcen');
+    await markeBeginntMitIcon(projektMarke);
+    await expect(nurProjekt.locator('svg')).toHaveCount(1);
+
+    await legeEigene(page, 'Nur Vision', { attribut: null, projekt: 'Fit und belastbar' });
+    const nurVision = zeileVon(page, 'Nur Vision').locator('[data-investition-neben]');
+    const visionMarke = nurVision.locator('[data-ziel="vision"]');
+    await expect(visionMarke).toHaveAttribute('data-icon', 'flag');
+    await markeBeginntMitIcon(visionMarke);
+
+    await legeEigene(page, 'Beides', { attribut: 'Körper', projekt: 'Ausdauer' });
+    const beides = zeileVon(page, 'Beides').locator('[data-investition-neben]');
+    const beidesMarke = beides.locator('[data-ziel="projekt"]');
+    await expect(beidesMarke).toHaveAttribute('data-icon', 'target');
+    await liegtLinksDavor(beides.getByText('Körper', { exact: true }), beidesMarke);
+    await markeBeginntMitIcon(beidesMarke);
+
+    const bank = zeileVon(page, 'Trainingsbank').locator('[data-investition-neben]');
+    const bankMarke = bank.locator('[data-ziel="vision"]');
+    await expect(bankMarke).toHaveAttribute('data-icon', 'flag');
+    await liegtLinksDavor(bank.getByText('Körper', { exact: true }), bankMarke);
+  } finally {
+    await entferneNamen(page, namen);
+  }
+});
+
+test('Eine alte Investition mit zweitem Attribut bleibt, bis ein Projekt gewählt wird', async ({ page }) => {
+  const name = 'Altziel zweites Attribut';
+  await anmelden(page);
+  await entferneNamen(page, [name]);
+  const ids = await page.evaluate(async () => {
+    const antwort = await fetch('/api/attribute');
+    if (!antwort.ok) {
+      throw new Error('Attribute nicht geladen');
+    }
+    return (await antwort.json()) as { id: number; kennung: string | null }[];
+  });
+  const koerper = ids.find((eintrag) => eintrag.kennung === 'koerper');
+  const ressourcen = ids.find((eintrag) => eintrag.kennung === 'ressourcen');
+  expect(koerper).toBeTruthy();
+  expect(ressourcen).toBeTruthy();
+  if (!koerper || !ressourcen) {
+    return;
+  }
+  const db = new DatabaseSync(weltDatei(), { timeout: 5_000 });
+  try {
+    db.prepare(
+      `INSERT INTO investitionen (name, icon, groesse, bonus, ziel_art, ziel_id, attribut_id, archiviert, betrag)
+       VALUES (?, 'gem', 1, 0.1, 'attribut', ?, ?, 0, 0)`,
+    ).run(name, ressourcen.id, koerper.id);
+  } finally {
+    db.close();
+  }
+  try {
+    await page.goto('/investitionen');
+    await page.getByRole('button', { name, exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Investition', exact: true });
+    const hinweis = dialog.getByText('Wirkt auch auf Ressourcen', { exact: true });
+    await expect(hinweis).toBeVisible();
+    const hinweisLage = await kasten(hinweis);
+    const projektLage = await kasten(dialog.getByRole('button', { name: 'Projekt · Keins' }));
+    expect(projektLage.y + projektLage.height).toBeLessThanOrEqual(hinweisLage.y + 1);
+    await dialog.getByRole('button', { name: 'Speichern' }).click();
+    await expect(dialog).toBeHidden();
+    expect(zielDerZeile(name)).toEqual({ ziel_art: 'attribut', ziel_id: ressourcen.id });
+
+    await page.getByRole('button', { name, exact: true }).click();
+    const erneut = page.getByRole('dialog', { name: 'Investition', exact: true });
+    await expect(erneut.getByText('Wirkt auch auf Ressourcen', { exact: true })).toBeVisible();
+    await waehleOption(page, erneut, 'Projekt', 'Keins', 'Ausdauer');
+    await expect(erneut.getByText('Wirkt auch auf Ressourcen')).toHaveCount(0);
+    await erneut.getByRole('button', { name: 'Speichern' }).click();
+    await expect(erneut).toBeHidden();
+    const danach = zielDerZeile(name);
+    expect(danach.ziel_art).toBe('projekt');
+    expect(danach.ziel_id).not.toBe(ressourcen.id);
+    const zeile = zeileVon(page, name).locator('[data-investition-neben]');
+    await expect(zeile.locator('[data-ziel="projekt"][data-icon="target"]')).toBeVisible();
+    await expect(zeile).not.toContainText('Ressourcen');
+  } finally {
+    await entferneNamen(page, [name]);
   }
 });

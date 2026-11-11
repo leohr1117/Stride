@@ -210,6 +210,38 @@ describe('endgültiges Löschen', () => {
       expect(() => loescheInvestition(nachher.id)).toThrow(/genutzt/);
     });
   });
+
+  it('löscht eine Investition auf ein Projekt, solange kein späterer Eintrag das Projekt trifft', () => {
+    mitWelt(welt(), () => {
+      const taetigkeit = vorlage('Tun');
+      const ziel = erstelleProjekt({
+        name: 'Werk',
+        beschreibung: '',
+        visionId: null,
+        organisationId: null,
+        standardVorlageId: taetigkeit,
+      });
+      const anderes = erstelleProjekt({
+        name: 'Neben',
+        beschreibung: '',
+        visionId: null,
+        organisationId: null,
+        standardVorlageId: taetigkeit,
+      });
+      const angelegt = erstelleInvestition({
+        name: 'Nur Projekt',
+        icon: 'gem',
+        groesse: 1,
+        attributId: null,
+        ziel: { art: 'projekt', id: ziel.id },
+      });
+      expect(istLoeschbar('investition', angelegt.id)).toBe(true);
+      eintrag({ projektId: anderes.id, vorlageId: taetigkeit });
+      expect(istLoeschbar('investition', angelegt.id)).toBe(true);
+      eintrag({ projektId: ziel.id, vorlageId: taetigkeit });
+      expect(() => loescheInvestition(angelegt.id)).toThrow(/genutzt/);
+    });
+  });
 });
 
 function knotenId(faehigkeit: { knoten: { id: number; titel: string }[] }, titel: string): number {

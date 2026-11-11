@@ -7,19 +7,18 @@ import type { Sichtbarkeit } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { IconAuswahl } from '../../components/IconAuswahl.tsx';
 import { ZeilenGruppe } from '../../components/Zeile.tsx';
-import { levelZahl, zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
 import { attributName, tx } from '../../text.ts';
 import { betragVorschlaege } from '../../../../shared/spiel/betragVorschlag.ts';
 import { EINGABE_STIL, Fehlermeldung, Knopf } from '../../ui/index.ts';
 import { BetragFeld, BonusSegment } from './betragFeld.tsx';
 import { EinzelWahl, type WahlOption } from './EinzelWahl.tsx';
+import { fassung, zielName } from './investitionFassung.ts';
 import {
   betragAusText,
   betragProblem,
   bisherigerBetrag,
   kurveFuerTyp,
-  levelDanach,
   verfuegbaresXp,
   zahlungVon,
 } from './zahlungAnzeige.ts';
@@ -113,13 +112,20 @@ export function InvestitionFormular({
   const [bezahltId, setBezahltId] = useState<number | null>(investition ? investition.bezahltAttributId : (ressourcen?.id ?? null));
   const [betragText, setBetragText] = useState(investition && investition.betrag > 0 ? String(investition.betrag) : '');
   const [betragGeprueft, setBetragGeprueft] = useState(false);
-  const [attributId, setAttributId] = useState<number | null>(investition?.attributId ?? ressourcen?.id ?? attribute[0]?.id ?? null);
-  const [ziel, setZiel] = useState<InvestitionsZiel | null>(investition?.ziel ?? null);
+  const [zielGeprueft, setZielGeprueft] = useState(false);
+  const [attributId, setAttributId] = useState<number | null>(
+    investition ? investition.attributId : (ressourcen?.id ?? attribute[0]?.id ?? null),
+  );
+  const [projektZiel, setProjektZiel] = useState<InvestitionsZiel | null>(
+    investition?.ziel && investition.ziel.art !== 'attribut' ? investition.ziel : null,
+  );
   const [serverFehler, setServerFehler] = useState<unknown>(null);
   const betragRef = useRef<HTMLInputElement>(null);
   const wahlRef = useRef<HTMLInputElement>(null);
+  const attributAnker = useRef<HTMLDivElement>(null);
   const basisId = useId();
-  const listen = listenFuerZiel(ziel, sichtbarkeit, ziele?.visionen ?? [], ziele?.projekte ?? [], attribute);
+  const altAttributZiel = investition?.ziel?.art === 'attribut' ? investition.ziel : null;
+  const listen = listenFuerZiel(projektZiel, sichtbarkeit, ziele?.visionen ?? [], ziele?.projekte ?? [], attribute);
   const bonusListe = waehlbareAttribute(attribute, sichtbarkeit.funktionen, attributId ?? undefined);
   const zahlungsListe = waehlbareAttribute(attribute, sichtbarkeit.funktionen, bezahltId ?? undefined);
   const zahlAttribut = attribute.find((eintrag) => eintrag.id === bezahltId) ?? null;
@@ -128,13 +134,15 @@ export function InvestitionFormular({
   const verfuegbar = zahlAttribut ? verfuegbaresXp(zahlAttribut.level.xpGesamt, zurueck) : 0;
   const problem = betragProblem(bezahltId !== null, betragText, verfuegbar);
   const betragZahl = betragAusText(betragText);
+  const vorschlagZiel = projektZiel ?? altAttributZiel;
   const vorschlaege = useMemo(
-    () => (rhythmus ? betragVorschlaege(rhythmus.posten, attributId, ziel, rhythmus.wochenMitEintraegen) : []),
-    [rhythmus, attributId, ziel],
+    () => (rhythmus ? betragVorschlaege(rhythmus.posten, attributId, vorschlagZiel, rhythmus.wochenMitEintraegen) : []),
+    [rhythmus, attributId, vorschlagZiel],
   );
-  const bonusText = bonusAttribut ? attributName(bonusAttribut) : tx('Wähle ein Attribut.');
+  const attributText = bonusAttribut ? attributName(bonusAttribut) : null;
   const zahlText = nameVonAttribut(bezahltId, attribute, tx('Nichts'));
-  const zielText = zielName(ziel, listen.visionen, listen.projekte, listen.attribute);
+  const projektText = projektZiel ? zielName(projektZiel, listen.visionen, listen.projekte, listen.attribute) : null;
+  const zielFehlt = attributId === null && projektZiel === null;
   const feldId = `${basisId}-betrag`;
   const fehlerId = `${basisId}-fehler`;
   const hinweisId = `${basisId}-hinweis`;
@@ -150,17 +158,16 @@ export function InvestitionFormular({
 
   const speichern = useMutation({
     mutationFn: async () => {
-      if (attributId === null) {
-        throw new Error(tx('Wähle ein Attribut.'));
-      }
       const daten: InvestitionDaten = {
         name: name.trim(),
         icon,
         groesse,
         attributId,
-        ziel,
         ...zahlungVon(bezahltId, betragText),
       };
+      if (!(altAttributZiel && projektZiel === null)) {
+        daten.ziel = projektZiel;
+      }
       if (investition) {
         const aenderung: InvestitionAenderung = daten;
         return api.aendereInvestition(investition.id, aenderung);
@@ -186,7 +193,9 @@ export function InvestitionFormular({
       betragRef.current?.focus();
       return;
     }
-    if (attributId === null) {
+    if (attributId === null && projektZiel === null) {
+      setZielGeprueft(true);
+      attributAnker.current?.querySelector('button')?.focus();
       return;
     }
     laeuft.current = true;
@@ -201,7 +210,8 @@ export function InvestitionFormular({
     bezahltId,
     betragZahl,
     zahlText,
-    bonusText,
+    attributText,
+    projektText,
     xpNeu: zahlAttribut && betragZahl !== null && betragZahl > 0 ? zahlAttribut.level.xpGesamt + zurueck - betragZahl : null,
     xpJetzt: zahlAttribut?.level.xpGesamt ?? 0,
     kurve: zahlAttribut ? kurveFuerTyp(zahlAttribut.typ) : kurveFuerTyp('attribut'),
@@ -211,12 +221,14 @@ export function InvestitionFormular({
     { wert: '', name: tx('Nichts') },
     ...zahlungsListe.map((eintrag) => ({ wert: String(eintrag.id), name: attributName(eintrag) })),
   ];
-  const bonusOptionen: WahlOption[] = bonusListe.map((eintrag) => ({ wert: String(eintrag.id), name: attributName(eintrag) }));
-  const zielOptionen: WahlOption[] = [
+  const bonusOptionen: WahlOption[] = [
+    { wert: '', name: tx('Keins') },
+    ...bonusListe.map((eintrag) => ({ wert: String(eintrag.id), name: attributName(eintrag) })),
+  ];
+  const projektOptionen: WahlOption[] = [
     { wert: '', name: tx('Keins') },
     ...listen.visionen.map((vision) => ({ wert: `vision:${vision.id}`, name: vision.titel, gruppe: 'Vision' })),
     ...listen.projekte.map((eintrag) => ({ wert: `projekt:${eintrag.id}`, name: eintrag.name, gruppe: 'Projekt' })),
-    ...listen.attribute.map((eintrag) => ({ wert: `attribut:${eintrag.id}`, name: attributName(eintrag), gruppe: 'Attribut' })),
   ];
 
   return (
@@ -246,7 +258,7 @@ export function InvestitionFormular({
               if (id === null) {
                 setBetragGeprueft(false);
               }
-              merkeWahl(id, attributId, ziel);
+              merkeWahl(id, attributId, projektZiel);
             }}
           />
         </ZeilenGruppe>
@@ -266,40 +278,52 @@ export function InvestitionFormular({
           />
         ) : null}
         <ZeilenGruppe titel="Wirkung" zwischen={<BonusSegment wert={groesse} onAendern={setGroesse} />}>
+          <div ref={attributAnker} data-feld="attribut">
+            <EinzelWahl
+              feld="Attribut"
+              wertName={attributText ?? tx('Keins')}
+              optionen={bonusOptionen}
+              wert={attributId === null ? '' : String(attributId)}
+              onWaehlen={(wert) => {
+                const id = wert === '' ? null : Number(wert);
+                setAttributId(id);
+                merkeWahl(bezahltId, id, projektZiel);
+              }}
+            />
+            {zielGeprueft && zielFehlt ? (
+              <p id={`${basisId}-ziel`} role="alert" className="feld-fehler px-4 pb-3 text-[13px] leading-[18px] break-words text-gefahr">
+                {tx('Wähle ein Attribut oder ein Projekt.')}
+              </p>
+            ) : null}
+          </div>
           <EinzelWahl
-            feld="Bonus für"
-            wertName={bonusText}
-            optionen={bonusOptionen}
-            wert={attributId === null ? '' : String(attributId)}
+            feld="Projekt"
+            wertName={projektText ?? tx('Keins')}
+            optionen={projektOptionen}
+            wert={zielWert(projektZiel)}
             onWaehlen={(wert) => {
-              const id = Number(wert);
-              setAttributId(id);
-              merkeWahl(bezahltId, id, ziel);
-            }}
-          />
-          <EinzelWahl
-            feld="Auch für"
-            wertName={zielText}
-            optionen={zielOptionen}
-            wert={zielWert(ziel)}
-            onWaehlen={(wert) => {
-              const naechstes = zielAusWert(wert);
-              setZiel(naechstes);
+              const naechstes = projektAusWert(wert);
+              setProjektZiel(naechstes);
               merkeWahl(bezahltId, attributId, naechstes);
             }}
           />
         </ZeilenGruppe>
+        {altAttributZiel && projektZiel === null ? (
+          <p className="text-[13px] leading-[18px] text-leise">
+            {tx('Wirkt auch auf {name}', { name: nameVonAttribut(altAttributZiel.id, attribute, tx('Attribut')) })}
+          </p>
+        ) : null}
         <IconAuswahl wert={icon} farbe={NEUTRAL_FARBE} onAendern={setIcon} />
         <input
           ref={wahlRef}
           disabled
           tabIndex={-1}
           aria-hidden="true"
-          defaultValue={`${bezahltId ?? ''}|${attributId ?? ''}|${zielWert(ziel)}`}
+          defaultValue={`${bezahltId ?? ''}|${attributId ?? ''}|${zielWert(projektZiel)}`}
           className="pointer-events-none absolute h-px w-px overflow-hidden opacity-0"
         />
         <Fehlermeldung fehler={serverFehler} />
-        <p className="text-[13px] leading-[18px] text-leise">{zusammenfassung}</p>
+        {zusammenfassung ? <p className="text-[13px] leading-[18px] text-leise">{zusammenfassung}</p> : null}
         <Knopf type="submit" variante="primaer" className="w-full">
           {tx('Speichern')}
         </Knopf>
@@ -308,44 +332,11 @@ export function InvestitionFormular({
   );
 }
 
-function zielName(ziel: InvestitionsZiel | null, visionen: Vision[], projekte: Projekt[], attribute: Attribut[]): string {
-  if (!ziel) {
-    return tx('Keins');
+function projektAusWert(wert: string): InvestitionsZiel | null {
+  const ziel = zielAusWert(wert);
+  if (!ziel || ziel.art === 'attribut') {
+    return null;
   }
-  if (ziel.art === 'vision') {
-    return visionen.find((vision) => vision.id === ziel.id)?.titel ?? tx('Keins');
-  }
-  if (ziel.art === 'projekt') {
-    return projekte.find((eintrag) => eintrag.id === ziel.id)?.name ?? tx('Keins');
-  }
-  return nameVonAttribut(ziel.id, attribute, tx('Keins'));
+  return ziel;
 }
 
-function fassung(angaben: {
-  bezahltId: number | null;
-  betragZahl: number | null;
-  zahlText: string;
-  bonusText: string;
-  xpNeu: number | null;
-  xpJetzt: number;
-  kurve: ReturnType<typeof kurveFuerTyp>;
-}): string {
-  const kostenlos = angaben.bezahltId === null || angaben.betragZahl === 0;
-  const basis = kostenlos
-    ? tx('Kostenlos · Bonus für {name}', { name: angaben.bonusText })
-    : angaben.betragZahl !== null && angaben.betragZahl > 0
-      ? tx('Kostet {xp} XP aus {name} · Bonus für {bonus}', {
-          xp: zahl(angaben.betragZahl),
-          name: angaben.zahlText,
-          bonus: angaben.bonusText,
-        })
-      : tx('Bonus für {name}', { name: angaben.bonusText });
-  if (angaben.xpNeu === null || angaben.betragZahl === null || angaben.betragZahl <= 0) {
-    return basis;
-  }
-  const fall = levelDanach(angaben.xpJetzt, angaben.xpNeu, angaben.kurve);
-  if (fall === null) {
-    return basis;
-  }
-  return `${basis} · ${tx('{name} fällt auf Level {level}', { name: angaben.zahlText, level: levelZahl(fall) })}`;
-}

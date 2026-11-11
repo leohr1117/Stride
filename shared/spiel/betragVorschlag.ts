@@ -33,7 +33,7 @@ export function rundeBetrag(xp: number): number {
   return Math.round(xp / VORSCHLAG_RUNDUNG) * VORSCHLAG_RUNDUNG;
 }
 
-/** Wochenwert W der Attribute und des Ziels unter „Bonus für“ und „Auch für“. Dasselbe Ziel zählt einmal. */
+/** Wochenwert W des Attributs und des Projekt- oder Visionsziels. Dasselbe Ziel zählt einmal. */
 export function wochenXp(
   posten: readonly BetragPosten[],
   bonusAttributId: number | null,

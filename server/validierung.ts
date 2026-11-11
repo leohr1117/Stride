@@ -217,17 +217,39 @@ export const projektAenderungSchema = projektSchema.partial().extend({
   geschafft: z.boolean().optional(),
 });
 
-export const investitionSchema = z.object({
+const eigenesZielSchema = z.object({
+  art: z.enum(['vision', 'projekt']),
+  id: z.number().int().positive(),
+});
+
+const ZIEL_FEHLT = 'Wähle ein Attribut oder ein Projekt.';
+
+const investitionFelder = {
   name: pflichtText('Der Name', GRENZEN.nameMax),
   icon: z.enum(ICONS),
   groesse: investitionsGroesse,
-  attributId: z.number().int().positive(),
-  ziel: investitionsZielSchema.nullable().optional(),
+  attributId: z.number().int().positive().nullable().optional(),
+  ziel: eigenesZielSchema.nullable().optional(),
   bezahltAttributId: z.number().int().positive().nullable().optional(),
   betrag: z.number().int().min(0).optional(),
-});
+};
 
-export const investitionAenderungSchema = investitionSchema.partial().extend(archiviert);
+export const investitionSchema = z
+  .object(investitionFelder)
+  .refine((daten) => daten.attributId != null || daten.ziel != null, ZIEL_FEHLT);
+
+export const investitionAenderungSchema = z
+  .object({
+    name: investitionFelder.name.optional(),
+    icon: investitionFelder.icon.optional(),
+    groesse: investitionFelder.groesse.optional(),
+    attributId: investitionFelder.attributId,
+    ziel: investitionFelder.ziel,
+    bezahltAttributId: investitionFelder.bezahltAttributId,
+    betrag: investitionFelder.betrag,
+    archiviert: z.boolean().optional(),
+  })
+  .refine((daten) => !(daten.attributId === null && daten.ziel === null), ZIEL_FEHLT);
 
 export const vorhabenSchema = z.object({
   titel: pflichtText('Der Titel', GRENZEN.nameMax),

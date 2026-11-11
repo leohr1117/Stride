@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "Una inversión puede aplicarse ahora a un atributo, a un proyecto o a ambos. Al menos un objetivo sigue siendo obligatorio. Las inversiones existentes se quedan como están.",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "La pérdida si no se usa desaparece. Los atributos solo pierden XP con el tiempo, cuando no reciben entradas.",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "En el formulario de actividades, un deslizamiento vertical sobre los reguladores desplaza la página en lugar de cambiar el valor.",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "Las actividades reparten porcentajes fijos. Por debajo del 100 %, el resto no va a ningún atributo. Un menos resta XP, nunca por debajo de 0.",
@@ -200,6 +201,12 @@ export const TEXTE: Record<string, string> = {
   "Bonus für {name}": "Bonificación para {name}",
   "Kostenlos · Bonus für {name}": "Gratis · Bonificación para {name}",
   "Kostet {xp} XP aus {name} · Bonus für {bonus}": "Cuesta {xp} XP de {name} · Bonificación para {bonus}",
+  "Kostet {xp} XP aus {name} · Bonus für {bonus} und {ziel}": "Cuesta {xp} XP de {name} · Bonificación para {bonus} y {ziel}",
+  "Kostet {xp} XP aus {name}": "Cuesta {xp} XP de {name}",
+  "Kostenlos · Bonus für {name} und {ziel}": "Gratis · Bonificación para {name} y {ziel}",
+  "Bonus für {name} und {ziel}": "Bonificación para {name} y {ziel}",
+  "Wähle ein Attribut oder ein Projekt.": "Elige un atributo o un proyecto.",
+  "Wirkt auch auf {name}": "También actúa sobre {name}",
   "Betrag eingeben oder „Nichts“ wählen": "Escribe un importe o elige «Nada»",
   "Nur {xp} XP verfügbar": "Solo {xp} XP disponibles",
   "Verfügbar: {xp} XP": "Disponible: {xp} XP",
@@ -1044,7 +1051,7 @@ export const TEXTE: Record<string, string> = {
   "Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.": "Un gran momento: una meta alcanzada, un récord nuevo o algo hecho por primera vez. Da más XP.",
   "Nur ein Datum. Nach der Deadline geht Disziplin verloren.": "Solo una fecha. Tras la fecha límite se pierde Disciplina.",
   "Bis zum Datum entsteht er. Danach greift er an.": "Hasta la fecha se forma. Después ataca.",
-  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "Una inversión puede costar XP de un atributo. Una inversión propia, o un proyecto terminado, da más XP de forma permanente.",
+  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP. Der Bonus gilt für beide. Boni auf dasselbe Ziel zählen zusammen bis zur Obergrenze.": "Una inversión puede costar XP de un atributo. Una inversión propia, o un proyecto terminado, da más XP de forma permanente. La bonificación vale para ambos. Las bonificaciones sobre el mismo objetivo se suman hasta el tope.",
   "Bonus gilt auch für Ressourcen": "El bonus también vale para Recursos",
   "Ressourcen werden mit investiert und bekommen denselben Bonus.": "Recursos también se invierte y recibe el mismo bonus.",
   "Tägliche Aufgaben zum Abhaken.": "Tareas diarias para marcar.",

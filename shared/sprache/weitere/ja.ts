@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "投資は、属性、プロジェクト、またはその両方に効くようになりました。対象は少なくとも一つ必要です。これまでの投資はそのままです。",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "使わないときの損失はなくなります。属性がXPを失うのは、記録がないときの時間の経過だけです。",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "活動のフォームでは、スライダー上を縦にスワイプすると値が変わらず、ページがスクロールします。",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "活動は固定の割合で配分します。100%未満の残りはどの属性にも入りません。マイナスはXPを引き、0未満にはなりません。",
@@ -200,6 +201,12 @@ export const TEXTE: Record<string, string> = {
   "Bonus für {name}": "ボーナス先 {name}",
   "Kostenlos · Bonus für {name}": "無料 · ボーナス先 {name}",
   "Kostet {xp} XP aus {name} · Bonus für {bonus}": "{xp} XP を {name} から · ボーナス先 {bonus}",
+  "Kostet {xp} XP aus {name} · Bonus für {bonus} und {ziel}": "{xp} XP を {name} から · ボーナス先 {bonus} と {ziel}",
+  "Kostet {xp} XP aus {name}": "{xp} XP を {name} から",
+  "Kostenlos · Bonus für {name} und {ziel}": "無料 · ボーナス先 {name} と {ziel}",
+  "Bonus für {name} und {ziel}": "ボーナス先 {name} と {ziel}",
+  "Wähle ein Attribut oder ein Projekt.": "属性かプロジェクトを選んでください。",
+  "Wirkt auch auf {name}": "{name} にも効きます",
   "Betrag eingeben oder „Nichts“ wählen": "金額を入力するか、「なし」を選んでください",
   "Nur {xp} XP verfügbar": "使えるのは {xp} XP だけ",
   "Verfügbar: {xp} XP": "使える XP：{xp}",
@@ -1044,7 +1051,7 @@ export const TEXTE: Record<string, string> = {
   "Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.": "大きな出来事。目標達成、新記録、初めてできたこと。XPが増えます。",
   "Nur ein Datum. Nach der Deadline geht Disziplin verloren.": "日付だけです。期限を過ぎると規律を失います。",
   "Bis zum Datum entsteht er. Danach greift er an.": "日付まで育ちます。そのあと攻撃します。",
-  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "投資は属性のXPを支払うことがあります。自分の投資か、達成したプロジェクトは、ずっと多くのXPを与えます。",
+  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP. Der Bonus gilt für beide. Boni auf dasselbe Ziel zählen zusammen bis zur Obergrenze.": "投資は属性のXPを支払うことがあります。自分の投資か、達成したプロジェクトは、ずっと多くのXPを与えます。ボーナスは両方に効きます。同じ対象へのボーナスは上限まで合算されます。",
   "Bonus gilt auch für Ressourcen": "ボーナスは資源にも適用されます",
   "Ressourcen werden mit investiert und bekommen denselben Bonus.": "資源も一緒に投資され、同じボーナスを受けます。",
   "Tägliche Aufgaben zum Abhaken.": "毎日チェックする課題。",

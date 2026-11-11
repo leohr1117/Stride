@@ -17,20 +17,8 @@ import { AnlegeZeile, Liste, Zeile, ZeileSchalter, ZeilenGruppe } from '../../co
 import { Chip, Fehlermeldung, Knopf, Ladeanzeige, Leer, Segmentauswahl } from '../../ui/index.ts';
 import { GroessenRegler } from './groesse.tsx';
 import { InvestitionFormular, listenFuerZiel } from './InvestitionBlatt.tsx';
+import { nebenDerInvestition, zielText } from './investitionNeben.tsx';
 import { loeschHinweis } from './zahlungAnzeige.ts';
-
-function zielText(ziel: InvestitionsZiel | null, visionen: Vision[], projekte: Projekt[], attribute: Attribut[]): string | null {
-  if (!ziel) {
-    return null;
-  }
-  if (ziel.art === 'vision') {
-    return visionen.find((vision) => vision.id === ziel.id)?.titel ?? null;
-  }
-  if (ziel.art === 'projekt') {
-    return projekte.find((projekt) => projekt.id === ziel.id)?.name ?? null;
-  }
-  return attribute.find((attribut) => attribut.id === ziel.id)?.name ?? null;
-}
 
 function gewaehlteArt(
   segment: InvestitionsArt | null,
@@ -216,8 +204,7 @@ export function InvestitionenSeite() {
       ) : (
         <Liste>
           {eigene.map((investition) => {
-            const ziel = investition.zielName ?? zielText(investition.ziel, visionen, alleProjekte, attribute);
-            const neben = [bonusProzent(investition.bonus), ziel].filter((teil) => teil).join(' · ');
+            const neben = nebenDerInvestition(investition, visionen, alleProjekte, attribute);
             return (
               <SchnellZeile
                 key={investition.id}

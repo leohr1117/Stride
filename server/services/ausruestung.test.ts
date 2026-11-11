@@ -346,14 +346,12 @@ describe('Investition aus einem Projekt', () => {
       expect(projektXp(mit.eintrag.id)).toBe(Math.round(projektXp(basis.eintrag.id) * 1.1));
       expect(attributXp(mit.eintrag.id, koerper)).toBe(Math.round(attributXp(basis.eintrag.id, koerper) * 1.1));
 
-      const nurAttribut = aendereInvestition(eigene.id, { ziel: { art: 'attribut', id: koerper } });
-      expect(nurAttribut.ziel).toEqual({ art: 'attribut', id: koerper });
-      expect(nurAttribut.zielName).not.toBe('Werkstatt');
+      expect(() => aendereInvestition(eigene.id, { ziel: { art: 'attribut', id: koerper } })).toThrow(/Attribut oder ein Projekt/);
+      const ohneProjekt = aendereInvestition(eigene.id, { ziel: null });
+      expect(ohneProjekt.ziel).toBeNull();
       const danach = eintrag(ziel.id, vorlageId, spaet);
       expect(danach.eintrag.ausruestungBonus).toBe(0);
       expect(attributXp(danach.eintrag.id, koerper)).toBe(attributXp(mit.eintrag.id, koerper));
-
-      expect(aendereInvestition(eigene.id, { ziel: null }).ziel).toBeNull();
       expect(() =>
         erstelleInvestition({
           name: 'Weg',

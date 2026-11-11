@@ -104,8 +104,8 @@ test('Investition trennt Kosten und Wirkung', async ({ page }, testInfo) => {
   await zeile(dialog.getByRole('heading', { name: 'Wirkung' }));
   await expect(dialog.getByRole('button', { name: 'Bezahlt mit · Ressourcen' })).toBeVisible();
   await expect(dialog.getByRole('textbox', { name: 'Eigener Betrag', exact: true })).toBeVisible();
-  await expect(dialog.getByRole('button', { name: 'Bonus für · Ressourcen' })).toBeVisible();
-  await expect(dialog.getByRole('button', { name: 'Auch für · Keins' })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Attribut · Ressourcen' })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Projekt · Keins' })).toBeVisible();
   const speichern = dialog.getByRole('button', { name: 'Speichern' });
   await expect(speichern).toBeEnabled();
 

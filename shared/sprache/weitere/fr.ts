@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "Un investissement peut maintenant porter sur un attribut, un projet ou les deux. Au moins une cible reste obligatoire. Les investissements existants restent tels quels.",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "La perte si inutilisé disparaît. Les attributs ne perdent des XP qu'avec le temps, lorsqu'ils ne reçoivent pas d'entrées.",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "Dans le formulaire des activités, un glissement vertical sur les curseurs fait défiler la page au lieu de déplacer la valeur.",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "Les activités répartissent des pourcentages fixes. Sous 100 %, le reste ne va à aucun attribut. Un moins retire de l'XP, jamais sous 0.",
@@ -200,6 +201,12 @@ export const TEXTE: Record<string, string> = {
   "Bonus für {name}": "Bonus pour {name}",
   "Kostenlos · Bonus für {name}": "Gratuit · Bonus pour {name}",
   "Kostet {xp} XP aus {name} · Bonus für {bonus}": "Coûte {xp} XP de {name} · Bonus pour {bonus}",
+  "Kostet {xp} XP aus {name} · Bonus für {bonus} und {ziel}": "Coûte {xp} XP de {name} · Bonus pour {bonus} et {ziel}",
+  "Kostet {xp} XP aus {name}": "Coûte {xp} XP de {name}",
+  "Kostenlos · Bonus für {name} und {ziel}": "Gratuit · Bonus pour {name} et {ziel}",
+  "Bonus für {name} und {ziel}": "Bonus pour {name} et {ziel}",
+  "Wähle ein Attribut oder ein Projekt.": "Choisis un attribut ou un projet.",
+  "Wirkt auch auf {name}": "Agit aussi sur {name}",
   "Betrag eingeben oder „Nichts“ wählen": "Saisis un montant ou choisis « Rien »",
   "Nur {xp} XP verfügbar": "Seulement {xp} XP disponibles",
   "Verfügbar: {xp} XP": "Disponible : {xp} XP",
@@ -1044,7 +1051,7 @@ export const TEXTE: Record<string, string> = {
   "Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.": "Un grand moment : un objectif atteint, un nouveau record, ou quelque chose fait pour la première fois. Ça donne plus d'XP.",
   "Nur ein Datum. Nach der Deadline geht Disziplin verloren.": "Juste une date. Après la date limite, tu perds de la Discipline.",
   "Bis zum Datum entsteht er. Danach greift er an.": "Il se forme jusqu'à la date. Ensuite il attaque.",
-  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "Un investissement peut coûter des XP d'un attribut. Un investissement à toi, ou un projet terminé, donne plus d'XP pour de bon.",
+  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP. Der Bonus gilt für beide. Boni auf dasselbe Ziel zählen zusammen bis zur Obergrenze.": "Un investissement peut coûter des XP d'un attribut. Un investissement à toi, ou un projet terminé, donne plus d'XP pour de bon. Le bonus vaut pour les deux. Les bonus sur la même cible s'additionnent jusqu'au plafond.",
   "Bonus gilt auch für Ressourcen": "Le bonus vaut aussi pour Ressources",
   "Ressourcen werden mit investiert und bekommen denselben Bonus.": "Ressources est aussi investi et reçoit le même bonus.",
   "Tägliche Aufgaben zum Abhaken.": "Tâches quotidiennes à cocher.",

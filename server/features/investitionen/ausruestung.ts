@@ -1,4 +1,11 @@
-import type { Investition, InvestitionAenderung, InvestitionDaten, InvestitionsArt, InvestitionsZiel } from '../../../shared/api/index.ts';
+import {
+  investitionsZieleGueltig,
+  type Investition,
+  type InvestitionAenderung,
+  type InvestitionDaten,
+  type InvestitionsArt,
+  type InvestitionsZiel,
+} from '../../../shared/api/index.ts';
 import type { AttributTyp } from '../../../shared/spiel/begriffe.ts';
 import { istTypAktiv } from '../../../shared/spiel/funktionen.ts';
 import { ausruestungsBonus, investitionsBonus } from '../../../shared/spiel/xp.ts';
@@ -70,7 +77,7 @@ export function bonusAufAttribut(attributId: number, zeitpunkt: string): number 
      WHERE n.archiviert = 0
        AND (
          n.attribut_id = ?
-         OR (n.ziel_art = 'attribut' AND n.ziel_id = ? AND n.attribut_id <> n.ziel_id)
+         OR (n.ziel_art = 'attribut' AND n.ziel_id = ? AND n.attribut_id IS NOT n.ziel_id)
        )`,
     zeitpunkt,
     attributId,
@@ -185,8 +192,8 @@ interface InvestitionZeile {
   zielArt: string | null;
   zielId: number | null;
   zielName: string | null;
-  attributId: number;
-  attributName: string;
+  attributId: number | null;
+  attributName: string | null;
   bezahltAttributId: number | null;
   betrag: number;
   archiviert: number;
@@ -205,7 +212,7 @@ const INVESTITION_ABFRAGE = `
            ELSE NULL
          END AS zielName
   FROM investitionen n
-  JOIN attribute a ON a.id = n.attribut_id
+  LEFT JOIN attribute a ON a.id = n.attribut_id
 `;
 
 function zuInvestition(zeile: InvestitionZeile): Investition {
@@ -254,10 +261,29 @@ function pruefeZahlung(zahlung: { bezahltAttributId: number | null; betrag: numb
   }
 }
 
+const ZIEL_FEHLT = 'Wähle ein Attribut oder ein Projekt.';
+
+function kanonZiel(ziel: InvestitionsZiel | null | undefined): InvestitionsZiel | null {
+  if (!ziel) {
+    return null;
+  }
+  if (ziel.art === 'attribut') {
+    throw ungueltig(ZIEL_FEHLT);
+  }
+  return ziel;
+}
+
 export function erstelleInvestition(daten: InvestitionDaten): Investition {
-  pruefeAttributZiel(daten.attributId);
-  if (daten.ziel) {
-    pruefeZiel(daten.ziel);
+  const attributId = daten.attributId ?? null;
+  const ziel = kanonZiel(daten.ziel);
+  if (!investitionsZieleGueltig(attributId, ziel)) {
+    throw ungueltig(ZIEL_FEHLT);
+  }
+  if (attributId !== null) {
+    pruefeAttributZiel(attributId);
+  }
+  if (ziel) {
+    pruefeZiel(ziel);
   }
   const zahlung = loeseZahlung(null, daten);
   pruefeZahlung(zahlung, null);
@@ -270,9 +296,9 @@ export function erstelleInvestition(daten: InvestitionDaten): Investition {
       daten.icon,
       groesse,
       investitionsBonus(groesse),
-      daten.ziel?.art ?? null,
-      daten.ziel?.id ?? null,
-      daten.attributId,
+      ziel?.art ?? null,
+      ziel?.id ?? null,
+      attributId,
       zahlung.bezahltAttributId,
       zahlung.betrag,
     );
@@ -285,11 +311,16 @@ export function erstelleInvestition(daten: InvestitionDaten): Investition {
 
 export function aendereInvestition(id: number, aenderung: InvestitionAenderung): Investition {
   const bisher = ladeInvestition(id);
-  if (aenderung.attributId !== undefined) {
-    pruefeAttributZiel(aenderung.attributId);
+  const attributId = aenderung.attributId !== undefined ? aenderung.attributId : bisher.attributId;
+  const ziel = aenderung.ziel !== undefined ? kanonZiel(aenderung.ziel) : bisher.ziel;
+  if (!investitionsZieleGueltig(attributId, ziel)) {
+    throw ungueltig(ZIEL_FEHLT);
   }
-  if (aenderung.ziel) {
-    pruefeZiel(aenderung.ziel);
+  if (attributId !== null && aenderung.attributId !== undefined) {
+    pruefeAttributZiel(attributId);
+  }
+  if (ziel && aenderung.ziel !== undefined) {
+    pruefeZiel(ziel);
   }
   const zahlung = loeseZahlung(bisher, aenderung);
   pruefeZahlung(zahlung, bisher);
@@ -309,8 +340,8 @@ export function aendereInvestition(id: number, aenderung: InvestitionAenderung):
     if (aenderung.ziel !== undefined) {
       ausfuehren(
         'UPDATE investitionen SET ziel_art = ?, ziel_id = ? WHERE id = ?',
-        aenderung.ziel?.art ?? null,
-        aenderung.ziel?.id ?? null,
+        ziel?.art ?? null,
+        ziel?.id ?? null,
         id,
       );
     }

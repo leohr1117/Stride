@@ -14,8 +14,8 @@ export interface Investition {
   bonus: number;
   ziel: InvestitionsZiel | null;
   zielName: string | null;
-  attributId: number;
-  attributName: string;
+  attributId: number | null;
+  attributName: string | null;
   bezahltAttributId: number | null;
   betrag: number;
   archiviert: boolean;
@@ -27,7 +27,7 @@ export interface InvestitionDaten {
   name: string;
   icon: string;
   groesse: number;
-  attributId: number;
+  attributId?: number | null;
   ziel?: InvestitionsZiel | null;
   bezahltAttributId?: number | null;
   betrag?: number;
@@ -37,9 +37,16 @@ export interface InvestitionAenderung {
   name?: string;
   icon?: string;
   groesse?: number;
-  attributId?: number;
+  attributId?: number | null;
   ziel?: InvestitionsZiel | null;
   bezahltAttributId?: number | null;
   betrag?: number;
   archiviert?: boolean;
+}
+
+export function investitionsZieleGueltig(attributId: number | null, ziel: InvestitionsZiel | null): boolean {
+  if (ziel?.art === 'attribut') {
+    return attributId !== null;
+  }
+  return attributId !== null || ziel !== null;
 }

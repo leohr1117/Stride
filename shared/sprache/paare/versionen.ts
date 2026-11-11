@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.',
+    'An investment can now apply to an attribute, a project, or both. At least one target stays required. Existing investments stay as they are.',
+  ],
+  [
     'Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.',
     'Loss when unused is gone. Attributes now lose XP only over time, when they get no entries.',
   ],

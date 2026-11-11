@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "Вложение теперь может действовать на атрибут, проект или на оба. Хотя бы одна цель остаётся обязательной. Существующие вложения остаются как есть.",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "Потеря без использования исчезает. Атрибуты теряют XP только со временем, если записей нет.",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "В форме занятия вертикальное движение по регуляторам прокручивает страницу и не сдвигает значение.",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "Занятия распределяют фиксированные проценты. Ниже 100 % остаток не идёт ни одному атрибуту. Минус снимает опыт, но не ниже 0.",
@@ -200,6 +201,12 @@ export const TEXTE: Record<string, string> = {
   "Bonus für {name}": "Бонус для {name}",
   "Kostenlos · Bonus für {name}": "Бесплатно · Бонус для {name}",
   "Kostet {xp} XP aus {name} · Bonus für {bonus}": "Стоит {xp} XP из {name} · Бонус для {bonus}",
+  "Kostet {xp} XP aus {name} · Bonus für {bonus} und {ziel}": "Стоит {xp} XP из {name} · Бонус для {bonus} и {ziel}",
+  "Kostet {xp} XP aus {name}": "Стоит {xp} XP из {name}",
+  "Kostenlos · Bonus für {name} und {ziel}": "Бесплатно · Бонус для {name} и {ziel}",
+  "Bonus für {name} und {ziel}": "Бонус для {name} и {ziel}",
+  "Wähle ein Attribut oder ein Projekt.": "Выбери атрибут или проект.",
+  "Wirkt auch auf {name}": "Действует также на {name}",
   "Betrag eingeben oder „Nichts“ wählen": "Введи сумму или выбери «Ничего»",
   "Nur {xp} XP verfügbar": "Доступно только {xp} XP",
   "Verfügbar: {xp} XP": "Доступно: {xp} XP",
@@ -1044,7 +1051,7 @@ export const TEXTE: Record<string, string> = {
   "Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.": "Крупное событие: цель достигнута, новый рекорд или что-то сделано впервые. За это больше XP.",
   "Nur ein Datum. Nach der Deadline geht Disziplin verloren.": "Только дата. После срока теряется дисциплина.",
   "Bis zum Datum entsteht er. Danach greift er an.": "До даты он копится. Потом атакует.",
-  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "Вложение может стоить XP атрибута. Своё вложение или завершённый проект даёт больше XP навсегда.",
+  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP. Der Bonus gilt für beide. Boni auf dasselbe Ziel zählen zusammen bis zur Obergrenze.": "Вложение может стоить XP атрибута. Своё вложение или завершённый проект даёт больше XP навсегда. Бонус действует на оба. Бонусы на одну цель суммируются до предела.",
   "Bonus gilt auch für Ressourcen": "Бонус действует и для ресурсов",
   "Ressourcen werden mit investiert und bekommen denselben Bonus.": "Ресурсы тоже вкладываются и получают тот же бонус.",
   "Tägliche Aufgaben zum Abhaken.": "Ежедневные задачи, которые можно отметить.",

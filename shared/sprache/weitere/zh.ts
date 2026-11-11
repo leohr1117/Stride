@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "投入现在可以作用于一项属性、一个项目或两者。至少要有一个目标。已有投入保持原样。",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "不用时的损失取消。属性只在没有记录时随时间失去 XP。",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "在活动表单里，在滑块上垂直滑动会滚动页面，而不会改动数值。",
   "Tätigkeiten verteilen feste Prozent. Unter 100 % geht der Rest an kein Attribut. Ein Minus zieht XP ab, nie unter 0.": "活动按固定百分比分配。低于 100% 的剩余部分不计入任何属性。减号会扣掉经验，但不会低于 0。",
@@ -200,6 +201,12 @@ export const TEXTE: Record<string, string> = {
   "Bonus für {name}": "加成用于 {name}",
   "Kostenlos · Bonus für {name}": "免费 · 加成用于 {name}",
   "Kostet {xp} XP aus {name} · Bonus für {bonus}": "花费 {xp} XP（来自 {name}）· 加成用于 {bonus}",
+  "Kostet {xp} XP aus {name} · Bonus für {bonus} und {ziel}": "花费 {xp} XP（来自 {name}）· 加成用于 {bonus} 和 {ziel}",
+  "Kostet {xp} XP aus {name}": "花费 {xp} XP（来自 {name}）",
+  "Kostenlos · Bonus für {name} und {ziel}": "免费 · 加成用于 {name} 和 {ziel}",
+  "Bonus für {name} und {ziel}": "加成用于 {name} 和 {ziel}",
+  "Wähle ein Attribut oder ein Projekt.": "请选一项属性或一个项目。",
+  "Wirkt auch auf {name}": "也对 {name} 生效",
   "Betrag eingeben oder „Nichts“ wählen": "输入金额，或选择“无”",
   "Nur {xp} XP verfügbar": "只有 {xp} XP 可用",
   "Verfügbar: {xp} XP": "可用：{xp} XP",
@@ -1044,7 +1051,7 @@ export const TEXTE: Record<string, string> = {
   "Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.": "大事：达成目标、新纪录，或第一次做成。会给更多 XP。",
   "Nur ein Datum. Nach der Deadline geht Disziplin verloren.": "只有日期。过了期限会失去自律。",
   "Bis zum Datum entsteht er. Danach greift er an.": "到期前他在成形。之后他会进攻。",
-  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP.": "投入可以花费一项属性的 XP。自己的投入或完成的项目会永久给更多 XP。",
+  "Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP. Der Bonus gilt für beide. Boni auf dasselbe Ziel zählen zusammen bis zur Obergrenze.": "投入可以花费一项属性的 XP。自己的投入或完成的项目会永久给更多 XP。加成对两者都生效。同一目标上的加成合计不超过上限。",
   "Bonus gilt auch für Ressourcen": "加成也适用于资源",
   "Ressourcen werden mit investiert und bekommen denselben Bonus.": "资源一并投入，并得到同样的加成。",
   "Tägliche Aufgaben zum Abhaken.": "每天可勾选的任务。",

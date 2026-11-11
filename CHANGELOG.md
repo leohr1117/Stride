@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.21
+
+### Geändert
+
+- Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.
+
 ## 4.1.20
 
 ### Geändert

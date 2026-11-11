@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.21',
+    seiten: 'Investitionen',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.20',
     seiten: 'Können, Haben, Mehr',
     abschnitte: [
