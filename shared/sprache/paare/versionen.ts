@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.',
+    'When you log an entry, you choose the duration in one row from 15 minutes, or type it yourself.',
+  ],
+  [
     'Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.',
     'An investment can now apply to an attribute, a project, or both. At least one target stays required. Existing investments stay as they are.',
   ],

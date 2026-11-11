@@ -1,10 +1,10 @@
-import { tx, txMenge } from '../../text.ts';
+import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
 import { AbhakKreis } from './AbhakKreis.tsx';
 import { useState, type FormEvent } from 'react';
 import type { BasisAufgabe } from '../../../../shared/api/index.ts';
-import { DAUER_OPTIONEN, GRENZEN, type IconName } from '../../../../shared/spiel/begriffe.ts';
+import { GRENZEN, type IconName } from '../../../../shared/spiel/begriffe.ts';
 import { fehlendeZuordnung } from '../../../../shared/spiel/ebenen.ts';
 import { taetigkeitPasst, taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
@@ -23,37 +23,7 @@ import { EINGABE_STIL, Feld, Fehlermeldung, Flaeche, Formular, Knopf, VorschlagF
 import { HierarchieWahl } from '../../components/HierarchieWahl.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { gliedereProjekte, wahlBaum } from '../../projektHierarchie.ts';
-
-function dauerTextZuZahl(text: string): { stunden: number | null; fehler: string | null; unfertig: boolean } {
-  const roh = text.trim();
-  if (roh === '') {
-    return { stunden: null, fehler: null, unfertig: false };
-  }
-  if (roh === '.' || /^\d+\.$/.test(roh)) {
-    return { stunden: null, fehler: null, unfertig: true };
-  }
-  if (!/^\d+(\.\d+)?$/.test(roh)) {
-    return { stunden: null, fehler: txMenge(GRENZEN.stundenMin, 'Die Dauer muss mindestens {min} Stunden sein.', { min: String(GRENZEN.stundenMin) }), unfertig: false };
-  }
-  const wert = Number(roh);
-  if (wert < GRENZEN.stundenMin) {
-    return { stunden: null, fehler: txMenge(GRENZEN.stundenMin, 'Die Dauer muss mindestens {min} Stunden sein.', { min: String(GRENZEN.stundenMin) }), unfertig: false };
-  }
-  if (wert > GRENZEN.stundenMax) {
-    return { stunden: null, fehler: txMenge(GRENZEN.stundenMax, 'Die Dauer darf höchstens {max} Stunden sein.', { max: String(GRENZEN.stundenMax) }), unfertig: false };
-  }
-  return { stunden: wert, fehler: null, unfertig: false };
-}
-
-function bereinigeDauer(roh: string): string {
-  const erlaubt = roh.replace(',', '.').replace(/[^\d.]/g, '');
-  const [ganz, ...rest] = erlaubt.split('.');
-  const kopf = (ganz ?? '').slice(0, 2);
-  if (rest.length === 0) {
-    return kopf;
-  }
-  return `${kopf}.${rest.join('').slice(0, 2)}`;
-}
+import { bereinigeDauer, dauerFeldFehler, dauerOptionen, dauerTextZuZahl } from '../dauerFeld.ts';
 
 export function useBasisAufgaben() {
   return useQuery({ queryKey: SCHLUESSEL.basis, queryFn: api.basis });
@@ -386,16 +356,8 @@ export function BasisFormular({
         eigenLabel="Eigene"
         einheit={tx('Std')}
         eingabeModus="decimal"
-        optionen={[
-          { id: 'keine', wert: '', zeile: tx('Keine Angabe'), name: tx('Keine Angabe') },
-          ...DAUER_OPTIONEN.map((option) => ({
-            id: String(option.stunden),
-            wert: String(option.stunden),
-            zeile: tx(option.label),
-            name: tx(option.label),
-          })),
-        ]}
-        fehler={dauer.fehler ?? (dauerErzwungen && dauer.unfertig ? txMenge(GRENZEN.stundenMin, 'Die Dauer muss mindestens {min} Stunden sein.', { min: String(GRENZEN.stundenMin) }) : null)}
+        optionen={dauerOptionen()}
+        fehler={dauerFeldFehler(dauer, dauerErzwungen)}
         bereinige={bereinigeDauer}
       />
       <Fehlermeldung fehler={speichern.error} />

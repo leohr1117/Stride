@@ -48,6 +48,7 @@ export const ABSCHLUESSE = ['geschafft', 'gescheitert'] as const;
 export type Abschluss = (typeof ABSCHLUESSE)[number];
 
 export const DAUER_OPTIONEN: { stunden: number; label: string }[] = [
+  { stunden: 0.25, label: '15 Min' },
   { stunden: 0.5, label: '30 Min' },
   { stunden: 1, label: '1 Std' },
   { stunden: 2, label: '2 Std' },

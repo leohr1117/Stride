@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import type { Sprache } from '../../shared/sprache/kern.ts';
 import { setzeAktiveSprache } from '../../shared/sprache/index.ts';
 import { zeigeMenge } from '../../shared/sprache/menge.ts';
-import { eineNachkommastelle, hoechstensEineStelle, kompakt, levelZahl, prozentText, relativeZeit, stunden, zahl, zeitspanne } from './format.ts';
+import { dauerText, eineNachkommastelle, hoechstensEineStelle, kompakt, levelZahl, prozentText, relativeZeit, stunden, zahl, zeitspanne } from './format.ts';
 
 describe('kompakt', () => {
   afterEach(() => {
@@ -43,6 +43,19 @@ describe('kompakt', () => {
     setzeAktiveSprache('ja');
     expect(zeitspanne(400)).toBe('13か月');
     expect(prozentText(0.12)).toBe('12%');
+  });
+});
+
+describe('dauerText', () => {
+  afterEach(() => {
+    setzeAktiveSprache('de');
+  });
+
+  it('nennt eine Viertelstunde als 15 Minuten', () => {
+    setzeAktiveSprache('de');
+    expect(dauerText(0.25)).toBe('15 Min');
+    setzeAktiveSprache('en');
+    expect(dauerText(0.25)).toBe('15 min');
   });
 });
 

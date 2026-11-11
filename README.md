@@ -6,7 +6,7 @@ Stride ist eine Web-App, die den eigenen Alltag wie ein Rollenspiel führt: Du t
 
 ## Funktionen
 
-- **Einträge:** Eine Tätigkeit mit Dauer eintragen bringt XP, verteilt in festen Prozent auf Attribute; eine Tätigkeit kann auch XP abziehen. Tätigkeiten legst du selbst an und ordnest sie.
+- **Einträge:** Eine Tätigkeit eintragen bringt XP; die Dauer wählst du ab 15 Minuten oder gibst sie selbst ein. Die Punkte verteilen sich in festen Prozent auf Attribute; eine Tätigkeit kann auch XP abziehen. Tätigkeiten legst du selbst an und ordnest sie.
 - **Ziele:** Visionen, Organisationen und Projekte mit eigenem Level, dazu offene Vorhaben.
 - **Tageskette:** Ein Streak für jeden aktiven Tag, mit Schutz bei Pausen und einer Rückkehr nach einer Unterbrechung. Unter Bereiche lässt sich der Streak aussetzen; die Länge bleibt, neue Einträge haben dabei Momentum 1,0.
 - **Gegner und Bosse:** Vorhaben können als Gegner oder Boss mit Deadline laufen. Ist die Deadline verpasst, kostet das XP.

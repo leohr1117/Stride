@@ -81,6 +81,10 @@ test('Handbuch ist eine offene Scrollseite', async ({ page }, testInfo) => {
   const eintraegeAbschnitt = page.locator('#eintraege');
   await expect(eintraegeAbschnitt.getByRole('columnheader', { name: 'Dauer', exact: true })).toBeVisible();
   await expect(eintraegeAbschnitt.getByRole('columnheader', { name: 'XP ohne Boni', exact: true })).toBeVisible();
+  const dauerZeilen = eintraegeAbschnitt.locator('tbody tr');
+  await expect(dauerZeilen).toHaveCount(7);
+  await expect(dauerZeilen.nth(0).locator('td').first()).toHaveText('Keine Angabe');
+  await expect(dauerZeilen.nth(1).locator('td').first()).toHaveText('15 Min');
   await expect(page.getByRole('columnheader', { name: 'Beute', exact: true })).toHaveCount(0);
   await expect(page.getByText('Empfohlen', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Nach Vorliebe', { exact: true })).toHaveCount(0);

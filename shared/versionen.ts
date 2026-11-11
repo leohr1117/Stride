@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.22',
+    seiten: 'Einträge, Basis',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: [
+          'Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.21',
     seiten: 'Investitionen',
     abschnitte: [

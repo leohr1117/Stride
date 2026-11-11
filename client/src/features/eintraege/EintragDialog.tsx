@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Swords, Trophy } from 'lucide-react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import type { EintragDaten, VorhabenMitProjekt, VorhabenWahl } from '../../../../shared/api/index.ts';
-import { DAUER_OPTIONEN, GRENZEN } from '../../../../shared/spiel/begriffe.ts';
+import { GRENZEN } from '../../../../shared/spiel/begriffe.ts';
 import { standardEbenen } from '../../../../shared/spiel/ebenen.ts';
 import { taetigkeitPasst, taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
@@ -18,11 +18,14 @@ import { Dialog } from '../../components/Dialog.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { NeueTaetigkeit } from '../taetigkeiten/TaetigkeitFormular.tsx';
 import { Chip, EINGABE_STIL, Feld, Fehlermeldung, Formular as FormularKasten, InfoHinweis, Knopf, SchalterBahn, Segmentauswahl } from '../../ui/index.ts';
+import { dauerAnfang, dauerPruefung, type DauerStand } from '../dauerFeld.ts';
+import { DauerWahl } from './DauerWahl.tsx';
 
 export interface EintragVorgabe {
   projektId?: number;
   vorhabenId?: number;
   faehigkeitId?: number;
+  stunden?: number | null;
 }
 
 type Ergebnis = 'dran' | 'geschafft' | 'gescheitert';
@@ -36,6 +39,8 @@ interface Formular {
   meilenstein: boolean;
   faehigkeitId: number | null;
   stunden: number | null;
+  dauerText: string;
+  dauerEigene: boolean;
   notiz: string;
   datum: string;
 }
@@ -86,6 +91,8 @@ function leeresFormular(): Formular {
     meilenstein: false,
     faehigkeitId: null,
     stunden: null,
+    dauerText: '',
+    dauerEigene: false,
     notiz: '',
     datum: lokalesDatum(new Date()),
   };
@@ -165,7 +172,9 @@ export function EintragDialog({
   const [neuesVorhaben, setNeuesVorhaben] = useState('');
   const [neueTaetigkeit, setNeueTaetigkeit] = useState(false);
   const [taetigkeitFehler, setTaetigkeitFehler] = useState<string | null>(null);
+  const [dauerErzwungen, setDauerErzwungen] = useState(false);
   const chipReihe = useRef<HTMLDivElement>(null);
+  const dauerEingabe = useRef<HTMLInputElement>(null);
   const initialisiert = useRef(false);
 
   const offeneZiele = [...(laufendes?.bosse ?? []), ...(laufendes?.vorhaben ?? [])];
@@ -175,6 +184,7 @@ export function EintragDialog({
       initialisiert.current = false;
       setNeueTaetigkeit(false);
       setTaetigkeitFehler(null);
+      setDauerErzwungen(false);
       return;
     }
     if (initialisiert.current || einstellungenLaden || projekteLaden || vorlagenLaden) {
@@ -189,6 +199,7 @@ export function EintragDialog({
     const vorhaben = ebenen.vorhaben ? liste.find((eintrag) => eintrag.id === vorgabe.vorhabenId) : undefined;
     const projekt = ebenen.projekte ? projekte.find((eintrag) => eintrag.id === vorgabe.projektId) : undefined;
     const faehigkeitId = funktionen.faehigkeiten && vorgabe.faehigkeitId ? vorgabe.faehigkeitId : null;
+    const startDauer = dauerAnfang(vorgabe.stunden ?? null);
     const startProjektId = ebenen.projekte ? (vorhaben?.projektId ?? projekt?.id ?? null) : null;
     const standardId =
       startProjektId != null ? (projekte.find((eintrag) => eintrag.id === startProjektId)?.vorlageId ?? null) : null;
@@ -198,6 +209,9 @@ export function EintragDialog({
       vorhabenId: vorhaben?.id ?? null,
       vorlageId: vorlageFuerProjekt(vorlagen, standardId, startProjektId),
       faehigkeitId,
+      stunden: startDauer.stunden,
+      dauerText: startDauer.text,
+      dauerEigene: startDauer.eigene,
     });
     setNeuesVorhaben('');
   }, [
@@ -276,6 +290,18 @@ export function EintragDialog({
     vorhabenAnlegen.mutate({ projektId: geerbteProjektId, titel: ausstehenderTitel });
   };
 
+  const dauerStand = (): DauerStand => ({
+    stunden: formular.stunden,
+    text: formular.dauerText,
+    eigene: formular.dauerEigene,
+  });
+  const dauerJetzt = dauerPruefung(dauerStand(), dauerErzwungen);
+
+  const setzeDauer = (naechstes: DauerStand) => {
+    setDauerErzwungen(false);
+    aendern({ stunden: naechstes.stunden, dauerText: naechstes.text, dauerEigene: naechstes.eigene });
+  };
+
   const absenden = (ereignis: FormEvent) => {
     ereignis.preventDefault();
     if (!vorlage) {
@@ -287,6 +313,12 @@ export function EintragDialog({
       return;
     }
     setTaetigkeitFehler(null);
+    const dauerBeimSenden = dauerPruefung(dauerStand(), true);
+    if (dauerBeimSenden.fehler || dauerBeimSenden.unfertig) {
+      setDauerErzwungen(true);
+      dauerEingabe.current?.focus();
+      return;
+    }
     let vorhaben: VorhabenWahl = null;
     if (ebenen.vorhaben && formular.vorhabenId !== null) {
       vorhaben = { art: 'bestehend', id: formular.vorhabenId };
@@ -301,7 +333,7 @@ export function EintragDialog({
       vorhaben,
       abschluss,
       erkenntnis: abschluss === 'gescheitert' ? formular.erkenntnis : '',
-      stunden: formular.stunden,
+      stunden: dauerBeimSenden.stunden,
       notiz: formular.notiz,
       meilenstein: vorhaben === null && formular.meilenstein,
       faehigkeitId: funktionen.faehigkeiten ? (faehigkeit?.id ?? null) : null,
@@ -506,22 +538,7 @@ export function EintragDialog({
           </div>
         )}
 
-        <Feld label={tx("Dauer")}>
-          <div className={CHIP_ZEILE}>
-            <Chip aktiv={formular.stunden === null} onClick={() => aendern({ stunden: null })}>
-              {tx("Keine Angabe")}
-            </Chip>
-            {DAUER_OPTIONEN.map((option) => (
-              <Chip
-                key={option.stunden}
-                aktiv={formular.stunden === option.stunden}
-                onClick={() => aendern({ stunden: option.stunden })}
-              >
-                {tx(option.label)}
-              </Chip>
-            ))}
-          </div>
-        </Feld>
+        <DauerWahl stand={dauerStand()} onAendern={setzeDauer} fehler={dauerJetzt.fehler} eingabeRef={dauerEingabe} />
 
         <Feld label={tx("Notiz")}>
           <textarea
@@ -537,7 +554,7 @@ export function EintragDialog({
         <Fehlermeldung fehler={eintragen.error} />
 
         <Knopf type="submit" variante="primaer" className="w-full py-3 text-base" aria-busy={eintragen.isPending || undefined}>
-          {eintragen.isPending ? tx("Wird eingetragen …") : eintragAktion(nachtragen, zahl(basisXp(formular.stunden)), istMeilenstein)}
+          {eintragen.isPending ? tx("Wird eingetragen …") : eintragAktion(nachtragen, zahl(basisXp(dauerJetzt.stunden)), istMeilenstein)}
         </Knopf>
       </FormularKasten>
     </Dialog>

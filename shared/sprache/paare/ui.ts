@@ -403,6 +403,7 @@ export const PAARE = [
   ['Du bist gewachsen', 'You grew'],
   ['Du bist in diesem Jahr geboren.', 'You were born this year.'],
   ['Dauer', 'Duration'],
+  ['Dauer in Std', 'Duration in h'],
   ['Ebenen ausblenden?', 'Hide these levels?'],
   ['Ein Eintrag', 'One entry'],
   ['Eintrag anlegen', 'Log an entry'],

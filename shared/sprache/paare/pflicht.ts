@@ -147,6 +147,7 @@ export const PAARE = [
   ['Geschafft', 'Done'],
   ['Gescheitert', 'Failed'],
   ['Losgelassen', 'Let go'],
+  ['15 Min', '15 min'],
   ['30 Min', '30 min'],
   ['1 Std', '1 h'],
   ['2 Std', '2 h'],

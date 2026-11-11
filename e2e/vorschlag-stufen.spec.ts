@@ -311,9 +311,17 @@ test('Dauer-Chips setzen das Feld, eine eigene Stundenzahl bleibt gespeichert', 
   await dauer.scrollIntoViewIfNeeded();
   await ohneSeitlichenUeberlauf(page);
   await page.screenshot({ path: `${BILD}/${testInfo.project.name}-basis.png` });
+  await expect(dauer.getByRole('button')).toHaveCount(7);
+  await expect(dauer.locator('.grid')).toHaveClass(/grid-cols-3/);
+  const feld = dauer.getByRole('textbox', { name: 'Eigene' });
+  await expect(feld).toBeVisible();
+  const viertel = dauer.getByRole('button', { name: '15 Min', exact: true });
+  await viertel.click();
+  await expect(feld).toHaveValue('0.25');
+  await expect(feld).not.toBeFocused();
+  await expect(viertel).toBeFocused();
   const stunde = dauer.getByRole('button', { name: '1 Std', exact: true });
   await stunde.click();
-  const feld = dauer.getByRole('textbox', { name: 'Eigene' });
   await expect(feld).toHaveValue('1');
   await expect(stunde).toHaveAttribute('aria-pressed', 'true');
   await feld.fill('3');

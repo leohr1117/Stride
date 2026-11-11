@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.22
+
+### Verbessert
+
+- Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.
+
 ## 4.1.21
 
 ### Geändert

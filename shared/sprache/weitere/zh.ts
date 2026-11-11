@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "记录时，你在一行里从 15 分钟起选择时长，也可以自己填写。",
   "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "投入现在可以作用于一项属性、一个项目或两者。至少要有一个目标。已有投入保持原样。",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "不用时的损失取消。属性只在没有记录时随时间失去 XP。",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "在活动表单里，在滑块上垂直滑动会滚动页面，而不会改动数值。",
@@ -858,6 +859,7 @@ export const TEXTE: Record<string, string> = {
   "Geschafft": "已完成",
   "Gescheitert": "已失败",
   "Losgelassen": "已放下",
+  "15 Min": "15 分钟",
   "30 Min": "30 分钟",
   "1 Std": "1 小时",
   "2 Std": "2 小时",
@@ -1679,6 +1681,7 @@ export const TEXTE: Record<string, string> = {
   "Du bist gewachsen": "你成长了",
   "Du bist in diesem Jahr geboren.": "你出生在这一年。",
   "Dauer": "时长",
+  "Dauer in Std": "时长（小时）",
   "Ebenen ausblenden?": "隐藏这些层级？",
   "Ein Eintrag": "一条记录",
   "Eintrag anlegen": "新建记录",

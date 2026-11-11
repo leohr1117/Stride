@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "Al registrar, eliges la duración en una fila a partir de 15 minutos o la escribes tú.",
   "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "Una inversión puede aplicarse ahora a un atributo, a un proyecto o a ambos. Al menos un objetivo sigue siendo obligatorio. Las inversiones existentes se quedan como están.",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "La pérdida si no se usa desaparece. Los atributos solo pierden XP con el tiempo, cuando no reciben entradas.",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "En el formulario de actividades, un deslizamiento vertical sobre los reguladores desplaza la página en lugar de cambiar el valor.",
@@ -858,6 +859,7 @@ export const TEXTE: Record<string, string> = {
   "Geschafft": "Hecho",
   "Gescheitert": "Fracasado",
   "Losgelassen": "Soltado",
+  "15 Min": "15 min",
   "30 Min": "30 min",
   "1 Std": "1 h",
   "2 Std": "2 h",
@@ -1679,6 +1681,7 @@ export const TEXTE: Record<string, string> = {
   "Du bist gewachsen": "Has crecido",
   "Du bist in diesem Jahr geboren.": "Naciste este año.",
   "Dauer": "Duración",
+  "Dauer in Std": "Duración en h",
   "Ebenen ausblenden?": "¿Ocultar estos niveles?",
   "Ein Eintrag": "Un registro",
   "Eintrag anlegen": "Anotar un registro",

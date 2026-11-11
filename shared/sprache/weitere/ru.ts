@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "При записи ты выбираешь длительность в одной строке от 15 минут или вводишь её сам.",
   "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "Вложение теперь может действовать на атрибут, проект или на оба. Хотя бы одна цель остаётся обязательной. Существующие вложения остаются как есть.",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "Потеря без использования исчезает. Атрибуты теряют XP только со временем, если записей нет.",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "В форме занятия вертикальное движение по регуляторам прокручивает страницу и не сдвигает значение.",
@@ -858,6 +859,7 @@ export const TEXTE: Record<string, string> = {
   "Geschafft": "Готово",
   "Gescheitert": "Провал",
   "Losgelassen": "Отпущено",
+  "15 Min": "15 мин",
   "30 Min": "30 мин",
   "1 Std": "1 ч",
   "2 Std": "2 ч",
@@ -1679,6 +1681,7 @@ export const TEXTE: Record<string, string> = {
   "Du bist gewachsen": "Ты вырос",
   "Du bist in diesem Jahr geboren.": "Ты родился в этом году.",
   "Dauer": "Длительность",
+  "Dauer in Std": "Длительность в ч",
   "Ebenen ausblenden?": "Скрыть уровни?",
   "Ein Eintrag": "Одна запись",
   "Eintrag anlegen": "Создать запись",

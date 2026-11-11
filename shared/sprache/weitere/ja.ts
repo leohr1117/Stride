@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "記録するとき、長さは15分からの一行で選ぶか、自分で入力します。",
   "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "投資は、属性、プロジェクト、またはその両方に効くようになりました。対象は少なくとも一つ必要です。これまでの投資はそのままです。",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "使わないときの損失はなくなります。属性がXPを失うのは、記録がないときの時間の経過だけです。",
   "Im Tätigkeiten-Formular scrollt senkrechtes Wischen über die Regler, statt den Wert zu verschieben.": "活動のフォームでは、スライダー上を縦にスワイプすると値が変わらず、ページがスクロールします。",
@@ -858,6 +859,7 @@ export const TEXTE: Record<string, string> = {
   "Geschafft": "達成",
   "Gescheitert": "失敗",
   "Losgelassen": "手放した",
+  "15 Min": "15分",
   "30 Min": "30分",
   "1 Std": "1時間",
   "2 Std": "2時間",
@@ -1679,6 +1681,7 @@ export const TEXTE: Record<string, string> = {
   "Du bist gewachsen": "成長しました",
   "Du bist in diesem Jahr geboren.": "この年に生まれています。",
   "Dauer": "長さ",
+  "Dauer in Std": "長さ（時間）",
   "Ebenen ausblenden?": "階層を隠しますか？",
   "Ein Eintrag": "記録一つ",
   "Eintrag anlegen": "記録を作る",
