@@ -1,5 +1,9 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "Los logros, los títulos y los avisos en Hoy se pueden ocultar. Los avisos solo valen para este dispositivo.",
+  "Erfolge und Titel": "Logros y títulos",
+  "Hinweise auf Heute": "Avisos en Hoy",
+  "Gilt nur auf diesem Gerät.": "Solo en este dispositivo.",
   "Nicht verfügbar": "No disponible",
   "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "Todoist no está configurado en este servidor. Quien lo opera tiene que activarlo.",
   "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "El token guardado ya no se puede leer. Vuelve a introducirlo.",

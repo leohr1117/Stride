@@ -110,7 +110,9 @@ function ProfilListe() {
             <AbschnittKopf titel={tx("Profil")} />
             <Liste>
               <Zeile titel={tx("Profilname")} wert={data.charakterName} nach="/mehr/profil/name" />
-              <Zeile titel={tx("Titel")} wert={titelName(erfolge)} nach="/mehr/profil/titel" />
+              {data.funktionen.erfolge ? (
+                <Zeile titel={tx("Titel")} wert={titelName(erfolge)} nach="/mehr/profil/titel" />
+              ) : null}
               <Zeile
                 titel={tx("Geburtsjahr")}
                 wert={data.geburtsjahr === null ? '—' : String(data.geburtsjahr)}
@@ -207,6 +209,7 @@ function TitelSeite() {
 export function MehrProfilSeite() {
   const { teil } = useParams();
   const { pathname } = useLocation();
+  const einstellungen = useEinstellungen();
   useHashWeiter(PROFIL_HASH);
   if (pathname.startsWith('/mehr/profil/benutzernamen')) {
     return <Navigate to="/mehr/profil/accounts" replace />;
@@ -215,6 +218,12 @@ export function MehrProfilSeite() {
     return <NameSeite />;
   }
   if (teil === 'titel') {
+    if (einstellungen.isPending) {
+      return <FormularSeite titel={tx('Titel')} zurueck={PROFIL_ZURUECK} kinder={<Ladeanzeige />} />;
+    }
+    if (!einstellungen.data?.funktionen.erfolge) {
+      return <Navigate to="/mehr/profil" replace />;
+    }
     return <TitelSeite />;
   }
   if (teil === 'jahr') {

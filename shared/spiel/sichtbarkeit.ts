@@ -83,6 +83,9 @@ export function pfadAktiv(pfad: string, sichtbarkeit: Sichtbarkeit): boolean {
 }
 
 export function erfolgSichtbar(kennzahl: ErfolgKennzahl, sichtbarkeit: Sichtbarkeit): boolean {
+  if (!sichtbarkeit.funktionen.erfolge) {
+    return false;
+  }
   const schalter = ERFOLG_SCHALTER[kennzahl];
   return schalter === undefined || istAn(schalter, sichtbarkeit);
 }

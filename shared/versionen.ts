@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.15',
+    seiten: 'Bereiche, Heute, Konto, Profil',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.14',
     seiten: 'Vorbilder',
     abschnitte: [

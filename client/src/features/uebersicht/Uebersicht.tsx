@@ -36,6 +36,7 @@ import { HeuteKarte } from './Heute.tsx';
 import { HinweisAngebot } from './HinweisAngebot.tsx';
 
 import { faktorText, kurzesDatum, zahl } from '../../format.ts';
+import { leseMerker } from '../../speicher.ts';
 import { useSichtbarkeit, useUebersichtKarten } from '../../funktionen.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { karteGewaehlt } from '../../../../shared/spiel/uebersichtKarten.ts';
@@ -57,7 +58,9 @@ export function UebersichtSeite() {
     return <Fehlermeldung fehler={error} />;
   }
   const klasseAnzeige = klassenText(uebersicht.klasse);
-  const identitaet = uebersicht.titel ? `${klasseAnzeige} · ${uebersicht.titel}` : klasseAnzeige;
+  const identitaet =
+    uebersicht.titel && funktionen.erfolge ? `${klasseAnzeige} · ${uebersicht.titel}` : klasseAnzeige;
+  const hinweiseAn = !leseMerker('stride.hinweiseAus');
   const levelZeile = tx('{xp} XP · noch {rest} bis Level {level}', {
     xp: zahl(uebersicht.level.xpGesamt),
     rest: zahl(uebersicht.level.xpFuerNaechstes - uebersicht.level.xpImLevel),
@@ -111,7 +114,15 @@ export function UebersichtSeite() {
           </Flaeche>
         )}
 
-        <div data-hinweis-platz className="empty:hidden"><BewertungKarte /><HinweisAngebot /><InstallBanner /></div>
+        <div data-hinweis-platz className="empty:hidden">
+          {hinweiseAn ? (
+            <>
+              <BewertungKarte />
+              <HinweisAngebot />
+              <InstallBanner />
+            </>
+          ) : null}
+        </div>
       </div>
 
       <HeuteKarte />

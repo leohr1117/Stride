@@ -1,5 +1,9 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "Les succès, les titres et les conseils sur Aujourd’hui peuvent être masqués. Les conseils ne valent que pour cet appareil.",
+  "Erfolge und Titel": "Succès et titres",
+  "Hinweise auf Heute": "Conseils sur Aujourd’hui",
+  "Gilt nur auf diesem Gerät.": "Uniquement sur cet appareil.",
   "Nicht verfügbar": "Indisponible",
   "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "Todoist n'est pas configuré sur ce serveur. La personne qui l'exploite doit l'activer.",
   "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "Le jeton enregistré n'est plus lisible. Saisis-le à nouveau.",

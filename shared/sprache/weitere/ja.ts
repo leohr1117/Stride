@@ -1,5 +1,9 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "実績、称号、「今日」のヒントを非表示にできます。ヒントはこの端末だけに適用されます。",
+  "Erfolge und Titel": "実績と称号",
+  "Hinweise auf Heute": "「今日」のヒント",
+  "Gilt nur auf diesem Gerät.": "この端末のみ。",
   "Nicht verfügbar": "利用できません",
   "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "このサーバーでは Todoist が設定されていません。運営者が有効にする必要があります。",
   "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "保存されたトークンは読み取れなくなりました。もう一度入力してください。",

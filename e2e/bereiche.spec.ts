@@ -35,7 +35,7 @@ test('Bereiche → Toast Öffnen → Fähigkeiten → Zurück = Bereiche', async
     await page.goto('/mehr/funktionen');
     await expect(page.locator('main h1')).toHaveText('Bereiche');
     await expect(page.getByText('Ausschalten blendet aus. Gelöscht wird nichts.')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Funktionen', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Funktionen', exact: true })).toHaveCount(1);
     await expect(page.getByText('großes Ziel', { exact: true })).toHaveCount(0);
     await expect(page.getByText('Empfohlen bei Ressourcen', { exact: true })).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Seiten', exact: true })).toBeVisible();

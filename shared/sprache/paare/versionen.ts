@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.',
+    'Achievements, titles and the tips on Today can be hidden. The tips apply to this device only.',
+  ],
+  [
     '31 neue Vorbilder aus Sport, Kunst, Technik, Wirtschaft und Geschichte.',
     '31 new role models from sport, art, technology, business and history.',
   ],

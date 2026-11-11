@@ -1,5 +1,9 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.": "可以隐藏成就、称号和“今天”页上的提示。这些提示仅适用于此设备。",
+  "Erfolge und Titel": "成就与称号",
+  "Hinweise auf Heute": "“今天”页提示",
+  "Gilt nur auf diesem Gerät.": "仅限此设备。",
   "Nicht verfügbar": "不可用",
   "Auf diesem Server ist Todoist nicht eingerichtet. Der Betreiber muss es freischalten.": "此服务器上尚未设置 Todoist。运营者需要启用它。",
   "Der gespeicherte Token ist nicht mehr lesbar. Gib ihn neu ein.": "已保存的令牌无法再读取。请重新输入。",

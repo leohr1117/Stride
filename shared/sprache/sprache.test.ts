@@ -163,6 +163,7 @@ function katalogTexte(): string[] {
     bossAngriffe: true,
     verfallKoennen: true,
     verfallHaben: true,
+    erfolge: true,
   };
   const ebenen = { visionen: true, organisationen: true, projekte: false, vorhaben: false };
   for (const funktion of Object.keys(funktionen) as (keyof typeof funktionen)[]) {

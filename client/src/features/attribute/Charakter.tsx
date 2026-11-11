@@ -33,7 +33,7 @@ export function CharakterSeite() {
     return <Fehlermeldung fehler={error} />;
   }
 
-  const klassenName = funktionen.koennen ? tx("Klassen und Titel") : tx("Titel");
+  const klassenName = klassenZeile(funktionen.koennen, funktionen.erfolge);
 
   return (
     <div className="space-y-6">
@@ -69,27 +69,46 @@ export function CharakterSeite() {
       <Kennzahlen charakter={charakter} />
       <Spektren charakter={charakter} />
 
-      <Liste>
-        <Zeile titel={klassenName} name={klassenName} onKlick={() => setKlassenOffen(true)} />
-      </Liste>
+      {klassenName ? (
+        <Liste>
+          <Zeile titel={klassenName} name={klassenName} onKlick={() => setKlassenOffen(true)} />
+        </Liste>
+      ) : null}
 
       <ProfilZeilen charakter={charakter} />
 
-      <Dialog offen={klassenOffen} titel={klassenName} onSchliessen={() => setKlassenOffen(false)}>
-        <KlassenUndTitel attribute={alleAttribute} klasse={charakter.klasse} />
-      </Dialog>
+      {klassenName ? (
+        <Dialog offen={klassenOffen} titel={klassenName} onSchliessen={() => setKlassenOffen(false)}>
+          <KlassenUndTitel attribute={alleAttribute} klasse={charakter.klasse} />
+        </Dialog>
+      ) : null}
     </div>
   );
+}
+
+function klassenZeile(koennenAn: boolean, erfolgeAn: boolean): string | null {
+  if (koennenAn && erfolgeAn) {
+    return tx('Klassen und Titel');
+  }
+  if (koennenAn) {
+    return tx('Klassen');
+  }
+  if (erfolgeAn) {
+    return tx('Titel');
+  }
+  return null;
 }
 
 function Identitaet({ klasse, titel }: { klasse: string; titel: string | null }) {
   const sichtbarkeit = useSichtbarkeit();
   const klasseSichtbar = istAn('koennen', sichtbarkeit);
-  if (!klasseSichtbar && !titel) {
+  const titelSichtbar = titel !== null && sichtbarkeit.funktionen.erfolge ? titel : null;
+  if (!klasseSichtbar && titelSichtbar === null) {
     return null;
   }
   const klasseAnzeige = klassenText(klasse);
-  const text = klasseSichtbar && titel ? `${klasseAnzeige} · ${titel}` : klasseSichtbar ? klasseAnzeige : titel;
+  const text =
+    klasseSichtbar && titelSichtbar ? `${klasseAnzeige} · ${titelSichtbar}` : klasseSichtbar ? klasseAnzeige : titelSichtbar;
   return <p className="mt-0.5 text-sm font-medium break-words text-akzent">{text}</p>;
 }
 

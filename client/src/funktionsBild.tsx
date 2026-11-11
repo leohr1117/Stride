@@ -1,4 +1,5 @@
 import {
+  Award,
   BookMarked,
   Brain,
   CalendarCheck,
@@ -29,4 +30,5 @@ export const FUNKTION_BILD: Record<Funktion, { icon: LucideIcon; pfad?: string }
   verfallKoennen: { icon: TrendingDown },
   verfallHaben: { icon: TrendingDown },
   bossAngriffe: { icon: Swords, pfad: '/laufend' },
+  erfolge: { icon: Award },
 };

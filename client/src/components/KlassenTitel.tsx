@@ -41,6 +41,7 @@ function aktiveKennungen(attribute: Attribut[]): Set<KoennenKennung> {
 export function KlassenUndTitel({ attribute, klasse }: { attribute: Attribut[]; klasse: string }) {
   const sichtbarkeit = useSichtbarkeit();
   const koennenAn = istAn('koennen', sichtbarkeit);
+  const erfolgeAn = sichtbarkeit.funktionen.erfolge;
   const { data: erfolge, error } = useQuery({ queryKey: SCHLUESSEL.erfolge, queryFn: api.erfolge });
   const [staerkstes, zweites] = staerksteKennungen(attribute);
   const aktiv = aktiveKennungen(attribute);
@@ -103,6 +104,7 @@ export function KlassenUndTitel({ attribute, klasse }: { attribute: Attribut[]; 
       </section>
       )}
 
+      {erfolgeAn && (
       <section>
         <Ueberschrift titel={tx("Titel")} />
         <Fehlermeldung fehler={error} />
@@ -127,6 +129,7 @@ export function KlassenUndTitel({ attribute, klasse }: { attribute: Attribut[]; 
           ))}
         </div>
       </section>
+      )}
     </div>
   );
 }

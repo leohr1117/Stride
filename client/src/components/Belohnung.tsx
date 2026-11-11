@@ -41,6 +41,7 @@ function sichtbareBelohnung(belohnung: Belohnung, sichtbarkeit: Sichtbarkeit): B
     projekt: projektAn ? belohnung.projekt : null,
     faehigkeit: faehigkeitenAn ? belohnung.faehigkeit : null,
     boss: istAn('bossAngriffe', sichtbarkeit) ? belohnung.boss : null,
+    erfolge: sichtbarkeit.funktionen.erfolge ? belohnung.erfolge : [],
     aufstiege: belohnung.aufstiege.filter((aufstieg) => {
       if (aufstieg.art === 'projekt') {
         return projektAn;

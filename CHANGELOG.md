@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.15
+
+### Hinzugefügt
+
+- Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden. Die Hinweise gelten nur für dieses Gerät.
+
 ## 4.1.14
 
 ### Hinzugefügt

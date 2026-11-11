@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { standardEbenen, type Ebenen } from './ebenen.ts';
+import { ERFOLG_KENNZAHLEN } from './erfolge.ts';
 import { standardFunktionen, type Funktionen } from './funktionen.ts';
 import { erfolgSichtbar, istAn, laufendAktiv, pfadAktiv, zieleAktiv, type Sichtbarkeit } from './sichtbarkeit.ts';
 
@@ -136,5 +137,28 @@ describe('erfolgSichtbar', () => {
     expect(erfolgSichtbar('skills', aus)).toBe(false);
     expect(erfolgSichtbar('eintraege', aus)).toBe(true);
     expect(erfolgSichtbar('level', aus)).toBe(true);
+  });
+
+  it('blendet bei ausgeschalteten Erfolgen jede Kennzahl aus und stellt den Boss nur mit Boss-Schalter wieder her', () => {
+    const aus = sicht({
+      erfolge: false,
+      bossAngriffe: true,
+      basis: true,
+      faehigkeiten: true,
+      ausruestung: true,
+      rueckblick: true,
+    });
+    for (const kennzahl of ERFOLG_KENNZAHLEN) {
+      expect(erfolgSichtbar(kennzahl, aus)).toBe(false);
+    }
+    const an = sicht({ erfolge: true, bossAngriffe: true });
+    expect(erfolgSichtbar('bosse', an)).toBe(true);
+    expect(erfolgSichtbar('bossLevel', an)).toBe(true);
+    expect(erfolgSichtbar('eintraege', an)).toBe(true);
+    const ohneBoss = sicht({ erfolge: true, bossAngriffe: false }, { vorhaben: true });
+    expect(erfolgSichtbar('bosse', ohneBoss)).toBe(false);
+    expect(erfolgSichtbar('bossLevel', ohneBoss)).toBe(false);
+    expect(erfolgSichtbar('eintraege', ohneBoss)).toBe(true);
+    expect(erfolgSichtbar('level', ohneBoss)).toBe(true);
   });
 });

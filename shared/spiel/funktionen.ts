@@ -16,6 +16,7 @@ export const FUNKTIONEN = [
   'bossAngriffe',
   'verfallKoennen',
   'verfallHaben',
+  'erfolge',
 ] as const;
 export type Funktion = (typeof FUNKTIONEN)[number];
 export type Funktionen = Record<Funktion, boolean>;
@@ -35,8 +36,8 @@ export interface FunktionsBlock {
   eintraege: readonly FunktionsEintrag[];
 }
 
-/** Die 17 Schalter in Bereiche, gruppiert nach Fundort (11.2 a). */
-export const BEREICH_GRUPPEN = ['Seiten', 'Seiten im Profil', 'Auf Ziele', 'Regeln'] as const;
+/** Schalter in Bereiche, gruppiert nach Fundort (11.2 a). Funktionen stehen am Ende. */
+export const BEREICH_GRUPPEN = ['Seiten', 'Seiten im Profil', 'Auf Ziele', 'Regeln', 'Funktionen'] as const;
 export type BereichGruppe = (typeof BEREICH_GRUPPEN)[number];
 export type BereichSchalter = Funktion | Ebene;
 
@@ -66,6 +67,7 @@ const FUNKTION_LABEL: Record<Funktion, string> = {
   bossAngriffe: 'Bosse',
   verfallKoennen: 'Verfall Können',
   verfallHaben: 'Verfall Haben',
+  erfolge: 'Erfolge und Titel',
 };
 
 /** Reihenfolge wie 11.2 a. Namen wie in der Seitentabelle bzw. Ziel-Marke. */
@@ -87,6 +89,7 @@ export const BEREICH_SCHALTER: readonly BereichEintrag[] = [
   { schalter: 'bossAngriffe', label: FUNKTION_LABEL.bossAngriffe, gruppe: 'Auf Ziele' },
   { schalter: 'verfallKoennen', label: FUNKTION_LABEL.verfallKoennen, gruppe: 'Regeln' },
   { schalter: 'verfallHaben', label: FUNKTION_LABEL.verfallHaben, gruppe: 'Regeln' },
+  { schalter: 'erfolge', label: FUNKTION_LABEL.erfolge, gruppe: 'Funktionen' },
 ];
 
 export const FUNKTION_BLOECKE: readonly FunktionsBlock[] = BEREICH_GRUPPEN.map((gruppe) => ({
@@ -96,7 +99,7 @@ export const FUNKTION_BLOECKE: readonly FunktionsBlock[] = BEREICH_GRUPPEN.map((
   ),
 })).filter((block) => block.eintraege.length > 0);
 
-const STANDARD_AN = new Set<Funktion>(['koennen', 'status', 'chronik', 'handbuch']);
+const STANDARD_AN = new Set<Funktion>(['koennen', 'status', 'chronik', 'handbuch', 'erfolge']);
 
 export function standardFunktionen(): Funktionen {
   const funktionen = {} as Funktionen;

@@ -117,12 +117,21 @@ const TOAST_ZIEL: Record<string, string> = {
   bossAngriffe: '/laufend',
   verfallKoennen: '/koennen',
   verfallHaben: '/haben',
+  erfolge: '/',
 };
 
-describe('17 Schalter', () => {
-  it('liest das Toast-Ziel aus der Seitentabelle bzw. 11.2 b', () => {
-    expect(BEREICH_SCHALTER).toHaveLength(17);
-    for (const eintrag of BEREICH_SCHALTER) {
+function istGeraeteZeile(schalter: string): boolean {
+  return schalter === 'hinweise';
+}
+
+describe('Bereich-Schalter', () => {
+  it('liest das Toast-Ziel der Kontoschalter und lässt die Gerätezeile aus', () => {
+    const konto = BEREICH_SCHALTER.filter((eintrag) => !istGeraeteZeile(eintrag.schalter));
+    expect(konto.filter((eintrag) => eintrag.schalter !== 'erfolge')).toHaveLength(17);
+    expect(konto).toHaveLength(18);
+    expect(konto.some((eintrag) => istGeraeteZeile(eintrag.schalter))).toBe(false);
+    expect(toastZielFuer('erfolge')).toBe('/');
+    for (const eintrag of konto) {
       const seite = SEITEN.find((kandidat) => kandidat.schalter === eintrag.schalter);
       if (seite) {
         expect(eintrag.label).toBe(seite.name);

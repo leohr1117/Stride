@@ -1,4 +1,4 @@
-import { Flag, Landmark, Mountain, Target, type LucideIcon } from 'lucide-react';
+import { Flag, Landmark, Lightbulb, Mountain, Target, type LucideIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { ebenenSperre, funktionsSperre } from '../../../../shared/spiel/abhaengigkeiten.ts';
@@ -19,8 +19,19 @@ import { Fehlermeldung, Ladeanzeige } from '../../ui/index.ts';
 import { ZeileSchalter, ZeilenGruppe } from '../../components/Zeile.tsx';
 import { FUNKTION_BILD } from '../../funktionsBild.tsx';
 import { bestaetigeAusblenden } from '../../ebenenFrage.ts';
+import { leseMerker, merke } from '../../speicher.ts';
 import { tx } from '../../text.ts';
 import { Bereich, useEinstellungen, useSprungmarke } from './rahmen.tsx';
+
+const GERAETE_SCHALTER = [
+  {
+    schalter: 'hinweise',
+    label: 'Hinweise auf Heute',
+    untertitel: 'Gilt nur auf diesem Gerät.',
+    gruppe: 'Funktionen',
+    icon: Lightbulb,
+  },
+] as const;
 
 const VERFALL_INFO = 'Ungenutzte Attribute verlieren XP. Wie stark, stellst du pro Attribut ein.';
 
@@ -79,6 +90,7 @@ export function MehrFunktionenSeite() {
   const navigiere = useNavigate();
   const bestaetigen = useBestaetigung();
   const [meldung, setMeldung] = useState<{ name: string; ziel: string } | null>(null);
+  const [hinweiseAn, setHinweiseAn] = useState(() => !leseMerker('stride.hinweiseAus'));
   useSprungmarke(!isPending && Boolean(einstellungen));
 
   if (isPending) {
@@ -119,6 +131,16 @@ export function MehrFunktionenSeite() {
     speichern.mutate({ ebenen: nachher }, { onSuccess: () => zeigeToast(eintrag, an) });
   };
 
+  const schalteHinweise = (an: boolean) => {
+    merke('stride.hinweiseAus', !an);
+    setHinweiseAn(an);
+    if (an) {
+      setMeldung({ name: 'Hinweise auf Heute', ziel: '/' });
+    } else {
+      setMeldung(null);
+    }
+  };
+
   return (
     <Bereich
       titel={tx('Bereiche')}
@@ -154,6 +176,21 @@ export function MehrFunktionenSeite() {
                           }
                         }}
                         deaktiviert={felder.sperre !== null}
+                      />
+                    );
+                  })}
+                  {GERAETE_SCHALTER.filter((eintrag) => eintrag.gruppe === gruppe).map((eintrag) => {
+                    const Icon = eintrag.icon;
+                    return (
+                      <ZeileSchalter
+                        key={eintrag.schalter}
+                        id={`geraet-${eintrag.schalter}`}
+                        className="scroll-mt-24"
+                        titel={tx(eintrag.label)}
+                        untertitel={tx(eintrag.untertitel)}
+                        symbol={<Icon className="size-5" aria-hidden />}
+                        an={hinweiseAn}
+                        onAendern={schalteHinweise}
                       />
                     );
                   })}
