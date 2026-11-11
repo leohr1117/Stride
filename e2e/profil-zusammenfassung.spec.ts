@@ -569,7 +569,7 @@ test('Vorbilder sind eine Liste mit seitlichen Richtungen', async ({ page }, inf
   const hinweis = page.getByRole('button', { name: /^Info zu / });
   await hinweis.click();
   await expect(page.getByRole('tooltip')).toHaveText(
-    'Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.',
+    'Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft. Ein ~ oder ein hohler Punkt im Radar heißt: Dazu gibt es kaum verlässliche Infos.',
   );
   await page.keyboard.press('Escape');
 
@@ -581,7 +581,7 @@ test('Vorbilder sind eine Liste mit seitlichen Richtungen', async ({ page }, inf
   await ohneSeitlichenUeberlauf(page);
   await page.screenshot({ path: bild(info, 'vorbilder'), fullPage: true });
 
-  await page.getByRole('link', { name: 'Muhammad Ali', exact: true }).click();
+  await page.getByRole('link', { name: /^Muhammad Ali etwa .+ geschätzt$/ }).click();
   await expect(page).toHaveURL(/\/vorbilder\/ali$/);
   await expect(page.getByRole('heading', { name: 'Muhammad Ali', exact: true })).toBeVisible();
   const kopf = page.locator('.vorbild-kopf');

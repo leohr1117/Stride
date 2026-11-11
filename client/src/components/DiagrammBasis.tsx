@@ -65,7 +65,7 @@ export function DiagrammTooltip({
 }: {
   titel: string;
   untertitel?: string;
-  zeilen: { wert: string; name?: string }[];
+  zeilen: { wert: string; name?: string; leise?: boolean }[];
 }) {
   return (
     <div data-diagramm-hinweis="" className="max-w-60 rounded-xl border border-rand bg-flaeche px-3 py-2 text-xs shadow-lg break-words">
@@ -73,7 +73,7 @@ export function DiagrammTooltip({
       {untertitel && <p className="mb-1 font-medium text-haupt">{untertitel}</p>}
       {zeilen.map((zeile, index) => (
         <p key={index} className="zahl">
-          <span className="font-semibold text-haupt">{zeile.wert}</span>
+          <span className={zeile.leise ? 'font-semibold text-leise' : 'font-semibold text-haupt'}>{zeile.wert}</span>
           {zeile.name && <span className="text-leise"> {zeile.name}</span>}
         </p>
       ))}

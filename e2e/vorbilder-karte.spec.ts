@@ -43,10 +43,12 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   const massstab = zeilen.filter({ has: page.locator('a[href="/vorbilder/durchschnitt"]') });
   await expect(massstab).toContainText('Durchschnittsmensch');
   await expect(massstab).toContainText(/%/);
+  await expect(massstab).toContainText('≈');
   const anzahl = await zeilen.count();
   expect(anzahl).toBeGreaterThan(10);
   for (let index = 0; index < anzahl; index += 1) {
     await expect(zeilen.nth(index)).toContainText(/%/);
+    await expect(zeilen.nth(index)).toContainText('≈');
   }
 
   const breite = page.viewportSize()?.width ?? 0;
@@ -161,7 +163,7 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   expect(deltaListe ?? 99).toBeLessThanOrEqual(4);
   await hinweis.click();
   await expect(page.getByRole('tooltip')).toHaveText(
-    'Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft.',
+    'Die Ähnlichkeit misst die Form des Profils, nicht die Höhe der Level. Die Werte sind grobe Schätzungen aus öffentlichen Infos, keine Wissenschaft. Ein ~ oder ein hohler Punkt im Radar heißt: Dazu gibt es kaum verlässliche Infos.',
   );
 
   const alle = page.getByRole('button', { name: /^Alle/ });
@@ -171,6 +173,7 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   expect(beste).toBeGreaterThanOrEqual(40);
   const wettkampf = page.getByRole('button', { name: /^Wettkampf/ });
   await expect(wettkampf).toContainText(/%/);
+  await expect(wettkampf).toContainText('≈');
   const chipZahl = (await wettkampf.innerText()).match(/(\d+)\s*%/)?.[1];
   expect(chipZahl).toBeTruthy();
   await wettkampf.click();
@@ -182,6 +185,7 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   const aehnlich = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Ähnlich', exact: true }) });
   const ersteZeile = aehnlich.locator('[data-zeile]').first();
   await expect(ersteZeile).toContainText(`${chipZahl} %`);
+  await expect(ersteZeile).toContainText('≈');
   const zeileLaeuftUeber = await ersteZeile.evaluate((element) => element.scrollWidth > element.clientWidth + 1);
   expect(zeileLaeuftUeber).toBe(false);
   await ohneSeitlichenUeberlauf(page);
@@ -206,7 +210,7 @@ test('Vorbilder: Liste ohne Radar, Prozent in der Zeile und Richtung', async ({ 
   await expect(page.getByRole('heading', { name: 'Muhammad Ali', exact: true })).toBeVisible();
   await expect(page.locator('.recharts-wrapper').first()).toBeVisible();
   const prozentZeile = page.locator('[data-aehnlichkeit]');
-  await expect(prozentZeile).toContainText(/%\s*ähnlich/);
+  await expect(prozentZeile).toContainText(/≈\s*\d+\s*%\s*ähnlich/);
   const nameHinweis = page.getByRole('button', { name: /^Info zu / });
   await expect(nameHinweis).toBeVisible();
   const deltaName = await page.getByRole('heading', { name: 'Profil im Vergleich', exact: true }).evaluate((titel) => {

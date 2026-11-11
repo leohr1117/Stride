@@ -315,6 +315,23 @@ describe('Level-Vergleich', () => {
     expect(punkte[0]?.anteil).toBeCloseTo(1 / (punkte[0]?.vorbild ?? 1));
   });
 
+  it('reicht die unsichere Schätzung an den Vergleichspunkt weiter', () => {
+    const davinci = findeVorbild('davinci');
+    if (!davinci) {
+      throw new Error('da Vinci fehlt');
+    }
+    const punkte = vergleichspunkte({ intellekt: 1, koerper: 10, geist: 4 }, davinci, ['intellekt', 'koerper', 'geist']);
+    expect(punkte.find((punkt) => punkt.kennung === 'intellekt')?.unsicher).toBe(false);
+    expect(punkte.find((punkt) => punkt.kennung === 'koerper')?.unsicher).toBe(true);
+    expect(punkte.find((punkt) => punkt.kennung === 'geist')?.unsicher).toBe(true);
+    const schnitt = findeVorbild(DURCHSCHNITT);
+    if (!schnitt) {
+      throw new Error('Durchschnitt fehlt');
+    }
+    const ruhig = vergleichspunkte({ intellekt: 1, koerper: 2 }, schnitt, ['intellekt', 'koerper']);
+    expect(ruhig.every((punkt) => punkt.unsicher === false)).toBe(true);
+  });
+
   it('streckt niemanden auf das eigene Maximum', () => {
     expect(uebereinstimmung(5, 5)).toBe(1);
     expect(uebereinstimmung(2, 40)).toBeCloseTo(0.05);

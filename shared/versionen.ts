@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.13',
+    seiten: 'Vorbilder',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: [
+          'Vorbild-Werte sind sichtbar als Schätzung gekennzeichnet. Unsichere Werte tragen ein ~, im Radar einen hohlen Punkt.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.12',
     seiten: 'Verbindungen',
     abschnitte: [

@@ -27,7 +27,14 @@ import { useFunktionen } from '../../funktionen.ts';
 import { attributName, klassenText, tx, txMenge } from '../../text.ts';
 import { eigenesProfil } from '../../pages/eigenesProfil.ts';
 import { useVorbildFavoriten } from './favoritAktion.ts';
-import { Legende, WerteHinweis } from './vorbildTeile.tsx';
+import {
+  AehnlichkeitVorsatz,
+  Legende,
+  SchaetzungMarke,
+  SchaetzungZusatz,
+  UnsicherWert,
+  vorbildLevelSichtbar,
+} from './vorbildTeile.tsx';
 
 const ANZAHL_STAERKEN = 3;
 
@@ -76,14 +83,28 @@ function VergleichListe({
         <li key={punkt.kennung} data-kennung={punkt.kennung} data-du={punkt.du} data-vorbild={punkt.vorbild} className="space-y-1">
           <div className="flex items-baseline justify-between gap-3 text-sm">
             <span className="min-w-0 break-words">{attributName({ kennung: punkt.kennung, name: namen(punkt.kennung) })}</span>
-            <span className="zahl shrink-0 font-medium">{prozentText(punkt.anteil)}</span>
+            <span className={punkt.unsicher ? 'zahl shrink-0 font-medium text-leise' : 'zahl shrink-0 font-medium'}>
+              {punkt.unsicher ? (
+                <UnsicherWert sichtbar={`~${prozentText(punkt.anteil)}`} wert={prozentText(punkt.anteil)} />
+              ) : (
+                prozentText(punkt.anteil)
+              )}
+            </span>
           </div>
           <Fortschrittsbalken anteil={punkt.du / maximum} farbe="var(--akzent)" hoehe="h-1.5" bewegt={false} />
           <Fortschrittsbalken anteil={punkt.vorbild / maximum} farbe="var(--diagramm-vorbild)" hoehe="h-1.5" bewegt={false} />
           <p className="text-xs text-leise break-words">
             {tx('Du')} {tx('Lvl {level}', { level: levelZahl(punkt.du) })}
             {' · '}
-            {person} {tx('Lvl {level}', { level: levelZahl(punkt.vorbild) })}
+            {person}{' '}
+            {punkt.unsicher ? (
+              <UnsicherWert
+                sichtbar={vorbildLevelSichtbar(levelZahl(punkt.vorbild), true)}
+                wert={vorbildLevelSichtbar(levelZahl(punkt.vorbild), false)}
+              />
+            ) : (
+              tx('Lvl {level}', { level: levelZahl(punkt.vorbild) })
+            )}
           </p>
         </li>
       ))}
@@ -169,11 +190,15 @@ export function VorbildProfilSeite() {
           <p data-vorbild-herkunft="" className="break-words text-[13px] leading-[18px] text-leise">
             {herkunft}
           </p>
-          <p data-vorbild-stand="" className="zahl mt-1 break-words text-[15px] leading-[22px] font-semibold">
-            {stand}
-          </p>
+          <div className="mt-1 flex flex-wrap items-center">
+            <p data-vorbild-stand="" className="zahl min-w-0 break-words text-[15px] leading-[22px] font-semibold">
+              {stand}
+            </p>
+            <SchaetzungMarke />
+          </div>
           {wert !== null && (
             <p data-aehnlichkeit="" className="zahl mt-0.5 break-words text-[15px] leading-[22px] font-semibold">
+              <AehnlichkeitVorsatz wert={prozentText(wert)} />
               {tx('{prozent} ähnlich', { prozent: prozentText(wert) })}
             </p>
           )}
@@ -194,7 +219,7 @@ export function VorbildProfilSeite() {
 
       {punkte.length > 0 && (
         <section data-vergleich="" data-achsen-max={maximum}>
-          <AbschnittKopf titel={tx('Profil im Vergleich')} zusatz={<WerteHinweis name="Profil im Vergleich" />} />
+          <AbschnittKopf titel={tx('Profil im Vergleich')} zusatz={<SchaetzungZusatz name="Profil im Vergleich" />} />
           <Flaeche>
             <div className="space-y-3 px-4 py-3">
               {punkte.length >= MIN_RADAR_ACHSEN && (
@@ -204,6 +229,7 @@ export function VorbildProfilSeite() {
                     name: attributName({ kennung: punkt.kennung, name: name(punkt.kennung) }),
                     du: punkt.du,
                     vorbild: punkt.vorbild,
+                    unsicher: punkt.unsicher,
                   }))}
                   maximum={maximum}
                   hoehe="h-72"
@@ -222,7 +248,7 @@ export function VorbildProfilSeite() {
       )}
 
       <section>
-        <AbschnittKopf titel={tx('Lebensweg')} />
+        <AbschnittKopf titel={tx('Lebensweg')} zusatz={<SchaetzungZusatz />} />
         <Flaeche>
           <div className="space-y-3 px-4 py-3">
         {einstellungen && einstellungen.geburtsjahr === null ? (

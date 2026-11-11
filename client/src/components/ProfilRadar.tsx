@@ -1,5 +1,6 @@
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { duZeichenwert } from '../../../shared/spiel/radar.ts';
+import { vorbildLevelSichtbar } from '../features/vorbilder/vorbildTeile.tsx';
 import { levelZahl } from '../format.ts';
 import { tx } from '../text.ts';
 import { DIAGRAMM_ANIMATION_MS, DiagrammTooltip } from './DiagrammBasis.tsx';
@@ -8,6 +9,28 @@ export interface RadarZeile {
   name: string;
   du: number;
   vorbild: number;
+  unsicher?: boolean;
+}
+
+function vorbildPunkt(props: { cx?: number; cy?: number; payload?: { unsicher?: boolean } }) {
+  const { cx, cy, payload } = props;
+  if (cx == null || cy == null) {
+    return <g />;
+  }
+  const unsicher = payload?.unsicher === true;
+  return (
+    <circle
+      className="recharts-radar-dot"
+      data-vorbild-punkt={unsicher ? 'hohl' : 'voll'}
+      cx={cx}
+      cy={cy}
+      r={3}
+      aria-hidden="true"
+      fill={unsicher ? 'var(--flaeche)' : 'var(--diagramm-vorbild)'}
+      stroke="var(--diagramm-vorbild)"
+      strokeWidth={unsicher ? 1.5 : 0}
+    />
+  );
 }
 
 /** Rohwerte in Leveln. Die Achse endet beim größten Wert, niemand wird auf 1 gezogen. */
@@ -49,6 +72,8 @@ export function ProfilRadar({
               strokeWidth={2}
               fill="var(--diagramm-vorbild)"
               fillOpacity={0.12}
+              dot={vorbildPunkt}
+              activeDot={vorbildPunkt}
             />
             <Radar
               className="radar-du"
@@ -70,7 +95,11 @@ export function ProfilRadar({
                     titel={punkt.name}
                     zeilen={[
                       { wert: tx('Lvl {level}', { level: levelZahl(punkt.du) }), name: tx('Du') },
-                      { wert: tx('Lvl {level}', { level: levelZahl(punkt.vorbild) }), name: person },
+                      {
+                        wert: vorbildLevelSichtbar(levelZahl(punkt.vorbild), punkt.unsicher === true),
+                        name: person,
+                        leise: punkt.unsicher === true,
+                      },
                     ]}
                   />
                 );

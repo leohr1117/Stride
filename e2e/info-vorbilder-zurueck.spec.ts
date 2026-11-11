@@ -91,10 +91,12 @@ test('Vorbilder zeigen die Ähnlichkeit und behalten den Filter', async ({ page 
   expect(anzahl).toBeGreaterThan(10);
   for (let index = 0; index < Math.min(anzahl, 8); index += 1) {
     await expect(zeilen.nth(index)).toContainText(/%/);
+    await expect(zeilen.nth(index)).toContainText('≈');
   }
 
   const wettkampf = page.getByRole('button', { name: /^Wettkampf/ });
   await expect(wettkampf).toContainText(/%/);
+  await expect(wettkampf).toContainText('≈');
   await wettkampf.click();
   await expect(wettkampf).toHaveAttribute('aria-pressed', 'true');
   await expect(page).toHaveURL(/richtung=Wettkampf/);
@@ -104,8 +106,8 @@ test('Vorbilder zeigen die Ähnlichkeit und behalten den Filter', async ({ page 
   await page.getByRole('link', { name: /Muhammad Ali/ }).click();
   await expect(page).toHaveURL(/\/vorbilder\/ali$/);
   await expect(page.getByRole('heading', { name: 'Muhammad Ali', exact: true })).toBeVisible();
-  await expect(page.getByText(/\d+\s*%\s*ähnlich/)).toHaveCount(1);
-  await expect(page.getByText(/\d+\s*%\s*ähnlich/)).toBeVisible();
+  await expect(page.getByText(/≈\s*\d+\s*%\s*ähnlich/)).toHaveCount(1);
+  await expect(page.getByText(/≈\s*\d+\s*%\s*ähnlich/)).toBeVisible();
   await page.locator('[data-zurueck]').click();
   await expect(page).toHaveURL(/\/vorbilder\?richtung=Wettkampf/);
   await expect(wettkampf).toHaveAttribute('aria-pressed', 'true');

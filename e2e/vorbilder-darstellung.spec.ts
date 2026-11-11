@@ -242,8 +242,9 @@ test('Profil: langer Titel und Level überlappen sich nicht', async ({ page }, t
   await page.goto('/vorbilder');
   const zeile = page.locator('[data-zeile]').filter({ has: page.locator('a[href="/vorbilder/durchschnitt"]') });
   await zeile.scrollIntoViewIfNeeded();
-  await expect(zeile.getByRole('link', { name: 'Durchschnittsmensch', exact: true })).toBeVisible();
+  await expect(zeile.getByRole('link', { name: /^Durchschnittsmensch etwa .+ geschätzt$/ })).toBeVisible();
   await expect(zeile).toContainText(/%/);
+  await expect(zeile).toContainText('≈');
   const zeilenUeberlauf = await zeile.evaluate((element) => element.scrollWidth > element.clientWidth + 1);
   expect(zeilenUeberlauf).toBe(false);
 
@@ -405,7 +406,7 @@ test('Vorbild: Kopf ist eine Fläche ohne zweiten Namen', async ({ page }, testI
   const kopf = page.locator('.vorbild-kopf');
   await expect(kopf.locator('[data-vorbild-herkunft]')).toHaveText('Renaissance · 1452 bis 1519');
   await expect(kopf.locator('[data-vorbild-stand]')).toHaveText('Lvl 7.917 · Kreativer Gelehrter · Ikone');
-  await expect(kopf.locator('[data-aehnlichkeit]')).toContainText(/%\s*ähnlich/);
+  await expect(kopf.locator('[data-aehnlichkeit]')).toContainText(/≈\s*\d+\s*%\s*ähnlich/);
   const breite = testInfo.project.name === 'desktop' ? '1440' : '390';
   const ordner = 'tmp-test/vorbild-kopf';
   await page.screenshot({ path: `${ordner}/${breite}-vorbild-davinci.png` });

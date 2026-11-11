@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Vorbild-Werte sind sichtbar als Schätzung gekennzeichnet. Unsichere Werte tragen ein ~, im Radar einen hohlen Punkt.',
+    'Role model values are visibly marked as an estimate. Uncertain values carry a ~ and a hollow dot on the radar.',
+  ],
+  [
     'Der Todoist-Token wird verschlüsselt gespeichert. Neu verbinden geht nur, wenn der Betreiber es freigeschaltet hat; verbundene Konten laufen weiter.',
     'The Todoist token is stored encrypted. Connecting again works only after the operator has enabled it; connected accounts keep working.',
   ],

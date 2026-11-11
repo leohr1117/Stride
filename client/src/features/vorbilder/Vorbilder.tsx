@@ -22,7 +22,7 @@ import { AbschnittKopf, Chip, Fehlermeldung, Ladeanzeige } from '../../ui/index.
 import { prozentText, zahl } from '../../format.ts';
 import { useFunktionen } from '../../funktionen.ts';
 import { eigenesProfil, type EigenesProfil } from '../../pages/eigenesProfil.ts';
-import { WerteHinweis } from './vorbildTeile.tsx';
+import { AehnlichkeitVorsatz, SchaetzungZusatz, aehnlichkeitName } from './vorbildTeile.tsx';
 
 const ALLE = 'alle';
 
@@ -115,7 +115,7 @@ export function VorbilderSeite() {
       {uebersicht ? duZeile(uebersicht.level.level, funktionen.koennen ? uebersicht.klasse : null) : null}
       {favoriten.length > 0 && (
         <section>
-          <AbschnittKopf titel={tx('Favoriten')} />
+          <AbschnittKopf titel={tx('Favoriten')} zusatz={<SchaetzungZusatz />} />
           <Liste>
             {favoriten.map((auswertung) => (
               <VorbildZeile
@@ -133,7 +133,7 @@ export function VorbilderSeite() {
           <VorbildZeile auswertung={massstab} />
         </Liste>
       )}
-      <div className="mt-4 min-w-0 overflow-x-auto overscroll-x-contain">
+      <div className="relative mt-4 min-w-0 overflow-x-auto overscroll-x-contain">
         <div className="flex w-max min-w-full gap-2 px-4 pb-1">
           <RichtungsChip
             label="Alle"
@@ -156,7 +156,7 @@ export function VorbilderSeite() {
         </div>
       </div>
       <section>
-        <AbschnittKopf titel={tx('Ähnlich')} zusatz={<WerteHinweis name="Ähnlich" />} />
+        <AbschnittKopf titel={tx('Ähnlich')} zusatz={<SchaetzungZusatz name="Ähnlich" />} />
         <Liste>
           {sichtbar.map((auswertung) => (
             <VorbildZeile
@@ -183,10 +183,22 @@ function RichtungsChip({
   prozent: number | null;
   onClick: () => void;
 }) {
+  const sichtbar = prozent !== null ? prozentText(prozent) : null;
   return (
-    <Chip aktiv={aktiv} onClick={onClick} className="whitespace-nowrap">
+    <Chip
+      aktiv={aktiv}
+      onClick={onClick}
+      className="whitespace-nowrap"
+      name={sichtbar !== null ? aehnlichkeitName(tx(label), sichtbar) : undefined}
+    >
       {tx(label)}
-      {prozent !== null && <span className="zahl whitespace-nowrap"> {prozentText(prozent)}</span>}
+      {sichtbar !== null && (
+        <span className="zahl whitespace-nowrap">
+          {' '}
+          <AehnlichkeitVorsatz wert={sichtbar} stumm />
+          {sichtbar}
+        </span>
+      )}
     </Chip>
   );
 }
@@ -201,12 +213,17 @@ function VorbildZeile({
   onFavorit?: () => void;
 }) {
   const name = tx(auswertung.vorbild.name);
+  const prozent = auswertung.aehnlichkeit !== null ? prozentText(auswertung.aehnlichkeit) : null;
   const wert =
-    auswertung.aehnlichkeit !== null
-      ? tx('{prozent} ähnlich', { prozent: prozentText(auswertung.aehnlichkeit) })
-      : undefined;
+    prozent !== null ? (
+      <>
+        <AehnlichkeitVorsatz wert={prozent} />
+        {tx('{prozent} ähnlich', { prozent })}
+      </>
+    ) : undefined;
+  const zeilenName = prozent !== null ? aehnlichkeitName(name, prozent) : name;
   const zeile = (menue?: ReactNode) => (
-    <Zeile nach={`/vorbilder/${auswertung.vorbild.schluessel}`} titel={name} name={name} wert={wert} menue={menue} />
+    <Zeile nach={`/vorbilder/${auswertung.vorbild.schluessel}`} titel={name} name={zeilenName} wert={wert} menue={menue} />
   );
   if (!onFavorit) {
     return zeile();

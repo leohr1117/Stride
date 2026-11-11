@@ -116,6 +116,7 @@ test('Vorbilder lassen sich als Favorit merken und wieder entfernen', async ({ p
   await expect(aehnlich.getByRole('link', { name: 'Albert Einstein' })).toHaveCount(0);
   await expect(aehnlich.getByRole('link', { name: /Muhammad Ali/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /^Wettkampf/ })).toContainText(/%/);
+  await expect(page.getByRole('button', { name: /^Wettkampf/ })).toContainText('≈');
   await ohneSeitlichenUeberlauf(page);
   await page.screenshot({ path: bild(testInfo, 'liste'), fullPage: true });
 

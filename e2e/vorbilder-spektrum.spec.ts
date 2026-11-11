@@ -41,7 +41,9 @@ test('Vorbilder zeigen Prozent, aktive Level und das Spektrum', async ({ page },
   const zeilen = page.locator('[data-zeile]').filter({ has: page.locator('a[href^="/vorbilder/"]') });
   await expect(zeilen.first()).toBeVisible();
   await expect(zeilen.first()).toContainText(/%/);
+  await expect(zeilen.first()).toContainText('≈');
   await expect(page.getByRole('button', { name: /^Alle/ })).toContainText(/%/);
+  await expect(page.getByRole('button', { name: /^Alle/ })).toContainText('≈');
   await page.screenshot({ path: bild(info, 'liste') });
   await ohneSeitlichenUeberlauf(page);
 
@@ -51,7 +53,7 @@ test('Vorbilder zeigen Prozent, aktive Level und das Spektrum', async ({ page },
   await expect(kopf).toContainText('7.917');
   const aehnlichkeit = page.locator('[data-aehnlichkeit]');
   await expect(aehnlichkeit).toBeVisible();
-  await expect(aehnlichkeit).toContainText(/%\s*ähnlich/);
+  await expect(aehnlichkeit).toContainText(/≈\s*\d+\s*%\s*ähnlich/);
   const attributeAntwort = await page.request.get('/api/attribute');
   expect(attributeAntwort.ok()).toBe(true);
   const profilAttribute = (await attributeAntwort.json()) as Attribut[];

@@ -398,6 +398,7 @@ export interface Vergleichspunkt {
   du: number;
   vorbild: number;
   anteil: number;
+  unsicher: boolean;
 }
 
 /** Nur die übergebenen Kennungen. Archivierte oder ausgeschaltete Werte stehen hier nicht drin. */
@@ -413,7 +414,13 @@ export function vergleichspunkte(
       continue;
     }
     const fremd = levelAusRecherche(vorbild, kennung);
-    punkte.push({ kennung, du, vorbild: fremd, anteil: uebereinstimmung(du, fremd) });
+    punkte.push({
+      kennung,
+      du,
+      vorbild: fremd,
+      anteil: uebereinstimmung(du, fremd),
+      unsicher: vorbild.unsicher[kennung] === true,
+    });
   }
   return punkte;
 }
