@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.": "Le bouton « Noter » affiche l’XP selon les pourcentages de l’activité.",
   "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "Quand tu enregistres, tu choisis la durée sur une ligne à partir de 15 minutes, ou tu la saisis toi-même.",
   "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "Un investissement peut maintenant porter sur un attribut, un projet ou les deux. Au moins une cible reste obligatoire. Les investissements existants restent tels quels.",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "La perte si inutilisé disparaît. Les attributs ne perdent des XP qu'avec le temps, lorsqu'ils ne reçoivent pas d'entrées.",

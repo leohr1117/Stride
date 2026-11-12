@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.23
+
+### Behoben
+
+- Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.
+
 ## 4.1.22
 
 ### Verbessert

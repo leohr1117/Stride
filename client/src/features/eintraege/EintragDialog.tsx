@@ -7,7 +7,7 @@ import { GRENZEN } from '../../../../shared/spiel/begriffe.ts';
 import { standardEbenen } from '../../../../shared/spiel/ebenen.ts';
 import { taetigkeitPasst, taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
-import { basisXp, MEILENSTEIN_INFO } from '../../../../shared/spiel/xp.ts';
+import { aktiveGewichte, basisXp, MEILENSTEIN_INFO, vorschauXp } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { merkeAngebotFaellig } from '../uebersicht/angebotStand.ts';
 import { merkeBewertungFaellig } from '../uebersicht/bewertungStand.ts';
@@ -156,6 +156,11 @@ export function EintragDialog({
     queryFn: api.vorlagen,
     enabled: offen,
   });
+  const { data: attribute } = useQuery({
+    queryKey: SCHLUESSEL.attribute,
+    queryFn: api.attribute,
+    enabled: offen,
+  });
   const { data: faehigkeiten = [] } = useQuery({
     queryKey: SCHLUESSEL.faehigkeiten,
     queryFn: api.faehigkeiten,
@@ -296,6 +301,11 @@ export function EintragDialog({
     eigene: formular.dauerEigene,
   });
   const dauerJetzt = dauerPruefung(dauerStand(), dauerErzwungen);
+  const gewichteAktiv = vorlage && attribute ? aktiveGewichte(vorlage.gewichte, attribute, funktionen) : [];
+  const xpVorschau =
+    !vorlage || !attribute || gewichteAktiv.length === 0
+      ? basisXp(dauerJetzt.stunden)
+      : vorschauXp(dauerJetzt.stunden, gewichteAktiv, vorlage.festeAnteile);
 
   const setzeDauer = (naechstes: DauerStand) => {
     setDauerErzwungen(false);
@@ -554,7 +564,7 @@ export function EintragDialog({
         <Fehlermeldung fehler={eintragen.error} />
 
         <Knopf type="submit" variante="primaer" className="w-full py-3 text-base" aria-busy={eintragen.isPending || undefined}>
-          {eintragen.isPending ? tx("Wird eingetragen …") : eintragAktion(nachtragen, zahl(basisXp(dauerJetzt.stunden)), istMeilenstein)}
+          {eintragen.isPending ? tx("Wird eingetragen …") : eintragAktion(nachtragen, zahl(xpVorschau), istMeilenstein)}
         </Knopf>
       </FormularKasten>
     </Dialog>

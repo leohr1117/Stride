@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.": "「記入」ボタンは、活動の割合に合わせたXPを表示します。",
   "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "記録するとき、長さは15分からの一行で選ぶか、自分で入力します。",
   "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "投資は、属性、プロジェクト、またはその両方に効くようになりました。対象は少なくとも一つ必要です。これまでの投資はそのままです。",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "使わないときの損失はなくなります。属性がXPを失うのは、記録がないときの時間の経過だけです。",

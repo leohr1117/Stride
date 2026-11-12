@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.23',
+    seiten: 'Einträge',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.22',
     seiten: 'Einträge, Basis',
     abschnitte: [

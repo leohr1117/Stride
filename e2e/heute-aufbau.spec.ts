@@ -1,16 +1,11 @@
 import fs from 'node:fs';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+import { TESTDATUM } from './uhr.ts';
 
 async function bild(seite: Page, name: string, volleSeite = true): Promise<void> {
   fs.mkdirSync('tmp-test/heute-aufbau', { recursive: true });
   await seite.screenshot({ path: `tmp-test/heute-aufbau/${name}.png`, fullPage: volleSeite });
-}
-
-function tagesSchluessel(zeit: Date): string {
-  const monat = String(zeit.getMonth() + 1).padStart(2, '0');
-  const tag = String(zeit.getDate()).padStart(2, '0');
-  return `${zeit.getFullYear()}-${monat}-${tag}`;
 }
 
 async function setzeTesttag(seite: Page, datum: string | null): Promise<void> {
@@ -25,17 +20,9 @@ test.afterEach(async ({ page }) => {
 test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) => {
   const projekt = testInfo.project.name;
   await anmelden(page);
+  await setzeTesttag(page, TESTDATUM);
   const stand = await page.request.get('/api/kette/heute');
   expect(stand.ok()).toBe(true);
-  const vorher = (await stand.json()) as {
-    heuteErfasst: boolean;
-    serie: { laenge: number; angeknackst: boolean };
-  };
-  if (!vorher.heuteErfasst && vorher.serie.laenge > 0 && !vorher.serie.angeknackst) {
-    const gestern = new Date();
-    gestern.setDate(gestern.getDate() - 1);
-    await setzeTesttag(page, tagesSchluessel(gestern));
-  }
   await page.goto('/');
   await expect(page.locator('main h1')).toHaveText('Heute');
   await expect(page.getByRole('heading', { name: 'Willkommen bei Stride' })).toHaveCount(0);

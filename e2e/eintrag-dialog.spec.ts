@@ -1,5 +1,8 @@
 import fs from 'node:fs';
-import { expect, test, type Locator } from './uhr.ts';
+import type { Attribut } from '../shared/api/attribute.ts';
+import type { Einstellungen } from '../shared/api/einstellungen.ts';
+import { istTypAktiv } from '../shared/spiel/funktionen.ts';
+import { expect, test, type Locator, type Page } from './uhr.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 async function ganzInDerReihe(reihe: Locator, chip: Locator): Promise<void> {
@@ -106,4 +109,83 @@ test('Eintrag-Dialog ist ein Blatt ohne Tipp, mit lesbaren Chips und Info', asyn
     expect(knopf.y + knopf.height).toBeLessThanOrEqual(blatt.y + blatt.height + 1);
   }
   await bild('fuss');
+});
+
+async function loescheNamen(page: Page, namen: readonly string[]): Promise<void> {
+  const antwort = await page.request.get('/api/vorlagen');
+  if (!antwort.ok()) {
+    return;
+  }
+  const vorlagen = (await antwort.json()) as { id: number; name: string }[];
+  for (const vorlage of vorlagen) {
+    if (namen.includes(vorlage.name)) {
+      await page.request.delete(`/api/vorlagen/${vorlage.id}`);
+    }
+  }
+}
+
+async function aktivesAttribut(page: Page): Promise<number> {
+  const attributAntwort = await page.request.get('/api/attribute');
+  const einstellungenAntwort = await page.request.get('/api/einstellungen');
+  expect(attributAntwort.ok()).toBe(true);
+  expect(einstellungenAntwort.ok()).toBe(true);
+  const attribute = (await attributAntwort.json()) as Attribut[];
+  const einstellungen = (await einstellungenAntwort.json()) as Einstellungen;
+  const treffer = attribute.find(
+    (attribut) => !attribut.archiviert && istTypAktiv(einstellungen.funktionen, attribut.typ),
+  );
+  expect(treffer).toBeTruthy();
+  if (!treffer) {
+    throw new Error('Kein aktives Attribut.');
+  }
+  return treffer.id;
+}
+
+async function legeFest(page: Page, name: string, attributId: number, gewicht: number): Promise<void> {
+  const antwort = await page.request.post('/api/vorlagen', {
+    data: {
+      name,
+      icon: 'rocket',
+      festeAnteile: true,
+      gewichte: [{ attributId, gewicht }],
+    },
+  });
+  expect(antwort.ok()).toBe(true);
+}
+
+test('Der Eintragen-Knopf zeigt die XP nach den Prozenten der Tätigkeit', async ({ page }, testInfo) => {
+  const halb = `Vorschau Hälfte ${testInfo.project.name}`;
+  const ganz = `Vorschau Ganz ${testInfo.project.name}`;
+  const namen = [halb, ganz];
+  fs.mkdirSync('tmp-test/eintrag-xp', { recursive: true });
+  await anmelden(page);
+  await loescheNamen(page, namen);
+  try {
+    const attributId = await aktivesAttribut(page);
+    await legeFest(page, halb, attributId, 50);
+    await legeFest(page, ganz, attributId, 100);
+    await page.reload();
+    await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
+    await page.getByRole('button', { name: 'Eintrag loggen' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Was hast du getan?' });
+    await expect(dialog).toBeVisible();
+    const halbStunde = dialog.getByRole('button', { name: '30 Min', exact: true });
+    await halbStunde.click();
+    await expect(halbStunde).toHaveAttribute('aria-pressed', 'true');
+    const chips = dialog.locator('.eintrag-chips');
+    const haelfte = chips.getByRole('button', { name: halb, exact: true });
+    await haelfte.scrollIntoViewIfNeeded();
+    await haelfte.click();
+    await expect(haelfte).toHaveAttribute('aria-pressed', 'true');
+    await expect(dialog.getByRole('button', { name: 'Eintragen · ca. +8 XP', exact: true })).toBeVisible();
+    await page.screenshot({ path: `tmp-test/eintrag-xp/${testInfo.project.name}-haelfte.png` });
+    const volle = chips.getByRole('button', { name: ganz, exact: true });
+    await volle.scrollIntoViewIfNeeded();
+    await volle.click();
+    await expect(volle).toHaveAttribute('aria-pressed', 'true');
+    await expect(dialog.getByRole('button', { name: 'Eintragen · ca. +16 XP', exact: true })).toBeVisible();
+    await page.screenshot({ path: `tmp-test/eintrag-xp/${testInfo.project.name}-ganz.png` });
+  } finally {
+    await loescheNamen(page, namen);
+  }
 });

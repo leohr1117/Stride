@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.": "Кнопка «Записать» показывает опыт по процентам занятия.",
   "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "При записи ты выбираешь длительность в одной строке от 15 минут или вводишь её сам.",
   "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "Вложение теперь может действовать на атрибут, проект или на оба. Хотя бы одна цель остаётся обязательной. Существующие вложения остаются как есть.",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "Потеря без использования исчезает. Атрибуты теряют XP только со временем, если записей нет.",

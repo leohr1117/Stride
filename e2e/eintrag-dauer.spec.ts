@@ -1,6 +1,9 @@
 import fs from 'node:fs';
+import type { Attribut } from '../shared/api/attribute.ts';
 import type { ChronikSeite } from '../shared/api/eintraege.ts';
-import { basisXp } from '../shared/spiel/xp.ts';
+import type { Einstellungen } from '../shared/api/einstellungen.ts';
+import type { Vorlage } from '../shared/api/taetigkeiten.ts';
+import { aktiveGewichte, basisXp, vorschauXp } from '../shared/spiel/xp.ts';
 import { anmelden, meilensteineAus, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { expect, test, type Locator, type Page } from './uhr.ts';
 
@@ -86,6 +89,28 @@ async function dialogOeffnen(page: Page): Promise<Locator> {
   return dialog;
 }
 
+async function xpAmKnopf(page: Page, dialog: Locator, stunden: number | null): Promise<string> {
+  const vorlagenAntwort = await page.request.get('/api/vorlagen');
+  const attributAntwort = await page.request.get('/api/attribute');
+  const einstellungenAntwort = await page.request.get('/api/einstellungen');
+  expect(vorlagenAntwort.ok()).toBe(true);
+  expect(attributAntwort.ok()).toBe(true);
+  expect(einstellungenAntwort.ok()).toBe(true);
+  const vorlagen = (await vorlagenAntwort.json()) as Vorlage[];
+  const attribute = (await attributAntwort.json()) as Attribut[];
+  const einstellungen = (await einstellungenAntwort.json()) as Einstellungen;
+  const gedrueckt = dialog.locator('.eintrag-chips').getByRole('button', { pressed: true });
+  await expect(gedrueckt.first()).toBeVisible();
+  const name = await gedrueckt.first().getAttribute('aria-label');
+  const vorlage = vorlagen.find((eintrag) => eintrag.name === name);
+  if (!vorlage) {
+    return String(basisXp(stunden));
+  }
+  const gewichte = aktiveGewichte(vorlage.gewichte, attribute, einstellungen.funktionen);
+  const xp = gewichte.length === 0 ? basisXp(stunden) : vorschauXp(stunden, gewichte, vorlage.festeAnteile);
+  return String(xp);
+}
+
 async function masseDerZeile(zeile: Locator): Promise<ZeileMasse> {
   return zeile.evaluate((element) => {
     const stil = getComputedStyle(element);
@@ -167,8 +192,6 @@ test.beforeAll(() => {
 
 test('Die Dauer steht in einer festen Zeile und 15 Minuten lässt sich wählen', async ({ page }, testInfo) => {
   const notiz = `Dauerzeile ${testInfo.project.name}`;
-  const xpLeer = String(basisXp(null));
-  const xpKurz = String(basisXp(0.25));
   try {
     const dialog = await dialogOeffnen(page);
     const gruppe = dialog.getByRole('group', { name: 'Dauer', exact: true });
@@ -185,7 +208,7 @@ test('Die Dauer steht in einer festen Zeile und 15 Minuten lässt sich wählen',
     for (const name of DAUER_NAMEN) {
       await expect(zeile.getByRole('button', { name, exact: true })).toHaveAttribute('aria-pressed', 'false');
     }
-    await expect(dialog.getByRole('button', { name: `Eintragen · ca. +${xpLeer} XP`, exact: true })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: `Eintragen · ca. +${await xpAmKnopf(page, dialog, null)} XP`, exact: true })).toBeVisible();
     await page.screenshot({ path: `${BILD}/${testInfo.project.name}-dialog.png` });
 
     for (const name of DAUER_NAMEN) {
@@ -201,18 +224,18 @@ test('Die Dauer steht in einer festen Zeile und 15 Minuten lässt sich wählen',
     zeileForm(await masseDerZeile(zeile), testInfo.project.name, true);
     await expect(viertel).toBeFocused();
     await expect(gruppe.getByRole('textbox')).toHaveCount(0);
-    await expect(dialog.getByRole('button', { name: `Eintragen · ca. +${xpKurz} XP`, exact: true })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: `Eintragen · ca. +${await xpAmKnopf(page, dialog, 0.25)} XP`, exact: true })).toBeVisible();
     await viertel.click();
     await expect(viertel).toHaveAttribute('aria-pressed', 'false');
     await expect(viertel).toBeFocused();
-    await expect(dialog.getByRole('button', { name: `Eintragen · ca. +${xpLeer} XP`, exact: true })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: `Eintragen · ca. +${await xpAmKnopf(page, dialog, null)} XP`, exact: true })).toBeVisible();
     await viertel.click();
     await expect(viertel).toHaveAttribute('aria-pressed', 'true');
     zeileForm(await masseDerZeile(zeile), testInfo.project.name, true);
 
     await taetigkeitWaehlen(page, dialog);
     await dialog.getByRole('textbox', { name: 'Notiz', exact: true }).fill(notiz);
-    await dialog.getByRole('button', { name: `Eintragen · ca. +${xpKurz} XP`, exact: true }).click();
+    await dialog.getByRole('button', { name: `Eintragen · ca. +${await xpAmKnopf(page, dialog, 0.25)} XP`, exact: true }).click();
     await expect(dialog).toBeHidden();
     await page.goto('/chronik');
     await expect(page).toHaveURL(/\/chronik$/);

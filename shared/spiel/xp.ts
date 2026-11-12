@@ -1,3 +1,5 @@
+import type { AttributTyp } from './begriffe.ts';
+import { istTypAktiv, type Funktionen } from './funktionen.ts';
 import { tageZwischen } from './kette.ts';
 import { berechneLevel, LEVEL_KURVEN, xpBisLevel } from './level.ts';
 
@@ -237,6 +239,36 @@ export function verteileTaetigkeit(xp: number, gewichte: Gewicht[], fest: boolea
   }
   const gesamt = Math.round((xp * Math.min(100, summe)) / 100);
   return verteileNachGewichten(gesamt, gewichte);
+}
+
+/** Summe der Attribut-XP. Gleiche Rundung wie die Buchung, ohne Momentum, Abzüge und Boni. */
+export function vorschauXp(stunden: number | null, gewichte: Gewicht[], fest: boolean): number {
+  let summe = 0;
+  for (const anteil of verteileTaetigkeit(basisXp(stunden), gewichte, fest)) {
+    summe += anteil.xp;
+  }
+  return summe;
+}
+
+/** Wie die Buchung: Attribut nicht archiviert, Typ aktiv, Gewicht über 0. */
+export function aktiveGewichte(
+  gewichte: readonly Gewicht[],
+  attribute: readonly { id: number; archiviert: boolean; typ: AttributTyp }[],
+  funktionen: Funktionen,
+): Gewicht[] {
+  const nachId = new Map(attribute.map((attribut) => [attribut.id, attribut]));
+  const aktiv: Gewicht[] = [];
+  for (const eintrag of gewichte) {
+    if (eintrag.gewicht <= 0) {
+      continue;
+    }
+    const attribut = nachId.get(eintrag.attributId);
+    if (!attribut || attribut.archiviert || !istTypAktiv(funktionen, attribut.typ)) {
+      continue;
+    }
+    aktiv.push({ attributId: eintrag.attributId, gewicht: eintrag.gewicht });
+  }
+  return aktiv;
 }
 
 export const RUECKBLICK = {

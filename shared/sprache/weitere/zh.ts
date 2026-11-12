@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.": "“记下”按钮按活动的百分比显示经验。",
   "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "记录时，你在一行里从 15 分钟起选择时长，也可以自己填写。",
   "Eine Investition kann jetzt auf ein Attribut, ein Projekt oder beides wirken. Mindestens ein Ziel bleibt Pflicht. Bestehende Investitionen bleiben, wie sie sind.": "投入现在可以作用于一项属性、一个项目或两者。至少要有一个目标。已有投入保持原样。",
   "Der Verlust bei Nichtnutzung entfällt. Attribute verlieren XP nur noch mit der Zeit, wenn sie keine Einträge bekommen.": "不用时的损失取消。属性只在没有记录时随时间失去 XP。",

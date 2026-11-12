@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.',
+    'The ‘Log’ button shows the XP according to the activity’s percentages.',
+  ],
+  [
     'Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.',
     'When you log an entry, you choose the duration in one row from 15 minutes, or type it yourself.',
   ],

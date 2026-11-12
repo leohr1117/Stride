@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { standardFunktionen } from './funktionen.ts';
 import {
+  aktiveGewichte,
   basisXp,
   bestaendigkeitsBonus,
   eintragXp,
@@ -11,6 +13,7 @@ import {
   projektAbschlussBonus,
   verteileNachGewichten,
   verteileTaetigkeit,
+  vorschauXp,
 } from './xp.ts';
 
 describe('basisXp', () => {
@@ -181,5 +184,42 @@ describe('verteileTaetigkeit', () => {
       { attributId: 3, xp: 3 },
     ]);
     expect(anteile.reduce((summe, anteil) => summe + anteil.xp, 0)).toBe(9);
+  });
+});
+
+describe('vorschauXp', () => {
+  it('rechnet eine halbe Stunde nach den festen Prozenten', () => {
+    expect(vorschauXp(0.5, [{ attributId: 1, gewicht: 50 }], true)).toBe(8);
+    expect(vorschauXp(0.5, [{ attributId: 1, gewicht: 100 }], true)).toBe(16);
+    expect(
+      vorschauXp(
+        0.5,
+        [
+          { attributId: 1, gewicht: 30 },
+          { attributId: 2, gewicht: 30 },
+        ],
+        true,
+      ),
+    ).toBe(10);
+    expect(vorschauXp(0.5, [{ attributId: 1, gewicht: 50 }], false)).toBe(16);
+  });
+});
+
+describe('aktiveGewichte', () => {
+  it('lässt das Gewicht eines ausgeschalteten Typs weg', () => {
+    const funktionen = standardFunktionen();
+    funktionen.status = false;
+    const attribute = [
+      { id: 1, archiviert: false, typ: 'attribut' as const },
+      { id: 2, archiviert: false, typ: 'status' as const },
+      { id: 3, archiviert: true, typ: 'attribut' as const },
+    ];
+    const gewichte = [
+      { attributId: 1, gewicht: 40 },
+      { attributId: 2, gewicht: 30 },
+      { attributId: 3, gewicht: 20 },
+      { attributId: 1, gewicht: 0 },
+    ];
+    expect(aktiveGewichte(gewichte, attribute, funktionen)).toEqual([{ attributId: 1, gewicht: 40 }]);
   });
 });
