@@ -16,12 +16,63 @@ export function zielName(ziel: InvestitionsZiel | null, visionen: Vision[], proj
   return attribute.find((eintrag) => eintrag.id === ziel.id)?.name ?? tx('Keins');
 }
 
+function bonusText(
+  namen: string[],
+  kostenlos: boolean,
+  hatBetrag: boolean,
+  zahlText: string,
+  betragZahl: number | null,
+): string {
+  const [name, ziel, skill] = namen;
+  if (namen.length >= 3 && name && ziel && skill) {
+    return kostenlos
+      ? tx('Kostenlos · Bonus für {name}, {ziel} und {skill}', { name, ziel, skill })
+      : hatBetrag
+        ? tx('Kostet {xp} XP aus {name} · Bonus für {bonus}, {ziel} und {skill}', {
+            xp: zahl(betragZahl ?? 0),
+            name: zahlText,
+            bonus: name,
+            ziel,
+            skill,
+          })
+        : tx('Bonus für {name}, {ziel} und {skill}', { name, ziel, skill });
+  }
+  if (namen.length === 2 && name && ziel) {
+    return kostenlos
+      ? tx('Kostenlos · Bonus für {name} und {ziel}', { name, ziel })
+      : hatBetrag
+        ? tx('Kostet {xp} XP aus {name} · Bonus für {bonus} und {ziel}', {
+            xp: zahl(betragZahl ?? 0),
+            name: zahlText,
+            bonus: name,
+            ziel,
+          })
+        : tx('Bonus für {name} und {ziel}', { name, ziel });
+  }
+  if (namen.length === 1 && name) {
+    return kostenlos
+      ? tx('Kostenlos · Bonus für {name}', { name })
+      : hatBetrag
+        ? tx('Kostet {xp} XP aus {name} · Bonus für {bonus}', {
+            xp: zahl(betragZahl ?? 0),
+            name: zahlText,
+            bonus: name,
+          })
+        : tx('Bonus für {name}', { name });
+  }
+  if (!kostenlos && hatBetrag) {
+    return tx('Kostet {xp} XP aus {name}', { xp: zahl(betragZahl ?? 0), name: zahlText });
+  }
+  return '';
+}
+
 export function fassung(angaben: {
   bezahltId: number | null;
   betragZahl: number | null;
   zahlText: string;
   attributText: string | null;
   projektText: string | null;
+  faehigkeitText: string | null;
   xpNeu: number | null;
   xpJetzt: number;
   kurve: ReturnType<typeof kurveFuerTyp>;
@@ -29,33 +80,8 @@ export function fassung(angaben: {
   const kostenlos = angaben.bezahltId === null || angaben.betragZahl === 0;
   const betragZahl = angaben.betragZahl;
   const hatBetrag = betragZahl !== null && betragZahl > 0;
-  const { attributText, projektText } = angaben;
-  let basis = '';
-  if (attributText && projektText) {
-    basis = kostenlos
-      ? tx('Kostenlos · Bonus für {name} und {ziel}', { name: attributText, ziel: projektText })
-      : hatBetrag
-        ? tx('Kostet {xp} XP aus {name} · Bonus für {bonus} und {ziel}', {
-            xp: zahl(betragZahl ?? 0),
-            name: angaben.zahlText,
-            bonus: attributText,
-            ziel: projektText,
-          })
-        : tx('Bonus für {name} und {ziel}', { name: attributText, ziel: projektText });
-  } else if (attributText || projektText) {
-    const name = attributText ?? projektText ?? '';
-    basis = kostenlos
-      ? tx('Kostenlos · Bonus für {name}', { name })
-      : hatBetrag
-        ? tx('Kostet {xp} XP aus {name} · Bonus für {bonus}', {
-            xp: zahl(betragZahl ?? 0),
-            name: angaben.zahlText,
-            bonus: name,
-          })
-        : tx('Bonus für {name}', { name });
-  } else if (!kostenlos && hatBetrag) {
-    basis = tx('Kostet {xp} XP aus {name}', { xp: zahl(betragZahl ?? 0), name: angaben.zahlText });
-  }
+  const namen = [angaben.attributText, angaben.projektText, angaben.faehigkeitText].filter((name): name is string => name !== null && name !== '');
+  const basis = bonusText(namen, kostenlos, hatBetrag, angaben.zahlText, betragZahl);
   if (angaben.xpNeu === null || betragZahl === null || betragZahl <= 0) {
     return basis;
   }

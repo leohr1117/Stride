@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Investitionen können jetzt auch auf eine Fähigkeit wirken, in einem eigenen Feld neben Attribut und Projekt. Bestehende Investitionen bleiben, wie sie sind.',
+    'Investments can now also apply to a skill, in a field of its own beside attribute and project. Existing investments stay as they are.',
+  ],
+  [
     'Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.',
     'The ‘Log’ button shows the XP according to the activity’s percentages.',
   ],

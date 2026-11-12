@@ -14,7 +14,8 @@ import { nichtGefunden, ungueltig } from '../../fehler.ts';
 import { istLoeschbar } from '../../services/loeschen.ts';
 import { leseJetzt } from '../../services/zeit.ts';
 import { aktivesAttribut } from '../attribute/attribute.ts';
-import { funktionAktiv, ladeEinstellungen, pruefeEbene } from '../einstellungen/einstellungen.ts';
+import { funktionAktiv, ladeEinstellungen, pruefeEbene, pruefeFunktion } from '../einstellungen/einstellungen.ts';
+import { pruefeAktiveFaehigkeit } from '../faehigkeiten/faehigkeiten.ts';
 import { KONTEXT_JOINS, PROJEKT_AKTIV } from '../ziele/kontext.ts';
 import { anlageHinterAltenBuchungen, bucheZahlungsDifferenz, KEINE_ZAHLUNG, loeseZahlung } from './zahlung.ts';
 
@@ -85,6 +86,17 @@ export function bonusAufAttribut(attributId: number, zeitpunkt: string): number 
     attributId,
     attributId,
   );
+}
+
+export function bonusAufFaehigkeit(faehigkeitId: number, zeitpunkt: string): number {
+  if (zeitpunkt === '' || !funktionAktiv('ausruestung') || !funktionAktiv('faehigkeiten')) {
+    return 0;
+  }
+  const faehigkeit = eine<{ archiviert: number }>('SELECT archiviert FROM faehigkeiten WHERE id = ?', faehigkeitId);
+  if (!faehigkeit || faehigkeit.archiviert === 1) {
+    return 0;
+  }
+  return boni('SELECT n.bonus AS bonus FROM investitionen n WHERE n.archiviert = 0 AND n.faehigkeit_id = ?', faehigkeitId);
 }
 
 /** Bonus, den jedes Projekt gerade empfängt. Für die Anzeige, ohne Zeitpunkt. */
@@ -194,6 +206,8 @@ interface InvestitionZeile {
   zielName: string | null;
   attributId: number | null;
   attributName: string | null;
+  faehigkeitId: number | null;
+  faehigkeitName: string | null;
   bezahltAttributId: number | null;
   betrag: number;
   archiviert: number;
@@ -203,7 +217,8 @@ interface InvestitionZeile {
 const INVESTITION_ABFRAGE = `
   SELECT n.id, n.name, n.icon, n.groesse, n.bonus,
          n.ziel_art AS zielArt, n.ziel_id AS zielId, n.attribut_id AS attributId,
-         a.name AS attributName, n.bezahlt_attribut_id AS bezahltAttributId, n.betrag,
+         a.name AS attributName, n.faehigkeit_id AS faehigkeitId, f.name AS faehigkeitName,
+         n.bezahlt_attribut_id AS bezahltAttributId, n.betrag,
          n.archiviert, n.erstellt_am AS erstelltAm,
          CASE n.ziel_art
            WHEN 'vision' THEN (SELECT titel FROM visionen WHERE id = n.ziel_id)
@@ -213,6 +228,7 @@ const INVESTITION_ABFRAGE = `
          END AS zielName
   FROM investitionen n
   LEFT JOIN attribute a ON a.id = n.attribut_id
+  LEFT JOIN faehigkeiten f ON f.id = n.faehigkeit_id
 `;
 
 function zuInvestition(zeile: InvestitionZeile): Investition {
@@ -227,6 +243,8 @@ function zuInvestition(zeile: InvestitionZeile): Investition {
     zielName: zeile.zielName,
     attributId: zeile.attributId,
     attributName: zeile.attributName,
+    faehigkeitId: zeile.faehigkeitId,
+    faehigkeitName: zeile.faehigkeitName,
     bezahltAttributId: zeile.bezahltAttributId,
     betrag: zeile.betrag,
     archiviert: zeile.archiviert === 1,
@@ -261,7 +279,12 @@ function pruefeZahlung(zahlung: { bezahltAttributId: number | null; betrag: numb
   }
 }
 
-const ZIEL_FEHLT = 'Wähle ein Attribut oder ein Projekt.';
+const ZIEL_FEHLT = 'Wähle ein Attribut, ein Projekt oder eine Fähigkeit.';
+
+function pruefeFaehigkeit(id: number): void {
+  pruefeFunktion('faehigkeiten');
+  pruefeAktiveFaehigkeit(id);
+}
 
 function kanonZiel(ziel: InvestitionsZiel | null | undefined): InvestitionsZiel | null {
   if (!ziel) {
@@ -276,7 +299,8 @@ function kanonZiel(ziel: InvestitionsZiel | null | undefined): InvestitionsZiel 
 export function erstelleInvestition(daten: InvestitionDaten): Investition {
   const attributId = daten.attributId ?? null;
   const ziel = kanonZiel(daten.ziel);
-  if (!investitionsZieleGueltig(attributId, ziel)) {
+  const faehigkeitId = daten.faehigkeitId ?? null;
+  if (!investitionsZieleGueltig(attributId, ziel, faehigkeitId)) {
     throw ungueltig(ZIEL_FEHLT);
   }
   if (attributId !== null) {
@@ -285,13 +309,16 @@ export function erstelleInvestition(daten: InvestitionDaten): Investition {
   if (ziel) {
     pruefeZiel(ziel);
   }
+  if (faehigkeitId !== null) {
+    pruefeFaehigkeit(faehigkeitId);
+  }
   const zahlung = loeseZahlung(null, daten);
   pruefeZahlung(zahlung, null);
   const groesse = groesseVon(daten.groesse);
   return inTransaktion(() => {
     const { id } = ausfuehren(
-      `INSERT INTO investitionen (name, icon, groesse, bonus, ziel_art, ziel_id, attribut_id, bezahlt_attribut_id, betrag)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO investitionen (name, icon, groesse, bonus, ziel_art, ziel_id, attribut_id, faehigkeit_id, bezahlt_attribut_id, betrag)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       daten.name,
       daten.icon,
       groesse,
@@ -299,6 +326,7 @@ export function erstelleInvestition(daten: InvestitionDaten): Investition {
       ziel?.art ?? null,
       ziel?.id ?? null,
       attributId,
+      faehigkeitId,
       zahlung.bezahltAttributId,
       zahlung.betrag,
     );
@@ -313,7 +341,8 @@ export function aendereInvestition(id: number, aenderung: InvestitionAenderung):
   const bisher = ladeInvestition(id);
   const attributId = aenderung.attributId !== undefined ? aenderung.attributId : bisher.attributId;
   const ziel = aenderung.ziel !== undefined ? kanonZiel(aenderung.ziel) : bisher.ziel;
-  if (!investitionsZieleGueltig(attributId, ziel)) {
+  const faehigkeitId = aenderung.faehigkeitId !== undefined ? aenderung.faehigkeitId : bisher.faehigkeitId;
+  if (!investitionsZieleGueltig(attributId, ziel, faehigkeitId)) {
     throw ungueltig(ZIEL_FEHLT);
   }
   if (attributId !== null && aenderung.attributId !== undefined) {
@@ -321,6 +350,9 @@ export function aendereInvestition(id: number, aenderung: InvestitionAenderung):
   }
   if (ziel && aenderung.ziel !== undefined) {
     pruefeZiel(ziel);
+  }
+  if (faehigkeitId !== null && aenderung.faehigkeitId !== undefined && aenderung.faehigkeitId !== bisher.faehigkeitId) {
+    pruefeFaehigkeit(faehigkeitId);
   }
   const zahlung = loeseZahlung(bisher, aenderung);
   pruefeZahlung(zahlung, bisher);
@@ -333,6 +365,7 @@ export function aendereInvestition(id: number, aenderung: InvestitionAenderung):
       groesse,
       bonus: groesse === undefined ? undefined : investitionsBonus(groesse),
       attribut_id: aenderung.attributId,
+      faehigkeit_id: aenderung.faehigkeitId,
       archiviert: alsZahl(aenderung.archiviert),
       bezahlt_attribut_id: zahlungNeu ? zahlung.bezahltAttributId : undefined,
       betrag: zahlungNeu ? zahlung.betrag : undefined,

@@ -16,6 +16,8 @@ export interface Investition {
   zielName: string | null;
   attributId: number | null;
   attributName: string | null;
+  faehigkeitId: number | null;
+  faehigkeitName: string | null;
   bezahltAttributId: number | null;
   betrag: number;
   archiviert: boolean;
@@ -29,6 +31,7 @@ export interface InvestitionDaten {
   groesse: number;
   attributId?: number | null;
   ziel?: InvestitionsZiel | null;
+  faehigkeitId?: number | null;
   bezahltAttributId?: number | null;
   betrag?: number;
 }
@@ -39,14 +42,19 @@ export interface InvestitionAenderung {
   groesse?: number;
   attributId?: number | null;
   ziel?: InvestitionsZiel | null;
+  faehigkeitId?: number | null;
   bezahltAttributId?: number | null;
   betrag?: number;
   archiviert?: boolean;
 }
 
-export function investitionsZieleGueltig(attributId: number | null, ziel: InvestitionsZiel | null): boolean {
+export function investitionsZieleGueltig(
+  attributId: number | null,
+  ziel: InvestitionsZiel | null,
+  faehigkeitId: number | null = null,
+): boolean {
   if (ziel?.art === 'attribut') {
     return attributId !== null;
   }
-  return attributId !== null || ziel !== null;
+  return attributId !== null || ziel !== null || faehigkeitId !== null;
 }

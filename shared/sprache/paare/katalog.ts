@@ -80,7 +80,7 @@ export const PAARE = [
   ['Ein großes Ereignis: ein Ziel erreicht, ein neuer Rekord oder etwas zum ersten Mal geschafft. Dafür gibt es mehr XP.', 'A big moment: a goal reached, a new record, or something done for the first time. It grants more XP.'],
   ['Nur ein Datum. Nach der Deadline geht Disziplin verloren.', 'Just a date. After the deadline you lose Discipline.'],
   ['Bis zum Datum entsteht er. Danach greift er an.', 'He builds until the date. After that he attacks.'],
-  ['Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP. Der Bonus gilt für beide. Boni auf dasselbe Ziel zählen zusammen bis zur Obergrenze.', 'An investment can cost XP from an attribute. An investment of your own, or a finished project, grants more XP for good. The bonus applies to both. Bonuses on the same target add up to the cap.'],
+  ['Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP. Der Bonus gilt für jedes gewählte Ziel. Bei einer Fähigkeit wächst ihre XP aus Einträgen. Boni auf dasselbe Ziel zählen zusammen bis zur Obergrenze.', 'An investment can cost XP from an attribute. An investment of your own, or a finished project, grants more XP for good. The bonus applies to each chosen target. With a skill, its XP from entries grows. Bonuses on the same target add up to the cap.'],
   ['Bonus gilt auch für Ressourcen', 'Bonus applies to Resources too'],
   ['Ressourcen werden mit investiert und bekommen denselben Bonus.', 'Resources are invested too and get the same bonus.'],
   ['Tägliche Aufgaben zum Abhaken.', 'Daily tasks to check off.'],

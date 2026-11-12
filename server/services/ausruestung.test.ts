@@ -346,7 +346,7 @@ describe('Investition aus einem Projekt', () => {
       expect(projektXp(mit.eintrag.id)).toBe(Math.round(projektXp(basis.eintrag.id) * 1.1));
       expect(attributXp(mit.eintrag.id, koerper)).toBe(Math.round(attributXp(basis.eintrag.id, koerper) * 1.1));
 
-      expect(() => aendereInvestition(eigene.id, { ziel: { art: 'attribut', id: koerper } })).toThrow(/Attribut oder ein Projekt/);
+      expect(() => aendereInvestition(eigene.id, { ziel: { art: 'attribut', id: koerper } })).toThrow(/Attribut, ein Projekt oder eine Fähigkeit/);
       const ohneProjekt = aendereInvestition(eigene.id, { ziel: null });
       expect(ohneProjekt.ziel).toBeNull();
       const danach = eintrag(ziel.id, vorlageId, spaet);

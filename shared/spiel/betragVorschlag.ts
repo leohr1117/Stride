@@ -7,7 +7,7 @@ export const VORSCHLAG_RUNDUNG = 50;
 export const VORSCHLAG_MIN_WOCHEN = 2;
 export const FESTE_BETRAEGE = [100, 300, 800] as const;
 
-export type BetragZielArt = 'vision' | 'projekt' | 'attribut';
+export type BetragZielArt = 'vision' | 'projekt' | 'attribut' | 'faehigkeit';
 
 export interface BetragPosten {
   art: BetragZielArt;
@@ -38,6 +38,7 @@ export function wochenXp(
   posten: readonly BetragPosten[],
   bonusAttributId: number | null,
   auch: { art: BetragZielArt; id: number } | null,
+  faehigkeitId: number | null = null,
 ): number {
   const gewaehlt = new Set<string>();
   if (bonusAttributId !== null) {
@@ -45,6 +46,9 @@ export function wochenXp(
   }
   if (auch) {
     gewaehlt.add(schluessel(auch.art, auch.id));
+  }
+  if (faehigkeitId !== null) {
+    gewaehlt.add(schluessel('faehigkeit', faehigkeitId));
   }
   let summe = 0;
   const gesehen = new Set<string>();
@@ -76,9 +80,10 @@ export function betragVorschlaege(
   bonusAttributId: number | null,
   auch: { art: BetragZielArt; id: number } | null,
   wochenMitEintraegen: number,
+  faehigkeitId: number | null = null,
 ): readonly number[] {
   if (!Number.isFinite(wochenMitEintraegen) || wochenMitEintraegen < VORSCHLAG_MIN_WOCHEN) {
     return FESTE_BETRAEGE;
   }
-  return ausWoche(wochenXp(posten, bonusAttributId, auch));
+  return ausWoche(wochenXp(posten, bonusAttributId, auch, faehigkeitId));
 }

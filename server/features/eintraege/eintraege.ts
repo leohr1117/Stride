@@ -22,6 +22,7 @@ import {
   bestaendigkeitsBonus,
   bossBeute,
   bossLevelAusKampfXp,
+  ausruestungsBonus,
   eintragXp,
   GEGNER,
   gesamtFaktor,
@@ -36,7 +37,7 @@ import {
 import { alle, ausfuehren, eine, inTransaktion, platzhalter, type Parameter } from '../../db.ts';
 import { ladeInvestitionsBuchungen } from './buchungen.ts';
 import { nichtGefunden, ungueltig } from '../../fehler.ts';
-import { bonusAufAttribut, bonusAufProjekt } from '../investitionen/ausruestung.ts';
+import { bonusAufAttribut, bonusAufFaehigkeit, bonusAufProjekt } from '../investitionen/ausruestung.ts';
 import {
   aktivesAttribut,
   ladeAttributXp,
@@ -613,6 +614,8 @@ export function erstelleEintrag(
   const faktor = gesamtFaktor(weitere);
   const xp = eintragXp(daten.stunden, faktor);
   const projektBonus = projekt ? bonusAufProjekt(projekt.id, projekt.visionId, iso) : 0;
+  const faehigkeitBonus = faehigkeit !== null ? bonusAufFaehigkeit(faehigkeit.id, iso) : 0;
+  const faehigkeitDecke = ausruestungsBonus([projektBonus, faehigkeitBonus]);
   const boss = bestehendesVorhaben?.boss ?? null;
   const schaden = boss ? xp : null;
   const disziplinId = aktivesAttribut('disziplin');
@@ -679,7 +682,16 @@ export function erstelleEintrag(
       xp: Math.round(anteil.xp * (1 + bonusAufAttribut(anteil.attributId, iso))),
     }));
     bucheAttribute('eintrag', eintragAnteile, vorhabenId);
-    bucheErfahrung('eintrag', Math.round(xp * (1 + projektBonus)));
+    if (projekt) {
+      const betrag = Math.round(xp * (1 + projektBonus));
+      bucheProjektXp({ quelle: 'eintrag', projektId: projekt.id, xp: betrag, eintragId, vorhabenId }, iso);
+      projektXp += betrag;
+    }
+    if (faehigkeit !== null) {
+      const betrag = Math.round(xp * (1 + faehigkeitDecke));
+      bucheFaehigkeitXp({ quelle: 'eintrag', faehigkeitId: faehigkeit.id, xp: betrag, eintragId }, iso);
+      faehigkeitXp += betrag;
+    }
 
     const abzugBeiNull = fest
       ? bucheAbzuege(abzuege, eintragXp(daten.stunden), eintragId, iso, buchungen, vorher)

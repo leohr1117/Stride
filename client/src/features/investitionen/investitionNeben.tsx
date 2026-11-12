@@ -17,8 +17,8 @@ export function zielText(ziel: InvestitionsZiel | null, visionen: Vision[], proj
   return attribute.find((attribut) => attribut.id === ziel.id)?.name ?? null;
 }
 
-function zielMarke(art: 'vision' | 'projekt', name: string) {
-  const icon = art === 'vision' ? 'flag' : 'target';
+function zielMarke(art: 'vision' | 'projekt' | 'faehigkeit', name: string) {
+  const icon = art === 'vision' ? 'flag' : art === 'projekt' ? 'target' : 'sparkles';
   return (
     <span data-ziel={art} data-icon={icon}>
       <Icon name={icon} className="me-1 inline-block size-3.5 align-middle" aria-hidden="true" />
@@ -32,6 +32,7 @@ export function nebenDerInvestition(
   visionen: Vision[],
   projekte: Projekt[],
   attribute: Attribut[],
+  faehigkeiten: { id: number; name: string }[] = [],
 ) {
   const teile: ReactNode[] = [<span key="bonus">{bonusProzent(investition.bonus)}</span>];
   const trenner = (key: string) => (
@@ -57,6 +58,13 @@ export function nebenDerInvestition(
     const name = eintrag ? attributName(eintrag) : investition.zielName;
     if (name) {
       teile.push(trenner('zweit'), <span key="zweit">{name}</span>);
+    }
+  }
+  if (investition.faehigkeitId !== null) {
+    const name =
+      investition.faehigkeitName ?? faehigkeiten.find((faehigkeit) => faehigkeit.id === investition.faehigkeitId)?.name ?? null;
+    if (name) {
+      teile.push(trenner('faehigkeit'), zielMarke('faehigkeit', name));
     }
   }
   return <span data-investition-neben="">{teile}</span>;

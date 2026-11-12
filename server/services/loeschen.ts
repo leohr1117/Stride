@@ -95,7 +95,8 @@ const MENGE: Record<LoeschArt, string> = {
         WHERE k.faehigkeit_id = f.id AND (k.freigeschaltet_am IS NOT NULL OR k.eintrag_id IS NOT NULL)
       )
       AND NOT EXISTS (SELECT 1 FROM todoist_projekte t WHERE t.faehigkeit_id = f.id)
-      AND NOT EXISTS (SELECT 1 FROM todoist_labels l WHERE l.faehigkeit_id = f.id)`,
+      AND NOT EXISTS (SELECT 1 FROM todoist_labels l WHERE l.faehigkeit_id = f.id)
+      AND NOT EXISTS (SELECT 1 FROM investitionen n WHERE n.faehigkeit_id = f.id)`,
   investition: `
     SELECT n.id FROM investitionen n
     WHERE NOT EXISTS (
@@ -114,6 +115,7 @@ const MENGE: Record<LoeschArt, string> = {
             SELECT 1 FROM xp_ereignisse x
             WHERE x.eintrag_id = e.id AND (x.attribut_id = n.attribut_id OR (n.ziel_art = 'attribut' AND x.attribut_id = n.ziel_id))
           )
+          OR (n.faehigkeit_id IS NOT NULL AND e.faehigkeit_id = n.faehigkeit_id)
         )
     )`,
   basis: `

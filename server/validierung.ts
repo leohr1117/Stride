@@ -222,7 +222,7 @@ const eigenesZielSchema = z.object({
   id: z.number().int().positive(),
 });
 
-const ZIEL_FEHLT = 'Wähle ein Attribut oder ein Projekt.';
+const ZIEL_FEHLT = 'Wähle ein Attribut, ein Projekt oder eine Fähigkeit.';
 
 const investitionFelder = {
   name: pflichtText('Der Name', GRENZEN.nameMax),
@@ -230,13 +230,14 @@ const investitionFelder = {
   groesse: investitionsGroesse,
   attributId: z.number().int().positive().nullable().optional(),
   ziel: eigenesZielSchema.nullable().optional(),
+  faehigkeitId: z.number().int().positive().nullable().optional(),
   bezahltAttributId: z.number().int().positive().nullable().optional(),
   betrag: z.number().int().min(0).optional(),
 };
 
 export const investitionSchema = z
   .object(investitionFelder)
-  .refine((daten) => daten.attributId != null || daten.ziel != null, ZIEL_FEHLT);
+  .refine((daten) => daten.attributId != null || daten.ziel != null || daten.faehigkeitId != null, ZIEL_FEHLT);
 
 export const investitionAenderungSchema = z
   .object({
@@ -245,11 +246,12 @@ export const investitionAenderungSchema = z
     groesse: investitionFelder.groesse.optional(),
     attributId: investitionFelder.attributId,
     ziel: investitionFelder.ziel,
+    faehigkeitId: investitionFelder.faehigkeitId,
     bezahltAttributId: investitionFelder.bezahltAttributId,
     betrag: investitionFelder.betrag,
     archiviert: z.boolean().optional(),
   })
-  .refine((daten) => !(daten.attributId === null && daten.ziel === null), ZIEL_FEHLT);
+  .refine((daten) => !(daten.attributId === null && daten.ziel === null && daten.faehigkeitId === null), ZIEL_FEHLT);
 
 export const vorhabenSchema = z.object({
   titel: pflichtText('Der Titel', GRENZEN.nameMax),

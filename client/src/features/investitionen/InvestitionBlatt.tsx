@@ -105,6 +105,12 @@ export function InvestitionFormular({
   const sichtbarkeit = useSichtbarkeit();
   const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
   const { data: rhythmus } = useQuery({ queryKey: SCHLUESSEL.investitionsRhythmus, queryFn: api.investitionsRhythmus });
+  const faehigkeitenAn = sichtbarkeit.funktionen.faehigkeiten;
+  const { data: faehigkeiten = [] } = useQuery({
+    queryKey: SCHLUESSEL.faehigkeiten,
+    queryFn: api.faehigkeiten,
+    enabled: faehigkeitenAn,
+  });
   const ressourcen = attribute.find((eintrag) => eintrag.kennung === 'ressourcen' && !eintrag.archiviert);
   const [name, setName] = useState(investition?.name ?? '');
   const [icon, setIcon] = useState<IconName>(gueltigesIcon(investition?.icon ?? 'gem'));
@@ -119,6 +125,7 @@ export function InvestitionFormular({
   const [projektZiel, setProjektZiel] = useState<InvestitionsZiel | null>(
     investition?.ziel && investition.ziel.art !== 'attribut' ? investition.ziel : null,
   );
+  const [faehigkeitId, setFaehigkeitId] = useState<number | null>(investition?.faehigkeitId ?? null);
   const [serverFehler, setServerFehler] = useState<unknown>(null);
   const betragRef = useRef<HTMLInputElement>(null);
   const wahlRef = useRef<HTMLInputElement>(null);
@@ -135,24 +142,34 @@ export function InvestitionFormular({
   const problem = betragProblem(bezahltId !== null, betragText, verfuegbar);
   const betragZahl = betragAusText(betragText);
   const vorschlagZiel = projektZiel ?? altAttributZiel;
+  const gesetzteFaehigkeit = faehigkeitenAn ? faehigkeitId : (investition?.faehigkeitId ?? null);
   const vorschlaege = useMemo(
-    () => (rhythmus ? betragVorschlaege(rhythmus.posten, attributId, vorschlagZiel, rhythmus.wochenMitEintraegen) : []),
-    [rhythmus, attributId, vorschlagZiel],
+    () => (rhythmus ? betragVorschlaege(rhythmus.posten, attributId, vorschlagZiel, rhythmus.wochenMitEintraegen, gesetzteFaehigkeit) : []),
+    [rhythmus, attributId, vorschlagZiel, gesetzteFaehigkeit],
   );
   const attributText = bonusAttribut ? attributName(bonusAttribut) : null;
   const zahlText = nameVonAttribut(bezahltId, attribute, tx('Nichts'));
   const projektText = projektZiel ? zielName(projektZiel, listen.visionen, listen.projekte, listen.attribute) : null;
-  const zielFehlt = attributId === null && projektZiel === null;
+  const faehigkeitText =
+    gesetzteFaehigkeit === null
+      ? null
+      : (faehigkeiten.find((eintrag) => eintrag.id === gesetzteFaehigkeit)?.name ?? investition?.faehigkeitName ?? null);
+  const zielFehlt = attributId === null && projektZiel === null && gesetzteFaehigkeit === null;
   const feldId = `${basisId}-betrag`;
   const fehlerId = `${basisId}-fehler`;
   const hinweisId = `${basisId}-hinweis`;
 
-  const merkeWahl = (bezahlt: number | null, bonus: number | null, naechstesZiel: InvestitionsZiel | null) => {
+  const merkeWahl = (
+    bezahlt: number | null,
+    bonus: number | null,
+    naechstesZiel: InvestitionsZiel | null,
+    faehigkeit: number | null,
+  ) => {
     const feld = wahlRef.current;
     if (!feld) {
       return;
     }
-    feld.value = `${bezahlt ?? ''}|${bonus ?? ''}|${zielWert(naechstesZiel)}`;
+    feld.value = `${bezahlt ?? ''}|${bonus ?? ''}|${zielWert(naechstesZiel)}|${faehigkeit ?? ''}`;
     feld.dispatchEvent(new Event('input', { bubbles: true }));
   };
 
@@ -165,6 +182,9 @@ export function InvestitionFormular({
         attributId,
         ...zahlungVon(bezahltId, betragText),
       };
+      if (faehigkeitenAn) {
+        daten.faehigkeitId = faehigkeitId;
+      }
       if (!(altAttributZiel && projektZiel === null)) {
         daten.ziel = projektZiel;
       }
@@ -193,7 +213,7 @@ export function InvestitionFormular({
       betragRef.current?.focus();
       return;
     }
-    if (attributId === null && projektZiel === null) {
+    if (zielFehlt) {
       setZielGeprueft(true);
       attributAnker.current?.querySelector('button')?.focus();
       return;
@@ -212,6 +232,7 @@ export function InvestitionFormular({
     zahlText,
     attributText,
     projektText,
+    faehigkeitText,
     xpNeu: zahlAttribut && betragZahl !== null && betragZahl > 0 ? zahlAttribut.level.xpGesamt + zurueck - betragZahl : null,
     xpJetzt: zahlAttribut?.level.xpGesamt ?? 0,
     kurve: zahlAttribut ? kurveFuerTyp(zahlAttribut.typ) : kurveFuerTyp('attribut'),
@@ -229,6 +250,20 @@ export function InvestitionFormular({
     { wert: '', name: tx('Keins') },
     ...listen.visionen.map((vision) => ({ wert: `vision:${vision.id}`, name: vision.titel, gruppe: 'Vision' })),
     ...listen.projekte.map((eintrag) => ({ wert: `projekt:${eintrag.id}`, name: eintrag.name, gruppe: 'Projekt' })),
+  ];
+  const faehigkeitNamen = new Map(
+    faehigkeiten
+      .filter((eintrag) => eintrag.id === faehigkeitId || !eintrag.archiviert)
+      .map((eintrag) => [String(eintrag.id), eintrag.name] as const),
+  );
+  if (faehigkeitId !== null && !faehigkeitNamen.has(String(faehigkeitId)) && investition?.faehigkeitName) {
+    faehigkeitNamen.set(String(faehigkeitId), investition.faehigkeitName);
+  }
+  const faehigkeitOptionen: WahlOption[] = [
+    { wert: '', name: tx('Keins') },
+    ...[...faehigkeitNamen.entries()]
+      .sort((links, rechts) => links[1].localeCompare(rechts[1], 'de'))
+      .map(([wert, name]) => ({ wert, name })),
   ];
 
   return (
@@ -258,7 +293,7 @@ export function InvestitionFormular({
               if (id === null) {
                 setBetragGeprueft(false);
               }
-              merkeWahl(id, attributId, projektZiel);
+              merkeWahl(id, attributId, projektZiel, faehigkeitId);
             }}
           />
         </ZeilenGruppe>
@@ -287,12 +322,12 @@ export function InvestitionFormular({
               onWaehlen={(wert) => {
                 const id = wert === '' ? null : Number(wert);
                 setAttributId(id);
-                merkeWahl(bezahltId, id, projektZiel);
+                merkeWahl(bezahltId, id, projektZiel, faehigkeitId);
               }}
             />
             {zielGeprueft && zielFehlt ? (
               <p id={`${basisId}-ziel`} role="alert" className="feld-fehler px-4 pb-3 text-[13px] leading-[18px] break-words text-gefahr">
-                {tx('Wähle ein Attribut oder ein Projekt.')}
+                {tx('Wähle ein Attribut, ein Projekt oder eine Fähigkeit.')}
               </p>
             ) : null}
           </div>
@@ -304,9 +339,22 @@ export function InvestitionFormular({
             onWaehlen={(wert) => {
               const naechstes = projektAusWert(wert);
               setProjektZiel(naechstes);
-              merkeWahl(bezahltId, attributId, naechstes);
+              merkeWahl(bezahltId, attributId, naechstes, faehigkeitId);
             }}
           />
+          {faehigkeitenAn ? (
+            <EinzelWahl
+              feld="Fähigkeit"
+              wertName={faehigkeitText ?? tx('Keins')}
+              optionen={faehigkeitOptionen}
+              wert={faehigkeitId === null ? '' : String(faehigkeitId)}
+              onWaehlen={(wert) => {
+                const id = wert === '' ? null : Number(wert);
+                setFaehigkeitId(id);
+                merkeWahl(bezahltId, attributId, projektZiel, id);
+              }}
+            />
+          ) : null}
         </ZeilenGruppe>
         {altAttributZiel && projektZiel === null ? (
           <p className="text-[13px] leading-[18px] text-leise">
@@ -319,7 +367,7 @@ export function InvestitionFormular({
           disabled
           tabIndex={-1}
           aria-hidden="true"
-          defaultValue={`${bezahltId ?? ''}|${attributId ?? ''}|${zielWert(projektZiel)}`}
+          defaultValue={`${bezahltId ?? ''}|${attributId ?? ''}|${zielWert(projektZiel)}|${faehigkeitId ?? ''}`}
           className="pointer-events-none absolute h-px w-px overflow-hidden opacity-0"
         />
         <Fehlermeldung fehler={serverFehler} />

@@ -540,6 +540,7 @@ test('Investition am Projekt und als eigene Investition', async ({ page }, testI
 interface ZielWahl {
   attribut: string | null;
   projekt: string | null;
+  faehigkeit?: string | null;
 }
 
 async function waehleOption(seite: Page, dialog: Locator, feld: string, jetzt: string, option: string): Promise<string> {
@@ -571,6 +572,9 @@ async function legeEigene(seite: Page, name: string, ziel: ZielWahl): Promise<vo
   }
   if (ziel.projekt) {
     await waehleOption(seite, dialog, 'Projekt', 'Keins', ziel.projekt);
+  }
+  if (ziel.faehigkeit) {
+    await waehleOption(seite, dialog, 'Fähigkeit', 'Keins', ziel.faehigkeit);
   }
   await dialog.getByRole('button', { name: 'Speichern' }).click();
   await expect(dialog).toBeHidden();
@@ -691,7 +695,7 @@ test('Investition zielt auf Attribut, Projekt, Vision oder beides', async ({ pag
     await expect(speichern).toBeEnabled();
     await speichern.click();
     const fehler = dialog.locator('[data-feld="attribut"] [role="alert"]');
-    await expect(fehler).toHaveText('Wähle ein Attribut oder ein Projekt.');
+    await expect(fehler).toHaveText('Wähle ein Attribut, ein Projekt oder eine Fähigkeit.');
     await expect(speichern).toBeEnabled();
     await expect(dialog).toBeVisible();
     const fehlerLage = await kasten(fehler);
@@ -797,5 +801,77 @@ test('Eine alte Investition mit zweitem Attribut bleibt, bis ein Projekt gewähl
     await expect(zeile).not.toContainText('Ressourcen');
   } finally {
     await entferneNamen(page, [name]);
+  }
+});
+
+test('Investition zielt auf eine Fähigkeit oder auf alle drei', async ({ page }) => {
+  const namen = ['Nur Fähigkeit', 'Alle drei'];
+  await anmelden(page);
+  await entferneNamen(page, namen);
+  try {
+    const dialog = await oeffneNeu(page);
+    await dialog.getByRole('heading', { name: 'Wirkung' }).scrollIntoViewIfNeeded();
+    const attributKnopf = dialog.getByRole('button', { name: 'Attribut · Ressourcen' });
+    const projektKnopf = dialog.getByRole('button', { name: 'Projekt · Keins' });
+    const faehigkeitKnopf = dialog.getByRole('button', { name: 'Fähigkeit · Keins' });
+    await attributKnopf.scrollIntoViewIfNeeded();
+    const attributLage = await kasten(attributKnopf);
+    const projektLage = await kasten(projektKnopf);
+    expect(attributLage.y + attributLage.height).toBeLessThanOrEqual(projektLage.y + 1);
+    expect(Math.abs(attributLage.x - projektLage.x)).toBeLessThan(4);
+    await faehigkeitKnopf.scrollIntoViewIfNeeded();
+    const projektDanach = await kasten(projektKnopf);
+    const faehigkeitLage = await kasten(faehigkeitKnopf);
+    expect(projektDanach.y + projektDanach.height).toBeLessThanOrEqual(faehigkeitLage.y + 1);
+    expect(Math.abs(projektDanach.x - faehigkeitLage.x)).toBeLessThan(4);
+
+    await faehigkeitKnopf.click();
+    const faehigkeitWahl = page.getByRole('dialog', { name: 'Fähigkeit' });
+    await expect(faehigkeitWahl.getByRole('option').first()).toHaveText('Keins');
+    await faehigkeitWahl.getByRole('option', { name: 'Keins', exact: true }).click();
+    await expect(faehigkeitWahl).toBeHidden();
+
+    await dialog.getByRole('textbox', { name: 'Name' }).fill('Nur Fähigkeit');
+    await dialog.getByRole('button', { name: 'Bezahlt mit · Ressourcen' }).click();
+    const zahl = page.getByRole('dialog', { name: 'Bezahlt mit' });
+    await zahl.getByRole('option', { name: 'Nichts', exact: true }).click();
+    await expect(zahl).toBeHidden();
+    await waehleOption(page, dialog, 'Attribut', 'Ressourcen', 'Keins');
+    await waehleOption(page, dialog, 'Fähigkeit', 'Keins', 'Programmieren');
+    await dialog.getByRole('button', { name: 'Speichern' }).click();
+    await expect(dialog).toBeHidden();
+
+    const nurFaehigkeit = zeileVon(page, 'Nur Fähigkeit').locator('[data-investition-neben]');
+    const nurMarke = nurFaehigkeit.locator('[data-ziel="faehigkeit"][data-icon="sparkles"]');
+    await expect(nurMarke).toContainText('Programmieren');
+    await expect(nurMarke.locator('svg')).toHaveClass(/inline-block/);
+    await expect(nurMarke.locator('svg')).toHaveClass(/size-3\.5/);
+    await markeBeginntMitIcon(nurMarke);
+    await expect(nurFaehigkeit.locator('[data-ziel="projekt"], [data-ziel="vision"]')).toHaveCount(0);
+    await expect(nurFaehigkeit).toContainText('+10 %');
+    await expect(nurFaehigkeit).not.toContainText('Körper');
+    await expect(nurFaehigkeit).not.toContainText('Ressourcen');
+
+    await legeEigene(page, 'Alle drei', { attribut: 'Körper', projekt: 'Ausdauer', faehigkeit: 'Programmieren' });
+    const alle = zeileVon(page, 'Alle drei').locator('[data-investition-neben]');
+    const koerper = alle.getByText('Körper', { exact: true });
+    const projektMarke = alle.locator('[data-ziel="projekt"][data-icon="target"]');
+    const skillMarke = alle.locator('[data-ziel="faehigkeit"][data-icon="sparkles"]');
+    await expect(projektMarke).toContainText('Ausdauer');
+    await expect(skillMarke).toContainText('Programmieren');
+    await liegtLinksDavor(koerper, projektMarke);
+    await liegtLinksDavor(projektMarke, skillMarke);
+    await markeBeginntMitIcon(skillMarke);
+    await expect(alle.locator('svg')).toHaveCount(2);
+
+    for (const name of ['Nur Fähigkeit', 'Alle drei', 'Trainingsbank']) {
+      const zeile = zeileVon(page, name);
+      await zeile.scrollIntoViewIfNeeded();
+      const hoehe = (await kasten(zeile)).height;
+      expect(Math.abs(hoehe - 68)).toBeLessThanOrEqual(1);
+      expect(await zeile.getAttribute('data-zeilen')).toBeNull();
+    }
+  } finally {
+    await entferneNamen(page, namen);
   }
 });

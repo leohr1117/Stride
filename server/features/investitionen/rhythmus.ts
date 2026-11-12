@@ -24,6 +24,12 @@ export function ladeInvestitionsRhythmus(jetzt = leseJetzt()): InvestitionsRhyth
     seit,
     bis,
   );
+  const faehigkeiten = alle<Summe>(
+    `SELECT faehigkeit_id AS id, SUM(xp) AS xp FROM faehigkeit_xp
+     WHERE xp > 0 AND erstellt_am >= ? AND erstellt_am <= ? GROUP BY faehigkeit_id`,
+    seit,
+    bis,
+  );
   const visionen = alle<Summe>(
     `SELECT COALESCE(p.vision_id, o.vision_id) AS id, SUM(px.xp) AS xp
      FROM projekt_xp px
@@ -48,6 +54,7 @@ export function ladeInvestitionsRhythmus(jetzt = leseJetzt()): InvestitionsRhyth
       ...attribute.map((zeile) => ({ art: 'attribut' as const, id: zeile.id, xp: zeile.xp })),
       ...projekte.map((zeile) => ({ art: 'projekt' as const, id: zeile.id, xp: zeile.xp })),
       ...visionen.map((zeile) => ({ art: 'vision' as const, id: zeile.id, xp: zeile.xp })),
+      ...faehigkeiten.map((zeile) => ({ art: 'faehigkeit' as const, id: zeile.id, xp: zeile.xp })),
     ],
   };
 }

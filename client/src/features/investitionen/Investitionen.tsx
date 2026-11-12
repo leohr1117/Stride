@@ -185,6 +185,7 @@ export function InvestitionenSeite() {
   const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
   const { data: attribute = [] } = useQuery({ queryKey: SCHLUESSEL.attribute, queryFn: api.attribute });
   const { data: investitionen, error, isPending } = useQuery({ queryKey: SCHLUESSEL.investitionen, queryFn: api.investitionen });
+  const { data: faehigkeiten = [] } = useQuery({ queryKey: SCHLUESSEL.faehigkeiten, queryFn: api.faehigkeiten });
   const [dialog, setDialog] = useState<Investition | null | 'neu'>(null);
   const liste = investitionen ?? [];
   const eigene = liste.filter((eintrag) => !eintrag.archiviert);
@@ -204,7 +205,7 @@ export function InvestitionenSeite() {
       ) : (
         <Liste>
           {eigene.map((investition) => {
-            const neben = nebenDerInvestition(investition, visionen, alleProjekte, attribute);
+            const neben = nebenDerInvestition(investition, visionen, alleProjekte, attribute, faehigkeiten);
             return (
               <SchnellZeile
                 key={investition.id}

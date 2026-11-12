@@ -71,7 +71,7 @@ export function investitionsBonus(groesse: number): number {
 }
 
 export const INVESTITION_INFO =
-  'Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP. Der Bonus gilt für beide. Boni auf dasselbe Ziel zählen zusammen bis zur Obergrenze.';
+  'Eine Investition kann XP eines Attributs kosten. Eine eigene Investition oder ein geschafftes Projekt gibt dauerhaft mehr XP. Der Bonus gilt für jedes gewählte Ziel. Bei einer Fähigkeit wächst ihre XP aus Einträgen. Boni auf dasselbe Ziel zählen zusammen bis zur Obergrenze.';
 
 export const RESSOURCEN_SCHALTER = 'Bonus gilt auch für Ressourcen';
 

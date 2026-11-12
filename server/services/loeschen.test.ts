@@ -10,6 +10,7 @@ import { erstelleFaehigkeit, erstelleKnoten, loescheKnoten, schalteSkillFrei } f
 import {
   istLoeschbar,
   loescheAttribut,
+  loescheFaehigkeit,
   loescheProjekt,
   loescheVision,
   loescheVorhaben,
@@ -76,19 +77,22 @@ function vision(titel: string): number {
   }).id;
 }
 
-function eintrag(daten: Partial<EintragDaten> & { vorlageId: number }): void {
-  erstelleEintrag({
-    projektId: daten.projektId ?? null,
-    vorlageId: daten.vorlageId,
-    vorhaben: daten.vorhaben ?? null,
-    abschluss: null,
-    erkenntnis: '',
-    stunden: 1,
-    notiz: '',
-    meilenstein: false,
-    faehigkeitId: null,
-    datum: null,
-  });
+function eintrag(daten: Partial<EintragDaten> & { vorlageId: number }, zeit?: Date): void {
+  erstelleEintrag(
+    {
+      projektId: daten.projektId ?? null,
+      vorlageId: daten.vorlageId,
+      vorhaben: daten.vorhaben ?? null,
+      abschluss: null,
+      erkenntnis: '',
+      stunden: 1,
+      notiz: '',
+      meilenstein: false,
+      faehigkeitId: daten.faehigkeitId ?? null,
+      datum: null,
+    },
+    zeit,
+  );
 }
 
 describe('endgültiges Löschen', () => {
@@ -239,6 +243,51 @@ describe('endgültiges Löschen', () => {
       eintrag({ projektId: anderes.id, vorlageId: taetigkeit });
       expect(istLoeschbar('investition', angelegt.id)).toBe(true);
       eintrag({ projektId: ziel.id, vorlageId: taetigkeit });
+      expect(() => loescheInvestition(angelegt.id)).toThrow(/genutzt/);
+    });
+  });
+
+  it('löscht eine Fähigkeit ohne Investition und sperrt sie, sobald eine darauf zeigt', () => {
+    mitWelt(welt(), () => {
+      aendereEinstellungen({ funktionen: { ausruestung: true, faehigkeiten: true } });
+      const frei = erstelleFaehigkeit({ name: 'Frei', beschreibung: '', farbe: '#112233', icon: 'sparkles' });
+      loescheFaehigkeit(frei.id);
+      expect(eine(`SELECT id FROM faehigkeiten WHERE id = ?`, frei.id)).toBeUndefined();
+
+      const belegt = erstelleFaehigkeit({ name: 'Belegt', beschreibung: '', farbe: '#112233', icon: 'sparkles' });
+      const anlage = erstelleInvestition({
+        name: 'Auf Fähigkeit',
+        icon: 'gem',
+        groesse: 1,
+        attributId: null,
+        faehigkeitId: belegt.id,
+      });
+      expect(() => loescheFaehigkeit(belegt.id)).toThrow(/genutzt/);
+      loescheInvestition(anlage.id);
+      loescheFaehigkeit(belegt.id);
+      expect(eine(`SELECT id FROM faehigkeiten WHERE id = ?`, belegt.id)).toBeUndefined();
+    });
+  });
+
+  it('löscht eine Investition auf eine Fähigkeit, bis ein späterer Eintrag sie trifft', () => {
+    mitWelt(welt(), () => {
+      aendereEinstellungen({ funktionen: { ausruestung: true, faehigkeiten: true } });
+      const ziel = erstelleFaehigkeit({ name: 'Ziel', beschreibung: '', farbe: '#112233', icon: 'sparkles' });
+      const andere = erstelleFaehigkeit({ name: 'Andere', beschreibung: '', farbe: '#112233', icon: 'sparkles' });
+      const taetigkeit = vorlage('Tun');
+      eintrag({ vorlageId: taetigkeit, faehigkeitId: ziel.id }, new Date(2020, 0, 1, 12, 0, 0));
+      const angelegt = erstelleInvestition({
+        name: 'Nur Fähigkeit',
+        icon: 'gem',
+        groesse: 1,
+        attributId: null,
+        faehigkeitId: ziel.id,
+      });
+      expect(istLoeschbar('investition', angelegt.id)).toBe(true);
+      eintrag({ vorlageId: taetigkeit, faehigkeitId: andere.id });
+      eintrag({ vorlageId: taetigkeit });
+      expect(istLoeschbar('investition', angelegt.id)).toBe(true);
+      eintrag({ vorlageId: taetigkeit, faehigkeitId: ziel.id });
       expect(() => loescheInvestition(angelegt.id)).toThrow(/genutzt/);
     });
   });

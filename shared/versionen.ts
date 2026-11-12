@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.24',
+    seiten: 'Investitionen',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Investitionen können jetzt auch auf eine Fähigkeit wirken, in einem eigenen Feld neben Attribut und Projekt. Bestehende Investitionen bleiben, wie sie sind.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.23',
     seiten: 'Einträge',
     abschnitte: [

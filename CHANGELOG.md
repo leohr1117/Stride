@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.24
+
+### Hinzugefügt
+
+- Investitionen können jetzt auch auf eine Fähigkeit wirken, in einem eigenen Feld neben Attribut und Projekt. Bestehende Investitionen bleiben, wie sie sind.
+
 ## 4.1.23
 
 ### Behoben
