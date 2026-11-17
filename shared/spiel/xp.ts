@@ -226,6 +226,15 @@ export function verteileNachGewichten(xp: number, gewichte: Gewicht[]): XpAnteil
   return roh.filter((anteil) => anteil.xp > 0).map(({ attributId, xp: anteilXp }) => ({ attributId, xp: anteilXp }));
 }
 
+/** Feste Prozent ohne Plus, mit mindestens einem Abzug. */
+export function istNurAbzug(
+  fest: boolean,
+  gewichte: readonly { gewicht: number }[],
+  abzuege: readonly unknown[],
+): boolean {
+  return fest && abzuege.length > 0 && !gewichte.some((eintrag) => eintrag.gewicht > 0);
+}
+
 /** Feste Prozent: nur die Summe der aktiven Gewichte, höchstens 100, geht an Attribute. Sonst das heutige Verhältnis. */
 export function verteileTaetigkeit(xp: number, gewichte: Gewicht[], fest: boolean): XpAnteil[] {
   if (!fest) {

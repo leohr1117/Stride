@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Tätigkeit kann nur aus Abzügen bestehen. So ein Eintrag zieht XP ab und zählt nicht für die Tageskette, für Erfolge bei Einträgen und Stunden und nicht für die Erfahrung von Projekt und Fähigkeit.": "Una actividad puede consistir solo en descuentos. Esa entrada resta XP y no cuenta para la racha diaria, los logros de entradas y horas, ni la experiencia de proyecto y habilidad.",
   "Investitionen können jetzt auch auf eine Fähigkeit wirken, in einem eigenen Feld neben Attribut und Projekt. Bestehende Investitionen bleiben, wie sie sind.": "Las inversiones ahora también pueden actuar sobre una habilidad, en un campo propio junto al atributo y al proyecto. Las inversiones existentes se quedan como están.",
   "Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.": "El botón «Anotar» muestra la XP según los porcentajes de la actividad.",
   "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "Al registrar, eliges la duración en una fila a partir de 15 minutos o la escribes tú.",

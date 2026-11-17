@@ -118,7 +118,7 @@ export function verdieneSchutz(tag: string, eintragId: number): void {
   const bruecken = ladeBrueckentage();
   const andere =
     eine<{ anzahl: number }>(
-      `SELECT COUNT(*) AS anzahl FROM eintraege WHERE id <> ? AND date(erstellt_am, 'localtime') = ?`,
+      `SELECT COUNT(*) AS anzahl FROM eintraege WHERE id <> ? AND nur_abzug = 0 AND date(erstellt_am, 'localtime') = ?`,
       eintragId,
       tag,
     )?.anzahl ?? 0;

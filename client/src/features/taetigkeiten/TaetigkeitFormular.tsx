@@ -122,7 +122,9 @@ export function TaetigkeitFormular({
   const abzugSumme = summeVon(false);
   const rest = Math.max(0, 100 - plusSumme);
   const anzahl = [...werte].filter(([id, wert]) => wert !== 0 && aktive.some((attribut) => attribut.id === id)).length;
-  const hatPlus = festModus ? plusSumme > 0 : (vorlage?.gewichte.some((gewicht) => gewicht.gewicht > 0) ?? false);
+  const hatWirkung = festModus
+    ? plusSumme > 0 || abzugSumme > 0
+    : (vorlage?.gewichte.some((gewicht) => gewicht.gewicht > 0) ?? false);
   const liveFehler = summeFehler ?? (festModus && plusSumme > 100 ? SUMME_ZU_VIEL : null);
 
   const speichern = useMutation({
@@ -184,8 +186,8 @@ export function TaetigkeitFormular({
     const zuViel = festModus && plusSumme > 100;
     const zuViele = festModus && anzahl > GRENZEN.vorlageAttributeMax;
     setNameFehler(nameLeer ? 'Der Name darf nicht leer sein.' : null);
-    if (nameLeer || zuViel || zuViele || !hatPlus || speichern.isPending) {
-      if (!nameLeer && (zuViel || zuViele || !hatPlus)) {
+    if (nameLeer || zuViel || zuViele || !hatWirkung || speichern.isPending) {
+      if (!nameLeer && (zuViel || zuViele || !hatWirkung)) {
         setSummeFehler(zuViele ? SUMME_ZU_VIELE : zuViel ? SUMME_ZU_VIEL : SUMME_OHNE_PLUS);
         setFokus((stand) => stand + 1);
       }

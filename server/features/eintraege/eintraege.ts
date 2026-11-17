@@ -27,6 +27,7 @@ import {
   GEGNER,
   gesamtFaktor,
   meilensteinBonus,
+  istNurAbzug,
   verteileNachGewichten,
   verteileTaetigkeit,
   WEITERMACHEN,
@@ -568,7 +569,7 @@ export function ladeAktiveTageDesProjekts(projektId: number | null, ohneEintragI
   const filter = projektId === null ? 'projekt_id IS NULL' : 'projekt_id = ?';
   const parameter: Parameter[] = projektId === null ? [] : [projektId];
   return alle<{ tag: string }>(
-    `SELECT DISTINCT date(erstellt_am, 'localtime') AS tag FROM eintraege WHERE ${filter} AND id <> ?`,
+    `SELECT DISTINCT date(erstellt_am, 'localtime') AS tag FROM eintraege WHERE ${filter} AND id <> ? AND nur_abzug = 0`,
     ...parameter,
     ohneEintragId,
   ).map((zeile) => zeile.tag);
@@ -602,6 +603,7 @@ export function erstelleEintrag(
   sonder: EintragSonder = {},
 ): EintragErgebnis {
   const { projekt, gewichte, fest, abzuege, bestehendesVorhaben, istMeilenstein, faehigkeit } = bereiteVor(daten);
+  const nurAbzug = istNurAbzug(fest, gewichte, abzuege);
   const zeitpunkt = zeitpunktFuerEintrag(daten.datum, jetzt);
   const iso = zeitpunkt.toISOString();
   const tag = lokalesDatum(zeitpunkt);
@@ -617,7 +619,7 @@ export function erstelleEintrag(
   const faehigkeitBonus = faehigkeit !== null ? bonusAufFaehigkeit(faehigkeit.id, iso) : 0;
   const faehigkeitDecke = ausruestungsBonus([projektBonus, faehigkeitBonus]);
   const boss = bestehendesVorhaben?.boss ?? null;
-  const schaden = boss ? xp : null;
+  const schaden = boss && !nurAbzug ? xp : null;
   const disziplinId = aktivesAttribut('disziplin');
   const geistId = aktivesAttribut('geist');
   const vorher = ladeLevelStand(projekt?.id ?? null, faehigkeit?.id ?? null);
@@ -631,8 +633,8 @@ export function erstelleEintrag(
 
     const { id: eintragId } = ausfuehren(
       `INSERT INTO eintraege (projekt_id, vorlage_id, vorhaben_id, faehigkeit_id, abschluss, stunden, notiz,
-                              meilenstein, krit, boss_schaden, ausruestung_bonus, faktor, basis_aufgabe_id, erstellt_am)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                              meilenstein, krit, boss_schaden, ausruestung_bonus, faktor, basis_aufgabe_id, nur_abzug, erstellt_am)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       projekt?.id ?? null,
       daten.vorlageId,
       vorhabenId,
@@ -646,6 +648,7 @@ export function erstelleEintrag(
       projektBonus,
       faktor,
       sonder.basisAufgabeId ?? null,
+      Number(nurAbzug),
       iso,
     );
 
@@ -677,25 +680,31 @@ export function erstelleEintrag(
       }
     };
 
-    const eintragAnteile = mindereGezielt(verteileTaetigkeit(xp, gewichte, fest), gezielteErschoepfung).map((anteil) => ({
-      attributId: anteil.attributId,
-      xp: Math.round(anteil.xp * (1 + bonusAufAttribut(anteil.attributId, iso))),
-    }));
-    bucheAttribute('eintrag', eintragAnteile, vorhabenId);
-    if (projekt) {
-      const betrag = Math.round(xp * (1 + projektBonus));
-      bucheProjektXp({ quelle: 'eintrag', projektId: projekt.id, xp: betrag, eintragId, vorhabenId }, iso);
-      projektXp += betrag;
-    }
-    if (faehigkeit !== null) {
-      const betrag = Math.round(xp * (1 + faehigkeitDecke));
-      bucheFaehigkeitXp({ quelle: 'eintrag', faehigkeitId: faehigkeit.id, xp: betrag, eintragId }, iso);
-      faehigkeitXp += betrag;
+    if (!nurAbzug) {
+      const eintragAnteile = mindereGezielt(verteileTaetigkeit(xp, gewichte, fest), gezielteErschoepfung).map((anteil) => ({
+        attributId: anteil.attributId,
+        xp: Math.round(anteil.xp * (1 + bonusAufAttribut(anteil.attributId, iso))),
+      }));
+      bucheAttribute('eintrag', eintragAnteile, vorhabenId);
+      if (projekt) {
+        const betrag = Math.round(xp * (1 + projektBonus));
+        bucheProjektXp({ quelle: 'eintrag', projektId: projekt.id, xp: betrag, eintragId, vorhabenId }, iso);
+        projektXp += betrag;
+      }
+      if (faehigkeit !== null) {
+        const betrag = Math.round(xp * (1 + faehigkeitDecke));
+        bucheFaehigkeitXp({ quelle: 'eintrag', faehigkeitId: faehigkeit.id, xp: betrag, eintragId }, iso);
+        faehigkeitXp += betrag;
+      }
     }
 
     const abzugBeiNull = fest
       ? bucheAbzuege(abzuege, eintragXp(daten.stunden), eintragId, iso, buchungen, vorher)
       : [];
+
+    if (nurAbzug) {
+      return { eintragId, buchungen, boni, projektXp, faehigkeitXp, bossSieg: null, abzugBeiNull };
+    }
 
     const tageVorher = ladeAktiveTageDesProjekts(projekt?.id ?? null, eintragId);
     if (disziplinId !== null && !tageVorher.includes(tag)) {
@@ -843,19 +852,21 @@ export function erstelleEintrag(
     belohnung: erstelleBelohnung({
       buchungen: ergebnis.buchungen,
       boni: ergebnis.boni,
-      meilenstein: istMeilenstein,
-      projekt: projekt ? { name: projekt.name, xp: ergebnis.projektXp } : null,
-      faehigkeit: faehigkeit !== null ? { name: faehigkeit.name, xp: ergebnis.faehigkeitXp } : null,
+      meilenstein: istMeilenstein && !nurAbzug,
+      projekt: projekt && !nurAbzug ? { name: projekt.name, xp: ergebnis.projektXp } : null,
+      faehigkeit: faehigkeit !== null && !nurAbzug ? { name: faehigkeit.name, xp: ergebnis.faehigkeitXp } : null,
       boss: bossBelohnung,
-      multiplikatoren: [
-        ...weitere,
-        ...(projektBonus > 0 ? [{ art: 'ausruestung' as const, faktor: 1 + projektBonus }] : []),
-        ...gezielteErschoepfung.map((regel) => ({
-          art: 'erschoepfung' as const,
-          faktor: regel.faktor,
-          label: `Erschöpfung: ${regel.quelleName} → ${regel.zielName ?? ''}`,
-        })),
-      ],
+      multiplikatoren: nurAbzug
+        ? []
+        : [
+            ...weitere,
+            ...(projektBonus > 0 ? [{ art: 'ausruestung' as const, faktor: 1 + projektBonus }] : []),
+            ...gezielteErschoepfung.map((regel) => ({
+              art: 'erschoepfung' as const,
+              faktor: regel.faktor,
+              label: `Erschöpfung: ${regel.quelleName} → ${regel.zielName ?? ''}`,
+            })),
+          ],
       vorher,
       nachher,
       abzugBeiNull: ergebnis.abzugBeiNull,

@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.25',
+    seiten: 'Tätigkeiten, Einträge',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Eine Tätigkeit kann nur aus Abzügen bestehen. So ein Eintrag zieht XP ab und zählt nicht für die Tageskette, für Erfolge bei Einträgen und Stunden und nicht für die Erfahrung von Projekt und Fähigkeit.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.24',
     seiten: 'Investitionen',
     abschnitte: [

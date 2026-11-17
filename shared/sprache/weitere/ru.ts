@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Tätigkeit kann nur aus Abzügen bestehen. So ein Eintrag zieht XP ab und zählt nicht für die Tageskette, für Erfolge bei Einträgen und Stunden und nicht für die Erfahrung von Projekt und Fähigkeit.": "Занятие может состоять только из списаний. Такая запись снимает опыт и не идёт в ежедневную серию, в успехи по записям и часам и в опыт проекта и навыка.",
   "Investitionen können jetzt auch auf eine Fähigkeit wirken, in einem eigenen Feld neben Attribut und Projekt. Bestehende Investitionen bleiben, wie sie sind.": "Вложения теперь могут действовать и на навык, в отдельном поле рядом с атрибутом и проектом. Существующие вложения остаются как есть.",
   "Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.": "Кнопка «Записать» показывает опыт по процентам занятия.",
   "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "При записи ты выбираешь длительность в одной строке от 15 минут или вводишь её сам.",

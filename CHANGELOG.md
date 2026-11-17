@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.1.25
+
+### Hinzugefügt
+
+- Eine Tätigkeit kann nur aus Abzügen bestehen. So ein Eintrag zieht XP ab und zählt nicht für die Tageskette, für Erfolge bei Einträgen und Stunden und nicht für die Erfahrung von Projekt und Fähigkeit.
+
 ## 4.1.24
 
 ### Hinzugefügt

@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Tätigkeit kann nur aus Abzügen bestehen. So ein Eintrag zieht XP ab und zählt nicht für die Tageskette, für Erfolge bei Einträgen und Stunden und nicht für die Erfahrung von Projekt und Fähigkeit.": "一项活动可以只包含扣除。这样的记录会扣掉经验，并且不计入每日连续、记录与小时成就，也不计入项目和技能经验。",
   "Investitionen können jetzt auch auf eine Fähigkeit wirken, in einem eigenen Feld neben Attribut und Projekt. Bestehende Investitionen bleiben, wie sie sind.": "投入现在也可以作用在一项技能上，在属性和项目旁边的单独字段里。已有投入保持原样。",
   "Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.": "“记下”按钮按活动的百分比显示经验。",
   "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "记录时，你在一行里从 15 分钟起选择时长，也可以自己填写。",

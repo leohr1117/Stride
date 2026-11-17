@@ -83,7 +83,7 @@ export function ladeUebersicht(jetzt = leseJetzt()): Uebersicht {
 
 export function ladeCharakter(): Charakter {
   const statistik = eine<Omit<Charakter['statistik'], 'aktiveTage'>>(
-    `SELECT (SELECT COUNT(*) FROM eintraege) AS eintraegeGesamt,
+    `SELECT (SELECT COUNT(*) FROM eintraege WHERE nur_abzug = 0) AS eintraegeGesamt,
             (SELECT COUNT(*) FROM eintraege WHERE meilenstein = 1) AS meilensteine,
             (SELECT COUNT(*) FROM vorhaben WHERE status = 'geschafft') AS vorhabenGeschafft`,
   ) ?? { eintraegeGesamt: 0, meilensteine: 0, vorhabenGeschafft: 0 };

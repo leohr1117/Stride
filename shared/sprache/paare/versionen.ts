@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Eine Tätigkeit kann nur aus Abzügen bestehen. So ein Eintrag zieht XP ab und zählt nicht für die Tageskette, für Erfolge bei Einträgen und Stunden und nicht für die Erfahrung von Projekt und Fähigkeit.',
+    'An activity can consist only of deductions. Such an entry subtracts XP and does not count toward the daily streak, entry and hour achievements, or project and skill experience.',
+  ],
+  [
     'Investitionen können jetzt auch auf eine Fähigkeit wirken, in einem eigenen Feld neben Attribut und Projekt. Bestehende Investitionen bleiben, wie sie sind.',
     'Investments can now also apply to a skill, in a field of its own beside attribute and project. Existing investments stay as they are.',
   ],

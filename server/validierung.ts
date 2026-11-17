@@ -81,7 +81,6 @@ const gewichteSchema = z
       gewicht: z.number().int().min(1).max(GRENZEN.vorlageGewichtMax),
     }),
   )
-  .min(1, 'Eine Tätigkeit braucht mindestens ein Attribut.')
   .max(GRENZEN.vorlageAttributeMax, `Eine Tätigkeit darf höchstens ${GRENZEN.vorlageAttributeMax} Attribute haben.`)
   .refine(
     (gewichte) => new Set(gewichte.map((gewicht) => gewicht.attributId)).size === gewichte.length,
@@ -118,9 +117,12 @@ export function anteileFehler(daten: {
     return `Eine Tätigkeit darf höchstens ${GRENZEN.vorlageAttributeMax} Attribute haben.`;
   }
   if (!daten.festeAnteile) {
+    if (!daten.gewichte.some((gewicht) => gewicht.gewicht > 0)) {
+      return 'Eine Tätigkeit braucht mindestens ein Attribut.';
+    }
     return null;
   }
-  if (!daten.gewichte.some((gewicht) => gewicht.gewicht > 0)) {
+  if (!daten.gewichte.some((gewicht) => gewicht.gewicht > 0) && daten.abzuege.length === 0) {
     return ANTEIL_PLUS;
   }
   let summe = 0;

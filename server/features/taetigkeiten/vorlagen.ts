@@ -112,9 +112,6 @@ export function ladeAktiveVerteilung(vorlageId: number): AktiveVerteilung {
     vorlageId,
     ...typen,
   );
-  if (gewichte.length === 0) {
-    throw ungueltig(`Die Tätigkeit "${vorlage.name}" stärkt kein aktives Attribut. Passe sie unter "Mehr" an.`);
-  }
   const abzuege = alle<VorlageAbzug>(
     `SELECT z.attribut_id AS attributId, z.prozent
      FROM vorlage_abzuege z
@@ -124,6 +121,9 @@ export function ladeAktiveVerteilung(vorlageId: number): AktiveVerteilung {
     vorlageId,
     ...typen,
   );
+  if (gewichte.length === 0 && !(vorlage.festeAnteile && abzuege.length > 0)) {
+    throw ungueltig(`Die Tätigkeit "${vorlage.name}" stärkt kein aktives Attribut. Passe sie unter "Mehr" an.`);
+  }
   return { gewichte, fest: vorlage.festeAnteile, abzuege };
 }
 

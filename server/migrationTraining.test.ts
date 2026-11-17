@@ -159,7 +159,7 @@ describe('Migration 24', () => {
     expect(MIGRATIONEN[24]).toContain('ziel_saetze IS NULL OR ziel_saetze BETWEEN 1 AND 20');
   });
 
-  it('legt die Spalten an und lässt eintraege und einstellungen unverändert', () => {
+  it('legt die Spalten an, hängt nur_abzug an eintraege und lässt einstellungen unverändert', () => {
     const db = datenbank();
     migriere(db, 23);
     expect(version(db)).toBe(23);
@@ -182,8 +182,9 @@ describe('Migration 24', () => {
     expect(spalten(db, 'trainingseinheiten')).toEqual(EINHEITEN_SPALTEN);
     expect(spalten(db, 'trainingssaetze')).toEqual(SAETZE_SPALTEN);
     expect(spalten(db, 'bestwerte')).toEqual(BESTWERTE_SPALTEN);
-    expect(spalten(db, 'eintraege')).toEqual(eintraege);
+    expect(spalten(db, 'eintraege')).toEqual([...eintraege, 'nur_abzug']);
     expect(eintraege).not.toContain('gewicht_einheit');
+    expect(eintraege).not.toContain('nur_abzug');
     expect(spalten(db, 'einstellungen')).toEqual(['schluessel', 'wert']);
     expect(db.prepare(`SELECT name FROM sqlite_master WHERE sql LIKE '%gewicht_einheit%'`).get()).toBeUndefined();
 

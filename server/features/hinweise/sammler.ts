@@ -39,7 +39,9 @@ function aktiveTage(zone: string | null): string[] {
     return [];
   }
   const tage = new Set<string>();
-  for (const zeile of alle<{ erstelltAm: string }>('SELECT erstellt_am AS erstelltAm FROM eintraege')) {
+  for (const zeile of alle<{ erstelltAm: string }>(
+    'SELECT erstellt_am AS erstelltAm FROM eintraege WHERE nur_abzug = 0',
+  )) {
     const zeit = new Date(zeile.erstelltAm);
     if (Number.isNaN(zeit.getTime())) {
       continue;

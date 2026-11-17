@@ -157,13 +157,23 @@ describe('feste Anteile', () => {
       const geist = geistId();
       expect(() =>
         erstelleVorlage({
-          name: 'Nur Abzug',
+          name: 'Ohne Anteil',
           icon: 'star',
           festeAnteile: true,
           gewichte: [],
-          abzuege: [{ attributId: geist, prozent: 10 }],
+          abzuege: [],
         }),
       ).toThrow(/Mindestens ein Attribut mit Plus/);
+      const nurAbzug = erstelleVorlage({
+        name: 'Nur Abzug',
+        icon: 'star',
+        festeAnteile: true,
+        gewichte: [],
+        abzuege: [{ attributId: geist, prozent: 10 }],
+      });
+      expect(nurAbzug.festeAnteile).toBe(true);
+      expect(nurAbzug.gewichte).toEqual([]);
+      expect(nurAbzug.abzuege).toEqual([{ attributId: geist, prozent: 10 }]);
       expect(() =>
         erstelleVorlage({
           name: 'Beides',

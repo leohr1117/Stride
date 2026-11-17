@@ -4,9 +4,13 @@ import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { abzugXp } from '../../../shared/spiel/belastung.ts';
 import { eintragXp, verteileTaetigkeit } from '../../../shared/spiel/xp.ts';
-import { ausfuehren, eine, mitWelt, schliesseWelt } from '../../db.ts';
+import { alle, ausfuehren, eine, mitWelt, schliesseWelt } from '../../db.ts';
 import { aendereAttribut } from '../attribute/attribute.ts';
 import { aendereEinstellungen } from '../einstellungen/einstellungen.ts';
+import { ladeKennzahlen } from '../erfolge/erfolge.ts';
+import { erstelleFaehigkeit } from '../faehigkeiten/faehigkeiten.ts';
+import { aendereVorhaben, erstelleVorhaben } from '../ziele/vorhaben.ts';
+import { ladeAktiveTage } from '../../services/serie.ts';
 import { erstelleProjekt } from '../../services/struktur.ts';
 import { erstelleVorlage } from '../taetigkeiten/vorlagen.ts';
 import { erstelleEintrag, loescheEintrag } from './eintraege.ts';
@@ -187,4 +191,127 @@ describe('feste Anteile beim Eintrag', () => {
       expect(ergebnis.belohnung.abzugBeiNull).toEqual([nameUndFarbe(geist)]);
     });
   });
+
+  it('bucht bei reinem Abzug nur den Abzug und lässt Kette, Erfolge und Projekt-XP stehen', () => {
+    mitWelt(welt(), () => {
+      aendereEinstellungen({ funktionen: { faehigkeiten: true, bossAngriffe: true } });
+      const koerper = attributId('koerper');
+      const geist = attributId('geist');
+      setzeXp(geist, 80);
+      const abzugVorlage = erstelleVorlage({
+        name: 'Nur Abzug',
+        icon: 'star',
+        festeAnteile: true,
+        gewichte: [],
+        abzuege: [{ attributId: geist, prozent: 30 }],
+      });
+      const plusVorlage = erstelleVorlage({
+        name: 'Mit Plus',
+        icon: 'star',
+        festeAnteile: true,
+        gewichte: [{ attributId: koerper, gewicht: 40 }],
+      });
+      const projekt = erstelleProjekt({
+        name: 'Sache',
+        beschreibung: '',
+        visionId: null,
+        organisationId: null,
+        standardVorlageId: plusVorlage.id,
+      });
+      const faehigkeit = erstelleFaehigkeit({ name: 'Handwerk', beschreibung: '', farbe: '#34d399', icon: 'star' });
+      const vorhaben = erstelleVorhaben(projekt.id, 'Drache', ZEIT);
+      aendereVorhaben(vorhaben.id, { boss: { deadline: '2026-12-01' } }, ZEIT);
+      const vorher = ladeKennzahlen();
+
+      const strafe = eintragFuer(abzugVorlage.id, projekt.id, vorhaben.id, faehigkeit.id, 1, ZEIT);
+      const abzug = abzugXp(eintragXp(1), 30, 80);
+
+      expect(abzug).toBeGreaterThan(0);
+      expect(xpQuelle(strafe.eintrag.id, geist, 'abzug')).toBe(-abzug);
+      expect(quellen(strafe.eintrag.id)).toEqual(['abzug']);
+      expect(projektXp(strafe.eintrag.id)).toBe(0);
+      expect(faehigkeitXp(strafe.eintrag.id)).toBe(0);
+      expect(strafe.eintrag.bossSchaden).toBeNull();
+      expect(strafe.belohnung.projekt).toBeNull();
+      expect(strafe.belohnung.faehigkeit).toBeNull();
+      expect(strafe.belohnung.boss).toBeNull();
+      expect(strafe.belohnung.boni).toEqual([]);
+      expect(strafe.belohnung.anteile.every((anteil) => anteil.xp < 0)).toBe(true);
+      expect(nurAbzugFlag(strafe.eintrag.id)).toBe(1);
+      expect(ladeAktiveTage()).toEqual([]);
+      expect(ladeKennzahlen().eintraege).toBe(vorher.eintraege);
+      expect(ladeKennzahlen().stunden).toBe(vorher.stunden);
+      expect(ladeKennzahlen().streak).toBe(vorher.streak);
+
+      const plus = eintragFuer(plusVorlage.id, projekt.id, vorhaben.id, faehigkeit.id, 2, ZEIT);
+      expect(plus.eintrag.bossSchaden).toBeGreaterThan(0);
+      expect(projektXp(plus.eintrag.id)).toBeGreaterThan(0);
+      expect(faehigkeitXp(plus.eintrag.id)).toBeGreaterThan(0);
+      expect(projektXp(strafe.eintrag.id)).toBe(0);
+      const tag = tagVon(plus.eintrag.id);
+      expect(ladeAktiveTage()).toEqual([tag]);
+      expect(ladeKennzahlen().eintraege).toBe(vorher.eintraege + 1);
+      expect(ladeKennzahlen().stunden).toBe(vorher.stunden + 2);
+
+      const morgen = eintragFuer(abzugVorlage.id, projekt.id, vorhaben.id, faehigkeit.id, 1, new Date(2026, 5, 3, 12, 0, 0));
+      expect(morgen.eintrag.bossSchaden).toBeNull();
+      expect(tagVon(morgen.eintrag.id)).not.toBe(tag);
+      expect(ladeAktiveTage()).toEqual([tag]);
+      expect(ladeKennzahlen().eintraege).toBe(vorher.eintraege + 1);
+      expect(ladeKennzahlen().stunden).toBe(vorher.stunden + 2);
+    });
+  });
 });
+
+function eintragFuer(
+  vorlageId: number,
+  projektId: number,
+  vorhabenId: number,
+  faehigkeitId: number,
+  stunden: number,
+  zeit: Date,
+) {
+  return erstelleEintrag(
+    {
+      projektId,
+      vorlageId,
+      vorhaben: { art: 'bestehend', id: vorhabenId },
+      abschluss: null,
+      erkenntnis: '',
+      stunden,
+      notiz: '',
+      meilenstein: false,
+      faehigkeitId,
+      datum: null,
+    },
+    zeit,
+  );
+}
+
+function quellen(eintragId: number): string[] {
+  return alle<{ quelle: string }>(
+    'SELECT DISTINCT quelle FROM xp_ereignisse WHERE eintrag_id = ? ORDER BY quelle',
+    eintragId,
+  ).map((zeile) => zeile.quelle);
+}
+
+function faehigkeitXp(eintragId: number): number {
+  return (
+    eine<{ xp: number }>('SELECT COALESCE(SUM(xp), 0) AS xp FROM faehigkeit_xp WHERE eintrag_id = ?', eintragId)?.xp ?? 0
+  );
+}
+
+function nurAbzugFlag(eintragId: number): number {
+  return eine<{ wert: number }>('SELECT nur_abzug AS wert FROM eintraege WHERE id = ?', eintragId)?.wert ?? -1;
+}
+
+function tagVon(eintragId: number): string {
+  const tag = eine<{ tag: string }>(
+    `SELECT date(erstellt_am, 'localtime') AS tag FROM eintraege WHERE id = ?`,
+    eintragId,
+  )?.tag;
+  if (!tag) {
+    throw new Error('Tag fehlt.');
+  }
+  return tag;
+}

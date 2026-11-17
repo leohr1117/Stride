@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Tätigkeit kann nur aus Abzügen bestehen. So ein Eintrag zieht XP ab und zählt nicht für die Tageskette, für Erfolge bei Einträgen und Stunden und nicht für die Erfahrung von Projekt und Fähigkeit.": "Une activité peut ne comporter que des retraits. Une telle entrée retire de l’XP et ne compte pas pour la série du jour, les succès d’entrées et d’heures, ni l’expérience du projet et de la compétence.",
   "Investitionen können jetzt auch auf eine Fähigkeit wirken, in einem eigenen Feld neben Attribut und Projekt. Bestehende Investitionen bleiben, wie sie sind.": "Les investissements peuvent maintenant aussi agir sur une compétence, dans un champ à part à côté de l’attribut et du projet. Les investissements existants restent tels quels.",
   "Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.": "Le bouton « Noter » affiche l’XP selon les pourcentages de l’activité.",
   "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "Quand tu enregistres, tu choisis la durée sur une ligne à partir de 15 minutes, ou tu la saisis toi-même.",

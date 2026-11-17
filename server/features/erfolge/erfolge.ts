@@ -15,7 +15,7 @@ type ZaehlbareKennzahlen = Omit<Kennzahlen, 'streak' | 'level' | 'aktiveTage'>;
 
 export function ladeKennzahlen(): Kennzahlen {
   const zaehlungen = eine<ZaehlbareKennzahlen>(
-    `SELECT (SELECT COUNT(*) FROM eintraege) AS eintraege,
+    `SELECT (SELECT COUNT(*) FROM eintraege WHERE nur_abzug = 0) AS eintraege,
             (SELECT COUNT(*) FROM eintraege WHERE meilenstein = 1) AS meilensteine,
             (SELECT COUNT(*) FROM vorhaben WHERE boss = 1 AND status = 'geschafft') AS bosse,
             (SELECT COALESCE(MAX(boss_level), 0) FROM vorhaben WHERE boss = 1 AND status = 'geschafft') AS bossLevel,
@@ -24,7 +24,7 @@ export function ladeKennzahlen(): Kennzahlen {
             (SELECT COUNT(*) FROM skill_knoten WHERE freigeschaltet_am IS NOT NULL) AS skills,
             (SELECT COUNT(*) FROM projekte WHERE investition = 1 AND archiviert = 0 AND geschafft_am IS NOT NULL)
               + (SELECT COUNT(*) FROM investitionen WHERE archiviert = 0) AS ausruestung,
-            (SELECT COALESCE(SUM(stunden), 0) FROM eintraege) AS stunden,
+            (SELECT COALESCE(SUM(stunden), 0) FROM eintraege WHERE nur_abzug = 0) AS stunden,
             (SELECT COUNT(*) FROM rueckblicke WHERE gut <> '' OR lernen <> '' OR fokus <> '') AS rueckblicke,
             (SELECT COUNT(*) FROM visionen WHERE erreicht_am IS NOT NULL) AS visionen`,
   );

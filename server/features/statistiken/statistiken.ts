@@ -79,15 +79,15 @@ export function ladeStatistiken(zeitraum: Zeitraum, jetzt = leseJetzt()): Statis
   const tagesXp = ladeTagesXp(seit);
 
   const zaehlungen = eine<Omit<Statistiken['kennzahlen'], 'laengsterStreak'>>(
-    `SELECT (SELECT COUNT(*) FROM eintraege WHERE erstellt_am >= ?1) AS eintraege,
-            (SELECT COALESCE(SUM(stunden), 0) FROM eintraege WHERE erstellt_am >= ?1) AS stunden,
-            (SELECT COUNT(DISTINCT date(erstellt_am, 'localtime')) FROM eintraege WHERE erstellt_am >= ?1) AS aktiveTage,
+    `SELECT (SELECT COUNT(*) FROM eintraege WHERE nur_abzug = 0 AND erstellt_am >= ?1) AS eintraege,
+            (SELECT COALESCE(SUM(stunden), 0) FROM eintraege WHERE nur_abzug = 0 AND erstellt_am >= ?1) AS stunden,
+            (SELECT COUNT(DISTINCT date(erstellt_am, 'localtime')) FROM eintraege WHERE nur_abzug = 0 AND erstellt_am >= ?1) AS aktiveTage,
             (SELECT COUNT(*) FROM eintraege WHERE meilenstein = 1 AND erstellt_am >= ?1) AS meilensteine,
             (SELECT COUNT(*) FROM vorhaben WHERE boss = 1 AND status = 'geschafft' AND abgeschlossen_am >= ?1) AS bosseBesiegt`,
     seit,
   ) ?? { eintraege: 0, stunden: 0, aktiveTage: 0, meilensteine: 0, bosseBesiegt: 0 };
   const aktiveTage = alle<{ tag: string }>(
-    `SELECT DISTINCT date(erstellt_am, 'localtime') AS tag FROM eintraege WHERE erstellt_am >= ?`,
+    `SELECT DISTINCT date(erstellt_am, 'localtime') AS tag FROM eintraege WHERE nur_abzug = 0 AND erstellt_am >= ?`,
     seit,
   ).map((zeile) => zeile.tag);
 
@@ -96,7 +96,7 @@ export function ladeStatistiken(zeitraum: Zeitraum, jetzt = leseJetzt()): Statis
      FROM eintraege e
      JOIN vorlagen vl ON vl.id = e.vorlage_id
      LEFT JOIN projekt_xp px ON px.eintrag_id = e.id AND px.quelle = 'eintrag'
-     WHERE e.erstellt_am >= ?
+     WHERE e.nur_abzug = 0 AND e.erstellt_am >= ?
      GROUP BY vl.id ORDER BY xp DESC`,
     seit,
   );

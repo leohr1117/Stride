@@ -169,7 +169,7 @@ export function haengeRueckkehrUm(rueckkehrId: number, geoeffnetAm: string, fris
   const wirksam = ruhendeFrist(geoeffnetAm, fristAm, heute, ladePausen());
   const anderer = eine<{ id: number; erstelltAm: string }>(
     `SELECT id, erstellt_am AS erstelltAm FROM eintraege
-     WHERE date(erstellt_am, 'localtime') >= ? AND date(erstellt_am, 'localtime') <= ?
+     WHERE nur_abzug = 0 AND date(erstellt_am, 'localtime') >= ? AND date(erstellt_am, 'localtime') <= ?
      ORDER BY date(erstellt_am, 'localtime'), id
      LIMIT 1`,
     geoeffnetAm,

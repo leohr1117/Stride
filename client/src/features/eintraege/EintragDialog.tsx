@@ -6,8 +6,9 @@ import type { EintragDaten, VorhabenMitProjekt, VorhabenWahl } from '../../../..
 import { GRENZEN } from '../../../../shared/spiel/begriffe.ts';
 import { standardEbenen } from '../../../../shared/spiel/ebenen.ts';
 import { taetigkeitPasst, taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
+import { istTypAktiv } from '../../../../shared/spiel/funktionen.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
-import { aktiveGewichte, basisXp, MEILENSTEIN_INFO, vorschauXp } from '../../../../shared/spiel/xp.ts';
+import { aktiveGewichte, basisXp, istNurAbzug, MEILENSTEIN_INFO, vorschauXp } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { merkeAngebotFaellig } from '../uebersicht/angebotStand.ts';
 import { merkeBewertungFaellig } from '../uebersicht/bewertungStand.ts';
@@ -302,8 +303,16 @@ export function EintragDialog({
   });
   const dauerJetzt = dauerPruefung(dauerStand(), dauerErzwungen);
   const gewichteAktiv = vorlage && attribute ? aktiveGewichte(vorlage.gewichte, attribute, funktionen) : [];
+  const abzuegeAktiv =
+    vorlage && attribute
+      ? vorlage.abzuege.filter((abzug) => {
+          const ziel = attribute.find((eintrag) => eintrag.id === abzug.attributId);
+          return Boolean(ziel && !ziel.archiviert && istTypAktiv(funktionen, ziel.typ));
+        })
+      : [];
+  const nurAbzug = Boolean(vorlage && istNurAbzug(vorlage.festeAnteile, gewichteAktiv, abzuegeAktiv));
   const xpVorschau =
-    !vorlage || !attribute || gewichteAktiv.length === 0
+    !vorlage || !attribute || (gewichteAktiv.length === 0 && !nurAbzug)
       ? basisXp(dauerJetzt.stunden)
       : vorschauXp(dauerJetzt.stunden, gewichteAktiv, vorlage.festeAnteile);
 

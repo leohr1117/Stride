@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Eine Tätigkeit kann nur aus Abzügen bestehen. So ein Eintrag zieht XP ab und zählt nicht für die Tageskette, für Erfolge bei Einträgen und Stunden und nicht für die Erfahrung von Projekt und Fähigkeit.": "活動は控除だけでも作れます。その記録はXPを引き、日々の連続、記録と時間の成果、プロジェクトとスキルの経験には数えません。",
   "Investitionen können jetzt auch auf eine Fähigkeit wirken, in einem eigenen Feld neben Attribut und Projekt. Bestehende Investitionen bleiben, wie sie sind.": "投資は、属性とプロジェクトの隣にある専用の欄で、スキルにも効くようになりました。これまでの投資はそのままです。",
   "Der Knopf ‚Eintragen‘ zeigt die XP nach den Prozenten der Tätigkeit.": "「記入」ボタンは、活動の割合に合わせたXPを表示します。",
   "Beim Eintragen wählst du die Dauer in einer Zeile ab 15 Minuten oder gibst sie selbst ein.": "記録するとき、長さは15分からの一行で選ぶか、自分で入力します。",

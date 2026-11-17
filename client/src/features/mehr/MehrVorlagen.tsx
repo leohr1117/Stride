@@ -41,7 +41,7 @@ export function VorlagenVerwaltung({ onBearbeiten }: { onBearbeiten: (vorlage: V
     });
     const fassungen = teile.length > 0 ? staerktFassungen(teile) : [];
     const anteile: ReactNode =
-      gewichte.length > 0 ? (
+      gewichte.length > 0 || abzugZeilen.length > 0 ? (
         <>
           {neben || fassungen.length === 0 ? null : (
             <GekuerzteNebenzeile

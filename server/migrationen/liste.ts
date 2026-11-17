@@ -35,6 +35,7 @@ import { sql as m34 } from './34.ts';
 import { sql as m35 } from './35.ts';
 import { sql as m36 } from './36.ts';
 import { sql as m37 } from './37.ts';
+import { sql as m38 } from './38.ts';
 
 export const MIGRATIONEN: string[] = [
   m01,
@@ -74,4 +75,5 @@ export const MIGRATIONEN: string[] = [
   m35,
   m36,
   m37,
+  m38,
 ];

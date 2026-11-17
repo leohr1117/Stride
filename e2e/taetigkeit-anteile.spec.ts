@@ -310,3 +310,224 @@ test('Alte Tätigkeit bleibt im Verhältnis, wenn kein Regler sich bewegt', asyn
     }
   }
 });
+
+interface KennzahlAntwort {
+  kategorien: { kennzahl: string; wert: number }[];
+}
+
+interface KetteAntwort {
+  serie: { laenge: number };
+  heuteErfasst: boolean;
+}
+
+interface BuchAntwort {
+  eintrag: {
+    id: number;
+    projektId: number | null;
+    vorlageId: number;
+    bossSchaden: number | null;
+    faehigkeit: { id: number } | null;
+    vorhaben: { boss: boolean } | null;
+  };
+  belohnung: {
+    projekt: { name: string; xp: number } | null;
+    faehigkeit: { name: string; xp: number } | null;
+    boss: { titel: string } | null;
+    boni: unknown[];
+    anteile: { xp: number }[];
+    abzugBeiNull?: { name: string }[];
+    erfolge: string[];
+  };
+}
+
+function kennzahl(daten: KennzahlAntwort, name: string): number {
+  const kategorie = daten.kategorien.find((eintrag) => eintrag.kennzahl === name);
+  if (!kategorie) {
+    throw new Error(`Kennzahl ${name} fehlt.`);
+  }
+  return kategorie.wert;
+}
+
+test('Tätigkeit nur mit Abzug lässt sich speichern, der Eintrag bucht nur den Abzug', async ({ page }) => {
+  const name = 'Nur Abzug';
+  const zielName = 'Abzug Ziel';
+  const fertigkeit = 'Abzug Fertigkeit';
+  let vorlageId: number | null = null;
+  let eintragId: number | null = null;
+  let vorhabenId: number | null = null;
+  let fertigkeitId: number | null = null;
+  try {
+    await anmelden(page);
+    const erfolgeVorher = (await (await page.request.get('/api/erfolge')).json()) as KennzahlAntwort;
+    const ketteVorher = (await (await page.request.get('/api/kette/heute')).json()) as KetteAntwort;
+    await page.goto('/mehr/inhalte');
+    const attribute = await koennen(page);
+    const minus = attribute[0];
+    if (!minus) {
+      throw new Error('Kein Attribut.');
+    }
+    await page.getByRole('button', { name: 'Tätigkeit anlegen' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Tätigkeit anlegen' });
+    await dialog.getByRole('textbox', { name: 'Name' }).fill(name);
+    const speichern = dialog.getByRole('button', { name: 'Speichern', exact: true });
+    await speichern.click();
+    const summe = dialog.locator('[data-summe]');
+    const fehler = summe.locator('.text-gefahr');
+    await expect(dialog).toBeVisible();
+    await expect(fehler).toHaveText(/Mindestens ein Attribut mit Plus/);
+    const leerLage = await dialog.evaluate(() => {
+      const block = document.querySelector('[data-summe]');
+      const satz = block?.querySelector('.text-leise');
+      const hinweis = block?.querySelector('.text-gefahr');
+      const knopf = [...document.querySelectorAll('button')].find((eintrag) => eintrag.textContent?.trim() === 'Speichern');
+      const satzKasten = satz?.getBoundingClientRect();
+      const hinweisKasten = hinweis?.getBoundingClientRect();
+      const knopfKasten = knopf?.getBoundingClientRect();
+      return {
+        satzUnten: satzKasten?.bottom ?? 0,
+        hinweisOben: hinweisKasten?.top ?? 0,
+        summeUnten: block?.getBoundingClientRect().bottom ?? 0,
+        knopfOben: knopfKasten?.top ?? 0,
+      };
+    });
+    expect(leerLage.hinweisOben).toBeGreaterThanOrEqual(leerLage.satzUnten - 1);
+    expect(leerLage.knopfOben).toBeGreaterThanOrEqual(leerLage.summeUnten - 1);
+
+    const regler = dialog.getByRole('slider', { name: `Anteil ${minus.name}` });
+    await setzeRegler(regler, -30);
+    await expect(summe).toContainText('Plus 0 % · Abzug 30 % · Rest 100 % ohne Attribut');
+    await expect(dialog.locator('span.zahl', { hasText: '−30 %' })).toBeVisible();
+    const formLage = await dialog.evaluate((wurzel) => {
+      const block = wurzel.querySelector('[data-summe]');
+      const schieber = wurzel.querySelector('[role="slider"]');
+      const knopf = [...wurzel.querySelectorAll('button')].find((eintrag) => eintrag.textContent?.trim() === 'Speichern');
+      return {
+        reglerUnten: schieber?.getBoundingClientRect().bottom ?? 0,
+        summeOben: block?.getBoundingClientRect().top ?? 0,
+        summeUnten: block?.getBoundingClientRect().bottom ?? 0,
+        knopfOben: knopf?.getBoundingClientRect().top ?? 0,
+      };
+    }, await dialog.elementHandle());
+    expect(formLage.summeOben).toBeGreaterThanOrEqual(formLage.reglerUnten - 1);
+    expect(formLage.knopfOben).toBeGreaterThanOrEqual(formLage.summeUnten - 1);
+    await speichern.click();
+    await expect(dialog).toBeHidden();
+
+    const liste = (await (await page.request.get('/api/vorlagen')).json()) as {
+      id: number;
+      name: string;
+      festeAnteile: boolean;
+      gewichte: unknown[];
+      abzuege: { prozent: number }[];
+    }[];
+    const gespeichert = liste.find((eintrag) => eintrag.name === name);
+    if (!gespeichert) {
+      throw new Error('Die Tätigkeit fehlt.');
+    }
+    vorlageId = gespeichert.id;
+    expect(gespeichert.festeAnteile).toBe(true);
+    expect(gespeichert.gewichte).toEqual([]);
+    expect(gespeichert.abzuege.map((abzug) => abzug.prozent)).toEqual([30]);
+
+    const zeile = page.locator(`[data-taetigkeit="${name}"]`);
+    await expect(zeile.locator('[data-rest="100"]')).toBeVisible();
+    await expect(zeile.locator('[data-anteil]')).toHaveCount(0);
+    const minusText = zeile.locator('span', { hasText: '−30 %' }).filter({ hasNot: page.locator('[data-anteile]') });
+    const balken = zeile.locator('[data-anteile]');
+    await expect(minusText).toBeVisible();
+    const textKasten = await minusText.boundingBox();
+    const balkenKasten = await balken.boundingBox();
+    if (!textKasten || !balkenKasten) {
+      throw new Error('Text oder Balken fehlt.');
+    }
+    expect(balkenKasten.y).toBeGreaterThanOrEqual(textKasten.y + textKasten.height - 1);
+
+    const auswahl = (await (await page.request.get('/api/projekte/auswahl')).json()) as { id: number }[];
+    const projekt = auswahl[0];
+    if (!projekt) {
+      throw new Error('Kein Projekt.');
+    }
+    const vorhabenAntwort = await page.request.post(`/api/projekte/${projekt.id}/vorhaben`, { data: { titel: zielName } });
+    expect(vorhabenAntwort.ok()).toBe(true);
+    vorhabenId = ((await vorhabenAntwort.json()) as { id: number }).id;
+    const bossAntwort = await page.request.patch(`/api/vorhaben/${vorhabenId}`, {
+      data: { boss: { deadline: '2026-12-31' } },
+    });
+    expect(bossAntwort.ok()).toBe(true);
+    const skillAntwort = await page.request.post('/api/faehigkeiten', {
+      data: { name: fertigkeit, beschreibung: '', farbe: '#34d399', icon: 'sparkles' },
+    });
+    expect(skillAntwort.ok()).toBe(true);
+    fertigkeitId = ((await skillAntwort.json()) as { id: number }).id;
+
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Eintrag loggen' }).click();
+    const eintrag = page.getByRole('dialog', { name: 'Was hast du getan?' });
+    await eintrag.getByRole('button', { name: zielName, exact: true }).click();
+    await eintrag.getByRole('button', { name, exact: true }).click();
+    await eintrag.getByRole('button', { name: fertigkeit, exact: true }).click();
+    await eintrag.getByRole('button', { name: '1 Std', exact: true }).click();
+    const dauerZeile = eintrag.locator('[data-dauer-zeile]');
+    const eintragen = eintrag.getByRole('button', { name: 'Eintragen · ca. +0 XP' });
+    await expect(eintragen).toBeVisible();
+    const dialogLage = await eintrag.evaluate((wurzel) => {
+      const chip = [...wurzel.querySelectorAll('button')].find((knopf) => knopf.textContent?.includes('Nur Abzug'));
+      const dauer = wurzel.querySelector('[data-dauer-zeile]');
+      const knopf = [...wurzel.querySelectorAll('button')].find((eintragKnopf) =>
+        eintragKnopf.textContent?.includes('Eintragen · ca. +0 XP'),
+      );
+      return {
+        chipUnten: chip?.getBoundingClientRect().bottom ?? 0,
+        dauerOben: dauer?.getBoundingClientRect().top ?? 0,
+        dauerUnten: dauer?.getBoundingClientRect().bottom ?? 0,
+        knopfOben: knopf?.getBoundingClientRect().top ?? 0,
+      };
+    });
+    expect(dialogLage.dauerOben).toBeGreaterThanOrEqual(dialogLage.chipUnten - 1);
+    expect(dialogLage.knopfOben).toBeGreaterThanOrEqual(dialogLage.dauerUnten - 1);
+    await expect(dauerZeile).toBeVisible();
+    const antwortZusage = page.waitForResponse(
+      (antwort) => antwort.url().includes('/api/eintraege') && antwort.request().method() === 'POST',
+    );
+    await eintragen.click();
+    const antwort = await antwortZusage;
+    expect(antwort.status()).toBe(201);
+    const gebucht = (await antwort.json()) as BuchAntwort;
+    eintragId = gebucht.eintrag.id;
+    expect(gebucht.eintrag.vorlageId).toBe(vorlageId);
+    expect(gebucht.eintrag.projektId).toBe(projekt.id);
+    expect(gebucht.eintrag.vorhaben?.boss).toBe(true);
+    expect(gebucht.eintrag.faehigkeit?.id).toBe(fertigkeitId);
+    expect(gebucht.eintrag.bossSchaden).toBeNull();
+    expect(gebucht.belohnung.projekt).toBeNull();
+    expect(gebucht.belohnung.faehigkeit).toBeNull();
+    expect(gebucht.belohnung.boss).toBeNull();
+    expect(gebucht.belohnung.boni).toEqual([]);
+    expect(gebucht.belohnung.erfolge).toEqual([]);
+    const zogAb = gebucht.belohnung.anteile.length > 0 || (gebucht.belohnung.abzugBeiNull?.length ?? 0) > 0;
+    expect(zogAb).toBe(true);
+    expect(gebucht.belohnung.anteile.every((anteil) => anteil.xp < 0)).toBe(true);
+    await expect(page.getByText('Erfahrung in', { exact: false })).toHaveCount(0);
+
+    const erfolgeNachher = (await (await page.request.get('/api/erfolge')).json()) as KennzahlAntwort;
+    const ketteNachher = (await (await page.request.get('/api/kette/heute')).json()) as KetteAntwort;
+    expect(kennzahl(erfolgeNachher, 'eintraege')).toBe(kennzahl(erfolgeVorher, 'eintraege'));
+    expect(kennzahl(erfolgeNachher, 'stunden')).toBe(kennzahl(erfolgeVorher, 'stunden'));
+    expect(kennzahl(erfolgeNachher, 'streak')).toBe(kennzahl(erfolgeVorher, 'streak'));
+    expect(ketteNachher.serie.laenge).toBe(ketteVorher.serie.laenge);
+    expect(ketteNachher.heuteErfasst).toBe(ketteVorher.heuteErfasst);
+  } finally {
+    if (eintragId !== null) {
+      await page.request.delete(`/api/eintraege/${eintragId}`);
+    }
+    if (vorhabenId !== null) {
+      await page.request.delete(`/api/vorhaben/${vorhabenId}`);
+    }
+    if (vorlageId !== null) {
+      await page.request.delete(`/api/vorlagen/${vorlageId}`);
+    }
+    if (fertigkeitId !== null) {
+      await page.request.delete(`/api/faehigkeiten/${fertigkeitId}`);
+    }
+  }
+});

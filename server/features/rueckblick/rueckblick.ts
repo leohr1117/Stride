@@ -59,7 +59,7 @@ export function ladeRueckblick(woche: string, jetzt = leseJetzt()): Rueckblick {
 
   const eintraege = eine<{ anzahl: number; tage: number }>(
     `SELECT COUNT(*) AS anzahl, COUNT(DISTINCT date(erstellt_am, 'localtime')) AS tage
-     FROM eintraege WHERE erstellt_am >= ? AND erstellt_am < ?`,
+     FROM eintraege WHERE nur_abzug = 0 AND erstellt_am >= ? AND erstellt_am < ?`,
     von,
     bis,
   ) ?? { anzahl: 0, tage: 0 };

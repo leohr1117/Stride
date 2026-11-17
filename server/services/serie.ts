@@ -5,7 +5,9 @@ import { alle, ausfuehren, eine, gemerkt } from '../db.ts';
 
 export function ladeAktiveTage(): string[] {
   return gemerkt('aktive-tage', () =>
-    alle<{ tag: string }>(`SELECT DISTINCT date(erstellt_am, 'localtime') AS tag FROM eintraege`).map((zeile) => zeile.tag),
+    alle<{ tag: string }>(
+      `SELECT DISTINCT date(erstellt_am, 'localtime') AS tag FROM eintraege WHERE nur_abzug = 0`,
+    ).map((zeile) => zeile.tag),
   );
 }
 

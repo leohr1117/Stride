@@ -32,7 +32,7 @@ interface KnotenZeile {
 const FAEHIGKEIT_ABFRAGE = `
   SELECT f.id, f.name, f.beschreibung, f.farbe, f.icon, f.archiviert,
          COALESCE((SELECT SUM(xp) FROM faehigkeit_xp WHERE faehigkeit_id = f.id), 0) AS xp,
-         (SELECT COUNT(*) FROM eintraege WHERE faehigkeit_id = f.id) AS anzahlEintraege
+         (SELECT COUNT(*) FROM eintraege WHERE faehigkeit_id = f.id AND nur_abzug = 0) AS anzahlEintraege
   FROM faehigkeiten f
 `;
 
