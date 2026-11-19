@@ -8,6 +8,7 @@ const PAKETE = [
   '@fontsource/barlow-semi-condensed',
   '@fontsource-variable/exo-2',
   'Roboto',
+  'nodemailer',
 ];
 
 test('Lizenzhinweise verlinken den Quellstand und die Liste', async ({ page }) => {

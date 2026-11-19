@@ -72,11 +72,17 @@ Die Daten liegen in `data/` (`app.db` und `zugang.db`). Liegt `app.db` schon vor
 | `STRIDE_GOOGLE_CLIENT_ID` | Client-ID der Google-Cloud-Anmeldung. |
 | `STRIDE_GOOGLE_CLIENT_SECRET` | Client-Geheimnis der Google-Cloud-Anmeldung. |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Schlüssel für Web-Push |
+| `STRIDE_SMTP_HOST` | SMTP-Server für das Kontaktformular. Ohne Host, Port, Postfach und Passwort ist das Formular nicht verfügbar. `ASCEND_SMTP_HOST` wird weiter gelesen. |
+| `STRIDE_SMTP_PORT` | Port dieses SMTP-Servers. |
+| `STRIDE_SMTP_BENUTZER` | Postfach, das die Nachricht sendet. Empfänger ist fest `kontakt@leohr.de`. Die Adresse des Besuchers wird nur als Antwortadresse gesetzt. |
+| `STRIDE_SMTP_PASSWORT` | Passwort dieses Postfachs. Der Betreiber setzt es als Umgebungsvariable. |
 | `STRIDE_TEST` | Nur für Tests: `1` schaltet den Testmodus ein (alter Name `ASCEND_TEST`). Dann setzt `POST /api/test/heute` mit `{ datum }` die Spieluhr des Servers (Kette, Einträge, Verfall, Bosse, Buchungen, Kalender- und Todoist-Zuordnung). Sitzungen und Sperren bleiben echte Zeit. Der Server warnt beim Start. `datum: null` stellt die echte Uhr wieder her. |
 
 In der Google Cloud Console muss die Weiterleitungs-URI `https://<host>/api/zugang/google/zurueck` eingetragen sein. Ohne den Wert `1` bei `STRIDE_GOOGLE` und ohne Client-ID und Secret bleibt die Anmeldung über Google aus. Ob neue Konten möglich sind, folgt nur `STRIDE_REGISTRIERUNG`.
 
 Eine Vorlage mit allen Variablen steht in `.env.example`. Die Werte werden als Umgebungsvariablen gesetzt, zum Beispiel mit `node --env-file=.env`.
+
+Das Kontaktformular unter `/kontakt` ist ohne Anmeldung erreichbar. Es sendet nur, wenn die vier `STRIDE_SMTP_`-Variablen gesetzt sind, und speichert die Nachricht nicht.
 
 ## Lizenz
 

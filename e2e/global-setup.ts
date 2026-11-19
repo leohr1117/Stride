@@ -144,6 +144,10 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
   env.STRIDE_GOOGLE = '1';
   env.STRIDE_GOOGLE_CLIENT_ID = TEST_GOOGLE_CLIENT_ID;
   env.STRIDE_GOOGLE_CLIENT_SECRET = TEST_GOOGLE_CLIENT_SECRET;
+  env.STRIDE_SMTP_HOST = '127.0.0.1';
+  env.STRIDE_SMTP_PORT = '9';
+  env.STRIDE_SMTP_BENUTZER = 'kontakt@leohr.de';
+  env.STRIDE_SMTP_PASSWORT = 'nur-test';
 
   const kind = spawn(process.execPath, ['--disable-warning=ExperimentalWarning', 'server/index.ts'], {
     cwd: WURZEL,

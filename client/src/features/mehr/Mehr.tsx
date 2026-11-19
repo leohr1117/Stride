@@ -1,7 +1,9 @@
 import { tx } from '../../text.ts';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Scale } from 'lucide-react';
 import { Fragment, useEffect, useState, type ReactNode } from 'react';
 import { STIL_INFO } from '../../../../shared/features/darstellung/stile.ts';
+import { RECHT_HUB_PFAD } from '../../../../shared/recht/seiten.ts';
 import { sichtbareMehrBereiche, type MehrBereichId } from '../../../../shared/spiel/mehrBereiche.ts';
 import { neuereVersionen } from '../../../../shared/spiel/updateHinweis.ts';
 import type { Einstellungen } from '../../../../shared/api/einstellungen.ts';
@@ -15,7 +17,6 @@ import { sichtbareGruppen, type NavEintrag } from '../../navigation.ts';
 import { AbschnittKopf, Flaeche, Ladeanzeige } from '../../ui/index.ts';
 import { useNeuMarkierung, verbindeVersionsstand } from '../../updateHinweis.tsx';
 import { InstallZeile } from '../../installHinweis.tsx';
-import { RechtBereich } from '../recht/RechtLinks.tsx';
 import { kachelText } from './hinweisGeraet.ts';
 import { bereicheAn, kartenStand, verbindungsKurz } from './mehrWerte.ts';
 
@@ -86,7 +87,11 @@ export function MehrSeite() {
         </Liste>
       </section>
       <WasNeuZeile />
-      <RechtBereich />
+      <div className="mt-6" data-abschnitt="rechtliches">
+        <Liste>
+          <Zeile titel={tx('Rechtliches')} symbol={<Scale aria-hidden />} nach={RECHT_HUB_PFAD} />
+        </Liste>
+      </div>
       <Absender className="mt-6" />
     </div>
     </DichteZeilen>

@@ -7,6 +7,7 @@ import {
   istHauptseite,
   istLeistenplatz,
   ketteUnter,
+  platzFuer,
   schiebeHerkunft,
 } from './herkunft.ts';
 import {
@@ -78,10 +79,14 @@ describe('elternZiel', () => {
     expect(elternZiel('/mehr/inhalte/verbindungen/kalender')).toEqual({ pfad: '/mehr/inhalte/verbindungen', label: 'Verbindungen' });
     expect(elternZiel('/mehr/uebersicht')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/mehr/neu')).toEqual({ pfad: '/mehr', label: 'Mehr' });
-    expect(elternZiel('/impressum')).toEqual({ pfad: '/mehr', label: 'Mehr' });
-    expect(elternZiel('/datenschutz')).toEqual({ pfad: '/mehr', label: 'Mehr' });
-    expect(elternZiel('/nutzungsbedingungen')).toEqual({ pfad: '/mehr', label: 'Mehr' });
-    expect(elternZiel('/lizenzhinweise')).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/mehr/rechtliches')).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/impressum')).toEqual({ pfad: '/mehr/rechtliches', label: 'Rechtliches' });
+    expect(elternZiel('/datenschutz')).toEqual({ pfad: '/mehr/rechtliches', label: 'Rechtliches' });
+    expect(elternZiel('/nutzungsbedingungen')).toEqual({ pfad: '/mehr/rechtliches', label: 'Rechtliches' });
+    expect(elternZiel('/lizenzhinweise')).toEqual({ pfad: '/mehr/rechtliches', label: 'Rechtliches' });
+    expect(elternZiel('/kontakt')).toEqual({ pfad: '/mehr/rechtliches', label: 'Rechtliches' });
+    expect(ketteUnter('/impressum', { leiste: [...LEISTE] })).toEqual(['/', '/mehr', '/mehr/rechtliches', '/impressum']);
+    expect(platzFuer('/kontakt', { leiste: [...LEISTE] })).toBe('/mehr');
     expect(elternZiel('/projekte/4')).toEqual({ pfad: '/ziele', label: 'Ziele' });
     expect(elternZiel('/faehigkeiten')).toEqual({ pfad: '/charakter', label: 'Profil' });
     expect(elternZiel('/faehigkeiten', { leiste: ['/', '/faehigkeiten'] })).toBeNull();
@@ -109,6 +114,9 @@ describe('herkunftsLabel', () => {
     expect(herkunftsLabel('/mehr/uebersicht')).toBe('Karten auf Heute');
     expect(herkunftsLabel('/mehr/funktionen')).toBe('Bereiche');
     expect(herkunftsLabel('/mehr/neu')).toBe('Was ist neu');
+    expect(herkunftsLabel('/mehr/rechtliches')).toBe('Rechtliches');
+    expect(herkunftsLabel('/kontakt')).toBe('Kontakt');
+    expect(herkunftsLabel('/impressum')).toBe('Impressum');
     expect(herkunftsLabel('/faehigkeiten')).toBe('Fähigkeiten');
     expect(herkunftsLabel('/koennen')).toBe('Können');
     expect(herkunftsLabel('/haben')).toBe('Haben');

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { EMAIL_MAX, NAME_MAX, NACHRICHT_MAX, istKontaktEmail } from '../shared/kontakt.ts';
 import { AKTIVIERUNGS_MODI, INVESTITIONS_ARTEN, SICHERUNG_APP, ZEITRAEUME } from '../shared/api/index.ts';
 import { ABSCHLUESSE, ATTRIBUT_KENNUNGEN, FARBE, GRENZEN, ICONS } from '../shared/spiel/begriffe.ts';
 import { VERFALL_STUFEN } from '../shared/spiel/belastung.ts';
@@ -719,4 +720,19 @@ export const passwortAenderungSchema = z.object({
 
 export const kontoLoeschenSchema = z.object({
   passwort: z.string().min(1, 'Passwort darf nicht leer sein.'),
+});
+
+export const kontaktSchema = z.object({
+  name: z.string().trim().max(NAME_MAX, 'Der Name darf höchstens 80 Zeichen haben.').optional(),
+  email: z
+    .string()
+    .trim()
+    .min(1, 'Die E-Mail-Adresse fehlt.')
+    .max(EMAIL_MAX, 'Die E-Mail-Adresse darf höchstens 200 Zeichen haben.')
+    .refine(istKontaktEmail, 'Die E-Mail-Adresse ist ungültig.'),
+  nachricht: z
+    .string()
+    .trim()
+    .min(1, 'Die Nachricht fehlt.')
+    .max(NACHRICHT_MAX, 'Die Nachricht darf höchstens 4000 Zeichen haben.'),
 });

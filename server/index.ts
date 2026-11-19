@@ -15,6 +15,7 @@ import { basisRouten } from './features/basis/routen.ts';
 import { bewertungRouten } from './features/bewertung/routen.ts';
 import { hinweiseRouten } from './features/hinweise/routen.ts';
 import { ketteRouten } from './features/kette/routen.ts';
+import { kontaktRouten } from './features/kontakt/routen.ts';
 import { pflegeRueckkehr } from './features/kette/rueckkehr.ts';
 import { datenRouten } from './features/daten/daten.ts';
 import { eintragRouten } from './features/eintraege/routen.ts';
@@ -125,6 +126,7 @@ await app.register(
     await api.register(datenRouten);
     await api.register(verbindungsRouten);
     await api.register(zugangRouten);
+    await api.register(kontaktRouten);
     if (process.env.STRIDE_TEST === '1') {
       api.post('/test/heute', async (anfrage) => {
         const roh = anfrage.body;

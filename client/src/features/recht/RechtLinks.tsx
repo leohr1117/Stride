@@ -1,6 +1,4 @@
-import { Liste, Zeile } from '../../components/Zeile.tsx';
 import { tx } from '../../text.ts';
-import { AbschnittKopf } from '../../ui/index.ts';
 import { RECHT_SEITEN } from '../../../../shared/recht/seiten.ts';
 import { rechtTitel } from './titel.ts';
 
@@ -17,18 +15,5 @@ export function RechtLinks({ className = '' }: { className?: string }) {
         ))}
       </ul>
     </nav>
-  );
-}
-
-export function RechtBereich() {
-  return (
-    <section className="mt-6" data-abschnitt="recht">
-      <AbschnittKopf titel={tx('Rechtliches')} />
-      <Liste>
-        {RECHT_SEITEN.map((seite) => (
-          <Zeile key={seite.pfad} titel={rechtTitel(seite.id)} nach={seite.pfad} />
-        ))}
-      </Liste>
-    </section>
   );
 }

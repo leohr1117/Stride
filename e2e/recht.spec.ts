@@ -56,11 +56,45 @@ test('Rechtsseiten sind ohne Anmeldung erreichbar', async ({ page }) => {
 test('Mehr verlinkt die Rechtsseiten', async ({ page }) => {
   await anmelden(page);
   await page.goto('/mehr');
-  const bereich = page.locator('[data-abschnitt="recht"]');
-  await bereich.getByRole('link', { name: 'Nutzungsbedingungen', exact: true }).click();
+  await expect(page.locator('[data-abschnitt="recht"]')).toHaveCount(0);
+  await page.locator('[data-abschnitt="rechtliches"]').getByRole('link', { name: 'Rechtliches', exact: true }).click();
+  await expect(page).toHaveURL(/\/mehr\/rechtliches$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'Rechtliches' })).toBeVisible();
+  await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr');
+  await expect(page.locator('a[data-platz="/mehr"][aria-current="page"]')).not.toHaveCount(0);
+  const links = page.locator('[data-recht-hub] a');
+  await expect(links).toHaveCount(5);
+  await expect(links.nth(0)).toHaveAttribute('aria-label', 'Kontakt');
+  await expect(links.nth(1)).toHaveAttribute('aria-label', 'Impressum');
+  await expect(links.nth(2)).toHaveAttribute('aria-label', 'Datenschutz');
+  await expect(links.nth(3)).toHaveAttribute('aria-label', 'Nutzungsbedingungen');
+  await expect(links.nth(4)).toHaveAttribute('aria-label', 'Lizenzen');
+  await links.nth(3).click();
   await expect(page).toHaveURL(/\/nutzungsbedingungen$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Nutzungsbedingungen' })).toBeVisible();
   await expect(page.getByText('Exportiere wichtige Daten deshalb zusätzlich selbst.')).toBeVisible();
-  await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr');
+  await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr/rechtliches');
+  await page.goto('/kontakt');
+  await expect(page.getByRole('heading', { level: 1, name: 'Kontakt' })).toBeVisible();
+  await expect(page.locator('a[data-zurueck]')).toHaveAttribute('href', '/mehr/rechtliches');
+  await expect(page.locator('a[data-platz="/mehr"][aria-current="page"]')).not.toHaveCount(0);
+  await ohneSeitlichenUeberlauf(page);
+});
+
+test('Rechtliches ist ohne Anmeldung erreichbar', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Rechtliches', exact: true }).click();
+  await expect(page).toHaveURL(/\/mehr\/rechtliches$/);
+  await expect(page.locator('.mobilleiste')).toHaveCount(0);
+  await expect(page.getByRole('heading', { level: 1, name: 'Rechtliches' })).toBeVisible();
+  const links = page.locator('[data-recht-hub] a');
+  await expect(links.nth(0)).toHaveAttribute('aria-label', 'Kontakt');
+  await links.nth(1).click();
+  await expect(page).toHaveURL(/\/impressum$/);
+  await expect(page.locator('header a')).toHaveAttribute('href', '/mehr/rechtliches');
+  await expect(page.locator('header a')).toHaveAttribute('aria-label', 'Zurück zu Rechtliches');
+  await page.goto('/impressum', { referer: '' });
+  await expect(page.locator('header a')).toHaveAttribute('href', '/');
+  await expect(page.locator('header a')).toHaveAttribute('aria-label', 'Anmelden');
   await ohneSeitlichenUeberlauf(page);
 });

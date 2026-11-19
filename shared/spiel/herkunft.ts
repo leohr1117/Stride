@@ -37,6 +37,12 @@ const FEST = new Map<string, string>([
   ['/mehr/benachrichtigungen', 'Benachrichtigungen'],
   ['/mehr/daten', 'Daten'],
   ['/mehr/neu', 'Was ist neu'],
+  ['/mehr/rechtliches', 'Rechtliches'],
+  ['/kontakt', 'Kontakt'],
+  ['/impressum', 'Impressum'],
+  ['/datenschutz', 'Datenschutzerklärung'],
+  ['/nutzungsbedingungen', 'Nutzungsbedingungen'],
+  ['/lizenzhinweise', 'Lizenzhinweise'],
 ]);
 
 const PROFIL_TEIL: Record<string, string> = {
@@ -191,12 +197,19 @@ export function elternZiel(pfad: string, lage: NavLage = { leiste: [], verlaufAn
     rein === '/mehr/funktionen' ||
     rein === '/mehr/benachrichtigungen' ||
     rein === '/mehr/daten' ||
-    rein === '/mehr/neu'
+    rein === '/mehr/neu' ||
+    rein === '/mehr/rechtliches'
   ) {
     return ziel('/mehr');
   }
-  if (rein === '/impressum' || rein === '/datenschutz' || rein === '/nutzungsbedingungen' || rein === '/lizenzhinweise') {
-    return ziel('/mehr');
+  if (
+    rein === '/impressum' ||
+    rein === '/datenschutz' ||
+    rein === '/nutzungsbedingungen' ||
+    rein === '/lizenzhinweise' ||
+    rein === '/kontakt'
+  ) {
+    return ziel('/mehr/rechtliches');
   }
   return null;
 }

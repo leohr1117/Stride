@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Unter Mehr führt eine Seite Rechtliches zu Impressum, Datenschutz, Nutzungsbedingungen, Lizenzen und zum Kontaktformular. Das Formular ist ohne Anmeldung erreichbar.',
+    'More leads to a Legal page with the legal notice, privacy, terms of use, licenses and a contact form. The form is available without signing in.',
+  ],
+  [
     'Du kannst dir selbst ein Konto anlegen und dich mit Google anmelden, wenn der Betreiber das einschaltet. Ohne Google-Angaben bleibt diese Anmeldung aus. Ein schon verknüpftes Google-Konto meldet dich an. Dieselbe E-Mail allein öffnet kein bestehendes Konto.',
     'You can create your own account and sign in with Google when the operator turns that on. Without Google details, this sign-in stays off. A Google account that is already linked signs you in. The same email alone does not open an existing account.',
   ],

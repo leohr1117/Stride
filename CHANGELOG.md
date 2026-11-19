@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.2.1
+
+### Hinzugefügt
+
+- Unter Mehr führt eine Seite Rechtliches zu Impressum, Datenschutz, Nutzungsbedingungen, Lizenzen und zum Kontaktformular. Das Formular ist ohne Anmeldung erreichbar.
+
 ## 4.2.0
 
 ### Hinzugefügt

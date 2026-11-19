@@ -9,6 +9,7 @@ import { faehigkeitenApi, faehigkeitenSchluessel } from './faehigkeiten.ts';
 import { investitionenApi, investitionenSchluessel } from './investitionen.ts';
 import { hinweiseApi, hinweiseSchluessel } from './hinweise.ts';
 import { kalenderApi } from './kalender.ts';
+import { kontaktApi } from './kontakt.ts';
 import { ketteApi, ketteSchluessel } from './kette.ts';
 import { ApiFehler, beobachteAnmeldung, meldeAnmeldungAbgelaufen } from './kern.ts';
 import { rueckblickApi, rueckblickSchluessel } from './rueckblick.ts';
@@ -41,6 +42,7 @@ export const api = {
   ...verbindungenApi,
   ...todoistApi,
   ...kalenderApi,
+  ...kontaktApi,
   ...ketteApi,
   ...hinweiseApi,
 };

@@ -31,6 +31,8 @@ const ladeStatistiken = () => import('./features/statistiken/Statistiken.tsx');
 const ladeVorbildProfil = () => import('./features/vorbilder/VorbildProfil.tsx');
 const ladeVorbilder = () => import('./features/vorbilder/Vorbilder.tsx');
 const ladeRecht = () => import('./features/recht/RechtSeiten.tsx');
+const ladeRechtHub = () => import('./features/recht/RechtHub.tsx');
+const ladeKontakt = () => import('./features/kontakt/KontaktSeite.tsx');
 
 const UebersichtSeite = seite(ladeUebersicht, (modul) => modul.UebersichtSeite);
 const LaufendSeite = seite(ladeLaufend, (modul) => modul.LaufendSeite);
@@ -62,6 +64,8 @@ const ImpressumSeite = seite(ladeRecht, (modul) => modul.ImpressumSeite);
 const DatenschutzSeite = seite(ladeRecht, (modul) => modul.DatenschutzSeite);
 const NutzungSeite = seite(ladeRecht, (modul) => modul.NutzungSeite);
 const LizenzSeite = seite(ladeRecht, (modul) => modul.LizenzSeite);
+const RechtlichesSeite = seite(ladeRechtHub, (modul) => modul.RechtlichesSeite);
+const KontaktSeite = seite(ladeKontakt, (modul) => modul.KontaktSeite);
 
 function Weiter({ nach }: { nach: string }) {
   const ort = useLocation();
@@ -94,6 +98,7 @@ const router = createBrowserRouter([
       { path: 'training/*', element: <Navigate to="/" replace /> },
       { path: 'mehr', element: <MehrSeite /> },
       { path: 'mehr/neu', element: <WasNeuSeite /> },
+      { path: 'mehr/rechtliches', element: <RechtlichesSeite /> },
       { path: 'mehr/profil', element: <MehrProfilSeite /> },
       { path: 'mehr/profil/benutzernamen/:kontoId', element: <Navigate to="/mehr/profil/accounts" replace /> },
       { path: 'mehr/profil/benutzernamen', element: <Navigate to="/mehr/profil/accounts" replace /> },
@@ -113,6 +118,7 @@ const router = createBrowserRouter([
       { path: 'mehr/taetigkeiten', element: <Navigate to="/mehr/inhalte" replace /> },
       { path: 'mehr/sonstiges', element: <Weiter nach="/mehr/funktionen" /> },
       { path: 'handbuch', element: <HandbuchSeite /> },
+      { path: 'kontakt', element: <KontaktSeite /> },
       { path: 'impressum', element: <ImpressumSeite /> },
       { path: 'datenschutz', element: <DatenschutzSeite /> },
       { path: 'nutzungsbedingungen', element: <NutzungSeite /> },

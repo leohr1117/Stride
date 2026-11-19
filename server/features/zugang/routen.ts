@@ -40,6 +40,8 @@ const OEFFENTLICH = new Set([
   'POST /zugang/registrieren',
   'GET /zugang/google/start',
   'GET /zugang/google/zurueck',
+  'GET /kontakt',
+  'POST /kontakt',
 ]);
 const ZU_VIELE_VERSUCHE = 'Zu viele Versuche. Bitte später erneut versuchen.';
 const NAME_VERGEBEN = 'Der Benutzername ist schon vergeben. Wähle einen anderen.';

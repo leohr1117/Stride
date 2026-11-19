@@ -9,7 +9,7 @@ import { ApiFehler, api, beobachteAnmeldung } from '../../api/index.ts';
 import { SpracheAbgleich } from '../../sprache.tsx';
 import { Fehlermeldung, Feld, Knopf, Ladeanzeige, EINGABE_STIL, PasswortFeld } from '../../ui/index.ts';
 import { ZUSTIMMUNG_FEHLT } from '../../../../shared/recht/fassung.ts';
-import { oeffentlicherRechtPfad } from '../../../../shared/recht/seiten.ts';
+import { KONTAKT_PFAD, RECHT_HUB_PFAD, oeffentlicherRechtPfad } from '../../../../shared/recht/seiten.ts';
 import { RechtLinks } from '../recht/RechtLinks.tsx';
 import { AnmeldeRahmen } from './AnmeldeRahmen.tsx';
 import { ZustimmungDialog, ZustimmungsKasten } from './Zustimmung.tsx';
@@ -18,6 +18,8 @@ import { BenutzernameFestlegen } from './BenutzernameFestlegen.tsx';
 import { GoogleAnlage, GoogleKnopf, GoogleOder, googleHinweis, useGoogleRueckkehr } from './GoogleAnmeldung.tsx';
 
 const RechtOeffentlich = lazy(() => import('../recht/RechtSeiten.tsx').then((modul) => ({ default: modul.RechtOeffentlich })));
+const RechtHubOeffentlich = lazy(() => import('../recht/RechtHub.tsx').then((modul) => ({ default: modul.RechtHubOeffentlich })));
+const KontaktOeffentlich = lazy(() => import('../kontakt/KontaktSeite.tsx').then((modul) => ({ default: modul.KontaktOeffentlich })));
 
 function Anmeldung({
   modus,
@@ -336,7 +338,9 @@ export function ZugangTor({ children }: { children: ReactNode }) {
     }
     return (
       <Suspense fallback={<Ladeanzeige />}>
-        <RechtOeffentlich pfad={rechtPfad} />
+        {rechtPfad === RECHT_HUB_PFAD ? <RechtHubOeffentlich /> : null}
+        {rechtPfad === KONTAKT_PFAD ? <KontaktOeffentlich /> : null}
+        {rechtPfad !== RECHT_HUB_PFAD && rechtPfad !== KONTAKT_PFAD ? <RechtOeffentlich pfad={rechtPfad} /> : null}
       </Suspense>
     );
   }

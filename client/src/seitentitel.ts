@@ -24,6 +24,8 @@ const UNTERSEITE: Record<string, string> = {
   '/mehr/funktionen': 'Bereiche',
   '/mehr/benachrichtigungen': 'Benachrichtigungen',
   '/mehr/daten': 'Daten',
+  '/mehr/rechtliches': 'Rechtliches',
+  '/kontakt': 'Kontakt',
   '/impressum': 'Impressum',
   '/datenschutz': 'Datenschutzerklärung',
   '/nutzungsbedingungen': 'Nutzungsbedingungen',
