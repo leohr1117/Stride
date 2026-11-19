@@ -17,6 +17,54 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.1.29',
+    seiten: 'Mehr',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Serverprotokolle werden nach 14 Tagen gelöscht, auch wenn in der Zwischenzeit nichts Neues protokolliert wird.',
+        ],
+      },
+    ],
+  },
+  {
+    version: '4.1.28',
+    seiten: 'Anmeldung',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Ein neues Konto entsteht nur, wenn du die Nutzungsbedingungen und den Datenschutz bestätigst und mindestens 16 Jahre alt bist. Bei einer neuen Fassung fragt Stride nach der Anmeldung nach.',
+        ],
+      },
+    ],
+  },
+  {
+    version: '4.1.27',
+    seiten: 'Anmeldung, Lizenzhinweise',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Die Lizenzhinweise verlinken den Quellcode dieser Version und die Lizenzen der mitgelieferten Bibliotheken.',
+        ],
+      },
+    ],
+  },
+  {
+    version: '4.1.26',
+    seiten: 'Anmeldung, Mehr',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Impressum, Datenschutzerklärung, Nutzungsbedingungen und Lizenzhinweise sind in der App und ohne Anmeldung erreichbar.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.25',
     seiten: 'Tätigkeiten, Einträge',
     abschnitte: [

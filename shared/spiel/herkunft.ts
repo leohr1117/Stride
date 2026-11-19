@@ -195,6 +195,9 @@ export function elternZiel(pfad: string, lage: NavLage = { leiste: [], verlaufAn
   ) {
     return ziel('/mehr');
   }
+  if (rein === '/impressum' || rein === '/datenschutz' || rein === '/nutzungsbedingungen' || rein === '/lizenzhinweise') {
+    return ziel('/mehr');
+  }
   return null;
 }
 

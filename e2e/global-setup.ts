@@ -7,7 +7,7 @@ import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { mitDatenbankPfaden } from '../server/umgebung.ts';
 import { erstelleTestkopie, loescheTestkopie } from './kopie.ts';
 import { TEST_APP, TEST_PORT, TEST_URL, TEST_ZUGANG, WURZEL, TEST_PASSWORT } from './testdaten.ts';
-import { testJetzt } from './uhr.ts';
+import { TESTDATUM, testJetzt } from './uhr.ts';
 
 function portFrei(port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -37,6 +37,17 @@ async function warteAufServer(kind: ChildProcess): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 200));
   }
   throw new Error(`Testserver auf ${TEST_URL} nicht bereit: ${letzter}`);
+}
+
+async function setzeTestuhr(): Promise<void> {
+  const antwort = await fetch(`${TEST_URL}/api/test/heute`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ datum: TESTDATUM }),
+  });
+  if (!antwort.ok) {
+    throw new Error(`Testuhr ließ sich nicht setzen: ${antwort.status} ${await antwort.text()}`);
+  }
 }
 
 async function setzeHinweisAktuell(): Promise<void> {
@@ -131,6 +142,7 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
 
   try {
     await warteAufServer(kind);
+    await setzeTestuhr();
     await setzeHinweisAktuell();
   } catch (fehler) {
     await beende(kind);

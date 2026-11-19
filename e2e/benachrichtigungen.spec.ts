@@ -1,9 +1,11 @@
 import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './uhr.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { TEST_TEIL_WELT, TEST_URL, TEST_PASSWORT } from './testdaten.ts';
+
+test.use({ echteZeit: true });
 
 const ENDPUNKTE = ['https://geraet.example/abo', 'https://geraet.example/abo-zwei'] as const;
 const HINWEIS = ['hinweis_streak', 'hinweis_rueckkehr', 'hinweis_boss', 'hinweis_ruhe_von', 'hinweis_ruhe_bis'] as const;

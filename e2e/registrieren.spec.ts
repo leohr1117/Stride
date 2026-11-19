@@ -43,7 +43,13 @@ test('Neues Konto entsteht auf der Anmeldeseite', async ({ page }, testInfo) => 
   await link.click();
   await expect(page.getByRole('heading', { name: 'Konto erstellen', exact: true })).toBeVisible();
   const felder = page.locator('form input:not([type="hidden"])');
-  await expect(felder).toHaveCount(2);
+  await expect(felder).toHaveCount(3);
+  const zustimmung = page.getByRole('checkbox', { name: /mindestens 16 Jahre alt/ });
+  await expect(zustimmung).toBeVisible();
+  await expect(zustimmung).not.toBeChecked();
+  const kasten = page.locator('label[for="zustimmung"]');
+  await expect(kasten.getByRole('link', { name: 'Nutzungsbedingungen', exact: true })).toHaveAttribute('href', '/nutzungsbedingungen');
+  await expect(kasten.getByRole('link', { name: 'Datenschutzerklärung', exact: true })).toHaveAttribute('href', '/datenschutz');
   const name = page.locator('input[name="username"]');
   const passwort = page.locator('input[name="password"]');
   await expect(name).toHaveAttribute('autocomplete', 'username');
@@ -74,6 +80,13 @@ test('Neues Konto entsteht auf der Anmeldeseite', async ({ page }, testInfo) => 
   await name.fill('testvoll');
   await passwort.fill('anderes-passwort');
   await page.locator('form button[type="submit"]').click();
+  await expect(page.locator('#zustimmung-fehler')).toContainText(
+    'Bitte bestätige die Nutzungsbedingungen, den Datenschutz und dass du mindestens 16 Jahre alt bist.',
+  );
+  await expect(page.getByRole('heading', { name: 'Konto erstellen', exact: true })).toBeVisible();
+  await expect(passwort).toHaveValue('anderes-passwort');
+  await zustimmung.check();
+  await page.locator('form button[type="submit"]').click();
   const nameFeld = page.locator('.feld', { has: page.locator('input[name="username"]') });
   await expect(nameFeld).toContainText(NAME_VERGEBEN);
   await expect(name).toHaveValue('testvoll');
@@ -86,11 +99,13 @@ test('Neues Konto entsteht auf der Anmeldeseite', async ({ page }, testInfo) => 
   await expect(page.getByRole('button', { name: 'Konto erstellen', exact: true })).toBeVisible();
 
   await page.getByRole('button', { name: 'Konto erstellen', exact: true }).click();
-  const neu = `gast-${projekt}-${Date.now().toString(36)}`;
+  const neu = `gast-${projekt}`;
   await page.locator('input[name="username"]').fill(neu);
   await page.locator('input[name="password"]').fill('neues-konto-1');
+  await page.getByRole('checkbox', { name: /mindestens 16 Jahre alt/ }).check();
   await page.locator('form button[type="submit"]').click();
   await expect(page.getByRole('heading', { name: 'Sprache', exact: true })).toBeVisible();
+  await expect(page.getByRole('alertdialog', { name: 'Neue Bedingungen annehmen?' })).toHaveCount(0);
   const status = await page.evaluate(async () => {
     const antwort = await fetch('/api/zugang');
     return antwort.json() as Promise<{ modus: string; benutzername: string; rolle: string; admin: boolean }>;

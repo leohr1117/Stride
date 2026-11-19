@@ -18,7 +18,8 @@ Stride ist eine Web-App, die den eigenen Alltag wie ein Rollenspiel führt: Du t
 - **Verbindungen:** Erledigte Aufgaben aus Todoist und Termine aus einem Kalender (iCal-Adresse, z. B. Google oder iCloud) werden zu Einträgen; Mehr zeigt eine Übersicht mit dem Status beider Verbindungen, und jede hat eine eigene Seite.
 - **Benachrichtigungen:** Web-Push, wenn der Streak in Gefahr ist, ein Boss ansteht oder eine Rückkehr möglich ist, mit Ruhezeit.
 - **Anpassen:** Bereiche lassen sich einzeln abschalten. Ansichten, Farbpaletten und eigene Farben. Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden; die Hinweise gelten nur für dieses Gerät.
-- **Sonstiges:** Installierbar als PWA, mit einem Hinweis auf Heute nach der Anmeldung und einem Eintrag unter den Einstellungen. Sieben Sprachen (Deutsch, Englisch, Spanisch, Französisch, Japanisch, Russisch, Chinesisch). Ohne gewählte Sprache gilt die des Geräts, sonst Englisch. Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter. Export und Import der Daten, mehrere Konten, auf Wunsch mit Selbst-Registrierung oder Anmeldung über Google, Anmeldung mit Passwortmanagern, Handbuch in der App. Zu viele Anfragen in kurzer Zeit werden gebremst, die Registrierung zusätzlich je Adresse. Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser. `GET /api/gesundheit` nennt ohne Anmeldung nur die laufende Version, etwa für eine Erreichbarkeitsprüfung, und zählt nicht zur Anfragegrenze. Ein Tagesprotokoll kann in einem eigenen Ordner liegen; Dateien, die älter als 14 Tage sind, werden entfernt.
+- **Rechtliches:** Impressum, Datenschutzerklärung, Nutzungsbedingungen und Lizenzhinweise sind ohne Anmeldung erreichbar, von der Anmeldeseite und unter Mehr.
+- **Sonstiges:** Installierbar als PWA, mit einem Hinweis auf Heute nach der Anmeldung und einem Eintrag unter den Einstellungen. Sieben Sprachen (Deutsch, Englisch, Spanisch, Französisch, Japanisch, Russisch, Chinesisch). Ohne gewählte Sprache gilt die des Geräts, sonst Englisch. Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter. Export und Import der Daten, mehrere Konten, auf Wunsch mit Selbst-Registrierung (nur nach Bestätigung der Nutzungsbedingungen, des Datenschutzes und des Mindestalters 16) oder Anmeldung über Google, Anmeldung mit Passwortmanagern, Handbuch in der App. Zu viele Anfragen in kurzer Zeit werden gebremst, die Registrierung zusätzlich je Adresse. Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser. `GET /api/gesundheit` nennt ohne Anmeldung nur die laufende Version, etwa für eine Erreichbarkeitsprüfung, und zählt nicht zur Anfragegrenze. Ein Tagesprotokoll kann in einem eigenen Ordner liegen; Dateien werden nach 14 Tagen gelöscht.
 
 Änderungen je Version stehen in [CHANGELOG.md](CHANGELOG.md).
 
@@ -50,6 +51,8 @@ npm run build          # Produktions-Build nach client/dist
 npm start              # Server; Oberfläche aus STRIDE_CLIENT_DIR, Standard client/dist-live
 ```
 
+Der Befehl `npm run build` schreibt `/lizenzen.txt` mit den Lizenzen der mitgelieferten Bibliotheken und merkt sich den Quellstand über `git rev-parse HEAD`, ersatzweise über die Build-Variable `STRIDE_COMMIT`.
+
 Die Daten liegen in `data/` (`app.db` und `zugang.db`). Liegt `app.db` schon vor, legt `npm run beispieldaten` nichts an. `npm run beispieldaten -- --ersetzen` sichert die alte Datei und baut die Beispielwelt neu. Dafür schaltet das Skript die Bereiche ein, die die Beispielwelt braucht, und aktiviert fehlende Attribute.
 
 ### Umgebungsvariablen
@@ -60,11 +63,11 @@ Die Daten liegen in `data/` (`app.db` und `zugang.db`). Liegt `app.db` schon vor
 | `STRIDE_DB_PFAD` | Pfad der Datenbank, Standard `data/app.db`. Dieser Name gilt vor dem alten Namen `DB_PFAD`. |
 | `STRIDE_ZUGANG_PFAD` | Pfad der Zugangsdatenbank, Standard `data/zugang.db`. Dieser Name gilt vor dem alten Namen `ZUGANG_PFAD`. |
 | `LOG_LEVEL` | Log-Stufe, Standard `warn` |
-| `STRIDE_LOG_PFAD` | Ordner für das Tagesprotokoll. Jeder Tag ist eine Datei. Dateien, die älter als 14 Tage sind, werden gelöscht. Ohne die Variable nur die Konsole. Nicht die Datenbankdatei eintragen. `ASCEND_LOG_PFAD` wird weiter gelesen. |
+| `STRIDE_LOG_PFAD` | Ordner für das Tagesprotokoll. Jeder Tag ist eine Datei. Dateien werden nach 14 Tagen gelöscht. Ohne die Variable nur die Konsole. Nicht die Datenbankdatei eintragen. `ASCEND_LOG_PFAD` wird weiter gelesen. |
 | `STRIDE_CLIENT_DIR` | Ordner, aus dem der laufende Server die Oberfläche ausliefert. Standard ist `client/dist-live`. Ist der Ordner beim ersten Start noch leer, wird `client/dist` hineinkopiert. `npm run build` und die Browser-Tests schreiben und lesen weiter `client/dist`. Der alte Name `ASCEND_CLIENT_DIR` wird weiter gelesen. |
 | `STRIDE_TOKEN_SCHLUESSEL` | 32 Byte Base64. Damit wird der Todoist-Token verschlüsselt gespeichert. Ohne ihn lässt sich Todoist nicht neu einrichten, vorhandene Tokens bleiben unverschlüsselt und laufen weiter. Ist er gesetzt, packt der Start sie einmal. Wer ihn ändert, gibt die Tokens neu ein. Der alte Name `ASCEND_TOKEN_SCHLUESSEL` wird weiter gelesen. |
 | `STRIDE_ADMIN` | Admin wird einmal vergeben: Das Konto muss schon existieren, die Variable steht auf diesen Namen, nach dem Neustart zählt die gespeicherte Konto-ID. Ein späteres Konto mit demselben Namen ist kein Admin. Die Selbst-Registrierung dieses Namens bleibt gesperrt. `ASCEND_ADMIN` wird weiter gelesen. Fehlt das Konto beim ersten Start, wird nichts gespeichert und der nächste Start versucht es erneut. Nach dem Löschen des Admin-Kontos bindet beim nächsten Start nur ein anderer Name, und nur wenn dieses Konto schon existiert. Sonst warnt das Log, und eine spätere Registrierung bindet nicht. Derselbe Name bindet nie wieder. |
-| `STRIDE_REGISTRIERUNG` | `1` erlaubt neuen Nutzern, selbst ein Konto zu erstellen. Standard aus. |
+| `STRIDE_REGISTRIERUNG` | `1` erlaubt neuen Nutzern, selbst ein Konto zu erstellen. Dabei müssen sie bestätigen, dass sie die Nutzungsbedingungen und den Datenschutz gelesen haben und mindestens 16 Jahre alt sind. Ohne diese Bestätigung entsteht kein Konto. Ändert sich die Fassung, erscheint nach der Anmeldung ein Dialog. Standard aus. |
 | `STRIDE_GOOGLE` | `1` erlaubt die Anmeldung über Google. Standard aus. Wirkt nur mit Client-ID und Secret. |
 | `STRIDE_GOOGLE_CLIENT_ID` | Client-ID der Google-Cloud-Anmeldung. |
 | `STRIDE_GOOGLE_CLIENT_SECRET` | Client-Geheimnis der Google-Cloud-Anmeldung. |

@@ -1,4 +1,5 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { ZUSTIMMUNG_FEHLT } from '../../../shared/recht/fassung.ts';
 import { AppFehler, ungueltig } from '../../fehler.ts';
 import { entferneKonto, erstelleMitglied, hauptweltdatei, konten, loescheEigenesKonto } from './konten.ts';
 import {
@@ -13,6 +14,7 @@ import {
   kontenSichtbar,
   legeBenutzerAn,
   merkeFehlversuch,
+  merkeZustimmung,
   oeffneSitzung,
   passwortDerSitzungStimmt,
   passwortStimmt,
@@ -135,6 +137,10 @@ function setzeSitzung(anfrage: FastifyRequest, antwort: FastifyReply, token: str
   antwort.header('set-cookie', sitzungsCookie(token, sicherVon(anfrage)));
 }
 
+function zustimmungGesetzt(roh: unknown): boolean {
+  return roh !== null && typeof roh === 'object' && (roh as { zustimmung?: unknown }).zustimmung === true;
+}
+
 function fordereAdmin(token: string | undefined): void {
   const selbst = sitzungsBenutzer(token);
   if (!selbst) {
@@ -214,6 +220,9 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
       throw ungueltig(geprueft.error.issues[0]?.message ?? 'Ungültige Eingabe.');
     }
     const { benutzername, passwort } = geprueft.data;
+    if (!zustimmungGesetzt(roh)) {
+      throw ungueltig(ZUSTIMMUNG_FEHLT);
+    }
     if (istAdminName(benutzername)) {
       throw ungueltig(NAME_VERGEBEN);
     }
@@ -221,7 +230,7 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
     const anlage = anlageVon(schluessel);
     let konto: ReturnType<typeof erstelleMitglied>;
     try {
-      konto = erstelleMitglied({ benutzername, passwort });
+      konto = erstelleMitglied({ benutzername, passwort, zustimmung: new Date() });
     } catch (fehler) {
       if (fehler instanceof AppFehler && fehler.message === 'Der Benutzername ist schon vergeben.') {
         throw ungueltig(NAME_VERGEBEN);
@@ -241,6 +250,19 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
     }
     antwort.header('set-cookie', cookies);
     return zugangStatus(token);
+  });
+
+  app.post('/zugang/zustimmung', async (anfrage) => {
+    const token = leseSitzungsToken(anfrage.headers.cookie);
+    const benutzer = sitzungsBenutzer(token);
+    if (!benutzer) {
+      throw new AppFehler(401, 'Anmeldung erforderlich.');
+    }
+    if (!zustimmungGesetzt(anfrage.body)) {
+      throw ungueltig(ZUSTIMMUNG_FEHLT);
+    }
+    merkeZustimmung(benutzer.id);
+    return zugangStatus(token, new Date(), googleSchluessel(anfrage.headers.cookie));
   });
 
   app.post('/zugang/abmelden', async (anfrage, antwort) => {

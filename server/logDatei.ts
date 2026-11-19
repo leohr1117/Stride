@@ -63,6 +63,11 @@ function tageVor(damals: Date, heute: Date): number {
   return Math.round((ende - start) / 86_400_000);
 }
 
+function msBisNaechstenTag(datum: Date): number {
+  const rest = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate() + 1).getTime() - datum.getTime();
+  return Number.isFinite(rest) && rest > 0 ? rest : 86_400_000;
+}
+
 export function loescheAlteLogdateien(ordner: string, heute: Date): void {
   let namen: string[];
   try {
@@ -82,7 +87,7 @@ export function loescheAlteLogdateien(ordner: string, heute: Date): void {
     if (datum.getFullYear() !== jahr || datum.getMonth() !== monat - 1 || datum.getDate() !== tag) {
       continue;
     }
-    if (tageVor(datum, heute) <= AUFBEWAHRUNG_TAGE) {
+    if (tageVor(datum, heute) < AUFBEWAHRUNG_TAGE) {
       continue;
     }
     const ziel = path.join(ordner, name);
@@ -167,6 +172,7 @@ class LogTee extends Writable {
   private dateiGewarnt = false;
   private zu = false;
   private warte: Promise<void> = Promise.resolve();
+  private loeschTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly ordner: string;
   private readonly jetzt: () => Date;
   private readonly ausgabe: NodeJS.WritableStream;
@@ -182,6 +188,7 @@ class LogTee extends Writable {
     this.oeffne = optionen.oeffne;
     const datum = this.jetzt();
     this.oeffneDatei(datum, tagesstempel(datum));
+    this.planeLoeschung();
   }
 
   override _write(chunk: Buffer | string, _encoding: BufferEncoding, fertig: (fehler?: Error | null) => void): void {
@@ -202,6 +209,7 @@ class LogTee extends Writable {
   }
 
   schliesse(): Promise<void> {
+    this.planeLoeschung(false);
     if (this.zu) {
       return this.warte;
     }
@@ -314,6 +322,32 @@ class LogTee extends Writable {
       }
     });
     this.warte = this.warte.then(() => ende);
+  }
+
+  private planeLoeschung(weiter = true): void {
+    if (this.loeschTimer) {
+      clearTimeout(this.loeschTimer);
+      this.loeschTimer = null;
+    }
+    if (!weiter || this.zu) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      this.loeschTimer = null;
+      if (!this.zu) {
+        const datum = this.jetzt();
+        if (tagesstempel(datum) !== this.tag) {
+          this.dateiAus = false;
+          this.dateiGewarnt = false;
+          this.beendeDatei();
+          this.tag = '';
+        }
+        loescheAlteLogdateien(this.ordner, datum);
+      }
+      this.planeLoeschung();
+    }, msBisNaechstenTag(this.jetzt()));
+    timer.unref();
+    this.loeschTimer = timer;
   }
 }
 

@@ -1,5 +1,22 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  [
+    'Ich habe die Nutzungsbedingungen und die Datenschutzerklärung gelesen und bin mindestens 16 Jahre alt.',
+    'I have read the Terms of use and the Privacy policy and I am at least 16 years old.',
+  ],
+  [
+    'Die neue Fassung der Nutzungsbedingungen und der Datenschutzerklärung gilt erst, wenn du zustimmst.',
+    'The new version of the Terms of use and the Privacy policy applies only once you agree.',
+  ],
+  ['Neue Bedingungen annehmen?', 'Accept the new terms?'],
+  ['Zustimmen', 'Agree'],
+  ['Impressum', 'Legal notice'],
+  ['Datenschutzerklärung', 'Privacy policy'],
+  ['Nutzungsbedingungen', 'Terms of use'],
+  ['Lizenzhinweise', 'License notices'],
+  ['Rechtliches', 'Legal information'],
+  ['Maßgeblich ist die deutsche Fassung.', 'The German version prevails.'],
+  ['Quellcode dieser Version', 'Source code of this version'],
   ['Konto löschen', 'Delete account'],
   ['Konto löschen?', 'Delete account?'],
   [

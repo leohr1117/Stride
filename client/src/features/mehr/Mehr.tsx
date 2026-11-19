@@ -15,6 +15,7 @@ import { sichtbareGruppen, type NavEintrag } from '../../navigation.ts';
 import { AbschnittKopf, Flaeche, Ladeanzeige } from '../../ui/index.ts';
 import { useNeuMarkierung, verbindeVersionsstand } from '../../updateHinweis.tsx';
 import { InstallZeile } from '../../installHinweis.tsx';
+import { RechtBereich } from '../recht/RechtLinks.tsx';
 import { kachelText } from './hinweisGeraet.ts';
 import { bereicheAn, kartenStand, verbindungsKurz } from './mehrWerte.ts';
 
@@ -85,6 +86,7 @@ export function MehrSeite() {
         </Liste>
       </section>
       <WasNeuZeile />
+      <RechtBereich />
       <Absender className="mt-6" />
     </div>
     </DichteZeilen>

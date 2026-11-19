@@ -2,6 +2,8 @@ import path from 'node:path';
 import { mitWelt, schliesseWelt } from '../server/db.ts';
 import { erstelleMitglied } from '../server/features/zugang/konten.ts';
 import { listeKonten, loeseWeltdatei, schliesseZugang } from '../server/features/zugang/zugang.ts';
+import { setzeTestzeit } from '../server/services/zeit.ts';
+import { TESTDATUM } from './uhr.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
 import { fuelleTeil } from './samen/teil.ts';
 import { fuelleVoll } from './samen/voll.ts';
@@ -28,6 +30,7 @@ function legeAn(benutzername: string, profilname: string, dateiname: string): st
 }
 
 function main(): void {
+  setzeTestzeit(TESTDATUM);
   const vollWelt = legeAn('testvoll', 'Test Voll', '1.db');
   const teilWelt = legeAn('testteil', 'Test Teil', '2.db');
   try {

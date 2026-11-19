@@ -1,5 +1,6 @@
 import type { FormEvent, ReactNode } from 'react';
 import { Absender } from '../../components/Absender.tsx';
+import { RechtLinks } from '../recht/RechtLinks.tsx';
 import { tx } from '../../text.ts';
 import { Flaeche, Formular } from '../../ui/index.ts';
 
@@ -22,6 +23,7 @@ export function AnmeldeRahmen({
           </div>
           <h1 className="text-2xl leading-8 font-semibold break-words">{tx(titel)}</h1>
           {children}
+          <RechtLinks />
           <Absender />
         </Formular>
       </Flaeche>

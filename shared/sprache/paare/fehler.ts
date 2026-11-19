@@ -1,6 +1,10 @@
 /** Fehlermeldungen, wortgenau wie der Server sie ausgibt. */
 export const PAARE = [
   [
+    'Bitte bestätige die Nutzungsbedingungen, den Datenschutz und dass du mindestens 16 Jahre alt bist.',
+    'Please confirm the terms of use, the privacy notice and that you are at least 16 years old.',
+  ],
+  [
     'Du bist der einzige Inhaber. Solange es andere Accounts gibt, kannst du dein Konto nicht löschen.',
     'You’re the only owner. While other accounts exist, you can’t delete yours.',
   ],

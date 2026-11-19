@@ -4,6 +4,7 @@ import path from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { gitHead, leseCommit, lizenztextFuerRepo } from './skripte/lizenzliste.ts';
 
 const SERVER_PORT = Number(process.env.PORT ?? 3000);
 const CLIENT_ORDNER = path.resolve(import.meta.dirname, 'client');
@@ -11,7 +12,11 @@ const PUBLIC_ORDNER = path.join(CLIENT_ORDNER, 'public');
 const SERVICE_WORKER_VORLAGE = path.join(CLIENT_ORDNER, 'service-worker.js');
 const SERVICE_WORKER_DATEI = 'sw.js';
 const VERSIONS_LAENGE = 12;
-const NUR_BEI_BEDARF = [/\.woff2?$/, /^assets\/stil-[^/]+\.css$/];
+const NUR_BEI_BEDARF = [/\.woff2?$/, /^assets\/stil-[^/]+\.css$/, /^lizenzen\.txt$/];
+const BAU_COMMIT = leseCommit(process.env, () => gitHead(import.meta.dirname));
+const OFL_DATEI = path.join(import.meta.dirname, 'client/src/features/zugang/roboto-OFL.txt');
+const ROBOTO_DATEI = path.join(import.meta.dirname, 'client/src/features/zugang/roboto-latin-500.woff2');
+const ROBOTO_NAME = 'roboto-latin-500.woff2';
 
 function wirdVorgeladen(name: string): boolean {
   return !NUR_BEI_BEDARF.some((muster) => muster.test(name));
@@ -74,6 +79,9 @@ function serviceWorker(): Plugin {
         pruefsumme.update(datei.type === 'chunk' ? datei.code : datei.source);
       }
       for (const datei of oeffentlicheDateien(PUBLIC_ORDNER)) {
+        if (/(?:^|\/)lizenzen\.txt$/.test(datei)) {
+          continue;
+        }
         dateien.push(datei);
         pruefsumme.update(datei);
         pruefsumme.update(fs.readFileSync(path.join(PUBLIC_ORDNER, datei)));
@@ -84,6 +92,57 @@ function serviceWorker(): Plugin {
         .replace(`['__DATEIEN__']`, JSON.stringify(dateien.sort()));
       const ausgabe = optionen.dir ?? path.join(CLIENT_ORDNER, 'dist');
       fs.writeFileSync(path.join(ausgabe, SERVICE_WORKER_DATEI), quelle);
+    },
+  };
+}
+
+function robotoSchrift(): Plugin {
+  return {
+    name: 'stride-roboto',
+    generateBundle() {
+      this.emitFile({ type: 'asset', fileName: ROBOTO_NAME, source: fs.readFileSync(ROBOTO_DATEI) });
+    },
+    configureServer(server) {
+      server.middlewares.use((anfrage, antwort, weiter) => {
+        const url = anfrage.url?.split('?')[0];
+        if (url !== `/${ROBOTO_NAME}`) {
+          weiter();
+          return;
+        }
+        antwort.statusCode = 200;
+        antwort.setHeader('Content-Type', 'font/woff2');
+        antwort.end(fs.readFileSync(ROBOTO_DATEI));
+      });
+    },
+  };
+}
+
+function lizenzliste(): Plugin {
+  let gemerkt: string | undefined;
+  const inhalt = (): string => {
+    gemerkt ??= lizenztextFuerRepo(import.meta.dirname, BAU_COMMIT, OFL_DATEI);
+    return gemerkt;
+  };
+  return {
+    name: 'stride-lizenzliste',
+    buildStart() {
+      // Vite kopiert client/public nach dem Bundle und würde sonst die alte Liste darüberlegen.
+      fs.writeFileSync(path.join(PUBLIC_ORDNER, 'lizenzen.txt'), inhalt());
+    },
+    generateBundle() {
+      this.emitFile({ type: 'asset', fileName: 'lizenzen.txt', source: inhalt() });
+    },
+    configureServer(server) {
+      server.middlewares.use((anfrage, antwort, weiter) => {
+        const url = anfrage.url?.split('?')[0];
+        if (url !== '/lizenzen.txt') {
+          weiter();
+          return;
+        }
+        antwort.statusCode = 200;
+        antwort.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        antwort.end(inhalt());
+      });
     },
   };
 }
@@ -115,7 +174,10 @@ function strideVersion(): Plugin {
 
 export default defineConfig({
   root: 'client',
-  plugins: [palettenModul(), react(), tailwindcss(), serviceWorker(), strideVersion()],
+  define: {
+    'import.meta.env.VITE_STRIDE_COMMIT': JSON.stringify(BAU_COMMIT),
+  },
+  plugins: [palettenModul(), react(), tailwindcss(), lizenzliste(), robotoSchrift(), serviceWorker(), strideVersion()],
   server: {
     host: 'localhost',
     proxy: {

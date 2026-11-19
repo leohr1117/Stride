@@ -160,6 +160,7 @@ describe('accounts', () => {
       rolle: 'inhaber',
       admin: false,
       registrierung: false,
+      zustimmungAktuell: true,
       google: false,
       googleEmail: null,
       googleAnlage: null,

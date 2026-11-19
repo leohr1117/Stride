@@ -318,7 +318,7 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
   await expect(page.getByText('Bis zum Datum entsteht er. Danach greift er an.')).toBeVisible();
   await page.keyboard.press('Escape');
 
-  const siegTitel = `Prüfboss ${testInfo.project.name} ${Date.now()}`;
+  const siegTitel = `Prüfboss ${testInfo.project.name}`;
   const sieg = await page.evaluate(async (titel) => {
     const ziele = (await fetch('/api/ziele').then((antwort) => antwort.json())) as {
       projekte: { id: number; aktiv: boolean }[];

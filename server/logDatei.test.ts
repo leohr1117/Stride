@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { Writable } from 'node:stream';
 import Fastify from 'fastify';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AKTUELLE_VERSION } from '../shared/versionen.ts';
 import { registriereGesundheit } from './gesundheit.ts';
 import {
@@ -119,20 +119,56 @@ describe('Logdatei', () => {
     expect(stdout.text()).toContain('zweiter');
   });
 
-  it('löscht nur Tagesdateien, die älter als 14 Tage sind', () => {
+  it('löscht Tagesdateien nach 14 Tagen und lässt jüngere liegen', () => {
     const ziel = ordner();
     fs.mkdirSync(path.join(ziel, 'unter'));
     fs.writeFileSync(path.join(ziel, 'unter', 'stride-2020-01-01.log'), 'bleib');
     fs.writeFileSync(path.join(ziel, 'app.db'), 'db');
     fs.writeFileSync(path.join(ziel, 'foo.log'), 'foo');
     fs.writeFileSync(path.join(ziel, 'stride-2026-10-26.log'), 'alt');
-    fs.writeFileSync(path.join(ziel, 'stride-2026-10-27.log'), 'grenze');
+    fs.writeFileSync(path.join(ziel, 'stride-2026-10-27.log'), 'frist');
+    fs.writeFileSync(path.join(ziel, 'stride-2026-10-28.log'), 'jung');
+    fs.writeFileSync(path.join(ziel, 'stride-2026-11-10.log'), 'heute');
     loescheAlteLogdateien(ziel, new Date(2026, 10, 10));
     expect(fs.existsSync(path.join(ziel, 'stride-2026-10-26.log'))).toBe(false);
-    expect(fs.readFileSync(path.join(ziel, 'stride-2026-10-27.log'), 'utf8')).toBe('grenze');
+    expect(fs.existsSync(path.join(ziel, 'stride-2026-10-27.log'))).toBe(false);
+    expect(fs.readFileSync(path.join(ziel, 'stride-2026-10-28.log'), 'utf8')).toBe('jung');
+    expect(fs.readFileSync(path.join(ziel, 'stride-2026-11-10.log'), 'utf8')).toBe('heute');
     expect(fs.readFileSync(path.join(ziel, 'app.db'), 'utf8')).toBe('db');
     expect(fs.readFileSync(path.join(ziel, 'foo.log'), 'utf8')).toBe('foo');
     expect(fs.readFileSync(path.join(ziel, 'unter', 'stride-2020-01-01.log'), 'utf8')).toBe('bleib');
+  });
+
+  it('löscht beim Öffnen und zum Tageswechsel nach 14 Tagen, auch ohne neue Zeile', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'] });
+    const ziel = ordner();
+    fs.writeFileSync(path.join(ziel, 'stride-2026-10-27.log'), 'frist');
+    fs.writeFileSync(path.join(ziel, 'stride-2026-10-28.log'), 'morgen');
+    fs.writeFileSync(path.join(ziel, 'stride-2026-10-29.log'), 'jung');
+    fs.writeFileSync(path.join(ziel, 'foo.log'), 'foo');
+    const uhr = { datum: new Date(2026, 10, 10, 23, 59, 59) };
+    const stdout = merke();
+    try {
+      oeffneLogStrom({ ordner: ziel, stdout: stdout.strom, jetzt: () => uhr.datum });
+      expect(fs.existsSync(path.join(ziel, 'stride-2026-10-27.log'))).toBe(false);
+      expect(fs.readFileSync(path.join(ziel, 'stride-2026-10-28.log'), 'utf8')).toBe('morgen');
+      expect(fs.readFileSync(path.join(ziel, 'foo.log'), 'utf8')).toBe('foo');
+      await vi.advanceTimersByTimeAsync(999);
+      expect(fs.readFileSync(path.join(ziel, 'stride-2026-10-28.log'), 'utf8')).toBe('morgen');
+      uhr.datum = new Date(2026, 10, 11, 0, 0, 0);
+      await vi.advanceTimersByTimeAsync(1);
+      expect(fs.existsSync(path.join(ziel, 'stride-2026-10-28.log'))).toBe(false);
+      expect(fs.readFileSync(path.join(ziel, 'stride-2026-10-29.log'), 'utf8')).toBe('jung');
+      expect(fs.readFileSync(path.join(ziel, 'foo.log'), 'utf8')).toBe('foo');
+    } finally {
+      try {
+        const ende = schliesseLogStrom();
+        await vi.advanceTimersByTimeAsync(200);
+        await ende;
+      } finally {
+        vi.useRealTimers();
+      }
+    }
   });
 
   it('warnt bei einem Dateipfad, schreibt nur auf die Konsole und lässt die Datei', async () => {

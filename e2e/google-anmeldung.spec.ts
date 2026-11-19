@@ -32,6 +32,10 @@ async function setzePalette(seite: Page, farben: { primaer: string; akzent: stri
 
 test('Anmeldung zeigt Google nur als eigenen Weg', async ({ page }, testInfo) => {
   test.setTimeout(120_000);
+  const netz: string[] = [];
+  page.on('request', (anfrage) => {
+    netz.push(anfrage.url());
+  });
   fs.mkdirSync('tmp-test/google-anmeldung', { recursive: true });
   const projekt = testInfo.project.name;
   await page.addInitScript((werte) => {
@@ -72,6 +76,29 @@ test('Anmeldung zeigt Google nur als eigenen Weg', async ({ page }, testInfo) =>
   expect(masse.rand).toBe(rgb('#747775'));
   expect(masse.schrift).toBe(rgb('#1F1F1F'));
   expect(masse.familie.toLowerCase()).toContain('roboto');
+  const schrift = await page.evaluate(async () => {
+    await document.fonts.ready;
+    const rein = (familie: string) => familie.replaceAll('"', '').replaceAll("'", '');
+    const faces = Array.from(document.fonts)
+      .filter((face) => rein(face.family) === 'Stride Roboto')
+      .map((face) => ({ gewicht: String(face.weight), anzeige: face.display, status: face.status }));
+    const adressen = performance.getEntriesByType('resource').map((eintrag) => eintrag.name);
+    return { faces, adressen, body: getComputedStyle(document.body).fontFamily };
+  });
+  expect(schrift.faces).toEqual([{ gewicht: '500', anzeige: 'swap', status: 'loaded' }]);
+  expect(schrift.body).not.toContain('Stride Roboto');
+  const herkunft = new URL(page.url()).origin;
+  const geladen = [...new Set([...schrift.adressen, ...netz])].filter(
+    (adresse) => adresse.toLowerCase().includes('roboto') && (adresse.split('?')[0] ?? '').endsWith('.woff2'),
+  );
+  expect(geladen.length).toBeGreaterThan(0);
+  for (const adresse of geladen) {
+    expect(new URL(adresse).origin).toBe(herkunft);
+  }
+  for (const adresse of [...schrift.adressen, ...netz]) {
+    expect(adresse).not.toContain('fonts.googleapis.com');
+    expect(adresse).not.toContain('fonts.gstatic.com');
+  }
   expect(masse.groesse).toBe('14px');
   expect(masse.zeile).toBe('20px');
   expect(String(masse.gewicht)).toBe('500');

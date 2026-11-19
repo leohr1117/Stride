@@ -1,5 +1,29 @@
 # Änderungsprotokoll
 
+## 4.1.29
+
+### Geändert
+
+- Serverprotokolle werden nach 14 Tagen gelöscht, auch wenn in der Zwischenzeit nichts Neues protokolliert wird.
+
+## 4.1.28
+
+### Hinzugefügt
+
+- Ein neues Konto entsteht nur, wenn du die Nutzungsbedingungen und den Datenschutz bestätigst und mindestens 16 Jahre alt bist. Bei einer neuen Fassung fragt Stride nach der Anmeldung nach.
+
+## 4.1.27
+
+### Hinzugefügt
+
+- Die Lizenzhinweise verlinken den Quellcode dieser Version und die Lizenzen der mitgelieferten Bibliotheken.
+
+## 4.1.26
+
+### Hinzugefügt
+
+- Impressum, Datenschutzerklärung, Nutzungsbedingungen und Lizenzhinweise sind in der App und ohne Anmeldung erreichbar.
+
 ## 4.1.25
 
 ### Hinzugefügt

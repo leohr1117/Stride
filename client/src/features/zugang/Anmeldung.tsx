@@ -2,16 +2,22 @@ import { KONTO_GELOESCHT_SCHLUESSEL } from '../mehr/KontoLoeschen.tsx';
 import { leseSitzung, merkeSitzung } from '../../speicher.ts';
 import { feldLeer, tx } from '../../text.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import type { ZugangModus, ZugangStatus } from '../../../../shared/api/index.ts';
 import { PASSWORT_MAX } from '../../../../shared/spiel/passwort.ts';
 import { ApiFehler, api, beobachteAnmeldung } from '../../api/index.ts';
 import { SpracheAbgleich } from '../../sprache.tsx';
 import { Fehlermeldung, Feld, Knopf, Ladeanzeige, EINGABE_STIL, PasswortFeld } from '../../ui/index.ts';
+import { ZUSTIMMUNG_FEHLT } from '../../../../shared/recht/fassung.ts';
+import { oeffentlicherRechtPfad } from '../../../../shared/recht/seiten.ts';
+import { RechtLinks } from '../recht/RechtLinks.tsx';
 import { AnmeldeRahmen } from './AnmeldeRahmen.tsx';
+import { ZustimmungDialog, ZustimmungsKasten } from './Zustimmung.tsx';
 import { seitenwechsel } from './anmeldungFelder.ts';
 import { BenutzernameFestlegen } from './BenutzernameFestlegen.tsx';
 import { GoogleAnlage, GoogleKnopf, GoogleOder, googleHinweis, useGoogleRueckkehr } from './GoogleAnmeldung.tsx';
+
+const RechtOeffentlich = lazy(() => import('../recht/RechtSeiten.tsx').then((modul) => ({ default: modul.RechtOeffentlich })));
 
 function Anmeldung({
   modus,
@@ -175,6 +181,8 @@ function KontoErstellen({
   const [fehler, setFehler] = useState<unknown>(null);
   const [nameFehler, setNameFehler] = useState<string | null>(null);
   const [passwortFehler, setPasswortFehler] = useState<string | null>(null);
+  const [zustimmung, setZustimmung] = useState(false);
+  const [zustimmungFehler, setZustimmungFehler] = useState<string | null>(null);
   const [laeuft, setLaeuft] = useState(false);
 
   const senden = async (ereignis: FormEvent) => {
@@ -187,12 +195,21 @@ function KontoErstellen({
     if (nameLeer || passwortLeer) {
       setNameFehler(nameLeer ? 'Der Benutzername fehlt.' : null);
       setPasswortFehler(passwortLeer ? feldLeer('Passwort') : null);
+      setZustimmungFehler(zustimmung ? null : ZUSTIMMUNG_FEHLT);
       setFehler(null);
       setPasswort('');
       return;
     }
+    if (!zustimmung) {
+      setNameFehler(null);
+      setPasswortFehler(null);
+      setZustimmungFehler(ZUSTIMMUNG_FEHLT);
+      setFehler(null);
+      return;
+    }
     setNameFehler(null);
     setPasswortFehler(null);
+    setZustimmungFehler(null);
     setLaeuft(true);
     setFehler(null);
     try {
@@ -203,7 +220,7 @@ function KontoErstellen({
           return;
         }
       }
-      const status = await api.registrieren({ benutzername: benutzername.trim(), passwort });
+      const status = await api.registrieren({ benutzername: benutzername.trim(), passwort, zustimmung: true });
       onErfolg(status);
       seitenwechsel(window);
     } catch (anlageFehler) {
@@ -249,6 +266,14 @@ function KontoErstellen({
         onChange={(ereignis) => {
           setPasswort(ereignis.target.value);
           setPasswortFehler(null);
+        }}
+      />
+      <ZustimmungsKasten
+        an={zustimmung}
+        fehler={zustimmungFehler}
+        onAendern={(wert) => {
+          setZustimmung(wert);
+          setZustimmungFehler(null);
         }}
       />
       <Fehlermeldung fehler={fehler} />
@@ -304,6 +329,17 @@ export function ZugangTor({ children }: { children: ReactNode }) {
     [queryClient, lade, nimmGeloescht],
   );
 
+  const rechtPfad = oeffentlicherRechtPfad(window.location.pathname);
+  if (rechtPfad && status?.modus !== 'bereit') {
+    if (!status && !fehler) {
+      return <Ladeanzeige />;
+    }
+    return (
+      <Suspense fallback={<Ladeanzeige />}>
+        <RechtOeffentlich pfad={rechtPfad} />
+      </Suspense>
+    );
+  }
   if (!status && fehler) {
     return (
       <main className="flex sicht-mitte items-center justify-center px-4">
@@ -312,6 +348,7 @@ export function ZugangTor({ children }: { children: ReactNode }) {
           <Knopf variante="primaer" onClick={() => void lade()}>
             {tx("Erneut versuchen")}
           </Knopf>
+          <RechtLinks />
         </div>
       </main>
     );
@@ -355,6 +392,7 @@ export function ZugangTor({ children }: { children: ReactNode }) {
     <>
       <SpracheAbgleich />
       {children}
+      <ZustimmungDialog faellig={status.zustimmungAktuell === false} onErledigt={setStatus} />
     </>
   );
 }

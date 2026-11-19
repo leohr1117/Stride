@@ -164,6 +164,20 @@ function nutzlast(ziel: unknown, title = 'Stride', body = '4 Tage sind angeschla
   };
 }
 
+function serviceWorkerAbschnitt(quelle: string): string {
+  const kopf = 'function serviceWorker';
+  const anfang = quelle.indexOf(kopf);
+  if (anfang < 0) {
+    return '';
+  }
+  const rest = quelle.slice(anfang + kopf.length);
+  const versatz = rest.search(/\nfunction\s/);
+  if (versatz < 0) {
+    return quelle.slice(anfang);
+  }
+  return quelle.slice(anfang, anfang + kopf.length + versatz);
+}
+
 describe('Service Worker', () => {
   it('behält die Platzhalter, damit der Build Version und Dateien einsetzt', () => {
     expect(QUELLE).toContain("const VERSION = '__VERSION__'");
@@ -173,7 +187,10 @@ describe('Service Worker', () => {
   });
 
   it('schreibt die Dateiliste erst nach dem finalen Bundle', () => {
-    const plugin = readFileSync(fileURLToPath(new URL('../../vite.config.ts', import.meta.url)), 'utf8');
+    const plugin = serviceWorkerAbschnitt(
+      readFileSync(fileURLToPath(new URL('../../vite.config.ts', import.meta.url)), 'utf8'),
+    );
+    expect(plugin.startsWith('function serviceWorker')).toBe(true);
     expect(plugin).toContain('writeBundle(optionen, bundle)');
     expect(plugin).not.toContain('emitFile');
   });

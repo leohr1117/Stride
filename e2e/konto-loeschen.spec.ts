@@ -4,7 +4,7 @@ import { anmelden } from './helfer.ts';
 
 test('Ein frisches Konto löscht sich und die anderen Konten bleiben', async ({ page }, testInfo) => {
   const projekt = testInfo.project.name;
-  const name = `loesch-${projekt}-${Date.now().toString(36)}-${Math.floor(Math.random() * 36).toString(36)}`;
+  const name = `loesch-${projekt}`;
   const passwort = 'Stride-Loesch-2026';
   fs.mkdirSync('tmp-test/konto-loeschen', { recursive: true });
   const bild = (aufnahme: string, fullPage = false) =>
@@ -16,7 +16,7 @@ test('Ein frisches Konto löscht sich und die anderen Konten bleiben', async ({ 
       const antwort = await fetch('/api/zugang/registrieren', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ benutzername, passwort: geheim }),
+        body: JSON.stringify({ benutzername, passwort: geheim, zustimmung: true }),
       });
       return { ok: antwort.ok, status: antwort.status, text: await antwort.text() };
     },

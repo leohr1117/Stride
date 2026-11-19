@@ -1,7 +1,6 @@
 import fs from 'node:fs';
-import { expect, test, type Locator, type Page } from '@playwright/test';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
-import { TESTDATUM } from './uhr.ts';
+import { expect, test, TESTDATUM, type Locator, type Page } from './uhr.ts';
 
 async function bild(seite: Page, name: string, volleSeite = true): Promise<void> {
   fs.mkdirSync('tmp-test/heute-aufbau', { recursive: true });
@@ -14,7 +13,7 @@ async function setzeTesttag(seite: Page, datum: string | null): Promise<void> {
 }
 
 test.afterEach(async ({ page }) => {
-  await setzeTesttag(page, null);
+  await setzeTesttag(page, TESTDATUM);
 });
 
 test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) => {

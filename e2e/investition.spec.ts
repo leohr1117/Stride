@@ -1,8 +1,10 @@
 import { DatabaseSync } from 'node:sqlite';
-import { expect, test, type Locator, type Page, type Route } from '@playwright/test';
+import { expect, test, type Locator, type Page, type Route } from './uhr.ts';
 import { meilensteineAus } from './helfer.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
+
+test.use({ echteZeit: true });
 
 interface ZielRef {
   art: string;

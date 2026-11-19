@@ -1,4 +1,3 @@
-import { randomBytes } from 'node:crypto';
 import { expect, test, type Locator, type Page } from './uhr.ts';
 import type { ChronikSeite } from '../shared/api/eintraege.ts';
 import { SPRACHEN, type Sprache } from '../shared/sprache/kern.ts';
@@ -422,8 +421,8 @@ test('Wischen löscht sofort und der nächste Toast ersetzt den ersten', async (
 });
 
 test('Einführung fragt die Sprache und dann den Namen', async ({ page }) => {
-  const name = `l81${test.info().project.name}${Date.now().toString(36).slice(-5)}`;
-  const geheim = randomBytes(12).toString('base64url');
+  const name = `l81${test.info().project.name}`;
+  const geheim = 'Stride-Lauf-2026';
   let kontoId: number | null = null;
   const { erstelleMitglied, entferneKonto } = await import('../server/features/zugang/konten.ts');
   try {

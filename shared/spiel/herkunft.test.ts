@@ -78,6 +78,10 @@ describe('elternZiel', () => {
     expect(elternZiel('/mehr/inhalte/verbindungen/kalender')).toEqual({ pfad: '/mehr/inhalte/verbindungen', label: 'Verbindungen' });
     expect(elternZiel('/mehr/uebersicht')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/mehr/neu')).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/impressum')).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/datenschutz')).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/nutzungsbedingungen')).toEqual({ pfad: '/mehr', label: 'Mehr' });
+    expect(elternZiel('/lizenzhinweise')).toEqual({ pfad: '/mehr', label: 'Mehr' });
     expect(elternZiel('/projekte/4')).toEqual({ pfad: '/ziele', label: 'Ziele' });
     expect(elternZiel('/faehigkeiten')).toEqual({ pfad: '/charakter', label: 'Profil' });
     expect(elternZiel('/faehigkeiten', { leiste: ['/', '/faehigkeiten'] })).toBeNull();

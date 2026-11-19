@@ -24,6 +24,10 @@ const UNTERSEITE: Record<string, string> = {
   '/mehr/funktionen': 'Bereiche',
   '/mehr/benachrichtigungen': 'Benachrichtigungen',
   '/mehr/daten': 'Daten',
+  '/impressum': 'Impressum',
+  '/datenschutz': 'Datenschutzerklärung',
+  '/nutzungsbedingungen': 'Nutzungsbedingungen',
+  '/lizenzhinweise': 'Lizenzhinweise',
 };
 
 /** Kopf-Titel. Seiten aus der Tabelle kommen von dort, der Rest aus der Unterseitenliste. */

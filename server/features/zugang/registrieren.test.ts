@@ -98,7 +98,7 @@ describe('registrieren', () => {
       const antwort = await app.inject({
         method: 'POST',
         url: '/api/zugang/registrieren',
-        payload: { benutzername: ' Neu ', passwort: PASSWORT, rolle: 'inhaber', profilname: 'Fremd' },
+        payload: { benutzername: ' Neu ', passwort: PASSWORT, rolle: 'inhaber', profilname: 'Fremd', zustimmung: true },
       });
       expect(antwort.statusCode).toBe(200);
       expect(antwort.json()).toMatchObject({
@@ -127,12 +127,12 @@ describe('registrieren', () => {
       const admin = await app.inject({
         method: 'POST',
         url: '/api/zugang/registrieren',
-        payload: { benutzername: ' wirt ', passwort: PASSWORT },
+        payload: { benutzername: ' wirt ', passwort: PASSWORT, zustimmung: true },
       });
       const vergeben = await app.inject({
         method: 'POST',
         url: '/api/zugang/registrieren',
-        payload: { benutzername: 'ADA', passwort: PASSWORT },
+        payload: { benutzername: 'ADA', passwort: PASSWORT, zustimmung: true },
       });
       expect(admin.statusCode).toBe(400);
       expect(vergeben.statusCode).toBe(400);
@@ -169,7 +169,7 @@ describe('registrieren', () => {
           method: 'POST',
           url: '/api/zugang/registrieren',
           headers: adresse,
-          payload: { benutzername: 'Neu', passwort: PASSWORT },
+          payload: { benutzername: 'Neu', passwort: PASSWORT, zustimmung: true },
         });
         expect(angelegt.statusCode).toBe(200);
         for (let versuch = 1; versuch < REGISTRIERUNG_GRENZE.jeStunde; versuch += 1) {

@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, TESTDATUM, type Page } from './uhr.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { kettenLaenge } from '../shared/spiel/kette.ts';
 import { SCHUTZ } from '../shared/spiel/schutz.ts';
@@ -519,7 +519,7 @@ test('Kette auf Heute und Protokoll in der Chronik', async ({ page }, testInfo) 
     await page.setViewportSize(ausgang);
     await pruefeChronik(page, 'kette');
   } finally {
-    await setzeHeute(page, null).catch(() => undefined);
+    await setzeHeute(page, TESTDATUM).catch(() => undefined);
     await page.request.post('/api/kette/schutz', { data: {} }).catch(() => undefined);
     for (const id of angelegt) {
       await loescheStill(page, id).catch(() => undefined);
@@ -692,7 +692,7 @@ test('Streak-Zeile bleibt eine Zeile', async ({ page }, testInfo) => {
         });
       }, wieder)
       .catch(() => undefined);
-    await setzeHeute(page, null).catch(() => undefined);
+    await setzeHeute(page, TESTDATUM).catch(() => undefined);
     await page.setViewportSize(ausgang).catch(() => undefined);
   }
 });

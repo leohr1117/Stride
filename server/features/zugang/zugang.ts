@@ -8,6 +8,7 @@ import { ungueltig } from '../../fehler.ts';
 import { sperreEchteDatenbankImTest } from '../../testpfad.ts';
 import { strideVariable } from '../../umgebung.ts';
 import { BENUTZER_MAX, PASSWORT_MAX, PASSWORT_MIN } from '../../validierung.ts';
+import { RECHT_FASSUNG, istZustimmungAktuell } from '../../../shared/recht/fassung.ts';
 import { entferneGoogle, googleTeil, migriereGoogle, verbindeGoogle } from './google.ts';
 
 const SCRYPT = { N: 16384, r: 8, p: 1, maxmem: 32 * 1024 * 1024 } as const;
@@ -49,6 +50,11 @@ export function setzeZugangsWarnung(fn: ZugangsWarnung): void {
   warne = fn;
 }
 
+function hatSpalte(db: DatabaseSync, tabelle: 'sitzungen' | 'benutzer', name: string): boolean {
+  const spalten = db.prepare(`SELECT name FROM pragma_table_info('${tabelle}')`).all() as { name: string }[];
+  return spalten.some((spalte) => spalte.name === name);
+}
+
 function oeffne(pfad: string): DatabaseSync {
   sperreEchteDatenbankImTest(pfad);
   if (pfad !== ':memory:') {
@@ -75,12 +81,19 @@ function oeffne(pfad: string): DatabaseSync {
       hash TEXT NOT NULL,
       rolle TEXT NOT NULL CHECK (rolle IN ('inhaber', 'mitglied')),
       weltdatei TEXT NOT NULL,
-      geaendert_am TEXT NOT NULL
+      geaendert_am TEXT NOT NULL,
+      zustimmung_fassung TEXT,
+      zustimmung_am TEXT
     );
   `);
-  const spalten = datenbank.prepare(`SELECT name FROM pragma_table_info('sitzungen')`).all() as { name: string }[];
-  if (!spalten.some((spalte) => spalte.name === 'benutzer_id')) {
+  if (!hatSpalte(datenbank, 'sitzungen', 'benutzer_id')) {
     datenbank.exec('ALTER TABLE sitzungen ADD COLUMN benutzer_id INTEGER REFERENCES benutzer(id)');
+  }
+  if (!hatSpalte(datenbank, 'benutzer', 'zustimmung_fassung')) {
+    datenbank.exec('ALTER TABLE benutzer ADD COLUMN zustimmung_fassung TEXT');
+  }
+  if (!hatSpalte(datenbank, 'benutzer', 'zustimmung_am')) {
+    datenbank.exec('ALTER TABLE benutzer ADD COLUMN zustimmung_am TEXT');
   }
   sichereNamensindex(datenbank);
   migriereGoogle(datenbank);
@@ -411,7 +424,7 @@ export function listeKonten(): { id: number; benutzername: string; rolle: Rolle;
 }
 
 export function legeBenutzerAn(
-  daten: { benutzername: string; passwort: string; rolle: Rolle; weltdatei: string },
+  daten: { benutzername: string; passwort: string; rolle: Rolle; weltdatei: string; zustimmung?: Date },
   jetzt = new Date(),
 ): { id: number; benutzername: string; rolle: Rolle } {
   const benutzername = pruefeBenutzername(daten.benutzername);
@@ -424,10 +437,20 @@ export function legeBenutzerAn(
   try {
     const ergebnis = datenbank()
       .prepare(
-        `INSERT INTO benutzer (benutzername, name_norm, salt, hash, rolle, weltdatei, geaendert_am)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO benutzer (benutzername, name_norm, salt, hash, rolle, weltdatei, geaendert_am, zustimmung_fassung, zustimmung_am)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
-      .run(benutzername, nameNorm(benutzername), salt.toString('hex'), hash.toString('hex'), daten.rolle, daten.weltdatei, jetzt.toISOString());
+      .run(
+        benutzername,
+        nameNorm(benutzername),
+        salt.toString('hex'),
+        hash.toString('hex'),
+        daten.rolle,
+        daten.weltdatei,
+        jetzt.toISOString(),
+        daten.zustimmung ? RECHT_FASSUNG : null,
+        daten.zustimmung ? daten.zustimmung.toISOString() : null,
+      );
     return { id: Number(ergebnis.lastInsertRowid), benutzername, rolle: daten.rolle };
   } catch (fehler) {
     if (istNamenkollision(fehler)) {
@@ -643,11 +666,36 @@ export function anzahlKonten(): number {
   return anzahlBenutzer();
 }
 
+export function liesZustimmung(id: number): { fassung: string | null; am: string | null } | null {
+  const zeile = datenbank()
+    .prepare('SELECT zustimmung_fassung AS fassung, zustimmung_am AS am FROM benutzer WHERE id = ?')
+    .get(id) as { fassung: string | null; am: string | null } | undefined;
+  return zeile ?? null;
+}
+
+export function merkeZustimmung(id: number, jetzt = new Date()): void {
+  const ergebnis = datenbank()
+    .prepare('UPDATE benutzer SET zustimmung_fassung = ?, zustimmung_am = ? WHERE id = ?')
+    .run(RECHT_FASSUNG, jetzt.toISOString(), id);
+  if (Number(ergebnis.changes) !== 1) {
+    throw ungueltig('Der Account existiert nicht.');
+  }
+}
+
+/** Tauscht nur die gespeicherte Fassung. Der Zeitpunkt bleibt. */
+export function setzeZustimmungsFassung(id: number, fassung: string): void {
+  const ergebnis = datenbank().prepare('UPDATE benutzer SET zustimmung_fassung = ? WHERE id = ?').run(fassung, id);
+  if (Number(ergebnis.changes) !== 1) {
+    throw ungueltig('Der Account existiert nicht.');
+  }
+}
+
 export function zugangStatus(token: string | undefined, jetzt = new Date(), schluessel?: string): ZugangStatus {
   const registrierung = strideVariable('REGISTRIERUNG') === '1';
   const sitzung = leseSitzung(token, jetzt);
   const benutzer = sitzung?.benutzerId ? holeBenutzer(sitzung.benutzerId) : undefined;
   const google = googleTeil(benutzer?.id ?? null, schluessel);
+  const zustimmungAktuell = benutzer ? istZustimmungAktuell(liesZustimmung(benutzer.id)?.fassung ?? null) : true;
   if (benutzer) {
     return {
       modus: 'bereit',
@@ -655,12 +703,20 @@ export function zugangStatus(token: string | undefined, jetzt = new Date(), schl
       rolle: benutzer.rolle,
       admin: istAdmin(benutzer.id),
       registrierung,
+      zustimmungAktuell,
       ...google,
     };
   }
   const hatBenutzer = anzahlBenutzer() > 0;
   const hatPasswort = hatAltesPasswort();
-  const ohneAdmin = { benutzername: null, rolle: null as Rolle | null, admin: false, registrierung, ...google };
+  const ohneAdmin = {
+    benutzername: null,
+    rolle: null as Rolle | null,
+    admin: false,
+    registrierung,
+    zustimmungAktuell: true,
+    ...google,
+  };
   if (sitzung && hatPasswort && !hatBenutzer) {
     return { modus: 'benutzername', ...ohneAdmin };
   }

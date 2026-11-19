@@ -117,9 +117,28 @@ test('Weitere Dialoge folgen der festen Reihenfolge', async ({ page }, testInfo)
     const klassen = page.getByRole('dialog', { name: 'Klassen und Titel' });
     const tabelle = klassen.locator('table');
     const satz = klassen.getByText('Fett ist dein stärkstes Können. Der Beiname folgt dem zweitstärksten.', { exact: true });
-    const tabelleKasten = await tabelle.boundingBox();
-    const satzKasten = await satz.boundingBox();
-    expect(tabelleKasten && satzKasten && tabelleKasten.y + tabelleKasten.height <= satzKasten.y + 1).toBe(true);
+    await expect(tabelle).toBeVisible();
+    await expect(satz).toBeVisible();
+    await expect(async () => {
+      const ersteTabelle = await tabelle.boundingBox();
+      const ersterSatz = await satz.boundingBox();
+      await page.evaluate(() => new Promise<void>((fertig) => {
+        requestAnimationFrame(() => requestAnimationFrame(() => fertig()));
+      }));
+      const tabelleKasten = await tabelle.boundingBox();
+      const satzKasten = await satz.boundingBox();
+      expect(ersteTabelle && ersterSatz && tabelleKasten && satzKasten).toBeTruthy();
+      if (!ersteTabelle || !ersterSatz || !tabelleKasten || !satzKasten) {
+        throw new Error('Dialogkaesten fehlen');
+      }
+      const still = (links: number, rechts: number) => Math.abs(links - rechts) <= 1;
+      expect(
+        still(ersteTabelle.y, tabelleKasten.y) &&
+          still(ersteTabelle.height, tabelleKasten.height) &&
+          still(ersterSatz.y, satzKasten.y),
+      ).toBe(true);
+      expect(tabelleKasten.y + tabelleKasten.height <= satzKasten.y + 1).toBe(true);
+    }).toPass();
     expect(await oben(satz)).toBeLessThan(await oben(klassen.getByText(/bis Level/)));
     await ohneSeitlichenUeberlauf(page);
     await bild('klassen');

@@ -4,8 +4,9 @@ import { anfrage } from './kern.ts';
 export const zugangApi = {
   zugang: () => anfrage<ZugangStatus>('/zugang'),
   anmelden: (daten: { benutzername?: string; passwort: string }) => anfrage<ZugangStatus>('/zugang', 'POST', daten),
-  registrieren: (daten: { benutzername: string; passwort: string }) =>
+  registrieren: (daten: { benutzername: string; passwort: string; zustimmung: boolean }) =>
     anfrage<ZugangStatus>('/zugang/registrieren', 'POST', daten),
+  stimmeZu: () => anfrage<ZugangStatus>('/zugang/zustimmung', 'POST', { zustimmung: true }),
   abmelden: () => anfrage<void>('/zugang/abmelden', 'POST', {}),
   loeseGoogle: () => anfrage<void>('/zugang/google', 'DELETE'),
   aenderePasswort: (bisher: string, neu: string) => anfrage<ZugangStatus>('/zugang/passwort', 'POST', { bisher, neu }),

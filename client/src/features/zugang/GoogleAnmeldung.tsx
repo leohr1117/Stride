@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { tx } from '../../text.ts';
+import './roboto.css';
 
 const HINWEIS: Record<string, string> = {
   c: 'Dieses Google-Konto ist mit keinem Stride-Konto verknüpft. Melde dich mit Passwort an und verknüpfe es unter Mehr → Konto.',
@@ -122,7 +123,7 @@ export function GoogleKnopf() {
     <a
       href="/api/zugang/google/start?zweck=anmelden"
       className={`${KNOPF} ${farbe}`}
-      style={{ fontFamily: 'Roboto, system-ui, sans-serif' }}
+      style={{ fontFamily: "'Stride Roboto', system-ui, sans-serif" }}
     >
       <GoogleZeichen />
       {tx('Über Google anmelden')}

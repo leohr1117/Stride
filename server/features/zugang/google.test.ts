@@ -203,7 +203,7 @@ describe('Google-Anmeldung', () => {
         method: 'POST',
         url: '/api/zugang/registrieren',
         headers: { cookie: `${GOOGLE_COOKIE}=${anlage}`, 'content-type': 'application/json' },
-        payload: { benutzername: 'Neu', passwort: PASSWORT },
+        payload: { benutzername: 'Neu', passwort: PASSWORT, zustimmung: true },
       });
       expect(reg.statusCode).toBe(200);
       const neu = listeKonten().find((konto) => konto.benutzername === 'Neu');

@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page, type TestInfo } from '@playwright/test';
+import { expect, test, testJetzt, type Locator, type Page, type TestInfo } from './uhr.ts';
 import { DatabaseSync } from 'node:sqlite';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { erschoepfungsBild } from '../shared/spiel/belastung.ts';
@@ -601,7 +601,7 @@ function setzeVerstecktenVerlust(ids: number[]): () => void {
   }
   const datei = weltDatei();
   const db = new DatabaseSync(datei);
-  const jetzt = new Date().toISOString();
+  const jetzt = testJetzt().toISOString();
   const einfuegen = db.prepare(
     `INSERT INTO xp_ereignisse (quelle, attribut_id, xp, erstellt_am) VALUES ('umverteilung', ?, ?, ?)`,
   );
@@ -629,8 +629,6 @@ function setzeVerstecktenVerlust(ids: number[]): () => void {
 test('Rückblick zeigt verlorenes XP in der Hauptfarbe', async ({ page }, testInfo) => {
   verbieteBrowserFenster(page);
   await anmelden(page);
-  const uhr = await page.request.post('/api/test/heute', { data: { datum: null } });
-  expect(uhr.ok()).toBe(true);
   const ids = await aktiveAttributIds(page);
   expect(ids.length).toBeGreaterThan(BALKEN_SICHTBAR);
   const raeume = setzeVerstecktenVerlust(ids);

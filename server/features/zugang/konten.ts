@@ -34,13 +34,19 @@ function entferneDatei(absolut: string): void {
   }
 }
 
-export function erstelleMitglied(daten: { benutzername: string; passwort: string; profilname?: string }): Konto {
+export function erstelleMitglied(daten: {
+  benutzername: string;
+  passwort: string;
+  profilname?: string;
+  zustimmung?: Date;
+}): Konto {
   const profilname = (daten.profilname ?? daten.benutzername).trim();
   const angelegt = legeBenutzerAn({
     benutzername: daten.benutzername,
     passwort: daten.passwort,
     rolle: 'mitglied',
     weltdatei: path.join('welten', 'offen.db'),
+    zustimmung: daten.zustimmung,
   });
   const relativ = path.join('welten', `${angelegt.id}.db`);
   const absolut = loeseWeltdatei(relativ);

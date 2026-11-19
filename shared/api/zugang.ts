@@ -10,6 +10,8 @@ export interface ZugangStatus {
   admin: boolean;
   /** Wahr, wenn STRIDE_REGISTRIERUNG auf 1 steht. */
   registrierung: boolean;
+  /** Wahr, wenn die gespeicherte Zustimmung zur aktuellen Fassung passt. Ohne Sitzung immer wahr. */
+  zustimmungAktuell: boolean;
   /** Wahr, wenn die Anmeldung über Google erlaubt ist. */
   google: boolean;
   /** Gespeicherte Adresse der Verknüpfung. Null, wenn keine besteht. */

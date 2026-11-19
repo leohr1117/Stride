@@ -1,6 +1,22 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Serverprotokolle werden nach 14 Tagen gelöscht, auch wenn in der Zwischenzeit nichts Neues protokolliert wird.',
+    'Server logs are deleted after 14 days, even if nothing new is logged in the meantime.',
+  ],
+  [
+    'Ein neues Konto entsteht nur, wenn du die Nutzungsbedingungen und den Datenschutz bestätigst und mindestens 16 Jahre alt bist. Bei einer neuen Fassung fragt Stride nach der Anmeldung nach.',
+    'A new account is created only if you confirm the terms of use and the privacy notice and you are at least 16 years old. When the version changes, Stride asks after you sign in.',
+  ],
+  [
+    'Die Lizenzhinweise verlinken den Quellcode dieser Version und die Lizenzen der mitgelieferten Bibliotheken.',
+    'The license notices link to the source code of this version and the licenses of the included libraries.',
+  ],
+  [
+    'Impressum, Datenschutzerklärung, Nutzungsbedingungen und Lizenzhinweise sind in der App und ohne Anmeldung erreichbar.',
+    'The legal notice, privacy policy, terms of use and license notices are available in the app and without signing in.',
+  ],
+  [
     'Eine Tätigkeit kann nur aus Abzügen bestehen. So ein Eintrag zieht XP ab und zählt nicht für die Tageskette, für Erfolge bei Einträgen und Stunden und nicht für die Erfahrung von Projekt und Fähigkeit.',
     'An activity can consist only of deductions. Such an entry subtracts XP and does not count toward the daily streak, entry and hour achievements, or project and skill experience.',
   ],
