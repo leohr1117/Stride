@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { expect, test, type Page } from './uhr.ts';
+import { diagrammeAufnehmen, diagrammLoesen, expect, test, type Page } from './uhr.ts';
 import type { Stil } from '../shared/features/darstellung/stile.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
@@ -277,8 +277,15 @@ test('Profilbild bleibt in jeder Ansicht rund', async ({ page }, testInfo) => {
       expect(ring).toBe(104);
       await expect(page.locator('main [data-levelring] span.uppercase')).toBeVisible();
       await ohneSeitlichenUeberlauf(page);
+      const diagramm = ansicht.stil === 'holo' && projekt === 'desktop';
+      if (diagramm) {
+        await diagrammeAufnehmen(page);
+      }
       if (ansicht.stil === 'holo' || ansicht.stil === 'antik') {
         await bild(`${ansicht.stil}-profil`);
+      }
+      if (diagramm) {
+        await diagrammLoesen(page);
       }
     }
   } finally {

@@ -1,4 +1,5 @@
 import { expect, test as basis, type Locator, type Page } from '@playwright/test';
+import { MIN_RADAR_ACHSEN } from '../shared/spiel/radar.ts';
 
 export const TESTZEIT = '2026-11-10T12:00:00+01:00';
 export const TESTDATUM = '2026-11-10';
@@ -19,37 +20,173 @@ export async function koppeleAnTestzeit(seite: Page): Promise<void> {
   await schreibeTesttag(seite, TESTDATUM);
 }
 
-async function diagrammSteht(seite: Page): Promise<void> {
+function diagrammLesen(mindestAchsen: number): string {
+  const radarFertig = (wurzel: Element): boolean => {
+    const radar = wurzel.matches('[data-spektrum], [data-radar="vergleich"]')
+      ? wurzel
+      : wurzel.querySelector('[data-spektrum], [data-radar="vergleich"]');
+    if (!radar) {
+      return false;
+    }
+    const kasten = radar.getBoundingClientRect();
+    if (kasten.width < 40 || kasten.height < 40) {
+      return false;
+    }
+    const flaechen = [...radar.querySelectorAll('.recharts-radar-polygon path')];
+    if (flaechen.length === 0) {
+      return false;
+    }
+    const werte = (radar.getAttribute('data-werte') ?? '').split(',').filter((teil) => teil.length > 0);
+    for (const flaeche of flaechen) {
+      const pfad = flaeche.getAttribute('d') ?? '';
+      if (pfad.length === 0) {
+        return false;
+      }
+      if (werte.length >= mindestAchsen) {
+        const punkte = pfad.match(/[ML]\s*-?[0-9.]+\s*,\s*-?[0-9.]+/gi);
+        if (!punkte || punkte.length < werte.length) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const rahmenFertig = (rahmen: Element): boolean => {
+    const kasten = rahmen.getBoundingClientRect();
+    if (kasten.width < 40 || kasten.height < 40) {
+      return false;
+    }
+    const daten = rahmen.querySelectorAll(
+      '.recharts-radar-polygon path, .recharts-line path, .recharts-area path, .recharts-bar path, .recharts-rectangle',
+    );
+    return [...daten].some((knoten) => knoten.tagName !== 'path' || (knoten.getAttribute('d') ?? '').length > 0);
+  };
+
+  const chartFertig = (wurzel: Element): boolean => {
+    if (wurzel.querySelector('[data-spektrum], [data-radar="vergleich"]')) {
+      return radarFertig(wurzel);
+    }
+    const kandidaten = wurzel.classList.contains('recharts-wrapper')
+      ? [wurzel]
+      : [...wurzel.querySelectorAll('.recharts-wrapper')];
+    return kandidaten.some(rahmenFertig);
+  };
+
+  const spektren = document.querySelector('[data-spektren]');
+  if (spektren) {
+    const bloecke = [...spektren.children];
+    if (bloecke.length === 0 || bloecke.some((block) => !radarFertig(block))) {
+      return 'offen';
+    }
+  }
+
+  if ([...document.querySelectorAll('main div.px-2.py-3')].some((slot) => !chartFertig(slot))) {
+    return 'offen';
+  }
+
+  const vergleich = document.querySelector('[data-vergleich]');
+  const kennungen = vergleich ? vergleich.querySelectorAll('[data-kennung]').length : 0;
+  if (vergleich && kennungen >= mindestAchsen && !radarFertig(vergleich)) {
+    return 'offen';
+  }
+
+  if (/\/vorbilder\/[^/]+$/.test(location.pathname)) {
+    const rahmen = [...document.querySelectorAll('.recharts-wrapper')];
+    const erwartet = (kennungen >= mindestAchsen ? 1 : 0) + 1;
+    if (rahmen.filter((knoten) => chartFertig(knoten)).length < erwartet) {
+      return 'offen';
+    }
+  }
+
+  const huellen = [...document.querySelectorAll('.recharts-wrapper')];
+  if (huellen.some((knoten) => !rahmenFertig(knoten))) {
+    return 'offen';
+  }
+  const teile: string[] = [];
+  for (const knoten of huellen) {
+    for (const pfad of knoten.querySelectorAll('path')) {
+      teile.push(pfad.getAttribute('d') ?? '');
+    }
+  }
+  return teile.length === 0 ? 'keine' : teile.join('\n');
+}
+
+function animationenAus(): void {
+  if (document.getElementById('diagramm-still')) {
+    return;
+  }
+  const stil = document.createElement('style');
+  stil.id = 'diagramm-still';
+  stil.textContent =
+    '[data-spektrum],[data-spektrum] *,[data-radar="vergleich"],[data-radar="vergleich"] *,main div.px-2.py-3,main div.px-2.py-3 *,.recharts-wrapper,.recharts-wrapper *{animation:none !important;transition:none !important}';
+  document.head.append(stil);
+}
+
+function festeBreiten(): void {
+  const rahmen = new Set<HTMLElement>();
+  for (const knoten of document.querySelectorAll(
+    'main div.px-2.py-3, [data-spektrum], [data-radar="vergleich"], .recharts-responsive-container',
+  )) {
+    const treffer = knoten.closest('main div.px-2.py-3, [data-spektrum], [data-radar="vergleich"]');
+    const ziel = treffer instanceof HTMLElement ? treffer : knoten.parentElement;
+    if (ziel instanceof HTMLElement) {
+      rahmen.add(ziel);
+    }
+  }
+  for (const ziel of rahmen) {
+    const kasten = ziel.getBoundingClientRect();
+    const breite = Math.floor(kasten.width);
+    if (breite < 40) {
+      continue;
+    }
+    ziel.style.boxSizing = 'border-box';
+    ziel.style.width = `${breite}px`;
+    ziel.dataset.festeBreite = '1';
+  }
+}
+
+function diagrammLoesenImDokument(): void {
+  document.getElementById('diagramm-still')?.remove();
+  for (const knoten of document.querySelectorAll('[data-feste-breite]')) {
+    if (!(knoten instanceof HTMLElement)) {
+      continue;
+    }
+    knoten.style.boxSizing = '';
+    knoten.style.width = '';
+    delete knoten.dataset.festeBreite;
+  }
+}
+
+export async function diagrammLoesen(seite: Page): Promise<void> {
+  await seite.evaluate(diagrammLoesenImDokument);
+}
+
+async function warteGezeichnet(seite: Page, leereSeiteFertig = false): Promise<void> {
   let vorher = '';
   await expect
     .poll(async () => {
-      const jetzt = await seite.evaluate(() => {
-        const rahmen = document.querySelectorAll('.recharts-wrapper');
-        if (rahmen.length === 0) {
-          return 'keine';
-        }
-        const pfade: string[] = [];
-        for (const knoten of rahmen) {
-          for (const pfad of knoten.querySelectorAll('path')) {
-            pfade.push(pfad.getAttribute('d') ?? '');
-          }
-        }
-        if (pfade.length === 0 || pfade.every((pfad) => pfad === '')) {
-          return 'leer';
-        }
-        return pfade.join('\n');
-      });
-      const stabil = jetzt !== 'leer' && jetzt === vorher;
+      const jetzt = await seite.evaluate(diagrammLesen, MIN_RADAR_ACHSEN);
+      const gezeichnet = jetzt !== 'offen' && jetzt !== 'keine';
+      const ohneDiagramm = leereSeiteFertig && jetzt === 'keine';
+      const stabil = (gezeichnet || ohneDiagramm) && jetzt === vorher;
       vorher = jetzt;
       return stabil;
     })
     .toBe(true);
 }
 
+export async function diagrammeAufnehmen(seite: Page): Promise<void> {
+  await seite.evaluate(animationenAus);
+  await warteGezeichnet(seite);
+  await seite.evaluate(festeBreiten);
+  await warteGezeichnet(seite);
+}
+
 export async function vorbereiteAufnahme(seite: Page): Promise<void> {
   await expect(seite.locator('main div.py-16').filter({ hasText: /^Lädt …$/ })).toHaveCount(0);
   await seite.evaluate(() => document.fonts.ready);
-  await diagrammSteht(seite);
+  await warteGezeichnet(seite, true);
 }
 
 function haengeAufnahmeAn(seite: Page): void {

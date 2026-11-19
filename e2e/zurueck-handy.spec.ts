@@ -1,4 +1,4 @@
-import { expect, test, type Page } from './uhr.ts';
+import { diagrammeAufnehmen, diagrammLoesen, expect, test, type Page } from './uhr.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
 
 async function anmelden(seite: Page): Promise<void> {
@@ -104,5 +104,12 @@ test('Zurück-Pfeil sitzt im Kopf', async ({ page }, testInfo) => {
   } else {
     await expect(page.locator('a[data-zurueck]')).toHaveCount(0);
   }
+  const diagramm = !handy;
+  if (diagramm) {
+    await diagrammeAufnehmen(page);
+  }
   await bild('charakter');
+  if (diagramm) {
+    await diagrammLoesen(page);
+  }
 });

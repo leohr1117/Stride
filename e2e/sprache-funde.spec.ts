@@ -1,4 +1,4 @@
-import { expect, test, type Page, type TestInfo } from './uhr.ts';
+import { diagrammeAufnehmen, diagrammLoesen, expect, test, vorbereiteAufnahme, type Page, type TestInfo } from './uhr.ts';
 import fs from 'node:fs';
 import { SPRACHEN, type Sprache } from '../shared/sprache/kern.ts';
 import { zeige } from '../shared/sprache/index.ts';
@@ -92,8 +92,22 @@ test('übersetzte Funde sind in jeder Sprache sichtbar', async ({ page }, info) 
       if (code !== 'de') {
         await expect(page.getByRole('heading', { name: 'Durchschnittsmensch', exact: true })).toHaveCount(0);
       }
+      const diagramm =
+        (info.project.name === 'desktop' && code === 'es') || (info.project.name === 'handy' && code === 'zh');
+      if (diagramm) {
+        await diagrammeAufnehmen(page);
+      }
       await zeigeAbschnitt(page, '[data-kennung="koerper"]');
+      if (info.project.name === 'desktop' && code === 'de') {
+        await vorbereiteAufnahme(page);
+        await page.locator('header[data-kopf]').evaluate((element) => {
+          element.scrollIntoView({ block: 'start' });
+        });
+      }
       await page.screenshot({ path: bild(info, code, 'vorbild') });
+      if (diagramm) {
+        await diagrammLoesen(page);
+      }
 
       await page.goto('/mehr/profil/titel');
       await expect(page.getByRole('heading', { name: zeige('Titel', code), exact: true })).toBeVisible();

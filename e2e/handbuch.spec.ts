@@ -141,7 +141,14 @@ test('Handbuch ist eine offene Scrollseite', async ({ page }, testInfo) => {
   await ohneSeitlichenUeberlauf(page);
   await page.screenshot({ path: `tmp-test/handbuch/${projekt}-oben.png` });
   await page.locator('#visionen').screenshot({ path: `tmp-test/handbuch/${projekt}-visionen.png` });
-  await page.locator('#vorbilder').screenshot({ path: `tmp-test/handbuch/${projekt}-vorbilder.png` });
+  await page.locator('#vorbilder').screenshot(
+    handy
+      ? {
+          path: `tmp-test/handbuch/${projekt}-vorbilder.png`,
+          style: '.handbuch-leiste { visibility: hidden !important; }',
+        }
+      : { path: `tmp-test/handbuch/${projekt}-vorbilder.png` },
+  );
 
   await sprung.getByRole('link', { name: 'Level', exact: true }).click();
   await expect(page).toHaveURL(/#level$/);

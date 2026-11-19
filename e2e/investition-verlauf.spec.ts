@@ -130,6 +130,13 @@ test('Verlauf zeigt die Zahlung und die Rückbuchung', async ({ page }, testInfo
     await dialog.getByRole('button', { name: 'Schließen' }).click();
     await expect(dialog).toBeHidden();
 
+    if (testInfo.project.name === 'desktop') {
+      await zeile.evaluate((element) => {
+        element.style.boxSizing = 'border-box';
+        element.style.width = 'var(--inhalt-max)';
+        element.style.maxWidth = 'var(--inhalt-max)';
+      });
+    }
     await zeile.screenshot({ path: `tmp-test/investition-verlauf/${testInfo.project.name}-zeile.png` });
 
     const geloescht = page.locator('[data-buchung-art="geloescht"]', { hasText: `+${BETRAG} XP · Investition gelöscht` });

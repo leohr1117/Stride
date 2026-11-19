@@ -1,4 +1,4 @@
-import { expect, test, testJetzt, type Locator, type Page, type TestInfo } from './uhr.ts';
+import { diagrammeAufnehmen, diagrammLoesen, expect, test, testJetzt, type Locator, type Page, type TestInfo } from './uhr.ts';
 import { DatabaseSync } from 'node:sqlite';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { erschoepfungsBild } from '../shared/spiel/belastung.ts';
@@ -522,8 +522,15 @@ test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
       await expect(normaleStufe).not.toHaveClass(/text-gefahr/);
       await expect(normal.first().locator('.balken')).not.toHaveClass(/text-gefahr|bg-gefahr|border-gefahr/);
     }
+    const diagramm = testInfo.project.name === 'desktop';
+    if (diagramm) {
+      await diagrammeAufnehmen(page);
+    }
     await zeile.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `tmp-test/balken-boss-dialog/${testInfo.project.name}-koennen-stufe.png` });
+    if (diagramm) {
+      await diagrammLoesen(page);
+    }
     const oeffnen = zeile.locator('[data-zeile] > button');
     const name = await oeffnen.getAttribute('aria-label');
     expect(name).toBeTruthy();

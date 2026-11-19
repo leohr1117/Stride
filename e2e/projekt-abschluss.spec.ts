@@ -206,7 +206,13 @@ test('Abschlusstätigkeit, einmaliger Bonus und Kopfmenü', async ({ page }, tes
   await expect(feier.getByText('Projekt abgeschlossen', { exact: true })).toBeVisible();
   const weiter = page.getByRole('button', { name: 'Weiter', exact: true });
   await expect(weiter).toBeVisible();
-  await page.screenshot({ path: `tmp-test/projekt-abschluss/${testInfo.project.name}-feier.png` });
+  await page.screenshot({
+    path: `tmp-test/projekt-abschluss/${testInfo.project.name}-feier.png`,
+    style: [
+      '.belohnung, .belohnung * { animation: none !important; transition: none !important; transform: none !important; opacity: 1 !important; }',
+      '.dialog-scrim.fixed, .dialog-scrim.fixed * { animation: none !important; transition: none !important; transform: none !important; opacity: 1 !important; }',
+    ].join('\n'),
+  });
   await weiter.click();
   await feier.getByRole('button', { name: 'Schließen', exact: true }).click();
   await expect(feier).toHaveCount(0);

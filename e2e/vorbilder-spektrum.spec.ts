@@ -127,7 +127,21 @@ test('Vorbilder zeigen Prozent, aktive Level und das Spektrum', async ({ page },
     await expect(page.locator('[data-kennung="intellekt"]')).toBeVisible();
     await expect(page.locator('[data-kennung="koerper"]')).toHaveCount(0);
     await expect(page.locator('[data-kennung="ressourcen"]')).toHaveCount(0);
-    await page.locator('[data-vergleich]').screenshot({ path: bild(info, 'balken') });
+    const vergleichBalken = page.locator('[data-vergleich]');
+    if (info.project.name === 'desktop') {
+      await vergleichBalken.evaluate((element) => {
+        const kasten = element.getBoundingClientRect();
+        const breite = element.parentElement?.clientWidth ?? Math.round(kasten.width);
+        const rest = kasten.y - Math.round(kasten.y);
+        element.style.boxSizing = 'border-box';
+        element.style.width = `${breite}px`;
+        if (rest !== 0) {
+          element.style.position = 'relative';
+          element.style.top = `${-rest}px`;
+        }
+      });
+    }
+    await vergleichBalken.screenshot({ path: bild(info, 'balken') });
     await ohneSeitlichenUeberlauf(page);
 
     await page.goto('/koennen');

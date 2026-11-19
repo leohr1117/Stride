@@ -1,4 +1,4 @@
-import { expect, test, type Page, type TestInfo } from './uhr.ts';
+import { diagrammeAufnehmen, diagrammLoesen, expect, test, type Page, type TestInfo } from './uhr.ts';
 import { attributVorlage } from '../shared/features/attribute/attributKatalog.ts';
 import { KOENNEN_KENNUNGEN } from '../shared/spiel/begriffe.ts';
 import { kontrast, MINDEST_KONTRAST } from '../shared/spiel/farben.ts';
@@ -596,5 +596,7 @@ test('Vorbilder sind eine Liste mit seitlichen Richtungen', async ({ page }, inf
   await page.getByRole('button', { name: /^Info zu / }).click();
   await expect(page.getByRole('tooltip')).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
+  await diagrammeAufnehmen(page);
   await page.screenshot({ path: bild(info, 'vorbild'), fullPage: true });
+  await diagrammLoesen(page);
 });
