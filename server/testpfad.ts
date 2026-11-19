@@ -53,3 +53,39 @@ export function sperreEchteDatenbankImTest(pfad: string): void {
   }
   verweigereEchteDatenbank(pfad);
 }
+
+/** Diese Namen leeren Tests immer, auch wenn sie in der Umgebung gerade fehlen. */
+export const GEERBTE_ZUGANGS_NAMEN = [
+  'STRIDE_SMTP_HOST',
+  'STRIDE_SMTP_PORT',
+  'STRIDE_SMTP_BENUTZER',
+  'STRIDE_SMTP_PASSWORT',
+  'ASCEND_SMTP_HOST',
+  'ASCEND_SMTP_PORT',
+  'ASCEND_SMTP_BENUTZER',
+  'ASCEND_SMTP_PASSWORT',
+  'STRIDE_GOOGLE',
+  'ASCEND_GOOGLE',
+  'STRIDE_GOOGLE_CLIENT_ID',
+  'ASCEND_GOOGLE_CLIENT_ID',
+  'STRIDE_GOOGLE_CLIENT_SECRET',
+  'ASCEND_GOOGLE_CLIENT_SECRET',
+  'STRIDE_REGISTRIERUNG',
+  'ASCEND_REGISTRIERUNG',
+] as const;
+
+const ZUGANGS_MUSTER = /^(?:STRIDE|ASCEND)_(?:SMTP_|GOOGLE|REGISTRIERUNG)/i;
+
+/** Entfernt SMTP-, Google- und Registrierungsvariablen aus der übergebenen Umgebung. */
+export function leereGeerbteZugangsVariablen(env: NodeJS.ProcessEnv = process.env): string[] {
+  const namen = new Set<string>(GEERBTE_ZUGANGS_NAMEN);
+  for (const name of Object.keys(env)) {
+    if (ZUGANGS_MUSTER.test(name)) {
+      namen.add(name);
+    }
+  }
+  for (const name of namen) {
+    delete env[name];
+  }
+  return [...namen];
+}

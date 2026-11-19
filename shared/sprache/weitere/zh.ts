@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Du kannst dir selbst ein Konto anlegen und dich mit Google anmelden, wenn der Betreiber das einschaltet. Ohne Google-Angaben bleibt diese Anmeldung aus. Ein schon verknüpftes Google-Konto meldet dich an. Dieselbe E-Mail allein öffnet kein bestehendes Konto.": "运营者开启后，你可以自己创建账户并用 Google 登录。没有 Google 资料时，这种登录保持关闭。已经关联的 Google 账户会直接登录。仅凭同一个邮箱不会打开已有账户。",
   "Serverprotokolle werden nach 14 Tagen gelöscht, auch wenn in der Zwischenzeit nichts Neues protokolliert wird.": "服务器日志会在 14 天后删除，即使这段时间没有新的记录。",
   "Ein neues Konto entsteht nur, wenn du die Nutzungsbedingungen und den Datenschutz bestätigst und mindestens 16 Jahre alt bist. Bei einer neuen Fassung fragt Stride nach der Anmeldung nach.": "只有确认使用条款和隐私说明并且年满 16 岁，才会创建新账户。版本变更后，Stride 会在登录后询问。",
   "Bitte bestätige die Nutzungsbedingungen, den Datenschutz und dass du mindestens 16 Jahre alt bist.": "请确认使用条款和隐私说明，并且你已年满 16 岁。",

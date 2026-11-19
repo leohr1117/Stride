@@ -14,6 +14,7 @@ import {
 } from './google.ts';
 import { istOeffentlicherZugang } from './routen.ts';
 import { legeBenutzerAn, listeKonten, loescheBenutzer, oeffneSitzung, schliesseZugang, verwendeZugang } from './zugang.ts';
+import { leereGeerbteZugangsVariablen } from '../../testpfad.ts';
 import {
   CLIENT,
   GEHEIM,
@@ -50,15 +51,26 @@ describe('Google-Anmeldung', () => {
         () => {
           delete process.env.STRIDE_GOOGLE;
           delete process.env.ASCEND_GOOGLE;
+          expect(process.env.STRIDE_GOOGLE).toBeUndefined();
+          expect(process.env.ASCEND_GOOGLE).toBeUndefined();
         },
         () => {
           process.env.STRIDE_GOOGLE = '0';
+          expect(process.env.STRIDE_GOOGLE).toBe('0');
+          expect(process.env.STRIDE_GOOGLE_CLIENT_ID).toBe(CLIENT);
+          expect(process.env.STRIDE_GOOGLE_CLIENT_SECRET).toBe(GEHEIM);
         },
         () => {
           delete process.env.STRIDE_GOOGLE_CLIENT_ID;
+          delete process.env.ASCEND_GOOGLE_CLIENT_ID;
+          expect(process.env.STRIDE_GOOGLE_CLIENT_ID).toBeUndefined();
+          expect(process.env.ASCEND_GOOGLE_CLIENT_ID).toBeUndefined();
         },
         () => {
           delete process.env.STRIDE_GOOGLE_CLIENT_SECRET;
+          delete process.env.ASCEND_GOOGLE_CLIENT_SECRET;
+          expect(process.env.STRIDE_GOOGLE_CLIENT_SECRET).toBeUndefined();
+          expect(process.env.ASCEND_GOOGLE_CLIENT_SECRET).toBeUndefined();
         },
       ];
       for (const aus of schalter) {
@@ -76,6 +88,66 @@ describe('Google-Anmeldung', () => {
           expect(antwort.json()).toEqual({ fehler: `Unbekannter Pfad: ${methode} ${url}` });
         }
       }
+    });
+  });
+
+  it('leert geerbte Werte im Testprozess, lässt Google aus und behält die Passwort-Anmeldung', async () => {
+    const falsche = [
+      'STRIDE_SMTP_HOST',
+      'STRIDE_SMTP_PORT',
+      'STRIDE_SMTP_BENUTZER',
+      'STRIDE_SMTP_PASSWORT',
+      'ASCEND_SMTP_HOST',
+      'STRIDE_GOOGLE',
+      'ASCEND_GOOGLE',
+      'STRIDE_GOOGLE_CLIENT_ID',
+      'ASCEND_GOOGLE_CLIENT_ID',
+      'STRIDE_GOOGLE_CLIENT_SECRET',
+      'ASCEND_GOOGLE_CLIENT_SECRET',
+      'STRIDE_GOOGLE_ZUSATZ',
+      'STRIDE_SMTP_ZUSATZ',
+      'STRIDE_REGISTRIERUNG',
+      'ASCEND_REGISTRIERUNG',
+    ] as const;
+    for (const name of falsche) {
+      process.env[name] = 'nicht-verwenden';
+    }
+    const geleert = leereGeerbteZugangsVariablen();
+    for (const name of falsche) {
+      expect(geleert).toContain(name);
+      expect(process.env[name]).toBeUndefined();
+    }
+    inhaber();
+    await mitRouten(async (app) => {
+      const status = await app.inject({ method: 'GET', url: '/api/zugang' });
+      expect(status.json()).toMatchObject({ modus: 'anmelden', registrierung: false, google: false });
+      const login = await app.inject({
+        method: 'POST',
+        url: '/api/zugang',
+        payload: { benutzername: 'Ada', passwort: PASSWORT },
+      });
+      expect(login.statusCode).toBe(200);
+      expect(login.json()).toMatchObject({ modus: 'bereit', benutzername: 'Ada' });
+      const googleStart = await app.inject({ method: 'GET', url: '/api/zugang/google/start' });
+      expect(googleStart.statusCode).toBe(404);
+      const registrieren = await app.inject({
+        method: 'POST',
+        url: '/api/zugang/registrieren',
+        payload: { benutzername: 'Neu', passwort: PASSWORT, zustimmung: true },
+      });
+      expect(registrieren.statusCode).toBe(404);
+      process.env.STRIDE_REGISTRIERUNG = '1';
+      const an = await app.inject({ method: 'GET', url: '/api/zugang' });
+      expect(an.json()).toMatchObject({ modus: 'anmelden', registrierung: true, google: false });
+      expect((await app.inject({ method: 'GET', url: '/api/zugang/google/start' })).statusCode).toBe(404);
+      delete process.env.STRIDE_REGISTRIERUNG;
+      delete process.env.ASCEND_REGISTRIERUNG;
+      process.env.STRIDE_GOOGLE = '1';
+      expect(process.env.STRIDE_GOOGLE_CLIENT_ID).toBeUndefined();
+      expect(process.env.STRIDE_GOOGLE_CLIENT_SECRET).toBeUndefined();
+      const nurSchalter = await app.inject({ method: 'GET', url: '/api/zugang' });
+      expect(nurSchalter.json()).toMatchObject({ registrierung: false, google: false });
+      expect((await app.inject({ method: 'GET', url: '/api/zugang/google/start' })).statusCode).toBe(404);
     });
   });
 

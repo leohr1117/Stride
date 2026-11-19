@@ -3,10 +3,19 @@ import net from 'node:net';
 import path from 'node:path';
 import { AKTUELLE_VERSION } from '../shared/versionen.ts';
 import { starteTodoistAttrappe, type TodoistAttrappe } from '../server/integrationen/todoistAttrappe.ts';
-import { verweigereEchteDatenbank } from '../server/testpfad.ts';
+import { leereGeerbteZugangsVariablen, verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { mitDatenbankPfaden } from '../server/umgebung.ts';
 import { erstelleTestkopie, loescheTestkopie } from './kopie.ts';
-import { TEST_APP, TEST_PORT, TEST_URL, TEST_ZUGANG, WURZEL, TEST_PASSWORT } from './testdaten.ts';
+import {
+  TEST_APP,
+  TEST_GOOGLE_CLIENT_ID,
+  TEST_GOOGLE_CLIENT_SECRET,
+  TEST_PASSWORT,
+  TEST_PORT,
+  TEST_URL,
+  TEST_ZUGANG,
+  WURZEL,
+} from './testdaten.ts';
 import { TESTDATUM, testJetzt } from './uhr.ts';
 
 function portFrei(port: number): Promise<boolean> {
@@ -120,22 +129,25 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
     ],
   });
 
+  const env = mitDatenbankPfaden({
+    ...process.env,
+    STRIDE_TEST: '1',
+    STRIDE_ADMIN: 'testvoll',
+    STRIDE_CLIENT_DIR: path.join(WURZEL, 'client', 'dist'),
+    PORT: String(TEST_PORT),
+    TODOIST_API: attrappe.basis,
+    STRIDE_TOKEN_SCHLUESSEL: Buffer.from('stride-test-token-schluessel-v3!').toString('base64'),
+    ASCEND_TOKEN_SCHLUESSEL: '',
+  }, TEST_APP, TEST_ZUGANG);
+  leereGeerbteZugangsVariablen(env);
+  env.STRIDE_REGISTRIERUNG = '1';
+  env.STRIDE_GOOGLE = '1';
+  env.STRIDE_GOOGLE_CLIENT_ID = TEST_GOOGLE_CLIENT_ID;
+  env.STRIDE_GOOGLE_CLIENT_SECRET = TEST_GOOGLE_CLIENT_SECRET;
+
   const kind = spawn(process.execPath, ['--disable-warning=ExperimentalWarning', 'server/index.ts'], {
     cwd: WURZEL,
-    env: mitDatenbankPfaden({
-      ...process.env,
-      STRIDE_TEST: '1',
-      STRIDE_REGISTRIERUNG: '1',
-      STRIDE_GOOGLE: '1',
-      STRIDE_GOOGLE_CLIENT_ID: 'test-client.apps.googleusercontent.com',
-      STRIDE_GOOGLE_CLIENT_SECRET: 'test-secret',
-      STRIDE_ADMIN: 'testvoll',
-      STRIDE_CLIENT_DIR: path.join(WURZEL, 'client', 'dist'),
-      PORT: String(TEST_PORT),
-      TODOIST_API: attrappe.basis,
-      STRIDE_TOKEN_SCHLUESSEL: Buffer.from('stride-test-token-schluessel-v3!').toString('base64'),
-      ASCEND_TOKEN_SCHLUESSEL: '',
-    }, TEST_APP, TEST_ZUGANG),
+    env,
     stdio: 'inherit',
     windowsHide: true,
   });

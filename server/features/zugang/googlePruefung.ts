@@ -8,6 +8,7 @@ import { GOOGLE_COOKIE, GOOGLE_TOKEN } from './google.ts';
 import { leereGoogleAblage } from './google.ts';
 import { SITZUNG_COOKIE, zugangRouten } from './routen.ts';
 import { setzeRegistrierungenZurueck } from '../../anfrageGrenzen.ts';
+import { leereGeerbteZugangsVariablen } from '../../testpfad.ts';
 import { legeBenutzerAn, setzeSperrenZurueck, verwendeZugang } from './zugang.ts';
 
 const ordner = mkdtempSync(path.join(tmpdir(), 'stride-google-'));
@@ -19,21 +20,8 @@ let nummer = 0;
 export let aktuell = '';
 export let aufrufe = 0;
 
-const ENV = [
-  'STRIDE_GOOGLE',
-  'ASCEND_GOOGLE',
-  'STRIDE_GOOGLE_CLIENT_ID',
-  'ASCEND_GOOGLE_CLIENT_ID',
-  'STRIDE_GOOGLE_CLIENT_SECRET',
-  'ASCEND_GOOGLE_CLIENT_SECRET',
-  'STRIDE_REGISTRIERUNG',
-  'ASCEND_REGISTRIERUNG',
-] as const;
-
 export function googleEnv(an: boolean): void {
-  for (const name of ENV) {
-    delete process.env[name];
-  }
+  leereGeerbteZugangsVariablen();
   if (!an) {
     return;
   }

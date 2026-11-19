@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.2.0
+
+### Hinzugefügt
+
+- Du kannst dir selbst ein Konto anlegen und dich mit Google anmelden, wenn der Betreiber das einschaltet. Ohne Google-Angaben bleibt diese Anmeldung aus. Ein schon verknüpftes Google-Konto meldet dich an. Dieselbe E-Mail allein öffnet kein bestehendes Konto.
+
 ## 4.1.29
 
 ### Geändert

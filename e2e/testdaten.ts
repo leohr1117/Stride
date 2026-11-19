@@ -11,3 +11,5 @@ export const TEST_TEIL_WELT = path.join(TEST_KOPIE, 'welten', '2.db');
 export const TEST_PORT = 3327;
 export const TEST_URL = `http://127.0.0.1:${TEST_PORT}`;
 export const TEST_PASSWORT = 'Stride-Test-2026';
+export const TEST_GOOGLE_CLIENT_ID = 'test-client.apps.googleusercontent.com';
+export const TEST_GOOGLE_CLIENT_SECRET = 'test-secret';

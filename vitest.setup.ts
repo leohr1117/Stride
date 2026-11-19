@@ -2,7 +2,9 @@ import { mkdirSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { schreibePfadVariable } from './server/umgebung.ts';
-import { verweigereEchteDatenbank } from './server/testpfad.ts';
+import { leereGeerbteZugangsVariablen, verweigereEchteDatenbank } from './server/testpfad.ts';
+
+leereGeerbteZugangsVariablen();
 
 const kennung = process.env.VITEST_WORKER_ID ?? process.env.VITEST_POOL_ID ?? String(process.pid);
 const ordner = path.join(os.tmpdir(), 'stride-vitest', kennung);

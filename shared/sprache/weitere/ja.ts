@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Du kannst dir selbst ein Konto anlegen und dich mit Google anmelden, wenn der Betreiber das einschaltet. Ohne Google-Angaben bleibt diese Anmeldung aus. Ein schon verknüpftes Google-Konto meldet dich an. Dieselbe E-Mail allein öffnet kein bestehendes Konto.": "運営者が有効にすると、自分でアカウントを作り、Google でログインできます。Google の情報がなければ、このログインはオフのままです。すでに結びついた Google アカウントはそのままログインします。同じメールだけでは、既存のアカウントは開きません。",
   "Serverprotokolle werden nach 14 Tagen gelöscht, auch wenn in der Zwischenzeit nichts Neues protokolliert wird.": "サーバーの記録は14日後に削除されます。その間に新しい記録がなくても同じです。",
   "Ein neues Konto entsteht nur, wenn du die Nutzungsbedingungen und den Datenschutz bestätigst und mindestens 16 Jahre alt bist. Bei einer neuen Fassung fragt Stride nach der Anmeldung nach.": "新しいアカウントは、利用規約とプライバシーを確認し、16歳以上の場合にだけ作られます。版が変わると、Stride はログインのあとに尋ねます。",
   "Bitte bestätige die Nutzungsbedingungen, den Datenschutz und dass du mindestens 16 Jahre alt bist.": "利用規約とプライバシーを読み、16歳以上であることを確認してください。",

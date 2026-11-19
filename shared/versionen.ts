@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.2.0',
+    seiten: 'Anmeldung',
+    abschnitte: [
+      {
+        titel: 'Hinzugefügt',
+        punkte: [
+          'Du kannst dir selbst ein Konto anlegen und dich mit Google anmelden, wenn der Betreiber das einschaltet. Ohne Google-Angaben bleibt diese Anmeldung aus. Ein schon verknüpftes Google-Konto meldet dich an. Dieselbe E-Mail allein öffnet kein bestehendes Konto.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.1.29',
     seiten: 'Mehr',
     abschnitte: [

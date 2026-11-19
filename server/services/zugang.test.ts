@@ -6,6 +6,7 @@ import Fastify, { type FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { AppFehler } from '../fehler.ts';
+import { leereGeerbteZugangsVariablen } from '../testpfad.ts';
 import {
   SITZUNG_COOKIE,
   abmeldeCookie,
@@ -103,14 +104,7 @@ beforeEach(() => {
   });
   delete process.env.STRIDE_ADMIN;
   delete process.env.ASCEND_ADMIN;
-  delete process.env.STRIDE_REGISTRIERUNG;
-  delete process.env.ASCEND_REGISTRIERUNG;
-  delete process.env.STRIDE_GOOGLE;
-  delete process.env.ASCEND_GOOGLE;
-  delete process.env.STRIDE_GOOGLE_CLIENT_ID;
-  delete process.env.ASCEND_GOOGLE_CLIENT_ID;
-  delete process.env.STRIDE_GOOGLE_CLIENT_SECRET;
-  delete process.env.ASCEND_GOOGLE_CLIENT_SECRET;
+  leereGeerbteZugangsVariablen();
   datenbankNummer += 1;
   starte();
   setzeSperrenZurueck();

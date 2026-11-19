@@ -6,6 +6,7 @@ import { ZodError } from 'zod';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { REGISTRIERUNG_GRENZE, setzeRegistrierungenZurueck } from '../../anfrageGrenzen.ts';
 import { AppFehler } from '../../fehler.ts';
+import { leereGeerbteZugangsVariablen } from '../../testpfad.ts';
 import { istOeffentlicherZugang, leseSitzungsToken, zugangRouten } from './routen.ts';
 import {
   ZUGANG,
@@ -35,6 +36,7 @@ function schalter(wert: string | undefined): void {
 beforeEach(() => {
   delete process.env.STRIDE_ADMIN;
   delete process.env.ASCEND_ADMIN;
+  leereGeerbteZugangsVariablen();
   schalter(undefined);
   nummer += 1;
   verwendeZugang(path.join(ordner, `${nummer}.db`));
@@ -72,6 +74,27 @@ function inhaber(name = 'Ada'): void {
 
 describe('registrieren', () => {
   it('bleibt aus, solange der Schalter nicht 1 ist', async () => {
+    const falsche = [
+      'STRIDE_REGISTRIERUNG',
+      'ASCEND_REGISTRIERUNG',
+      'STRIDE_GOOGLE',
+      'STRIDE_GOOGLE_CLIENT_ID',
+      'STRIDE_GOOGLE_CLIENT_SECRET',
+      'ASCEND_GOOGLE_CLIENT_SECRET',
+      'STRIDE_SMTP_HOST',
+      'STRIDE_SMTP_PORT',
+      'STRIDE_SMTP_BENUTZER',
+      'STRIDE_SMTP_PASSWORT',
+      'ASCEND_SMTP_PASSWORT',
+    ] as const;
+    for (const name of falsche) {
+      process.env[name] = 'nicht-verwenden';
+    }
+    const geleert = leereGeerbteZugangsVariablen();
+    for (const name of falsche) {
+      expect(geleert).toContain(name);
+      expect(process.env[name]).toBeUndefined();
+    }
     expect(istOeffentlicherZugang('POST', '/api/zugang/registrieren')).toBe(true);
     inhaber();
     await mitRouten(async (app) => {

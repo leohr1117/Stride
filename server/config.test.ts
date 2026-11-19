@@ -231,4 +231,17 @@ describe('Doku zum Client-Pfad', () => {
     expect(setup).toContain("schreibePfadVariable('ZUGANG_PFAD'");
     expect(start).toContain('mitDatenbankPfaden(');
   });
+
+  it('nennt Registrierung und Google nur mit leerem Wert', () => {
+    const readme = fs.readFileSync(path.join(WURZEL, 'README.md'), 'utf8');
+    const beispiel = fs.readFileSync(path.join(WURZEL, '.env.example'), 'utf8');
+    const namen = ['STRIDE_REGISTRIERUNG', 'STRIDE_GOOGLE', 'STRIDE_GOOGLE_CLIENT_ID', 'STRIDE_GOOGLE_CLIENT_SECRET'] as const;
+    const zeilen = beispiel.split(/\r?\n/);
+    for (const name of namen) {
+      expect(readme).toContain(name);
+      expect(zeilen.some((zeile) => zeile.includes(name))).toBe(true);
+      expect(zeilen.some((zeile) => new RegExp(`^${name}=\\S`).test(zeile)), name).toBe(false);
+    }
+    expect(readme).toContain('Standard aus');
+  });
 });

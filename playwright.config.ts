@@ -1,10 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
 import { TEST_URL, TEST_WELT } from './e2e/testdaten.ts';
+import { leereGeerbteZugangsVariablen } from './server/testpfad.ts';
 
 const iphone = devices['iPhone 13'];
 
 process.env.STRIDE_TEST = '1';
 process.env.PLAYWRIGHT_WELT = TEST_WELT;
+leereGeerbteZugangsVariablen();
 
 export default defineConfig({
   testDir: 'e2e',
