@@ -80,6 +80,7 @@ export const PAARE = [
   ['Wähle „Zum Dock hinzufügen“.', 'Choose “Add to Dock”.'],
   ['Klicke auf „Hinzufügen“.', 'Click “Add”.'],
   ['Konto erstellen', 'Create account'],
+  ['Noch kein Konto?', 'No account yet?'],
   ['Ich habe schon ein Konto', 'I already have an account'],
   ['Als App installieren', 'Install as an app'],
   ['Installieren', 'Install'],

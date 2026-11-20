@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Anmeldeseite ist eine durchgehende Karte: Anmelden, Google-Anmeldung und „Noch kein Konto? Konto erstellen“ stehen untereinander, Rechtliches, Impressum und Datenschutz stehen unter der Karte. Auf dem Desktop steht die Karte genau in der Mitte.": "Страница входа — одна сплошная карточка: вход, вход через Google и «Ещё нет аккаунта? Создать аккаунт» расположены друг под другом, а правовая информация, выходные данные и конфиденциальность находятся под карточкой. На компьютере карточка стоит точно по центру.",
   "Unter Mehr führt eine Seite Rechtliches zu Impressum, Datenschutz, Nutzungsbedingungen, Lizenzen und zum Kontaktformular. Das Formular ist ohne Anmeldung erreichbar.": "Ещё ведёт на страницу «Правовая информация» с выходными данными, конфиденциальностью, условиями использования, лицензиями и формой контакта. Форма доступна без входа.",
   "Du kannst dir selbst ein Konto anlegen und dich mit Google anmelden, wenn der Betreiber das einschaltet. Ohne Google-Angaben bleibt diese Anmeldung aus. Ein schon verknüpftes Google-Konto meldet dich an. Dieselbe E-Mail allein öffnet kein bestehendes Konto.": "Ты можешь завести свой аккаунт и войти через Google, если оператор это включит. Без данных Google этот вход остаётся выключенным. Уже связанный аккаунт Google выполняет вход. Одна и та же почта сама по себе не открывает существующий аккаунт.",
   "Serverprotokolle werden nach 14 Tagen gelöscht, auch wenn in der Zwischenzeit nichts Neues protokolliert wird.": "Журналы сервера удаляются через 14 дней, даже если за это время ничего нового не записывается.",
@@ -118,6 +119,7 @@ export const TEXTE: Record<string, string> = {
   "Klicke auf „Hinzufügen“.": "Нажмите «Добавить».",
   "Wer Stride selbst betreibt, kann jetzt erlauben, dass neue Nutzer selbst ein Konto erstellen.": "Если вы размещаете Stride у себя, теперь можно разрешить новым пользователям самим создавать аккаунт.",
   "Konto erstellen": "Создать аккаунт",
+  "Noch kein Konto?": "Ещё нет аккаунта?",
   "Ich habe schon ein Konto": "У меня уже есть аккаунт",
   "Der Benutzername ist schon vergeben. Wähle einen anderen.": "Это имя уже занято. Выберите другое.",
   "Die App lässt sich jetzt direkt aus der App heraus installieren.": "Теперь приложение можно установить прямо из самого приложения.",

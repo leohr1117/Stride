@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Anmeldeseite ist eine durchgehende Karte: Anmelden, Google-Anmeldung und „Noch kein Konto? Konto erstellen“ stehen untereinander, Rechtliches, Impressum und Datenschutz stehen unter der Karte. Auf dem Desktop steht die Karte genau in der Mitte.": "La page de connexion forme une seule carte continue : se connecter, la connexion avec Google et « Pas encore de compte ? Créer un compte » sont empilés, et les informations légales, les mentions légales et la confidentialité se trouvent sous la carte. Sur ordinateur, la carte est exactement centrée.",
   "Unter Mehr führt eine Seite Rechtliches zu Impressum, Datenschutz, Nutzungsbedingungen, Lizenzen und zum Kontaktformular. Das Formular ist ohne Anmeldung erreichbar.": "Plus mène vers une page Informations légales avec les mentions légales, la confidentialité, les conditions d'utilisation, les licences et un formulaire de contact. Le formulaire est disponible sans connexion.",
   "Du kannst dir selbst ein Konto anlegen und dich mit Google anmelden, wenn der Betreiber das einschaltet. Ohne Google-Angaben bleibt diese Anmeldung aus. Ein schon verknüpftes Google-Konto meldet dich an. Dieselbe E-Mail allein öffnet kein bestehendes Konto.": "Tu peux créer ton propre compte et te connecter avec Google lorsque l'exploitant l'active. Sans données Google, cette connexion reste désactivée. Un compte Google déjà lié te connecte. Le même e-mail à lui seul n'ouvre pas un compte existant.",
   "Serverprotokolle werden nach 14 Tagen gelöscht, auch wenn in der Zwischenzeit nichts Neues protokolliert wird.": "Les journaux du serveur sont supprimés au bout de 14 jours, même si rien de nouveau n'est enregistré entre-temps.",
@@ -118,6 +119,7 @@ export const TEXTE: Record<string, string> = {
   "Klicke auf „Hinzufügen“.": "Cliquez sur « Ajouter ».",
   "Wer Stride selbst betreibt, kann jetzt erlauben, dass neue Nutzer selbst ein Konto erstellen.": "Si vous hébergez Stride vous-même, vous pouvez désormais permettre aux nouveaux utilisateurs de créer leur propre compte.",
   "Konto erstellen": "Créer un compte",
+  "Noch kein Konto?": "Pas encore de compte ?",
   "Ich habe schon ein Konto": "J'ai déjà un compte",
   "Der Benutzername ist schon vergeben. Wähle einen anderen.": "Ce nom d'utilisateur est déjà pris. Choisis-en un autre.",
   "Die App lässt sich jetzt direkt aus der App heraus installieren.": "L'application peut désormais être installée directement depuis l'application.",

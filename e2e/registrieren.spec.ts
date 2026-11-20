@@ -33,7 +33,8 @@ test('Neues Konto entsteht auf der Anmeldeseite', async ({ page }, testInfo) => 
       darunter: knopf ? kasten.top >= knopf.bottom - 1 : false,
     };
   });
-  expect(lage.hoehe).toBeGreaterThanOrEqual(24);
+  expect(lage.hoehe).toBeGreaterThanOrEqual(48);
+  await expect(page.getByText('Noch kein Konto?', { exact: true })).toBeVisible();
   expect(lage.breite).toBeGreaterThanOrEqual(24);
   expect(lage.darunter).toBe(true);
   if (projekt === 'handy') {

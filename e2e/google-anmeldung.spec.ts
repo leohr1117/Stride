@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { expect, test, type Page } from './uhr.ts';
-import { anmelden } from './helfer.ts';
+import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 const HELL = { primaer: '#141414', akzent: '#707070', hintergrund: '#f2f2f2' };
 const DUNKEL = { primaer: '#f2f2f2', akzent: '#8a8a8a', hintergrund: '#141414' };
@@ -102,15 +102,135 @@ test('Anmeldung zeigt Google nur als eigenen Weg', async ({ page }, testInfo) =>
   expect(masse.groesse).toBe('14px');
   expect(masse.zeile).toBe('20px');
   expect(String(masse.gewicht)).toBe('500');
-  const knopfKasten = await knopf.boundingBox();
-  const kontoKasten = await page.getByRole('button', { name: 'Konto erstellen', exact: true }).boundingBox();
-  const anmeldeKasten = await page.getByRole('button', { name: 'Anmelden', exact: true }).boundingBox();
-  expect(knopfKasten && kontoKasten && anmeldeKasten && anmeldeKasten.y < kontoKasten.y && kontoKasten.y < knopfKasten.y).toBe(true);
+  await expect(page.getByText('Noch kein Konto?', { exact: true })).toBeVisible();
+  const lage = await page.evaluate(() => {
+    const kasten = (element: Element | null) => {
+      if (!(element instanceof HTMLElement)) {
+        return null;
+      }
+      const box = element.getBoundingClientRect();
+      return { y: box.top, unten: box.bottom, hoehe: box.height, breite: box.width };
+    };
+    const karte = document.querySelector('[data-flaeche]');
+    const spalte = document.querySelector('[data-anmelde-spalte]');
+    const fuss = document.querySelector('.formular-fuss');
+    const nav = document.querySelector('nav[aria-label="Rechtliches"]');
+    const konto = document.querySelector('[data-konto-knopf]');
+    const frage = document.querySelector('[data-konto-frage]');
+    const felder = [...document.querySelectorAll('form .formular-felder .feld')];
+    const passwort = document.querySelector('#current-password')?.closest('.feld') ?? null;
+    const oder = [...document.querySelectorAll('p')].find((element) => element.textContent?.trim() === 'oder') ?? null;
+    const googleWeg = document.querySelector('a[href="/api/zugang/google/start?zweck=anmelden"]');
+    const anmeldenKnopf = document.querySelector('button[type="submit"]');
+    const main = document.querySelector('main');
+    const mainStil = main ? getComputedStyle(main) : null;
+    const mainInnen = main && mainStil ? main.clientWidth - Number.parseFloat(mainStil.paddingLeft) - Number.parseFloat(mainStil.paddingRight) : 0;
+    const karteStil = karte ? getComputedStyle(karte) : null;
+    const inhalt = karte && karteStil ? karte.clientWidth - Number.parseFloat(karteStil.paddingLeft) - Number.parseFloat(karteStil.paddingRight) : 0;
+    const kontoStil = konto ? getComputedStyle(konto) : null;
+    const spaltenBox = spalte?.getBoundingClientRect();
+    return {
+      anmelden: kasten(anmeldenKnopf),
+      oder: kasten(oder),
+      google: kasten(googleWeg),
+      konto: kasten(konto),
+      passwort: kasten(passwort),
+      karte: kasten(karte),
+      nav: kasten(nav),
+      feldAbstand:
+        felder[0] instanceof HTMLElement && felder[1] instanceof HTMLElement
+          ? felder[1].getBoundingClientRect().top - felder[0].getBoundingClientRect().bottom
+          : -1,
+      fussGrund: fuss ? getComputedStyle(fuss).backgroundColor : '',
+      fussInKarte: Boolean(fuss && karte?.contains(fuss)),
+      linksInKarte: Boolean(karte?.querySelector('nav, [data-absender]')),
+      pad: karteStil?.paddingBottom ?? '',
+      karteBreite: karte?.getBoundingClientRect().width ?? 0,
+      mainInnen,
+      inhalt,
+      knopfGleich: anmeldenKnopf instanceof HTMLElement ? Math.abs(anmeldenKnopf.getBoundingClientRect().width - inhalt) <= 1 : false,
+      googleGleich:
+        anmeldenKnopf instanceof HTMLElement && googleWeg instanceof HTMLElement
+          ? Math.abs(anmeldenKnopf.getBoundingClientRect().width - googleWeg.getBoundingClientRect().width) <= 1
+          : false,
+      gewicht: kontoStil?.fontWeight ?? '',
+      dekor: kontoStil?.textDecorationLine ?? '',
+      knopfFarbe: kontoStil?.color ?? '',
+      frageFarbe: frage ? getComputedStyle(frage).color : '',
+      textFarbe: getComputedStyle(document.body).color,
+      nowrap: kontoStil?.whiteSpace ?? '',
+      frageNowrap: frage ? getComputedStyle(frage).whiteSpace : '',
+      spalteLinks: spaltenBox?.left ?? -1,
+      spalteBreite: spaltenBox?.width ?? -1,
+      fenster: window.innerWidth,
+    };
+  });
+  const luecke = (oben: { unten: number } | null, unten: { y: number } | null) => (oben && unten ? unten.y - oben.unten : -1);
+  const nahe = (wert: number, ziel: number) => Math.abs(wert - ziel) <= 1;
+  expect(nahe(lage.feldAbstand, 16)).toBe(true);
+  expect(nahe(luecke(lage.passwort, lage.anmelden), 24)).toBe(true);
+  expect(nahe(luecke(lage.anmelden, lage.oder), 20)).toBe(true);
+  expect(nahe(luecke(lage.oder, lage.google), 20)).toBe(true);
+  expect(nahe(luecke(lage.google, lage.konto), 24)).toBe(true);
+  expect(lage.anmelden?.hoehe).toBeGreaterThanOrEqual(48);
+  expect(lage.google?.hoehe).toBeGreaterThanOrEqual(48);
+  expect(lage.konto?.hoehe).toBeGreaterThanOrEqual(48);
+  expect(lage.pad).toBe('24px');
+  expect(nahe(luecke(lage.karte, lage.nav), 24)).toBe(true);
+  expect(lage.fussGrund === 'rgba(0, 0, 0, 0)' || lage.fussGrund === 'transparent').toBe(true);
+  expect(lage.fussInKarte).toBe(true);
+  expect(lage.linksInKarte).toBe(false);
+  expect(lage.knopfGleich).toBe(true);
+  expect(lage.googleGleich).toBe(true);
+  expect(lage.knopfFarbe).toBe(lage.textFarbe);
+  expect(lage.frageFarbe).not.toBe(lage.textFarbe);
+  expect(Number(lage.gewicht)).toBeGreaterThanOrEqual(700);
+  expect(lage.dekor).toContain('underline');
+  expect(lage.nowrap).toBe('nowrap');
+  expect(lage.frageNowrap).toBe('nowrap');
+  expect(lage.anmelden && lage.oder && lage.google && lage.konto && lage.anmelden.y < lage.oder.y && lage.oder.y < lage.google.y && lage.google.y < lage.konto.y).toBe(true);
+  expect(Math.abs(lage.spalteLinks - (lage.fenster - lage.spalteLinks - lage.spalteBreite))).toBeLessThanOrEqual(1);
+  if (projekt === 'desktop') {
+    expect(Math.round(lage.karteBreite)).toBe(400);
+  }
+  if (projekt === 'handy') {
+    expect(Math.abs(lage.karteBreite - lage.mainInnen)).toBeLessThanOrEqual(1);
+  }
   if (projekt === 'handy') {
     await page.screenshot({ path: 'tmp-test/google-anmeldung/handy-anmelden-google.png', fullPage: true });
   }
   if (projekt === 'desktop') {
     await page.screenshot({ path: 'tmp-test/google-anmeldung/desktop-anmelden-google.png', fullPage: true });
+  }
+  if (projekt === 'handy') {
+    await page.evaluate(() => localStorage.setItem('stride-sprache', 'ja'));
+    await page.reload();
+    const frage = page.locator('[data-konto-frage]');
+    const kontoKnopf = page.locator('[data-konto-knopf]');
+    await expect(frage).toBeVisible();
+    await expect(kontoKnopf).toBeVisible();
+    const schrift = await kontoKnopf.evaluate((element) => {
+      const frageElement = element.parentElement?.querySelector('[data-konto-frage]');
+      const frageKasten = frageElement?.getBoundingClientRect();
+      const kasten = element.getBoundingClientRect();
+      return {
+        nowrap: getComputedStyle(element).whiteSpace,
+        innen: element.scrollWidth <= element.clientWidth + 1,
+        frageNowrap: frageElement ? getComputedStyle(frageElement).whiteSpace : '',
+        frageInnen: frageElement instanceof HTMLElement ? frageElement.scrollWidth <= frageElement.clientWidth + 1 : false,
+        gleicheZeile: frageKasten ? Math.abs(frageKasten.top - kasten.top) < 2 : false,
+        darunter: frageKasten ? kasten.top >= frageKasten.bottom - 1 : false,
+      };
+    });
+    expect(schrift.nowrap).toBe('nowrap');
+    expect(schrift.frageNowrap).toBe('nowrap');
+    expect(schrift.innen).toBe(true);
+    expect(schrift.frageInnen).toBe(true);
+    expect(schrift.gleicheZeile || schrift.darunter).toBe(true);
+    await ohneSeitlichenUeberlauf(page);
+    await page.evaluate(() => localStorage.setItem('stride-sprache', 'de'));
+    await page.reload();
+    await expect(page.getByRole('button', { name: 'Anmelden', exact: true })).toBeVisible();
   }
 
   await setzePalette(page, DUNKEL);

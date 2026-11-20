@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.2.2',
+    seiten: 'Anmeldung',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: [
+          'Die Anmeldeseite ist eine durchgehende Karte: Anmelden, Google-Anmeldung und „Noch kein Konto? Konto erstellen“ stehen untereinander, Rechtliches, Impressum und Datenschutz stehen unter der Karte. Auf dem Desktop steht die Karte genau in der Mitte.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.2.1',
     seiten: 'Mehr, Anmeldung',
     abschnitte: [

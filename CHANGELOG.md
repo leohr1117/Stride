@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.2.2
+
+### Verbessert
+
+- Die Anmeldeseite ist eine durchgehende Karte: Anmelden, Google-Anmeldung und „Noch kein Konto? Konto erstellen“ stehen untereinander, Rechtliches, Impressum und Datenschutz stehen unter der Karte. Auf dem Desktop steht die Karte genau in der Mitte.
+
 ## 4.2.1
 
 ### Hinzugefügt

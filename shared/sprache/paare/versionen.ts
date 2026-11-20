@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Die Anmeldeseite ist eine durchgehende Karte: Anmelden, Google-Anmeldung und „Noch kein Konto? Konto erstellen“ stehen untereinander, Rechtliches, Impressum und Datenschutz stehen unter der Karte. Auf dem Desktop steht die Karte genau in der Mitte.',
+    'The sign-in page is one continuous card: sign in, Google sign-in and “No account yet? Create account” are stacked, and legal information, legal notice and privacy sit below the card. On desktop the card is exactly centered.',
+  ],
+  [
     'Unter Mehr führt eine Seite Rechtliches zu Impressum, Datenschutz, Nutzungsbedingungen, Lizenzen und zum Kontaktformular. Das Formular ist ohne Anmeldung erreichbar.',
     'More leads to a Legal page with the legal notice, privacy, terms of use, licenses and a contact form. The form is available without signing in.',
   ],

@@ -15,7 +15,8 @@ import { AnmeldeRahmen } from './AnmeldeRahmen.tsx';
 import { ZustimmungDialog, ZustimmungsKasten } from './Zustimmung.tsx';
 import { seitenwechsel } from './anmeldungFelder.ts';
 import { BenutzernameFestlegen } from './BenutzernameFestlegen.tsx';
-import { GoogleAnlage, GoogleKnopf, GoogleOder, googleHinweis, useGoogleRueckkehr } from './GoogleAnmeldung.tsx';
+import { AnmeldeAktionen } from './AnmeldeAktionen.tsx';
+import { GoogleAnlage, googleHinweis, useGoogleRueckkehr } from './GoogleAnmeldung.tsx';
 
 const RechtOeffentlich = lazy(() => import('../recht/RechtSeiten.tsx').then((modul) => ({ default: modul.RechtOeffentlich })));
 const RechtHubOeffentlich = lazy(() => import('../recht/RechtHub.tsx').then((modul) => ({ default: modul.RechtHubOeffentlich })));
@@ -85,7 +86,11 @@ function Anmeldung({
   };
 
   return (
-    <AnmeldeRahmen onAbsenden={(ereignis) => void senden(ereignis)} titel={neu ? 'Passwort festlegen' : 'Anmelden'}>
+    <AnmeldeRahmen
+      onAbsenden={(ereignis) => void senden(ereignis)}
+      titel={neu ? 'Passwort festlegen' : 'Anmelden'}
+      fussAussen={modus === 'anmelden'}
+    >
         {hinweis ? (
           <p role="status" className="text-leise">
             {tx(hinweis)}
@@ -141,17 +146,21 @@ function Anmeldung({
             }}
           />
         )}
-        <Fehlermeldung fehler={fehler} />
-        <Knopf type="submit" variante="primaer" className="w-full" aria-busy={laeuft || undefined}>
-          {neu ? tx("Festlegen") : tx("Anmelden")}
-        </Knopf>
-        {onKonto ? (
-          <Knopf type="button" variante="text" className="w-full" onClick={onKonto}>
-            {tx('Konto erstellen')}
-          </Knopf>
-        ) : null}
-        {google && modus === 'anmelden' ? <GoogleOder /> : null}
-        {google && modus === 'anmelden' ? <GoogleKnopf /> : null}
+        {modus === 'anmelden' ? (
+          <AnmeldeAktionen fehler={fehler} laeuft={laeuft} google={google} onKonto={onKonto} />
+        ) : (
+          <>
+            <Fehlermeldung fehler={fehler} />
+            <Knopf type="submit" variante="primaer" className="w-full" aria-busy={laeuft || undefined}>
+              {neu ? tx("Festlegen") : tx("Anmelden")}
+            </Knopf>
+            {onKonto ? (
+              <Knopf type="button" variante="text" className="w-full" onClick={onKonto}>
+                {tx('Konto erstellen')}
+              </Knopf>
+            ) : null}
+          </>
+        )}
     </AnmeldeRahmen>
   );
 }

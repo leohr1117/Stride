@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die Anmeldeseite ist eine durchgehende Karte: Anmelden, Google-Anmeldung und „Noch kein Konto? Konto erstellen“ stehen untereinander, Rechtliches, Impressum und Datenschutz stehen unter der Karte. Auf dem Desktop steht die Karte genau in der Mitte.": "登录页面现在是一张完整的卡片：登录、使用 Google 登录以及“还没有账号？创建账号”上下排列，法律信息、版权声明和隐私位于卡片下方。在桌面端，卡片精确居中。",
   "Unter Mehr führt eine Seite Rechtliches zu Impressum, Datenschutz, Nutzungsbedingungen, Lizenzen und zum Kontaktformular. Das Formular ist ohne Anmeldung erreichbar.": "更多会打开法律信息页面，其中有法律声明、隐私、使用条款、许可和联系表单。表单无需登录即可使用。",
   "Du kannst dir selbst ein Konto anlegen und dich mit Google anmelden, wenn der Betreiber das einschaltet. Ohne Google-Angaben bleibt diese Anmeldung aus. Ein schon verknüpftes Google-Konto meldet dich an. Dieselbe E-Mail allein öffnet kein bestehendes Konto.": "运营者开启后，你可以自己创建账户并用 Google 登录。没有 Google 资料时，这种登录保持关闭。已经关联的 Google 账户会直接登录。仅凭同一个邮箱不会打开已有账户。",
   "Serverprotokolle werden nach 14 Tagen gelöscht, auch wenn in der Zwischenzeit nichts Neues protokolliert wird.": "服务器日志会在 14 天后删除，即使这段时间没有新的记录。",
@@ -118,6 +119,7 @@ export const TEXTE: Record<string, string> = {
   "Klicke auf „Hinzufügen“.": "点按“添加”。",
   "Wer Stride selbst betreibt, kann jetzt erlauben, dass neue Nutzer selbst ein Konto erstellen.": "自行托管 Stride 时，现在可以允许新用户自行创建账户。",
   "Konto erstellen": "创建账户",
+  "Noch kein Konto?": "还没有账户？",
   "Ich habe schon ein Konto": "我已有账户",
   "Der Benutzername ist schon vergeben. Wähle einen anderen.": "这个用户名已被使用。请另选一个。",
   "Die App lässt sich jetzt direkt aus der App heraus installieren.": "现在可以直接在应用内安装应用。",
