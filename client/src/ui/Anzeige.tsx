@@ -192,16 +192,34 @@ function ringSchrift(groesse: number, basis: number): number | undefined {
   return Math.max(1, Math.round((basis * groesse) / RING_SCHRIFT_AB));
 }
 
+function pilleInhalt(level: number): ReactNode {
+  const text = tx('Lvl {level}', { level });
+  const ziffern = String(level);
+  const stelle = text.lastIndexOf(ziffern);
+  if (stelle < 0) {
+    return text;
+  }
+  return (
+    <>
+      {text.slice(0, stelle)}
+      <span className="zahl">{ziffern}</span>
+      {text.slice(stelle + ziffern.length)}
+    </>
+  );
+}
+
 export function LevelRing({
   level,
   anteil,
   groesse = 96,
   mitte,
+  beschriftung,
 }: {
   level: number;
   anteil: number;
   groesse?: number;
   mitte?: ReactNode;
+  beschriftung?: string;
 }) {
   const schein = ringId(useId());
   const begrenzt = Math.min(1, Math.max(0, anteil));
@@ -232,7 +250,7 @@ export function LevelRing({
       </span>
     </>
   );
-  const grafik = (
+  const bahn = (
     <>
       <svg viewBox="0 0 100 100" className="absolute inset-0 overflow-visible" aria-hidden="true">
         <circle cx={RING_MITTE} cy={RING_MITTE} r={RING_RADIUS} fill="none" stroke="var(--flaeche-2)" strokeWidth={RING_STRICH} />
@@ -254,41 +272,58 @@ export function LevelRing({
           style={{ background: verlauf, maskImage: maske, WebkitMaskImage: maske }}
         />
       )}
-      {begrenzt > 0 && (
-        <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 overflow-visible" aria-hidden="true">
-          <defs>
-            <filter id={schein} x="-70%" y="-70%" width="240%" height="240%" colorInterpolationFilters="sRGB">
-              <feGaussianBlur stdDeviation="1.6" />
-            </filter>
-          </defs>
-          <circle
-            className="levelring-spitze-schein"
-            cx={spitze.cx}
-            cy={spitze.cy}
-            r="6.4"
-            fill={spitzenFarbe}
-            fillOpacity={0.45 + begrenzt * 0.5}
-            filter={`url(#${schein})`}
-          />
-          <circle cx={spitze.cx} cy={spitze.cy} r="4.05" fill={spitzenFarbe} />
-          <circle data-ringlicht="" cx={spitze.cx} cy={spitze.cy} r="1.25" fill="white" fillOpacity={0.55 + begrenzt * 0.4} />
-        </svg>
-      )}
+    </>
+  );
+  const spitzeGrafik = begrenzt > 0 ? (
+    <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 overflow-visible" aria-hidden="true">
+      <defs>
+        <filter id={schein} x="-70%" y="-70%" width="240%" height="240%" colorInterpolationFilters="sRGB">
+          <feGaussianBlur stdDeviation="1.6" />
+        </filter>
+      </defs>
+      <circle
+        className="levelring-spitze-schein"
+        cx={spitze.cx}
+        cy={spitze.cy}
+        r="6.4"
+        fill={spitzenFarbe}
+        fillOpacity={0.45 + begrenzt * 0.5}
+        filter={`url(#${schein})`}
+      />
+      <circle cx={spitze.cx} cy={spitze.cy} r="4.05" fill={spitzenFarbe} />
+      <circle data-ringlicht="" cx={spitze.cx} cy={spitze.cy} r="1.25" fill="white" fillOpacity={0.55 + begrenzt * 0.4} />
+    </svg>
+  ) : null;
+  const grafik = (
+    <>
+      {bahn}
+      {spitzeGrafik}
     </>
   );
 
   if (mitte) {
+    const name = beschriftung?.trim() ? beschriftung : tx('Level {level}', { level });
     return (
       <div
-        className="levelring relative flex shrink-0 flex-col items-center"
+        className="levelring relative h-20 w-20 shrink-0 md:h-24 md:w-24"
         data-levelring=""
-        style={{ width: groesse, minWidth: groesse, maxWidth: groesse }}
+        role="img"
+        aria-label={name}
       >
-        <div className="relative" style={{ width: groesse, height: groesse }}>
-          {grafik}
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">{mitte}</div>
-        </div>
-        <div className="mt-1 flex w-full flex-col items-center">{zeile}</div>
+        {bahn}
+        <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">{mitte}</div>
+        <span
+          data-levelpille=""
+          aria-hidden="true"
+          className="pointer-events-none absolute top-full left-1/2 z-10 inline-flex h-5 max-w-full -translate-x-1/2 -translate-y-1/2 items-center rounded-full border-2 border-grund bg-akzent px-2 text-[13px] leading-none font-bold whitespace-nowrap text-akzent-text"
+        >
+          {pilleInhalt(level)}
+        </span>
+        {spitzeGrafik ? (
+          <div className="pointer-events-none absolute inset-0 z-20" data-ringspitze="">
+            {spitzeGrafik}
+          </div>
+        ) : null}
       </div>
     );
   }

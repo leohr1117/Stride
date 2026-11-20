@@ -46,17 +46,17 @@ export function CharakterSeite() {
           <Pencil className="size-5" aria-hidden="true" />
         </Link>
       </KopfAktion>
-      <div className="flex items-start gap-5">
+      <div className="flex items-center gap-4 md:gap-5" data-profilkopf="">
         <LevelRing
           level={charakter.level.level}
           anteil={charakter.level.fortschritt}
-          groesse={104}
-          mitte={<ProfilBild klasse={charakter.klasse} groesse="size-16" />}
+          beschriftung={ringBeschriftung(charakter.level)}
+          mitte={<ProfilBild klasse={charakter.klasse} groesse="size-14 md:size-16" />}
         />
-        <div className="min-w-0 flex-1">
-          <p className="kopfblock-name truncate text-2xl font-bold tracking-tight">{charakter.name}</p>
+        <div className="min-w-0 flex-1 text-left">
+          <p className="kopfblock-name line-clamp-2 text-2xl font-bold tracking-tight">{charakter.name}</p>
           <Identitaet klasse={charakter.klasse} titel={charakter.titel} />
-          <p className="zahl text-sm text-leise break-words">
+          <p className="zahl text-sm break-words text-haupt">
             {tx('{xp} XP · noch {rest} bis Level {level}', {
               xp: zahl(charakter.level.xpGesamt),
               rest: zahl(charakter.level.xpFuerNaechstes - charakter.level.xpImLevel),
@@ -86,6 +86,14 @@ export function CharakterSeite() {
   );
 }
 
+function ringBeschriftung(level: Charakter['level']): string {
+  const stand = tx('{n} von {gesamt}', {
+    n: zahl(level.xpImLevel),
+    gesamt: zahl(level.xpFuerNaechstes),
+  });
+  return `${tx('Level {level}', { level: level.level })}, ${tx('{xp} XP', { xp: stand })}`;
+}
+
 function klassenZeile(koennenAn: boolean, erfolgeAn: boolean): string | null {
   if (koennenAn && erfolgeAn) {
     return tx('Klassen und Titel');
@@ -109,7 +117,7 @@ function Identitaet({ klasse, titel }: { klasse: string; titel: string | null })
   const klasseAnzeige = klassenText(klasse);
   const text =
     klasseSichtbar && titelSichtbar ? `${klasseAnzeige} · ${titelSichtbar}` : klasseSichtbar ? klasseAnzeige : titelSichtbar;
-  return <p className="mt-0.5 text-sm font-medium break-words text-akzent">{text}</p>;
+  return <p className="mt-0.5 text-sm font-medium break-words text-leise">{text}</p>;
 }
 
 function Kennzahlen({ charakter }: { charakter: Charakter }) {

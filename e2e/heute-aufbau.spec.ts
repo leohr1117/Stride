@@ -383,7 +383,7 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await page.goto('/charakter');
   const profilRing = page.locator('main [data-levelring]').first();
   const profilBreite = await profilRing.evaluate((element) => Math.round(element.getBoundingClientRect().width));
-  expect(profilBreite).toBe(104);
+  expect(profilBreite).toBe(projekt === 'handy' ? 80 : 96);
   await expect(page.locator('main .kopfblock-name').locator('visible=true').first()).toHaveClass(/text-2xl/);
   await ohneSeitlichenUeberlauf(page);
   await bild(page, `${projekt}-profil`);

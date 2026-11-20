@@ -387,7 +387,7 @@ test('Profil fasst Level, Kennzahlen, Blätter und Spektren zusammen', async ({ 
   await expect(page.getByRole('heading', { name: 'Profil', exact: true })).toBeVisible();
   await expect(page.locator('main [data-levelring]')).toBeVisible();
   const ringBreite = await page.locator('main [data-levelring]').evaluate((element) => Math.round(element.getBoundingClientRect().width));
-  expect(ringBreite).toBe(104);
+  expect(ringBreite).toBe(info.project.name === 'handy' ? 80 : 96);
   await expect(page.locator('main .kopfblock-name')).toHaveClass(/text-2xl/);
 
   const kennzahlen = page.locator('[data-kennzahlen]');

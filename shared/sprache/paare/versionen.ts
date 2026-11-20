@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Im Profil steht das Level als Pille auf der Unterkante des Rings; der eigene Level-Block darunter entfällt. Die XP-Zeile bleibt.',
+    'On the profile, the level sits as a pill on the bottom edge of the ring; the separate level block below it is gone. The XP line stays.',
+  ],
+  [
     'Die Anmeldeseite ist eine durchgehende Karte: Anmelden, Google-Anmeldung und „Noch kein Konto? Konto erstellen“ stehen untereinander, Rechtliches, Impressum und Datenschutz stehen unter der Karte. Auf dem Desktop steht die Karte genau in der Mitte.',
     'The sign-in page is one continuous card: sign in, Google sign-in and “No account yet? Create account” are stacked, and legal information, legal notice and privacy sit below the card. On desktop the card is exactly centered.',
   ],

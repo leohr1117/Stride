@@ -267,15 +267,23 @@ test('Profilbild bleibt in jeder Ansicht rund', async ({ page }, testInfo) => {
       const profil = await form(page, 'main [data-levelring] [data-profilbild]');
       expect(kreis(profil.radius, profil.breite), `${ansicht.name} Profil ${profil.radius}`).toBe(true);
       expect(profil.ueberlauf).toBe('hidden');
-      expect(Math.round(profil.breite)).toBe(64);
+      expect(Math.round(profil.breite)).toBe(projekt === 'handy' ? 56 : 64);
       const profilFarbe = await flaechen(page, 'main [data-levelring] [data-profilbild]');
       expect(profilFarbe.hintergrund, `${ansicht.name} Profil-Fläche`).toBe(profilFarbe.flaeche);
       expect(profilFarbe.farbe, `${ansicht.name} Profil-Zeichen`).toBe(profilFarbe.text);
-      expect(profilFarbe.zeichen).toBeGreaterThan(36);
-      expect(profilFarbe.zeichen).toBeLessThan(44);
+      if (projekt === 'handy') {
+        expect(profilFarbe.zeichen).toBeGreaterThan(32);
+        expect(profilFarbe.zeichen).toBeLessThan(38);
+      } else {
+        expect(profilFarbe.zeichen).toBeGreaterThan(36);
+        expect(profilFarbe.zeichen).toBeLessThan(44);
+      }
       const ring = await page.locator('main [data-levelring]').evaluate((element) => Math.round(element.getBoundingClientRect().width));
-      expect(ring).toBe(104);
-      await expect(page.locator('main [data-levelring] span.uppercase')).toBeVisible();
+      expect(ring).toBe(projekt === 'handy' ? 80 : 96);
+      const pille = page.locator('main [data-levelpille]');
+      await expect(pille).toBeVisible();
+      await expect(pille).toHaveAttribute('aria-hidden', 'true');
+      await expect(page.locator('main [data-levelring] span.uppercase')).toHaveCount(0);
       await ohneSeitlichenUeberlauf(page);
       const diagramm = ansicht.stil === 'holo' && projekt === 'desktop';
       if (diagramm) {

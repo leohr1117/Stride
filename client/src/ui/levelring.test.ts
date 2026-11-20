@@ -9,6 +9,8 @@ describe('LevelRing', () => {
     expect(html).toContain('data-levelbogen');
     expect(html).toMatch(/conic-gradient\(from 0deg, color-mix\(in srgb, var\(--haupt\) 67%, transparent\) 0deg, color-mix\(in srgb, var\(--fortschritt\) 59%, var\(--haupt\)\) 180deg/);
     expect(html).toMatch(/data-ringlicht="" [^>]*r="1.25" fill="white" fill-opacity="0.75"/);
+    expect(html).toContain('uppercase');
+    expect(html).not.toContain('data-levelpille');
   });
 
   it('verkleinert die Schrift im kleinen Ring', () => {
@@ -32,6 +34,45 @@ describe('LevelRing', () => {
     expect(weiter).toContain('width:120px');
     expect(weiter).toContain('font-size:13px');
     expect(weiter).toContain('font-size:30px');
+  });
+
+  it('legt die Pille auf die Profilkante und lässt den Block darunter weg', () => {
+    const html = renderToStaticMarkup(createElement(LevelRing, {
+      level: 127,
+      anteil: 0.5,
+      mitte: createElement('span', null, 'Bild'),
+      beschriftung: 'Level 127, 10 von 100 XP',
+    }));
+    expect(html).toContain('data-levelpille=""');
+    expect(html).toContain('aria-hidden="true"');
+    expect(html).toContain('Lvl ');
+    expect(html).toContain('>127<');
+    expect(html).toContain('whitespace-nowrap');
+    expect(html).toContain('max-w-full');
+    expect(html).toContain('border-grund');
+    expect(html).toContain('bg-akzent');
+    expect(html).toContain('text-akzent-text');
+    expect(html).toContain('role="img"');
+    expect(html).toContain('aria-label="Level 127, 10 von 100 XP"');
+    expect(html).toContain('data-levelbogen');
+    expect(html).toContain('levelring-spitze-schein');
+    expect(html).toContain('data-ringspitze=""');
+    expect(html).toContain('data-ringlicht=""');
+    expect(html).toContain('z-20');
+    expect(html.indexOf('data-levelpille')).toBeLessThan(html.indexOf('data-ringspitze'));
+    expect(html).not.toContain('uppercase');
+    expect(html).toContain('h-20');
+    expect(html).toContain('md:h-24');
+    expect(html).not.toContain('width:');
+    const ohneLicht = renderToStaticMarkup(createElement(LevelRing, {
+      level: 1,
+      anteil: 0,
+      mitte: createElement('span', null, 'Bild'),
+      beschriftung: 'Level 1, 0 von 100 XP',
+    }));
+    expect(ohneLicht).toContain('data-levelpille=""');
+    expect(ohneLicht).not.toContain('data-ringspitze');
+    expect(ohneLicht).not.toContain('uppercase');
   });
 
   it('wird mit dem Fortschritt kraeftiger', () => {

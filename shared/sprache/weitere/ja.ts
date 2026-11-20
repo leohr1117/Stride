@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Profil steht das Level als Pille auf der Unterkante des Rings; der eigene Level-Block darunter entfällt. Die XP-Zeile bleibt.": "プロフィールでは、レベルがリングの下端にピルとして表示されます。下にあった別のレベル表示はなくなりました。XPの行はそのままです。",
   "Die Anmeldeseite ist eine durchgehende Karte: Anmelden, Google-Anmeldung und „Noch kein Konto? Konto erstellen“ stehen untereinander, Rechtliches, Impressum und Datenschutz stehen unter der Karte. Auf dem Desktop steht die Karte genau in der Mitte.": "サインインページは1枚の連続したカードになりました。サインイン、Googleでサインイン、「アカウントをお持ちでない方 アカウントを作成」が縦に並び、法的情報、運営者情報、プライバシーはカードの下にあります。デスクトップではカードが中央に配置されます。",
   "Unter Mehr führt eine Seite Rechtliches zu Impressum, Datenschutz, Nutzungsbedingungen, Lizenzen und zum Kontaktformular. Das Formular ist ohne Anmeldung erreichbar.": "その他から法的情報のページを開くと、法的通知、プライバシー、利用規約、ライセンス、問い合わせフォームがあります。フォームはログインなしで使えます。",
   "Du kannst dir selbst ein Konto anlegen und dich mit Google anmelden, wenn der Betreiber das einschaltet. Ohne Google-Angaben bleibt diese Anmeldung aus. Ein schon verknüpftes Google-Konto meldet dich an. Dieselbe E-Mail allein öffnet kein bestehendes Konto.": "運営者が有効にすると、自分でアカウントを作り、Google でログインできます。Google の情報がなければ、このログインはオフのままです。すでに結びついた Google アカウントはそのままログインします。同じメールだけでは、既存のアカウントは開きません。",

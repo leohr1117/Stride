@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.2.3
+
+### Verbessert
+
+- Im Profil steht das Level als Pille auf der Unterkante des Rings; der eigene Level-Block darunter entfällt. Die XP-Zeile bleibt.
+
 ## 4.2.2
 
 ### Verbessert

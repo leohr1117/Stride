@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.2.3',
+    seiten: 'Profil',
+    abschnitte: [
+      {
+        titel: 'Verbessert',
+        punkte: [
+          'Im Profil steht das Level als Pille auf der Unterkante des Rings; der eigene Level-Block darunter entfällt. Die XP-Zeile bleibt.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.2.2',
     seiten: 'Anmeldung',
     abschnitte: [

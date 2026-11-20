@@ -3,6 +3,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, test, type Locator, type Page } from './uhr.ts';
 import { LevelRing } from '../client/src/ui/Anzeige.tsx';
+import { kontrast, MINDEST_KONTRAST } from '../shared/spiel/farben.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 function bild(seite: Page, name: string): Promise<void> {
@@ -129,6 +130,119 @@ async function flaechePasst(page: Page, spektrum: string): Promise<void> {
   })).toEqual({ grund: 'ok' });
 }
 
+async function profilKopfPasst(page: Page): Promise<void> {
+  const kopf = page.locator('[data-profilkopf]');
+  await expect(kopf).toBeVisible();
+  const fenster = page.viewportSize()?.width ?? 0;
+  const erwartet = fenster >= 768 ? 96 : 80;
+  const masse = await kopf.evaluate((element) => {
+    const ring = element.querySelector('[data-levelring]');
+    const pille = element.querySelector('[data-levelpille]');
+    const name = element.querySelector('.kopfblock-name');
+    const spalte = name?.parentElement;
+    const bild = element.querySelector('[data-profilbild]');
+    const spitze = element.querySelector('[data-ringspitze]');
+    if (!(ring instanceof HTMLElement) || !(pille instanceof HTMLElement) || !(name instanceof HTMLElement) || !(spalte instanceof HTMLElement)) {
+      return null;
+    }
+    const ringBox = ring.getBoundingClientRect();
+    const pillBox = pille.getBoundingClientRect();
+    const spalteBox = spalte.getBoundingClientRect();
+    const bildBox = bild instanceof HTMLElement ? bild.getBoundingClientRect() : null;
+    const pillStil = getComputedStyle(pille);
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--grund)';
+    document.body.append(probe);
+    const grund = getComputedStyle(probe).color;
+    probe.remove();
+    const zeilen = [...spalte.querySelectorAll(':scope > p')].filter((knoten) => knoten.getBoundingClientRect().height > 0);
+    const klasse = spalte.querySelector('p.text-leise');
+    const xp = spalte.querySelector('p.zahl');
+    return {
+      ringBreite: Math.round(ringBox.width),
+      ringHoehe: Math.round(ringBox.height),
+      pillHoehe: Math.round(pillBox.height),
+      pillMitteX: pillBox.left + pillBox.width / 2,
+      ringMitteX: ringBox.left + ringBox.width / 2,
+      pillMitteY: pillBox.top + pillBox.height / 2,
+      ringUnten: ringBox.bottom,
+      pillLinks: pillBox.left,
+      pillRechts: pillBox.right,
+      ringLinks: ringBox.left,
+      ringRechts: ringBox.right,
+      spalteMitte: spalteBox.top + spalteBox.height / 2,
+      ringMitteY: ringBox.top + ringBox.height / 2,
+      abstand: Math.round(spalteBox.left - ringBox.right),
+      nameKlasse: name.className,
+      pilleVersteckt: pille.getAttribute('aria-hidden'),
+      pilleText: (pille.textContent ?? '').replace(/\s+/g, ' ').trim(),
+      pilleNowrap: pillStil.whiteSpace,
+      pilleGewicht: pillStil.fontWeight,
+      pilleSchrift: Number.parseFloat(pillStil.fontSize),
+      pilleFarbe: pillStil.color,
+      pilleGrund: pillStil.backgroundColor,
+      pilleRand: pillStil.borderTopWidth,
+      pilleRandFarbe: pillStil.borderTopColor,
+      pilleSchatten: pillStil.boxShadow,
+      pilleFilter: pillStil.filter,
+      grund,
+      label: ring.getAttribute('aria-label') ?? '',
+      grossbuchstaben: element.querySelectorAll('span.uppercase').length,
+      kanten: zeilen.map((knoten) => Math.round(knoten.getBoundingClientRect().left)),
+      bildUnten: bildBox ? bildBox.bottom : null,
+      bildBreite: bildBox ? Math.round(bildBox.width) : null,
+      pillOben: pillBox.top,
+      spitzeZ: spitze instanceof HTMLElement ? getComputedStyle(spitze).zIndex : null,
+      pilleZ: pillStil.zIndex,
+      klasseKlasse: klasse instanceof HTMLElement ? klasse.className : '',
+      xpKlasse: xp instanceof HTMLElement ? xp.className : '',
+      xpText: (xp?.textContent ?? '').replace(/\s+/g, ' ').trim(),
+    };
+  });
+  expect(masse).not.toBeNull();
+  if (!masse) {
+    return;
+  }
+  expect(masse.ringBreite).toBe(erwartet);
+  expect(masse.ringHoehe).toBe(erwartet);
+  expect(masse.grossbuchstaben).toBe(0);
+  expect(masse.pilleText).toMatch(/^Lvl \d+$/);
+  expect(masse.pilleVersteckt).toBe('true');
+  expect(masse.label).toMatch(/^Level \d+, .+ XP$/);
+  expect(masse.pillHoehe).toBe(20);
+  expect(Math.abs(masse.pillMitteX - masse.ringMitteX)).toBeLessThanOrEqual(1);
+  expect(Math.abs(masse.pillMitteY - masse.ringUnten)).toBeLessThanOrEqual(1);
+  expect(masse.pillLinks).toBeGreaterThanOrEqual(masse.ringLinks - 1);
+  expect(masse.pillRechts).toBeLessThanOrEqual(masse.ringRechts + 1);
+  expect(Math.abs(masse.spalteMitte - masse.ringMitteY)).toBeLessThanOrEqual(2);
+  expect(Math.abs(masse.abstand - (erwartet === 80 ? 16 : 20))).toBeLessThanOrEqual(1);
+  expect(masse.nameKlasse).toContain('line-clamp-2');
+  expect(masse.nameKlasse).toContain('text-2xl');
+  expect(masse.pilleNowrap).toBe('nowrap');
+  expect(Number(masse.pilleGewicht)).toBeGreaterThanOrEqual(600);
+  expect(masse.pilleSchrift).toBeGreaterThanOrEqual(12);
+  expect(masse.pilleSchrift).toBeLessThanOrEqual(13);
+  expect(masse.pilleRand).toBe('2px');
+  expect(masse.pilleRandFarbe).toBe(masse.grund);
+  expect(masse.pilleSchatten).toBe('none');
+  expect(masse.pilleFilter).toBe('none');
+  expect(kontrast(masse.pilleFarbe, masse.pilleGrund)).toBeGreaterThanOrEqual(MINDEST_KONTRAST);
+  expect(masse.kanten.length).toBeGreaterThanOrEqual(2);
+  expect(Math.max(...masse.kanten) - Math.min(...masse.kanten)).toBeLessThanOrEqual(1);
+  expect(masse.klasseKlasse).toContain('text-leise');
+  expect(masse.xpKlasse).toContain('text-haupt');
+  expect(masse.xpKlasse).toContain('zahl');
+  expect(masse.xpText).toMatch(/XP/);
+  expect(masse.bildBreite).toBe(erwartet === 80 ? 56 : 64);
+  expect(masse.bildUnten).not.toBeNull();
+  if (masse.bildUnten !== null) {
+    expect(masse.bildUnten).toBeLessThanOrEqual(masse.pillOben + 1);
+  }
+  if (masse.spitzeZ !== null) {
+    expect(Number(masse.spitzeZ)).toBeGreaterThan(Number(masse.pilleZ));
+  }
+}
+
 async function ringPasst(ring: Locator): Promise<void> {
   const passt = await ring.evaluate((element) => {
     const kasten = element.getBoundingClientRect();
@@ -184,11 +298,7 @@ test('Level ohne Bruch, Radare nebeneinander, Hinweis und Ring', async ({ page }
     expect(rechts.rechts).toBeLessThanOrEqual(fenster.width + 1);
   }
   expect(await spektren.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
-  const profilLabel = page.locator('main [data-levelring] span.uppercase');
-  await expect(profilLabel).toBeVisible();
-  expect(await profilLabel.evaluate((element) => getComputedStyle(element).fontSize)).toBe('11px');
-  const profilZahl = page.locator('main [data-levelring] span.zahl');
-  expect(await profilZahl.evaluate((element) => getComputedStyle(element).fontSize)).toBe('26px');
+  await profilKopfPasst(page);
 
   const flaeche = page.locator('[data-spektrum="attribut"] .recharts-radar-polygon').first();
   await flaeche.hover({ force: true });
