@@ -33,6 +33,6 @@ test('Lizenzhinweise verlinken den Quellstand und die Liste', async ({ page }) =
   expect(text).not.toContain('vitest');
   expect(text).not.toContain('playwright');
   expect(text).not.toContain('typescript');
-  expect(text.startsWith(`Open-Source-Komponenten von Stride\nCommit: ${sha}\n`)).toBe(true);
+  expect(text.startsWith(`Open-Source-Komponenten von Wupo\nCommit: ${sha}\n`)).toBe(true);
   await ohneSeitlichenUeberlauf(page);
 });

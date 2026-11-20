@@ -77,7 +77,7 @@ async function alteAngeboteWeg(seite: Page): Promise<void> {
 async function sprachwahlSichtbar(seite: Page, sprache: Sprache): Promise<void> {
   await expect(seite.getByRole('heading', { name: zeige('Sprache', sprache), exact: true })).toBeVisible();
   await expect(seite.getByRole('radio', { name: SPRACH_NAME[sprache], exact: true })).toBeChecked();
-  await expect(seite.getByRole('heading', { name: zeige('Wie heißt du in Stride?', sprache), exact: true })).toHaveCount(0);
+  await expect(seite.getByRole('heading', { name: zeige('Wie heißt du in Wupo?', sprache), exact: true })).toHaveCount(0);
   await auswahlZeilen(seite.getByRole('radiogroup', { name: zeige('Sprache', sprache) }), 'radio', 56, 'rechts', true);
   const breite = seite.viewportSize()?.width ?? 0;
   for (const code of SPRACHEN) {
@@ -145,7 +145,7 @@ test('Weg A legt ein Projekt an und Fertig öffnet Heute', async ({ page }) => {
   aktionen += 1;
   await knopf(page, 'de', 'Weiter').click();
 
-  await expect(page.getByRole('heading', { name: 'Wie heißt du in Stride?', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Wie heißt du in Wupo?', exact: true })).toBeVisible();
   await expect(page.getByText('Halte fest, was du tust. Daraus werden Level und Streak.')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Geburtsjahr', exact: true })).toHaveCount(0);
   await ohneSeitlichenUeberhang(page);
@@ -327,7 +327,7 @@ test.describe('Englisch', () => {
     await page.getByRole('radio', { name: 'English', exact: true }).click();
     await sprachwahlSichtbar(page, 'en');
     await knopf(page, 'en', 'Weiter').click();
-    await expect(page.getByRole('heading', { name: 'What should Stride call you?', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'What should Wupo call you?', exact: true })).toBeVisible();
     await nameWeiter(page, 'en');
     await sportWaehlen(page, 'en');
     await knopf(page, 'en', 'Weiter').click();
@@ -383,7 +383,7 @@ async function wegASprache(seite: Page, sprache: Sprache): Promise<void> {
   await sprachwahlSichtbar(seite, sprache);
   await merkbild(seite, `${sprache}-sprache`);
   await knopf(seite, sprache, 'Weiter').click();
-  await expect(seite.getByRole('heading', { name: zeige('Wie heißt du in Stride?', sprache), exact: true })).toBeVisible();
+  await expect(seite.getByRole('heading', { name: zeige('Wie heißt du in Wupo?', sprache), exact: true })).toBeVisible();
   await ohneSeitlichenUeberhang(seite);
   await merkbild(seite, `${sprache}-name`);
   await nameWeiter(seite, sprache);

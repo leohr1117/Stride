@@ -226,7 +226,7 @@ function Logo() {
   return (
     <span className="flex items-center gap-2 text-lg font-bold tracking-tight">
       <img src="/logo-v2.svg" alt="" className="logo-bild size-7" />
-      Stride
+      Wupo
     </span>
   );
 }

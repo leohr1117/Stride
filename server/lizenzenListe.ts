@@ -188,7 +188,7 @@ function block(eintrag: Eintrag): string {
 export function schreibeLizenzen(wurzel: string, ziel: string): void {
   const eintraege = sammle(wurzel);
   const kopf = [
-    'Open-Source-Komponenten von Stride',
+    'Open-Source-Komponenten von Wupo',
     'Liste der Produktionsabhängigkeiten mit Lizenz und Lizenztext.',
     '',
   ].join('\n');

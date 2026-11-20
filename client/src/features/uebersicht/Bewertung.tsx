@@ -25,7 +25,7 @@ export function BewertungKarte() {
     return null;
   }
 
-  const frage = tx('Wie hilfreich ist Stride gerade?');
+  const frage = tx('Wie hilfreich ist Wupo gerade?');
   const speichern = (eingabe: { wert: number } | { nie: true }) => {
     if (!beginneBewertung(client)) {
       return;

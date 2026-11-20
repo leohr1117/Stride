@@ -96,14 +96,14 @@ export function KontoLoeschen({
               </Liste>
               <p className="text-sm leading-relaxed break-words text-leise">
                 {tx(
-                  'Du bist das einzige Konto. Danach hat diese Stride-Instanz kein Konto mehr; wer sie als Nächstes öffnet, legt ein neues Inhaber-Konto an.',
+                  'Du bist das einzige Konto. Danach hat diese Wupo-Instanz kein Konto mehr; wer sie als Nächstes öffnet, legt ein neues Inhaber-Konto an.',
                 )}
               </p>
             </>
           ) : null}
           {admin ? (
             <p className="text-sm leading-relaxed break-words text-leise">
-              {tx('Danach hat diese Stride-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.')}
+              {tx('Danach hat diese Wupo-Instanz keinen Admin, bis der Betreiber einen neuen festlegt.')}
             </p>
           ) : null}
           <form

@@ -19,7 +19,7 @@ const GOOGLE_MIGRATIONEN = [
   )`,
 ];
 
-export const FREMD = 'Dieses Google-Konto ist schon mit einem anderen Stride-Konto verknüpft.';
+export const FREMD = 'Dieses Google-Konto ist schon mit einem anderen Wupo-Konto verknüpft.';
 export const LOESEN_GESPERRT =
   'Lösen geht erst, wenn das Konto ein Passwort hat. Sonst kommst du nicht mehr hinein.';
 

@@ -288,7 +288,7 @@ function block(eintrag: Eintrag): string {
 }
 
 export function erzeugeLizenztext(eintraege: readonly Eintrag[], commit: string, roboto: Eintrag): string {
-  const kopf = ['Open-Source-Komponenten von Stride', istSha(commit) ? `Commit: ${commit}` : 'Commit: keiner', ''];
+  const kopf = ['Open-Source-Komponenten von Wupo', istSha(commit) ? `Commit: ${commit}` : 'Commit: keiner', ''];
   const inhalt = `${kopf.join('\n')}${[...eintraege, roboto].map(block).join('\n\n')}\n`;
   if (inhalt.includes('<!--')) {
     throw new Error('Lizenzliste enthält einen HTML-Kommentar.');

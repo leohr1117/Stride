@@ -88,7 +88,7 @@ function DatenKarte() {
     try {
       daten = JSON.parse(await datei.text());
     } catch {
-      setLesefehler(new Error(tx("Die Datei ist keine gültige Stride-Sicherung.")));
+      setLesefehler(new Error(tx("Die Datei ist keine gültige Wupo-Sicherung.")));
       return;
     }
     if (

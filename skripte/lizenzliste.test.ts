@@ -89,7 +89,7 @@ describe('lizenzliste', () => {
     expect(text.indexOf('## a-paket@')).toBeLessThan(text.indexOf('## c-paket@'));
     expect(text.indexOf('## c-paket@')).toBeLessThan(text.indexOf('## m-paket@'));
     expect(text.split('## m-paket@').length - 1).toBe(1);
-    expect(text.startsWith(`Open-Source-Komponenten von Stride\nCommit: ${sha}\n`)).toBe(true);
+    expect(text.startsWith(`Open-Source-Komponenten von Wupo\nCommit: ${sha}\n`)).toBe(true);
   });
 
   it('wirft, wenn die Lizenzdatei fehlt', () => {

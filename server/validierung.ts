@@ -554,7 +554,7 @@ export const versionHinweisSchema = z
 const datenWert = z.union([z.string(), z.number(), z.null()]);
 
 export const datenImportSchema = z.object({
-  app: z.literal(SICHERUNG_APP, { error: 'Das ist keine Stride-Sicherung.' }),
+  app: z.literal(SICHERUNG_APP, { error: 'Das ist keine Wupo-Sicherung.' }),
   schemaVersion: z.number().int().min(1),
   exportiertAm: z.string(),
   tabellen: z.record(z.string(), z.array(z.record(z.string(), datenWert))),

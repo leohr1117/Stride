@@ -5,10 +5,10 @@ import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { TEST_PASSWORT, TEST_TEIL_WELT, TEST_URL } from './testdaten.ts';
 
-const HINWEIS = 'Stride als App installieren';
+const HINWEIS = 'Wupo als App installieren';
 const SCHLIESSEN = 'Hinweis ausblenden';
 const FRAGE = 'Benachrichtigungen einschalten?';
-const BEWERTUNG = 'Wie hilfreich ist Stride gerade?';
+const BEWERTUNG = 'Wie hilfreich ist Wupo gerade?';
 const IPHONE =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Version/17.0 Mobile/15E148 Safari/604.1';
 const IPAD =

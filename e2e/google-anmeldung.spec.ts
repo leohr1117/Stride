@@ -5,7 +5,7 @@ import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 const HELL = { primaer: '#141414', akzent: '#707070', hintergrund: '#f2f2f2' };
 const DUNKEL = { primaer: '#f2f2f2', akzent: '#8a8a8a', hintergrund: '#141414' };
 const C =
-  'Dieses Google-Konto ist mit keinem Stride-Konto verknüpft. Melde dich mit Passwort an und verknüpfe es unter Mehr → Konto.';
+  'Dieses Google-Konto ist mit keinem Wupo-Konto verknüpft. Melde dich mit Passwort an und verknüpfe es unter Mehr → Konto.';
 const D = 'Anmeldung mit Google hat nicht geklappt. Versuche es erneut oder melde dich mit Passwort an.';
 
 function rgb(hex: string): string {

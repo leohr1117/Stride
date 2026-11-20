@@ -137,9 +137,9 @@ test('zehnter Eintrag mit bewertung_testen zeigt die Karte, Nicht fragen schlie�
   await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
   await eintraegeLegen(page, 9);
   await tragEin(page);
-  const karte = page.getByRole('region', { name: 'Wie hilfreich ist Stride gerade?' });
+  const karte = page.getByRole('region', { name: 'Wie hilfreich ist Wupo gerade?' });
   await expect(karte).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Willkommen bei Stride' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Willkommen bei Wupo' })).toHaveCount(0);
   await karte.getByRole('button', { name: 'Bewerten', exact: true }).click();
   await expect(karte.getByRole('button', { name: '1', exact: true })).toBeVisible();
   await expect(karte.getByRole('button', { name: 'Nicht fragen', exact: true })).toBeVisible();
@@ -181,13 +181,13 @@ test('ohne bewertung_testen bleibt die Karte aus', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Eintrag loggen' })).toBeVisible();
   await eintraegeLegen(page, 9);
   await tragEin(page);
-  await expect(page.getByRole('region', { name: 'Wie hilfreich ist Stride gerade?' })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'Wie hilfreich ist Wupo gerade?' })).toHaveCount(0);
 });
 
 test('testvoll ohne den Testschlüssel zeigt die Karte nicht', async ({ page }) => {
   await anmelden(page);
   await tragEin(page);
-  await expect(page.getByRole('region', { name: 'Wie hilfreich ist Stride gerade?' })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'Wie hilfreich ist Wupo gerade?' })).toHaveCount(0);
 });
 
 test('Handbuch nennt Schutz und Rückkehr in kurzen Zeilen', async ({ page }) => {

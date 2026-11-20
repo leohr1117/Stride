@@ -53,7 +53,7 @@ test('angelegtes Projekt trägt einen Haken, die Schritte stehen nur hier', asyn
   });
   await page.goto('/');
   await expect(page.locator('main h1')).toHaveText('Heute');
-  await expect(page.getByRole('heading', { name: 'Willkommen bei Stride' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Willkommen bei Wupo' })).toBeVisible();
   const willkommen = karte(page);
   await expect(willkommen).toContainText('Projekt „Test"');
   await expect(willkommen.getByRole('button', { name: 'Ersten Eintrag anlegen' })).toBeVisible();
@@ -80,7 +80,7 @@ test('angelegtes Projekt trägt einen Haken, die Schritte stehen nur hier', asyn
 
   await anlegen(page, { funktionen: { handbuch: false } });
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Willkommen bei Stride' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Willkommen bei Wupo' })).toBeVisible();
   await expect(willkommen).toContainText('Projekt „Test"');
   await ohneSeitlichenUeberlauf(page);
   await bild(page, 'ohne-handbuch');
@@ -164,7 +164,7 @@ test('Einfach zeigt nur den Eintrag, der erste XP nimmt die Karte weg', async ({
   });
   expect(gelegt).toBe(true);
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Willkommen bei Stride' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Willkommen bei Wupo' })).toHaveCount(0);
   await ringUndName(page);
   await ohneSeitlichenUeberlauf(page);
   await bild(page, 'nach-xp');

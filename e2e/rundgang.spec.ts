@@ -437,7 +437,7 @@ test('Einführung fragt die Sprache und dann den Namen', async ({ page }) => {
     await page.getByRole('button', { name: 'Anmelden' }).click();
     await page.getByRole('radio', { name: 'English', exact: true }).click();
     await page.getByRole('button', { name: 'Next', exact: true }).click();
-    await expect(page.getByRole('heading', { name: 'What should Stride call you?' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'What should Wupo call you?' })).toBeVisible();
     await expect(page.getByText('Log what you do. It turns into levels and a streak.')).toBeVisible();
     await expect(page.getByText('Entries show up as levels.')).toHaveCount(0);
   } finally {

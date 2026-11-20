@@ -105,7 +105,7 @@ export function AnmeldeRahmen({
         ) : null}
         <div className="flex items-center gap-2 text-lg font-bold tracking-tight">
           <img src="/logo-v2.svg" alt="" className="size-7" />
-          Stride
+          Wupo
         </div>
         <h1 className="text-2xl leading-8 font-semibold break-words">{tx(titel)}</h1>
         {children}

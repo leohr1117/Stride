@@ -176,7 +176,7 @@ export const PAARE = [
   ['Tausend Stunden', 'A thousand hours'],
   ['Zehntausend Stunden', 'Ten thousand hours'],
   ['Hundert Tage', 'A hundred days'],
-  ['Ein Jahr Stride', 'A year of Stride'],
+  ['Ein Jahr Wupo', 'A year of Wupo'],
   ['Tausend Tage', 'A thousand days'],
   ['Innehalten', 'Pause'],
   ['Reflektiert', 'Reflective'],

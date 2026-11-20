@@ -21,7 +21,7 @@ test('eine Snackbar bei verpassten Versionen, keine beim aktuellen Stand, Punkt 
     await expect(page.getByText('Test Voll').filter({ visible: true })).toBeVisible();
     const hinweis = page.locator('[data-update-hinweis]');
     await expect(hinweis).toHaveCount(1);
-    await expect(hinweis).toContainText('Stride wurde aktualisiert.');
+    await expect(hinweis).toContainText('Wupo wurde aktualisiert.');
     await expect(hinweis).not.toContainText(/\d+\.\d+\.\d+/);
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(page.getByRole('alertdialog')).toHaveCount(0);

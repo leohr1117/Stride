@@ -24,7 +24,7 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   expect(stand.ok()).toBe(true);
   await page.goto('/');
   await expect(page.locator('main h1')).toHaveText('Heute');
-  await expect(page.getByRole('heading', { name: 'Willkommen bei Stride' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Willkommen bei Wupo' })).toHaveCount(0);
   await expect(page.locator('main .space-y-6')).toHaveCount(1);
 
   const ring = page.locator('main [data-levelring]').first();

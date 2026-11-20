@@ -68,7 +68,7 @@ export function UpdateHinweis() {
   }
   return (
     <Toast
-      text="Stride wurde aktualisiert."
+      text="Wupo wurde aktualisiert."
       rolle="status"
       aktionLabel="Neuigkeiten"
       aktion={() => {

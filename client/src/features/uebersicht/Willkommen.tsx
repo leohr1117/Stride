@@ -74,7 +74,7 @@ export function WillkommenKarte({ xp }: { xp: number }) {
   if (!vorlagen || !erfolge || wartetAufZiel || wartetAufFaehigkeit) {
     return (
       <Karte dicht className="overflow-hidden">
-        <h2 className="px-4 py-4 font-semibold">{tx('Willkommen bei Stride')}</h2>
+        <h2 className="px-4 py-4 font-semibold">{tx('Willkommen bei Wupo')}</h2>
       </Karte>
     );
   }
@@ -113,8 +113,8 @@ export function WillkommenKarte({ xp }: { xp: number }) {
   };
 
   return (
-    <Karte dicht className="overflow-hidden" label={tx('Willkommen bei Stride')}>
-      <h2 className="px-4 pt-4 font-semibold">{tx('Willkommen bei Stride')}</h2>
+    <Karte dicht className="overflow-hidden" label={tx('Willkommen bei Wupo')}>
+      <h2 className="px-4 pt-4 font-semibold">{tx('Willkommen bei Wupo')}</h2>
       <div className="liste">
         {zeilen.map((zeile) => {
           const erledigt = zeile.erledigt;

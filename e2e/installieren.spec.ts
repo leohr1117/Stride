@@ -4,7 +4,7 @@ import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 import { TEST_URL } from './testdaten.ts';
 
 const BANNER = 'Als App installieren';
-const HINWEIS = 'Stride als App installieren';
+const HINWEIS = 'Wupo als App installieren';
 const SCHLIESSEN = 'Hinweis ausblenden';
 const HINWEIS_IOS = 'Teilen → Zum Home-Bildschirm.';
 const IPHONE =

@@ -98,7 +98,7 @@ export function InstallBanner() {
     return null;
   }
 
-  const text = tx('Stride als App installieren');
+  const text = tx('Wupo als App installieren');
   const weglegen = () => {
     wegklickenInstallHinweis();
     setWeg(true);

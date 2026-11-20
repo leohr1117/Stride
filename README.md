@@ -1,8 +1,8 @@
-# Stride
+# Wupo
 
-Stride ist eine Web-App, die den eigenen Alltag wie ein Rollenspiel führt: Du trägst ein, was du getan hast, bekommst dafür Erfahrungspunkte und steigst mit deinen Zielen und Fähigkeiten im Level auf.
+Wupo ist eine Web-App, die den eigenen Alltag wie ein Rollenspiel führt: Du trägst ein, was du getan hast, bekommst dafür Erfahrungspunkte und steigst mit deinen Zielen und Fähigkeiten im Level auf.
 
-![Ziele in Stride](docs/desktop-ziele.png)
+![Ziele in Wupo](docs/desktop-ziele.png)
 
 ## Funktionen
 
@@ -19,7 +19,7 @@ Stride ist eine Web-App, die den eigenen Alltag wie ein Rollenspiel führt: Du t
 - **Benachrichtigungen:** Web-Push, wenn der Streak in Gefahr ist, ein Boss ansteht oder eine Rückkehr möglich ist, mit Ruhezeit.
 - **Anpassen:** Bereiche lassen sich einzeln abschalten. Ansichten, Farbpaletten und eigene Farben. Erfolge, Titel und die Hinweise auf Heute lassen sich ausblenden; die Hinweise gelten nur für dieses Gerät.
 - **Rechtliches:** Impressum, Datenschutzerklärung, Nutzungsbedingungen und Lizenzhinweise sind ohne Anmeldung erreichbar, von der Anmeldeseite und unter Mehr.
-- **Sonstiges:** Installierbar als PWA, mit einem Hinweis auf Heute nach der Anmeldung und einem Eintrag unter den Einstellungen. Sieben Sprachen (Deutsch, Englisch, Spanisch, Französisch, Japanisch, Russisch, Chinesisch). Ohne gewählte Sprache gilt die des Geräts, sonst Englisch. Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter. Export und Import der Daten, mehrere Konten, auf Wunsch mit Selbst-Registrierung (nur nach Bestätigung der Nutzungsbedingungen, des Datenschutzes und des Mindestalters 16) oder Anmeldung über Google, Anmeldung mit Passwortmanagern, Handbuch in der App. Zu viele Anfragen in kurzer Zeit werden gebremst, die Registrierung zusätzlich je Adresse. Stride schickt jetzt zusätzliche Sicherheitsangaben an den Browser. `GET /api/gesundheit` nennt ohne Anmeldung nur die laufende Version, etwa für eine Erreichbarkeitsprüfung, und zählt nicht zur Anfragegrenze. Ein Tagesprotokoll kann in einem eigenen Ordner liegen; Dateien werden nach 14 Tagen gelöscht.
+- **Sonstiges:** Installierbar als PWA, mit einem Hinweis auf Heute nach der Anmeldung und einem Eintrag unter den Einstellungen. Sieben Sprachen (Deutsch, Englisch, Spanisch, Französisch, Japanisch, Russisch, Chinesisch). Ohne gewählte Sprache gilt die des Geräts, sonst Englisch. Eine früher im Browser gemerkte Sprache, Ansicht oder ein zugeklappter Bereich gilt weiter. Export und Import der Daten, mehrere Konten, auf Wunsch mit Selbst-Registrierung (nur nach Bestätigung der Nutzungsbedingungen, des Datenschutzes und des Mindestalters 16) oder Anmeldung über Google, Anmeldung mit Passwortmanagern, Handbuch in der App. Zu viele Anfragen in kurzer Zeit werden gebremst, die Registrierung zusätzlich je Adresse. Wupo schickt jetzt zusätzliche Sicherheitsangaben an den Browser. `GET /api/gesundheit` nennt ohne Anmeldung nur die laufende Version, etwa für eine Erreichbarkeitsprüfung, und zählt nicht zur Anfragegrenze. Ein Tagesprotokoll kann in einem eigenen Ordner liegen; Dateien werden nach 14 Tagen gelöscht.
 
 Änderungen je Version stehen in [CHANGELOG.md](CHANGELOG.md).
 
@@ -90,4 +90,4 @@ GNU Affero General Public License v3.0, siehe [LICENSE](LICENSE).
 
 ## Autor
 
-Stride von leohr: Leonardo Hramzow, [leohr.de](https://leohr.de), [GitHub](https://github.com/leohr1117)
+Wupo von leohr: Leonardo Hramzow, [leohr.de](https://leohr.de), [GitHub](https://github.com/leohr1117)

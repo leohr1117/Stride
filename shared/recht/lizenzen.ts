@@ -1,15 +1,15 @@
 import type { RechtBlock } from './arten.ts';
 
 export const LIZENZEN: readonly RechtBlock[] = [
-  { art: 'h', text: 'Stride' },
+  { art: 'h', text: 'Wupo' },
   { art: 'p', text: 'Copyright © 2026 Leonardo Hramzow' },
   {
     art: 'p',
-    text: 'Stride ist freie Software: Du kannst es unter den Bedingungen der GNU Affero General Public License, Version 3, wie von der Free Software Foundation veröffentlicht, weitergeben und/oder verändern.',
+    text: 'Wupo ist freie Software: Du kannst es unter den Bedingungen der GNU Affero General Public License, Version 3, wie von der Free Software Foundation veröffentlicht, weitergeben und/oder verändern.',
   },
   {
     art: 'p',
-    text: 'Stride wird in der Hoffnung verbreitet, dass es nützlich ist, aber OHNE JEDE GEWÄHRLEISTUNG, sogar ohne die implizite Gewährleistung der MARKTREIFE oder der EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Einzelheiten stehen in der GNU Affero General Public License.',
+    text: 'Wupo wird in der Hoffnung verbreitet, dass es nützlich ist, aber OHNE JEDE GEWÄHRLEISTUNG, sogar ohne die implizite Gewährleistung der MARKTREIFE oder der EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Einzelheiten stehen in der GNU Affero General Public License.',
   },
   {
     art: 'liste',
@@ -21,12 +21,12 @@ export const LIZENZEN: readonly RechtBlock[] = [
   { art: 'h', text: 'Verwendete Open-Source-Komponenten' },
   {
     art: 'p',
-    text: 'Stride verwendet Open-Source-Bibliotheken anderer Autorinnen und Autoren. Die vollständige Liste mit Lizenzen und Copyright-Hinweisen findest du hier: [Liste der Open-Source-Komponenten](/lizenzen.txt).',
+    text: 'Wupo verwendet Open-Source-Bibliotheken anderer Autorinnen und Autoren. Die vollständige Liste mit Lizenzen und Copyright-Hinweisen findest du hier: [Liste der Open-Source-Komponenten](/lizenzen.txt).',
   },
   { art: 'h', text: 'Schriften' },
   {
     art: 'p',
-    text: 'Stride liefert diese Schriften selbst aus. Sie stehen unter der SIL Open Font License 1.1. Der vollständige Lizenztext steht in der Liste der Open-Source-Komponenten.',
+    text: 'Wupo liefert diese Schriften selbst aus. Sie stehen unter der SIL Open Font License 1.1. Der vollständige Lizenztext steht in der Liste der Open-Source-Komponenten.',
   },
   {
     art: 'liste',
@@ -38,7 +38,7 @@ export const LIZENZEN: readonly RechtBlock[] = [
   },
   {
     art: 'p',
-    text: 'Für Chinesisch und Japanisch verwendet Stride Schriften des Geräts und liefert keine eigene Schriftdatei aus.',
+    text: 'Für Chinesisch und Japanisch verwendet Wupo Schriften des Geräts und liefert keine eigene Schriftdatei aus.',
   },
   { art: 'h', text: 'Icons' },
   {

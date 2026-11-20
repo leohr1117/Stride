@@ -17,11 +17,11 @@ export const IMPRESSUM: readonly RechtBlock[] = [
   { art: 'h', text: 'Haftung für Links' },
   {
     art: 'p',
-    text: 'Stride enthält Links zu externen Websites Dritter (zum Beispiel Quellen zu Vorbildern), auf deren Inhalte ich keinen Einfluss habe. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entferne ich derartige Links umgehend.',
+    text: 'Wupo enthält Links zu externen Websites Dritter (zum Beispiel Quellen zu Vorbildern), auf deren Inhalte ich keinen Einfluss habe. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entferne ich derartige Links umgehend.',
   },
   { art: 'h', text: 'Quellcode' },
   {
     art: 'p',
-    text: 'Stride ist freie Software unter der GNU Affero General Public License 3.0. Den Quellcode findest du unter [https://github.com/leohr1117/Stride](https://github.com/leohr1117/Stride). Details stehen in den [Lizenzhinweisen](/lizenzhinweise).',
+    text: 'Wupo ist freie Software unter der GNU Affero General Public License 3.0. Den Quellcode findest du unter [https://github.com/leohr1117/Stride](https://github.com/leohr1117/Stride). Details stehen in den [Lizenzhinweisen](/lizenzhinweise).',
   },
 ];

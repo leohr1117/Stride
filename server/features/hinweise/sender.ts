@@ -95,7 +95,7 @@ function textFuer(anlass: HinweisAnlass, sprache: Sprache): string {
 }
 
 function nutzlast(anlass: HinweisAnlass, sprache: Sprache): PushNutzlast {
-  return { title: 'Stride', body: textFuer(anlass, sprache), data: { ziel: anlass.ziel } };
+  return { title: 'Wupo', body: textFuer(anlass, sprache), data: { ziel: anlass.ziel } };
 }
 
 function meldung(httpStatus: number | null, aboId: number): string {

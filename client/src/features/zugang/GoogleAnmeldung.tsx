@@ -3,10 +3,10 @@ import { tx } from '../../text.ts';
 import './roboto.css';
 
 const HINWEIS: Record<string, string> = {
-  c: 'Dieses Google-Konto ist mit keinem Stride-Konto verknüpft. Melde dich mit Passwort an und verknüpfe es unter Mehr → Konto.',
+  c: 'Dieses Google-Konto ist mit keinem Wupo-Konto verknüpft. Melde dich mit Passwort an und verknüpfe es unter Mehr → Konto.',
   d: 'Anmeldung mit Google hat nicht geklappt. Versuche es erneut oder melde dich mit Passwort an.',
   abbruch: 'Anmeldung mit Google abgebrochen.',
-  fremd: 'Dieses Google-Konto ist schon mit einem anderen Stride-Konto verknüpft.',
+  fremd: 'Dieses Google-Konto ist schon mit einem anderen Wupo-Konto verknüpft.',
 };
 
 type Merker = { art: 'offen' } | { art: 'code'; wert: string } | { art: 'weg' };

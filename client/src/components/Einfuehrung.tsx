@@ -320,7 +320,7 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
       </div>
     );
   } else if (schritt === 'profilname') {
-    titel = 'Wie heißt du in Stride?';
+    titel = 'Wie heißt du in Wupo?';
     untertitel = 'Halte fest, was du tust. Daraus werden Level und Streak.';
     inhalt = (
       <div data-schritt-inhalt="">
@@ -477,7 +477,7 @@ export function EinfuehrungAblauf({ onHalten, onLos }: { onHalten: () => void; o
         {schritt === 'sprache' ? (
           <div className="flex items-center gap-2 text-lg font-semibold tracking-tight">
             <img src="/logo-v2.svg" alt="" className="size-7" />
-            Stride
+            Wupo
           </div>
         ) : null}
         <h1 className="text-2xl leading-8 font-semibold break-words">{tx(titel)}</h1>
