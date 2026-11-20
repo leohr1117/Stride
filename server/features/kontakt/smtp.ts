@@ -1,4 +1,5 @@
 import { createTransport, type SendMailOptions } from 'nodemailer';
+import { gueltigeAppAdresse } from '../../../shared/appAdresse.ts';
 import { KONTAKT_BETREFF, KONTAKT_EMPFAENGER } from '../../../shared/kontakt.ts';
 import { strideVariable } from '../../umgebung.ts';
 
@@ -61,9 +62,21 @@ export function kontaktText(name: string, email: string, nachricht: string): str
   return `Name: ${zeile.length > 0 ? zeile : '—'}\nE-Mail: ${email}\n\n${nachricht}`;
 }
 
-export function briefOptionen(brief: KontaktBrief, zugang: SmtpZugang): SendMailOptions {
+export function mailAbsender(benutzer: string, appRoh: string | undefined): string {
+  const adresse = gueltigeAppAdresse(appRoh);
+  if (!adresse) {
+    return benutzer;
+  }
+  const trenn = benutzer.indexOf('@');
+  if (trenn < 1 || trenn !== benutzer.lastIndexOf('@') || trenn === benutzer.length - 1) {
+    return benutzer;
+  }
+  return `${benutzer.slice(0, trenn)}@${new URL(adresse).hostname}`;
+}
+
+export function briefOptionen(brief: KontaktBrief, zugang: SmtpZugang, appRoh?: string): SendMailOptions {
   return {
-    from: zugang.benutzer,
+    from: mailAbsender(zugang.benutzer, appRoh),
     to: KONTAKT_EMPFAENGER,
     replyTo: antwortAdresse(brief.name, brief.email),
     subject: KONTAKT_BETREFF,
@@ -76,7 +89,7 @@ export async function sendeBrief(
   zugang: SmtpZugang,
   env: NodeJS.ProcessEnv = process.env,
 ): Promise<unknown> {
-  const mail = briefOptionen(brief, zugang);
+  const mail = briefOptionen(brief, zugang, strideVariable('APP_URL', env));
   if (env.STRIDE_TEST === '1') {
     const transport = createTransport({ jsonTransport: true });
     try {

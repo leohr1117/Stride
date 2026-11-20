@@ -1,12 +1,17 @@
 import type { RechtBlock, RechtId } from './arten.ts';
-import { DATENSCHUTZ } from './datenschutz.ts';
+import { APP_ADRESSE_STANDARD } from '../appAdresse.ts';
+import { datenschutz } from './datenschutz.ts';
 import { IMPRESSUM } from './impressum.ts';
 import { LIZENZEN } from './lizenzen.ts';
-import { NUTZUNG } from './nutzung.ts';
+import { nutzung } from './nutzung.ts';
 
-export const RECHT_DOKUMENTE: Record<RechtId, readonly RechtBlock[]> = {
-  impressum: IMPRESSUM,
-  datenschutz: DATENSCHUTZ,
-  nutzung: NUTZUNG,
-  lizenzen: LIZENZEN,
-};
+export function rechtDokumente(adresse: string = APP_ADRESSE_STANDARD): Record<RechtId, readonly RechtBlock[]> {
+  return {
+    impressum: IMPRESSUM,
+    datenschutz: datenschutz(adresse),
+    nutzung: nutzung(adresse),
+    lizenzen: LIZENZEN,
+  };
+}
+
+export const RECHT_DOKUMENTE: Record<RechtId, readonly RechtBlock[]> = rechtDokumente();

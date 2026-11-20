@@ -60,6 +60,7 @@ Die Daten liegen in `data/` (`app.db` und `zugang.db`). Liegt `app.db` schon vor
 | Variable | Zweck |
 |---|---|
 | `PORT` | Port des Servers, Standard 3000 |
+| `STRIDE_APP_URL` | Öffentliche https-Adresse der App, ohne Pfad. Ohne sie gilt für die Rechtstexte `https://stride.leohr.de`. Die OAuth-Weiterleitung folgt dann dem aufgerufenen Host, `VAPID_SUBJECT` bleibt nötig und der Mail-Absender ist das Postfach. Ist sie gesetzt, nutzen die OAuth-Weiterleitung, ein fehlender VAPID-Betreff und die Domain des Mail-Absenders diese Adresse. `ASCEND_APP_URL` wird weiter gelesen. |
 | `STRIDE_DB_PFAD` | Pfad der Datenbank, Standard `data/app.db`. Dieser Name gilt vor dem alten Namen `DB_PFAD`. |
 | `STRIDE_ZUGANG_PFAD` | Pfad der Zugangsdatenbank, Standard `data/zugang.db`. Dieser Name gilt vor dem alten Namen `ZUGANG_PFAD`. |
 | `LOG_LEVEL` | Log-Stufe, Standard `warn` |
@@ -74,11 +75,11 @@ Die Daten liegen in `data/` (`app.db` und `zugang.db`). Liegt `app.db` schon vor
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Schlüssel für Web-Push |
 | `STRIDE_SMTP_HOST` | SMTP-Server für das Kontaktformular. Ohne Host, Port, Postfach und Passwort ist das Formular nicht verfügbar. `ASCEND_SMTP_HOST` wird weiter gelesen. |
 | `STRIDE_SMTP_PORT` | Port dieses SMTP-Servers. |
-| `STRIDE_SMTP_BENUTZER` | Postfach, das die Nachricht sendet. Empfänger ist fest `kontakt@leohr.de`. Die Adresse des Besuchers wird nur als Antwortadresse gesetzt. |
+| `STRIDE_SMTP_BENUTZER` | Postfach, das die Nachricht sendet und sich am SMTP-Server anmeldet. Empfänger ist fest `kontakt@leohr.de`. Die Adresse des Besuchers wird nur als Antwortadresse gesetzt. Ist `STRIDE_APP_URL` gesetzt, trägt der Absender dieselbe lokale Adresse an der Domain der App-URL. |
 | `STRIDE_SMTP_PASSWORT` | Passwort dieses Postfachs. Der Betreiber setzt es als Umgebungsvariable. |
 | `STRIDE_TEST` | Nur für Tests: `1` schaltet den Testmodus ein (alter Name `ASCEND_TEST`). Dann setzt `POST /api/test/heute` mit `{ datum }` die Spieluhr des Servers (Kette, Einträge, Verfall, Bosse, Buchungen, Kalender- und Todoist-Zuordnung). Sitzungen und Sperren bleiben echte Zeit. Der Server warnt beim Start. `datum: null` stellt die echte Uhr wieder her. |
 
-In der Google Cloud Console muss die Weiterleitungs-URI `https://<host>/api/zugang/google/zurueck` eingetragen sein. Ohne den Wert `1` bei `STRIDE_GOOGLE` und ohne Client-ID und Secret bleibt die Anmeldung über Google aus. Ob neue Konten möglich sind, folgt nur `STRIDE_REGISTRIERUNG`.
+In der Google Cloud Console muss die Weiterleitungs-URI `https://<host>/api/zugang/google/zurueck` eingetragen sein. Ohne `STRIDE_APP_URL` ist `<host>` der aufgerufene Host. Mit gesetzter Variable ist es der Host dieser Adresse. Ohne den Wert `1` bei `STRIDE_GOOGLE` und ohne Client-ID und Secret bleibt die Anmeldung über Google aus. Ob neue Konten möglich sind, folgt nur `STRIDE_REGISTRIERUNG`.
 
 Eine Vorlage mit allen Variablen steht in `.env.example`. Die Werte werden als Umgebungsvariablen gesetzt, zum Beispiel mit `node --env-file=.env`.
 

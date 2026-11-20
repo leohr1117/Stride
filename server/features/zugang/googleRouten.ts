@@ -1,5 +1,7 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { oauthWeiterleitung } from '../../appAdresse.ts';
 import { AppFehler, ungueltig } from '../../fehler.ts';
+import { strideVariable } from '../../umgebung.ts';
 import { verbindungIstSicher, leseSitzungsToken, sitzungsCookie } from './routen.ts';
 import { beginneGoogle, googleAktiv, googleSchluessel, loeseGoogle, LOESEN_GESPERRT } from './google.ts';
 import { schliesseGoogle } from './googleSchluss.ts';
@@ -16,11 +18,7 @@ function sicher(anfrage: FastifyRequest): boolean {
 function weiterleitung(anfrage: FastifyRequest): string {
   const roh = anfrage.headers.host;
   const host = (Array.isArray(roh) ? roh[0] : roh)?.split(',')[0]?.trim() ?? '';
-  if (!host || host.includes('/') || host.includes(' ')) {
-    throw ungueltig('Ungültige Eingabe.');
-  }
-  const proto = sicher(anfrage) ? 'https' : 'http';
-  return `${proto}://${host}/api/zugang/google/zurueck`;
+  return oauthWeiterleitung(host, sicher(anfrage), strideVariable('APP_URL'));
 }
 
 function suchParameter(query: unknown): URLSearchParams {

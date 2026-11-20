@@ -1,12 +1,15 @@
 import type { RechtBlock } from './arten.ts';
+import { APP_ADRESSE_STANDARD, appAdresse, appHost } from '../appAdresse.ts';
 
-export const NUTZUNG: readonly RechtBlock[] = [
+export function nutzung(adresse: string = APP_ADRESSE_STANDARD): readonly RechtBlock[] {
+  const host = appHost(appAdresse(adresse));
+  return [
   { art: 'h', text: 'Nutzungsbedingungen (Deutsch)' },
   { art: 'p', text: 'Stand: 18. November 2026' },
   { art: 'h', text: '1. Geltungsbereich und Betreiber' },
   {
     art: 'p',
-    text: 'Diese Bedingungen gelten für die Nutzung der Web-App Wupo unter stride.leohr.de. Betreiber ist Leonardo Hramzow als Privatperson in Deutschland (Kontaktangaben im [Impressum](/impressum) von Wupo, E-Mail [kontakt@leohr.de](mailto:kontakt@leohr.de)). Mit der Registrierung erklärst du dich mit diesen Bedingungen einverstanden.',
+    text: `Diese Bedingungen gelten für die Nutzung der Web-App Wupo unter ${host}. Betreiber ist Leonardo Hramzow als Privatperson in Deutschland (Kontaktangaben im [Impressum](/impressum) von Wupo, E-Mail [kontakt@leohr.de](mailto:kontakt@leohr.de)). Mit der Registrierung erklärst du dich mit diesen Bedingungen einverstanden.`,
   },
   { art: 'h', text: '2. Was Wupo ist' },
   {
@@ -25,7 +28,7 @@ export const NUTZUNG: readonly RechtBlock[] = [
   },
   {
     art: 'p',
-    text: 'Diese Bedingungen gelten nur für die von mir betriebene Instanz unter stride.leohr.de. Wer Wupo selbst betreibt, ist für seine Instanz, ihre Nutzer und deren Daten selbst verantwortlich und braucht eigene Rechtstexte.',
+    text: `Diese Bedingungen gelten nur für die von mir betriebene Instanz unter ${host}. Wer Wupo selbst betreibt, ist für seine Instanz, ihre Nutzer und deren Daten selbst verantwortlich und braucht eigene Rechtstexte.`,
   },
   { art: 'h', text: '5. Dein Konto' },
   {
@@ -99,7 +102,7 @@ export const NUTZUNG: readonly RechtBlock[] = [
   { art: 'h', text: '1. Scope and operator' },
   {
     art: 'p',
-    text: 'These terms apply to the use of the web app Wupo at stride.leohr.de. Wupo is operated by Leonardo Hramzow, a private individual in Germany (contact details in Wupo\'s [legal notice](/impressum), email [kontakt@leohr.de](mailto:kontakt@leohr.de)). By registering, you agree to these terms.',
+    text: `These terms apply to the use of the web app Wupo at ${host}. Wupo is operated by Leonardo Hramzow, a private individual in Germany (contact details in Wupo's [legal notice](/impressum), email [kontakt@leohr.de](mailto:kontakt@leohr.de)). By registering, you agree to these terms.`,
   },
   { art: 'h', text: '2. What Wupo is' },
   {
@@ -118,7 +121,7 @@ export const NUTZUNG: readonly RechtBlock[] = [
   },
   {
     art: 'p',
-    text: 'These terms only apply to the instance I operate at stride.leohr.de. Anyone who runs Wupo themselves is responsible for their own instance, its users and their data, and needs their own legal texts.',
+    text: `These terms only apply to the instance I operate at ${host}. Anyone who runs Wupo themselves is responsible for their own instance, its users and their data, and needs their own legal texts.`,
   },
   { art: 'h', text: '5. Your account' },
   {
@@ -187,4 +190,7 @@ export const NUTZUNG: readonly RechtBlock[] = [
   },
   { art: 'p', text: 'These terms are available in German and English. In case of discrepancies, the German version prevails.' },
   { art: 'p', text: 'If any provision is invalid, the remaining provisions remain valid.' },
-];
+  ];
+}
+
+export const NUTZUNG: readonly RechtBlock[] = nutzung();

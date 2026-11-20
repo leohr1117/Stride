@@ -1,12 +1,15 @@
 import type { RechtBlock } from './arten.ts';
+import { APP_ADRESSE_STANDARD, appAdresse, appHost } from '../appAdresse.ts';
 
 const STAND = 'Stand: 18. November 2026';
 
-export const DATENSCHUTZ: readonly RechtBlock[] = [
+export function datenschutz(adresse: string = APP_ADRESSE_STANDARD): readonly RechtBlock[] {
+  const host = appHost(appAdresse(adresse));
+  return [
   { art: 'h', text: '1. Verantwortlicher' },
   {
     art: 'p',
-    text: 'Verantwortlich für die Datenverarbeitung in Wupo (stride.leohr.de) ist Leonardo Hramzow, erreichbar unter den Angaben im [Impressum](/impressum) und per E-Mail an [kontakt@leohr.de](mailto:kontakt@leohr.de).',
+    text: `Verantwortlich für die Datenverarbeitung in Wupo (${host}) ist Leonardo Hramzow, erreichbar unter den Angaben im [Impressum](/impressum) und per E-Mail an [kontakt@leohr.de](mailto:kontakt@leohr.de).`,
   },
   { art: 'h', text: '2. Wo Wupo läuft' },
   {
@@ -95,4 +98,7 @@ export const DATENSCHUTZ: readonly RechtBlock[] = [
     text: 'Du hast das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch gegen Verarbeitungen auf Grundlage berechtigter Interessen (Art. 21). Eine erteilte Einwilligung kannst du jederzeit mit Wirkung für die Zukunft widerrufen (Art. 7 Abs. 3). Schreib mir dazu einfach an [kontakt@leohr.de](mailto:kontakt@leohr.de). Außerdem kannst du dich bei einer Datenschutz-Aufsichtsbehörde beschweren (Art. 77 DSGVO), zum Beispiel beim Thüringer Landesbeauftragten für den Datenschutz und die Informationsfreiheit.',
   },
   { art: 'p', text: STAND },
-];
+  ];
+}
+
+export const DATENSCHUTZ: readonly RechtBlock[] = datenschutz();

@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { istTestlauf, verweigereEchteDatenbank } from './testpfad.ts';
+import { gueltigeAppAdresse } from '../shared/appAdresse.ts';
 import { pfadVariable, strideVariable } from './umgebung.ts';
 
 const PROJEKT_WURZEL = path.resolve(import.meta.dirname, '..');
@@ -117,12 +118,14 @@ function betreffGueltig(wert: string): boolean {
 /**
  * Liest VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY und VAPID_SUBJECT.
  * Der private Schlüssel liegt nicht an KONFIG, damit ein Log der Konfiguration ihn nicht mitnimmt.
- * Fehlt ein Wert oder ist der Betreff kein mailto: und kein https:, ist das Ergebnis null.
+ * Fehlt ein Schlüssel, ist das Ergebnis null. Fehlt der Betreff, gilt eine gesetzte App-Adresse, sonst ebenfalls null.
+ * Ist der Betreff gesetzt, aber kein mailto: und kein https:, ist das Ergebnis null.
  */
 export function leseVapid(env: NodeJS.ProcessEnv = process.env): VapidZumSenden | null {
   const oeffentlich = vapidRoh(env, 'VAPID_PUBLIC_KEY');
   const privat = vapidRoh(env, 'VAPID_PRIVATE_KEY');
-  const betreff = vapidRoh(env, 'VAPID_SUBJECT');
+  const rohBetreff = vapidRoh(env, 'VAPID_SUBJECT');
+  const betreff = rohBetreff ?? gueltigeAppAdresse(strideVariable('APP_URL', env));
   if (oeffentlich === null || privat === null || betreff === null || !betreffGueltig(betreff)) {
     return null;
   }

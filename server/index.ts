@@ -3,6 +3,7 @@ import fastifyStatic from '@fastify/static';
 import Fastify, { type FastifyError } from 'fastify';
 import { ZodError } from 'zod';
 import { aktiviereAnfrageSprache } from './anfrageSprache.ts';
+import { registriereAppAdresse } from './appAdresse.ts';
 import { KONFIG, stelleLiveClientBereit } from './config.ts';
 import { mitWelt, schliesseDatenbank } from './db.ts';
 import { registriereAnfrageGrenze } from './anfrageGrenze.ts';
@@ -46,6 +47,7 @@ setzeZugangsWarnung((text) => {
 });
 
 registriereSicherheitsKoepfe(app);
+registriereAppAdresse(app, KONFIG.clientPfad);
 
 app.setErrorHandler((fehler: FastifyError | Error, anfrage, antwort) => {
   if (fehler instanceof ZodError) {

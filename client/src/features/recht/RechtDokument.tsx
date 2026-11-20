@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
 import type { RechtBlock, RechtId } from '../../../../shared/recht/arten.ts';
-import { RECHT_DOKUMENTE } from '../../../../shared/recht/dokumente.ts';
+import { rechtDokumente } from '../../../../shared/recht/dokumente.ts';
 import { quellcodeAdresse } from '../../bauStand.ts';
 import { tx } from '../../text.ts';
 import { useSprache } from '../../sprache.tsx';
+import { liesAppAdresse } from './liesAppAdresse.ts';
 
 const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;
 
@@ -84,10 +85,11 @@ function Block({ block }: { block: RechtBlock }) {
 
 export function RechtDokument({ id }: { id: RechtId }) {
   const { sprache } = useSprache();
+  const dokumente = rechtDokumente(liesAppAdresse());
   return (
     <article data-recht="" className="max-w-[65ch] space-y-3 text-sm leading-6 break-words">
       {sprache !== 'de' ? <p className="text-leise">{tx('Maßgeblich ist die deutsche Fassung.')}</p> : null}
-      {RECHT_DOKUMENTE[id].map((block, index) => (
+      {dokumente[id].map((block, index) => (
         <Block key={index} block={block} />
       ))}
     </article>
