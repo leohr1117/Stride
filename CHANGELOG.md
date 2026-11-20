@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.2.4
+
+### Behoben
+
+- Unter Statistik zeigen Tätigkeiten die XP ihrer eigenen Einträge. Tätigkeiten ohne Projekt stehen nicht mehr mit Stunden bei 0 XP.
+
 ## 4.2.3
 
 ### Verbessert

@@ -93,6 +93,7 @@ export interface BalkenWert {
   wert: number;
   text: string;
   farbe?: string;
+  zeigeBalken?: boolean;
 }
 
 const BALKEN_SICHTBAR = 6;
@@ -128,12 +129,14 @@ export function BalkenListe({
               {eintrag.text}
             </span>
           </div>
-          <Fortschrittsbalken
-            anteil={eintrag.wert > 0 && maximum > 0 ? eintrag.wert / maximum : 0}
-            farbe={eintrag.farbe ?? farbe}
-            hoehe={liste ? 'h-1.5' : undefined}
-            bewegt={false}
-          />
+          {eintrag.zeigeBalken !== false && (
+            <Fortschrittsbalken
+              anteil={eintrag.wert > 0 && maximum > 0 ? eintrag.wert / maximum : 0}
+              farbe={eintrag.farbe ?? farbe}
+              hoehe={liste ? 'h-1.5' : undefined}
+              bewegt={false}
+            />
+          )}
         </div>
       )}
     />

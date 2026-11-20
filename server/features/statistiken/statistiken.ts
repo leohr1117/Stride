@@ -92,12 +92,19 @@ export function ladeStatistiken(zeitraum: Zeitraum, jetzt = leseJetzt()): Statis
   ).map((zeile) => zeile.tag);
 
   const vorlagen = alle<Statistiken['vorlagen'][number]>(
-    `SELECT vl.id, vl.name, vl.icon, COALESCE(SUM(px.xp), 0) AS xp, COALESCE(SUM(e.stunden), 0) AS stunden
+    `SELECT vl.id, vl.name, vl.icon, COALESCE(xp.xp, 0) AS xp, COALESCE(SUM(e.stunden), 0) AS stunden
      FROM eintraege e
      JOIN vorlagen vl ON vl.id = e.vorlage_id
-     LEFT JOIN projekt_xp px ON px.eintrag_id = e.id AND px.quelle = 'eintrag'
+     LEFT JOIN (
+       SELECT e2.vorlage_id, SUM(xe.xp) AS xp
+       FROM eintraege e2
+       JOIN xp_ereignisse xe ON xe.eintrag_id = e2.id AND xe.quelle = 'eintrag'
+       WHERE e2.nur_abzug = 0 AND e2.erstellt_am >= ?
+       GROUP BY e2.vorlage_id
+     ) xp ON xp.vorlage_id = vl.id
      WHERE e.nur_abzug = 0 AND e.erstellt_am >= ?
      GROUP BY vl.id ORDER BY xp DESC`,
+    seit,
     seit,
   );
   const projekte = alle<Statistiken['projekte'][number]>(

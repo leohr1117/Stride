@@ -119,6 +119,7 @@ export function StatistikenSeite() {
                         ),
                         wert: vorlage.xp,
                         text: `${zahl(vorlage.xp)} XP${vorlage.stunden > 0 ? ` · ${stunden(vorlage.stunden)}` : ''}`,
+                        zeigeBalken: vorlage.xp > 0 || vorlage.stunden <= 0,
                       }))}
                     />
                   </div>

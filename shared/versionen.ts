@@ -17,6 +17,19 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.2.4',
+    seiten: 'Statistik',
+    behoben: 'Statistik',
+    abschnitte: [
+      {
+        titel: 'Behoben',
+        punkte: [
+          'Unter Statistik zeigen Tätigkeiten die XP ihrer eigenen Einträge. Tätigkeiten ohne Projekt stehen nicht mehr mit Stunden bei 0 XP.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.2.3',
     seiten: 'Profil',
     abschnitte: [

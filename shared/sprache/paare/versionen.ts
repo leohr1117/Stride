@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Unter Statistik zeigen Tätigkeiten die XP ihrer eigenen Einträge. Tätigkeiten ohne Projekt stehen nicht mehr mit Stunden bei 0 XP.',
+    'Under Statistics, activities show the XP from their own entries. Activities without a project no longer show hours with 0 XP.',
+  ],
+  [
     'Im Profil steht das Level als Pille auf der Unterkante des Rings; der eigene Level-Block darunter entfällt. Die XP-Zeile bleibt.',
     'On the profile, the level sits as a pill on the bottom edge of the ring; the separate level block below it is gone. The XP line stays.',
   ],
