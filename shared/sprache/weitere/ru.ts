@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.": "Оператор может задать отправителя формы контакта. Без этого указания остаётся прежний отправитель.",
   "Die App heißt Wupo.": "Приложение называется Wupo.",
   "Der Betreiber kann die Adresse der App einstellen. Ohne diese Angabe bleibt die bisherige Adresse.": "Оператор может задать адрес приложения. Без этого указания остаётся прежний адрес.",
   "Datenschutz, Impressum und Nutzungsbedingungen beschreiben den Betrieb bei Hetzner Online GmbH in Falkenstein (Deutschland). Hetzner ist Auftragsverarbeiter. Die Datenbanken werden dort nächtlich gesichert. Die Verbindung läuft über einen Cloudflare-Tunnel.": "Конфиденциальность, выходные данные и условия использования описывают работу у Hetzner Online GmbH в Фалькенштайне (Германия). Hetzner — обработчик по договору. Базы данных сохраняются там каждую ночь. Соединение идёт через туннель Cloudflare.",

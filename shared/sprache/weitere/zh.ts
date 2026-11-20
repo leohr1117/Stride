@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.": "运营者可以设置联系表单的发件人。没有这项设置时，仍使用原来的发件人。",
   "Die App heißt Wupo.": "应用的可见名称是 Wupo。",
   "Der Betreiber kann die Adresse der App einstellen. Ohne diese Angabe bleibt die bisherige Adresse.": "运营者可以设置应用地址。没有这项设置时，仍使用原来的地址。",
   "Datenschutz, Impressum und Nutzungsbedingungen beschreiben den Betrieb bei Hetzner Online GmbH in Falkenstein (Deutschland). Hetzner ist Auftragsverarbeiter. Die Datenbanken werden dort nächtlich gesichert. Die Verbindung läuft über einen Cloudflare-Tunnel.": "隐私、法律声明和使用条款说明应用在德国法尔肯施泰因的 Hetzner Online GmbH 上运行。Hetzner 是受托处理方。数据库在那里每晚备份。连接通过 Cloudflare 隧道进行。",

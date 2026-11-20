@@ -24,6 +24,8 @@ const NAMEN = [
   'ASCEND_SMTP_BENUTZER',
   'STRIDE_SMTP_PASSWORT',
   'ASCEND_SMTP_PASSWORT',
+  'STRIDE_SMTP_ABSENDER',
+  'ASCEND_SMTP_ABSENDER',
   'STRIDE_GOOGLE',
   'ASCEND_GOOGLE',
   'STRIDE_GOOGLE_CLIENT_ID',
@@ -102,10 +104,12 @@ describe('Kontaktformular', () => {
     weg('STRIDE_SMTP_PORT');
     weg('STRIDE_SMTP_BENUTZER');
     weg('STRIDE_SMTP_PASSWORT');
+    weg('STRIDE_SMTP_ABSENDER');
     weg('ASCEND_SMTP_HOST');
     weg('ASCEND_SMTP_PORT');
     weg('ASCEND_SMTP_BENUTZER');
     weg('ASCEND_SMTP_PASSWORT');
+    weg('ASCEND_SMTP_ABSENDER');
     weg('STRIDE_GOOGLE');
     weg('STRIDE_GOOGLE_CLIENT_ID');
     weg('STRIDE_GOOGLE_CLIENT_SECRET');
@@ -132,7 +136,13 @@ describe('Kontaktformular', () => {
   it('lässt die SMTP-Platzhalter leer', () => {
     const beispiel = readFileSync(join(WURZEL, '.env.example'), 'utf8');
     const readme = readFileSync(join(WURZEL, 'README.md'), 'utf8');
-    for (const name of ['STRIDE_SMTP_HOST', 'STRIDE_SMTP_PORT', 'STRIDE_SMTP_BENUTZER', 'STRIDE_SMTP_PASSWORT']) {
+    for (const name of [
+      'STRIDE_SMTP_HOST',
+      'STRIDE_SMTP_PORT',
+      'STRIDE_SMTP_BENUTZER',
+      'STRIDE_SMTP_PASSWORT',
+      'STRIDE_SMTP_ABSENDER',
+    ]) {
       expect(beispiel).toContain(`${name}=`);
       expect(beispiel).not.toMatch(new RegExp(`^${name}=\\S`, 'm'));
       expect(readme).toContain(name);

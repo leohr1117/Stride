@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.2.6
+
+### Geändert
+
+- Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.
+
 ## 4.2.5
 
 ### Geändert

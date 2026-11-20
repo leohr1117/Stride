@@ -50,12 +50,40 @@ describe('App-Adresse am Server', () => {
   });
 
   it('lässt den Mail-Absender ohne Variable beim Postfach und hängt sonst die Domain an', () => {
-    expect(mailAbsender('kontakt@leohr.de', undefined)).toBe('kontakt@leohr.de');
-    expect(mailAbsender('kontakt@leohr.de', '   ')).toBe('kontakt@leohr.de');
-    expect(mailAbsender('kontakt@leohr.de', STANDARD)).toBe('kontakt@stride.leohr.de');
-    expect(mailAbsender('kontakt@leohr.de', ZIEL)).toBe('kontakt@wupo.app');
-    expect(mailAbsender('kein-at', ZIEL)).toBe('kein-at');
-    expect(mailAbsender('a@b@c.de', ZIEL)).toBe('a@b@c.de');
+    const ohne = {};
+    expect(mailAbsender('kontakt@leohr.de', undefined, ohne)).toBe('kontakt@leohr.de');
+    expect(mailAbsender('kontakt@leohr.de', '   ', ohne)).toBe('kontakt@leohr.de');
+    expect(mailAbsender('kontakt@leohr.de', STANDARD, ohne)).toBe('kontakt@stride.leohr.de');
+    expect(mailAbsender('kontakt@leohr.de', ZIEL, ohne)).toBe('kontakt@wupo.app');
+    expect(mailAbsender('kein-at', ZIEL, ohne)).toBe('kein-at');
+    expect(mailAbsender('a@b@c.de', ZIEL, ohne)).toBe('a@b@c.de');
+  });
+
+  it('nimmt eine gültige Absender-Variable und lässt ungültige oder fehlende Angaben bei der bisherigen Logik', () => {
+    const postfach = 'kontakt@leohr.de';
+    const eigener = 'absender@example.com';
+    expect(mailAbsender(postfach, ZIEL, { STRIDE_SMTP_ABSENDER: eigener })).toBe(eigener);
+    expect(mailAbsender(postfach, undefined, { ASCEND_SMTP_ABSENDER: eigener })).toBe(eigener);
+    expect(
+      mailAbsender(postfach, ZIEL, { STRIDE_SMTP_ABSENDER: eigener, ASCEND_SMTP_ABSENDER: 'alt@example.com' }),
+    ).toBe(eigener);
+    expect(mailAbsender(postfach, ZIEL, { STRIDE_SMTP_ABSENDER: `  ${eigener}  ` })).toBe(eigener);
+
+    expect(mailAbsender(postfach, ZIEL, { STRIDE_SMTP_ABSENDER: 'kein-at' })).toBe('kontakt@wupo.app');
+    expect(mailAbsender(postfach, ZIEL, { STRIDE_SMTP_ABSENDER: 'a@b@c.de' })).toBe('kontakt@wupo.app');
+    expect(mailAbsender(postfach, undefined, { STRIDE_SMTP_ABSENDER: 'ohne-punkt@host' })).toBe(postfach);
+    expect(mailAbsender('kein-at', ZIEL, { STRIDE_SMTP_ABSENDER: 'a@b' })).toBe('kein-at');
+    expect(
+      mailAbsender(postfach, ZIEL, { STRIDE_SMTP_ABSENDER: 'kein-at', ASCEND_SMTP_ABSENDER: eigener }),
+    ).toBe('kontakt@wupo.app');
+    expect(mailAbsender(postfach, ZIEL, { STRIDE_SMTP_ABSENDER: '', ASCEND_SMTP_ABSENDER: eigener })).toBe(
+      'kontakt@wupo.app',
+    );
+
+    expect(mailAbsender(postfach, undefined, {})).toBe(postfach);
+    expect(mailAbsender(postfach, '   ', { STRIDE_SMTP_ABSENDER: '   ' })).toBe(postfach);
+    expect(mailAbsender(postfach, STANDARD, {})).toBe('kontakt@stride.leohr.de');
+    expect(mailAbsender(postfach, ZIEL, {})).toBe('kontakt@wupo.app');
   });
 
   it('hängt die Adresse nur an Dokumente, wenn sie gesetzt ist', async () => {

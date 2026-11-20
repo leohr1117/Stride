@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.',
+    'The operator can set the sender of the contact form. Without that setting, the previous sender remains.',
+  ],
+  [
     'Die App heißt Wupo.',
     'The app is called Wupo.',
   ],

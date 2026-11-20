@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.": "運営者は問い合わせフォームの差出人を設定できます。その指定がなければ、これまでの差出人のままです。",
   "Die App heißt Wupo.": "アプリの表示名は Wupo です。",
   "Der Betreiber kann die Adresse der App einstellen. Ohne diese Angabe bleibt die bisherige Adresse.": "運営者はアプリのアドレスを設定できます。その指定がなければ、これまでのアドレスのままです。",
   "Datenschutz, Impressum und Nutzungsbedingungen beschreiben den Betrieb bei Hetzner Online GmbH in Falkenstein (Deutschland). Hetzner ist Auftragsverarbeiter. Die Datenbanken werden dort nächtlich gesichert. Die Verbindung läuft über einen Cloudflare-Tunnel.": "プライバシー、法的通知、利用規約は、ドイツのファルケンシュタインにある Hetzner Online GmbH での運用を説明します。Hetzner は処理の委託先です。データベースはそこで毎晩バックアップされます。接続は Cloudflare のトンネルを通ります。",

@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.": "Quien opera el servidor puede fijar el remitente del formulario de contacto. Sin esa indicación se mantiene el remitente anterior.",
   "Die App heißt Wupo.": "La aplicación se llama Wupo.",
   "Der Betreiber kann die Adresse der App einstellen. Ohne diese Angabe bleibt die bisherige Adresse.": "Quien opera el servidor puede fijar la dirección de la aplicación. Sin esa indicación se mantiene la dirección anterior.",
   "Datenschutz, Impressum und Nutzungsbedingungen beschreiben den Betrieb bei Hetzner Online GmbH in Falkenstein (Deutschland). Hetzner ist Auftragsverarbeiter. Die Datenbanken werden dort nächtlich gesichert. Die Verbindung läuft über einen Cloudflare-Tunnel.": "La privacidad, el aviso legal y las condiciones de uso describen el funcionamiento en Hetzner Online GmbH en Falkenstein (Alemania). Hetzner es el encargado del tratamiento. Las bases de datos se copian allí cada noche. La conexión pasa por un túnel de Cloudflare.",

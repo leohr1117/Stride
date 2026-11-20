@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.2.6',
+    seiten: 'Kontakt',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.2.5',
     seiten: 'Anmeldung, Impressum, Datenschutz, Nutzungsbedingungen',
     abschnitte: [
