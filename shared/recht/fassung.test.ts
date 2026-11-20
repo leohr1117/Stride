@@ -16,9 +16,11 @@ import {
 const SAETZE = [ZUSTIMMUNG_KASTEN, ZUSTIMMUNG_DIALOG_SATZ] as const;
 
 describe('recht fassung', () => {
-  it('zählt den Bestand ohne Eintrag als aktuelle Fassung und eine andere Fassung als offen', () => {
-    expect(RECHT_FASSUNG).toBe(RECHT_FASSUNG_BESTAND);
-    expect(istZustimmungAktuell(null)).toBe(true);
+  it('zählt den Bestand ohne Eintrag als alte Fassung und die neue Fassung als aktuell', () => {
+    expect(RECHT_FASSUNG).toBe('2026-11-20');
+    expect(RECHT_FASSUNG_BESTAND).toBe('2026-11-18');
+    expect(istZustimmungAktuell(null)).toBe(false);
+    expect(istZustimmungAktuell(RECHT_FASSUNG_BESTAND)).toBe(false);
     expect(istZustimmungAktuell(RECHT_FASSUNG)).toBe(true);
     expect(istZustimmungAktuell('2000-01-01')).toBe(false);
     expect(istZustimmungAktuell(null, '2026-12-01')).toBe(false);

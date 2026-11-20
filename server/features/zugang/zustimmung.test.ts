@@ -4,7 +4,7 @@ import path from 'node:path';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
-import { ZUSTIMMUNG_FEHLT, RECHT_FASSUNG } from '../../../shared/recht/fassung.ts';
+import { ZUSTIMMUNG_FEHLT, RECHT_FASSUNG, RECHT_FASSUNG_BESTAND } from '../../../shared/recht/fassung.ts';
 import { setzeRegistrierungenZurueck } from '../../anfrageGrenzen.ts';
 import { AppFehler } from '../../fehler.ts';
 import { istOeffentlicherZugang, leseSitzungsToken, SITZUNG_COOKIE, zugangRouten } from './routen.ts';
@@ -65,6 +65,10 @@ async function mitRouten<T>(arbeit: (app: FastifyInstance) => Promise<T>): Promi
   }
 }
 
+function fassungIstAktuell(gespeichert: string | null): boolean {
+  return (gespeichert ?? RECHT_FASSUNG_BESTAND) === RECHT_FASSUNG;
+}
+
 describe('zustimmung', () => {
   it('legt ohne Haken kein Konto an und speichert Zeitpunkt und Fassung mit Haken', async () => {
     legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
@@ -90,13 +94,17 @@ describe('zustimmung', () => {
         payload: { benutzername: 'Neu', passwort: PASSWORT, zustimmung: true },
       });
       expect(antwort.statusCode).toBe(200);
-      expect(antwort.json()).toMatchObject({ modus: 'bereit', benutzername: 'Neu', zustimmungAktuell: true });
+      expect(antwort.json()).toMatchObject({
+        modus: 'bereit',
+        benutzername: 'Neu',
+        zustimmungAktuell: fassungIstAktuell(RECHT_FASSUNG),
+      });
       const ada = await app.inject({
         method: 'POST',
         url: '/api/zugang',
         payload: { benutzername: 'Ada', passwort: PASSWORT },
       });
-      expect(ada.json()).toMatchObject({ benutzername: 'Ada', zustimmungAktuell: true });
+      expect(ada.json()).toMatchObject({ benutzername: 'Ada', zustimmungAktuell: fassungIstAktuell(null) });
     });
     expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada', 'Neu']);
     const ada = listeKonten().find((konto) => konto.benutzername === 'Ada');
@@ -130,7 +138,7 @@ describe('zustimmung', () => {
         payload: { benutzername: 'Neu', passwort: PASSWORT },
       });
       expect(login.statusCode).toBe(200);
-      expect(login.json()).toMatchObject({ zustimmungAktuell: false });
+      expect(login.json()).toMatchObject({ zustimmungAktuell: fassungIstAktuell('2000-01-01') });
       const token = leseSitzungsToken(login.headers['set-cookie']);
       const gast = await app.inject({
         method: 'POST',
@@ -154,7 +162,7 @@ describe('zustimmung', () => {
         payload: { zustimmung: true },
       });
       expect(ja.statusCode).toBe(200);
-      expect(ja.json()).toMatchObject({ benutzername: 'Neu', zustimmungAktuell: true });
+      expect(ja.json()).toMatchObject({ benutzername: 'Neu', zustimmungAktuell: fassungIstAktuell(RECHT_FASSUNG) });
     });
     expect(liesZustimmung(id)).toMatchObject({ fassung: RECHT_FASSUNG });
     expect(liesZustimmung(id)?.am).not.toBe('2026-11-18T08:00:00.000Z');

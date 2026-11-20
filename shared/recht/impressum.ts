@@ -9,6 +9,11 @@ export const IMPRESSUM: readonly RechtBlock[] = [
   { art: 'h', text: 'Kontakt' },
   { art: 'p', text: 'E-Mail: [kontakt@leohr.de](mailto:kontakt@leohr.de)' },
   { art: 'p', text: 'Kontaktformular: [Kontaktformular](/kontakt)' },
+  { art: 'h', text: 'Hosting' },
+  {
+    art: 'p',
+    text: 'Der Server steht bei Hetzner Online GmbH, Industriestr. 25, 91710 Gunzenhausen, am Standort Falkenstein (Deutschland).',
+  },
   { art: 'h', text: 'Kontaktstelle nach Art. 11 und 12 DSA' },
   {
     art: 'p',

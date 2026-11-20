@@ -7,6 +7,12 @@ import { useSprache } from '../../sprache.tsx';
 import { liesAppAdresse } from './liesAppAdresse.ts';
 
 const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;
+const LINK_KLASSE = 'underline underline-offset-2 break-words [word-break:normal]';
+const MAIL_KLASSE = `${LINK_KLASSE} whitespace-nowrap`;
+
+function linkKlasse(href: string): string {
+  return href.startsWith('mailto:') ? MAIL_KLASSE : LINK_KLASSE;
+}
 
 function erlaubteAdresse(href: string): boolean {
   return (href.startsWith('/') && !href.startsWith('//')) || href.startsWith('mailto:') || href.startsWith('https://') || href.startsWith('http://');
@@ -29,7 +35,7 @@ function Teile({ text }: { text: string }) {
         <a
           key={start}
           href={href}
-          className="break-all underline underline-offset-2"
+          className={linkKlasse(href)}
           target={extern ? '_blank' : undefined}
           rel={extern ? 'noopener noreferrer' : undefined}
         >
@@ -51,7 +57,7 @@ function Quellcode() {
   const href = quellcodeAdresse();
   return (
     <p>
-      <a href={href} className="break-all underline underline-offset-2" target="_blank" rel="noopener noreferrer">
+      <a href={href} className={LINK_KLASSE} target="_blank" rel="noopener noreferrer">
         {tx('Quellcode dieser Version')}
       </a>
     </p>
@@ -87,7 +93,7 @@ export function RechtDokument({ id }: { id: RechtId }) {
   const { sprache } = useSprache();
   const dokumente = rechtDokumente(liesAppAdresse());
   return (
-    <article data-recht="" className="max-w-[65ch] space-y-3 text-sm leading-6 break-words">
+    <article data-recht="" className="max-w-[65ch] space-y-3 text-sm leading-6 break-words [word-break:normal]">
       {sprache !== 'de' ? <p className="text-leise">{tx('Maßgeblich ist die deutsche Fassung.')}</p> : null}
       {dokumente[id].map((block, index) => (
         <Block key={index} block={block} />

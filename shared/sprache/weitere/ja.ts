@@ -1,5 +1,8 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die App heißt Wupo.": "アプリの表示名は Wupo です。",
+  "Der Betreiber kann die Adresse der App einstellen. Ohne diese Angabe bleibt die bisherige Adresse.": "運営者はアプリのアドレスを設定できます。その指定がなければ、これまでのアドレスのままです。",
+  "Datenschutz, Impressum und Nutzungsbedingungen beschreiben den Betrieb bei Hetzner Online GmbH in Falkenstein (Deutschland). Hetzner ist Auftragsverarbeiter. Die Datenbanken werden dort nächtlich gesichert. Die Verbindung läuft über einen Cloudflare-Tunnel.": "プライバシー、法的通知、利用規約は、ドイツのファルケンシュタインにある Hetzner Online GmbH での運用を説明します。Hetzner は処理の委託先です。データベースはそこで毎晩バックアップされます。接続は Cloudflare のトンネルを通ります。",
   "Unter Statistik zeigen Tätigkeiten die XP ihrer eigenen Einträge. Tätigkeiten ohne Projekt stehen nicht mehr mit Stunden bei 0 XP.": "統計では、アクティビティに自身の記録のXPが表示されます。プロジェクトのないアクティビティで、時間があるのに0 XPと表示されることはなくなりました。",
   "Im Profil steht das Level als Pille auf der Unterkante des Rings; der eigene Level-Block darunter entfällt. Die XP-Zeile bleibt.": "プロフィールでは、レベルがリングの下端にピルとして表示されます。下にあった別のレベル表示はなくなりました。XPの行はそのままです。",
   "Die Anmeldeseite ist eine durchgehende Karte: Anmelden, Google-Anmeldung und „Noch kein Konto? Konto erstellen“ stehen untereinander, Rechtliches, Impressum und Datenschutz stehen unter der Karte. Auf dem Desktop steht die Karte genau in der Mitte.": "サインインページは1枚の連続したカードになりました。サインイン、Googleでサインイン、「アカウントをお持ちでない方 アカウントを作成」が縦に並び、法的情報、運営者情報、プライバシーはカードの下にあります。デスクトップではカードが中央に配置されます。",

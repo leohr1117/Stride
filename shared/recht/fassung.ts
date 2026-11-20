@@ -1,5 +1,5 @@
 /** Aktuelle Fassung der Nutzungsbedingungen und der Datenschutzerklärung. */
-export const RECHT_FASSUNG = '2026-11-18';
+export const RECHT_FASSUNG = '2026-11-20';
 
 /** Konten ohne gespeicherte Zustimmung gelten als diese Fassung. Nur RECHT_FASSUNG anheben, wenn die Texte wechseln. */
 export const RECHT_FASSUNG_BESTAND = '2026-11-18';

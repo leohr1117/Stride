@@ -5,6 +5,7 @@ import path from 'node:path';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { RECHT_FASSUNG, RECHT_FASSUNG_BESTAND } from '../../shared/recht/fassung.ts';
 import { AppFehler } from '../fehler.ts';
 import { leereGeerbteZugangsVariablen } from '../testpfad.ts';
 import {
@@ -46,6 +47,11 @@ import {
 
 const ordner = mkdtempSync(path.join(tmpdir(), 'stride-zugang-'));
 const PASSWORT = 'geheimes-passwort';
+
+function fassungIstAktuell(gespeichert: string | null): boolean {
+  return (gespeichert ?? RECHT_FASSUNG_BESTAND) === RECHT_FASSUNG;
+}
+
 const warnungen: string[] = [];
 let datenbankNummer = 0;
 
@@ -154,7 +160,7 @@ describe('accounts', () => {
       rolle: 'inhaber',
       admin: false,
       registrierung: false,
-      zustimmungAktuell: true,
+      zustimmungAktuell: fassungIstAktuell(null),
       google: false,
       googleEmail: null,
       googleAnlage: null,

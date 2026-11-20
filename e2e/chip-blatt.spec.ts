@@ -66,10 +66,15 @@ test('Chips messen 36 px, das Eintrag-Blatt bleibt auf einem Schirm', async ({ p
   const reihe = dialog.locator('[data-gruppe="taetigkeit"] .chip-reihe');
   const knoepfe = reihe.getByRole('button');
   expect(await knoepfe.count()).toBeGreaterThan(1);
-  const erster = await knoepfe.nth(0).boundingBox();
-  const zweiter = await knoepfe.nth(1).boundingBox();
-  expect(erster).not.toBeNull();
-  expect(zweiter).not.toBeNull();
+  await expect(knoepfe.nth(0)).toHaveAttribute('aria-pressed', 'true');
+  const [erster, zweiter] = await knoepfe.evaluateAll((liste) =>
+    liste.slice(0, 2).map((knopf) => {
+      const kasten = knopf.getBoundingClientRect();
+      return { x: kasten.x, width: kasten.width };
+    }),
+  );
+  expect(erster).toBeDefined();
+  expect(zweiter).toBeDefined();
   if (erster && zweiter) {
     expect(Math.abs(zweiter.x - (erster.x + erster.width) - 8)).toBeLessThanOrEqual(1);
   }

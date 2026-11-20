@@ -1,7 +1,8 @@
 import path from 'node:path';
+import { RECHT_FASSUNG } from '../shared/recht/fassung.ts';
 import { mitWelt, schliesseWelt } from '../server/db.ts';
 import { erstelleMitglied } from '../server/features/zugang/konten.ts';
-import { listeKonten, loeseWeltdatei, schliesseZugang } from '../server/features/zugang/zugang.ts';
+import { listeKonten, loeseWeltdatei, schliesseZugang, setzeZustimmungsFassung } from '../server/features/zugang/zugang.ts';
 import { setzeTestzeit } from '../server/services/zeit.ts';
 import { TESTDATUM } from './uhr.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
@@ -21,7 +22,13 @@ function weltVon(benutzername: string): string {
 }
 
 function legeAn(benutzername: string, profilname: string, dateiname: string): string {
-  erstelleMitglied({ benutzername, passwort: TEST_PASSWORT, profilname });
+  const angelegt = erstelleMitglied({
+    benutzername,
+    passwort: TEST_PASSWORT,
+    profilname,
+    zustimmung: new Date(),
+  });
+  setzeZustimmungsFassung(angelegt.id, RECHT_FASSUNG);
   const konto = listeKonten().find((eintrag) => eintrag.benutzername === benutzername);
   if (!konto || path.basename(konto.weltdatei) !== dateiname) {
     throw new Error(`Das Konto ${benutzername} liegt in ${konto?.weltdatei ?? 'nirgends'}, erwartet ist welten/${dateiname}.`);

@@ -1,5 +1,13 @@
 # Änderungsprotokoll
 
+## 4.2.5
+
+### Geändert
+
+- Die App heißt Wupo.
+- Der Betreiber kann die Adresse der App einstellen. Ohne diese Angabe bleibt die bisherige Adresse.
+- Datenschutz, Impressum und Nutzungsbedingungen beschreiben den Betrieb bei Hetzner Online GmbH in Falkenstein (Deutschland). Hetzner ist Auftragsverarbeiter. Die Datenbanken werden dort nächtlich gesichert. Die Verbindung läuft über einen Cloudflare-Tunnel.
+
 ## 4.2.4
 
 ### Behoben

@@ -1,6 +1,18 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Die App heißt Wupo.',
+    'The app is called Wupo.',
+  ],
+  [
+    'Der Betreiber kann die Adresse der App einstellen. Ohne diese Angabe bleibt die bisherige Adresse.',
+    'The operator can set the address of the app. Without that setting, the previous address remains.',
+  ],
+  [
+    'Datenschutz, Impressum und Nutzungsbedingungen beschreiben den Betrieb bei Hetzner Online GmbH in Falkenstein (Deutschland). Hetzner ist Auftragsverarbeiter. Die Datenbanken werden dort nächtlich gesichert. Die Verbindung läuft über einen Cloudflare-Tunnel.',
+    'The privacy policy, legal notice and terms of use describe operation at Hetzner Online GmbH in Falkenstein (Germany). Hetzner is a processor. The databases are backed up there nightly. The connection runs through a Cloudflare tunnel.',
+  ],
+  [
     'Unter Statistik zeigen Tätigkeiten die XP ihrer eigenen Einträge. Tätigkeiten ohne Projekt stehen nicht mehr mit Stunden bei 0 XP.',
     'Under Statistics, activities show the XP from their own entries. Activities without a project no longer show hours with 0 XP.',
   ],

@@ -5,11 +5,11 @@ export function nutzung(adresse: string = APP_ADRESSE_STANDARD): readonly RechtB
   const host = appHost(appAdresse(adresse));
   return [
   { art: 'h', text: 'Nutzungsbedingungen (Deutsch)' },
-  { art: 'p', text: 'Stand: 18. November 2026' },
+  { art: 'p', text: 'Stand: 20. November 2026' },
   { art: 'h', text: '1. Geltungsbereich und Betreiber' },
   {
     art: 'p',
-    text: `Diese Bedingungen gelten für die Nutzung der Web-App Wupo unter ${host}. Betreiber ist Leonardo Hramzow als Privatperson in Deutschland (Kontaktangaben im [Impressum](/impressum) von Wupo, E-Mail [kontakt@leohr.de](mailto:kontakt@leohr.de)). Mit der Registrierung erklärst du dich mit diesen Bedingungen einverstanden.`,
+    text: `Diese Bedingungen gelten für die Nutzung der Web-App Wupo unter ${host}. Betreiber ist Leonardo Hramzow als Privatperson in Deutschland (Kontaktangaben im [Impressum](/impressum) von Wupo, E-Mail [kontakt@leohr.de](mailto:kontakt@leohr.de)). Der Server steht bei Hetzner Online GmbH, Industriestr. 25, 91710 Gunzenhausen, am Standort Falkenstein (Deutschland). Mit der Registrierung erklärst du dich mit diesen Bedingungen einverstanden.`,
   },
   { art: 'h', text: '2. Was Wupo ist' },
   {
@@ -33,7 +33,11 @@ export function nutzung(adresse: string = APP_ADRESSE_STANDARD): readonly RechtB
   { art: 'h', text: '5. Dein Konto' },
   {
     art: 'p',
-    text: 'Halte dein Passwort geheim. Ein Konto ist für eine Person gedacht. Du kannst dein Konto jederzeit in der App löschen oder die Löschung per E-Mail an [kontakt@leohr.de](mailto:kontakt@leohr.de) verlangen. Gelöschte Konten entferne ich sofort; aus Sicherungskopien verschwinden sie spätestens nach 30 Tagen.',
+    text: 'Halte dein Passwort geheim. Ein Konto ist für eine Person gedacht. Du kannst dein Konto jederzeit in der App löschen oder die Löschung per E-Mail an [kontakt@leohr.de](mailto:kontakt@leohr.de) verlangen. Gelöschte Konten entferne ich sofort.',
+  },
+  {
+    art: 'p',
+    text: 'Die Datenbanken werden nächtlich auf dem Hetzner-Server gesichert. Diese Kopien werden nach 29 Tagen gelöscht. Zusätzlich gibt es Server-Abbilder über die Backup-Funktion von Hetzner. Die Abbilder entstehen täglich, enthalten auch die Datenbank-Sicherungen und werden nach sieben Sicherungen überschrieben. Gelöschte Daten können noch bis zu 37 Tage in Sicherungskopien enthalten sein.',
   },
   { art: 'h', text: '6. Was nicht erlaubt ist' },
   { art: 'p', text: 'Bei der Nutzung von Wupo darfst du nicht:' },
@@ -98,11 +102,11 @@ export function nutzung(adresse: string = APP_ADRESSE_STANDARD): readonly RechtB
   { art: 'p', text: 'Diese Bedingungen gibt es auf Deutsch und Englisch. Bei Abweichungen gilt die deutsche Fassung.' },
   { art: 'p', text: 'Sollte eine Bestimmung unwirksam sein, bleiben die übrigen wirksam.' },
   { art: 'h', text: 'Terms of Use (English)' },
-  { art: 'p', text: 'Last updated: 18 November 2026' },
+  { art: 'p', text: 'Last updated: 20 November 2026' },
   { art: 'h', text: '1. Scope and operator' },
   {
     art: 'p',
-    text: `These terms apply to the use of the web app Wupo at ${host}. Wupo is operated by Leonardo Hramzow, a private individual in Germany (contact details in Wupo's [legal notice](/impressum), email [kontakt@leohr.de](mailto:kontakt@leohr.de)). By registering, you agree to these terms.`,
+    text: `These terms apply to the use of the web app Wupo at ${host}. Wupo is operated by Leonardo Hramzow, a private individual in Germany (contact details in Wupo's [legal notice](/impressum), email [kontakt@leohr.de](mailto:kontakt@leohr.de)). The server is hosted by Hetzner Online GmbH, Industriestr. 25, 91710 Gunzenhausen, at the Falkenstein site (Germany). By registering, you agree to these terms.`,
   },
   { art: 'h', text: '2. What Wupo is' },
   {
@@ -126,7 +130,11 @@ export function nutzung(adresse: string = APP_ADRESSE_STANDARD): readonly RechtB
   { art: 'h', text: '5. Your account' },
   {
     art: 'p',
-    text: 'Keep your password secret. An account is meant for one person. You can delete your account at any time in the app or request deletion by email to [kontakt@leohr.de](mailto:kontakt@leohr.de). I remove deleted accounts immediately; they disappear from backups within 30 days at the latest.',
+    text: 'Keep your password secret. An account is meant for one person. You can delete your account at any time in the app or request deletion by email to [kontakt@leohr.de](mailto:kontakt@leohr.de). I remove deleted accounts immediately.',
+  },
+  {
+    art: 'p',
+    text: 'The databases are backed up nightly on the Hetzner server. Those copies are deleted after 29 days. There are also server images through Hetzner\'s backup function. The images are created daily, also contain the database backups and are overwritten after seven backups. Deleted data can remain in backup copies for up to 37 days.',
   },
   { art: 'h', text: '6. What is not allowed' },
   { art: 'p', text: 'When using Wupo, you must not:' },

@@ -1,5 +1,8 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Die App heißt Wupo.": "应用的可见名称是 Wupo。",
+  "Der Betreiber kann die Adresse der App einstellen. Ohne diese Angabe bleibt die bisherige Adresse.": "运营者可以设置应用地址。没有这项设置时，仍使用原来的地址。",
+  "Datenschutz, Impressum und Nutzungsbedingungen beschreiben den Betrieb bei Hetzner Online GmbH in Falkenstein (Deutschland). Hetzner ist Auftragsverarbeiter. Die Datenbanken werden dort nächtlich gesichert. Die Verbindung läuft über einen Cloudflare-Tunnel.": "隐私、法律声明和使用条款说明应用在德国法尔肯施泰因的 Hetzner Online GmbH 上运行。Hetzner 是受托处理方。数据库在那里每晚备份。连接通过 Cloudflare 隧道进行。",
   "Unter Statistik zeigen Tätigkeiten die XP ihrer eigenen Einträge. Tätigkeiten ohne Projekt stehen nicht mehr mit Stunden bei 0 XP.": "在统计中，活动显示其自身记录的 XP。没有项目的活动不再显示有时长却为 0 XP。",
   "Im Profil steht das Level als Pille auf der Unterkante des Rings; der eigene Level-Block darunter entfällt. Die XP-Zeile bleibt.": "在个人资料中，等级以胶囊形式显示在圆环底边上；下方单独的等级区块已移除。XP 行保持不变。",
   "Die Anmeldeseite ist eine durchgehende Karte: Anmelden, Google-Anmeldung und „Noch kein Konto? Konto erstellen“ stehen untereinander, Rechtliches, Impressum und Datenschutz stehen unter der Karte. Auf dem Desktop steht die Karte genau in der Mitte.": "登录页面现在是一张完整的卡片：登录、使用 Google 登录以及“还没有账号？创建账号”上下排列，法律信息、版权声明和隐私位于卡片下方。在桌面端，卡片精确居中。",
