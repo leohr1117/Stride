@@ -78,6 +78,7 @@ function baueImportDatenbank(pfad: string, sicherung: DatenExport): number {
   try {
     datenbank.exec('PRAGMA foreign_keys = OFF');
     migriere(datenbank, sicherung.schemaVersion);
+    datenbank.exec('PRAGMA foreign_keys = OFF');
     datenbank.exec('BEGIN');
     let zeilen: number;
     try {
@@ -89,6 +90,7 @@ function baueImportDatenbank(pfad: string, sicherung: DatenExport): number {
       throw fehler;
     }
     migriere(datenbank);
+    datenbank.exec('PRAGMA foreign_keys = OFF');
     if (datenbank.prepare('PRAGMA foreign_key_check').all().length > 0) {
       throw ungueltig('Die Sicherung ist unvollständig: Einige Verweise zeigen ins Leere.');
     }
