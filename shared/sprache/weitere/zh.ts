@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "联系表单中的电子邮件可以不填。没有地址就无法回复。",
   "Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.": "运营者可以设置联系表单的发件人。没有这项设置时，仍使用原来的发件人。",
   "Die App heißt Wupo.": "应用的可见名称是 Wupo。",
   "Der Betreiber kann die Adresse der App einstellen. Ohne diese Angabe bleibt die bisherige Adresse.": "运营者可以设置应用地址。没有这项设置时，仍使用原来的地址。",
@@ -28,6 +29,8 @@ export const TEXTE: Record<string, string> = {
   "Lizenzen": "许可",
   "Nachricht": "消息",
   "E-Mail": "电子邮件",
+  "E-Mail (optional)": "电子邮件（可选）",
+  "Ohne E-Mail ist keine Antwort möglich.": "没有电子邮件就无法回复。",
   "Senden": "发送",
   "Das Kontaktformular ist nicht verfügbar.": "联系表单暂不可用。",
   "Deine Nachricht ist angekommen.": "你的消息已送达。",

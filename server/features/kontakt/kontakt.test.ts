@@ -266,4 +266,53 @@ describe('Kontaktformular', () => {
     });
     expect(aufrufe).toBe(1);
   });
+
+  it('sendet ohne E-Mail ohne Antwortadresse und lehnt eine ungültige weiter ab', async () => {
+    process.env.STRIDE_TEST = '1';
+    setzeSmtp();
+    const zugang = liesSmtp() ?? { host: '127.0.0.1', port: 9, benutzer: 'kontakt@leohr.de', passwort: 'nur-test' };
+    const ohne = (await sendeBrief(brief({ email: '' }), zugang)) as { message?: string };
+    const ohneDaten = JSON.parse(ohne.message ?? '') as { replyTo?: unknown; text?: unknown };
+    expect(ohneDaten.replyTo).toBeUndefined();
+    expect(String(ohneDaten.text)).toContain('keine Antwortadresse angegeben');
+    expect(String(ohneDaten.text)).toContain('Hallo Stride');
+    expect(antwortAdresse('Ada', '')).toBeNull();
+    expect(antwortAdresse('Ada', '   ')).toBeNull();
+    const mit = (await sendeBrief(brief(), zugang)) as { message?: string };
+    const mitDaten = JSON.parse(mit.message ?? '') as { replyTo?: unknown; text?: unknown };
+    expect(JSON.stringify(mitDaten.replyTo)).toContain('ada@example.com');
+    expect(String(mitDaten.text)).toContain('ada@example.com');
+    expect(String(mitDaten.text)).not.toContain('keine Antwortadresse angegeben');
+    const gesehen: KontaktBrief[] = [];
+    setzeKontaktVersand(async (gesendet) => {
+      gesehen.push(gesendet);
+    });
+    await mitRouten(async (app) => {
+      const leer = await app.inject({
+        method: 'POST',
+        url: '/api/kontakt',
+        payload: { name: 'Ada', email: '   ', nachricht: 'Hallo' },
+      });
+      expect(leer.statusCode).toBe(200);
+      expect(leer.json()).toEqual({ ok: true });
+      const fehlt = await app.inject({
+        method: 'POST',
+        url: '/api/kontakt',
+        payload: { nachricht: 'Ohne Feld' },
+      });
+      expect(fehlt.statusCode).toBe(200);
+      expect(fehlt.json()).toEqual({ ok: true });
+      const falsch = await app.inject({
+        method: 'POST',
+        url: '/api/kontakt',
+        payload: { email: 'keine-adresse', nachricht: 'Hallo' },
+      });
+      expect(falsch.statusCode).toBe(400);
+      expect(falsch.json()).toEqual({ fehler: 'Die E-Mail-Adresse ist ungültig.' });
+    });
+    expect(gesehen).toEqual([
+      { name: 'Ada', email: '', nachricht: 'Hallo' },
+      { name: '', email: '', nachricht: 'Ohne Feld' },
+    ]);
+  });
 });

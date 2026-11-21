@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "En el formulario de contacto, el correo es opcional. Sin él no es posible responder.",
   "Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.": "Quien opera el servidor puede fijar el remitente del formulario de contacto. Sin esa indicación se mantiene el remitente anterior.",
   "Die App heißt Wupo.": "La aplicación se llama Wupo.",
   "Der Betreiber kann die Adresse der App einstellen. Ohne diese Angabe bleibt die bisherige Adresse.": "Quien opera el servidor puede fijar la dirección de la aplicación. Sin esa indicación se mantiene la dirección anterior.",
@@ -28,6 +29,8 @@ export const TEXTE: Record<string, string> = {
   "Lizenzen": "Licencias",
   "Nachricht": "Mensaje",
   "E-Mail": "Correo",
+  "E-Mail (optional)": "Correo (opcional)",
+  "Ohne E-Mail ist keine Antwort möglich.": "Sin correo no es posible responder.",
   "Senden": "Enviar",
   "Das Kontaktformular ist nicht verfügbar.": "El formulario de contacto no está disponible.",
   "Deine Nachricht ist angekommen.": "Tu mensaje ha llegado.",

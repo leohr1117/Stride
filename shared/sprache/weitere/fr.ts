@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "Dans le formulaire de contact, l'adresse e-mail est facultative. Sans elle, aucune réponse n'est possible.",
   "Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.": "L'exploitant peut régler l'expéditeur du formulaire de contact. Sans cette indication, l'expéditeur précédent reste.",
   "Die App heißt Wupo.": "L'application s'appelle Wupo.",
   "Der Betreiber kann die Adresse der App einstellen. Ohne diese Angabe bleibt die bisherige Adresse.": "L'exploitant peut régler l'adresse de l'application. Sans cette indication, l'adresse précédente reste.",
@@ -28,6 +29,8 @@ export const TEXTE: Record<string, string> = {
   "Lizenzen": "Licences",
   "Nachricht": "Message",
   "E-Mail": "E-mail",
+  "E-Mail (optional)": "E-mail (facultatif)",
+  "Ohne E-Mail ist keine Antwort möglich.": "Sans e-mail, aucune réponse n'est possible.",
   "Senden": "Envoyer",
   "Das Kontaktformular ist nicht verfügbar.": "Le formulaire de contact n'est pas disponible.",
   "Deine Nachricht ist angekommen.": "Ton message est bien arrivé.",

@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 4.2.7
+
+### Geändert
+
+- Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.
+
 ## 4.2.6
 
 ### Geändert

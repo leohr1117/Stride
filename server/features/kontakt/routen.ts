@@ -76,7 +76,7 @@ export async function kontaktRouten(app: FastifyInstance): Promise<void> {
     }
     const brief: KontaktBrief = {
       name: geprueft.data.name ?? '',
-      email: geprueft.data.email,
+      email: geprueft.data.email ?? '',
       nachricht: geprueft.data.nachricht,
     };
     try {

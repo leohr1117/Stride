@@ -20,6 +20,8 @@ export const PAARE = [
   ['Lizenzen', 'Licenses'],
   ['Nachricht', 'Message'],
   ['E-Mail', 'Email'],
+  ['E-Mail (optional)', 'Email (optional)'],
+  ['Ohne E-Mail ist keine Antwort möglich.', 'Without an email, no reply is possible.'],
   ['Senden', 'Send'],
   ['Das Kontaktformular ist nicht verfügbar.', 'The contact form is not available.'],
   ['Deine Nachricht ist angekommen.', 'Your message has arrived.'],

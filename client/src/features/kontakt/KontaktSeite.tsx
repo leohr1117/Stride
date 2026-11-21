@@ -60,7 +60,7 @@ function KontaktFormular() {
     ereignis.preventDefault();
     const emailText = email.trim();
     const nachrichtText = nachricht.trim();
-    const emailHinweis = emailText === '' ? 'Die E-Mail-Adresse fehlt.' : istKontaktEmail(emailText) ? null : 'Die E-Mail-Adresse ist ungültig.';
+    const emailHinweis = emailText !== '' && !istKontaktEmail(emailText) ? 'Die E-Mail-Adresse ist ungültig.' : null;
     const nachrichtHinweis = nachrichtText === '' ? 'Die Nachricht fehlt.' : null;
     setEmailFehler(emailHinweis);
     setNachrichtFehler(nachrichtHinweis);
@@ -94,7 +94,7 @@ function KontaktFormular() {
           onChange={(ereignis) => setName(ereignis.target.value)}
         />
       </Feld>
-      <Feld label="E-Mail" fehler={emailFehler}>
+      <Feld label="E-Mail (optional)" hinweis="Ohne E-Mail ist keine Antwort möglich." fehler={emailFehler}>
         <input
           className={EINGABE_STIL}
           type="text"

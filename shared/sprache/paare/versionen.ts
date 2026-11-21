@@ -1,6 +1,10 @@
 /** Changelog-Punkte, wortgenau wie in versionen.ts. Seiten werden einzeln übersetzt. */
 export const PAARE = [
   [
+    'Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.',
+    'In the contact form, the email address is optional. Without it, no reply is possible.',
+  ],
+  [
     'Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.',
     'The operator can set the sender of the contact form. Without that setting, the previous sender remains.',
   ],

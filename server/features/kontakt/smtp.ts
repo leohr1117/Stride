@@ -49,17 +49,23 @@ function eineZeile(name: string): string {
   return name.replace(/[\r\n"]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-export function antwortAdresse(name: string, email: string): string {
+export function antwortAdresse(name: string, email: string): string | null {
+  const adresse = email.trim();
+  if (adresse.length === 0) {
+    return null;
+  }
   const sauber = eineZeile(name);
   if (!sauber) {
-    return email;
+    return adresse;
   }
-  return `"${sauber}" <${email}>`;
+  return `"${sauber}" <${adresse}>`;
 }
 
 export function kontaktText(name: string, email: string, nachricht: string): string {
   const zeile = eineZeile(name);
-  return `Name: ${zeile.length > 0 ? zeile : '—'}\nE-Mail: ${email}\n\n${nachricht}`;
+  const adresse = email.trim();
+  const gezeigt = adresse.length > 0 ? adresse : 'keine Antwortadresse angegeben';
+  return `Name: ${zeile.length > 0 ? zeile : '—'}\nE-Mail: ${gezeigt}\n\n${nachricht}`;
 }
 
 export function mailAbsender(
@@ -88,10 +94,11 @@ export function briefOptionen(
   appRoh?: string,
   env: NodeJS.ProcessEnv = process.env,
 ): SendMailOptions {
+  const antwort = antwortAdresse(brief.name, brief.email);
   return {
     from: mailAbsender(zugang.benutzer, appRoh, env),
     to: KONTAKT_EMPFAENGER,
-    replyTo: antwortAdresse(brief.name, brief.email),
+    ...(antwort !== null ? { replyTo: antwort } : {}),
     subject: KONTAKT_BETREFF,
     text: kontaktText(brief.name, brief.email, brief.nachricht),
   };

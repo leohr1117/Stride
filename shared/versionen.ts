@@ -17,6 +17,18 @@ export interface Versionseintrag {
 
 export const VERSIONEN: readonly Versionseintrag[] = [
   {
+    version: '4.2.7',
+    seiten: 'Kontakt',
+    abschnitte: [
+      {
+        titel: 'Geändert',
+        punkte: [
+          'Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.',
+        ],
+      },
+    ],
+  },
+  {
     version: '4.2.6',
     seiten: 'Kontakt',
     abschnitte: [

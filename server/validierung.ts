@@ -727,9 +727,9 @@ export const kontaktSchema = z.object({
   email: z
     .string()
     .trim()
-    .min(1, 'Die E-Mail-Adresse fehlt.')
     .max(EMAIL_MAX, 'Die E-Mail-Adresse darf höchstens 200 Zeichen haben.')
-    .refine(istKontaktEmail, 'Die E-Mail-Adresse ist ungültig.'),
+    .refine((wert) => wert.length === 0 || istKontaktEmail(wert), 'Die E-Mail-Adresse ist ungültig.')
+    .optional(),
   nachricht: z
     .string()
     .trim()

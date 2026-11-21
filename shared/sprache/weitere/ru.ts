@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "В форме контакта адрес эл. почты необязателен. Без него ответ невозможен.",
   "Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.": "Оператор может задать отправителя формы контакта. Без этого указания остаётся прежний отправитель.",
   "Die App heißt Wupo.": "Приложение называется Wupo.",
   "Der Betreiber kann die Adresse der App einstellen. Ohne diese Angabe bleibt die bisherige Adresse.": "Оператор может задать адрес приложения. Без этого указания остаётся прежний адрес.",
@@ -28,6 +29,8 @@ export const TEXTE: Record<string, string> = {
   "Lizenzen": "Лицензии",
   "Nachricht": "Сообщение",
   "E-Mail": "Эл. почта",
+  "E-Mail (optional)": "Эл. почта (необязательно)",
+  "Ohne E-Mail ist keine Antwort möglich.": "Без эл. почты ответ невозможен.",
   "Senden": "Отправить",
   "Das Kontaktformular ist nicht verfügbar.": "Форма контакта недоступна.",
   "Deine Nachricht ist angekommen.": "Твоё сообщение доставлено.",
