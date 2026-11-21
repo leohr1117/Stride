@@ -32,6 +32,9 @@ test('Konto gruppiert Profil und Anmeldung', async ({ page }, testInfo) => {
     }
   });
   await anmelden(page);
+  const welt = await page.request.get('/api/einstellungen');
+  expect(welt.ok()).toBe(true);
+  expect(((await welt.json()) as { charakterName: string }).charakterName).toBe('Test Voll');
   const anfang = await einstellungen(page);
   let titelVorher: string | null | undefined;
 

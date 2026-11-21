@@ -10,6 +10,7 @@ import { strideVariable } from '../../umgebung.ts';
 import { BENUTZER_MAX, PASSWORT_MAX, PASSWORT_MIN } from '../../validierung.ts';
 import { RECHT_FASSUNG, istZustimmungAktuell } from '../../../shared/recht/fassung.ts';
 import { entferneGoogle, googleTeil, migriereGoogle, verbindeGoogle } from './google.ts';
+import { migriereWeltdateien, neutralisiereWeltdatei } from './weltdateiPfad.ts';
 
 const SCRYPT = { N: 16384, r: 8, p: 1, maxmem: 32 * 1024 * 1024 } as const;
 const GLOBAL = 'global';
@@ -98,6 +99,12 @@ function oeffne(pfad: string): DatabaseSync {
   sichereNamensindex(datenbank);
   migriereGoogle(datenbank);
   bindeAdminEinmal(datenbank);
+  try {
+    migriereWeltdateien(datenbank, path.dirname(pfad));
+  } catch (fehler) {
+    datenbank.close();
+    throw fehler;
+  }
   return datenbank;
 }
 
@@ -114,6 +121,7 @@ function sichereNamensindex(db: DatabaseSync): void {
 
 export function verwendeZugang(pfad: string): void {
   geoffnet?.close();
+  geoffnet = null;
   zugangDatei = pfad;
   geoffnet = oeffne(pfad);
 }
@@ -446,7 +454,7 @@ export function legeBenutzerAn(
         salt.toString('hex'),
         hash.toString('hex'),
         daten.rolle,
-        daten.weltdatei,
+        neutralisiereWeltdatei(daten.weltdatei, datenordner()),
         jetzt.toISOString(),
         daten.zustimmung ? RECHT_FASSUNG : null,
         daten.zustimmung ? daten.zustimmung.toISOString() : null,
@@ -461,7 +469,8 @@ export function legeBenutzerAn(
 }
 
 export function setzeWeltdatei(id: number, weltdatei: string): void {
-  const ergebnis = datenbank().prepare('UPDATE benutzer SET weltdatei = ? WHERE id = ?').run(weltdatei, id);
+  const gespeichert = neutralisiereWeltdatei(weltdatei, datenordner());
+  const ergebnis = datenbank().prepare('UPDATE benutzer SET weltdatei = ? WHERE id = ?').run(gespeichert, id);
   if (Number(ergebnis.changes) !== 1) {
     throw ungueltig('Der Account existiert nicht.');
   }
@@ -519,6 +528,7 @@ export function uebernimmAltesPasswort(benutzername: string, weltdatei: string, 
   if (!alt) {
     throw ungueltig('Es ist noch kein Passwort festgelegt.');
   }
+  const datei = neutralisiereWeltdatei(weltdatei, datenordner());
   const db = datenbank();
   db.exec('BEGIN');
   try {
@@ -527,7 +537,7 @@ export function uebernimmAltesPasswort(benutzername: string, weltdatei: string, 
         `INSERT INTO benutzer (benutzername, name_norm, salt, hash, rolle, weltdatei, geaendert_am)
          VALUES (?, ?, ?, ?, 'inhaber', ?, ?)`,
       )
-      .run(name, nameNorm(name), alt.salt, alt.hash, weltdatei, jetzt.toISOString());
+      .run(name, nameNorm(name), alt.salt, alt.hash, datei, jetzt.toISOString());
     db.prepare('DELETE FROM passwort WHERE id = 1').run();
     const id = Number(ergebnis.lastInsertRowid);
     db.prepare('UPDATE sitzungen SET benutzer_id = ? WHERE benutzer_id IS NULL').run(id);
@@ -592,11 +602,11 @@ export function weltdateiDerSitzung(token: string | undefined, jetzt = new Date(
 }
 
 export function loeseWeltdatei(relativ: string): string {
-  if (relativ === '' || relativ.includes('..') || path.isAbsolute(relativ)) {
+  if (relativ === '' || relativ.includes('..') || path.isAbsolute(relativ) || /^[a-zA-Z]:/.test(relativ) || relativ.startsWith('\\\\')) {
     throw ungueltig('Die Weltdatei ist ungültig.');
   }
   const basis = path.resolve(datenordner());
-  const ziel = path.resolve(basis, relativ);
+  const ziel = path.join(basis, relativ);
   if (ziel !== basis && !ziel.startsWith(basis + path.sep)) {
     throw ungueltig('Die Weltdatei ist ungültig.');
   }

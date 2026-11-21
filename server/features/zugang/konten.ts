@@ -6,6 +6,7 @@ import { mitWelt, schliesseWelt } from '../../db.ts';
 import { AppFehler, nichtGefunden, ungueltig } from '../../fehler.ts';
 import { aendereEinstellungen } from '../einstellungen/einstellungen.ts';
 import { setzeProfilZurueck } from '../../services/profilZurueck.ts';
+import { speichereWeltdatei } from './weltdateiPfad.ts';
 import { istAdmin, legeBenutzerAn, listeKonten, loescheBenutzer, loeseWeltdatei, setzeWeltdatei } from './zugang.ts';
 
 const NEBEN_DATEIEN = ['', '-wal', '-shm', '-journal'];
@@ -45,10 +46,10 @@ export function erstelleMitglied(daten: {
     benutzername: daten.benutzername,
     passwort: daten.passwort,
     rolle: 'mitglied',
-    weltdatei: path.join('welten', 'offen.db'),
+    weltdatei: speichereWeltdatei('welten', 'offen.db'),
     zustimmung: daten.zustimmung,
   });
-  const relativ = path.join('welten', `${angelegt.id}.db`);
+  const relativ = speichereWeltdatei('welten', `${angelegt.id}.db`);
   const absolut = loeseWeltdatei(relativ);
   try {
     setzeWeltdatei(angelegt.id, relativ);
