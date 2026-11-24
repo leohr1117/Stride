@@ -93,7 +93,12 @@ export function prozentPunkte(prozent: number): string {
 }
 
 export function faktorText(faktor: number): string {
-  return `×${formate().faktor.format(faktor)}`;
+  const sprache = aktiveSprache();
+  const text = formate()
+    .faktor.formatToParts(faktor)
+    .map((teil) => (sprache === 'en' && teil.type === 'decimal' ? '.' : teil.value))
+    .join('');
+  return `×${text}`;
 }
 
 const MULTIPLIKATOR_LABEL: Record<MultiplikatorArt, string> = {

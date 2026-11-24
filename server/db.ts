@@ -9,6 +9,10 @@ import { sperreEchteDatenbankImTest } from './testpfad.ts';
 export type Parameter = SQLInputValue;
 
 const IN_MEMORY = ':memory:';
+const BESCHAEFTIGT_MS = 5000;
+export const WELT_LEERLAUF_MS = 10 * 60 * 1000;
+export const WELT_OBERGRENZE = 32;
+const LEERLAUF_PRUEFUNG_MS = 60_000;
 
 function oeffneDatenbank(pfad: string): DatabaseSync {
   sperreEchteDatenbankImTest(pfad);
@@ -16,6 +20,7 @@ function oeffneDatenbank(pfad: string): DatabaseSync {
     fs.mkdirSync(path.dirname(pfad), { recursive: true });
   }
   const datenbank = new DatabaseSync(pfad);
+  datenbank.exec(`PRAGMA busy_timeout = ${BESCHAEFTIGT_MS}`);
   datenbank.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
   migriere(datenbank);
   return datenbank;
@@ -117,24 +122,137 @@ interface Welt {
   pfad: string;
 }
 
+interface Geoeffnet {
+  datenbank: DatabaseSync;
+  zuletzt: number;
+  belegt: number;
+}
+
+const oeffnenGesperrt = new Map<string, number>();
+
 const welten = new AsyncLocalStorage<Welt>();
-const geoeffnet = new Map<string, DatabaseSync>();
+const geoeffnet = new Map<string, Geoeffnet>();
 
 function schluessel(pfad: string): string {
   return path.resolve(pfad);
 }
 
-function merke(pfad: string, datenbank: DatabaseSync): DatabaseSync {
-  const kanonisch = schluessel(pfad);
-  geoeffnet.set(kanonisch, datenbank);
-  return datenbank;
-}
-
-const standardDb = merke(KONFIG.datenbankPfad, oeffneDatenbank(KONFIG.datenbankPfad));
+const standardDb = oeffneDatenbank(KONFIG.datenbankPfad);
+const standardPfad = schluessel(KONFIG.datenbankPfad);
+geoeffnet.set(standardPfad, { datenbank: standardDb, zuletzt: Date.now(), belegt: 0 });
 
 function aktiveDatenbank(): DatabaseSync {
-  return welten.getStore()?.datenbank ?? standardDb;
+  const welt = welten.getStore();
+  if (!welt) {
+    return standardDb;
+  }
+  if (welt.datenbank.isOpen) {
+    return welt.datenbank;
+  }
+  const neu = weltVon(welt.pfad).datenbank;
+  welt.datenbank = neu;
+  return neu;
 }
+
+function anzahlWelten(): number {
+  let anzahl = 0;
+  for (const pfad of geoeffnet.keys()) {
+    if (pfad !== standardPfad) {
+      anzahl += 1;
+    }
+  }
+  return anzahl;
+}
+
+function darfSchliessen(pfad: string, eintrag: Geoeffnet): boolean {
+  return pfad !== standardPfad && eintrag.belegt === 0 && tiefe(eintrag.datenbank) === 0;
+}
+
+function schliesseEintrag(pfad: string): void {
+  const eintrag = geoeffnet.get(pfad);
+  if (!eintrag || !darfSchliessen(pfad, eintrag)) {
+    return;
+  }
+  geoeffnet.delete(pfad);
+  if (eintrag.datenbank.isOpen) {
+    eintrag.datenbank.close();
+  }
+}
+
+function laengstUngenutzt(behalten: string | null): string | null {
+  let opfer: string | null = null;
+  let zeit = Number.POSITIVE_INFINITY;
+  for (const [pfad, eintrag] of geoeffnet) {
+    if (pfad === behalten || !darfSchliessen(pfad, eintrag)) {
+      continue;
+    }
+    if (eintrag.zuletzt < zeit) {
+      zeit = eintrag.zuletzt;
+      opfer = pfad;
+    }
+  }
+  return opfer;
+}
+
+function raeume(behalten: string | null): void {
+  const jetzt = Date.now();
+  for (const [pfad, eintrag] of [...geoeffnet]) {
+    if (pfad === behalten || jetzt - eintrag.zuletzt < WELT_LEERLAUF_MS) {
+      continue;
+    }
+    schliesseEintrag(pfad);
+  }
+  const plaetze = behalten !== null && !geoeffnet.has(behalten) ? WELT_OBERGRENZE - 1 : WELT_OBERGRENZE;
+  while (anzahlWelten() > plaetze) {
+    const opfer = laengstUngenutzt(behalten);
+    if (!opfer) {
+      return;
+    }
+    const vorher = geoeffnet.size;
+    schliesseEintrag(opfer);
+    if (geoeffnet.size === vorher) {
+      return;
+    }
+  }
+}
+
+export function schliesseUnbenutzteWelten(): void {
+  raeume(null);
+}
+
+function belege(pfad: string): void {
+  const eintrag = geoeffnet.get(pfad);
+  if (!eintrag) {
+    return;
+  }
+  eintrag.belegt += 1;
+  eintrag.zuletzt = Date.now();
+}
+
+function gibFrei(pfad: string): void {
+  const rest = oeffnenGesperrt.get(pfad);
+  if (rest !== undefined) {
+    if (rest <= 1) {
+      oeffnenGesperrt.delete(pfad);
+    } else {
+      oeffnenGesperrt.set(pfad, rest - 1);
+    }
+    return;
+  }
+  const eintrag = geoeffnet.get(pfad);
+  if (!eintrag) {
+    return;
+  }
+  eintrag.belegt = Math.max(0, eintrag.belegt - 1);
+  eintrag.zuletzt = Date.now();
+}
+
+function istThenable(wert: unknown): wert is PromiseLike<unknown> {
+  return typeof wert === 'object' && wert !== null && typeof (wert as { then?: unknown }).then === 'function';
+}
+
+const leerlaufTimer = setInterval(schliesseUnbenutzteWelten, LEERLAUF_PRUEFUNG_MS);
+leerlaufTimer.unref();
 
 export function aktiverPfad(): string {
   return welten.getStore()?.pfad ?? schluessel(KONFIG.datenbankPfad);
@@ -142,30 +260,113 @@ export function aktiverPfad(): string {
 
 function weltVon(pfad: string): Welt {
   const kanonisch = schluessel(pfad);
-  const vorhanden = geoeffnet.get(kanonisch);
-  const datenbank = vorhanden ?? merke(kanonisch, oeffneDatenbank(kanonisch));
-  return { datenbank, pfad: kanonisch };
+  if (oeffnenGesperrt.has(kanonisch)) {
+    throw new Error('Die Welt ist zum Löschen geschlossen.');
+  }
+  raeume(kanonisch);
+  let eintrag = geoeffnet.get(kanonisch);
+  if (!eintrag) {
+    eintrag = { datenbank: oeffneDatenbank(kanonisch), zuletzt: Date.now(), belegt: 0 };
+    geoeffnet.set(kanonisch, eintrag);
+  }
+  eintrag.zuletzt = Date.now();
+  return { datenbank: eintrag.datenbank, pfad: kanonisch };
+}
+
+function imBereich<T>(pfad: string, arbeit: () => T): T {
+  const welt = weltVon(pfad);
+  belege(welt.pfad);
+  let spaeter = false;
+  try {
+    const ergebnis = welten.run(welt, arbeit);
+    if (istThenable(ergebnis)) {
+      spaeter = true;
+      return Promise.resolve(ergebnis).finally(() => gibFrei(welt.pfad)) as T;
+    }
+    return ergebnis;
+  } catch (fehler) {
+    spaeter = true;
+    gibFrei(welt.pfad);
+    throw fehler;
+  } finally {
+    if (!spaeter) {
+      gibFrei(welt.pfad);
+    }
+  }
 }
 
 export function mitWelt<T>(pfad: string, arbeit: () => T): T {
-  return welten.run(weltVon(pfad), arbeit);
+  return imBereich(pfad, arbeit);
 }
 
 export function mitWeltAsync<T>(pfad: string, arbeit: () => Promise<T>): Promise<T> {
-  return welten.run(weltVon(pfad), arbeit);
+  return imBereich(pfad, arbeit);
 }
 
-export function schliesseWelt(pfad: string): void {
+export function halteWelt(pfad: string): () => void {
   const kanonisch = schluessel(pfad);
-  if (kanonisch === schluessel(KONFIG.datenbankPfad)) {
+  weltVon(kanonisch);
+  belege(kanonisch);
+  let aktiv = true;
+  return () => {
+    if (!aktiv) {
+      return;
+    }
+    aktiv = false;
+    gibFrei(kanonisch);
+  };
+}
+
+export function istWeltGeoeffnet(pfad: string): boolean {
+  return geoeffnet.has(schluessel(pfad));
+}
+
+function schliesseVerbindung(datenbank: DatabaseSync): void {
+  if (!datenbank.isOpen) {
     return;
   }
-  const datenbank = geoeffnet.get(kanonisch);
-  if (!datenbank) {
-    return;
+  if (tiefe(datenbank) > 0) {
+    try {
+      datenbank.exec('ROLLBACK');
+    } catch (fehler) {
+      if (!(fehler instanceof Error)) {
+        throw fehler;
+      }
+    }
+    setzeTiefe(datenbank, 0);
   }
+  anweisungen.delete(datenbank);
+  lesecache.delete(datenbank);
   datenbank.close();
-  geoeffnet.delete(kanonisch);
+}
+
+function schliesseErzwungen(kanonisch: string): void {
+  if (kanonisch === standardPfad) {
+    return;
+  }
+  const eintrag = geoeffnet.get(kanonisch);
+  const haelt = eintrag?.belegt ?? 0;
+  if (eintrag) {
+    schliesseVerbindung(eintrag.datenbank);
+    geoeffnet.delete(kanonisch);
+  }
+  oeffnenGesperrt.set(kanonisch, haelt);
+}
+
+export function schliesseWelt(pfad: string, optionen?: { erzwungen?: boolean }): void {
+  const kanonisch = schluessel(pfad);
+  if (optionen?.erzwungen) {
+    schliesseErzwungen(kanonisch);
+    return;
+  }
+  schliesseEintrag(kanonisch);
+}
+
+export function beendeLoeschsperre(pfad: string): void {
+  const kanonisch = schluessel(pfad);
+  if (oeffnenGesperrt.get(kanonisch) === 0) {
+    oeffnenGesperrt.delete(kanonisch);
+  }
 }
 
 export function alle<T>(sql: string, ...parameter: Parameter[]): T[] {
@@ -231,8 +432,11 @@ export function alsZahl(wert: boolean | undefined): number | undefined {
 }
 
 export function schliesseDatenbank(): void {
-  for (const datenbank of geoeffnet.values()) {
-    datenbank.close();
+  oeffnenGesperrt.clear();
+  for (const eintrag of [...geoeffnet.values()]) {
+    if (eintrag.datenbank.isOpen) {
+      eintrag.datenbank.close();
+    }
   }
   geoeffnet.clear();
 }
@@ -254,6 +458,22 @@ function sqlText(wert: string): string {
   return `'${wert.replace(/'/g, "''")}'`;
 }
 
+const MAX_SICHERUNGS_SUFFIX = 999;
+
+function freieSicherungsDatei(ordner: string, name: string): string {
+  const erste = path.join(ordner, `${name}.db`);
+  if (!fs.existsSync(erste)) {
+    return erste;
+  }
+  for (let suffix = 2; suffix <= MAX_SICHERUNGS_SUFFIX; suffix += 1) {
+    const kandidat = path.join(ordner, `${name}-${suffix}.db`);
+    if (!fs.existsSync(kandidat)) {
+      return kandidat;
+    }
+  }
+  throw new Error('Für diesen Zeitpunkt gibt es keine freie Sicherungsdatei.');
+}
+
 export function sichereDatenbank(anlass: string, jetzt = new Date()): string {
   const pfad = aktiverPfad();
   if (pfad === IN_MEMORY) {
@@ -262,7 +482,7 @@ export function sichereDatenbank(anlass: string, jetzt = new Date()): string {
   const ordner = path.join(path.dirname(KONFIG.datenbankPfad), 'sicherungen');
   fs.mkdirSync(ordner, { recursive: true });
   const stamm = path.resolve(pfad) === path.resolve(KONFIG.datenbankPfad) ? anlass : `${path.basename(pfad, '.db')}-${anlass}`;
-  const datei = path.join(ordner, `${stamm}-${jetzt.toISOString().replace(/[:.]/g, '-')}.db`);
+  const datei = freieSicherungsDatei(ordner, `${stamm}-${jetzt.toISOString().replace(/[:.]/g, '-')}`);
   aktiveDatenbank().exec(`VACUUM INTO ${sqlText(datei)}`);
   return datei;
 }

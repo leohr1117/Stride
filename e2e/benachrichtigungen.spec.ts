@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { expect, test, type Page } from './uhr.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
-import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+import { anmelden, ohneSeitlichenUeberlauf, warteAufAnmeldung } from './helfer.ts';
 import { TEST_TEIL_WELT, TEST_URL, TEST_PASSWORT } from './testdaten.ts';
 
 test.use({ echteZeit: true });
@@ -418,7 +418,7 @@ async function vorbereitenTeil(seite: Page): Promise<string> {
   await seite.locator('input[name="username"]').fill('testteil');
   await seite.locator('input[name="password"]').fill(await passwortTeil());
   await seite.locator('button[type="submit"]').click();
-  await seite.waitForFunction(async () => (await fetch('/api/einstellungen')).ok);
+  await warteAufAnmeldung(seite);
   const vorher = await seite.evaluate(async () => {
     const reset = await fetch('/api/profil/zuruecksetzen', { method: 'POST' });
     if (!reset.ok) {

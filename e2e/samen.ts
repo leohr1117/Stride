@@ -21,8 +21,8 @@ function weltVon(benutzername: string): string {
   return loeseWeltdatei(konto.weltdatei);
 }
 
-function legeAn(benutzername: string, profilname: string, dateiname: string): string {
-  const angelegt = erstelleMitglied({
+async function legeAn(benutzername: string, profilname: string, dateiname: string): Promise<string> {
+  const angelegt = await erstelleMitglied({
     benutzername,
     passwort: TEST_PASSWORT,
     profilname,
@@ -36,10 +36,10 @@ function legeAn(benutzername: string, profilname: string, dateiname: string): st
   return weltVon(benutzername);
 }
 
-function main(): void {
+async function main(): Promise<void> {
   setzeTestzeit(TESTDATUM);
-  const vollWelt = legeAn('testvoll', 'Test Voll', '1.db');
-  const teilWelt = legeAn('testteil', 'Test Teil', '2.db');
+  const vollWelt = await legeAn('testvoll', 'Test Voll', '1.db');
+  const teilWelt = await legeAn('testteil', 'Test Teil', '2.db');
   try {
     mitWelt(vollWelt, fuelleVoll);
     mitWelt(teilWelt, fuelleTeil);
@@ -50,4 +50,7 @@ function main(): void {
   }
 }
 
-main();
+main().catch((fehler: unknown) => {
+  console.error(fehler instanceof Error ? fehler.message : fehler);
+  process.exit(1);
+});

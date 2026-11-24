@@ -71,7 +71,7 @@ function fassungIstAktuell(gespeichert: string | null): boolean {
 
 describe('zustimmung', () => {
   it('legt ohne Haken kein Konto an und speichert Zeitpunkt und Fassung mit Haken', async () => {
-    legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
     schalter(true);
     await mitRouten(async (app) => {
       const ohne = await app.inject({
@@ -115,20 +115,22 @@ describe('zustimmung', () => {
     expect(gespeichert?.am).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
   });
 
-  it('schreibt den übergebenen Zeitpunkt', () => {
-    const id = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' }).id;
+  it('schreibt den übergebenen Zeitpunkt', async () => {
+    const id = (await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' })).id;
     merkeZustimmung(id, new Date('2026-11-18T15:04:05.000Z'));
     expect(liesZustimmung(id)).toEqual({ fassung: RECHT_FASSUNG, am: '2026-11-18T15:04:05.000Z' });
   });
 
   it('fragt nach der Anmeldung nur bei abweichender Fassung und speichert die neue', async () => {
-    const id = legeBenutzerAn({
-      benutzername: 'Neu',
-      passwort: PASSWORT,
-      rolle: 'mitglied',
-      weltdatei: 'welten/2.db',
-      zustimmung: new Date('2026-11-18T08:00:00.000Z'),
-    }).id;
+    const id = (
+      await legeBenutzerAn({
+        benutzername: 'Neu',
+        passwort: PASSWORT,
+        rolle: 'mitglied',
+        weltdatei: 'welten/2.db',
+        zustimmung: new Date('2026-11-18T08:00:00.000Z'),
+      })
+    ).id;
     setzeZustimmungsFassung(id, '2000-01-01');
     expect(istOeffentlicherZugang('POST', '/api/zugang/zustimmung')).toBe(false);
     await mitRouten(async (app) => {

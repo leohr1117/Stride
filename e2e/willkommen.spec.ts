@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { expect, test, type Page } from './uhr.ts';
-import { ohneSeitlichenUeberlauf } from './helfer.ts';
+import { ohneSeitlichenUeberlauf, warteAufAnmeldung } from './helfer.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
 
 async function bild(seite: Page, name: string): Promise<void> {
@@ -17,7 +17,7 @@ async function anmelden(seite: Page): Promise<void> {
   await seite.locator('input[name="username"]').fill('testteil');
   await seite.locator('input[name="password"]').fill(await passwort());
   await seite.locator('button[type="submit"]').click();
-  await seite.waitForFunction(async () => (await fetch('/api/einstellungen')).ok);
+  await warteAufAnmeldung(seite);
 }
 
 async function zuruecksetzen(seite: Page): Promise<void> {

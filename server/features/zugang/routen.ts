@@ -178,10 +178,10 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
       if (!benutzername) {
         throw new AppFehler(400, 'Der Benutzername fehlt.');
       }
-      const konto = legeBenutzerAn({ benutzername, passwort, rolle: 'inhaber', weltdatei: hauptweltdatei() });
+      const konto = await legeBenutzerAn({ benutzername, passwort, rolle: 'inhaber', weltdatei: hauptweltdatei() });
       token = oeffneSitzung(new Date(), konto.id);
     } else if (anzahlKonten() === 0) {
-      if (!passwortStimmt(passwort)) {
+      if (!(await passwortStimmt(passwort))) {
         falsch();
       }
       token = oeffneSitzung();
@@ -189,7 +189,7 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
       if (!benutzername) {
         throw new AppFehler(400, 'Der Benutzername fehlt.');
       }
-      const konto = benutzerPasswortStimmt(benutzername, passwort);
+      const konto = await benutzerPasswortStimmt(benutzername, passwort);
       if (!konto) {
         return falsch();
       }
@@ -230,9 +230,9 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
     }
     const schluessel = googleSchluessel(anfrage.headers.cookie);
     const anlage = anlageVon(schluessel);
-    let konto: ReturnType<typeof erstelleMitglied>;
+    let konto: Awaited<ReturnType<typeof erstelleMitglied>>;
     try {
-      konto = erstelleMitglied({ benutzername, passwort, zustimmung: new Date() });
+      konto = await erstelleMitglied({ benutzername, passwort, zustimmung: new Date() });
     } catch (fehler) {
       if (fehler instanceof AppFehler && fehler.message === 'Der Benutzername ist schon vergeben.') {
         throw ungueltig(NAME_VERGEBEN);
@@ -286,7 +286,7 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
     if (!geprueft.success) {
       throw ungueltig(geprueft.error.issues[0]?.message ?? 'Ungültige Eingabe.');
     }
-    if (!passwortDerSitzungStimmt(token, geprueft.data.passwort)) {
+    if (!(await passwortDerSitzungStimmt(token, geprueft.data.passwort))) {
       merkeFehlversuch(adresse);
       throw new AppFehler(401, 'Das Passwort ist falsch.');
     }
@@ -311,11 +311,11 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
     if (istGesperrt(adresse)) {
       throw new AppFehler(429, ZU_VIELE_VERSUCHE);
     }
-    if (!passwortDerSitzungStimmt(token, bisher)) {
+    if (!(await passwortDerSitzungStimmt(token, bisher))) {
       merkeFehlversuch(adresse);
       throw new AppFehler(401, 'Das Passwort ist falsch.');
     }
-    aenderePasswort(neu, token);
+    await aenderePasswort(neu, token);
     setzeFehlversucheZurueck(adresse);
     return zugangStatus(token);
   });
@@ -364,7 +364,7 @@ export async function zugangRouten(app: FastifyInstance): Promise<void> {
     if (!kontenSichtbar(token)) {
       throw new AppFehler(403, 'Nur der Inhaber legt Accounts an.');
     }
-    const konto = erstelleMitglied(kontoSchema.parse(anfrage.body));
+    const konto = await erstelleMitglied(kontoSchema.parse(anfrage.body));
     return antwort.status(201).send(konto);
   });
 

@@ -7,7 +7,7 @@ import { RECHT_HUB_PFAD } from '../../../../shared/recht/seiten.ts';
 import { sichtbareMehrBereiche, type MehrBereichId } from '../../../../shared/spiel/mehrBereiche.ts';
 import { neuereVersionen } from '../../../../shared/spiel/updateHinweis.ts';
 import type { Einstellungen } from '../../../../shared/api/einstellungen.ts';
-import { AKTUELLE_VERSION, VERSIONEN, type Versionseintrag } from '../../../../shared/versionen.ts';
+import type { Versionseintrag } from '../../../../shared/versionen.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { Absender } from '../../components/Absender.tsx';
 import { ProfilBild } from '../../components/ProfilBild.tsx';
@@ -16,6 +16,7 @@ import { useSichtbarkeit } from '../../funktionen.ts';
 import { sichtbareGruppen, type NavEintrag } from '../../navigation.ts';
 import { AbschnittKopf, Flaeche, Ladeanzeige } from '../../ui/index.ts';
 import { useNeuMarkierung, verbindeVersionsstand } from '../../updateHinweis.tsx';
+import { versionsAnzeige } from '../../versionsquelle.ts';
 import { InstallZeile } from '../../installHinweis.tsx';
 import { kachelText } from './hinweisGeraet.ts';
 import { bereicheAn, kartenStand, verbindungsKurz } from './mehrWerte.ts';
@@ -100,13 +101,14 @@ export function MehrSeite() {
 
 function WasNeuZeile() {
   const neu = useNeuMarkierung();
+  const { version } = versionsAnzeige();
   return (
     <div className="mt-6" data-version="">
       <Liste>
         <Zeile
           name={tx('Was ist neu')}
           nach="/mehr/neu"
-          wert={AKTUELLE_VERSION}
+          wert={version}
           titel={
             <span className="flex min-w-0 items-center gap-2">
               <span className="min-w-0 break-words">{tx('Was ist neu')}</span>
@@ -164,6 +166,7 @@ function VersionsListe({ eintraege }: { eintraege: readonly Versionseintrag[] })
 /** Changelog. Öffnen merkt die aktuelle Version und nimmt Punkt und Neu-Markierung weg. */
 export function WasNeuSeite() {
   const client = useQueryClient();
+  const { version, liste } = versionsAnzeige();
   const { data } = useQuery({ queryKey: SCHLUESSEL.einstellungen, queryFn: api.einstellungen });
   const [gesehen, setGesehen] = useState<string | null | undefined>(undefined);
 
@@ -172,20 +175,20 @@ export function WasNeuSeite() {
       return;
     }
     setGesehen(data.versionHinweis.gesehen);
-    if (data.versionHinweis.gesehen === AKTUELLE_VERSION) {
+    if (data.versionHinweis.gesehen === version) {
       return;
     }
-    void api.merkeVersionHinweis({ gesehen: AKTUELLE_VERSION }).then((neu) => {
+    void api.merkeVersionHinweis({ gesehen: version }).then((neu) => {
       client.setQueryData<Einstellungen>(SCHLUESSEL.einstellungen, (alt) => verbindeVersionsstand(alt, neu));
     });
-  }, [data, gesehen, client]);
+  }, [data, gesehen, client, version]);
 
   if (gesehen === undefined) {
     return <Ladeanzeige />;
   }
-  const neu = neuereVersionen(VERSIONEN, gesehen);
+  const neu = neuereVersionen(liste, gesehen);
   const neuSatz = new Set(neu.map((eintrag) => eintrag.version));
-  const rest = VERSIONEN.filter((eintrag) => !neuSatz.has(eintrag.version));
+  const rest = liste.filter((eintrag) => !neuSatz.has(eintrag.version));
   return (
     <div data-changelog="">
       {neu.length > 0 ? (

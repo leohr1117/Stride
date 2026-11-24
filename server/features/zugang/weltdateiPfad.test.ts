@@ -133,17 +133,17 @@ describe('weltdatei', () => {
     }
   });
 
-  it('speichert neue Pfade mit Schrägstrich und löst sie mit path.join', () => {
+  it('speichert neue Pfade mit Schrägstrich und löst sie mit path.join', async () => {
     const datei = path.join(ordner, 'zugang.db');
     verwendeZugang(datei);
-    const ada = legeBenutzerAn({
+    const ada = await legeBenutzerAn({
       benutzername: 'Ada',
       passwort: PASSWORT,
       rolle: 'mitglied',
       weltdatei: 'welten\\ada.db',
     });
     expect(listeKonten().find((eintrag) => eintrag.id === ada.id)?.weltdatei).toBe('welten/ada.db');
-    const bea = erstelleMitglied({ benutzername: 'Bea', passwort: PASSWORT, profilname: 'Bea' });
+    const bea = await erstelleMitglied({ benutzername: 'Bea', passwort: PASSWORT, profilname: 'Bea' });
     const beaZeile = listeKonten().find((eintrag) => eintrag.id === bea.id);
     expect(beaZeile?.weltdatei).toBe(`welten/${bea.id}.db`);
     expect(loeseWeltdatei(beaZeile?.weltdatei ?? '')).toBe(path.join(path.resolve(datenordner()), beaZeile?.weltdatei ?? ''));

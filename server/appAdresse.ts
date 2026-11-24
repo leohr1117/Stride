@@ -3,6 +3,8 @@ import path from 'node:path';
 import type { FastifyInstance } from 'fastify';
 import { APP_ADRESSE_META, gueltigeAppAdresse } from '../shared/appAdresse.ts';
 import { ungueltig } from './fehler.ts';
+import { CHANGE_PASSWORD_PFAD, PASSWORT_AENDERN_PFAD } from './features/zugang/passwortAdresse.ts';
+import { fuegeTestVersionEin, testversionEinblendung } from './testVersionen.ts';
 import { strideVariable } from './umgebung.ts';
 
 export function gesetzteAppAdresse(env: NodeJS.ProcessEnv = process.env): string | null {
@@ -46,12 +48,20 @@ export function fuegeAppAdresseEin(html: string, adresse: string): string {
   return `${html.slice(0, kopf)}${meta}${html.slice(kopf)}`;
 }
 
-export function dokumentMitAppAdresse(clientPfad: string, adresse: string): string | null {
+function liesIndex(clientPfad: string): string | null {
   const datei = path.join(clientPfad, 'index.html');
   if (!existsSync(datei)) {
     return null;
   }
-  return fuegeAppAdresseEin(readFileSync(datei, 'utf8'), adresse);
+  return readFileSync(datei, 'utf8');
+}
+
+export function dokumentMitAppAdresse(clientPfad: string, adresse: string): string | null {
+  const html = liesIndex(clientPfad);
+  if (html === null) {
+    return null;
+  }
+  return fuegeAppAdresseEin(html, adresse);
 }
 
 export function registriereAppAdresse(
@@ -60,8 +70,16 @@ export function registriereAppAdresse(
   env: NodeJS.ProcessEnv = process.env,
 ): void {
   app.addHook('onRequest', (anfrage, antwort, fertig) => {
+    if (anfrage.method === 'GET' || anfrage.method === 'HEAD') {
+      const wechsel = anfrage.url.split('?')[0] ?? anfrage.url;
+      if (wechsel === CHANGE_PASSWORD_PFAD) {
+        antwort.redirect(PASSWORT_AENDERN_PFAD, 302);
+        return;
+      }
+    }
     const adresse = gesetzteAppAdresse(env);
-    if (!adresse) {
+    const testversion = testversionEinblendung(env);
+    if (!adresse && testversion === null) {
       fertig();
       return;
     }
@@ -74,10 +92,14 @@ export function registriereAppAdresse(
       fertig();
       return;
     }
-    const html = dokumentMitAppAdresse(clientPfad, adresse);
-    if (html === null) {
+    const roh = liesIndex(clientPfad);
+    if (roh === null) {
       fertig();
       return;
+    }
+    let html = adresse ? fuegeAppAdresseEin(roh, adresse) : roh;
+    if (testversion !== null) {
+      html = fuegeTestVersionEin(html, testversion);
     }
     antwort.type('text/html; charset=utf-8').send(html);
   });

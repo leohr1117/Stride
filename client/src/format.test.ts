@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import type { Sprache } from '../../shared/sprache/kern.ts';
 import { setzeAktiveSprache } from '../../shared/sprache/index.ts';
 import { zeigeMenge } from '../../shared/sprache/menge.ts';
-import { dauerText, eineNachkommastelle, hoechstensEineStelle, kompakt, levelZahl, prozentText, relativeZeit, stunden, zahl, zeitspanne } from './format.ts';
+import { dauerText, eineNachkommastelle, faktorText, hoechstensEineStelle, kompakt, levelZahl, prozentText, relativeZeit, stunden, zahl, zeitspanne } from './format.ts';
 
 describe('kompakt', () => {
   afterEach(() => {
@@ -124,6 +124,19 @@ describe('Mengenformen', () => {
         expect(zeigeMenge(sprache, n, '{tage} Tage', { tage: n }), `${sprache} kette ${n}`).toBe(zeit[sprache][index]);
       });
     }
+  });
+});
+
+describe('faktorText', () => {
+  afterEach(() => {
+    setzeAktiveSprache('de');
+  });
+
+  it('setzt den Momentum-Faktor auf Englisch mit Punkt', () => {
+    setzeAktiveSprache('de');
+    expect(faktorText(1.64)).toBe('×1,64');
+    setzeAktiveSprache('en');
+    expect(faktorText(1.64)).toBe('×1.64');
   });
 });
 

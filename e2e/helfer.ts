@@ -32,6 +32,14 @@ export async function anmelden(seite: Page): Promise<void> {
   await seite.getByRole('button', { name: 'Eintrag loggen' }).waitFor();
 }
 
+const ANMELDUNG_WARTE_MS = 30_000;
+
+export async function warteAufAnmeldung(seite: Page): Promise<void> {
+  await expect
+    .poll(() => seite.evaluate(async () => (await fetch('/api/einstellungen')).ok), { timeout: ANMELDUNG_WARTE_MS })
+    .toBe(true);
+}
+
 export async function ohneSeitlichenUeberlauf(seite: Page): Promise<void> {
   const ueberlauf = await seite.evaluate(
     () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,

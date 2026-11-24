@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import type { Einstellungen } from '../../shared/api/einstellungen.ts';
 import { entscheideUpdateHinweis, hoehereVersion } from '../../shared/spiel/updateHinweis.ts';
-import { AKTUELLE_VERSION } from '../../shared/versionen.ts';
 import { api, SCHLUESSEL } from './api/index.ts';
+import { versionsAnzeige } from './versionsquelle.ts';
 import { Toast } from './components/Toast.tsx';
 
 const DAUER_MS = 10_000;
@@ -38,7 +38,7 @@ export function useNeuMarkierung(): boolean {
     return false;
   }
   const frisch = !data.profilAngelegt && data.weltLeer;
-  return entscheideUpdateHinweis(data.versionHinweis, AKTUELLE_VERSION, frisch).badge;
+  return entscheideUpdateHinweis(data.versionHinweis, versionsAnzeige().version, frisch).badge;
 }
 
 /** Eine Snackbar nach dem Update. Kein Dialog. Fokus und Zeiger halten die Zeit an. */
@@ -49,6 +49,7 @@ export function UpdateHinweis() {
   const { pathname } = useLocation();
   const [zeigen, setZeigen] = useState(false);
   const entschieden = useRef(false);
+  const version = versionsAnzeige().version;
 
   useEffect(() => {
     if (!data || entschieden.current) {
@@ -56,12 +57,12 @@ export function UpdateHinweis() {
     }
     entschieden.current = true;
     const frisch = !data.profilAngelegt && data.weltLeer;
-    const entscheid = entscheideUpdateHinweis(data.versionHinweis, AKTUELLE_VERSION, frisch);
+    const entscheid = entscheideUpdateHinweis(data.versionHinweis, version, frisch);
     if (entscheid.schreiben) {
       schreibeStand(client, entscheid.schreiben);
     }
     setZeigen(entscheid.snackbar);
-  }, [data, client]);
+  }, [data, client, version]);
 
   if (!zeigen || pathname === NEU_PFAD) {
     return null;

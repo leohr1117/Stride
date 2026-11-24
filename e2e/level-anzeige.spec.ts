@@ -11,6 +11,30 @@ function bild(seite: Page, name: string): Promise<void> {
   return seite.screenshot({ path: `tmp-test/level-anzeige/${name}.png`, fullPage: true });
 }
 
+async function zeigerAusDemDiagramm(seite: Page): Promise<void> {
+  const diagramm = seite.locator('[data-spektrum="attribut"]').first();
+  const kasten = await diagramm.boundingBox();
+  const fenster = seite.viewportSize();
+  const breite = fenster?.width ?? 320;
+  const hoehe = fenster?.height ?? 844;
+  let x = Math.max(4, breite - 12);
+  let y = Math.min(28, hoehe - 4);
+  if (kasten) {
+    const innenY = Math.min(Math.max(kasten.y + 24, 1), hoehe - 2);
+    if (innenY > kasten.y && innenY < kasten.y + kasten.height) {
+      const innenX = Math.min(Math.max(kasten.x + kasten.width / 2, 1), breite - 2);
+      await seite.mouse.move(Math.round(innenX), Math.round(innenY));
+    }
+    const darunter = kasten.y + kasten.height + 4;
+    if (darunter >= 4 && darunter <= hoehe - 4) {
+      x = Math.min(Math.max(kasten.x + 8, 4), breite - 4);
+      y = darunter;
+    }
+  }
+  await seite.mouse.move(Math.round(x), Math.round(y));
+  await expect(seite.locator('[data-diagramm-hinweis]')).toHaveCount(0);
+}
+
 function bruch(text: string): boolean {
   return /Lvl\s+\d+,\d/.test(text);
 }
@@ -355,6 +379,7 @@ test('Level ohne Bruch, Radare nebeneinander, Hinweis und Ring', async ({ page }
     await expect(page.locator('main [data-zustand="zu-niedrig"]').first().getByRole('button', { name: 'Lvl zu niedrig' })).toBeVisible();
     await pruefeHinweise(page, 'attributzeile', true);
     await ohneSeitlichenUeberlauf(page);
+    await zeigerAusDemDiagramm(page);
     await bild(page, `${name}-320`);
   } finally {
     if (ausgang) {

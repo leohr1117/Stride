@@ -135,6 +135,25 @@ test('Verlauf zeigt die Zahlung und die Rückbuchung', async ({ page }, testInfo
         element.style.boxSizing = 'border-box';
         element.style.width = 'var(--inhalt-max)';
         element.style.maxWidth = 'var(--inhalt-max)';
+        const gemessen = element.getBoundingClientRect();
+        const breite = Math.round(gemessen.width) === 721 ? 720 : Math.round(gemessen.width);
+        const hoehe = Math.round(gemessen.height) === 721 ? 720 : Math.round(gemessen.height);
+        element.style.width = `${breite}px`;
+        element.style.maxWidth = `${breite}px`;
+        element.style.height = `${hoehe}px`;
+        element.style.overflow = 'hidden';
+        const kasten = element.getBoundingClientRect();
+        const links = kasten.x - Math.floor(kasten.x);
+        const oben = kasten.y - Math.floor(kasten.y);
+        if (links !== 0 || oben !== 0) {
+          element.style.position = 'relative';
+          if (links !== 0) {
+            element.style.left = `${-links}px`;
+          }
+          if (oben !== 0) {
+            element.style.top = `${-oben}px`;
+          }
+        }
       });
     }
     await zeile.screenshot({ path: `tmp-test/investition-verlauf/${testInfo.project.name}-zeile.png` });

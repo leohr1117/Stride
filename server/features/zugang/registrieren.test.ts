@@ -68,8 +68,8 @@ async function mitRouten<T>(arbeit: (app: FastifyInstance) => Promise<T>): Promi
   }
 }
 
-function inhaber(name = 'Ada'): void {
-  legeBenutzerAn({ benutzername: name, passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+async function inhaber(name = 'Ada'): Promise<void> {
+  await legeBenutzerAn({ benutzername: name, passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
 }
 
 describe('registrieren', () => {
@@ -96,7 +96,7 @@ describe('registrieren', () => {
       expect(process.env[name]).toBeUndefined();
     }
     expect(istOeffentlicherZugang('POST', '/api/zugang/registrieren')).toBe(true);
-    inhaber();
+    await inhaber();
     await mitRouten(async (app) => {
       for (const wert of [undefined, '0', 'true', '']) {
         schalter(wert);
@@ -115,7 +115,7 @@ describe('registrieren', () => {
   });
 
   it('legt mit Schalter 1 ein Mitglied an, ignoriert die Rolle und öffnet die Sitzung', async () => {
-    inhaber();
+    await inhaber();
     schalter('1');
     await mitRouten(async (app) => {
       const antwort = await app.inject({
@@ -144,7 +144,7 @@ describe('registrieren', () => {
 
   it('lehnt den Admin-Namen und einen vergebenen Namen mit demselben Text ab', async () => {
     process.env.STRIDE_ADMIN = 'Wirt';
-    inhaber();
+    await inhaber();
     schalter('1');
     await mitRouten(async (app) => {
       const admin = await app.inject({
@@ -166,7 +166,7 @@ describe('registrieren', () => {
   });
 
   it('lehnt ein zu kurzes Passwort ab', async () => {
-    inhaber();
+    await inhaber();
     schalter('1');
     await mitRouten(async (app) => {
       const antwort = await app.inject({
@@ -183,7 +183,7 @@ describe('registrieren', () => {
   it('begrenzt die Registrierung je Adresse, eine Anmeldung setzt sie nicht zurück', async () => {
     const vorher = process.env.STRIDE_TEST;
     delete process.env.STRIDE_TEST;
-    inhaber();
+    await inhaber();
     schalter('1');
     const adresse = { 'x-forwarded-for': '198.51.100.10' };
     try {
@@ -254,7 +254,7 @@ describe('registrieren', () => {
   it('bremst die Registrierung im Testmodus nicht', async () => {
     const vorher = process.env.STRIDE_TEST;
     process.env.STRIDE_TEST = '1';
-    inhaber();
+    await inhaber();
     schalter('1');
     try {
       await mitRouten(async (app) => {
@@ -278,7 +278,7 @@ describe('registrieren', () => {
   });
 
   it('sperrt die Anmeldung nach Fehlversuchen und ignoriert Registrierungen', async () => {
-    inhaber();
+    await inhaber();
     schalter('1');
     const adresse = { 'x-forwarded-for': '198.51.100.20' };
     await mitRouten(async (app) => {
@@ -332,7 +332,7 @@ describe('registrieren', () => {
         modus: 'einrichten',
         registrierung: true,
       });
-      legePasswortAn(PASSWORT);
+      await legePasswortAn(PASSWORT);
       const passwort = await app.inject({
         method: 'POST',
         url: '/api/zugang/registrieren',

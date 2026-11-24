@@ -28,6 +28,52 @@ async function spracheSetzen(seite: Page, sprache: string): Promise<void> {
   expect(ok).toBe(true);
 }
 
+async function warteOffenRuhig(seite: Page): Promise<void> {
+  await seite.emulateMedia({ reducedMotion: 'reduce' });
+  await seite.evaluate(() => {
+    for (const animation of document.getAnimations()) {
+      const wieder = animation.effect?.getComputedTiming().iterations;
+      if (wieder === Number.POSITIVE_INFINITY || animation.playState !== 'running') {
+        continue;
+      }
+      try {
+        animation.finish();
+      } catch {
+        // Die Animation ist zwischen Prüfung und finish schon zu Ende.
+      }
+    }
+  });
+  let vorher = '';
+  await expect.poll(async () => {
+    const stand = await seite.evaluate(() => {
+      const abschnitte = [...document.querySelectorAll('.handbuch-abschnitt')];
+      const level = document.querySelector('#level h2');
+      const kopf = document.querySelector('[data-kopf]');
+      const leiste = document.querySelector('.handbuch-leiste');
+      const reihe = document.querySelector('.handbuch-leiste .chip-reihe');
+      if (!level || !kopf || !leiste || abschnitte.length < 3) {
+        return 'offen';
+      }
+      const aufgeklappt = abschnitte.every((element) => element.getBoundingClientRect().height > 40);
+      const oben = level.getBoundingClientRect().top;
+      const frei =
+        oben >= kopf.getBoundingClientRect().bottom - 2 && oben >= leiste.getBoundingClientRect().bottom - 2;
+      const laufend = document.getAnimations().some((animation) => {
+        if (animation.playState !== 'running') {
+          return false;
+        }
+        return animation.effect?.getComputedTiming().iterations !== Number.POSITIVE_INFINITY;
+      });
+      const ruhe = aufgeklappt && frei && !laufend ? 'ruhig' : 'offen';
+      const versatz = reihe instanceof HTMLElement ? Math.round(reihe.scrollLeft) : 0;
+      return `${ruhe}|${Math.round(window.scrollY)}|${document.documentElement.scrollHeight}|${Math.round(oben)}|${versatz}`;
+    });
+    const stabil = stand.startsWith('ruhig|') && stand === vorher;
+    vorher = stand;
+    return stabil;
+  }).toBe(true);
+}
+
 async function bild(seite: Page, name: string): Promise<void> {
   fs.mkdirSync('tmp-test/handbuch', { recursive: true });
   await seite.screenshot({ path: `tmp-test/handbuch/${name}.png`, fullPage: true });
@@ -174,6 +220,7 @@ test('Handbuch ist eine offene Scrollseite', async ({ page }, testInfo) => {
   expect(lage?.oben ?? 0).toBeGreaterThanOrEqual((lage?.leiste ?? 0) - 2);
   expect(Math.abs((lage?.rand ?? 0) - (lage?.hoehe ?? 0))).toBeLessThanOrEqual(1);
   await ohneSeitlichenUeberlauf(page);
+  await warteOffenRuhig(page);
   await bild(page, `${projekt}-offen`);
 
   await page.request.patch('/api/einstellungen', { data: { ebenen: { visionen: false }, funktionen: { vorbilder: false } } });

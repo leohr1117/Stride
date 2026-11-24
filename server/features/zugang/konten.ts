@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Konto } from '../../../shared/api/index.ts';
 import { KONFIG } from '../../config.ts';
-import { mitWelt, schliesseWelt } from '../../db.ts';
+import { beendeLoeschsperre, mitWelt, schliesseWelt } from '../../db.ts';
 import { AppFehler, nichtGefunden, ungueltig } from '../../fehler.ts';
 import { aendereEinstellungen } from '../einstellungen/einstellungen.ts';
 import { setzeProfilZurueck } from '../../services/profilZurueck.ts';
@@ -29,20 +29,24 @@ export function konten(): Konto[] {
 }
 
 function entferneDatei(absolut: string): void {
-  schliesseWelt(absolut);
-  for (const endung of NEBEN_DATEIEN) {
-    fs.rmSync(`${absolut}${endung}`, { force: true });
+  schliesseWelt(absolut, { erzwungen: true });
+  try {
+    for (const endung of NEBEN_DATEIEN) {
+      fs.rmSync(`${absolut}${endung}`, { force: true });
+    }
+  } finally {
+    beendeLoeschsperre(absolut);
   }
 }
 
-export function erstelleMitglied(daten: {
+export async function erstelleMitglied(daten: {
   benutzername: string;
   passwort: string;
   profilname?: string;
   zustimmung?: Date;
-}): Konto {
+}): Promise<Konto> {
   const profilname = (daten.profilname ?? daten.benutzername).trim();
-  const angelegt = legeBenutzerAn({
+  const angelegt = await legeBenutzerAn({
     benutzername: daten.benutzername,
     passwort: daten.passwort,
     rolle: 'mitglied',

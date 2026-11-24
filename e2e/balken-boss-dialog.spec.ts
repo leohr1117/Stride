@@ -1,4 +1,4 @@
-import { diagrammeAufnehmen, diagrammLoesen, expect, test, testJetzt, type Locator, type Page, type TestInfo } from './uhr.ts';
+import { TESTDATUM, expect, stelleTestuhr, test, testJetzt, type Locator, type Page, type TestInfo } from './uhr.ts';
 import { DatabaseSync } from 'node:sqlite';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
 import { erschoepfungsBild } from '../shared/spiel/belastung.ts';
@@ -100,6 +100,69 @@ function weltDatei(): string {
     throw new Error('Abbruch: PLAYWRIGHT_WELT fehlt. Der Standard ist die Kopie aus dem Playwright-Setup.');
   }
   return verweigereEchteDatenbank(datei);
+}
+
+function sqlWert(wert: unknown): string | number | bigint | Uint8Array | null {
+  if (wert === null || typeof wert === 'string' || typeof wert === 'number' || typeof wert === 'bigint') {
+    return wert;
+  }
+  if (wert instanceof Uint8Array) {
+    return wert;
+  }
+  throw new Error('Unerwarteter Datenbankwert.');
+}
+
+/** Bossangriff und Verfall nach dem Testtag fliegen raus. Die Abrechnung bleibt auf dem Testtag. */
+function ruheBisTestdatum(): () => void {
+  const datei = weltDatei();
+  const db = new DatabaseSync(datei);
+  try {
+    const xp = db
+      .prepare(
+        `SELECT * FROM xp_ereignisse WHERE quelle IN ('bossangriff', 'verfall') AND date(erstellt_am, 'localtime') > ?`,
+      )
+      .all(TESTDATUM) as Record<string, unknown>[];
+    const angriffe = db
+      .prepare(`SELECT id, angriff_bis AS bis FROM vorhaben WHERE angriff_bis IS NOT NULL AND angriff_bis > ?`)
+      .all(TESTDATUM) as { id: number; bis: string }[];
+    const verfaelle = db
+      .prepare(`SELECT id, verfall_bis AS bis FROM attribute WHERE verfall_bis IS NOT NULL AND verfall_bis > ?`)
+      .all(TESTDATUM) as { id: number; bis: string }[];
+    const loeschen = db.prepare('DELETE FROM xp_ereignisse WHERE id = ?');
+    for (const zeile of xp) {
+      loeschen.run(zeile.id as number);
+    }
+    if (angriffe.length > 0) {
+      db.prepare('UPDATE vorhaben SET angriff_bis = ? WHERE angriff_bis > ?').run(TESTDATUM, TESTDATUM);
+    }
+    if (verfaelle.length > 0) {
+      db.prepare('UPDATE attribute SET verfall_bis = ? WHERE verfall_bis > ?').run(TESTDATUM, TESTDATUM);
+    }
+    return () => {
+      const wieder = new DatabaseSync(datei);
+      try {
+        for (const zeile of xp) {
+          const spalten = Object.keys(zeile);
+          const platz = spalten.map(() => '?').join(', ');
+          wieder
+            .prepare(`INSERT INTO xp_ereignisse (${spalten.join(', ')}) VALUES (${platz})`)
+            .run(...spalten.map((spalte) => sqlWert(zeile[spalte])));
+        }
+        const angriff = wieder.prepare('UPDATE vorhaben SET angriff_bis = ? WHERE id = ?');
+        for (const zeile of angriffe) {
+          angriff.run(zeile.bis, zeile.id);
+        }
+        const verfall = wieder.prepare('UPDATE attribute SET verfall_bis = ? WHERE id = ?');
+        for (const zeile of verfaelle) {
+          verfall.run(zeile.bis, zeile.id);
+        }
+      } finally {
+        wieder.close();
+      }
+    };
+  } finally {
+    db.close();
+  }
 }
 
 function setzeStufenVerlust(attributId: number, abzug: number): () => void {
@@ -480,65 +543,64 @@ test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
   await anmelden(page);
   await test.step('Attribut-Balken', async () => pruefeBalken(page, testInfo));
   await test.step('Erschöpfung', async () => {
-    await page.goto('/koennen');
-    const koennen = page.locator('main');
-    await expect(koennen.getByText('zu niedrig', { exact: true })).toHaveCount(0);
-    const hinweis = koennen.locator('[data-zustand="zu-niedrig"]').first();
-    await expect(hinweis).toBeVisible();
-    const hinweisText = (await hinweis.innerText()).replace(/\s+/g, ' ').trim();
-    if (hinweisText.includes('Lvl zu niedrig')) {
-      await expect(hinweis.getByRole('button')).toHaveCount(0);
-    } else {
-      await expect(hinweis.getByRole('button', { name: 'Lvl zu niedrig' })).toBeVisible();
+    const zurueck = ruheBisTestdatum();
+    try {
+      await stelleTestuhr(page);
+      await page.goto('/koennen');
+      const koennen = page.locator('main');
+      await expect(koennen.getByText('zu niedrig', { exact: true })).toHaveCount(0);
+      const hinweis = koennen.locator('[data-zustand="zu-niedrig"]').first();
+      await expect(hinweis).toBeVisible();
+      const hinweisText = (await hinweis.innerText()).replace(/\s+/g, ' ').trim();
+      if (hinweisText.includes('Lvl zu niedrig')) {
+        await expect(hinweis.getByRole('button')).toHaveCount(0);
+      } else {
+        await expect(hinweis.getByRole('button', { name: 'Lvl zu niedrig' })).toBeVisible();
+      }
+      const hinweisZahl = await koennen.locator('[data-zustand="zu-niedrig"]').count();
+      const roteStufen = koennen
+        .locator('.attributzeile')
+        .filter({ has: page.locator('[data-zustand="zu-niedrig"]') })
+        .locator('span.text-gefahr', { hasText: /^Lvl \d/ });
+      await expect(roteStufen).toHaveCount(hinweisZahl);
+      const zeile = hinweis.locator('xpath=ancestor::div[contains(@class,"attributzeile")][1]');
+      const stufe = zeile.locator('span', { hasText: /^Lvl \d/ }).last();
+      await expect(stufe).toHaveClass(/text-gefahr/);
+      await expect(stufe).not.toHaveClass(/text-leise/);
+      expect(await farbeWie(stufe, '--gefahr')).toBe(true);
+      const zeichen = hinweis.locator('span[aria-hidden="true"]');
+      await expect(zeichen).toHaveClass(/text-gefahr/);
+      await expect(zeichen).not.toHaveClass(/bg-gefahr|text-haupt/);
+      expect(await farbeWie(zeichen, '--gefahr')).toBe(true);
+      expect(await flaecheWie(zeichen, '--gefahr')).toBe(false);
+      if (hinweisText.includes('Lvl zu niedrig')) {
+        await expect(hinweis.getByText('Lvl zu niedrig', { exact: true })).toHaveClass(/text-gefahr/);
+      }
+      const abzug = zeile.locator('[data-abzug="ziel"]');
+      if ((await abzug.count()) > 0) {
+        await expect(abzug).toHaveClass(/text-gefahr/);
+        await expect(abzug).not.toHaveClass(/text-haupt/);
+      }
+      const normal = koennen.locator('.attributzeile').filter({ hasNot: page.locator('[data-zustand="zu-niedrig"]') });
+      if ((await normal.count()) > 0) {
+        const normaleStufe = normal.first().locator('span', { hasText: /^Lvl \d/ }).last();
+        await expect(normaleStufe).toHaveClass(/text-leise/);
+        await expect(normaleStufe).not.toHaveClass(/text-gefahr/);
+        await expect(normal.first().locator('.balken')).not.toHaveClass(/text-gefahr|bg-gefahr|border-gefahr/);
+      }
+      await zeile.scrollIntoViewIfNeeded();
+      await page.screenshot({ path: `tmp-test/balken-boss-dialog/${testInfo.project.name}-koennen-stufe.png` });
+      const oeffnen = zeile.locator('[data-zeile] > button');
+      const name = await oeffnen.getAttribute('aria-label');
+      expect(name).toBeTruthy();
+      await oeffnen.click();
+      const dialog = page.getByRole('dialog', { name: name ?? '', exact: true });
+      await expect(dialog.getByRole('switch', { name: 'Zu niedrig senkt XP anderer Attribute' })).toBeVisible();
+      await dialog.getByRole('button', { name: 'Schließen' }).click();
+      await expect(dialog).toBeHidden();
+    } finally {
+      zurueck();
     }
-    const hinweisZahl = await koennen.locator('[data-zustand="zu-niedrig"]').count();
-    const roteStufen = koennen
-      .locator('.attributzeile')
-      .filter({ has: page.locator('[data-zustand="zu-niedrig"]') })
-      .locator('span.text-gefahr', { hasText: /^Lvl \d/ });
-    await expect(roteStufen).toHaveCount(hinweisZahl);
-    const zeile = hinweis.locator('xpath=ancestor::div[contains(@class,"attributzeile")][1]');
-    const stufe = zeile.locator('span', { hasText: /^Lvl \d/ }).last();
-    await expect(stufe).toHaveClass(/text-gefahr/);
-    await expect(stufe).not.toHaveClass(/text-leise/);
-    expect(await farbeWie(stufe, '--gefahr')).toBe(true);
-    const zeichen = hinweis.locator('span[aria-hidden="true"]');
-    await expect(zeichen).toHaveClass(/text-gefahr/);
-    await expect(zeichen).not.toHaveClass(/bg-gefahr|text-haupt/);
-    expect(await farbeWie(zeichen, '--gefahr')).toBe(true);
-    expect(await flaecheWie(zeichen, '--gefahr')).toBe(false);
-    if (hinweisText.includes('Lvl zu niedrig')) {
-      await expect(hinweis.getByText('Lvl zu niedrig', { exact: true })).toHaveClass(/text-gefahr/);
-    }
-    const abzug = zeile.locator('[data-abzug="ziel"]');
-    if ((await abzug.count()) > 0) {
-      await expect(abzug).toHaveClass(/text-gefahr/);
-      await expect(abzug).not.toHaveClass(/text-haupt/);
-    }
-    const normal = koennen.locator('.attributzeile').filter({ hasNot: page.locator('[data-zustand="zu-niedrig"]') });
-    if ((await normal.count()) > 0) {
-      const normaleStufe = normal.first().locator('span', { hasText: /^Lvl \d/ }).last();
-      await expect(normaleStufe).toHaveClass(/text-leise/);
-      await expect(normaleStufe).not.toHaveClass(/text-gefahr/);
-      await expect(normal.first().locator('.balken')).not.toHaveClass(/text-gefahr|bg-gefahr|border-gefahr/);
-    }
-    const diagramm = testInfo.project.name === 'desktop';
-    if (diagramm) {
-      await diagrammeAufnehmen(page);
-    }
-    await zeile.scrollIntoViewIfNeeded();
-    await page.screenshot({ path: `tmp-test/balken-boss-dialog/${testInfo.project.name}-koennen-stufe.png` });
-    if (diagramm) {
-      await diagrammLoesen(page);
-    }
-    const oeffnen = zeile.locator('[data-zeile] > button');
-    const name = await oeffnen.getAttribute('aria-label');
-    expect(name).toBeTruthy();
-    await oeffnen.click();
-    const dialog = page.getByRole('dialog', { name: name ?? '', exact: true });
-    await expect(dialog.getByRole('switch', { name: 'Zu niedrig senkt XP anderer Attribute' })).toBeVisible();
-    await dialog.getByRole('button', { name: 'Schließen' }).click();
-    await expect(dialog).toBeHidden();
   });
   await test.step('Titel', async () => pruefeTitel(page, testInfo));
   await test.step('Chronik', async () => pruefeChronik(page, testInfo));

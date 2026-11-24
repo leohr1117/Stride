@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import { expect, test, type Page } from './uhr.ts';
+import { warteAufAnmeldung } from './helfer.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
 
 async function passwort(): Promise<string> {
@@ -26,10 +27,7 @@ test('Weiter steht in der Einführung direkt unter der Liste', async ({ page }, 
   await page.locator('input[name="username"]').fill('testteil');
   await page.locator('input[name="password"]').fill(await passwort());
   await page.locator('button[type="submit"]').click();
-  await page.waitForFunction(async () => {
-    const antwort = await fetch('/api/einstellungen');
-    return antwort.ok;
-  });
+  await warteAufAnmeldung(page);
   await page.evaluate(async () => {
     const antwort = await fetch('/api/profil/zuruecksetzen', { method: 'POST' });
     if (!antwort.ok) {

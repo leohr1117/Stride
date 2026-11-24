@@ -45,6 +45,14 @@ function protokolle(): number {
   return eine<{ anzahl: number }>('SELECT COUNT(*) AS anzahl FROM protokoll')?.anzahl ?? 0;
 }
 
+function sortiert(pfade: readonly string[]): string[] {
+  return [...pfade].sort();
+}
+
+function runden(pfade: readonly string[], anzahl: number): string[] {
+  return sortiert(pfade.flatMap((pfad) => Array.from({ length: anzahl }, () => kanonisch(pfad))));
+}
+
 describe('Hinweis-Takt', () => {
   it('startet nur den vorhandenen Takt', () => {
     const timeouts = vi.spyOn(globalThis, 'setTimeout');
@@ -99,11 +107,11 @@ describe('Hinweis-Takt', () => {
       await vi.advanceTimersByTimeAsync(29_000);
       expect(gesehen).toEqual([]);
       await vi.advanceTimersByTimeAsync(1_000);
-      expect(gesehen).toEqual([kanonisch(leer), kanonisch(berlin), kanonisch(ungueltig)]);
+      expect(sortiert(gesehen)).toEqual(runden([leer, berlin, ungueltig], 1));
       await vi.advanceTimersByTimeAsync(ABGLEICH_MINUTEN * 60 * 1000);
-      expect(gesehen).toHaveLength(6);
+      expect(sortiert(gesehen)).toEqual(runden([leer, berlin, ungueltig], 2));
       await vi.advanceTimersByTimeAsync(ABGLEICH_MINUTEN * 60 * 1000);
-      expect(gesehen).toHaveLength(9);
+      expect(sortiert(gesehen)).toEqual(runden([leer, berlin, ungueltig], 3));
       expect(fehler).toEqual([]);
     } finally {
       stop();
@@ -120,22 +128,22 @@ describe('Hinweis-Takt', () => {
     });
   });
 
-  it('bricht den restlichen Takt ab, wenn die Prüfung fehlschlägt', async () => {
+  it('führt die übrigen Welten weiter, wenn eine Prüfung fehlschlägt', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'] });
-    const erste = welt();
-    const zweite = welt();
+    const dateien = Array.from({ length: 6 }, () => welt());
+    const kaputt = new Set(dateien.slice(0, 4).map(kanonisch));
     const gesehen: string[] = [];
     vi.spyOn(webPush, 'pruefeHinweise').mockImplementation(async () => {
       const pfad = aktiverPfad();
       gesehen.push(pfad);
-      if (pfad === kanonisch(erste)) {
+      if (kaputt.has(pfad)) {
         throw new Error('hinweis-kaputt');
       }
       return 0;
     });
     const fehler: unknown[] = [];
     const stop = starteRegelmaessigenAbgleich(
-      () => [erste, zweite],
+      () => dateien,
       (grund) => {
         fehler.push(grund);
       },
@@ -145,8 +153,81 @@ describe('Hinweis-Takt', () => {
     } finally {
       stop();
     }
-    expect(gesehen).toEqual([kanonisch(erste)]);
-    expect(fehler).toHaveLength(1);
+    expect(sortiert(gesehen)).toEqual(sortiert(dateien.map(kanonisch)));
+    expect(fehler).toHaveLength(4);
+    expect(fehler.every((eintrag) => eintrag instanceof Error && eintrag.message === 'hinweis-kaputt')).toBe(true);
+  });
+
+  it('gleicht höchstens vier Welten gleichzeitig ab', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'] });
+    const dateien = Array.from({ length: 6 }, () => welt());
+    let gleichzeitig = 0;
+    let hoechstens = 0;
+    const wartend: Array<() => void> = [];
+    vi.spyOn(webPush, 'pruefeHinweise').mockImplementation(
+      () =>
+        new Promise((fertig) => {
+          gleichzeitig += 1;
+          hoechstens = Math.max(hoechstens, gleichzeitig);
+          wartend.push(() => {
+            gleichzeitig -= 1;
+            fertig(0);
+          });
+        }),
+    );
+    const stop = starteRegelmaessigenAbgleich(
+      () => dateien,
+      () => undefined,
+    );
+    try {
+      await vi.advanceTimersByTimeAsync(30_000);
+      expect(hoechstens).toBe(4);
+      expect(gleichzeitig).toBe(4);
+      wartend.shift()?.();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(hoechstens).toBe(4);
+      expect(gleichzeitig).toBe(4);
+      expect(wartend).toHaveLength(4);
+    } finally {
+      stop();
+      while (wartend.length > 0) {
+        wartend.shift()?.();
+        await vi.advanceTimersByTimeAsync(0);
+      }
+    }
+  });
+
+  it('startet keinen zweiten Durchgang, solange einer läuft', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'] });
+    const datei = welt();
+    let loese = (): void => {};
+    let aufrufe = 0;
+    vi.spyOn(webPush, 'pruefeHinweise').mockImplementation(
+      () =>
+        new Promise((fertig) => {
+          aufrufe += 1;
+          loese = () => {
+            fertig(0);
+          };
+        }),
+    );
+    const stop = starteRegelmaessigenAbgleich(
+      () => [datei],
+      () => undefined,
+    );
+    try {
+      await vi.advanceTimersByTimeAsync(30_000);
+      expect(aufrufe).toBe(1);
+      await vi.advanceTimersByTimeAsync(ABGLEICH_MINUTEN * 60 * 1000);
+      expect(aufrufe).toBe(1);
+      loese();
+      await vi.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(ABGLEICH_MINUTEN * 60 * 1000);
+      expect(aufrufe).toBe(2);
+    } finally {
+      loese();
+      stop();
+    }
   });
 
   it('vergibt für einen fälligen Hinweis keine XP', async () => {

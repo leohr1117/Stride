@@ -5,19 +5,83 @@ import { DatabaseSync } from 'node:sqlite';
 import { SICHERUNG_APP, type DatenExport, type DatenZeile, type DatenWert } from '../shared/api/daten.ts';
 import { AKTUELLE_VERSION } from '../shared/versionen.ts';
 import type { Sprache } from '../shared/sprache/kern.ts';
-import { zeige } from '../shared/sprache/index.ts';
+import { klasseAnzeigen, zeige } from '../shared/sprache/index.ts';
 import { leereGeerbteZugangsVariablen } from '../server/testpfad.ts';
 import { mitDatenbankPfaden } from '../server/umgebung.ts';
 import { TEST_PASSWORT, TEST_URL, WURZEL } from './testdaten.ts';
-import { TESTDATUM, TESTZEIT, expect, stelleTestuhr, test, testJetzt, type Page, type TestInfo } from './uhr.ts';
+import {
+  TESTDATUM,
+  TESTZEIT,
+  expect,
+  stelleTestuhr,
+  test,
+  testJetzt,
+  type Browser,
+  type Page,
+  type TestInfo,
+} from './uhr.ts';
 
 const ORDNER = 'tmp-test/infoseite';
+const EN_ORDNER = 'tmp-test/infoseite-en';
 const PROFIL_DATEI = path.join(ORDNER, 'profilstand.json');
+
+function saatKonstante(name: string): string {
+  const quelle = fs.readFileSync(path.join(WURZEL, 'e2e', 'infoseite-saat.ts'), 'utf8');
+  const treffer = quelle.match(new RegExp(`^const ${name} = ([^;\\n]+);`, 'm'));
+  if (!treffer?.[1]) {
+    throw new Error(`Die Saat nennt ${name} nicht.`);
+  }
+  return treffer[1].trim();
+}
+
+function saatText(name: string): string {
+  const roh = saatKonstante(name);
+  if (roh.length < 2 || roh[0] !== "'" || roh.at(-1) !== "'") {
+    throw new Error(`Die Saat setzt ${name} nicht als Text.`);
+  }
+  return roh.slice(1, -1);
+}
+
+function saatZahl(name: string): number {
+  const zahl = Number(saatKonstante(name));
+  if (!Number.isInteger(zahl)) {
+    throw new Error(`Die Saat setzt ${name} nicht als ganze Zahl.`);
+  }
+  return zahl;
+}
+
+const PROFIL_NAME = saatText('PROFIL');
+const KLASSE = saatText('KLASSE');
+const LEVEL = saatZahl('LEVEL');
+const MIN_EINTRAEGE = saatZahl('EINTRAEGE');
+const VISION = 'Fit im Alltag';
+const FAEHIGKEIT = 'Laufen';
+const KNOTEN = 'Locker laufen';
+const BOSSE = ['Zehn Kilometer', 'Rücken ruhig', 'Küche leer'] as const;
 const DUNKEL = { stil: 'standard', primaer: '#f2f2f2', akzent: '#8a8a8a', hintergrund: '#141414' };
-const VISION = 'Fit und belastbar';
-const BAUM_KNOTEN = 'Kniebeuge sauber';
-const PROFIL_NAME = 'Test Voll';
-const MIN_EINTRAEGE = 40;
+const EN_TEXT: Readonly<Record<string, string>> = {
+  [PROFIL_NAME]: PROFIL_NAME,
+  [VISION]: 'Fit for everyday life',
+  'Laufen, Rücken und ein klarer Kopf.': 'Running, a calm back and a clear head.',
+  Laufen: 'Running',
+  Spanisch: 'Spanish',
+  Lesen: 'Reading',
+  Rücken: 'Back',
+  Haushalt: 'Household',
+  Lernen: 'Learning',
+  [KNOTEN]: 'Easy running',
+  'Fünf Kilometer': 'Five kilometers',
+  'Rücken schonen': 'Spare the back',
+  'Zehn Kilometer': 'Ten kilometers',
+  'Rücken ruhig': 'Calm back',
+  'Küche leer': 'Kitchen clear',
+  'Kapitel 3': 'Chapter 3',
+  Lüften: 'Air it out',
+};
+const FENSTER = [
+  { art: 'handy', breite: 390, hoehe: 664, mobil: true, dsf: 2, geraetePixel: true, bildBreite: 780, bildHoehe: 1328 },
+  { art: 'desktop', breite: 1440, hoehe: 900, mobil: false, dsf: 1, geraetePixel: false, bildBreite: 1440, bildHoehe: 900 },
+] as const;
 
 interface Profilstand {
   name: string;
@@ -26,6 +90,17 @@ interface Profilstand {
   level: number;
   xp: number;
   eintraege: number;
+}
+
+interface Sicht {
+  art: 'handy' | 'desktop';
+  breite: number;
+  hoehe: number;
+  mobil: boolean;
+  dsf: number;
+  geraetePixel: boolean;
+  bildBreite: number;
+  bildHoehe: number;
 }
 
 let saatCache: DatenExport | null = null;
@@ -92,7 +167,7 @@ function baueSaat(): DatenExport {
     path.join(ordner, 'zugang.db'),
   );
   leereGeerbteZugangsVariablen(env);
-  const ergebnis = spawnSync(process.execPath, ['--disable-warning=ExperimentalWarning', 'e2e/samen.ts'], {
+  const ergebnis = spawnSync(process.execPath, ['--disable-warning=ExperimentalWarning', 'e2e/infoseite-saat.ts'], {
     cwd: WURZEL,
     env,
     encoding: 'utf8',
@@ -105,6 +180,10 @@ function baueSaat(): DatenExport {
   }
   saatCache = liesWelt(welt);
   return saatCache;
+}
+
+function raeumeSaatAuf(): void {
+  fs.rmSync(path.join(WURZEL, 'tmp-test', 'infoseite-saat'), { recursive: true, force: true });
 }
 
 async function liesExport(seite: Page): Promise<DatenExport> {
@@ -150,20 +229,34 @@ async function liesProfil(seite: Page): Promise<Profilstand> {
     statistik: { eintraegeGesamt: number };
   };
   return {
-    name: daten.name, klasse: daten.klasse, titel: daten.titel,
-    level: daten.level.level, xp: daten.level.xpGesamt, eintraege: daten.statistik.eintraegeGesamt,
+    name: daten.name,
+    klasse: daten.klasse,
+    titel: daten.titel,
+    level: daten.level.level,
+    xp: daten.level.xpGesamt,
+    eintraege: daten.statistik.eintraegeGesamt,
   };
 }
 
 function gleicherProfilstand(stand: Profilstand): void {
   expect(stand.name).toBe(PROFIL_NAME);
-  expect(stand.eintraege).toBeGreaterThanOrEqual(MIN_EINTRAEGE);
+  expect(stand.klasse).toBe(KLASSE);
+  expect(stand.level).toBe(LEVEL);
+  expect(stand.eintraege).toBe(MIN_EINTRAEGE);
   fs.mkdirSync(ORDNER, { recursive: true });
-  if (!fs.existsSync(PROFIL_DATEI)) {
+  const gespeichert = fs.existsSync(PROFIL_DATEI)
+    ? (JSON.parse(fs.readFileSync(PROFIL_DATEI, 'utf8')) as Profilstand)
+    : null;
+  const vonDieserSaat =
+    gespeichert !== null &&
+    gespeichert.name === PROFIL_NAME &&
+    gespeichert.klasse === KLASSE &&
+    gespeichert.level === LEVEL &&
+    gespeichert.eintraege === MIN_EINTRAEGE;
+  if (!vonDieserSaat) {
     fs.writeFileSync(PROFIL_DATEI, `${JSON.stringify(stand)}\n`);
     return;
   }
-  const gespeichert = JSON.parse(fs.readFileSync(PROFIL_DATEI, 'utf8')) as Profilstand;
   expect(stand).toEqual(gespeichert);
 }
 
@@ -173,17 +266,6 @@ async function festeUhrPasst(seite: Page): Promise<void> {
   const kette = await seite.request.get('/api/kette/heute');
   expect(kette.ok()).toBe(true);
   expect(((await kette.json()) as { heuteErfasst: boolean }).heuteErfasst, TESTDATUM).toBe(true);
-}
-
-function sollBreite(info: TestInfo): number {
-  if (info.project.name === 'handy') return 390;
-  if (info.project.name === 'desktop') return 1440;
-  throw new Error(`Unbekanntes Projekt ${info.project.name}`);
-}
-
-function bild(info: TestInfo, fassung: string, ansicht: string): string {
-  fs.mkdirSync(ORDNER, { recursive: true });
-  return `${ORDNER}/${info.project.name}-${sollBreite(info)}-${fassung}-${ansicht}.png`;
 }
 
 async function speichere(seite: Page, daten: Record<string, unknown>): Promise<void> {
@@ -198,17 +280,46 @@ async function speichere(seite: Page, daten: Record<string, unknown>): Promise<v
   expect(ok).toBe(true);
 }
 
-async function ohneTestreste(seite: Page): Promise<void> {
-  const text = await seite.evaluate(() => {
+function uebersetzeInhalt(wert: string): string {
+  return EN_TEXT[wert] ?? wert;
+}
+
+function englischeSaat(roh: DatenExport): DatenExport {
+  const tabellen: DatenExport['tabellen'] = {};
+  for (const [name, zeilen] of Object.entries(roh.tabellen)) {
+    tabellen[name] = zeilen.map((zeile) => {
+      const kopie: DatenZeile = {};
+      for (const [spalte, wert] of Object.entries(zeile)) {
+        kopie[spalte] = typeof wert === 'string' ? uebersetzeInhalt(wert) : wert;
+      }
+      return kopie;
+    });
+  }
+  return { ...roh, exportiertAm: testJetzt().toISOString(), tabellen };
+}
+
+function text(sprache: Sprache, deutsch: string): string {
+  if (sprache === 'de') {
+    return deutsch;
+  }
+  const uebersetzt = EN_TEXT[deutsch];
+  if (uebersetzt === undefined) {
+    throw new Error(`Die Übersetzung für „${deutsch}“ fehlt.`);
+  }
+  return uebersetzt;
+}
+
+async function ohneTestreste(seite: Page, verboten: readonly string[]): Promise<void> {
+  const inhalt = await seite.evaluate(() => {
     const teile: string[] = [];
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     let knoten = walker.nextNode();
     while (knoten) {
-      const inhalt = knoten.textContent ?? '';
+      const stueck = knoten.textContent ?? '';
       const eltern = knoten.parentElement;
       const aktuell = knoten;
       knoten = walker.nextNode();
-      if (!eltern || inhalt.trim() === '' || eltern.closest('[inert]')) {
+      if (!eltern || stueck.trim() === '' || eltern.closest('[inert]')) {
         continue;
       }
       const stil = getComputedStyle(eltern);
@@ -219,19 +330,35 @@ async function ohneTestreste(seite: Page): Promise<void> {
       bereich.selectNodeContents(aktuell);
       const kasten = bereich.getBoundingClientRect();
       if (kasten.width > 0 && kasten.height > 0) {
-        teile.push(inhalt);
+        teile.push(stueck);
       }
     }
     return teile.join('\n');
   });
-  expect(text.includes('Lauf80'), text).toBe(false);
-  expect(text.includes('Lvl 4242'), text).toBe(false);
+  expect(/\bLvl 1\b/.test(inhalt), inhalt).toBe(false);
+  for (const wort of verboten) {
+    expect(inhalt.includes(wort), `${wort}\n${inhalt}`).toBe(false);
+  }
 }
 
-async function aufnahme(seite: Page, pfad: string): Promise<void> {
-  await ohneTestreste(seite);
-  await seite.screenshot({ path: pfad, fullPage: false, scale: 'css' });
+async function aufnahme(
+  seite: Page,
+  pfad: string,
+  bild: { breite: number; hoehe: number; geraetePixel: boolean },
+  verboten: readonly string[],
+): Promise<void> {
+  await expect(seite.locator('[data-abzug]')).toHaveCount(0);
+  await expect(seite.locator('[data-zustand="zu-niedrig"]')).toHaveCount(0);
+  await ohneTestreste(seite, verboten);
+  await seite.screenshot({
+    path: pfad,
+    fullPage: false,
+    ...(bild.geraetePixel ? {} : { scale: 'css' as const }),
+  });
   expect(fs.existsSync(pfad), pfad).toBe(true);
+  const png = fs.readFileSync(pfad);
+  expect(png.readUInt32BE(16), pfad).toBe(bild.breite);
+  expect(png.readUInt32BE(20), pfad).toBe(bild.hoehe);
 }
 
 async function kopfFrei(seite: Page, ziel: string): Promise<void> {
@@ -243,12 +370,37 @@ async function kopfFrei(seite: Page, ziel: string): Promise<void> {
   });
 }
 
-async function nimmAnsichten(seite: Page, info: TestInfo, fassung: string, sprache: Sprache): Promise<void> {
-  expect(seite.viewportSize()?.width).toBe(sollBreite(info));
+function dateiFuer(fassung: string, sicht: Sicht, ansicht: string): string {
+  if (fassung === 'en') {
+    fs.mkdirSync(EN_ORDNER, { recursive: true });
+    return `${EN_ORDNER}/${sicht.breite}-${ansicht}.png`;
+  }
+  fs.mkdirSync(ORDNER, { recursive: true });
+  return `${ORDNER}/${sicht.art}-${sicht.breite}-${fassung}-${ansicht}.png`;
+}
+
+async function nimmAnsichten(seite: Page, fassung: string, sprache: Sprache, sicht: Sicht): Promise<void> {
+  expect(seite.viewportSize()?.width).toBe(sicht.breite);
+  expect(seite.viewportSize()?.height).toBe(sicht.hoehe);
+  expect(await seite.evaluate(() => window.devicePixelRatio)).toBe(sicht.dsf);
+  const klasse = klasseAnzeigen(KLASSE, sprache);
+  const vision = text(sprache, VISION);
+  const faehigkeit = text(sprache, FAEHIGKEIT);
+  const knoten = text(sprache, KNOTEN);
+  const verboten = ['Lauf80', 'Lvl 4242', zeige('Lvl zu niedrig', sprache), zeige('Bosse greifen an', sprache)];
+  const schuss = (ansicht: string) =>
+    aufnahme(
+      seite,
+      dateiFuer(fassung, sicht, ansicht),
+      { breite: sicht.bildBreite, hoehe: sicht.bildHoehe, geraetePixel: sicht.geraetePixel },
+      verboten,
+    );
   const xp = sprache === 'en' ? /about \+/ : /ca\. \+/;
 
   await seite.goto('/');
   await expect(seite.getByRole('heading', { name: zeige('Heute', sprache), exact: true })).toBeVisible();
+  await expect(seite.getByText(PROFIL_NAME, { exact: true }).first()).toBeVisible();
+  await expect(seite.getByText(klasse).first()).toBeVisible();
   await expect(seite.locator('[data-levelring]').first()).toBeVisible();
   await expect(seite.getByText(zeige('Streak', sprache), { exact: true }).first()).toBeVisible();
   await seite.evaluate(() => window.scrollTo(0, 0));
@@ -263,19 +415,68 @@ async function nimmAnsichten(seite: Page, info: TestInfo, fassung: string, sprac
   }
   await expect(seite.locator('html')).toHaveAttribute('data-schema', fassung === 'hell' ? 'light' : 'dark');
   await expect(seite.locator('[data-levelring]').first()).toBeInViewport();
-  await expect(seite.getByText(zeige('Streak', sprache), { exact: true }).first()).toBeInViewport();
-  await aufnahme(seite, bild(info, fassung, 'heute'));
+  await schuss('heute');
 
   await seite.getByRole('button', { name: zeige('Eintrag loggen', sprache) }).click();
   const dialogName = zeige('Was hast du getan?', sprache);
   const dialog = seite.getByRole('dialog', { name: dialogName });
+  const taetigkeit = dialog.locator('[data-gruppe="taetigkeit"]').getByRole('button', { name: faehigkeit, exact: true });
+  const skill = dialog.locator('[data-gruppe="faehigkeit"]').getByRole('button', { name: faehigkeit, exact: true });
+  await taetigkeit.click();
+  await skill.click();
+  await dialog.getByRole('button', { name: zeige('Eigene', sprache), exact: true }).click();
+  const dauer = dialog.getByLabel(zeige('Dauer in Std', sprache));
+  const dauerWert = sprache === 'en' ? '0.33' : '0,33';
+  await dauer.fill(dauerWert);
+  await expect(dauer).toHaveValue(dauerWert);
+  await expect(taetigkeit).toHaveAttribute('aria-pressed', 'true');
+  await expect(skill).toHaveAttribute('aria-pressed', 'true');
+  await dialog.locator('[data-gruppe="faehigkeit"]').evaluate((element) => element.scrollIntoView({ block: 'start' }));
   const vorschau = dialog.getByRole('button', { name: xp });
-  await expect(dialog.getByRole('heading', { name: dialogName, exact: true })).toBeVisible();
-  await expect(vorschau).toBeVisible();
+  await expect(skill).toBeInViewport();
+  await expect(dauer).toBeInViewport();
   await expect(vorschau).toBeInViewport();
-  await aufnahme(seite, bild(info, fassung, 'eintrag'));
-  await dialog.getByRole('button', { name: zeige('Schließen', sprache), exact: true }).click();
+  await schuss('eintrag');
+  const schliessen = dialog.getByRole('button', { name: zeige('Schließen', sprache), exact: true });
+  await expect(schliessen).toBeInViewport();
+  await schliessen.click();
+  const frage = seite.getByRole('alertdialog', { name: zeige('Änderungen verwerfen?', sprache) });
+  await expect(frage).toBeVisible();
+  const verwerfen = frage.getByRole('button', { name: zeige('Verwerfen', sprache), exact: true });
+  await expect(verwerfen).toBeInViewport();
+  await verwerfen.click();
+  await expect(frage).toBeHidden();
   await expect(dialog).toBeHidden();
+
+  await seite.goto('/koennen');
+  await expect(seite.getByRole('heading', { name: zeige('Können', sprache), exact: true })).toBeVisible();
+  const zeilen = seite.locator('.attributzeile');
+  await expect(zeilen.nth(0)).toContainText(zeige('Körper', sprache));
+  await expect(zeilen.nth(1)).toContainText(zeige('Disziplin', sprache));
+  await expect(zeilen.nth(2)).toContainText(zeige('Vitalität', sprache));
+  await seite.evaluate(() => window.scrollTo(0, 0));
+  await expect(zeilen.nth(0)).toBeInViewport();
+  await schuss('koennen');
+
+  await seite.goto('/charakter');
+  await seite.getByRole('button', { name: zeige('Klassen und Titel', sprache), exact: true }).click();
+  const klassenName = zeige('Klassen und Titel', sprache);
+  const klassen = seite.getByRole('dialog', { name: klassenName });
+  await expect(klassen).toBeVisible();
+  await expect(klassen.getByText(klasse).first()).toBeVisible();
+  await expect(klassen.getByRole('heading', { name: zeige('Klassen', sprache), exact: true })).toBeInViewport();
+  await expect(klassen.getByRole('heading', { name: zeige('Titel', sprache), exact: true })).toBeVisible();
+  await schuss('klassen');
+  await klassen.getByRole('button', { name: zeige('Schließen', sprache), exact: true }).click();
+  await expect(klassen).toBeHidden();
+
+  await seite.goto('/ziele');
+  await expect(seite.getByRole('heading', { name: zeige('Ziele', sprache), exact: true })).toBeVisible();
+  const visionKopf = seite.getByRole('heading', { name: vision, exact: true });
+  await expect(visionKopf).toBeVisible();
+  await seite.evaluate(() => window.scrollTo(0, 0));
+  await expect(visionKopf).toBeInViewport();
+  await schuss('ziele');
 
   await seite.goto('/laufend');
   const bosse = seite.getByRole('heading', { name: zeige('Bosse', sprache), exact: true });
@@ -283,20 +484,14 @@ async function nimmAnsichten(seite: Page, info: TestInfo, fassung: string, sprac
   await expect(seite.getByRole('heading', { name: zeige('Laufend', sprache), exact: true })).toBeVisible();
   await expect(bosse).toBeVisible();
   await expect(vorhaben).toBeVisible();
+  for (const titel of BOSSE) {
+    await expect(seite.getByText(text(sprache, titel), { exact: true }).first()).toBeVisible();
+  }
   await seite.evaluate(() => window.scrollTo(0, 0));
   await vorhaben.evaluate((element) => element.scrollIntoView({ block: 'nearest' }));
   await expect(bosse).toBeInViewport();
   await expect(vorhaben).toBeInViewport();
-  await aufnahme(seite, bild(info, fassung, 'laufend'));
-
-  await seite.goto('/charakter');
-  const spektren = seite.locator('[data-spektren]');
-  await expect(seite.getByRole('heading', { name: zeige('Profil', sprache), exact: true })).toBeVisible();
-  await expect(spektren.getByText(zeige('Können', sprache), { exact: true })).toBeVisible();
-  await expect(spektren.getByText(zeige('Haben', sprache), { exact: true })).toBeVisible();
-  await seite.evaluate(() => window.scrollTo(0, 0));
-  await expect(spektren).toBeInViewport();
-  await aufnahme(seite, bild(info, fassung, 'profil'));
+  await schuss('laufend');
 
   const liste = await seite.evaluate(async () => {
     const antwort = await fetch('/api/faehigkeiten');
@@ -305,48 +500,66 @@ async function nimmAnsichten(seite: Page, info: TestInfo, fassung: string, sprac
     }
     return (await antwort.json()) as { id: number; name: string; archiviert: boolean }[];
   });
-  const kraft = liste.find((eintrag) => eintrag.name === 'Kraft' && !eintrag.archiviert);
-  expect(kraft, 'Fähigkeit Kraft').toBeTruthy();
-  await seite.goto(`/faehigkeiten/${kraft?.id}`);
-  await expect(seite.getByRole('heading', { name: 'Kraft', exact: true })).toBeVisible();
+  const lauf = liste.find((eintrag) => eintrag.name === faehigkeit && !eintrag.archiviert);
+  expect(lauf, `Fähigkeit ${faehigkeit}`).toBeTruthy();
+  await seite.goto(`/faehigkeiten/${lauf?.id}`);
+  await expect(seite.getByRole('heading', { name: faehigkeit, exact: true })).toBeVisible();
   const baumName = zeige('Baum', sprache);
   await expect(seite.getByRole('heading', { name: baumName, exact: true })).toBeVisible();
   await kopfFrei(seite, 'section:has(.baum-karte)');
   await expect(seite.getByRole('heading', { name: baumName, exact: true })).toBeInViewport();
   await expect(seite.locator('.baum-karte')).toBeInViewport();
-  await expect(seite.getByText(BAUM_KNOTEN, { exact: true })).toBeInViewport();
-  await aufnahme(seite, bild(info, fassung, 'faehigkeiten'));
-
-  await seite.goto('/charakter');
-  await seite.getByRole('button', { name: zeige('Klassen und Titel', sprache), exact: true }).click();
-  const klassenName = zeige('Klassen und Titel', sprache);
-  const klassen = seite.getByRole('dialog', { name: klassenName });
-  await expect(klassen).toBeVisible();
-  await expect(klassen.getByRole('heading', { name: zeige('Klassen', sprache), exact: true })).toBeInViewport();
-  await expect(klassen.getByRole('heading', { name: zeige('Titel', sprache), exact: true })).toBeVisible();
-  await aufnahme(seite, bild(info, fassung, 'klassen'));
-  await klassen.getByRole('button', { name: zeige('Schließen', sprache), exact: true }).click();
-  await expect(klassen).toBeHidden();
-
-  await seite.goto('/ziele');
-  await expect(seite.getByRole('heading', { name: zeige('Ziele', sprache), exact: true })).toBeVisible();
-  const vision = seite.getByRole('heading', { name: VISION, exact: true });
-  await expect(vision).toBeVisible();
-  await seite.evaluate(() => window.scrollTo(0, 0));
-  await expect(vision).toBeInViewport();
-  await aufnahme(seite, bild(info, fassung, 'ziele'));
+  await expect(seite.getByText(knoten, { exact: true })).toBeInViewport();
+  await schuss('faehigkeiten');
 }
 
-async function nimmFassung(seite: Page, info: TestInfo, fassung: string, sprache: Sprache): Promise<void> {
-  const koerper =
-    fassung === 'hell'
-      ? { stil: 'standard', farbenZuruecksetzen: true, sprache: 'de' }
-      : { ...DUNKEL, sprache };
-  await speichere(seite, koerper);
-  await seite.reload();
-  await festeUhrPasst(seite);
-  await seite.getByRole('button', { name: zeige('Eintrag loggen', sprache) }).waitFor();
-  await nimmAnsichten(seite, info, fassung, sprache);
+async function nimmKontext(browser: Browser, fassung: string, sprache: Sprache, sicht: Sicht): Promise<void> {
+  const kontext = await browser.newContext({
+    baseURL: TEST_URL,
+    locale: sprache === 'en' ? 'en-US' : 'de-DE',
+    timezoneId: 'Europe/Berlin',
+    serviceWorkers: 'block',
+    reducedMotion: 'reduce',
+    viewport: { width: sicht.breite, height: sicht.hoehe },
+    deviceScaleFactor: sicht.dsf,
+    isMobile: sicht.mobil,
+    hasTouch: sicht.mobil,
+  });
+  try {
+    const seite = await kontext.newPage();
+    await stelleTestuhr(seite);
+    await meldeAn(seite);
+    await seite.getByRole('button', { name: zeige('Eintrag loggen', sprache) }).waitFor();
+    await festeUhrPasst(seite);
+    await nimmAnsichten(seite, fassung, sprache, sicht);
+  } finally {
+    await kontext.close();
+  }
+}
+
+async function nimmSet(browser: Browser, seite: Page, info: TestInfo, fassung: string, sprache: Sprache): Promise<void> {
+  test.skip(info.project.name !== 'handy', 'Beide Breiten entstehen hier einmal.');
+  test.setTimeout(480_000);
+  const deutsch = fassung === 'en' ? await liesExport(seite) : null;
+  try {
+    if (fassung === 'en') {
+      await schreibeWelt(seite, englischeSaat(baueSaat()));
+      await speichere(seite, { ...DUNKEL, sprache: 'en', charakterName: PROFIL_NAME });
+    } else if (fassung === 'hell') {
+      await speichere(seite, { stil: 'standard', farbenZuruecksetzen: true, sprache: 'de', charakterName: PROFIL_NAME });
+    } else {
+      await speichere(seite, { ...DUNKEL, sprache: 'de', charakterName: PROFIL_NAME });
+    }
+    await hinweisAktuell(seite);
+    for (const sicht of FENSTER) {
+      await nimmKontext(browser, fassung, sprache, sicht);
+    }
+  } finally {
+    if (deutsch) {
+      await schreibeWelt(seite, deutsch);
+      await hinweisAktuell(seite);
+    }
+  }
 }
 
 test.beforeAll(() => {
@@ -357,8 +570,7 @@ test.beforeEach(async ({ page }) => {
   await stelleTestuhr(page);
   await meldeAn(page);
   if (!vorher) {
-    const sicherung = await liesExport(page);
-    vorher = sicherung;
+    vorher = await liesExport(page);
     await schreibeWelt(page, baueSaat());
     await hinweisAktuell(page);
   }
@@ -368,32 +580,32 @@ test.beforeEach(async ({ page }) => {
 test.afterAll(async ({ browser }) => {
   const sicherung = vorher;
   vorher = null;
-  if (!sicherung) {
-    return;
-  }
-  const kontext = await browser.newContext({ baseURL: TEST_URL, locale: 'de-DE', timezoneId: 'Europe/Berlin' });
-  const seite = await kontext.newPage();
   try {
-    await stelleTestuhr(seite);
-    await meldeAn(seite);
-    await schreibeWelt(seite, sicherung);
+    if (!sicherung) {
+      return;
+    }
+    const kontext = await browser.newContext({ baseURL: TEST_URL, locale: 'de-DE', timezoneId: 'Europe/Berlin' });
+    const seite = await kontext.newPage();
+    try {
+      await stelleTestuhr(seite);
+      await meldeAn(seite);
+      await schreibeWelt(seite, sicherung);
+    } finally {
+      await kontext.close();
+    }
   } finally {
-    await kontext.close();
+    raeumeSaatAuf();
   }
 });
 
-test('Helle Hauptansichten für die Infoseite', async ({ page }, info) => {
-  await nimmFassung(page, info, 'hell', 'de');
+test('Helle Hauptansichten für die Infoseite', async ({ browser, page }, info) => {
+  await nimmSet(browser, page, info, 'hell', 'de');
 });
 
-test('Dunkle Hauptansichten für die Infoseite', async ({ page }, info) => {
-  await nimmFassung(page, info, 'dunkel', 'de');
+test('Dunkle Hauptansichten für die Infoseite', async ({ browser, page }, info) => {
+  await nimmSet(browser, page, info, 'dunkel', 'de');
 });
 
-test.describe('englisch', () => {
-  test.use({ locale: 'en-US' });
-
-  test('Englische dunkle Hauptansichten für die Infoseite', async ({ page }, info) => {
-    await nimmFassung(page, info, 'en-dunkel', 'en');
-  });
+test('Englische Hauptansichten für die Infoseite', async ({ browser, page }, info) => {
+  await nimmSet(browser, page, info, 'en', 'en');
 });

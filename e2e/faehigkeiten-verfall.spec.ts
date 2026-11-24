@@ -1,4 +1,6 @@
-import { expect, test, type Locator, type Page } from './uhr.ts';
+import { DatabaseSync } from 'node:sqlite';
+import { verweigereEchteDatenbank } from '../server/testpfad.ts';
+import { TESTDATUM, expect, stelleTestuhr, test, type Locator, type Page } from './uhr.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
 
 interface KnotenZeile {
@@ -28,6 +30,72 @@ interface EinstellungenZeile {
 
 async function passwort(): Promise<string> {
   return TEST_PASSWORT;
+}
+
+function sqlWert(wert: unknown): string | number | bigint | Uint8Array | null {
+  if (wert === null || typeof wert === 'string' || typeof wert === 'number' || typeof wert === 'bigint') {
+    return wert;
+  }
+  if (wert instanceof Uint8Array) {
+    return wert;
+  }
+  throw new Error('Unerwarteter Datenbankwert.');
+}
+
+function ruheBisTestdatum(): () => void {
+  const datei = process.env.PLAYWRIGHT_WELT;
+  if (!datei) {
+    throw new Error('Abbruch: PLAYWRIGHT_WELT fehlt. Der Standard ist die Kopie aus dem Playwright-Setup.');
+  }
+  const welt = verweigereEchteDatenbank(datei);
+  const db = new DatabaseSync(welt);
+  try {
+    const xp = db
+      .prepare(
+        `SELECT * FROM xp_ereignisse WHERE quelle IN ('bossangriff', 'verfall') AND date(erstellt_am, 'localtime') > ?`,
+      )
+      .all(TESTDATUM) as Record<string, unknown>[];
+    const angriffe = db
+      .prepare(`SELECT id, angriff_bis AS bis FROM vorhaben WHERE angriff_bis IS NOT NULL AND angriff_bis > ?`)
+      .all(TESTDATUM) as { id: number; bis: string }[];
+    const verfaelle = db
+      .prepare(`SELECT id, verfall_bis AS bis FROM attribute WHERE verfall_bis IS NOT NULL AND verfall_bis > ?`)
+      .all(TESTDATUM) as { id: number; bis: string }[];
+    const loeschen = db.prepare('DELETE FROM xp_ereignisse WHERE id = ?');
+    for (const zeile of xp) {
+      loeschen.run(zeile.id as number);
+    }
+    if (angriffe.length > 0) {
+      db.prepare('UPDATE vorhaben SET angriff_bis = ? WHERE angriff_bis > ?').run(TESTDATUM, TESTDATUM);
+    }
+    if (verfaelle.length > 0) {
+      db.prepare('UPDATE attribute SET verfall_bis = ? WHERE verfall_bis > ?').run(TESTDATUM, TESTDATUM);
+    }
+    return () => {
+      const wieder = new DatabaseSync(welt);
+      try {
+        for (const zeile of xp) {
+          const spalten = Object.keys(zeile);
+          const platz = spalten.map(() => '?').join(', ');
+          wieder
+            .prepare(`INSERT INTO xp_ereignisse (${spalten.join(', ')}) VALUES (${platz})`)
+            .run(...spalten.map((spalte) => sqlWert(zeile[spalte])));
+        }
+        const angriff = wieder.prepare('UPDATE vorhaben SET angriff_bis = ? WHERE id = ?');
+        for (const zeile of angriffe) {
+          angriff.run(zeile.bis, zeile.id);
+        }
+        const verfall = wieder.prepare('UPDATE attribute SET verfall_bis = ? WHERE id = ?');
+        for (const zeile of verfaelle) {
+          verfall.run(zeile.bis, zeile.id);
+        }
+      } finally {
+        wieder.close();
+      }
+    };
+  } finally {
+    db.close();
+  }
 }
 
 async function anmelden(seite: Page): Promise<void> {
@@ -418,13 +486,19 @@ test('Erschöpfung bleibt gespeichert und der Schalter folgt dem Verfall', async
     };
 
     await schalte(true, true);
-    const koennenAn = await oeffne('/koennen', koerper.name);
-    await pruefeErschoepfungsSchalter(koennenAn, true);
-    if (testInfo.project.name === 'handy') {
-      await page.screenshot({ path: 'tmp-test/erschoepfung-verfall/handy-390-koennen-an.png' });
+    const zurueck = ruheBisTestdatum();
+    try {
+      await stelleTestuhr(page);
+      const koennenAn = await oeffne('/koennen', koerper.name);
+      await pruefeErschoepfungsSchalter(koennenAn, true);
+      if (testInfo.project.name === 'handy') {
+        await page.screenshot({ path: 'tmp-test/erschoepfung-verfall/handy-390-koennen-an.png' });
+      }
+      await koennenAn.getByRole('button', { name: 'Schließen' }).click();
+      await expect(koennenAn).toBeHidden();
+    } finally {
+      zurueck();
     }
-    await koennenAn.getByRole('button', { name: 'Schließen' }).click();
-    await expect(koennenAn).toBeHidden();
 
     await schalte(false, false);
     const koennenAus = await oeffne('/koennen', koerper.name);

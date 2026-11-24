@@ -1,3 +1,4 @@
+import { randomBytes, scryptSync } from 'node:crypto';
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { DatabaseSync } from 'node:sqlite';
@@ -39,6 +40,7 @@ import {
   setzeSperrenZurueck,
   sitzungGueltig,
   setzeZugangsWarnung,
+  beschaeftigtTimeout,
   uebernimmAltesPasswort,
   verwendeZugang,
   zugangStatus,
@@ -61,6 +63,19 @@ function zugangPfad(): string {
 
 function starte(): void {
   verwendeZugang(zugangPfad());
+}
+
+function liesSchluessel(tabelle: 'passwort' | 'benutzer', id: number): { salt: string; hash: string } {
+  const db = new DatabaseSync(zugangPfad());
+  const zeile =
+    tabelle === 'passwort'
+      ? (db.prepare('SELECT salt, hash FROM passwort WHERE id = ?').get(id) as { salt: string; hash: string } | undefined)
+      : (db.prepare('SELECT salt, hash FROM benutzer WHERE id = ?').get(id) as { salt: string; hash: string } | undefined);
+  db.close();
+  if (!zeile) {
+    throw new Error(`Kein Schlüssel in ${tabelle}.`);
+  }
+  return zeile;
 }
 
 function adminZeile(): { benutzer_id: number | null; name_norm: string } | undefined {
@@ -123,35 +138,59 @@ afterAll(() => {
   schliesseZugang();
 });
 
+describe('zugang.db', () => {
+  it('setzt busy_timeout auf 5000 Millisekunden', () => {
+    expect(beschaeftigtTimeout()).toBe(5000);
+  });
+});
+
 describe('passwort', () => {
-  it('legt ein Passwort fest und prüft es', () => {
+  it('legt ein Passwort fest und prüft es', async () => {
     expect(istEingerichtet()).toBe(false);
-    legePasswortAn(PASSWORT);
+    await legePasswortAn(PASSWORT);
     expect(istEingerichtet()).toBe(true);
-    expect(passwortStimmt(PASSWORT)).toBe(true);
-    expect(passwortStimmt('falsches-passwort')).toBe(false);
-    expect(() => legePasswortAn('anderes-passwort')).toThrow('bereits festgelegt');
+    expect(await passwortStimmt(PASSWORT)).toBe(true);
+    expect(await passwortStimmt('falsches-passwort')).toBe(false);
+    await expect(legePasswortAn('anderes-passwort')).rejects.toThrow('bereits festgelegt');
   });
 
-  it('lehnt zu kurze Passwörter ab', () => {
-    expect(() => legePasswortAn('kurz')).toThrow('mindestens');
+  it('lehnt zu kurze Passwörter ab', async () => {
+    await expect(legePasswortAn('kurz')).rejects.toThrow('mindestens');
   });
 
-  it('wechselt das Passwort und beendet andere Sitzungen', () => {
-    legePasswortAn(PASSWORT);
+  it('speichert Salt und Hash als Hex und trifft scrypt', async () => {
+    expect(ZUGANG.saltBytes).toBe(16);
+    expect(ZUGANG.hashLaenge).toBe(64);
+    const parameter = { N: 16384, r: 8, p: 1, maxmem: 32 * 1024 * 1024 };
+    await legePasswortAn(PASSWORT);
+    const alt = liesSchluessel('passwort', 1);
+    const altHash = scryptSync(PASSWORT, Buffer.from(alt.salt, 'hex'), 64, parameter);
+    expect(alt.salt).toMatch(/^[0-9a-f]{32}$/);
+    expect(alt.hash).toBe(altHash.toString('hex'));
+    expect(await passwortStimmt(PASSWORT)).toBe(true);
+    const ada = await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const neu = liesSchluessel('benutzer', ada.id);
+    const neuHash = scryptSync(PASSWORT, Buffer.from(neu.salt, 'hex'), 64, parameter);
+    expect(neu.salt).toMatch(/^[0-9a-f]{32}$/);
+    expect(neu.hash).toBe(neuHash.toString('hex'));
+    expect((await benutzerPasswortStimmt('Ada', PASSWORT))?.id).toBe(ada.id);
+  });
+
+  it('wechselt das Passwort und beendet andere Sitzungen', async () => {
+    await legePasswortAn(PASSWORT);
     const bleiben = oeffneSitzung();
     const weg = oeffneSitzung();
-    aenderePasswort('neues-passwort-1', bleiben);
-    expect(passwortStimmt('neues-passwort-1')).toBe(true);
-    expect(passwortStimmt(PASSWORT)).toBe(false);
+    await aenderePasswort('neues-passwort-1', bleiben);
+    expect(await passwortStimmt('neues-passwort-1')).toBe(true);
+    expect(await passwortStimmt(PASSWORT)).toBe(false);
     expect(sitzungGueltig(bleiben)).toBe(true);
     expect(sitzungGueltig(weg)).toBe(false);
   });
 });
 
 describe('accounts', () => {
-  it('übernimmt das bestehende Passwort in einen Benutzernamen', () => {
-    legePasswortAn(PASSWORT);
+  it('übernimmt das bestehende Passwort in einen Benutzernamen', async () => {
+    await legePasswortAn(PASSWORT);
     const token = oeffneSitzung();
     uebernimmAltesPasswort('Ada', 'app.db');
     expect(zugangStatus(token)).toEqual({
@@ -166,18 +205,18 @@ describe('accounts', () => {
       googleAnlage: null,
       googleLoesen: false,
     });
-    expect(passwortStimmt(PASSWORT)).toBe(false);
-    expect(benutzerPasswortStimmt('ada', PASSWORT)?.benutzername).toBe('Ada');
+    expect(await passwortStimmt(PASSWORT)).toBe(false);
+    expect((await benutzerPasswortStimmt('ada', PASSWORT))?.benutzername).toBe('Ada');
   });
 
-  it('vergibt jeden Namen nur einmal', () => {
-    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
-    expect(() => legeBenutzerAn({ benutzername: ' ada ', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/2.db' })).toThrow(
-      'schon vergeben',
-    );
+  it('vergibt jeden Namen nur einmal', async () => {
+    const ada = await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    await expect(
+      legeBenutzerAn({ benutzername: ' ada ', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/2.db' }),
+    ).rejects.toThrow('schon vergeben');
     expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada']);
 
-    const bob = legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/3.db' });
+    const bob = await legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/3.db' });
     expect(() => benenneBenutzer(bob.id, 'ADA')).toThrow('schon vergeben');
     expect(listeKonten().find((konto) => konto.id === bob.id)?.benutzername).toBe('Bob');
     expect(listeKonten().find((konto) => konto.id === ada.id)?.benutzername).toBe('Ada');
@@ -186,19 +225,19 @@ describe('accounts', () => {
     benenneBenutzer(bob.id, 'berta');
     benenneBenutzer(bob.id, 'Bert');
     expect(listeKonten().find((konto) => konto.id === bob.id)?.benutzername).toBe('Bert');
-    expect(benutzerPasswortStimmt('bert', PASSWORT)?.id).toBe(bob.id);
+    expect((await benutzerPasswortStimmt('bert', PASSWORT))?.id).toBe(bob.id);
     expect(() => benenneBenutzer(999, 'Neu')).toThrow('existiert nicht');
   });
 
-  it('übernimmt kein Passwort auf einen vergebenen Namen', () => {
-    legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
-    legePasswortAn('anderes-passwort-1');
+  it('übernimmt kein Passwort auf einen vergebenen Namen', async () => {
+    await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    await legePasswortAn('anderes-passwort-1');
     expect(() => uebernimmAltesPasswort('ada', 'app.db')).toThrow('schon vergeben');
-    expect(passwortStimmt('anderes-passwort-1')).toBe(true);
+    expect(await passwortStimmt('anderes-passwort-1')).toBe(true);
     expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada']);
   });
 
-  it('benennt vorhandene Doppelte nicht um', () => {
+  it('benennt vorhandene Doppelte nicht um', async () => {
     const pfad = path.join(ordner, 'doppelt.db');
     schreibeAlteBenutzer(pfad, ['Ada', 'Ada']);
     verwendeZugang(pfad);
@@ -215,20 +254,20 @@ describe('accounts', () => {
     schliesseZugang();
 
     verwendeZugang(pfad);
-    expect(() => legeBenutzerAn({ benutzername: 'ADA', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/4.db' })).toThrow(
-      'schon vergeben',
-    );
+    await expect(
+      legeBenutzerAn({ benutzername: 'ADA', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/4.db' }),
+    ).rejects.toThrow('schon vergeben');
     expect(listeKonten().map((konto) => konto.benutzername)).toEqual(['Ada', 'Berta']);
     schliesseZugang();
     expect(hatNamensindex(pfad)).toBe(true);
   });
 
-  it('setzt das Passwort zurück, ohne das alte zu kennen', () => {
-    legePasswortAn(PASSWORT);
+  it('setzt das Passwort zurück, ohne das alte zu kennen', async () => {
+    await legePasswortAn(PASSWORT);
     const token = oeffneSitzung();
-    ersetzeZugangspasswort('neues-passwort-2');
-    expect(passwortStimmt('neues-passwort-2')).toBe(true);
-    expect(passwortStimmt(PASSWORT)).toBe(false);
+    await ersetzeZugangspasswort('neues-passwort-2');
+    expect(await passwortStimmt('neues-passwort-2')).toBe(true);
+    expect(await passwortStimmt(PASSWORT)).toBe(false);
     expect(sitzungGueltig(token)).toBe(false);
   });
 });
@@ -316,6 +355,55 @@ function cookie(token: string): { cookie: string } {
   return { cookie: `${SITZUNG_COOKIE}=${encodeURIComponent(token)}` };
 }
 
+describe('anmeldung', () => {
+  it('setzt die Sitzung nach dem Hash und lässt einen bestehenden Hex-Hash gelten', async () => {
+    const ada = await legeBenutzerAn({
+      benutzername: 'Ada',
+      passwort: PASSWORT,
+      rolle: 'mitglied',
+      weltdatei: 'welten/2.db',
+    });
+    const salt = randomBytes(16);
+    const parameter = { N: 16384, r: 8, p: 1, maxmem: 32 * 1024 * 1024 };
+    const hash = scryptSync(PASSWORT, salt, 64, parameter);
+    const db = new DatabaseSync(zugangPfad());
+    db.prepare('UPDATE benutzer SET salt = ?, hash = ? WHERE id = ?').run(salt.toString('hex'), hash.toString('hex'), ada.id);
+    db.close();
+
+    await mitRouten(async (app) => {
+      const vorher = await app.inject({ method: 'GET', url: '/api/zugang' });
+      expect(vorher.statusCode).toBe(200);
+      expect(vorher.json()).toMatchObject({ modus: 'anmelden' });
+
+      const antwort = await app.inject({
+        method: 'POST',
+        url: '/api/zugang',
+        payload: { benutzername: 'Ada', passwort: PASSWORT },
+      });
+      expect(antwort.statusCode).toBe(200);
+      const gesetzt = antwort.headers['set-cookie'];
+      const token = leseSitzungsToken(Array.isArray(gesetzt) ? gesetzt[0] : gesetzt);
+      if (!token) {
+        throw new Error('Die Anmeldung setzt kein Sitzungscookie.');
+      }
+      expect(sitzungGueltig(token)).toBe(true);
+      expect(antwort.json()).toMatchObject({ modus: 'bereit', benutzername: 'Ada' });
+
+      const danach = await app.inject({
+        method: 'GET',
+        url: '/api/zugang',
+        headers: cookie(token),
+      });
+      expect(danach.statusCode).toBe(200);
+      expect(danach.json()).toMatchObject({ modus: 'bereit', benutzername: 'Ada' });
+    });
+
+    const geblieben = liesSchluessel('benutzer', ada.id);
+    expect(geblieben.salt).toBe(salt.toString('hex'));
+    expect(geblieben.hash).toBe(hash.toString('hex'));
+  });
+});
+
 async function mitRouten<T>(arbeit: (app: FastifyInstance) => Promise<T>): Promise<T> {
   const app = Fastify({ logger: false });
   app.setErrorHandler((fehler, _anfrage, antwort) => {
@@ -337,7 +425,7 @@ async function mitRouten<T>(arbeit: (app: FastifyInstance) => Promise<T>): Promi
 
 describe('admin', () => {
   it('lässt einen angemeldeten Nutzer den eigenen Namen nicht ändern', async () => {
-    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const ada = await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
     const token = oeffneSitzung(new Date(), ada.id);
     await mitRouten(async (app) => {
       const antwort = await app.inject({
@@ -353,7 +441,7 @@ describe('admin', () => {
   });
 
   it('legt den ersten Benutzernamen weiter über die Anmeldung fest', async () => {
-    legePasswortAn(PASSWORT);
+    await legePasswortAn(PASSWORT);
     const token = oeffneSitzung();
     await mitRouten(async (app) => {
       const antwort = await app.inject({
@@ -369,8 +457,8 @@ describe('admin', () => {
 
   it('verweigert die Admin-Route ohne Admin und ändert nichts', async () => {
     process.env.STRIDE_ADMIN = 'Ada';
-    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
-    const bob = legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'welten/2.db' });
+    const ada = await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
+    const bob = await legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'welten/2.db' });
     starte();
     const token = oeffneSitzung(new Date(), bob.id);
     await mitRouten(async (app) => {
@@ -393,8 +481,8 @@ describe('admin', () => {
 
   it('ändert jeden Namen nur als Admin und lässt einen vergebenen Namen stehen', async () => {
     process.env.STRIDE_ADMIN = 'ADA';
-    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
-    const bob = legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/3.db' });
+    const ada = await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
+    const bob = await legeBenutzerAn({ benutzername: 'Bob', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/3.db' });
     starte();
     const token = oeffneSitzung(new Date(), ada.id);
     expect(zugangStatus(token).admin).toBe(true);
@@ -434,14 +522,14 @@ describe('admin', () => {
     expect(listeKonten().find((konto) => konto.id === bob.id)?.benutzername).toBe('Berta');
   });
 
-  it('bindet beim Start die ID und lässt einen anderen Namen daneben ohne Rechte', () => {
+  it('bindet beim Start die ID und lässt einen anderen Namen daneben ohne Rechte', async () => {
     process.env.ASCEND_ADMIN = 'Ada';
-    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
+    const ada = await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
     starte();
     expect(istAdmin(ada.id)).toBe(true);
     expect(adminZeile()).toEqual({ benutzer_id: ada.id, name_norm: 'ada' });
     benenneBenutzer(ada.id, 'Anders');
-    const neu = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/9.db' });
+    const neu = await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/9.db' });
     starte();
     expect(istAdmin(ada.id)).toBe(true);
     expect(istAdmin(neu.id)).toBe(false);
@@ -449,9 +537,9 @@ describe('admin', () => {
     expect(warnungen).toEqual([]);
   });
 
-  it('bindet denselben Namen nach dem Löschen nie wieder, auch bei wiedervergebener ID', () => {
+  it('bindet denselben Namen nach dem Löschen nie wieder, auch bei wiedervergebener ID', async () => {
     process.env.STRIDE_ADMIN = 'Ada';
-    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
+    const ada = await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
     starte();
     loescheBenutzer(ada.id);
     expect(adminZeile()).toEqual({ benutzer_id: null, name_norm: 'ada' });
@@ -467,10 +555,10 @@ describe('admin', () => {
     expect(warnungen).toEqual([]);
   });
 
-  it('hängt nur einen anderen, beim Start vorhandenen Namen um', () => {
+  it('hängt nur einen anderen, beim Start vorhandenen Namen um', async () => {
     process.env.STRIDE_ADMIN = 'Ada';
-    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
-    const berta = legeBenutzerAn({ benutzername: 'Berta', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/8.db' });
+    const ada = await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
+    const berta = await legeBenutzerAn({ benutzername: 'Berta', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/8.db' });
     starte();
     loescheBenutzer(ada.id);
     process.env.STRIDE_ADMIN = 'Berta';
@@ -480,9 +568,9 @@ describe('admin', () => {
     expect(warnungen).toEqual([]);
   });
 
-  it('warnt ohne Konto und bindet eine spätere Registrierung nicht von selbst', () => {
+  it('warnt ohne Konto und bindet eine spätere Registrierung nicht von selbst', async () => {
     process.env.STRIDE_ADMIN = 'Ada';
-    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
+    const ada = await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'app.db' });
     starte();
     loescheBenutzer(ada.id);
     process.env.STRIDE_ADMIN = 'Berta';
@@ -493,7 +581,7 @@ describe('admin', () => {
     ]);
     expect(warnungen[0]).not.toContain('STRIDE');
     expect(warnungen[0]).not.toContain('ASCEND');
-    const berta = legeBenutzerAn({ benutzername: 'Berta', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/8.db' });
+    const berta = await legeBenutzerAn({ benutzername: 'Berta', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/8.db' });
     expect(istAdmin(berta.id)).toBe(false);
     expect(adminZeile()?.benutzer_id).toBeNull();
     starte();
@@ -501,12 +589,12 @@ describe('admin', () => {
     expect(adminZeile()).toEqual({ benutzer_id: berta.id, name_norm: 'berta' });
   });
 
-  it('versucht das erste Binden beim nächsten Start erneut, ohne zu warnen', () => {
+  it('versucht das erste Binden beim nächsten Start erneut, ohne zu warnen', async () => {
     process.env.STRIDE_ADMIN = 'Ada';
     starte();
     expect(adminZeile()).toBeUndefined();
     expect(warnungen).toEqual([]);
-    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const ada = await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
     expect(istAdmin(ada.id)).toBe(false);
     starte();
     expect(istAdmin(ada.id)).toBe(true);

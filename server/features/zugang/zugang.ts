@@ -1,4 +1,4 @@
-import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
+import { createHash, randomBytes, scrypt, timingSafeEqual } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
@@ -13,6 +13,20 @@ import { entferneGoogle, googleTeil, migriereGoogle, verbindeGoogle } from './go
 import { migriereWeltdateien, neutralisiereWeltdatei } from './weltdateiPfad.ts';
 
 const SCRYPT = { N: 16384, r: 8, p: 1, maxmem: 32 * 1024 * 1024 } as const;
+
+function passwortHash(passwort: string, salt: Buffer, laenge: number): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    scrypt(passwort, salt, laenge, SCRYPT, (fehler, abgeleitet) => {
+      if (fehler) {
+        reject(fehler);
+        return;
+      }
+      resolve(abgeleitet);
+    });
+  });
+}
+
+const BESCHAEFTIGT_MS = 5000;
 const GLOBAL = 'global';
 
 export const ZUGANG = {
@@ -62,6 +76,7 @@ function oeffne(pfad: string): DatabaseSync {
     fs.mkdirSync(path.dirname(pfad), { recursive: true });
   }
   const datenbank = new DatabaseSync(pfad);
+  datenbank.exec(`PRAGMA busy_timeout = ${BESCHAEFTIGT_MS}`);
   datenbank.exec(`
     CREATE TABLE IF NOT EXISTS passwort (
       id INTEGER PRIMARY KEY CHECK (id = 1),
@@ -142,6 +157,11 @@ function datenbank(): DatabaseSync {
   return geoffnet;
 }
 
+export function beschaeftigtTimeout(): number {
+  const zeile = datenbank().prepare('PRAGMA busy_timeout').get() as { timeout: number } | undefined;
+  return Number(zeile?.timeout);
+}
+
 verbindeGoogle(() => datenbank());
 
 export function setzeSperrenZurueck(): void {
@@ -177,10 +197,10 @@ export function hatKeinKonto(): boolean {
   return !hatAltesPasswort() && anzahlBenutzer() === 0;
 }
 
-export function legePasswortAn(passwort: string, jetzt = new Date()): void {
+export async function legePasswortAn(passwort: string, jetzt = new Date()): Promise<void> {
   pruefePasswortLaenge(passwort);
   const salt = randomBytes(ZUGANG.saltBytes);
-  const hash = scryptSync(passwort, salt, ZUGANG.hashLaenge, SCRYPT);
+  const hash = await passwortHash(passwort, salt, ZUGANG.hashLaenge);
   const db = datenbank();
   db.exec('BEGIN');
   try {
@@ -199,27 +219,27 @@ export function legePasswortAn(passwort: string, jetzt = new Date()): void {
   }
 }
 
-export function passwortStimmt(passwort: string): boolean {
+export async function passwortStimmt(passwort: string): Promise<boolean> {
   const zeile = datenbank().prepare('SELECT salt, hash FROM passwort WHERE id = 1').get() as PasswortZeile | undefined;
   if (!zeile) {
     return false;
   }
   const erwartet = Buffer.from(zeile.hash, 'hex');
-  const berechnet = scryptSync(passwort, Buffer.from(zeile.salt, 'hex'), erwartet.length, SCRYPT);
+  const berechnet = await passwortHash(passwort, Buffer.from(zeile.salt, 'hex'), erwartet.length);
   if (berechnet.length !== erwartet.length) {
     return false;
   }
   return timingSafeEqual(berechnet, erwartet);
 }
 
-export function aenderePasswort(neu: string, token: string, jetzt = new Date()): void {
+export async function aenderePasswort(neu: string, token: string, jetzt = new Date()): Promise<void> {
   pruefePasswortLaenge(neu);
   const sitzung = leseSitzung(token, jetzt);
   if (!sitzung) {
     throw ungueltig('Die Sitzung ist abgelaufen.');
   }
   const salt = randomBytes(ZUGANG.saltBytes);
-  const hash = scryptSync(neu, salt, ZUGANG.hashLaenge, SCRYPT);
+  const hash = await passwortHash(neu, salt, ZUGANG.hashLaenge);
   const db = datenbank();
   db.exec('BEGIN');
   try {
@@ -416,9 +436,9 @@ function holeBenutzer(id: number): BenutzerIntern | undefined {
     .get(id) as BenutzerIntern | undefined;
 }
 
-function hashesPassen(passwort: string, salt: string, hash: string): boolean {
+async function hashesPassen(passwort: string, salt: string, hash: string): Promise<boolean> {
   const erwartet = Buffer.from(hash, 'hex');
-  const berechnet = scryptSync(passwort, Buffer.from(salt, 'hex'), erwartet.length, SCRYPT);
+  const berechnet = await passwortHash(passwort, Buffer.from(salt, 'hex'), erwartet.length);
   if (berechnet.length !== erwartet.length) {
     return false;
   }
@@ -431,17 +451,17 @@ export function listeKonten(): { id: number; benutzername: string; rolle: Rolle;
     .all() as { id: number; benutzername: string; rolle: Rolle; weltdatei: string }[];
 }
 
-export function legeBenutzerAn(
+export async function legeBenutzerAn(
   daten: { benutzername: string; passwort: string; rolle: Rolle; weltdatei: string; zustimmung?: Date },
   jetzt = new Date(),
-): { id: number; benutzername: string; rolle: Rolle } {
+): Promise<{ id: number; benutzername: string; rolle: Rolle }> {
   const benutzername = pruefeBenutzername(daten.benutzername);
   pruefePasswortLaenge(daten.passwort);
   if (nameVergeben(benutzername)) {
     throw ungueltig('Der Benutzername ist schon vergeben.');
   }
   const salt = randomBytes(ZUGANG.saltBytes);
-  const hash = scryptSync(daten.passwort, salt, ZUGANG.hashLaenge, SCRYPT);
+  const hash = await passwortHash(daten.passwort, salt, ZUGANG.hashLaenge);
   try {
     const ergebnis = datenbank()
       .prepare(
@@ -552,17 +572,17 @@ export function uebernimmAltesPasswort(benutzername: string, weltdatei: string, 
   }
 }
 
-export function benutzerPasswortStimmt(benutzername: string, passwort: string): BenutzerIntern | null {
+export async function benutzerPasswortStimmt(benutzername: string, passwort: string): Promise<BenutzerIntern | null> {
   const zeile = datenbank()
     .prepare('SELECT id, benutzername, rolle, weltdatei, salt, hash FROM benutzer WHERE name_norm = ?')
     .get(nameNorm(benutzername)) as BenutzerIntern | undefined;
-  if (!zeile || !hashesPassen(passwort, zeile.salt, zeile.hash)) {
+  if (!zeile || !(await hashesPassen(passwort, zeile.salt, zeile.hash))) {
     return null;
   }
   return zeile;
 }
 
-export function passwortDerSitzungStimmt(token: string | undefined, passwort: string, jetzt = new Date()): boolean {
+export async function passwortDerSitzungStimmt(token: string | undefined, passwort: string, jetzt = new Date()): Promise<boolean> {
   const sitzung = leseSitzung(token, jetzt);
   if (!sitzung) {
     return false;
@@ -571,7 +591,7 @@ export function passwortDerSitzungStimmt(token: string | undefined, passwort: st
     return passwortStimmt(passwort);
   }
   const benutzer = holeBenutzer(sitzung.benutzerId);
-  return benutzer !== undefined && hashesPassen(passwort, benutzer.salt, benutzer.hash);
+  return benutzer !== undefined && (await hashesPassen(passwort, benutzer.salt, benutzer.hash));
 }
 
 export function kontenSichtbar(token: string | undefined, jetzt = new Date()): boolean {
@@ -621,10 +641,10 @@ export function weltenPfade(): string[] {
   return [...new Set(konten.map((konto) => loeseWeltdatei(konto.weltdatei)))];
 }
 
-function schreibePasswort(passwort: string, jetzt: Date, ziel: { art: 'alt' } | { art: 'benutzer'; id: number }): void {
+async function schreibePasswort(passwort: string, jetzt: Date, ziel: { art: 'alt' } | { art: 'benutzer'; id: number }): Promise<void> {
   pruefePasswortLaenge(passwort);
   const salt = randomBytes(ZUGANG.saltBytes);
-  const hash = scryptSync(passwort, salt, ZUGANG.hashLaenge, SCRYPT);
+  const hash = await passwortHash(passwort, salt, ZUGANG.hashLaenge);
   const db = datenbank();
   db.exec('BEGIN');
   try {
@@ -652,24 +672,24 @@ function schreibePasswort(passwort: string, jetzt: Date, ziel: { art: 'alt' } | 
   }
 }
 
-export function ersetzeZugangspasswort(passwort: string, benutzername?: string, jetzt = new Date()): void {
+export async function ersetzeZugangspasswort(passwort: string, benutzername?: string, jetzt = new Date()): Promise<void> {
   const konten = listeKonten();
   if (konten.length === 0) {
-    schreibePasswort(passwort, jetzt, { art: 'alt' });
+    await schreibePasswort(passwort, jetzt, { art: 'alt' });
     return;
   }
   if (benutzername === undefined) {
     if (konten.length !== 1) {
       throw ungueltig('Der Benutzername fehlt.');
     }
-    schreibePasswort(passwort, jetzt, { art: 'benutzer', id: konten[0].id });
+    await schreibePasswort(passwort, jetzt, { art: 'benutzer', id: konten[0].id });
     return;
   }
   const ziel = konten.find((konto) => nameNorm(konto.benutzername) === nameNorm(benutzername));
   if (!ziel) {
     throw ungueltig('Der Benutzername ist unbekannt.');
   }
-  schreibePasswort(passwort, jetzt, { art: 'benutzer', id: ziel.id });
+  await schreibePasswort(passwort, jetzt, { art: 'benutzer', id: ziel.id });
 }
 
 export function anzahlKonten(): number {

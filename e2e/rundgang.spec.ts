@@ -427,7 +427,7 @@ test('Einführung fragt die Sprache und dann den Namen', async ({ page }) => {
   const { erstelleMitglied, entferneKonto } = await import('../server/features/zugang/konten.ts');
   try {
     try {
-      kontoId = erstelleMitglied({ benutzername: name, passwort: geheim, zustimmung: new Date() }).id;
+      kontoId = (await erstelleMitglied({ benutzername: name, passwort: geheim, zustimmung: new Date() })).id;
     } finally {
       await kopieSchliessen();
     }

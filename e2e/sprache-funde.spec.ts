@@ -54,6 +54,22 @@ async function zeigeAbschnitt(seite: Page, ziel: string): Promise<void> {
   await seite.locator(ziel).evaluate((element) => element.scrollIntoView({ block: 'center' }));
 }
 
+async function koerperSteht(seite: Page): Promise<void> {
+  await vorbereiteAufnahme(seite);
+  let vorher = Number.NaN;
+  await expect
+    .poll(async () => {
+      const oben = await seite.locator('[data-kennung="koerper"]').evaluate((element) => {
+        element.scrollIntoView({ block: 'center' });
+        return Math.round(element.getBoundingClientRect().top);
+      });
+      const stabil = oben === vorher;
+      vorher = oben;
+      return stabil;
+    })
+    .toBe(true);
+}
+
 test('übersetzte Funde sind in jeder Sprache sichtbar', async ({ page }, info) => {
   test.setTimeout(240_000);
   await anmelden(page);
@@ -94,15 +110,20 @@ test('übersetzte Funde sind in jeder Sprache sichtbar', async ({ page }, info) 
       }
       const diagramm =
         (info.project.name === 'desktop' && code === 'es') || (info.project.name === 'handy' && code === 'zh');
+      const handyEs = info.project.name === 'handy' && code === 'es';
       if (diagramm) {
         await diagrammeAufnehmen(page);
       }
-      await zeigeAbschnitt(page, '[data-kennung="koerper"]');
-      if (info.project.name === 'desktop' && code === 'de') {
-        await vorbereiteAufnahme(page);
-        await page.locator('header[data-kopf]').evaluate((element) => {
-          element.scrollIntoView({ block: 'start' });
-        });
+      if (handyEs) {
+        await koerperSteht(page);
+      } else {
+        await zeigeAbschnitt(page, '[data-kennung="koerper"]');
+        if (info.project.name === 'desktop' && code === 'de') {
+          await vorbereiteAufnahme(page);
+          await page.locator('header[data-kopf]').evaluate((element) => {
+            element.scrollIntoView({ block: 'start' });
+          });
+        }
       }
       await page.screenshot({ path: bild(info, code, 'vorbild') });
       if (diagramm) {

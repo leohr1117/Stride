@@ -45,7 +45,7 @@ describe('Google-Anmeldung', () => {
     expect(istOeffentlicherZugang('GET', '/api/zugang/google/start')).toBe(true);
     expect(istOeffentlicherZugang('GET', '/api/zugang/google/zurueck?code=1')).toBe(true);
     expect(istOeffentlicherZugang('DELETE', '/api/zugang/google')).toBe(false);
-    inhaber();
+    await inhaber();
     await mitRouten(async (app) => {
       const schalter = [
         () => {
@@ -117,7 +117,7 @@ describe('Google-Anmeldung', () => {
       expect(geleert).toContain(name);
       expect(process.env[name]).toBeUndefined();
     }
-    inhaber();
+    await inhaber();
     await mitRouten(async (app) => {
       const status = await app.inject({ method: 'GET', url: '/api/zugang' });
       expect(status.json()).toMatchObject({ modus: 'anmelden', registrierung: false, google: false });
@@ -153,7 +153,7 @@ describe('Google-Anmeldung', () => {
 
   it('schickt state, nonce und S256 an Google', async () => {
     googleEnv(true);
-    inhaber();
+    await inhaber();
     expect(codeChallenge('verifier')).toBe(createHash('sha256').update('verifier').digest('base64url'));
     await mitRouten(async (app) => {
       const start = await starte(app);
@@ -180,7 +180,7 @@ describe('Google-Anmeldung', () => {
   it('lehnt falschen, verbrauchten und abgelaufenen state ab', async () => {
     googleEnv(true);
     registrierung(false);
-    inhaber();
+    await inhaber();
     await mitRouten(async (app) => {
       const start = await starte(app);
       mocke(jwt(gut(start.nonce)), (body) => {
@@ -214,7 +214,7 @@ describe('Google-Anmeldung', () => {
 
   it('lehnt falschen Aussteller, Empfänger, Ablauf und nonce ab', async () => {
     googleEnv(true);
-    inhaber();
+    await inhaber();
     await mitRouten(async (app) => {
       const faelle: Record<string, unknown>[] = [
         { iss: 'https://evil.example' },
@@ -235,7 +235,7 @@ describe('Google-Anmeldung', () => {
   it('meldet ein verknüpftes Konto an und ignoriert dieselbe E-Mail ohne Verknüpfung', async () => {
     googleEnv(true);
     registrierung(true);
-    const id = inhaber();
+    const id = await inhaber();
     verknuepfeGoogle(id, 'sub-ada', 'ada@example.com');
     await mitRouten(async (app) => {
       const start = await starte(app);
@@ -262,7 +262,7 @@ describe('Google-Anmeldung', () => {
   it('verknüpft beim Anlegen und bleibt bei ausgeschalteter Registrierung unverknüpft', async () => {
     googleEnv(true);
     registrierung(true);
-    inhaber();
+    await inhaber();
     await mitRouten(async (app) => {
       const start = await starte(app);
       mocke(jwt(gut(start.nonce, { sub: 'sub-neu', email: 'neu@example.com' })));
@@ -292,8 +292,8 @@ describe('Google-Anmeldung', () => {
 
   it('lehnt ein fremdes sub ab, löst nur mit Passwort und entfernt die Verknüpfung mit dem Konto', async () => {
     googleEnv(true);
-    const ada = inhaber();
-    const berta = legeBenutzerAn({ benutzername: 'Berta', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/2.db' }).id;
+    const ada = await inhaber();
+    const berta = (await legeBenutzerAn({ benutzername: 'Berta', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/2.db' })).id;
     verknuepfeGoogle(ada, 'sub-fremd', 'fremd@example.com');
     const sitzung = oeffneSitzung(new Date(), berta);
     await mitRouten(async (app) => {

@@ -2,7 +2,7 @@ import { mkdirSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { expect, test, type Browser, type Page } from './uhr.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
-import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+import { anmelden, ohneSeitlichenUeberlauf, warteAufAnmeldung } from './helfer.ts';
 import { TEST_PASSWORT, TEST_TEIL_WELT, TEST_URL } from './testdaten.ts';
 
 const HINWEIS = 'Wupo als App installieren';
@@ -104,7 +104,7 @@ async function teilVorbereiten(seite: Page): Promise<string> {
   await seite.locator('input[name="username"]').fill('testteil');
   await seite.locator('input[name="password"]').fill(TEST_PASSWORT);
   await seite.locator('button[type="submit"]').click();
-  await seite.waitForFunction(async () => (await fetch('/api/einstellungen')).ok);
+  await warteAufAnmeldung(seite);
   const stil = await seite.evaluate(async () => {
     const reset = await fetch('/api/profil/zuruecksetzen', { method: 'POST' });
     if (!reset.ok) {

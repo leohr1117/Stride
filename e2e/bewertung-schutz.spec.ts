@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import { expect, test, type Page } from './uhr.ts';
 import { ERLAUBTE_PAUSENTAGE } from '../shared/spiel/kette.ts';
 import { RUECKKEHR, SCHUTZ } from '../shared/spiel/schutz.ts';
-import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+import { anmelden, ohneSeitlichenUeberlauf, warteAufAnmeldung } from './helfer.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
 
 async function passwort(): Promise<string> {
@@ -14,7 +14,7 @@ async function vorbereiten(seite: Page): Promise<void> {
   await seite.locator('input[name="username"]').fill('testteil');
   await seite.locator('input[name="password"]').fill(await passwort());
   await seite.locator('button[type="submit"]').click();
-  await seite.waitForFunction(async () => (await fetch('/api/einstellungen')).ok);
+  await warteAufAnmeldung(seite);
   await seite.evaluate(async () => {
     const reset = await fetch('/api/profil/zuruecksetzen', { method: 'POST' });
     if (!reset.ok) {

@@ -5,7 +5,7 @@ import { ZodError } from 'zod';
 import { aktiviereAnfrageSprache } from './anfrageSprache.ts';
 import { registriereAppAdresse } from './appAdresse.ts';
 import { KONFIG, stelleLiveClientBereit } from './config.ts';
-import { mitWelt, schliesseDatenbank } from './db.ts';
+import { halteWelt, mitWelt, schliesseDatenbank } from './db.ts';
 import { registriereAnfrageGrenze } from './anfrageGrenze.ts';
 import { istGesundheitsanfrage, registriereGesundheit } from './gesundheit.ts';
 import { bereiteLoggerVor, schliesseLogStrom } from './logDatei.ts';
@@ -96,7 +96,16 @@ await app.register(
         fertig();
       };
       if (weltdatei) {
-        mitWelt(loeseWeltdatei(weltdatei), weiter);
+        const pfad = loeseWeltdatei(weltdatei);
+        const los = halteWelt(pfad);
+        antwort.raw.once('finish', los);
+        antwort.raw.once('close', los);
+        try {
+          mitWelt(pfad, weiter);
+        } catch (fehler) {
+          los();
+          throw fehler;
+        }
         return;
       }
       weiter();

@@ -33,9 +33,9 @@ describe('welten', () => {
     schliesseWelt(ben);
   });
 
-  it('löscht mit dem Account auch die Weltdatei', () => {
-    legeBenutzerAn({ benutzername: 'Inhaber', passwort: 'geheimes-passwort', rolle: 'inhaber', weltdatei: 'app.db' });
-    const mitglied = erstelleMitglied({ benutzername: 'Gast', passwort: 'anderes-passwort', profilname: 'Gast' });
+  it('löscht mit dem Account auch die Weltdatei', async () => {
+    await legeBenutzerAn({ benutzername: 'Inhaber', passwort: 'geheimes-passwort', rolle: 'inhaber', weltdatei: 'app.db' });
+    const mitglied = await erstelleMitglied({ benutzername: 'Gast', passwort: 'anderes-passwort', profilname: 'Gast' });
     const datei = path.join(ordner, 'welten', `${mitglied.id}.db`);
     expect(fs.existsSync(datei)).toBe(true);
     expect(mitWelt(datei, () => ladeEinstellungen().charakterName)).toBe('Gast');

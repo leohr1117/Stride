@@ -1,7 +1,7 @@
 import { DatabaseSync } from 'node:sqlite';
 import { expect, test, type Locator, type Page } from './uhr.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
-import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
+import { anmelden, ohneSeitlichenUeberlauf, warteAufAnmeldung } from './helfer.ts';
 import { TEST_PASSWORT, TEST_TEIL_WELT } from './testdaten.ts';
 
 const NAME = 'Betrag Vorschlag';
@@ -282,7 +282,7 @@ test('Ohne Verlauf bleiben die festen Beträge', async ({ page }, testInfo) => {
   await page.locator('input[name="username"]').fill('testteil');
   await page.locator('input[name="password"]').fill(await teilPasswort());
   await page.getByRole('button', { name: 'Anmelden' }).click();
-  await page.waitForFunction(async () => (await fetch('/api/einstellungen')).ok);
+  await warteAufAnmeldung(page);
   const bereit = await page.evaluate(async () => {
     const reset = await fetch('/api/profil/zuruecksetzen', { method: 'POST' });
     if (!reset.ok) {

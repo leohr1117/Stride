@@ -2,7 +2,7 @@ import { expect, test, type Page } from './uhr.ts';
 import fs from 'node:fs';
 import { SPRACH_NAME, SPRACHEN, type Sprache } from '../shared/sprache/kern.ts';
 import { zeige } from '../shared/sprache/index.ts';
-import { auswahlZeilen } from './helfer.ts';
+import { auswahlZeilen, warteAufAnmeldung } from './helfer.ts';
 import { TEST_PASSWORT } from './testdaten.ts';
 
 async function merkbild(seite: Page, name: string): Promise<void> {
@@ -19,10 +19,7 @@ async function anmelden(seite: Page): Promise<void> {
   await seite.locator('input[name="username"]').fill('testteil');
   await seite.locator('input[name="password"]').fill(await passwort());
   await seite.locator('button[type="submit"]').click();
-  await seite.waitForFunction(async () => {
-    const antwort = await fetch('/api/einstellungen');
-    return antwort.ok;
-  });
+  await warteAufAnmeldung(seite);
 }
 
 async function onboarding(seite: Page): Promise<void> {

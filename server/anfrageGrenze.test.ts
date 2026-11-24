@@ -82,8 +82,8 @@ async function fuelle(
   return letzte;
 }
 
-function cookieFuer(name: string, weltdatei: string): string {
-  const konto = legeBenutzerAn({ benutzername: name, passwort: PASSWORT, rolle: 'mitglied', weltdatei });
+async function cookieFuer(name: string, weltdatei: string): Promise<string> {
+  const konto = await legeBenutzerAn({ benutzername: name, passwort: PASSWORT, rolle: 'mitglied', weltdatei });
   const token = oeffneSitzung(new Date(), konto.id);
   return `${SITZUNG_COOKIE}=${encodeURIComponent(token)}`;
 }
@@ -126,8 +126,8 @@ describe('Anfragegrenze', () => {
     const zurueck = stelleTestmodus(undefined);
     const app = await baueApp();
     const adresse = { 'cf-connecting-ip': '203.0.113.50' };
-    const ada = { ...adresse, cookie: cookieFuer('Ada', 'app.db') };
-    const bob = { ...adresse, cookie: cookieFuer('Bob', 'welten/2.db') };
+    const ada = { ...adresse, cookie: await cookieFuer('Ada', 'app.db') };
+    const bob = { ...adresse, cookie: await cookieFuer('Bob', 'welten/2.db') };
     try {
       await fuelle(app, '/api/ping', ANFRAGE_GRENZE.jeMinuteAdresse, adresse);
       expect((await hole(app, '/api/ping', adresse)).statusCode).toBe(429);

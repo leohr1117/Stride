@@ -1,6 +1,19 @@
 import { expect, test, type Page } from './uhr.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
+async function warteHinweisStabil(seite: Page): Promise<void> {
+  await seite.evaluate(() => document.fonts.ready);
+  let vorher: string | null = null;
+  await expect.poll(async () => {
+    const text = await seite.locator('[data-zustand="zu-niedrig"]').evaluateAll((liste) =>
+      liste.map((element) => (element.textContent ?? '').replace(/\s+/g, ' ').trim()).join('|'),
+    );
+    const stabil = vorher !== null && text === vorher;
+    vorher = text;
+    return stabil;
+  }).toBe(true);
+}
+
 async function setzeFunktion(seite: Page, funktionen: Record<string, boolean>): Promise<void> {
   const antwort = await seite.request.patch('/api/einstellungen', { data: { funktionen } });
   expect(antwort.ok()).toBe(true);
@@ -52,6 +65,7 @@ test('Profilzeilen öffnen Können, Haben, Fähigkeiten und Investitionen', asyn
   await expect(page.getByText('Lädt …')).toHaveCount(0);
   await expect(page.locator('[data-spektrum="attribut"]')).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
+  await warteHinweisStabil(page);
   await bild('koennen');
 
   await page.goto('/haben');
@@ -93,6 +107,7 @@ test('Profilzeilen öffnen Können, Haben, Fähigkeiten und Investitionen', asyn
   if (handy) {
     await expect(page.locator('a[data-zurueck]')).toHaveAttribute('aria-label', 'Zurück zu Heute');
   }
+  await warteHinweisStabil(page);
   await bild('heute-koennen');
 
   try {

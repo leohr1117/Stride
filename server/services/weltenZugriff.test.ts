@@ -328,16 +328,16 @@ describe('fremde Weltdatei', () => {
     if ([GAST_PASSWORT, INHABER_PASSWORT, FREMD_PASSWORT].includes(FALSCHES_PASSWORT)) throw new Error('Das Probe-Passwort ist ein echtes Kontopasswort.');
     const indexText = fs.readFileSync(new URL('../index.ts', import.meta.url), 'utf8');
     expect(indexText).toContain('weltdateiDerSitzung');
-    expect(indexText).toMatch(/mitWelt\(loeseWeltdatei\(weltdatei\),\s*weiter\)/);
+    expect(indexText).toMatch(/const pfad = loeseWeltdatei\(weltdatei\)[\s\S]*?mitWelt\(pfad,\s*weiter\)/);
     wirftBeiUngueltigerWeltdatei();
-    const inhaber = legeBenutzerAn({
+    const inhaber = await legeBenutzerAn({
       benutzername: 'Inhaber',
       passwort: INHABER_PASSWORT,
       rolle: 'inhaber',
       weltdatei: 'app.db',
     });
-    const gastSichtbar = erstelleMitglied({ benutzername: 'Gast', passwort: GAST_PASSWORT, profilname: 'Gast' });
-    const fremdSichtbar = erstelleMitglied({ benutzername: 'Fremd', passwort: FREMD_PASSWORT, profilname: 'Fremd' });
+    const gastSichtbar = await erstelleMitglied({ benutzername: 'Gast', passwort: GAST_PASSWORT, profilname: 'Gast' });
+    const fremdSichtbar = await erstelleMitglied({ benutzername: 'Fremd', passwort: FREMD_PASSWORT, profilname: 'Fremd' });
     const konten = listeKonten();
     const gast = konten.find((konto) => konto.id === gastSichtbar.id);
     const fremd = konten.find((konto) => konto.id === fremdSichtbar.id);

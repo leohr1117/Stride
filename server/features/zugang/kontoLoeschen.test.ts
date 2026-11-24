@@ -7,7 +7,7 @@ import { ZodError } from 'zod';
 import { afterAll, afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { PROFILNAME_PLATZHALTER } from '../../../shared/spiel/profil.ts';
 import { KONFIG } from '../../config.ts';
-import { mitWelt, schliesseWelt } from '../../db.ts';
+import { halteWelt, istWeltGeoeffnet, mitWelt, schliesseWelt } from '../../db.ts';
 import { AppFehler } from '../../fehler.ts';
 import { aendereEinstellungen, ladeEinstellungen } from '../einstellungen/einstellungen.ts';
 import { googleSub, verknuepfeGoogle } from './google.ts';
@@ -132,8 +132,8 @@ afterAll(() => {
 
 describe('eigenes Konto löschen', () => {
   it('entfernt ein Mitglied, seine Welt, Google und beide Sitzungen', async () => {
-    const wirt = legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
-    const gast = legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
+    const wirt = await legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const gast = await legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
     const datei = oeffneWelt('welten/gast.db', 'Gast');
     markiereNeben(datei);
     oeffneWelt('app.db', 'Wirt');
@@ -158,9 +158,32 @@ describe('eigenes Konto löschen', () => {
     expect(nameIn('app.db')).toBe('Wirt');
   });
 
+  it('löscht das Konto, während die eigene Anfrage die Welt hält', async () => {
+    const wirt = await legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const gast = await legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
+    const datei = oeffneWelt('welten/gast.db', 'Gast');
+    const token = oeffneSitzung(new Date(), gast.id);
+    const los = halteWelt(datei);
+    try {
+      expect(istWeltGeoeffnet(datei)).toBe(true);
+      await mitRouten(async (app) => {
+        const antwort = await loesche(app, token, PASSWORT);
+        expect(antwort.statusCode).toBe(204);
+      });
+      expect(listeKonten().map((konto) => konto.id)).toEqual([wirt.id]);
+      expect(istWeltGeoeffnet(datei)).toBe(false);
+      weg(datei);
+      expect(() => mitWelt(datei, () => ladeEinstellungen())).toThrow(/geschlossen/);
+      expect(fs.existsSync(datei)).toBe(false);
+    } finally {
+      los();
+    }
+    expect(() => mitWelt(datei, () => ladeEinstellungen())).not.toThrow();
+  });
+
   it('zählt ein falsches Passwort und sperrt den neunten Versuch', async () => {
-    const gast = legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
-    legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const gast = await legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
+    await legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
     const datei = oeffneWelt('welten/gast.db', 'Gast');
     const token = oeffneSitzung(new Date(), gast.id);
     await mitRouten(async (app) => {
@@ -179,7 +202,7 @@ describe('eigenes Konto löschen', () => {
   });
 
   it('zählt ein leeres Passwort nicht und löscht nichts', async () => {
-    const gast = legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
+    const gast = await legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
     const datei = oeffneWelt('welten/gast.db', 'Gast');
     const token = oeffneSitzung(new Date(), gast.id);
     await mitRouten(async (app) => {
@@ -196,7 +219,7 @@ describe('eigenes Konto löschen', () => {
   });
 
   it('verweigert die Route ohne Sitzung', async () => {
-    legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
+    await legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
     await mitRouten(async (app) => {
       const antwort = await app.inject({
         method: 'POST',
@@ -210,8 +233,8 @@ describe('eigenes Konto löschen', () => {
 
   it('lässt den letzten Inhaber stehen, auch wenn er Admin ist', async () => {
     process.env.STRIDE_ADMIN = 'Wirt';
-    const wirt = legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
-    const gast = legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
+    const wirt = await legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const gast = await legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
     starte();
     expect(istAdmin(wirt.id)).toBe(true);
     const datei = oeffneWelt('welten/gast.db', 'Gast');
@@ -233,8 +256,8 @@ describe('eigenes Konto löschen', () => {
 
   it('lässt ein Admin-Mitglied sich löschen', async () => {
     process.env.STRIDE_ADMIN = 'Ada';
-    const wirt = legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
-    const ada = legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/ada.db' });
+    const wirt = await legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const ada = await legeBenutzerAn({ benutzername: 'Ada', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/ada.db' });
     starte();
     expect(istAdmin(ada.id)).toBe(true);
     const datei = oeffneWelt('welten/ada.db', 'Ada');
@@ -249,7 +272,7 @@ describe('eigenes Konto löschen', () => {
   });
 
   it('leert beim einzigen Konto die Hauptwelt, lässt die Datei liegen und löscht nach einem Abbruch beim zweiten Mal', async () => {
-    const wirt = legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const wirt = await legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
     oeffneWelt('app.db', 'Wirt');
     const token = oeffneSitzung(new Date(), wirt.id);
     setzeLoeschabbruchEinmal(true);
@@ -271,7 +294,7 @@ describe('eigenes Konto löschen', () => {
   });
 
   it('entfernt die eigene Datei des einzigen Kontos und leert zusätzlich die Hauptwelt', async () => {
-    const wirt = legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'welten/solo.db' });
+    const wirt = await legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'welten/solo.db' });
     const datei = oeffneWelt('welten/solo.db', 'Solo');
     markiereNeben(datei);
     oeffneWelt('app.db', 'Alt');
@@ -287,8 +310,8 @@ describe('eigenes Konto löschen', () => {
   });
 
   it('lässt einen zweiten Inhaber löschen und die Hauptwelt gefüllt', async () => {
-    const wirt = legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
-    const zweit = legeBenutzerAn({ benutzername: 'Zweit', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const wirt = await legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const zweit = await legeBenutzerAn({ benutzername: 'Zweit', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
     oeffneWelt('app.db', 'Bleibt');
     const token = oeffneSitzung(new Date(), zweit.id);
     await mitRouten(async (app) => {
@@ -300,8 +323,8 @@ describe('eigenes Konto löschen', () => {
   });
 
   it('behält das Entfernen fremder Accounts beim Inhaber', async () => {
-    const wirt = legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
-    const gast = legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
+    const wirt = await legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+    const gast = await legeBenutzerAn({ benutzername: 'Gast', passwort: PASSWORT, rolle: 'mitglied', weltdatei: 'welten/gast.db' });
     const alsGast = oeffneSitzung(new Date(), gast.id);
     const alsWirt = oeffneSitzung(new Date(), wirt.id);
     await mitRouten(async (app) => {
@@ -323,8 +346,8 @@ describe('eigenes Konto löschen', () => {
     expect(listeKonten()).toHaveLength(2);
   });
 
-  it('wirft den Abbruch erst nach dem Leeren der Welt', () => {
-    const wirt = legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+  it('wirft den Abbruch erst nach dem Leeren der Welt', async () => {
+    const wirt = await legeBenutzerAn({ benutzername: 'Wirt', passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
     oeffneWelt('app.db', 'Wirt');
     setzeLoeschabbruchEinmal(true);
     expect(() => loescheEigenesKonto(wirt.id)).toThrow('Löschen abgebrochen');

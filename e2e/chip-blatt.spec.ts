@@ -65,7 +65,7 @@ test('Chips messen 36 px, das Eintrag-Blatt bleibt auf einem Schirm', async ({ p
 
   const reihe = dialog.locator('[data-gruppe="taetigkeit"] .chip-reihe');
   const knoepfe = reihe.getByRole('button');
-  expect(await knoepfe.count()).toBeGreaterThan(1);
+  await expect.poll(() => knoepfe.count()).toBeGreaterThan(1);
   await expect(knoepfe.nth(0)).toHaveAttribute('aria-pressed', 'true');
   const [erster, zweiter] = await knoepfe.evaluateAll((liste) =>
     liste.slice(0, 2).map((knopf) => {

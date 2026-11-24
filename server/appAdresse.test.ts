@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { leseVapid } from './config.ts';
 import { mailAbsender } from './features/kontakt/smtp.ts';
 import { aufraeumen, bereit, googleEnv, inhaber, mitRouten } from './features/zugang/googlePruefung.ts';
+import { CHANGE_PASSWORD_PFAD, PASSWORT_AENDERN_PFAD } from './features/zugang/passwortAdresse.ts';
 import {
   dokumentMitAppAdresse,
   fuegeAppAdresseEin,
@@ -145,12 +146,57 @@ describe('App-Adresse am Server', () => {
     }
   });
 
+  it('leitet die Wechseladresse vor dem Dokument um, auch im Testbetrieb ohne App-Adresse', async () => {
+    const ordner = mkdtempSync(path.join(tmpdir(), 'stride-app-adresse-'));
+    writeFileSync(path.join(ordner, 'index.html'), '<!doctype html><head></head><body>seite</body>');
+    const env: NodeJS.ProcessEnv = { STRIDE_TEST: '1' };
+    const app = Fastify({ logger: false });
+    registriereAppAdresse(app, ordner, env);
+    app.setNotFoundHandler((_anfrage, antwort) => {
+      antwort.status(404).type('text/plain').send('ORIGINAL');
+    });
+    try {
+      const umleitung = await app.inject({ method: 'GET', url: CHANGE_PASSWORD_PFAD });
+      expect(umleitung.statusCode).toBe(302);
+      expect(umleitung.headers.location).toBe(PASSWORT_AENDERN_PFAD);
+      expect(umleitung.body).not.toContain('seite');
+      const mitFrage = await app.inject({ method: 'GET', url: `${CHANGE_PASSWORD_PFAD}?von=manager` });
+      expect(mitFrage.statusCode).toBe(302);
+      expect(mitFrage.headers.location).toBe(PASSWORT_AENDERN_PFAD);
+      const kopf = await app.inject({ method: 'HEAD', url: CHANGE_PASSWORD_PFAD });
+      expect(kopf.statusCode).toBe(302);
+      expect(kopf.headers.location).toBe(PASSWORT_AENDERN_PFAD);
+
+      env.STRIDE_APP_URL = ZIEL;
+      const mitAdresse = await app.inject({ method: 'GET', url: CHANGE_PASSWORD_PFAD });
+      expect(mitAdresse.statusCode).toBe(302);
+      expect(mitAdresse.headers.location).toBe(PASSWORT_AENDERN_PFAD);
+      expect(mitAdresse.body).not.toContain(ZIEL);
+
+      const dokument = await app.inject({ method: 'GET', url: '/mehr' });
+      expect(dokument.statusCode).toBe(200);
+      expect(dokument.body).toContain('seite');
+      expect(dokument.body).toContain(`content="${ZIEL}"`);
+
+      delete env.STRIDE_TEST;
+      delete env.STRIDE_APP_URL;
+      const ohne = await app.inject({ method: 'GET', url: CHANGE_PASSWORD_PFAD });
+      expect(ohne.statusCode).toBe(302);
+      expect(ohne.headers.location).toBe(PASSWORT_AENDERN_PFAD);
+      const datei = await app.inject({ method: 'GET', url: '/assets/app.js' });
+      expect(datei.statusCode).toBe(404);
+      expect(datei.body).toBe('ORIGINAL');
+    } finally {
+      await app.close();
+    }
+  });
+
   it('nutzt die gesetzte Adresse in der echten OAuth-Weiterleitung', async () => {
     const vorherStride = process.env.STRIDE_APP_URL;
     const vorherAscend = process.env.ASCEND_APP_URL;
     bereit();
     googleEnv(true);
-    inhaber();
+    await inhaber();
     try {
       delete process.env.STRIDE_APP_URL;
       delete process.env.ASCEND_APP_URL;

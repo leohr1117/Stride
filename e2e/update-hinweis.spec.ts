@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { expect, test } from './uhr.ts';
-import { AKTUELLE_VERSION } from '../shared/versionen.ts';
+import { TEST_VERSION } from './versionsquelle.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
 
 test('eine Snackbar bei verpassten Versionen, keine beim aktuellen Stand, Punkt weg nach dem Changelog', async ({ page }, testInfo) => {
@@ -65,6 +65,7 @@ test('eine Snackbar bei verpassten Versionen, keine beim aktuellen Stand, Punkt 
     await expect(neu).toContainText('Neu seit deinem letzten Besuch');
     await expect(neu).toContainText('3.35.3');
     await expect(neu).toContainText('3.34.0');
+    await expect(neu.getByRole('region', { name: `Version ${TEST_VERSION}` })).toBeVisible();
     await expect(neu.getByRole('region', { name: 'Version 3.33.0' })).toHaveCount(0);
     await expect(page.locator('[data-neu-punkt]')).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);
@@ -81,11 +82,12 @@ test('eine Snackbar bei verpassten Versionen, keine beim aktuellen Stand, Punkt 
     const zeile = page.getByRole('link', { name: 'Was ist neu' });
     await zeile.scrollIntoViewIfNeeded();
     await expect(zeile).toBeVisible();
+    await expect(page.locator('[data-version]')).toContainText(TEST_VERSION);
     await expect(page.locator('[data-version] [data-neu]')).toHaveCount(0);
     await expect(page.locator('[data-neu-punkt]')).toHaveCount(0);
     await ohneSeitlichenUeberlauf(page);
     await bild('mehr');
   } finally {
-    await setzen({ benachrichtigt: AKTUELLE_VERSION, gesehen: AKTUELLE_VERSION });
+    await setzen({ benachrichtigt: TEST_VERSION, gesehen: TEST_VERSION });
   }
 });

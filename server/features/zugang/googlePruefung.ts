@@ -128,8 +128,9 @@ export function mocke(idToken: string, pruefe?: (body: URLSearchParams) => void)
   }) as typeof fetch;
 }
 
-export function inhaber(name = 'Ada'): number {
-  return legeBenutzerAn({ benutzername: name, passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' }).id;
+export async function inhaber(name = 'Ada'): Promise<number> {
+  const konto = await legeBenutzerAn({ benutzername: name, passwort: PASSWORT, rolle: 'inhaber', weltdatei: 'app.db' });
+  return konto.id;
 }
 
 export async function starte(app: FastifyInstance, zweck = 'anmelden', cookie?: string): Promise<{
