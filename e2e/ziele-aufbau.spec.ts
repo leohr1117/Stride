@@ -50,10 +50,50 @@ test('Ziele, Laufend und Projekt folgen der Liste', async ({ page }, testInfo) =
   await expect(page).toHaveURL(/\/laufend$/);
   await expect(page.getByRole('heading', { name: 'Laufend', level: 1 })).toBeVisible();
   await expect(page.getByText('Lädt …')).toHaveCount(0);
+  await expect(page.locator('main [data-boss-ring]').first()).toBeVisible();
+  await expect(page.getByText(/Erwacht · seit |Entsteht · /).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Weiter', exact: true }).first()).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
   await bild('laufend');
 
   await page.goto('/ziele');
+  await expect(page.getByText('Lädt …')).toHaveCount(0);
+  const visionen = page.locator('main section').filter({ has: page.locator('[data-zeile] h2') });
+  expect(await visionen.count()).toBeGreaterThan(0);
+  const flaechen = await visionen.evaluateAll((knoten) =>
+    knoten.map((knoten) => knoten.querySelectorAll('[data-flaeche]').length),
+  );
+  expect(flaechen.every((zahl) => zahl === 1)).toBe(true);
+  const fit = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Fit und belastbar', level: 2 }) });
+  const kopf = fit.locator('.vision-kopf');
+  const ring = kopf.locator('[data-visionsring]');
+  await expect(ring).toBeVisible();
+  await expect(kopf.locator('[data-zeile-wert]')).toHaveCount(0);
+  await expect(kopf.locator('[data-farbpunkt]')).toHaveCount(0);
+  await expect(fit.locator('[data-levelbogen]')).toHaveCount(0);
+  await expect(fit.locator('.h-1')).toHaveCount(0);
+  const lage = await ring.evaluate((element) => {
+    const kasten = element.getBoundingClientRect();
+    const titel = element.parentElement?.querySelector('button:not([data-visionsring]) span');
+    if (!(titel instanceof HTMLElement)) {
+      return null;
+    }
+    const titelKasten = titel.getBoundingClientRect();
+    return {
+      breite: kasten.width,
+      hoehe: kasten.height,
+      abstand: titelKasten.left - kasten.right,
+      links: kasten.right <= titelKasten.left + 1,
+    };
+  });
+  expect(lage).not.toBeNull();
+  expect(Math.abs((lage?.breite ?? 0) - 44)).toBeLessThanOrEqual(1);
+  expect(Math.abs((lage?.hoehe ?? 0) - 44)).toBeLessThanOrEqual(1);
+  expect(lage?.links).toBe(true);
+  expect(Math.abs((lage?.abstand ?? 99) - 12)).toBeLessThanOrEqual(1);
+  const zahl = ring.locator('[data-visionszahl]');
+  await expect(zahl).toBeVisible();
+  await expect(zahl).not.toContainText('Lvl');
   await page.getByRole('button', { name: 'Fit und belastbar', exact: true }).click();
   const vision = page.getByRole('dialog', { name: 'Fit und belastbar' });
   await expect(vision).toBeVisible();

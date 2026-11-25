@@ -108,7 +108,7 @@ export function ZieleSeite() {
 
   return (
     <DichteZeilen>
-    <div className="space-y-6">
+    <div className="ziele-seite space-y-6">
       {neuPunkte.length > 0 && (
         <KopfAktion>
           <Knopf
@@ -378,13 +378,24 @@ function NeuMenue({
 }
 
 function visionTitel(vision: Vision, onOeffnen: () => void) {
+  const level = vision.level;
+  const titelId = `vision-titel-${vision.id}`;
   return (
-    <button type="button" onClick={onOeffnen} className="pointer-events-auto block w-full min-w-0 text-left">
-      <h2 className="pointer-events-auto flex min-w-0 items-center text-base font-semibold leading-[22px]">
+    <h2
+      aria-labelledby={titelId}
+      className={`pointer-events-auto flex w-full min-w-0 items-center text-base font-semibold leading-[22px]${level !== null ? ' gap-[12px]' : ''}`}
+    >
+      {level !== null ? (
+        <VisionRing level={level} farbe={vision.farbe} onOeffnen={onOeffnen} />
+      ) : (
         <Farbpunkt farbe={vision.farbe} className="me-2" />
-        <span className="min-w-0 truncate break-words">{vision.titel}</span>
-      </h2>
-    </button>
+      )}
+      <button type="button" onClick={onOeffnen} className="pointer-events-auto min-w-0 flex-1 border-0 bg-transparent p-0 text-left">
+        <span id={titelId} className="block min-w-0 truncate">
+          {vision.titel}
+        </span>
+      </button>
+    </h2>
   );
 }
 
@@ -397,13 +408,37 @@ function organisationsTitel(organisation: Organisation) {
   );
 }
 
+function VisionRing({ level, farbe, onOeffnen }: { level: number; farbe: string; onOeffnen: () => void }) {
+  const ganz = tx('Lvl {level}', { level });
+  const roh = String(level);
+  const stelle = ganz.lastIndexOf(roh);
+  const prefix = stelle >= 0 ? ganz.slice(0, stelle) : '';
+  const sichtbar = stelle >= 0 ? ganz.slice(stelle) : ganz;
+  return (
+    <button
+      type="button"
+      data-visionsring=""
+      onClick={onOeffnen}
+      className="pointer-events-auto relative inline-flex size-11 shrink-0 items-center justify-center border-0 bg-transparent p-0 text-inherit"
+    >
+      <svg viewBox="0 0 44 44" className="pointer-events-none absolute inset-0 size-full" aria-hidden="true">
+        <circle cx="22" cy="22" r="19" fill="none" stroke={farbe} strokeWidth="1.5" />
+      </svg>
+      <span className="sr-only">{prefix}</span>
+      <span data-visionszahl="" className="relative zahl text-[10px] leading-none font-semibold">
+        {sichtbar}
+      </span>
+    </button>
+  );
+}
+
 function VisionKopf({ vision, onOeffnen }: { vision: Vision; onOeffnen: () => void }) {
   return (
     <Zeile
       typ="lesen"
+      className="vision-kopf"
       name={vision.titel}
       titel={visionTitel(vision, onOeffnen)}
-      wert={vision.level !== null ? tx('Lvl {level}', { level: vision.level }) : undefined}
     />
   );
 }

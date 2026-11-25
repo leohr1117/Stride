@@ -489,10 +489,8 @@ function OffenesVorhaben({
   return (
     <>
       <SchnellZeile
-        className={`rounded-2xl border ${
-          boss
-            ? 'border-gefahr/40 [&_[data-schnell-menue]]:size-12 [&_[data-schnell-menue]]:-m-0.5'
-            : 'border-rand'
+        className={`rounded-2xl border border-rand${
+          boss ? ' [&_[data-schnell-menue]]:size-12 [&_[data-schnell-menue]]:-m-0.5' : ''
         }`}
         eintraege={eintraege}
         onEintrag={(punkt) => {

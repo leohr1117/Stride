@@ -104,18 +104,29 @@ test('Die rechte Kante aller Level auf Ziele liegt auf einer Linie', async ({ pa
       expect(page.viewportSize()?.width).toBe(390);
     }
     const kanten = await lvlKanten(page);
-    expect(kanten.some((kante) => kante.text === `Lvl ${LEVEL}` && kante.vision && kante.listeOhneMenue)).toBe(true);
-    expect(kanten.some((kante) => kante.vision && !kante.listeOhneMenue)).toBe(true);
+    expect(kanten.some((kante) => kante.vision)).toBe(false);
     expect(kanten.some((kante) => kante.projekt)).toBe(true);
     const rechte = kanten.map((kante) => kante.rechts);
     const spanne = Math.max(...rechte) - Math.min(...rechte);
     expect(spanne, kanten.map((kante) => `${kante.text} ${kante.rechts.toFixed(2)}`).join(', ')).toBeLessThanOrEqual(0.5);
-    const letzteVision = page.locator('main section').filter({ has: page.locator('[data-zeile] h2') }).last();
-    await expect(letzteVision.getByRole('heading', { name: VISION, level: 2 })).toBeVisible();
-    const letzteRechts = await letzteVision.locator('[data-zeile-wert]').evaluate((knoten) => knoten.getBoundingClientRect().right);
-    const soll = kanten.find((kante) => kante.text === `Lvl ${LEVEL}` && kante.vision);
-    expect(soll).toBeTruthy();
-    expect(Math.abs(letzteRechts - (soll?.rechts ?? 0))).toBeLessThanOrEqual(0.5);
+    const kopfZeile = abschnitt.locator('.vision-kopf');
+    await expect(kopfZeile.locator('[data-zeile-wert]')).toHaveCount(0);
+    const ring = kopfZeile.locator('[data-visionsring]');
+    await expect(ring).toBeVisible();
+    await expect(ring.locator('[data-visionszahl]')).toHaveText(String(LEVEL));
+    await expect(ring.locator('[data-visionszahl]')).not.toContainText('Lvl');
+    const ringKasten = await ring.boundingBox();
+    const titelKasten = await kopfZeile.locator('h2 button:not([data-visionsring]) span').boundingBox();
+    expect(ringKasten && titelKasten && ringKasten.x < titelKasten.x).toBeTruthy();
+    expect(Math.round(ringKasten?.width ?? 0)).toBe(44);
+    expect(Math.round(ringKasten?.height ?? 0)).toBe(44);
+    const mitMenue = page
+      .locator('main section')
+      .filter({ has: page.locator('[data-visionsring]') })
+      .filter({ has: page.locator('.zeile-menue > button') })
+      .first();
+    await expect(mitMenue.locator('.vision-kopf [data-visionsring]')).toBeVisible();
+    await expect(mitMenue.locator('.vision-kopf [data-zeile-wert]')).toHaveCount(0);
     const menueRechts = await page.locator('main .zeile-menue > button').evaluateAll((knoten) =>
       knoten
         .map((knoten) => knoten.getBoundingClientRect())

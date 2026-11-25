@@ -88,13 +88,28 @@ test('Namen unter einer Vision rücken 16 px und 32 px ein, Level und Menü blei
   const visionen = page.locator('main section').filter({ has: page.locator('[data-zeile] h2') });
   const letzte = visionen.last();
   await expect(letzte.locator('[data-zeile] h2')).toBeVisible();
-  const letzteLvl = await kante(letzte.locator('[data-zeile-wert]').filter({ hasText: /^Lvl \d+$/ }).last());
+  const projektLvl = await page.locator('main [data-zeile]').evaluateAll((zeilen) =>
+    zeilen.flatMap((zeile) => {
+      if (zeile.querySelector('h2')) {
+        return [];
+      }
+      const wert = zeile.querySelector('[data-zeile-wert]');
+      if (!(wert instanceof HTMLElement)) {
+        return [];
+      }
+      const text = (wert.textContent ?? '').replace(/\s+/g, ' ').trim();
+      if (!/^Lvl \d+$/.test(text)) {
+        return [];
+      }
+      const kasten = wert.getBoundingClientRect();
+      return kasten.width > 1 ? [kasten.right] : [];
+    }),
+  );
   const letzteMenue = await kante(letzte.locator('.zeile-menue > button').last());
   const lvlRechts = [
-    (await kante(visionZeile.locator('[data-zeile-wert]'))).right,
+    ...projektLvl,
     (await kante(direkt.locator('[data-zeile-wert]'))).right,
     (await kante(projekt.locator('[data-zeile-wert]'))).right,
-    letzteLvl.right,
   ];
   const menueRechts = [
     (await kante(orgZeile.locator('.zeile-menue > button'))).right,
@@ -146,8 +161,73 @@ test('Namen unter einer Vision rücken 16 px und 32 px ein, Level und Menü blei
 
   const menue = await orgZeile.locator('.zeile-menue > button').boundingBox();
   expect(menue).not.toBeNull();
-  expect(nah(menue?.width ?? 0, 48)).toBe(true);
+  expect(nah(menue?.width ?? 0, 44)).toBe(true);
   expect(nah(menue?.height ?? 0, 44)).toBe(true);
+
+  const ring = visionZeile.locator('[data-visionsring]');
+  await expect(ring).toBeVisible();
+  const ringMass = await ring.evaluate((element) => {
+    const kasten = element.getBoundingClientRect();
+    const kreis = element.querySelector('circle');
+    const zahl = element.querySelector('[data-visionszahl]');
+    if (!(kreis instanceof SVGCircleElement) || !(zahl instanceof HTMLElement)) {
+      return null;
+    }
+    const titel = element.parentElement?.querySelector('button:not([data-visionsring]) span');
+    const kopf = element.closest('h2');
+    if (!(titel instanceof HTMLElement) || !(kopf instanceof HTMLElement)) {
+      return null;
+    }
+    const zahlKasten = zahl.getBoundingClientRect();
+    const titelKasten = titel.getBoundingClientRect();
+    const kopfKasten = kopf.getBoundingClientRect();
+    const mitteX = kasten.left + kasten.width / 2;
+    const mitteY = kasten.top + kasten.height / 2;
+    return {
+      breite: kasten.width,
+      hoehe: kasten.height,
+      fuellung: kreis.getAttribute('fill'),
+      strich: kreis.getAttribute('stroke-dasharray'),
+      farbe: kreis.getAttribute('stroke'),
+      bogen: element.querySelector('[data-levelbogen]') !== null,
+      zahlImRing:
+        Math.abs(zahlKasten.left + zahlKasten.width / 2 - mitteX) <= 1 &&
+        Math.abs(zahlKasten.top + zahlKasten.height / 2 - mitteY) <= 1,
+      abstand: titelKasten.left - kasten.right,
+      mitte: Math.abs(kasten.top + kasten.height / 2 - (titelKasten.top + titelKasten.height / 2)),
+      links: Math.abs(kasten.left - kopfKasten.left) <= 1 && kasten.right <= titelKasten.left + 1,
+      imWert: element.closest('[data-zeile-wert]') !== null,
+    };
+  });
+  expect(ringMass).not.toBeNull();
+  expect(nah(ringMass?.breite ?? 0, 44)).toBe(true);
+  expect(nah(ringMass?.hoehe ?? 0, 44)).toBe(true);
+  expect(ringMass?.fuellung).toBe('none');
+  expect(ringMass?.strich).toBeNull();
+  expect(ringMass?.bogen).toBe(false);
+  expect(ringMass?.zahlImRing).toBe(true);
+  expect(ringMass?.links).toBe(true);
+  expect(ringMass?.imWert).toBe(false);
+  expect(nah(ringMass?.abstand ?? 99, 12)).toBe(true);
+  expect((ringMass?.mitte ?? 99) <= 1).toBe(true);
+  await expect(ring.locator('[data-visionszahl]')).toBeVisible();
+  await expect(ring.locator('[data-visionszahl]')).not.toContainText('Lvl');
+  await expect(visionZeile.locator('[data-zeile-wert]')).toHaveCount(0);
+  await expect(visionZeile.locator('.h-1')).toHaveCount(0);
+  const visionsfarbe = await page.evaluate(async () => {
+    const antwort = await fetch('/api/ziele');
+    if (!antwort.ok) {
+      throw new Error('Ziele nicht geladen');
+    }
+    const koerper = (await antwort.json()) as { visionen: { titel: string; farbe: string }[] };
+    return koerper.visionen.find((eintrag) => eintrag.titel === 'Fit und belastbar')?.farbe ?? '';
+  });
+  expect(ringMass?.farbe).toBe(visionsfarbe);
+  const ruhig = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Ruhiger Alltag', level: 2 }) });
+  const ruhigKopf = ruhig.locator('.vision-kopf');
+  await expect(ruhigKopf.locator('[data-visionsring]')).toHaveCount(0);
+  await expect(ruhigKopf.locator('[data-farbpunkt]')).toBeVisible();
+  await expect(ruhigKopf.locator('[data-zeile-wert]')).toHaveCount(0);
 
   const level = await page.locator('main [data-zeile-wert]').evaluateAll((knoten) => {
     const probe = document.createElement('span');

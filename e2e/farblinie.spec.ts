@@ -63,24 +63,31 @@ test('Farbpunkt statt Linie und Balken', async ({ page }, testInfo) => {
   await keineFarbLinie(fit);
   await expect(fit.locator('.h-1')).toHaveCount(0);
   const visionKopf = fit.getByRole('heading', { name: 'Fit und belastbar', level: 2 });
-  const visionPunkt = visionKopf.locator('[data-farbpunkt]');
-  await punktIst10(visionPunkt);
-  const punktKasten = await visionPunkt.boundingBox();
-  const textKasten = await visionKopf.locator('span.break-words').boundingBox();
-  expect(punktKasten && textKasten && punktKasten.x < textKasten.x).toBe(true);
-  await punktBuendig(visionPunkt, visionKopf.locator('span.break-words'));
+  await expect(visionKopf.locator('[data-farbpunkt]')).toHaveCount(0);
+  const ring = visionKopf.locator('[data-visionsring]');
+  await expect(ring).toBeVisible();
+  const ringKasten = await ring.boundingBox();
+  const textKasten = await visionKopf.locator('button:not([data-visionsring]) span').boundingBox();
+  expect(ringKasten && textKasten && ringKasten.x < textKasten.x).toBe(true);
+  expect(ringKasten && textKasten && Math.abs(textKasten.x - (ringKasten.x + ringKasten.width) - 12) <= 1).toBe(true);
+  expect(Math.round(ringKasten?.width ?? 0)).toBe(44);
+  expect(Math.round(ringKasten?.height ?? 0)).toBe(44);
+  if (ringKasten && textKasten) {
+    const mitte = Math.abs(ringKasten.y + ringKasten.height / 2 - (textKasten.y + textKasten.height / 2));
+    expect(mitte).toBeLessThanOrEqual(1);
+  }
 
   const org = fit.locator('[data-ast="organisation"]').filter({ has: page.getByRole('heading', { name: 'Lauftreff', level: 3 }) });
   const orgPunkt = org.locator('[data-farbpunkt]');
   await punktIst(orgPunkt, 8);
   await punktBuendig(orgPunkt, org.locator('h3 span:not([data-farbpunkt])'));
   const orgKasten = await orgPunkt.boundingBox();
-  expect(punktKasten && orgKasten && Math.abs((orgKasten.x - punktKasten.x) - 16) <= 1).toBe(true);
+  expect(ringKasten && orgKasten && Math.abs((orgKasten.x - ringKasten.x) - 16) <= 1).toBe(true);
   await keineFarbLinie(org);
   await ohneSeitlichenUeberlauf(page);
   await bild('ziele', true);
 
-  await visionKopf.click();
+  await fit.getByRole('button', { name: 'Fit und belastbar', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Fit und belastbar' });
   await expect(dialog).toBeVisible();
   await expect(dialog.locator('.h-1')).toHaveCount(0);

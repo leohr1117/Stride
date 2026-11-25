@@ -33,7 +33,7 @@ export function LaufendSeite() {
   const leer = bosse.length === 0 && vorhaben.length === 0;
 
   return (
-    <div className="space-y-6">
+    <div className="laufend-seite space-y-6">
       {leer && <Leer text={tx('Nichts am Laufen.')} />}
 
       {bosse.length > 0 && (
@@ -93,17 +93,19 @@ function LaufendesVorhaben({
 
   if (boss) {
     return (
-      <div className="zeile symbol-zeile relative flex min-h-12 items-center gap-3 px-4 py-3">
+      <div className="zeile symbol-zeile relative flex min-h-16 items-center gap-3 px-4 py-3">
         <button type="button" className="absolute inset-0 z-0" aria-label={vorhaben.titel} onClick={onBoss} />
         <div className="pointer-events-none flex min-w-0 flex-1 items-center gap-3">
           <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />
           <div className="zeilen-text min-w-0 flex-1">
-            <p className="truncate text-base leading-6">{vorhaben.titel}</p>
+            <p className="truncate text-base leading-6 font-medium">{vorhaben.titel}</p>
             <p className="truncate text-[13px] leading-[18px] text-leise">{bossZeile(boss)}</p>
             {projekteAn && vorhaben.projektName ? (
               <p className="truncate text-[13px] leading-[18px] text-leise">{vorhaben.projektName}</p>
             ) : null}
-            <VorhabenKennzahlen vorhaben={vorhaben} ohneXp />
+            <div className="[&_p]:text-[13px]! [&_p]:leading-[18px]!">
+              <VorhabenKennzahlen vorhaben={vorhaben} ohneXp />
+            </div>
           </div>
         </div>
         <Knopf variante="text" className="relative z-10 -my-1 shrink-0" data-schnell-frei="" onClick={weiter}>
