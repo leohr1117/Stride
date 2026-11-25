@@ -122,10 +122,21 @@ test('Fortschrittsbalken: Abschluss je Ansicht, 0 % leer, kurze Füllung nur Spi
       }),
     );
     expect(minimal.length).toBeGreaterThan(1);
-    expect(new Set(minimal.map((eintrag) => eintrag.schatten)).size).toBeGreaterThan(1);
-    expect(new Set(minimal.map((eintrag) => eintrag.spitze)).size).toBeGreaterThan(1);
-    expect(new Set(minimal.map((eintrag) => eintrag.verlauf)).size).toBeGreaterThan(1);
+    expect(new Set(minimal.map((eintrag) => eintrag.farbe)).size).toBe(1);
+    expect(new Set(minimal.map((eintrag) => eintrag.schatten)).size).toBe(1);
+    expect(new Set(minimal.map((eintrag) => eintrag.spitze)).size).toBe(1);
+    expect(new Set(minimal.map((eintrag) => eintrag.verlauf)).size).toBe(1);
+    const balkenFarbe = await page.evaluate(() => {
+      const spur = document.querySelector('[data-werte="koennen"] .balken-fuellung');
+      const probe = document.createElement('span');
+      probe.style.backgroundColor = 'var(--fortschritt-balken)';
+      (spur ?? document.body).append(probe);
+      const farbe = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return farbe;
+    });
     for (const eintrag of minimal) {
+      expect(eintrag.farbe).toBe(balkenFarbe);
       expect(eintrag.schatten).not.toBe('none');
       expect(eintrag.schatten).toContain(schema === 'light' ? '4px' : '6px');
       expect(eintrag.spitze).not.toBe('rgba(0, 0, 0, 0)');
@@ -136,7 +147,7 @@ test('Fortschrittsbalken: Abschluss je Ansicht, 0 % leer, kurze Füllung nur Spi
     const antik = await koennenKarte(page).locator('.balken-fuellung').evaluateAll((knoten) =>
       knoten.filter((knoten) => knoten.getBoundingClientRect().width > 1).map((knoten) => getComputedStyle(knoten).boxShadow),
     );
-    expect(new Set(antik).size).toBeGreaterThan(1);
+    expect(new Set(antik).size).toBe(1);
     for (const schatten of antik) {
       expect(schatten).toContain('6px');
       expect(schatten).not.toContain('8px');

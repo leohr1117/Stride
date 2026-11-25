@@ -11,7 +11,8 @@ export function DichteZeilen({ children }: { children: ReactNode }) {
   return <ZeilenDicht.Provider value={true}>{children}</ZeilenDicht.Provider>;
 }
 
-const INFO_IN_ZEILE = 'inline-flex size-4 items-center justify-center rounded-full text-leise hover:text-haupt';
+const INFO_IN_ZEILE =
+  "relative inline-flex size-4 items-center justify-center rounded-full text-leise hover:text-haupt before:absolute before:inset-x-0 before:-top-[14px] before:-bottom-[14px] before:content-['']";
 const ABSCHNITT = 'ueberschrift abschnittskopf mb-2 text-[13px] font-semibold leading-[18px] tracking-normal text-leise normal-case';
 const TITEL_ALT = 'min-w-0 text-base leading-6 break-words';
 const TITEL_NEU = 'zeile-titel text-base min-w-0 overflow-hidden text-ellipsis whitespace-nowrap';
@@ -144,7 +145,6 @@ export function Zeile({
   const titelFarbe = art === 'aktion' ? (gefahr ? 'text-gefahr' : 'text-haupt') : '';
   const einzug = { '--liste-einzug': listenEinzug ?? (symbol ? '48px' : '16px') } as CSSProperties;
   const dicht = useContext(ZeilenDicht);
-  const rechtsAlt = rechts ?? menue;
   return (
     <div
       id={id}
@@ -207,7 +207,8 @@ export function Zeile({
       ) : (
         <span className="pointer-events-none flex shrink-0 items-center gap-2">
           {wert != null && wert !== '' ? <span className={deaktiviert ? `${WERT_ALT} opacity-60` : WERT_ALT}>{wert}</span> : null}
-          {rechtsAlt ? <span className="pointer-events-auto relative z-10">{rechtsAlt}</span> : null}
+          {rechts ? <span className="pointer-events-auto relative z-10">{rechts}</span> : null}
+          {menue ? <span className="pointer-events-auto relative z-10">{menue}</span> : null}
           {zeigePfeil ? <ChevronRight className="zeile-pfeil size-5 shrink-0 text-leise" aria-hidden /> : null}
         </span>
       )}

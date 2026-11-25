@@ -11,7 +11,7 @@ import { tx } from '../../text.ts';
 import { useEinstellungen } from './rahmen.tsx';
 
 const STIL_FORM: Record<Stil, { radius: string; balken: string; schrift: string; sperrung: string; gross: 'uppercase' | 'none' }> = {
-  standard: { radius: '8px', balken: '4px', schrift: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', sperrung: '0', gross: 'none' },
+  standard: { radius: '8px', balken: '4px', schrift: 'system-ui', sperrung: '0', gross: 'none' },
   minimal: { radius: '16px', balken: '999px', schrift: 'inherit', sperrung: '0', gross: 'none' },
   jade: { radius: '10px', balken: '2px', schrift: 'inherit', sperrung: '-0.02em', gross: 'none' },
   holo: { radius: '4px', balken: '0', schrift: 'ui-sans-serif, system-ui, sans-serif', sperrung: '0.08em', gross: 'uppercase' },

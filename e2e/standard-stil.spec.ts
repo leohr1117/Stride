@@ -111,6 +111,12 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
         xp: stil.getPropertyValue('--xp').trim(),
         schrift: schrift.fontFamily,
         groesse: schrift.fontSize,
+        fortschritt: stil.getPropertyValue('--fortschritt').trim().toLowerCase(),
+        streak: stil.getPropertyValue('--streak').trim().toLowerCase(),
+        tipp: stil.getPropertyValue('--tipp').trim(),
+        inhaltMax: stil.getPropertyValue('--inhalt-max').trim(),
+        hell: document.documentElement.dataset.hellAbleitung !== undefined,
+        schema: document.documentElement.dataset.schema ?? '',
       };
     });
     expect(werte.leise).toBe(logo.flaechen.leise);
@@ -120,8 +126,63 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
     expect(werte.rand).toBe(logo.flaechen.rand);
     expect(werte.haupt).toBe(logo.flaechen.haupt);
     expect(werte.xp).toBe(logo.akzent);
-    expect(werte.schrift).toContain('Segoe UI');
+    expect(werte.schrift.toLowerCase()).toContain('system-ui');
     expect(werte.groesse).toBe('16px');
+    expect(werte.tipp).toBe('44px');
+    expect(werte.inhaltMax).toBe('720px');
+    expect(werte.fortschritt).toBe(dunkel ? '#60a5fa' : '#1d4ed8');
+    expect(werte.streak).toBe(dunkel ? '#fb923c' : '#b93c0b');
+    expect(werte.schema).toBe(dunkel ? 'dark' : 'light');
+    expect(werte.hell).toBe(!dunkel);
+    const ableitung = await page.evaluate(() => {
+      const alsFarbe = (wert: string) => {
+        const probe = document.createElement('span');
+        probe.style.color = wert;
+        document.body.append(probe);
+        const farbe = getComputedStyle(probe).color;
+        probe.remove();
+        return farbe;
+      };
+      const kasten = document.createElement('div');
+      kasten.className = 'bg-flaeche-2';
+      const innen = document.createElement('span');
+      innen.style.color = 'var(--fortschritt-balken)';
+      kasten.append(innen);
+      document.body.append(kasten);
+      const balkenInnen = getComputedStyle(innen).color;
+      kasten.remove();
+      const wurzel = document.documentElement;
+      const vorher = wurzel.dataset.glimmen;
+      wurzel.dataset.glimmen = 'aus';
+      const schein = document.createElement('div');
+      schein.className = 'levelring-spitze-schein';
+      document.body.append(schein);
+      const scheinAus = getComputedStyle(schein).display;
+      schein.remove();
+      if (vorher === undefined) {
+        delete wurzel.dataset.glimmen;
+      } else {
+        wurzel.dataset.glimmen = vorher;
+      }
+      return {
+        anker: alsFarbe('var(--fortschritt)'),
+        text: alsFarbe('var(--fortschritt-text)'),
+        balken: alsFarbe('var(--fortschritt-balken)'),
+        textSoll: alsFarbe('#3a65dd'),
+        balkenSoll: alsFarbe('#6385e4'),
+        balkenInnen,
+        scheinAus,
+      };
+    });
+    expect(ableitung.balkenInnen).toBe(ableitung.anker);
+    expect(ableitung.scheinAus).toBe('none');
+    if (dunkel) {
+      expect(ableitung.text).toBe(ableitung.anker);
+      expect(ableitung.balken).toBe(ableitung.anker);
+    } else {
+      expect(ableitung.text).toBe(ableitung.textSoll);
+      expect(ableitung.balken).toBe(ableitung.balkenSoll);
+    }
     expect(await page.locator('.mobilkopf h1').evaluate((element) => getComputedStyle(element).textTransform)).toBe('none');
     expect(await eckenRadius(page, '.liste')).toBe(projekt === 'handy' ? '12px' : '8px');
     expect(await eckenRadius(page, '[data-zurueck]')).toBe('8px');
@@ -167,6 +228,9 @@ test('Standard hat die eckige Form und die Logo-Palette, Minimal bleibt rund', a
 
     await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('data-stil', 'standard');
+    if (projekt !== 'handy') {
+      expect(await page.locator('.inhalt-max').first().evaluate((element) => getComputedStyle(element).maxWidth)).toBe('720px');
+    }
     expect(await eckenRadius(page, '[data-flaeche]')).toBe(projekt === 'handy' ? '12px' : '8px');
     const sollEcke = projekt === 'handy' ? '12px' : '8px';
     const flaechenEcken = await page.locator('main [data-flaeche]').evaluateAll((knoten) =>

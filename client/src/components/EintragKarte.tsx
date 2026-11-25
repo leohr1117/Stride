@@ -1,7 +1,6 @@
 import { tx } from '../text.ts';
 import { Swords, Trophy } from 'lucide-react';
 import type { BonusQuelle, Eintrag } from '../../../shared/api/index.ts';
-import { NEUTRAL_FARBE } from '../../../shared/spiel/begriffe.ts';
 import { istAn } from '../../../shared/spiel/sichtbarkeit.ts';
 import { bonusProzent, dauerText, faktorText, lokalesDatum, tagesUeberschrift, uhrzeit, zahl } from '../format.ts';
 import { useSichtbarkeit } from '../funktionen.ts';
@@ -23,8 +22,6 @@ const BONUS: Record<BonusQuelle, string> = {
   vision: 'Vision',
   abschluss: 'Projekt abgeschlossen',
 };
-
-const FALLBACK_FARBE = NEUTRAL_FARBE;
 
 function kernzeile(eintrag: Eintrag): string | null {
   if (eintrag.vorhaben) {
@@ -62,7 +59,6 @@ export function eintragSchnellZiel(eintrag: Eintrag): SchnellZiel {
 
 export function EintragKarte({ eintrag, onOeffnen }: { eintrag: Eintrag; onOeffnen: () => void }) {
   const kern = kernzeile(eintrag);
-  const farbe = eintrag.kontext?.farbe ?? FALLBACK_FARBE;
   const rahmen = eintrag.meilenstein ? 'border-xp/40 bg-xp/5' : 'border-rand bg-flaeche';
   return (
     <SchnellZeile ziel={eintragSchnellZiel(eintrag)} className={`rounded-2xl border ${rahmen}`} hintergrund="bg-transparent">
@@ -73,10 +69,7 @@ export function EintragKarte({ eintrag, onOeffnen }: { eintrag: Eintrag; onOeffn
       onClick={onOeffnen}
       className="flex w-full items-center gap-3 px-3 py-3 pr-12 text-left"
     >
-      <span
-        className="flex size-10 shrink-0 items-center justify-center rounded-xl"
-        style={{ backgroundColor: `${farbe}22`, color: farbe }}
-      >
+      <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-flaeche-2 text-leise">
         {eintrag.meilenstein ? (
           <Trophy className="size-5 text-xp" />
         ) : (

@@ -9,6 +9,7 @@ import { halteWelt, mitWelt, schliesseDatenbank } from './db.ts';
 import { registriereAnfrageGrenze } from './anfrageGrenze.ts';
 import { istGesundheitsanfrage, registriereGesundheit } from './gesundheit.ts';
 import { bereiteLoggerVor, schliesseLogStrom } from './logDatei.ts';
+import { starteMessung } from './messung.ts';
 import { registriereSicherheitsKoepfe } from './sicherheitsKoepfe.ts';
 import { AppFehler, ungueltig } from './fehler.ts';
 import { attributRouten } from './features/attribute/routen.ts';
@@ -156,6 +157,11 @@ await app.register(
   { prefix: API_PREFIX },
 );
 
+let stoppeMessung: () => void = () => {};
+stoppeMessung = starteMessung((text) => {
+  app.log.warn(text);
+});
+
 schalteErfolgeFrei();
 registrierePasswortAdresse(app);
 
@@ -176,6 +182,7 @@ let stoppeAbgleich: (() => void) | null = null;
 
 async function beende(signal: string): Promise<void> {
   app.log.info(`${signal} empfangen, Server wird beendet.`);
+  stoppeMessung();
   stoppeAbgleich?.();
   await app.close();
   schliesseDatenbank();
@@ -207,6 +214,7 @@ try {
     app.log.warn.bind(app.log),
   );
 } catch (fehler) {
+  stoppeMessung();
   app.log.error({ err: fehler }, 'Server konnte nicht gestartet werden');
   schliesseDatenbank();
   void schliesseLogStrom().finally(() => {

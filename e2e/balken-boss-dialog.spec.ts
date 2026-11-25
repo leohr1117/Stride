@@ -52,11 +52,11 @@ async function ohneSeitlichenUeberlauf(seite: Page): Promise<void> {
   expect(ueberlauf).toBe(false);
 }
 
-async function farbeWie(ziel: Locator, variable: '--gefahr' | '--haupt' | '--leise'): Promise<boolean> {
+async function farbeWie(ziel: Locator, variable: '--gefahr' | '--gefahr-ton' | '--haupt' | '--leise'): Promise<boolean> {
   return ziel.evaluate((element, name) => {
     const probe = document.createElement('span');
     probe.style.color = `var(${name})`;
-    document.body.append(probe);
+    element.append(probe);
     const soll = getComputedStyle(probe).color;
     probe.remove();
     return getComputedStyle(element).color === soll;
@@ -341,20 +341,20 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
     const stufe = ursacheZeile.getByText(`Lvl ${ursache.level.level}`, { exact: true });
     await expect(stufe).toHaveClass(/text-gefahr/);
     await expect(stufe).not.toHaveClass(/text-leise/);
-    expect(await farbeWie(stufe, '--gefahr')).toBe(true);
+    expect(await farbeWie(stufe, '--gefahr-ton')).toBe(true);
     expect(await farbeWie(stufe, '--leise')).toBe(false);
     const zustand = ursacheZeile.locator('[data-zustand="zu-niedrig"]');
     const zeichen = zustand.locator('span[aria-hidden="true"]');
     await expect(zeichen).toHaveText('⚠');
     await expect(zeichen).toHaveClass(/text-gefahr/);
     await expect(zeichen).not.toHaveClass(/bg-gefahr|text-haupt/);
-    expect(await farbeWie(zeichen, '--gefahr')).toBe(true);
+    expect(await farbeWie(zeichen, '--gefahr-ton')).toBe(true);
     expect(await farbeWie(zeichen, '--haupt')).toBe(false);
     expect(await flaecheWie(zeichen, '--gefahr')).toBe(false);
     const label = zustand.getByText('Lvl zu niedrig', { exact: true });
     if ((await label.count()) > 0) {
       await expect(label).toHaveClass(/text-gefahr/);
-      expect(await farbeWie(label, '--gefahr')).toBe(true);
+      expect(await farbeWie(label, '--gefahr-ton')).toBe(true);
     }
     const nameKasten = await ursacheZeile.getByText(ursache.name, { exact: true }).boundingBox();
     const hinweisKasten = await zustand.boundingBox();
@@ -374,7 +374,7 @@ async function pruefeBalken(seite: Page, info: TestInfo): Promise<void> {
     await expect(abzug).toBeVisible();
     await expect(abzug).toHaveClass(/text-gefahr/);
     await expect(abzug).not.toHaveClass(/text-haupt/);
-    expect(await farbeWie(abzug, '--gefahr')).toBe(true);
+    expect(await farbeWie(abzug, '--gefahr-ton')).toBe(true);
     expect(await farbeWie(abzug, '--haupt')).toBe(false);
   }
   const ruhig = werte.find((attribut) => !bild.ursachen.includes(attribut.id));
@@ -567,11 +567,11 @@ test('Balken, besiegte Bosse und Titel-Dialog', async ({ page }, testInfo) => {
       const stufe = zeile.locator('span', { hasText: /^Lvl \d/ }).last();
       await expect(stufe).toHaveClass(/text-gefahr/);
       await expect(stufe).not.toHaveClass(/text-leise/);
-      expect(await farbeWie(stufe, '--gefahr')).toBe(true);
+      expect(await farbeWie(stufe, '--gefahr-ton')).toBe(true);
       const zeichen = hinweis.locator('span[aria-hidden="true"]');
       await expect(zeichen).toHaveClass(/text-gefahr/);
       await expect(zeichen).not.toHaveClass(/bg-gefahr|text-haupt/);
-      expect(await farbeWie(zeichen, '--gefahr')).toBe(true);
+      expect(await farbeWie(zeichen, '--gefahr-ton')).toBe(true);
       expect(await flaecheWie(zeichen, '--gefahr')).toBe(false);
       if (hinweisText.includes('Lvl zu niedrig')) {
         await expect(hinweis.getByText('Lvl zu niedrig', { exact: true })).toHaveClass(/text-gefahr/);

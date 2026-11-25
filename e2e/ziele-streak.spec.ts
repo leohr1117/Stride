@@ -157,8 +157,8 @@ test('Die Nebenzeile eines Projekts beginnt mit dem Streak und rechts steht nur 
       const streakKasten = streak?.getBoundingClientRect();
       const ruheKasten = ruhe?.getBoundingClientRect();
       const probe = document.createElement('span');
-      probe.style.color = 'var(--streak)';
-      document.body.append(probe);
+      probe.style.color = 'var(--streak-text)';
+      (streak ?? element).append(probe);
       const streakFarbe = getComputedStyle(probe).color;
       probe.style.color = 'var(--leise)';
       const leiseFarbe = getComputedStyle(probe).color;

@@ -28,7 +28,11 @@ export function ArchivListe({
             <SchnellZeile key={eintrag.schluessel} className="rounded-xl border border-rand" ziel={eintrag.ziel}>
               {(menue) => (
                 <div className="flex items-center gap-3 py-1 pr-1 pl-4">
-                  <Icon name={eintrag.icon} className="size-4 shrink-0" style={{ color: eintrag.farbe }} />
+                  <Icon
+                    name={eintrag.icon}
+                    className={`size-4 shrink-0 ${eintrag.ziel.art === 'faehigkeit' ? '' : 'text-leise'}`}
+                    style={eintrag.ziel.art === 'faehigkeit' ? { color: eintrag.farbe } : undefined}
+                  />
                   <span className="min-w-0 flex-1 truncate text-sm">{eintrag.name}</span>
                   {menue}
                 </div>

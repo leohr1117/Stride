@@ -94,7 +94,7 @@ test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInf
     const ringHtml = await page.locator('.levelring').first().innerHTML();
     const ohneLicht = ringHtml.replace(/<circle[^>]*data-ringlicht=""[^>]*>/g, '');
     expect(ringHtml).toContain('feGaussianBlur');
-    expect(ringHtml).toContain('color-mix(in srgb, var(--fortschritt)');
+    expect(ringHtml).toContain('color-mix(in srgb, var(--fortschritt-balken)');
     expect(ringHtml).toContain('var(--haupt)');
     expect(ohneLicht.toLowerCase()).not.toContain('fill="white"');
     expect(ringHtml).not.toContain('--akzent');
@@ -123,8 +123,8 @@ test('Listen, Glühen und Menü folgen den Bausteinen', async ({ page }, testInf
     await expect(loeschen).toBeVisible();
     const farben = await loeschen.evaluate((element) => {
       const probe = document.createElement('span');
-      probe.style.color = 'var(--gefahr)';
-      document.body.append(probe);
+      probe.style.color = 'var(--gefahr-ton)';
+      element.append(probe);
       const gefahr = getComputedStyle(probe).color;
       probe.remove();
       return { text: getComputedStyle(element).color, gefahr };

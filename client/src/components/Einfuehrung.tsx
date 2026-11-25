@@ -85,7 +85,7 @@ function Fortschritt({ schritt, gesamt }: { schritt: number; gesamt: number }) {
         <span
           key={index}
           className={`h-1 flex-1 rounded-full ${index < schritt ? '' : 'bg-rand'}`}
-          style={index < schritt ? { backgroundColor: 'var(--fortschritt, var(--akzent))' } : undefined}
+          style={index < schritt ? { backgroundColor: 'var(--fortschritt-balken, var(--fortschritt))' } : undefined}
         />
       ))}
     </div>

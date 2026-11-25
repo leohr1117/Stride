@@ -119,7 +119,7 @@ export function Ladeanzeige() {
 export function Fortschrittsbalken({
   anteil,
   verlustBis,
-  farbe = 'var(--fortschritt)',
+  farbe = 'var(--fortschritt-balken)',
   hoehe = 'h-2',
   bewegt = true,
 }: {
@@ -227,7 +227,7 @@ export function LevelRing({
   const spitze = ringSpitze(begrenzt);
   const endMix = Math.round(18 + begrenzt * 82);
   const startKraft = Math.round(58 + begrenzt * 18);
-  const spitzenFarbe = `color-mix(in srgb, var(--fortschritt) ${endMix}%, var(--haupt))`;
+  const spitzenFarbe = `color-mix(in srgb, var(--fortschritt-balken) ${endMix}%, var(--haupt))`;
   // 0° im conic-gradient ist 12 Uhr, im Uhrzeigersinn. Blass am Anfang, kräftig an der Spitze.
   const verlauf = `conic-gradient(from 0deg, color-mix(in srgb, var(--haupt) ${startKraft}%, transparent) 0deg, ${spitzenFarbe} ${begrenzt * 360}deg, transparent ${begrenzt * 360}deg)`;
   // Die Maske deckt genau den Strich (Mitte 42, Breite 8 in der 100er-Box).

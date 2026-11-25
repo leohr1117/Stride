@@ -147,7 +147,7 @@ test('Namen unter einer Vision rücken 16 px und 32 px ein, Level und Menü blei
   const menue = await orgZeile.locator('.zeile-menue > button').boundingBox();
   expect(menue).not.toBeNull();
   expect(nah(menue?.width ?? 0, 48)).toBe(true);
-  expect(nah(menue?.height ?? 0, 40)).toBe(true);
+  expect(nah(menue?.height ?? 0, 44)).toBe(true);
 
   const level = await page.locator('main [data-zeile-wert]').evaluateAll((knoten) => {
     const probe = document.createElement('span');

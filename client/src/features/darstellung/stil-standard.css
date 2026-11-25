@@ -1,7 +1,7 @@
 /* Form der Ansicht Standard. Minimal behält die runde Form in stil-minimal.css. */
 
 :root[data-stil='standard'] {
-  --standard-schrift: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", "PingFang SC", "Hiragino Sans", "Noto Sans CJK", sans-serif;
+  --standard-schrift: system-ui;
   --feldrand: #767676;
   --trenner: var(--rand);
   --radius-sm: 8px;
@@ -178,4 +178,24 @@ html[data-stil='standard'] body {
 
 :root[data-stil='standard'] .mobilleiste a[aria-current='page'] svg.lucide {
   stroke-width: 2.25;
+}
+
+:root[data-stil='standard'] [data-flaeche] [data-flaeche] {
+  background-color: transparent;
+  border-width: 0;
+  box-shadow: none;
+}
+
+:root[data-stil='standard'] .zeile {
+  border-inline-start-width: 0;
+}
+
+:root[data-stil='standard'][data-glimmen='aus'] :is(.levelring-spitze-schein, .skill-leuchten, .baum-puls, .glimm-fleck, .pfad-an) {
+  animation: none;
+  filter: none;
+  box-shadow: none;
+}
+
+:root[data-stil='standard'][data-glimmen='aus'] .levelring-spitze-schein {
+  display: none;
 }

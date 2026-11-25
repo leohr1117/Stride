@@ -40,6 +40,15 @@
   --prio-2: #eb8909;
   --prio-3: #246fe0;
   --prio-4: var(--leise);
+  --fortschritt-text: var(--fortschritt);
+  --fortschritt-balken: var(--fortschritt);
+  --streak-text: var(--streak);
+  --streak-balken: var(--streak);
+  --gefahr-ton: var(--gefahr);
+  --gefahr-balken: var(--gefahr);
+  --erfolg-ton: var(--erfolg);
+  --erfolg-balken: var(--erfolg);
+  --tipp: 44px;
 }
 
 @media (min-width: 768px) {
@@ -105,6 +114,45 @@
   }
 }
 
+/* Ableitungen nur auf Grund #f2f2f2 und Flaeche #ffffff. Flaeche-2 behaelt die Anker. */
+:root[data-schema='light'][data-hell-ableitung] {
+  --fortschritt-text: #3a65dd;
+  --fortschritt-balken: #6385e4;
+  --streak-text: #bd481a;
+  --streak-balken: #cc714d;
+  --gefahr-ton: #ca3737;
+  --gefahr-balken: #d76666;
+  --erfolg-ton: #377b50;
+  --erfolg-balken: #5e9573;
+}
+
+:root[data-schema='light'][data-hell-ableitung] :is(.bg-flaeche-2, [data-flaeche-2]) {
+  --fortschritt-text: var(--fortschritt);
+  --fortschritt-balken: var(--fortschritt);
+  --streak-text: var(--streak);
+  --streak-balken: var(--streak);
+  --gefahr-ton: var(--gefahr);
+  --gefahr-balken: var(--gefahr);
+  --erfolg-ton: var(--erfolg);
+  --erfolg-balken: var(--erfolg);
+}
+
+:root[data-schema='light'][data-hell-ableitung] .text-fortschritt {
+  color: var(--fortschritt-text);
+}
+
+:root[data-schema='light'][data-hell-ableitung] .text-streak {
+  color: var(--streak-text);
+}
+
+:root[data-schema='light'][data-hell-ableitung] .text-gefahr {
+  color: var(--gefahr-ton);
+}
+
+:root[data-schema='light'][data-hell-ableitung] .text-erfolg {
+  color: var(--erfolg-ton);
+}
+
 :root[data-stil='jade'],
 :root[data-stil='holo'],
 :root[data-stil='antik'] {
@@ -132,7 +180,7 @@
   --color-erfolg: var(--erfolg);
   --color-erfolg-text: var(--erfolg-text);
   --color-fokus: var(--fokus);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: system-ui;
 }
 
 html {
@@ -743,6 +791,8 @@ html[data-eingabe='zeiger'] :focus {
 .zeile-menue > button {
   width: 48px;
   height: 48px;
+  min-width: var(--tipp, 44px);
+  min-height: var(--tipp, 44px);
   flex: none;
   pointer-events: auto;
 }

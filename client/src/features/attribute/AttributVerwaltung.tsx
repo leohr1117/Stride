@@ -116,7 +116,7 @@ export function AttributBereich({
                 )}
               </SchnellZeile>
               <div className="px-4 pb-3">
-                <Fortschrittsbalken anteil={balken.stand} verlustBis={balken.verlustBis} farbe="var(--fortschritt)" hoehe="h-1.5" />
+                <Fortschrittsbalken anteil={balken.stand} verlustBis={balken.verlustBis} farbe="var(--fortschritt-balken)" hoehe="h-1.5" />
               </div>
             </div>
           );

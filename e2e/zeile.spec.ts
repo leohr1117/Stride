@@ -139,6 +139,16 @@ test('Zeilen auf Mehr, Konto, Vorbilder, Accounts, Verlauf und Ziele sind 48 ode
   const koennen = await koennenZeile.boundingBox();
   expect(nah(koennen?.height ?? 0, 86)).toBe(true);
   expect(await koennenZeile.locator('[data-zeile]').getAttribute('data-zeilen')).toBeNull();
+  const icon = await koennenZeile.locator('[data-zeile] svg').first().evaluate((svg) => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--leise)';
+    document.body.append(probe);
+    const leise = getComputedStyle(probe).color;
+    probe.remove();
+    return { farbe: getComputedStyle(svg).color, leise, stil: svg.getAttribute('style') };
+  });
+  expect(icon.farbe).not.toBe(icon.leise);
+  expect(icon.stil).toMatch(/color:/);
 
   await page.goto('/investitionen');
   const bank = page.locator('[data-schnell="Trainingsbank"] [data-zeile]');
@@ -162,6 +172,15 @@ test('Zeilen auf Mehr, Konto, Vorbilder, Accounts, Verlauf und Ziele sind 48 ode
   expect(knopf).not.toBeNull();
   expect(nah(knopf?.width ?? 0, 48)).toBe(true);
   expect(nah(knopf?.height ?? 0, 48)).toBe(true);
+  const reihenfolge = await page.locator('[data-hat-menue]:has(.zeile-pfeil)').first().evaluate((zeile) => {
+    const menue = zeile.querySelector('.zeile-menue');
+    const pfeil = zeile.querySelector('.zeile-pfeil');
+    if (!menue || !pfeil) {
+      return false;
+    }
+    return Boolean(menue.compareDocumentPosition(pfeil) & Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+  expect(reihenfolge).toBe(true);
   const person = await abstand('[data-hat-menue]');
   const massstab = await abstand('[data-zeile]:has(a[href="/vorbilder/durchschnitt"])');
   expect(person - massstab).toBeGreaterThan(50);

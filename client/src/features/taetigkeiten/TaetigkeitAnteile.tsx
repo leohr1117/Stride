@@ -57,7 +57,7 @@ export function AnteilGruppe({
             </div>
             <AnteilRegler
               wert={wert}
-              farbe={attribut.farbe}
+              farbe="var(--fortschritt-balken)"
               schritt={schritt}
               beschreibung={wertBeschreibung(wert)}
               onAendern={(naechster) => onAendern(attribut.id, naechster)}

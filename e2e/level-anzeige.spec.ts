@@ -142,7 +142,7 @@ async function flaechePasst(page: Page, spektrum: string): Promise<void> {
       : werte.reduce((max, wert, index) => Math.max(max, Math.abs((abst[index] ?? 0) - (wert / maxW) * maxA)), 0);
     const stil = getComputedStyle(flaeche);
     const probe = document.createElement('span');
-    probe.style.color = 'var(--fortschritt)';
+    probe.style.color = 'var(--fortschritt-balken)';
     document.body.append(probe);
     const farbe = getComputedStyle(probe).color;
     probe.remove();
@@ -498,7 +498,7 @@ test('Levelring: Verlauf, Spitze und Glühen in den Ansichten', async ({ page },
       expect(schema).toBe(ansicht.name === 'minimal' ? 'light' : 'dark');
       const html = await ring.innerHTML();
       expect(html, ansicht.name).toContain('stroke="var(--flaeche-2)"');
-      expect(html, ansicht.name).toContain('var(--fortschritt)');
+      expect(html, ansicht.name).toContain('var(--fortschritt-balken)');
       expect(html, ansicht.name).toContain('var(--haupt)');
       expect(html, ansicht.name).not.toContain('--akzent');
       const bogen = ring.locator('[data-levelbogen]');
@@ -508,7 +508,7 @@ test('Levelring: Verlauf, Spitze und Glühen in den Ansichten', async ({ page },
         const voll = await ring.evaluate((element) =>
           [...element.querySelectorAll('circle')].some((kreis) => {
             const strich = kreis.getAttribute('stroke') ?? '';
-            return strich.includes('color-mix') && strich.includes('var(--fortschritt)') && !kreis.hasAttribute('stroke-dasharray');
+            return strich.includes('color-mix') && strich.includes('var(--fortschritt-balken)') && !kreis.hasAttribute('stroke-dasharray');
           }),
         );
         expect(voll, ansicht.name).toBe(true);

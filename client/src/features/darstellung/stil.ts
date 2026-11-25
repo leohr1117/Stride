@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { bedeutungsfarben } from '../../../../shared/features/darstellung/bedeutung.ts';
+import { bedeutungsfarben, hellAbleitungAktiv } from '../../../../shared/features/darstellung/bedeutung.ts';
 import { kombination } from '../../../../shared/features/darstellung/kombination.ts';
 import { wacheKontrast } from '../../../../shared/features/darstellung/kontrastWaechter.ts';
 import { istHexFarbe, normaleHex } from '../../../../shared/spiel/farben.ts';
@@ -101,6 +101,11 @@ export function wendeErscheinung(wahl: Farbwahl): void {
   wurzel.style.setProperty('--diagramm-vorbild', flaechen.diagramm);
   wurzel.style.colorScheme = flaechen.schema;
   wurzel.dataset.schema = flaechen.schema;
+  if (hellAbleitungAktiv(flaechen.schema, bild.hintergrund, wache.flaeche)) {
+    wurzel.dataset.hellAbleitung = '';
+  } else {
+    delete wurzel.dataset.hellAbleitung;
+  }
   const glimmen = wahl.glimmen ?? wurzel.dataset.glimmen !== 'aus';
   if (glimmen) {
     delete wurzel.dataset.glimmen;

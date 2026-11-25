@@ -145,13 +145,13 @@ test('jede Sprache bleibt auf 390 px vollständig sichtbar', async ({ page }, in
         familie: getComputedStyle(document.body).fontFamily,
         stil: document.documentElement.dataset.stil ?? '',
       }));
-      if (code === 'ru') {
-        expect(schrift.familie).toContain(schrift.stil === 'standard' ? 'Segoe UI' : 'Exo 2');
-      }
-      if (code === 'zh') {
+      if (schrift.stil === 'standard') {
+        expect(schrift.familie.toLowerCase()).toContain('system-ui');
+      } else if (code === 'ru') {
+        expect(schrift.familie).toContain('Exo 2');
+      } else if (code === 'zh') {
         expect(schrift.familie).toMatch(/YaHei|PingFang|Noto Sans SC|Hiragino Sans GB/);
-      }
-      if (code === 'ja') {
+      } else if (code === 'ja') {
         expect(schrift.familie).toMatch(/Yu Gothic|Hiragino|Meiryo|Noto Sans JP/);
       }
     }

@@ -234,13 +234,13 @@ function MeldungInhalt({ belohnung }: { belohnung: Belohnung }) {
       <div className="mt-1.5 flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs text-leise">
         {belohnung.anteile.map((anteil) => (
           <span key={anteil.attributId} className={`flex items-center gap-1 ${anteil.xp < 0 ? 'text-gefahr' : ''}`}>
-            <span className="size-2 rounded-full" style={{ backgroundColor: anteil.farbe }} />
+            <span className="size-2 rounded-full bg-fortschritt" />
             {attributName({ name: anteil.name })} {mitVorzeichen(anteil.xp)}
           </span>
         ))}
         {belohnung.abzugBeiNull?.map((eintrag) => (
           <span key={`null-${eintrag.name}`} className="flex items-center gap-1 text-leise">
-            <span className="size-2 rounded-full" style={{ backgroundColor: eintrag.farbe }} />
+            <span className="size-2 rounded-full bg-fortschritt" />
             {attributName({ name: eintrag.name })} {tx('schon bei 0')}
           </span>
         ))}
@@ -338,7 +338,7 @@ function LevelAufstiegAnzeige({
 }) {
   const haupt = aufstiege?.find((aufstieg) => aufstieg.art === 'charakter') ?? aufstiege?.[0];
   const weitere = aufstiege?.filter((aufstieg) => aufstieg !== haupt) ?? [];
-  const hauptFarbe = haupt?.farbe ?? 'var(--akzent)';
+  const hauptFarbe = haupt?.art === 'faehigkeit' ? (haupt.farbe ?? 'var(--fortschritt)') : 'var(--fortschritt)';
   const fensterRef = useRef<HTMLDivElement>(null);
   const aktiv = Boolean(aufstiege && haupt);
   const titel = haupt ? aufstiegTitel(haupt) : '';
@@ -397,7 +397,11 @@ function LevelAufstiegAnzeige({
                     className="flex items-center justify-between rounded-xl bg-flaeche-2 px-3 py-2 text-sm"
                   >
                     <span className="flex items-center gap-2">
-                      <span className="size-2 rounded-full" style={{ backgroundColor: aufstieg.farbe ?? 'var(--akzent)' }} />
+                      {aufstieg.art === 'faehigkeit' ? (
+                        <span className="size-2 rounded-full" style={{ backgroundColor: aufstieg.farbe ?? 'var(--fortschritt)' }} />
+                      ) : (
+                        <span className="size-2 shrink-0 rounded-full bg-fortschritt" />
+                      )}
                       {aufstieg.art === 'attribut' || aufstieg.art === 'status'
                         ? attributName({ name: aufstieg.name })
                         : aufstieg.name}

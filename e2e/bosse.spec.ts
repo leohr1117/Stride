@@ -257,8 +257,8 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
   await expect(angriff.locator('.text-gefahr')).toHaveCount(2);
   const gefahrStimmt = await disziplin.evaluate((element) => {
     const probe = document.createElement('span');
-    probe.style.color = 'var(--gefahr)';
-    document.body.append(probe);
+    probe.style.color = 'var(--gefahr-ton)';
+    element.append(probe);
     const soll = getComputedStyle(probe).color;
     probe.remove();
     return getComputedStyle(element).color === soll;

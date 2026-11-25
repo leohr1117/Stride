@@ -23,7 +23,7 @@ export function AttributRadar({
   }
   const radarDaten = werte.map((attribut) => ({ name: attributName(attribut), wert: radarWert(attribut.level) }));
   const radarRand = radarMaximum(werte.map((attribut) => attribut.level));
-  const farbe = 'var(--fortschritt)';
+  const farbe = 'var(--fortschritt-balken)';
 
   return (
     <div ref={rahmen} data-spektrum={typ} data-achsen-max={radarRand} data-werte={radarDaten.map((eintrag) => eintrag.wert).join(',')}>

@@ -130,13 +130,13 @@ export function RueckblickSeite() {
               <Flaeche>
                 <div className="px-4 py-3">
               <BalkenListe
-                farbe="var(--fortschritt)"
+                farbe="var(--fortschritt-balken)"
                 vorzeichenHaupt
                 werte={rueckblick.attribute.map((attribut) => ({
                   schluessel: attribut.attributId,
                   label: (
                     <>
-                      <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: attribut.farbe }} />
+                      <span className="size-2 shrink-0 rounded-full bg-fortschritt" />
                       <span className="min-w-0 break-words">{attributName({ name: attribut.name })}</span>
                     </>
                   ),

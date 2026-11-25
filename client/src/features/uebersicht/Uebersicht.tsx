@@ -400,7 +400,7 @@ function Werte({
                   </div>
                 </div>
               </div>
-              <Fortschrittsbalken anteil={balken.stand} verlustBis={balken.verlustBis} farbe={attribut.farbe} hoehe="h-1.5" />
+              <Fortschrittsbalken anteil={balken.stand} verlustBis={balken.verlustBis} farbe="var(--fortschritt-balken)" hoehe="h-1.5" />
             </div>
           );
         }}

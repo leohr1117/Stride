@@ -111,7 +111,7 @@ function DuennRing({ anteil, kinder }: { anteil: number; kinder: ReactNode }) {
           cy="18"
           r={radius}
           fill="none"
-          stroke="var(--fortschritt)"
+          stroke="var(--fortschritt-balken)"
           strokeWidth="2"
           strokeDasharray={`${umfang * begrenzt} ${umfang}`}
           transform="rotate(-90 18 18)"
