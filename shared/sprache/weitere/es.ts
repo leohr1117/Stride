@@ -2088,6 +2088,7 @@ export const TEXTE: Record<string, string> = {
   "Sonntag": "domingo",
   "Gesamt": "Todo",
   "{aktion} · ca. +{xp} XP": "{aktion} · aprox. +{xp} XP",
+  "plus Kette": "más la racha",
   "{aktion} · ca. +{xp} XP + Meilenstein": "{aktion} · aprox. +{xp} XP + hito",
   "Speichern · +{xp} {name}": "Guardar · +{xp} {name}",
   "Beschriftungen folgen der gewählten Sprache.": "Los textos siguen el idioma elegido.",

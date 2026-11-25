@@ -2088,6 +2088,7 @@ export const TEXTE: Record<string, string> = {
   "Sonntag": "日曜日",
   "Gesamt": "すべて",
   "{aktion} · ca. +{xp} XP": "{aktion} · 約 +{xp} XP",
+  "plus Kette": "さらに連続",
   "{aktion} · ca. +{xp} XP + Meilenstein": "{aktion} · 約 +{xp} XP + マイルストーン",
   "Speichern · +{xp} {name}": "保存 · +{xp} {name}",
   "Beschriftungen folgen der gewählten Sprache.": "表示は選んだ言語に従います。",

@@ -2088,6 +2088,7 @@ export const TEXTE: Record<string, string> = {
   "Sonntag": "dimanche",
   "Gesamt": "Tout",
   "{aktion} · ca. +{xp} XP": "{aktion} · environ +{xp} XP",
+  "plus Kette": "plus la chaîne",
   "{aktion} · ca. +{xp} XP + Meilenstein": "{aktion} · environ +{xp} XP + jalon",
   "Speichern · +{xp} {name}": "Enregistrer · +{xp} {name}",
   "Beschriftungen folgen der gewählten Sprache.": "Les libellés suivent la langue choisie.",

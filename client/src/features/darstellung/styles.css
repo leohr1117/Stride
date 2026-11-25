@@ -1321,3 +1321,11 @@ a.profilziel,
   border-radius: 50%;
   overflow: hidden;
 }
+
+.abhak-marke {
+  border-radius: 4px;
+}
+
+.chronik-xp {
+  color: var(--fortschritt);
+}

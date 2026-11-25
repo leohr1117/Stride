@@ -173,6 +173,7 @@ test('Chronik zeigt Löschen nur beim Wischen', async ({ page }, testInfo) => {
   await expect(page.getByRole('heading', { name: /Verlauf|History/ })).toBeVisible();
   const karten = page.locator('[data-schnell]');
   await expect(karten.first()).toBeVisible();
+  await expect(page.locator('.chronik-tag').first()).toBeVisible();
   const bild = (name: string) => page.screenshot({ path: `tmp-test/chronik-wischen/${testInfo.project.name}-${name}.png` });
 
   const pruefeRuhe = async (name: string) => {
@@ -186,6 +187,17 @@ test('Chronik zeigt Löschen nur beim Wischen', async ({ page }, testInfo) => {
       await expect(karte.getByRole('button', { name: /^(Löschen|Delete)$/ })).toHaveCount(0);
       await expect(karte.getByRole('button', { name: /Aktionen für|Actions for/ })).toBeVisible();
       await expect(karte.locator('.zahl')).toBeVisible();
+      const xp = karte.locator('.chronik-xp');
+      await expect(xp).toBeVisible();
+      const xpFarbe = await xp.evaluate((element) => {
+        const probe = document.createElement('span');
+        probe.style.color = 'var(--fortschritt)';
+        element.append(probe);
+        const soll = getComputedStyle(probe).color;
+        probe.remove();
+        return getComputedStyle(element).color === soll;
+      });
+      expect(xpFarbe, `${name} Karte ${index}`).toBe(true);
     }
     await bild(name);
   };

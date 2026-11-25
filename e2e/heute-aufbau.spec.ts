@@ -78,6 +78,9 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
     expect(masse.rand).toBe(1);
     expect(masse.flaechenBreite).toBeLessThanOrEqual(720);
   }
+  const statusLeiste = page.locator('[data-status-leiste]');
+  await expect(statusLeiste).toBeVisible();
+  expect(await statusLeiste.evaluate((element) => getComputedStyle(element).borderTopWidth)).toBe('1px');
   await expect(page.getByRole('heading', { name: 'Basis', exact: true })).toHaveCount(1);
   const ketteStand = await page.request.get('/api/kette/heute');
   expect(ketteStand.ok()).toBe(true);
@@ -184,6 +187,25 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await expect(koennen).toBeVisible();
   await expect(koennen.locator('svg')).toHaveCount(1);
   await expect(haben.locator('svg')).toHaveCount(1);
+  const attribut = page.locator('[data-werte="koennen"] [data-attribut]').first();
+  await expect(attribut).toBeVisible();
+  const balken = attribut.locator('.balken');
+  expect(await balken.evaluate((element) => Math.round(element.getBoundingClientRect().height))).toBe(8);
+  const lage = await attribut.evaluate((zeile) => {
+    const name = zeile.querySelector('[data-attribut-name]');
+    const stufe = [...zeile.querySelectorAll('span')].find((element) => /^Lvl /.test(element.textContent ?? ''));
+    const icon = zeile.querySelector('svg');
+    if (!(name instanceof HTMLElement) || !(stufe instanceof HTMLElement) || !(icon instanceof SVGElement)) {
+      return null;
+    }
+    return {
+      stufeRechts: stufe.getBoundingClientRect().left > name.getBoundingClientRect().left,
+      iconFarbe: icon.getAttribute('style') ?? '',
+    };
+  });
+  expect(lage).not.toBeNull();
+  expect(lage?.stufeRechts).toBe(true);
+  expect(lage?.iconFarbe).toContain('color');
   await ohneSeitlichenUeberlauf(page);
   await bild(page, `${projekt}-werte`);
 
@@ -356,7 +378,7 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   expect(dichte.probleme).toEqual([]);
   expect(dichte.abstaende).toEqual([]);
   const ordnung = await page.evaluate(() => {
-    const namen = ['Bosse greifen an', 'Zurück aufstehen', 'Basis', 'Werte', 'Aktivität'];
+    const namen = ['Basis', 'Bosse greifen an', 'Zurück aufstehen', 'Werte', 'Aktivität'];
     return namen.flatMap((name) => {
       const kopf = [...document.querySelectorAll('h2')].find((element) => element.textContent?.trim() === name);
       return kopf ? [{ name, top: Math.round(kopf.getBoundingClientRect().top) }] : [];
@@ -376,6 +398,17 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
 
   if (projekt === 'handy') {
     await expect(page.locator('nav.mobilleiste').getByRole('link', { name: 'Heute', exact: true })).toBeVisible();
+    if (stil === 'standard') {
+      const fabRadius = await page.locator('.eintrag-fab').evaluate((element) => getComputedStyle(element).borderTopLeftRadius);
+      expect(fabRadius).toBe('16px');
+      const strich = await page.locator('nav.mobilleiste a[aria-current="page"] .leiste-symbol').evaluate((element) => {
+        const nach = getComputedStyle(element, '::after');
+        return { breite: nach.width, hoehe: nach.height, inhalt: nach.content };
+      });
+      expect(strich.inhalt).not.toBe('none');
+      expect(strich.breite).toBe('12px');
+      expect(strich.hoehe).toBe('2px');
+    }
   } else {
     await expect(page.locator('aside.seitenleiste').getByRole('link', { name: 'Heute', exact: true })).toBeVisible();
   }
@@ -389,7 +422,7 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await bild(page, `${projekt}-profil`);
 });
 
-async function kreisMass(kreis: Locator): Promise<{ breite: number; hoehe: number; rand: string; haken: boolean; zustand: string | null }> {
+async function kreisMass(kreis: Locator): Promise<{ breite: number; hoehe: number; rand: string; radius: number; haken: boolean; zustand: string | null }> {
   const kasten = await kreis.boundingBox();
   expect(kasten).toBeTruthy();
   expect(Math.round(kasten!.width)).toBe(48);
@@ -400,6 +433,7 @@ async function kreisMass(kreis: Locator): Promise<{ breite: number; hoehe: numbe
       breite: Math.round(box.width),
       hoehe: Math.round(box.height),
       rand: getComputedStyle(element).borderTopWidth,
+      radius: Number.parseFloat(getComputedStyle(element).borderTopLeftRadius),
       haken: element.querySelector('svg') !== null,
       zustand: element.getAttribute('data-abhak'),
     };
@@ -407,7 +441,7 @@ async function kreisMass(kreis: Locator): Promise<{ breite: number; hoehe: numbe
 }
 
 function kreisErwartet(
-  mass: { breite: number; hoehe: number; rand: string; haken: boolean; zustand: string | null },
+  mass: { breite: number; hoehe: number; rand: string; radius: number; haken: boolean; zustand: string | null },
   erledigt: boolean,
 ): void {
   expect(mass.breite).toBe(24);
@@ -415,6 +449,7 @@ function kreisErwartet(
   expect(mass.zustand).toBe(erledigt ? 'erledigt' : 'offen');
   expect(mass.haken).toBe(erledigt);
   expect(mass.rand).toBe(erledigt ? '0px' : '2px');
+  expect(mass.radius).toBe(4);
 }
 
 const HELL = { stil: 'standard', primaer: '#141414', akzent: '#707070', hintergrund: '#f2f2f2' };

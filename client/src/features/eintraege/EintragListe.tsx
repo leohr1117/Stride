@@ -181,7 +181,7 @@ function EintragZeile({ eintrag, onOeffnen }: { eintrag: Eintrag; onOeffnen: () 
           name={eintrag.vorlageName}
           titel={eintrag.vorlageName}
           neben={neben ?? undefined}
-          wert={`+${zahl(eintrag.xp)} XP`}
+          wert={<span className="chronik-xp">+{zahl(eintrag.xp)} XP</span>}
           symbol={<Icon name={eintrag.vorlageIcon} />}
           menue={menue}
           onKlick={onOeffnen}
@@ -198,7 +198,7 @@ function SkillZeile({ skill, onOeffnen }: { skill: SkillEreignis; onOeffnen: () 
       name={skill.titel}
       titel={skill.titel}
       neben={skill.faehigkeitName}
-      wert={`+${zahl(skill.xp)} XP`}
+      wert={<span className="chronik-xp">+{zahl(skill.xp)} XP</span>}
       symbol={<Sparkles aria-hidden />}
       onKlick={onOeffnen}
     />
@@ -292,7 +292,7 @@ export function EintragListe({
         </div>
       ) : (
         tage.map((tag) => (
-          <section key={tag.schluessel}>
+          <section key={tag.schluessel} className="chronik-tag">
             <AbschnittKopf titel={tagesUeberschrift(tag.schluessel)} />
             <Liste className="menue-spalte">
               {tag.eintraege.map((eintrag) => (

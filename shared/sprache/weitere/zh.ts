@@ -2088,6 +2088,7 @@ export const TEXTE: Record<string, string> = {
   "Sonntag": "星期日",
   "Gesamt": "全部",
   "{aktion} · ca. +{xp} XP": "{aktion} · 约 +{xp} XP",
+  "plus Kette": "另加连续",
   "{aktion} · ca. +{xp} XP + Meilenstein": "{aktion} · 约 +{xp} XP + 里程碑",
   "Speichern · +{xp} {name}": "保存 · +{xp} {name}",
   "Beschriftungen folgen der gewählten Sprache.": "文字跟随所选语言。",

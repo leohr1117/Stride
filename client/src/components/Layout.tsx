@@ -279,7 +279,7 @@ function Seitenleiste() {
       <button
         type="button"
         onClick={() => oeffnen()}
-        className="knopf knopf-primaer mt-8 flex items-center justify-center gap-2 rounded-xl bg-akzent px-4 py-3 text-sm font-semibold text-akzent-text transition hover:brightness-110"
+        className="eintrag-plus knopf knopf-primaer mt-8 flex items-center justify-center gap-2 rounded-xl bg-akzent px-4 py-3 text-sm font-semibold text-akzent-text transition hover:brightness-110"
       >
         <Plus className="size-4" strokeWidth={2.5} />
         {tx("Eintrag loggen")}
@@ -359,7 +359,7 @@ function MobilNavigation() {
         aria-current={aktiv ? 'page' : undefined}
         className={`flex min-h-12 min-w-12 flex-1 flex-col items-center justify-center gap-1 px-0.5 py-2 text-center text-[11px] leading-tight ${platzKlasse(aktiv)}`}
       >
-        <span className="relative">
+        <span className="leiste-symbol relative">
           <NavIcon className="size-5" strokeWidth={aktiv ? 2.25 : 1.75} />
           {pfad === '/mehr' && neu ? <NeuPunkt /> : null}
         </span>

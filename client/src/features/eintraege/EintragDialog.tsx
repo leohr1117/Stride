@@ -572,9 +572,16 @@ export function EintragDialog({
 
         <Fehlermeldung fehler={eintragen.error} />
 
-        <Knopf type="submit" variante="primaer" className="w-full py-3 text-base" aria-busy={eintragen.isPending || undefined}>
-          {eintragen.isPending ? tx("Wird eingetragen …") : eintragAktion(nachtragen, zahl(xpVorschau), istMeilenstein)}
-        </Knopf>
+        <div className="space-y-1">
+          <Knopf type="submit" variante="primaer" className="w-full py-3 text-base" aria-busy={eintragen.isPending || undefined}>
+            {eintragen.isPending ? tx("Wird eingetragen …") : eintragAktion(nachtragen, zahl(xpVorschau), istMeilenstein)}
+          </Knopf>
+          {!nachtragen && !eintragen.isPending ? (
+            <p className="text-center text-[13px] leading-[18px] text-leise" data-plus-kette="">
+              {tx('plus Kette')}
+            </p>
+          ) : null}
+        </div>
       </FormularKasten>
     </Dialog>
     <NeueTaetigkeit

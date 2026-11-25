@@ -27,8 +27,8 @@ export function AbhakKreis({
         data-abhak={erledigt ? 'erledigt' : 'offen'}
         className={
           erledigt
-            ? 'flex size-6 items-center justify-center rounded-full bg-erfolg text-erfolg-text'
-            : 'box-border size-6 rounded-full border-2 border-[color:var(--feldrand)]'
+            ? 'abhak-marke flex size-6 items-center justify-center bg-erfolg text-erfolg-text'
+            : 'abhak-marke box-border size-6 border-2 border-[color:var(--feldrand)]'
         }
       >
         {erledigt ? <Check className="size-3.5" strokeWidth={3} /> : null}

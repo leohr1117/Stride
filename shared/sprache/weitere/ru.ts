@@ -2088,6 +2088,7 @@ export const TEXTE: Record<string, string> = {
   "Sonntag": "воскресенье",
   "Gesamt": "Все",
   "{aktion} · ca. +{xp} XP": "{aktion} · примерно +{xp} XP",
+  "plus Kette": "плюс цепочка",
   "{aktion} · ca. +{xp} XP + Meilenstein": "{aktion} · примерно +{xp} XP + веха",
   "Speichern · +{xp} {name}": "Сохранить · +{xp} {name}",
   "Beschriftungen folgen der gewählten Sprache.": "Подписи следуют выбранному языку.",

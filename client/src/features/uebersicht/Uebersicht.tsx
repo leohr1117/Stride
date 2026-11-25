@@ -86,7 +86,8 @@ export function UebersichtSeite() {
                 </div>
               </div>
               <div
-                className="grid min-w-0"
+                className="status-leiste grid min-w-0 border-t border-rand pt-3"
+                data-status-leiste=""
                 style={{ gridTemplateColumns: `repeat(${funktionen.streak ? 3 : 1}, 1fr)` }}
               >
                 <Wochenwert label={tx('XP diese Woche')} wert={`+${zahl(uebersicht.wocheXp)}`} hervorheben="fortschritt" />
@@ -134,6 +135,8 @@ export function UebersichtSeite() {
 
       <HeuteKarte />
 
+      {karteGewaehlt('basis', karten) && funktionen.basis && <BasisKarte />}
+
       {karteGewaehlt('bosse', karten) && istAn('bossAngriffe', sichtbarkeit) && uebersicht.angriffe.length > 0 && (
         <Angriffe
           bosse={uebersicht.angriffe}
@@ -145,8 +148,6 @@ export function UebersichtSeite() {
       {karteGewaehlt('comeback', karten) && istAn('vorhaben', sichtbarkeit) && uebersicht.comebacks.length > 0 && (
         <Comebacks comebacks={uebersicht.comebacks} projekteAn={istAn('projekte', sichtbarkeit)} />
       )}
-
-      {karteGewaehlt('basis', karten) && funktionen.basis && <BasisKarte />}
 
       {karteGewaehlt('werte', karten) && (funktionen.koennen || funktionen.status) && (
         <div className="inhalt-max">
@@ -383,7 +384,7 @@ function Werte({
           const hoechstXp = Number.isFinite(attribut.hoechstXp) ? attribut.hoechstXp : attribut.level.xpGesamt;
           const balken = verlustBalken(attribut.level.xpGesamt, hoechstXp, LEVEL_KURVEN[attribut.typ]);
           return (
-            <div key={attribut.id} className="space-y-1.5">
+            <div key={attribut.id} className="space-y-1.5" data-attribut="">
               <div className="flex items-start gap-2">
                 <Icon name={attribut.icon} className="mt-0.5 size-4 shrink-0" style={{ color: attribut.farbe }} />
                 <div className="min-w-0 flex-1">
@@ -400,7 +401,7 @@ function Werte({
                   </div>
                 </div>
               </div>
-              <Fortschrittsbalken anteil={balken.stand} verlustBis={balken.verlustBis} farbe="var(--fortschritt-balken)" hoehe="h-1.5" />
+              <Fortschrittsbalken anteil={balken.stand} verlustBis={balken.verlustBis} farbe="var(--fortschritt-balken)" />
             </div>
           );
         }}

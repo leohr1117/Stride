@@ -97,6 +97,15 @@ test('Eintrag-Dialog ist ein Blatt ohne Tipp, mit lesbaren Chips und Info', asyn
   const eintragen = dialog.locator('.formular-fuss').getByRole('button', { name: /Eintragen/ });
   await expect(eintragen).toBeEnabled();
   await expect(eintragen).toContainText('ca. +');
+  const kette = dialog.locator('[data-plus-kette]');
+  await expect(kette).toHaveText('plus Kette');
+  const ketteKasten = await kette.boundingBox();
+  const knopfKasten = await eintragen.boundingBox();
+  expect(ketteKasten).not.toBeNull();
+  expect(knopfKasten).not.toBeNull();
+  if (ketteKasten && knopfKasten) {
+    expect(ketteKasten.y).toBeGreaterThan(knopfKasten.y);
+  }
   await dialog.locator('.formular-felder').evaluate((element) => {
     element.scrollTop = element.scrollHeight;
   });

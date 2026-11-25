@@ -199,3 +199,24 @@ html[data-stil='standard'] body {
 :root[data-stil='standard'][data-glimmen='aus'] .levelring-spitze-schein {
   display: none;
 }
+
+:root[data-stil='standard'] .eintrag-fab.knopf-rund,
+:root[data-stil='standard'] .eintrag-plus {
+  border-radius: 16px;
+}
+
+:root[data-stil='standard'] .mobilleiste a[aria-current='page'] .leiste-symbol::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 12px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--fortschritt);
+  transform: translateX(-50%);
+}
+
+:root[data-stil='standard'] .seitenleiste a[aria-current='page'] {
+  box-shadow: inset 3px 0 0 var(--fortschritt);
+}

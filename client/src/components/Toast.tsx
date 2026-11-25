@@ -106,7 +106,8 @@ export function Toast({
         role={rolle}
         data-dauer={dauerMs}
         data-update-hinweis={markierung === 'update' ? '' : undefined}
-        className="pointer-events-auto flex min-w-0 max-w-[min(100%,28rem)] items-center gap-3 rounded-2xl border border-rand bg-flaeche px-4 py-2 shadow-lg"
+        data-snackbar=""
+        className="snackbar pointer-events-auto flex min-w-0 max-w-[min(100%,28rem)] items-center gap-3 rounded-2xl bg-flaeche-2 px-4 py-2"
       >
         <span className="min-w-0 flex-1 text-sm break-words">{tx(text)}</span>
         {aktion && aktionLabel ? (

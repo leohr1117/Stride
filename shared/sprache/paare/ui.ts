@@ -788,6 +788,7 @@ export const PAARE = [
   ['Sonntag', 'Sunday'],
   ['Gesamt', 'All'],
   ['{aktion} · ca. +{xp} XP', '{aktion} · about +{xp} XP'],
+  ['plus Kette', 'plus chain'],
   ['{aktion} · ca. +{xp} XP + Meilenstein', '{aktion} · about +{xp} XP + milestone'],
   ['Speichern · +{xp} {name}', 'Save · +{xp} {name}'],
   ['Ansehen Lvl {level}', 'Reputation lvl {level}'],
