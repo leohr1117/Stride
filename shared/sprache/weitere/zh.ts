@@ -1,5 +1,10 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Deine Kette gibt {faktor} XP": "你的连续给出 {faktor} XP",
+  "{aktion} · +{xp} XP, plus Kette": "{aktion} · +{xp} XP，另加连续",
+  "{aktion} · +{xp} XP, plus Kette + Meilenstein": "{aktion} · +{xp} XP，另加连续 + 里程碑",
+  "{aktion} · +{xp} XP": "{aktion} · +{xp} XP",
+  "{aktion} · +{xp} XP + Meilenstein": "{aktion} · +{xp} XP + 里程碑",
   "Diese Woche": "本周",
   "Vorwoche": "上一周",
   "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "联系表单中的电子邮件可以不填。没有地址就无法回复。",

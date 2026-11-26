@@ -191,6 +191,7 @@ test('Jede Ansicht hat eine eigene Form und feste Bedeutungsfarben', async ({ pa
     await page.getByRole('button', { name: 'Eintrag loggen' }).click();
     const dialog = page.getByRole('dialog', { name: 'Was hast du getan?' });
     await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: 'Mehr', exact: true }).click();
     const schalter = dialog.getByRole('switch', { name: 'Meilenstein' });
     const knopf = schalter.locator('xpath=..').locator('.schalter-knopf');
     const bahn = schalter.locator('xpath=..').locator('.schalter-bahn');

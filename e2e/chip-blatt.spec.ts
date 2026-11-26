@@ -101,6 +101,7 @@ test('Chips messen 36 px, das Eintrag-Blatt bleibt auf einem Schirm', async ({ p
   const titel = [...laufend.bosse, ...laufend.vorhaben].map((eintrag) => eintrag.titel);
   expect(titel.length).toBeGreaterThanOrEqual(5);
   const lang = titel.reduce((bisher, name) => (name.length > bisher.length ? name : bisher));
+  await dialog.getByRole('button', { name: 'Mehr', exact: true }).click();
   const langChip = dialog.locator('[data-gruppe="wofuer"] button.chip').filter({ hasText: lang }).first();
   await expect(langChip).toHaveAttribute('aria-label', expect.stringContaining(lang));
   const nameKasten = await langChip.locator('.chip-name').evaluate((element) => ({

@@ -117,11 +117,13 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   expect(await bossZeile.locator('[data-boss-ring]').evaluate((element) => Math.round(element.getBoundingClientRect().width))).toBe(36);
   await expect(bossZeile).toContainText(/seit /);
   await expect(bossZeile).not.toContainText('Erwacht');
-  await expect(bossZeile.locator('.text-gefahr', { hasText: 'Disziplin' })).toBeVisible();
+  await expect(bossZeile.getByText(/Disziplin/)).toBeVisible();
+  await expect(bossZeile.locator('.zeile-wert', { hasText: 'Disziplin' })).toBeVisible();
+  await expect(bossZeile.locator('.text-gefahr', { hasText: 'Disziplin' })).toHaveCount(0);
   const klinge = bossZeile.locator('.lucide-swords');
-  if ((await klinge.count()) > 0) {
-    await expect(klinge).toHaveClass(/text-gefahr/);
-  }
+  await expect(klinge).toHaveCount(1);
+  await expect(klinge).not.toHaveClass(/text-gefahr/);
+  await expect(bossZeile.locator('[data-boss-ring]')).toHaveAttribute('data-erwacht', '');
   const bossLinien = await angriff.locator('[data-flaeche]').evaluate((flaeche) => {
     const kinder = [...flaeche.children].filter((kind) => kind instanceof HTMLElement && kind.getBoundingClientRect().height > 0);
     return kinder.map((kind, index) => {
@@ -154,12 +156,13 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
       return { top: kasten.top, left: kasten.left, rand: stil.borderRightWidth };
     }),
   );
-  expect(zeile).toHaveLength(3);
+  expect(zeile).toHaveLength(2);
   expect(Math.abs((zeile[0]?.top ?? 0) - (zeile[1]?.top ?? 0))).toBeLessThan(2);
-  expect(Math.abs((zeile[1]?.top ?? 0) - (zeile[2]?.top ?? 0))).toBeLessThan(2);
   expect(zeile[1]?.left ?? 0).toBeGreaterThan(zeile[0]?.left ?? 0);
   expect(zeile[0]?.rand).toBe('1px');
-  expect(zeile[2]?.rand).toBe('0px');
+  expect(zeile[1]?.rand).toBe('0px');
+  await expect(page.locator('[data-kette-faktor]')).toHaveCount(1);
+  await expect(page.locator('[data-kette-faktor]')).toContainText(/Deine Kette gibt ×/);
 
   const info = page.locator('[data-wochenwert="Streak"]').getByRole('button', { name: /^Info/ });
   await info.click();
@@ -219,6 +222,10 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await expect(page.getByText('Kurz dehnen')).toHaveCount(0);
   await basisSchalter.click();
   await expect(page.getByText('Kurz dehnen')).toBeVisible();
+  const basisKarten = page.locator('section', { has: page.getByRole('heading', { name: 'Basis', exact: true }) });
+  await expect(basisKarten.locator('.symbol-zeile', { hasText: 'Als Nächstes' })).toHaveCount(1);
+  await expect(basisKarten.locator('.symbol-zeile', { hasText: 'Seite lesen' })).toContainText('Als Nächstes');
+  await expect(basisKarten.locator('.symbol-zeile', { hasText: 'Kurz dehnen' })).not.toContainText('Als Nächstes');
   const basisLinks = page.locator('main a[href="/basis"]');
   await expect(basisLinks).toHaveCount(1);
   const basisZeile = basisLinks.locator('xpath=ancestor::*[@data-zeile][1]');
@@ -302,7 +309,7 @@ test('Heute behält Maß und folgt der Reihenfolge', async ({ page }, testInfo) 
   await projektLink.click();
   await expect(page).toHaveURL(/\/projekte\/\d+$/);
   await page.goto('/');
-  await expect(page.locator('[data-wochenwert]')).toHaveCount(3);
+  await expect(page.locator('[data-wochenwert]')).toHaveCount(2);
   const aktivitaet = page.getByRole('button', { name: 'Aktivität', exact: true });
   if ((await aktivitaet.getAttribute('aria-expanded')) !== 'true') {
     await aktivitaet.click();
@@ -763,7 +770,8 @@ function kennzahlBericht(): KennzahlBericht {
   const trenner = linien.map((linie, index) => {
     const kasten = linie.getBoundingClientRect();
     const mitte = kasten.left + kasten.width / 2;
-    return rasterKasten ? mitte - (rasterKasten.left + (rasterKasten.width * (index + 1)) / 3) : Number.NaN;
+    const teiler = spalten.length || 1;
+    return rasterKasten ? mitte - (rasterKasten.left + (rasterKasten.width * (index + 1)) / teiler) : Number.NaN;
   });
 
   const knopf = document.querySelector('[data-wochenwert="Streak"] button');
@@ -796,7 +804,7 @@ function kennzahlBericht(): KennzahlBericht {
   return { spalten: bericht, spaltenFormel: formula, trenner, trefferBreite, trefferHoehe, ikonNebenWort };
 }
 
-test('Kennzahlen auf Heute stehen in gleichen Dritteln', async ({ page }, testInfo) => {
+test('Kennzahlen auf Heute stehen in gleichen Spalten', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', 'Breiten setzt der Test selbst');
   test.setTimeout(180_000);
   await anmelden(page);
@@ -823,20 +831,21 @@ test('Kennzahlen auf Heute stehen in gleichen Dritteln', async ({ page }, testIn
         await expect(page.locator('html')).toHaveAttribute('data-stil', ansicht.stil);
         await expect(page.locator('html')).toHaveAttribute('data-schema', ansicht.schema);
         await page.evaluate(() => document.fonts.ready);
-        await expect(page.locator('[data-wochenwert]')).toHaveCount(3);
+        await expect(page.locator('[data-wochenwert]')).toHaveCount(2);
         const lage = `${fenster.breite} ${ansicht.name} ${ansicht.stil}`;
         const bericht = await page.evaluate(kennzahlBericht);
         const breiten = bericht.spalten.map((spalte) => spalte.breite);
-        expect(bericht.spalten, lage).toHaveLength(3);
+        expect(bericht.spalten, lage).toHaveLength(2);
+        expect(bericht.spalten.map((spalte) => spalte.label), lage).toEqual(['XP diese Woche', 'Streak']);
         expect(Math.max(...breiten) - Math.min(...breiten), lage).toBeLessThanOrEqual(0.5);
         const teile = bericht.spaltenFormel.split(' ').map((teil) => Number.parseFloat(teil));
-        expect(teile, lage).toHaveLength(3);
+        expect(teile, lage).toHaveLength(2);
         expect(Math.max(...teile) - Math.min(...teile), `${lage} ${bericht.spaltenFormel}`).toBeLessThanOrEqual(0.5);
         for (const spalte of bericht.spalten) {
           expect(Math.abs(spalte.dxWert), `${lage} ${spalte.label} Wert`).toBeLessThanOrEqual(0.5);
           expect(Math.abs(spalte.dxWort), `${lage} ${spalte.label} Wort`).toBeLessThanOrEqual(0.5);
         }
-        expect(bericht.trenner, lage).toHaveLength(2);
+        expect(bericht.trenner, lage).toHaveLength(1);
         for (const delta of bericht.trenner) {
           expect(Math.abs(delta), lage).toBeLessThanOrEqual(0.5);
         }

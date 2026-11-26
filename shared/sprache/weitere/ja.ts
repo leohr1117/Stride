@@ -1,5 +1,10 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Deine Kette gibt {faktor} XP": "連続は {faktor} XP",
+  "{aktion} · +{xp} XP, plus Kette": "{aktion} · +{xp} XP、さらに連続",
+  "{aktion} · +{xp} XP, plus Kette + Meilenstein": "{aktion} · +{xp} XP、さらに連続 + 節目",
+  "{aktion} · +{xp} XP": "{aktion} · +{xp} XP",
+  "{aktion} · +{xp} XP + Meilenstein": "{aktion} · +{xp} XP + 節目",
   "Diese Woche": "今週",
   "Vorwoche": "前の週",
   "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "問い合わせフォームのメールアドレスは任意です。ないと返信できません。",

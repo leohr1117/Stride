@@ -8,6 +8,7 @@ test('Dialoge stehen in fester Reihenfolge', async ({ page }, testInfo) => {
 
   await page.getByRole('button', { name: 'Eintrag loggen' }).click();
   const neu = page.getByRole('dialog', { name: 'Was hast du getan?' });
+  await neu.getByRole('button', { name: 'Mehr', exact: true }).click();
   await expect(neu.getByText('Wofür?', { exact: true })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
   await bild('eintrag-neu');

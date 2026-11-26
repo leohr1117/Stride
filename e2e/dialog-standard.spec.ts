@@ -79,6 +79,7 @@ test('Blatt, Fokus und Verwerfen folgen dem Dialog-Standard', async ({ page }, t
 
   await ausloeser.click();
   await expect(blatt).toBeVisible();
+  await blatt.getByRole('button', { name: 'Mehr', exact: true }).click();
   const notiz = blatt.getByRole('textbox', { name: 'Notiz' });
   await notiz.fill('Notiz noch offen');
   await klickScrim(page);

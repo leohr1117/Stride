@@ -373,7 +373,8 @@ test('Kettenfehler bleibt in Heute', async ({ page }, testInfo) => {
   await expect(page.getByText('Server nicht erreichbar.')).toHaveCount(0);
   await expect(page.locator('[data-wochenwert="Streak"]')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Streak', exact: true })).toBeVisible();
-  await expect(page.getByText('Momentum')).toBeVisible();
+  await expect(page.locator('[data-kette-faktor]')).toContainText(/Deine Kette gibt ×/);
+  await expect(page.locator('[data-wochenwert="Momentum"]')).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Basis' })).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
   await bild(page, `${testInfo.project.name}-fehler`);
@@ -389,9 +390,11 @@ test('Streak-Info öffnet sich', async ({ page }, testInfo) => {
   await expect(tooltip).not.toContainText('unter Heute');
   const verdeckt = await page.evaluate(() => {
     const kasten = document.querySelector('[role="tooltip"]')?.getBoundingClientRect();
-    const zahlen = ['Streak', 'Momentum'].map((name) =>
-      document.querySelector(`[data-wochenwert="${name}"] .zahl`)?.getBoundingClientRect(),
-    );
+    const zahlen = [
+      document.querySelector('[data-wochenwert="Streak"] .zahl')?.getBoundingClientRect(),
+      document.querySelector('[data-wochenwert="XP diese Woche"] .zahl')?.getBoundingClientRect(),
+      document.querySelector('[data-kette-faktor]')?.getBoundingClientRect(),
+    ];
     if (!kasten || zahlen.some((zahl) => !zahl)) {
       return true;
     }

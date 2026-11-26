@@ -463,18 +463,19 @@ test('Tätigkeit nur mit Abzug lässt sich speichern, der Eintrag bucht nur den 
     await page.goto('/');
     await page.getByRole('button', { name: 'Eintrag loggen' }).click();
     const eintrag = page.getByRole('dialog', { name: 'Was hast du getan?' });
+    await eintrag.getByRole('button', { name: 'Mehr', exact: true }).click();
     await eintrag.getByRole('button', { name: zielName, exact: true }).click();
     await eintrag.getByRole('button', { name, exact: true }).click();
     await eintrag.getByRole('button', { name: fertigkeit, exact: true }).click();
     await eintrag.getByRole('button', { name: '1 Std', exact: true }).click();
     const dauerZeile = eintrag.locator('[data-dauer-zeile]');
-    const eintragen = eintrag.getByRole('button', { name: 'Eintragen · ca. +0 XP' });
+    const eintragen = eintrag.getByRole('button', { name: 'Eintragen · +25 XP, plus Kette' });
     await expect(eintragen).toBeVisible();
     const dialogLage = await eintrag.evaluate((wurzel) => {
       const chip = [...wurzel.querySelectorAll('button')].find((knopf) => knopf.textContent?.includes('Nur Abzug'));
       const dauer = wurzel.querySelector('[data-dauer-zeile]');
       const knopf = [...wurzel.querySelectorAll('button')].find((eintragKnopf) =>
-        eintragKnopf.textContent?.includes('Eintragen · ca. +0 XP'),
+        eintragKnopf.textContent?.includes('Eintragen · +25 XP, plus Kette'),
       );
       return {
         chipUnten: chip?.getBoundingClientRect().bottom ?? 0,

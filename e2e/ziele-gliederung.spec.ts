@@ -237,7 +237,10 @@ test('Namen unter einer Vision rücken 16 px und 32 px ein, Level und Menü blei
     probe.remove();
     return knoten
       .filter((knoten) => (knoten.textContent ?? '').includes('Lvl'))
-      .map((knoten) => getComputedStyle(knoten).color === leise);
+      .map((knoten) => {
+        const stil = getComputedStyle(knoten);
+        return stil.color === leise && knoten.classList.contains('lvl-pille') && stil.borderRadius === '999px';
+      });
   });
   expect(level.length).toBeGreaterThan(0);
   expect(level.every(Boolean)).toBe(true);

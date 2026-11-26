@@ -562,7 +562,7 @@ html[data-eingabe='zeiger'] :focus {
   place-items: center;
   width: var(--ring-d);
   height: var(--ring-d);
-  color: var(--gefahr);
+  color: var(--leise);
 }
 
 .boss-ring-bild,
@@ -579,12 +579,16 @@ html[data-eingabe='zeiger'] :focus {
 
 .boss-ring circle {
   fill: none;
-  stroke: var(--gefahr);
+  stroke: currentColor;
   stroke-width: var(--ring-strich);
   stroke-linecap: round;
   cx: calc(var(--ring-d) / 2);
   cy: calc(var(--ring-d) / 2);
   r: calc((var(--ring-d) - var(--ring-strich)) / 2);
+}
+
+.boss-ring[data-erwacht] circle {
+  stroke: var(--gefahr);
 }
 
 .boss-ring-spur {
@@ -771,6 +775,18 @@ html[data-eingabe='zeiger'] :focus {
   line-height: 20px;
   color: var(--leise);
   font-variant-numeric: tabular-nums;
+}
+
+.zeile[data-zeilen] .zeile-wert.lvl-pille {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding-inline: 8px;
+  border-radius: 999px;
+  background: var(--flaeche-2);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 600;
 }
 
 .zeile-menue {

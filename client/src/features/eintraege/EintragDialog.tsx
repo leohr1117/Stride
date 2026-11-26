@@ -1,14 +1,13 @@
 import { tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, Swords, Trophy } from 'lucide-react';
+import { ChevronRight, Plus, Swords, Trophy } from 'lucide-react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import type { EintragDaten, VorhabenMitProjekt, VorhabenWahl } from '../../../../shared/api/index.ts';
 import { GRENZEN } from '../../../../shared/spiel/begriffe.ts';
 import { standardEbenen } from '../../../../shared/spiel/ebenen.ts';
 import { taetigkeitPasst, taetigkeitenFuerProjekt } from '../../../../shared/spiel/taetigkeit.ts';
-import { istTypAktiv } from '../../../../shared/spiel/funktionen.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
-import { aktiveGewichte, basisXp, istNurAbzug, MEILENSTEIN_INFO, vorschauXp } from '../../../../shared/spiel/xp.ts';
+import { basisXp, MEILENSTEIN_INFO } from '../../../../shared/spiel/xp.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { merkeAngebotFaellig } from '../uebersicht/angebotStand.ts';
 import { merkeBewertungFaellig } from '../uebersicht/bewertungStand.ts';
@@ -79,7 +78,10 @@ function DatumZeile({ wert, heute, onAendern }: { wert: string; heute: string; o
 
 function eintragAktion(nachtragen: boolean, xp: string, meilenstein: boolean): string {
   const aktion = tx(nachtragen ? 'Nachtragen' : 'Eintragen');
-  return tx(meilenstein ? '{aktion} · ca. +{xp} XP + Meilenstein' : '{aktion} · ca. +{xp} XP', { aktion, xp });
+  if (nachtragen) {
+    return tx(meilenstein ? '{aktion} · +{xp} XP + Meilenstein' : '{aktion} · +{xp} XP', { aktion, xp });
+  }
+  return tx(meilenstein ? '{aktion} · +{xp} XP, plus Kette + Meilenstein' : '{aktion} · +{xp} XP, plus Kette', { aktion, xp });
 }
 
 function leeresFormular(): Formular {
@@ -157,11 +159,6 @@ export function EintragDialog({
     queryFn: api.vorlagen,
     enabled: offen,
   });
-  const { data: attribute } = useQuery({
-    queryKey: SCHLUESSEL.attribute,
-    queryFn: api.attribute,
-    enabled: offen,
-  });
   const { data: faehigkeiten = [] } = useQuery({
     queryKey: SCHLUESSEL.faehigkeiten,
     queryFn: api.faehigkeiten,
@@ -179,6 +176,7 @@ export function EintragDialog({
   const [neueTaetigkeit, setNeueTaetigkeit] = useState(false);
   const [taetigkeitFehler, setTaetigkeitFehler] = useState<string | null>(null);
   const [dauerErzwungen, setDauerErzwungen] = useState(false);
+  const [mehrOffen, setMehrOffen] = useState(false);
   const chipReihe = useRef<HTMLDivElement>(null);
   const dauerEingabe = useRef<HTMLInputElement>(null);
   const initialisiert = useRef(false);
@@ -191,6 +189,7 @@ export function EintragDialog({
       setNeueTaetigkeit(false);
       setTaetigkeitFehler(null);
       setDauerErzwungen(false);
+      setMehrOffen(false);
       return;
     }
     if (initialisiert.current || einstellungenLaden || projekteLaden || vorlagenLaden) {
@@ -302,19 +301,7 @@ export function EintragDialog({
     eigene: formular.dauerEigene,
   });
   const dauerJetzt = dauerPruefung(dauerStand(), dauerErzwungen);
-  const gewichteAktiv = vorlage && attribute ? aktiveGewichte(vorlage.gewichte, attribute, funktionen) : [];
-  const abzuegeAktiv =
-    vorlage && attribute
-      ? vorlage.abzuege.filter((abzug) => {
-          const ziel = attribute.find((eintrag) => eintrag.id === abzug.attributId);
-          return Boolean(ziel && !ziel.archiviert && istTypAktiv(funktionen, ziel.typ));
-        })
-      : [];
-  const nurAbzug = Boolean(vorlage && istNurAbzug(vorlage.festeAnteile, gewichteAktiv, abzuegeAktiv));
-  const xpVorschau =
-    !vorlage || !attribute || (gewichteAktiv.length === 0 && !nurAbzug)
-      ? basisXp(dauerJetzt.stunden)
-      : vorschauXp(dauerJetzt.stunden, gewichteAktiv, vorlage.festeAnteile);
+  const knopfXp = zahl(basisXp(dauerJetzt.stunden));
 
   const setzeDauer = (naechstes: DauerStand) => {
     setDauerErzwungen(false);
@@ -393,6 +380,20 @@ export function EintragDialog({
           ) : null}
         </div>
 
+        <DauerWahl stand={dauerStand()} onAendern={setzeDauer} fehler={dauerJetzt.fehler} eingabeRef={dauerEingabe} />
+
+        <button
+          type="button"
+          className="flex min-h-11 w-full items-center gap-1 text-left text-sm font-semibold"
+          aria-expanded={mehrOffen}
+          data-eintrag-mehr=""
+          onClick={() => setMehrOffen((offen) => !offen)}
+        >
+          {tx('Mehr')}
+          <ChevronRight className={`size-4 shrink-0 ${mehrOffen ? 'rotate-90' : ''}`} aria-hidden="true" />
+        </button>
+        {mehrOffen ? (
+          <>
         {zeigtWofuer && (
           <section data-eintrag="wofuer" className="min-w-0 space-y-4">
             {zeigtVorhaben && (
@@ -557,8 +558,6 @@ export function EintragDialog({
           </div>
         )}
 
-        <DauerWahl stand={dauerStand()} onAendern={setzeDauer} fehler={dauerJetzt.fehler} eingabeRef={dauerEingabe} />
-
         <Feld label={tx("Notiz")}>
           <textarea
             className={`${EINGABE_STIL} min-h-16 resize-y`}
@@ -569,19 +568,14 @@ export function EintragDialog({
         </Feld>
 
         <DatumZeile wert={formular.datum} heute={heute} onAendern={(datum) => aendern({ datum })} />
+          </>
+        ) : null}
 
         <Fehlermeldung fehler={eintragen.error} />
 
-        <div className="space-y-1">
-          <Knopf type="submit" variante="primaer" className="w-full py-3 text-base" aria-busy={eintragen.isPending || undefined}>
-            {eintragen.isPending ? tx("Wird eingetragen …") : eintragAktion(nachtragen, zahl(xpVorschau), istMeilenstein)}
-          </Knopf>
-          {!nachtragen && !eintragen.isPending ? (
-            <p className="text-center text-[13px] leading-[18px] text-leise" data-plus-kette="">
-              {tx('plus Kette')}
-            </p>
-          ) : null}
-        </div>
+        <Knopf type="submit" variante="primaer" className="w-full py-3 text-base" aria-busy={eintragen.isPending || undefined}>
+          {eintragen.isPending ? tx("Wird eingetragen …") : eintragAktion(nachtragen, knopfXp, istMeilenstein)}
+        </Knopf>
       </FormularKasten>
     </Dialog>
     <NeueTaetigkeit

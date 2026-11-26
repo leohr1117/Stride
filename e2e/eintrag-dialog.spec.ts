@@ -38,6 +38,15 @@ test('Eintrag-Dialog ist ein Blatt ohne Tipp, mit lesbaren Chips und Info', asyn
   await expect(dialog.getByText('Tipp: Wähl ein Vorhaben oder eine Fähigkeit.')).toHaveCount(0);
   await expect(dialog.getByText('Tipp: Wähl eine Fähigkeit.')).toHaveCount(0);
 
+  const mehr = dialog.getByRole('button', { name: 'Mehr', exact: true });
+  await expect(mehr).toBeVisible();
+  await expect(mehr).toHaveAttribute('aria-expanded', 'false');
+  expect((await mehr.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+  await expect(dialog.getByText('Tätigkeit', { exact: true })).toBeVisible();
+  await expect(dialog.getByRole('group', { name: 'Dauer', exact: true })).toBeVisible();
+  await expect(dialog.locator('[data-eintrag="wofuer"]')).toHaveCount(0);
+  await mehr.click();
+  await expect(mehr).toHaveAttribute('aria-expanded', 'true');
   const wofuer = dialog.locator('[data-eintrag="wofuer"]');
   await expect(wofuer.getByText('Wofür?', { exact: true })).toBeVisible();
   await expect(wofuer.locator('p').filter({ hasText: /^Vorhaben$/ })).toHaveCount(0);
@@ -96,16 +105,9 @@ test('Eintrag-Dialog ist ein Blatt ohne Tipp, mit lesbaren Chips und Info', asyn
 
   const eintragen = dialog.locator('.formular-fuss').getByRole('button', { name: /Eintragen/ });
   await expect(eintragen).toBeEnabled();
-  await expect(eintragen).toContainText('ca. +');
-  const kette = dialog.locator('[data-plus-kette]');
-  await expect(kette).toHaveText('plus Kette');
-  const ketteKasten = await kette.boundingBox();
-  const knopfKasten = await eintragen.boundingBox();
-  expect(ketteKasten).not.toBeNull();
-  expect(knopfKasten).not.toBeNull();
-  if (ketteKasten && knopfKasten) {
-    expect(ketteKasten.y).toBeGreaterThan(knopfKasten.y);
-  }
+  await expect(eintragen).toHaveAccessibleName(/Eintragen · \+\d+ XP, plus Kette/);
+  await expect(eintragen).not.toContainText('ca. +');
+  await expect(dialog.locator('[data-plus-kette]')).toHaveCount(0);
   await dialog.locator('.formular-felder').evaluate((element) => {
     element.scrollTop = element.scrollHeight;
   });
@@ -162,7 +164,7 @@ async function legeFest(page: Page, name: string, attributId: number, gewicht: n
   expect(antwort.ok()).toBe(true);
 }
 
-test('Der Eintragen-Knopf zeigt die XP nach den Prozenten der Tätigkeit', async ({ page }, testInfo) => {
+test('Der Eintragen-Knopf zeigt die Basis-XP der Dauer, nicht die Prozente', async ({ page }, testInfo) => {
   const halb = `Vorschau Hälfte ${testInfo.project.name}`;
   const ganz = `Vorschau Ganz ${testInfo.project.name}`;
   const namen = [halb, ganz];
@@ -186,13 +188,13 @@ test('Der Eintragen-Knopf zeigt die XP nach den Prozenten der Tätigkeit', async
     await haelfte.scrollIntoViewIfNeeded();
     await haelfte.click();
     await expect(haelfte).toHaveAttribute('aria-pressed', 'true');
-    await expect(dialog.getByRole('button', { name: 'Eintragen · ca. +8 XP', exact: true })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Eintragen · +16 XP, plus Kette', exact: true })).toBeVisible();
     await page.screenshot({ path: `tmp-test/eintrag-xp/${testInfo.project.name}-haelfte.png` });
     const volle = chips.getByRole('button', { name: ganz, exact: true });
     await volle.scrollIntoViewIfNeeded();
     await volle.click();
     await expect(volle).toHaveAttribute('aria-pressed', 'true');
-    await expect(dialog.getByRole('button', { name: 'Eintragen · ca. +16 XP', exact: true })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Eintragen · +16 XP, plus Kette', exact: true })).toBeVisible();
     await page.screenshot({ path: `tmp-test/eintrag-xp/${testInfo.project.name}-ganz.png` });
   } finally {
     await loescheNamen(page, namen);

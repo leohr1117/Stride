@@ -1,5 +1,10 @@
 /** Oberflächentexte aus dem Client. */
 export const PAARE = [
+  ['Deine Kette gibt {faktor} XP', 'Your chain gives {faktor} XP'],
+  ['{aktion} · +{xp} XP, plus Kette', '{aktion} · +{xp} XP, plus chain'],
+  ['{aktion} · +{xp} XP, plus Kette + Meilenstein', '{aktion} · +{xp} XP, plus chain + milestone'],
+  ['{aktion} · +{xp} XP', '{aktion} · +{xp} XP'],
+  ['{aktion} · +{xp} XP + Meilenstein', '{aktion} · +{xp} XP + milestone'],
   [
     'Ich habe die Nutzungsbedingungen und die Datenschutzerklärung gelesen und bin mindestens 16 Jahre alt.',
     'I have read the Terms of use and the Privacy policy and I am at least 16 years old.',

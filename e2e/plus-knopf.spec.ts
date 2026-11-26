@@ -106,7 +106,9 @@ test('Plus-Knopf unten rechts, nicht auf Mehr, mit Vorauswahl', async ({ page },
   await ohneSeitlichenUeberlauf(page);
   await bild('projekt');
   await oeffneEintrag(page);
-  await expect(page.getByRole('dialog', { name: 'Was hast du getan?' }).getByPlaceholder('Neues Vorhaben')).toBeVisible();
+  const eintrag = page.getByRole('dialog', { name: 'Was hast du getan?' });
+  await eintrag.getByRole('button', { name: 'Mehr', exact: true }).click();
+  await expect(eintrag.getByPlaceholder('Neues Vorhaben')).toBeVisible();
   await schliesseEintrag(page);
 
   const faehigkeit = await page.evaluate(async () => {
@@ -124,7 +126,9 @@ test('Plus-Knopf unten rechts, nicht auf Mehr, mit Vorauswahl', async ({ page },
   await ohneSeitlichenUeberlauf(page);
   await bild('faehigkeit');
   await oeffneEintrag(page);
-  await expect(page.getByRole('dialog').getByRole('button', { name: faehigkeit?.name ?? '', exact: true })).toHaveAttribute(
+  const faehigkeitDialog = page.getByRole('dialog', { name: 'Was hast du getan?' });
+  await faehigkeitDialog.getByRole('button', { name: 'Mehr', exact: true }).click();
+  await expect(faehigkeitDialog.getByRole('button', { name: faehigkeit?.name ?? '', exact: true })).toHaveAttribute(
     'aria-pressed',
     'true',
   );

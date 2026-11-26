@@ -290,7 +290,7 @@ test('Beschriftungen folgen der Sprache', async ({ page }) => {
       await expect(dialog.getByRole('button', { name: /about \+.*milestone/ })).toBeVisible();
       await meilenstein.click();
     }
-    await expect(dialog.getByRole('button', { name: /about \+/ })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: /\+ *\d+ XP, plus chain/ })).toBeVisible();
     await page.keyboard.press('Escape');
     expect(await seitenrand(page)).toEqual([]);
   } finally {
@@ -322,6 +322,7 @@ test('Eintrag anlegen und löschen', async ({ page }) => {
     const dialog = page.getByRole('dialog', { name: 'Was hast du getan?' });
     await dialog.getByRole('button', { name: vorlage.name, exact: true }).click();
     await dialog.getByRole('button', { name: '1 Std', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Mehr', exact: true }).click();
     const schalter = dialog.getByRole('switch', { name: 'Meilenstein' });
     if (await schalter.count()) {
       await schalter.click();
@@ -329,8 +330,8 @@ test('Eintrag anlegen und löschen', async ({ page }) => {
       await schalter.click();
     }
     await dialog.locator('textarea').last().fill(notiz);
-    await expect(dialog.getByRole('button', { name: /Eintragen · ca\. \+/ })).toBeVisible();
-    await dialog.getByRole('button', { name: /Eintragen · ca\. \+/ }).click();
+    await expect(dialog.getByRole('button', { name: /Eintragen · \+\d+ XP, plus Kette/ })).toBeVisible();
+    await dialog.getByRole('button', { name: /Eintragen · \+\d+ XP, plus Kette/ }).click();
     await expect(dialog).toHaveCount(0);
     const neue = idsMitNotiz(await chronik(page), notiz).filter((id) => fremde === null || !fremde.has(id));
     if (neue.length !== 1) {

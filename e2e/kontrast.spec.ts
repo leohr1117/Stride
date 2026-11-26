@@ -105,6 +105,7 @@ test('Kontrastwächter bei eigenen Farben', async ({ page }, testInfo) => {
     await page.getByRole('button', { name: 'Eintrag loggen' }).click();
     const dialog = page.getByRole('dialog', { name: 'Was hast du getan?' });
     await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: 'Mehr', exact: true }).click();
     const schalter = dialog.getByRole('switch', { name: 'Meilenstein' });
     await expect(schalter).toBeVisible();
     const zeile = schalter.locator('xpath=..');

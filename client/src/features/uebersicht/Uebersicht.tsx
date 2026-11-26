@@ -83,12 +83,17 @@ export function UebersichtSeite() {
                   <p className="zahl text-[13px] leading-[18px] break-words text-leise" data-xp-zeile="">
                     {levelZeile}
                   </p>
+                  {funktionen.streak ? (
+                    <p className="zahl text-[13px] leading-[18px] break-words text-leise" data-kette-faktor="">
+                      {tx('Deine Kette gibt {faktor} XP', { faktor: faktorText(uebersicht.momentum) })}
+                    </p>
+                  ) : null}
                 </div>
               </div>
               <div
                 className="status-leiste grid min-w-0 border-t border-rand pt-3"
                 data-status-leiste=""
-                style={{ gridTemplateColumns: `repeat(${funktionen.streak ? 3 : 1}, 1fr)` }}
+                style={{ gridTemplateColumns: `repeat(${funktionen.streak ? 2 : 1}, 1fr)` }}
               >
                 <Wochenwert label={tx('XP diese Woche')} wert={`+${zahl(uebersicht.wocheXp)}`} hervorheben="fortschritt" />
                 {funktionen.streak ? (
@@ -114,7 +119,6 @@ export function UebersichtSeite() {
                         </span>
                       }
                     />
-                    <Wochenwert label={tx('Momentum')} wert={faktorText(uebersicht.momentum)} />
                   </>
                 ) : null}
               </div>
@@ -271,7 +275,7 @@ function Angriffe({
                 symbolKlasse={BOSS_SYMBOL}
                 listenEinzug={boss ? bossListenEinzug() : undefined}
                 wert={
-                  <span className="font-semibold text-gefahr">
+                  <span className="text-leise">
                     −{zahl(boss?.angriffXp ?? 0)} {tx('Disziplin')}
                   </span>
                 }

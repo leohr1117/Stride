@@ -239,6 +239,33 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
   await expect(entsteht).toContainText(/Entsteht · /);
   await expect(erwacht.getByText(/\d[\d.]* XP/)).toHaveCount(0);
   await expect(entsteht.getByText(/\d[\d.]* XP/)).toHaveCount(0);
+  const gefahrTon = await page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--gefahr)';
+    document.body.append(probe);
+    const farbe = getComputedStyle(probe).color;
+    probe.remove();
+    return farbe;
+  });
+  const erwachtStriche = await erwacht.locator('[data-boss-ring] svg circle').evaluateAll((kreise) =>
+    kreise.map((kreis) => getComputedStyle(kreis).stroke),
+  );
+  const entstehtStriche = await entsteht.locator('[data-boss-ring] svg circle').evaluateAll((kreise) =>
+    kreise.map((kreis) => getComputedStyle(kreis).stroke),
+  );
+  expect(erwachtStriche.length).toBeGreaterThan(0);
+  expect(entstehtStriche.length).toBeGreaterThan(0);
+  for (const strich of erwachtStriche) {
+    expect(strich).toBe(gefahrTon);
+  }
+  for (const strich of entstehtStriche) {
+    expect(strich).not.toBe(gefahrTon);
+  }
+  await expect(erwacht.locator('[data-boss-ring]')).toHaveAttribute('data-erwacht', '');
+  await expect(entsteht.locator('[data-boss-ring]')).not.toHaveAttribute('data-erwacht');
+  await expect(erwacht.locator('.lucide-swords')).toHaveCount(1);
+  await expect(erwacht.locator('.lucide-swords')).not.toHaveClass(/text-gefahr/);
+  await expect(entsteht.locator('.lucide-swords')).toHaveCount(0);
   await expect(page.getByText('HP')).toHaveCount(0);
   await ohneSeitlichenUeberlauf(page);
   await bild('laufend');
@@ -250,20 +277,21 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
   await expect(angriff).not.toContainText('Erwacht');
   await expect(angriff).toContainText('Disziplin');
   await expect(angriff).not.toHaveClass(/gefahr/);
-  const disziplin = angriff.locator('.text-gefahr', { hasText: 'Disziplin' });
+  const disziplin = angriff.locator('.zeile-wert', { hasText: 'Disziplin' });
   await expect(disziplin).toHaveCount(1);
+  await expect(angriff.locator('.text-gefahr', { hasText: 'Disziplin' })).toHaveCount(0);
   await expect(angriff.locator('.lucide-swords')).toHaveCount(1);
-  await expect(angriff.locator('.lucide-swords')).toHaveClass(/text-gefahr/);
-  await expect(angriff.locator('.text-gefahr')).toHaveCount(2);
-  const gefahrStimmt = await disziplin.evaluate((element) => {
+  await expect(angriff.locator('.lucide-swords')).not.toHaveClass(/text-gefahr/);
+  await expect(angriff.locator('.text-gefahr')).toHaveCount(0);
+  const leiseStimmt = await disziplin.evaluate((element) => {
     const probe = document.createElement('span');
-    probe.style.color = 'var(--gefahr-ton)';
+    probe.style.color = 'var(--leise)';
     element.append(probe);
     const soll = getComputedStyle(probe).color;
     probe.remove();
     return getComputedStyle(element).color === soll;
   });
-  expect(gefahrStimmt).toBe(true);
+  expect(leiseStimmt).toBe(true);
   const striche = await angriff.locator('svg circle').evaluateAll((kreise) => kreise.map((kreis) => getComputedStyle(kreis).stroke));
   const gefahrFarbe = await angriff.evaluate(() => {
     const probe = document.createElement('span');
@@ -624,11 +652,15 @@ function roteInnen(
   let summeX = 0;
   let summeY = 0;
   let anzahl = 0;
+  const aussen = radius + (radius - innen);
+  const innenQuadrat = innen * innen;
+  const aussenQuadrat = aussen * aussen;
   for (let y = 0; y < hoehe; y += 1) {
     for (let x = 0; x < breite; x += 1) {
       const abX = x + 0.5 - mitteX;
       const abY = y + 0.5 - mitteY;
-      if (abX * abX + abY * abY > innen * innen) {
+      const abstand = abX * abX + abY * abY;
+      if (abstand <= innenQuadrat || abstand > aussenQuadrat) {
         continue;
       }
       const index = (y * breite + x) * 4;

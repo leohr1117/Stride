@@ -521,7 +521,7 @@ function ProjektZeile({ projekt, namensEinzug = 0 }: { projekt: Projekt; namensE
           titel={projekt.name}
           rechts={
             <span className="flex min-w-0 items-center gap-3">
-              <span data-zeile-wert="" className="zeile-wert zahl shrink-0">
+              <span data-zeile-wert="" className="zeile-wert lvl-pille zahl shrink-0">
                 {tx('Lvl {level}', { level: projekt.level.level })}
               </span>
             </span>

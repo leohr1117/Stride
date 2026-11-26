@@ -395,7 +395,7 @@ async function nimmAnsichten(seite: Page, fassung: string, sprache: Sprache, sic
       { breite: sicht.bildBreite, hoehe: sicht.bildHoehe, geraetePixel: sicht.geraetePixel },
       verboten,
     );
-  const xp = sprache === 'en' ? /about \+/ : /ca\. \+/;
+  const xp = sprache === 'en' ? /\+\d+ XP, plus chain/ : /\+\d+ XP, plus Kette/;
 
   await seite.goto('/');
   await expect(seite.getByRole('heading', { name: zeige('Heute', sprache), exact: true })).toBeVisible();
@@ -422,6 +422,7 @@ async function nimmAnsichten(seite: Page, fassung: string, sprache: Sprache, sic
   const dialog = seite.getByRole('dialog', { name: dialogName });
   const taetigkeit = dialog.locator('[data-gruppe="taetigkeit"]').getByRole('button', { name: faehigkeit, exact: true });
   const skill = dialog.locator('[data-gruppe="faehigkeit"]').getByRole('button', { name: faehigkeit, exact: true });
+  await dialog.getByRole('button', { name: zeige('Mehr', sprache), exact: true }).click();
   await taetigkeit.click();
   await skill.click();
   await dialog.getByRole('button', { name: zeige('Eigene', sprache), exact: true }).click();
@@ -431,10 +432,12 @@ async function nimmAnsichten(seite: Page, fassung: string, sprache: Sprache, sic
   await expect(dauer).toHaveValue(dauerWert);
   await expect(taetigkeit).toHaveAttribute('aria-pressed', 'true');
   await expect(skill).toHaveAttribute('aria-pressed', 'true');
-  await dialog.locator('[data-gruppe="faehigkeit"]').evaluate((element) => element.scrollIntoView({ block: 'start' }));
   const vorschau = dialog.getByRole('button', { name: xp });
+  await skill.scrollIntoViewIfNeeded();
   await expect(skill).toBeInViewport();
+  await dauer.scrollIntoViewIfNeeded();
   await expect(dauer).toBeInViewport();
+  await vorschau.scrollIntoViewIfNeeded();
   await expect(vorschau).toBeInViewport();
   await schuss('eintrag');
   const schliessen = dialog.getByRole('button', { name: zeige('Schließen', sprache), exact: true });

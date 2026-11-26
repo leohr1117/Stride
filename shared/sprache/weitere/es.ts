@@ -1,5 +1,10 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Deine Kette gibt {faktor} XP": "Tu racha da {faktor} XP",
+  "{aktion} · +{xp} XP, plus Kette": "{aktion} · +{xp} XP, más la racha",
+  "{aktion} · +{xp} XP, plus Kette + Meilenstein": "{aktion} · +{xp} XP, más la racha + hito",
+  "{aktion} · +{xp} XP": "{aktion} · +{xp} XP",
+  "{aktion} · +{xp} XP + Meilenstein": "{aktion} · +{xp} XP + hito",
   "Diese Woche": "Esta semana",
   "Vorwoche": "Semana anterior",
   "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "En el formulario de contacto, el correo es opcional. Sin él no es posible responder.",

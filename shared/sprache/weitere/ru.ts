@@ -1,5 +1,10 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Deine Kette gibt {faktor} XP": "Твоя цепочка даёт {faktor} XP",
+  "{aktion} · +{xp} XP, plus Kette": "{aktion} · +{xp} XP, плюс цепочка",
+  "{aktion} · +{xp} XP, plus Kette + Meilenstein": "{aktion} · +{xp} XP, плюс цепочка + веха",
+  "{aktion} · +{xp} XP": "{aktion} · +{xp} XP",
+  "{aktion} · +{xp} XP + Meilenstein": "{aktion} · +{xp} XP + веха",
   "Diese Woche": "Эта неделя",
   "Vorwoche": "Прошлая неделя",
   "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "В форме контакта адрес эл. почты необязателен. Без него ответ невозможен.",

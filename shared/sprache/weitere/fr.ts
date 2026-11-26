@@ -1,5 +1,10 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Deine Kette gibt {faktor} XP": "Ta chaîne donne {faktor} XP",
+  "{aktion} · +{xp} XP, plus Kette": "{aktion} · +{xp} XP, plus la chaîne",
+  "{aktion} · +{xp} XP, plus Kette + Meilenstein": "{aktion} · +{xp} XP, plus la chaîne + jalon",
+  "{aktion} · +{xp} XP": "{aktion} · +{xp} XP",
+  "{aktion} · +{xp} XP + Meilenstein": "{aktion} · +{xp} XP + jalon",
   "Diese Woche": "Cette semaine",
   "Vorwoche": "Semaine précédente",
   "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "Dans le formulaire de contact, l'adresse e-mail est facultative. Sans elle, aucune réponse n'est possible.",

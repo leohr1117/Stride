@@ -397,6 +397,7 @@ test('Info-Icon hat überall Abstand zum Namen', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Eintrag loggen' }).click();
   const dialog = page.getByRole('dialog');
+  await dialog.getByRole('button', { name: 'Mehr', exact: true }).click();
   await expect(dialog.getByRole('switch', { name: 'Meilenstein', exact: true })).toBeVisible();
   const meilenstein = await missAbstaende(page, 'eintrag');
   pruefeAbstaende(meilenstein, 1);

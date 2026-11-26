@@ -604,13 +604,6 @@ async function liegtLinksDavor(links: Locator, rechts: Locator): Promise<void> {
   expect(mitte).toBeLessThanOrEqual(b.y + b.height + 2);
 }
 
-async function markeBeginntMitIcon(marke: Locator): Promise<void> {
-  const icon = marke.locator('svg');
-  const schrift = marke.locator('span');
-  await expect(icon).toHaveCount(1);
-  await liegtLinksDavor(icon, schrift);
-}
-
 async function entferneNamen(seite: Page, namen: string[]): Promise<void> {
   await seite.evaluate(async (titel) => {
     const antwort = await fetch('/api/investitionen');
@@ -720,28 +713,29 @@ test('Investition zielt auf Attribut, Projekt, Vision oder beides', async ({ pag
     await legeEigene(page, 'Nur Projekt', { attribut: null, projekt: 'Ausdauer' });
     const nurProjekt = zeileVon(page, 'Nur Projekt').locator('[data-investition-neben]');
     const projektMarke = nurProjekt.locator('[data-ziel="projekt"]');
-    await expect(projektMarke).toHaveAttribute('data-icon', 'target');
+    await expect(projektMarke).toContainText('Ausdauer');
+    await expect(projektMarke).not.toHaveAttribute('data-icon', /.+/);
     await expect(nurProjekt).not.toContainText('Körper');
     await expect(nurProjekt).not.toContainText('Ressourcen');
-    await markeBeginntMitIcon(projektMarke);
-    await expect(nurProjekt.locator('svg')).toHaveCount(1);
+    await expect(nurProjekt.locator('svg')).toHaveCount(0);
 
     await legeEigene(page, 'Nur Vision', { attribut: null, projekt: 'Fit und belastbar' });
     const nurVision = zeileVon(page, 'Nur Vision').locator('[data-investition-neben]');
     const visionMarke = nurVision.locator('[data-ziel="vision"]');
-    await expect(visionMarke).toHaveAttribute('data-icon', 'flag');
-    await markeBeginntMitIcon(visionMarke);
+    await expect(visionMarke).toContainText('Fit und belastbar');
+    await expect(visionMarke.locator('svg')).toHaveCount(0);
 
     await legeEigene(page, 'Beides', { attribut: 'Körper', projekt: 'Ausdauer' });
     const beides = zeileVon(page, 'Beides').locator('[data-investition-neben]');
     const beidesMarke = beides.locator('[data-ziel="projekt"]');
-    await expect(beidesMarke).toHaveAttribute('data-icon', 'target');
+    await expect(beidesMarke).toContainText('Ausdauer');
     await liegtLinksDavor(beides.getByText('Körper', { exact: true }), beidesMarke);
-    await markeBeginntMitIcon(beidesMarke);
+    await expect(beidesMarke.locator('svg')).toHaveCount(0);
 
     const bank = zeileVon(page, 'Trainingsbank').locator('[data-investition-neben]');
     const bankMarke = bank.locator('[data-ziel="vision"]');
-    await expect(bankMarke).toHaveAttribute('data-icon', 'flag');
+    await expect(bankMarke).toContainText('Fit und belastbar');
+    await expect(bankMarke.locator('svg')).toHaveCount(0);
     await liegtLinksDavor(bank.getByText('Körper', { exact: true }), bankMarke);
     const bankZeile = zeileVon(page, 'Trainingsbank');
     const bankMenue = bankZeile.getByRole('button', { name: 'Aktionen für Trainingsbank', exact: true });
@@ -807,7 +801,8 @@ test('Eine alte Investition mit zweitem Attribut bleibt, bis ein Projekt gewähl
     expect(danach.ziel_art).toBe('projekt');
     expect(danach.ziel_id).not.toBe(ressourcen.id);
     const zeile = zeileVon(page, name).locator('[data-investition-neben]');
-    await expect(zeile.locator('[data-ziel="projekt"][data-icon="target"]')).toBeVisible();
+    await expect(zeile.locator('[data-ziel="projekt"]')).toContainText('Ausdauer');
+    await expect(zeile.locator('[data-icon]')).toHaveCount(0);
     await expect(zeile).not.toContainText('Ressourcen');
   } finally {
     await entferneNamen(page, [name]);
@@ -852,11 +847,10 @@ test('Investition zielt auf eine Fähigkeit oder auf alle drei', async ({ page }
     await expect(dialog).toBeHidden();
 
     const nurFaehigkeit = zeileVon(page, 'Nur Fähigkeit').locator('[data-investition-neben]');
-    const nurMarke = nurFaehigkeit.locator('[data-ziel="faehigkeit"][data-icon="sparkles"]');
+    const nurMarke = nurFaehigkeit.locator('[data-ziel="faehigkeit"]');
     await expect(nurMarke).toContainText('Programmieren');
-    await expect(nurMarke.locator('svg')).toHaveClass(/inline-block/);
-    await expect(nurMarke.locator('svg')).toHaveClass(/size-3\.5/);
-    await markeBeginntMitIcon(nurMarke);
+    await expect(nurMarke.locator('svg')).toHaveCount(0);
+    await expect(nurFaehigkeit.locator('svg')).toHaveCount(0);
     await expect(nurFaehigkeit.locator('[data-ziel="projekt"], [data-ziel="vision"]')).toHaveCount(0);
     await expect(nurFaehigkeit).toContainText('+10 %');
     await expect(nurFaehigkeit).not.toContainText('Körper');
@@ -865,14 +859,14 @@ test('Investition zielt auf eine Fähigkeit oder auf alle drei', async ({ page }
     await legeEigene(page, 'Alle drei', { attribut: 'Körper', projekt: 'Ausdauer', faehigkeit: 'Programmieren' });
     const alle = zeileVon(page, 'Alle drei').locator('[data-investition-neben]');
     const koerper = alle.getByText('Körper', { exact: true });
-    const projektMarke = alle.locator('[data-ziel="projekt"][data-icon="target"]');
-    const skillMarke = alle.locator('[data-ziel="faehigkeit"][data-icon="sparkles"]');
+    const projektMarke = alle.locator('[data-ziel="projekt"]');
+    const skillMarke = alle.locator('[data-ziel="faehigkeit"]');
     await expect(projektMarke).toContainText('Ausdauer');
     await expect(skillMarke).toContainText('Programmieren');
     await liegtLinksDavor(koerper, projektMarke);
     await liegtLinksDavor(projektMarke, skillMarke);
-    await markeBeginntMitIcon(skillMarke);
-    await expect(alle.locator('svg')).toHaveCount(2);
+    await expect(skillMarke.locator('svg')).toHaveCount(0);
+    await expect(alle.locator('svg')).toHaveCount(0);
 
     for (const name of ['Nur Fähigkeit', 'Alle drei', 'Trainingsbank']) {
       const zeile = zeileVon(page, name);

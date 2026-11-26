@@ -69,9 +69,10 @@ test('Streak aus blendet Kette und Kennzahl aus und stellt die Länge wieder her
 
   try {
     await page.goto('/');
-    await expect(page.locator('[data-wochenwert]')).toHaveCount(3);
-    expect(await wochenNamen(page)).toEqual(['XP diese Woche', 'Streak', 'Momentum']);
-    expect(await spalten(page)).toBe('repeat(3, 1fr)');
+    await expect(page.locator('[data-wochenwert]')).toHaveCount(2);
+    expect(await wochenNamen(page)).toEqual(['XP diese Woche', 'Streak']);
+    expect(await spalten(page)).toBe('repeat(2, 1fr)');
+    await expect(page.locator('[data-kette-faktor]')).toContainText(/Deine Kette gibt ×/);
     await expect(page.locator('[data-wochenwert="Streak"]')).toContainText(String(laengeVorher));
     const abschnittVorher = await page.locator('section[data-heute]').count();
     const leisteVorher = await leistenZiele(page);
@@ -115,6 +116,7 @@ test('Streak aus blendet Kette und Kennzahl aus und stellt die Länge wieder her
     expect(await spalten(page)).toBe('repeat(1, 1fr)');
     await expect(raster(page).locator('[data-wochenwert="Streak"]')).toHaveCount(0);
     await expect(raster(page).locator('[data-wochenwert="Momentum"]')).toHaveCount(0);
+    await expect(page.locator('[data-kette-faktor]')).toHaveCount(0);
     expect(await leistenZiele(page)).toEqual(leisteVorher);
     expect(pausen()).toEqual([{ von: TESTDATUM, bis: null }]);
     await raster(page).screenshot({ path: `tmp-test/streak-aussetzen/${projekt}-aus-raster.png` });
@@ -148,9 +150,10 @@ test('Streak aus blendet Kette und Kennzahl aus und stellt die Länge wieder her
     expect((JSON.parse(patches.at(-1) ?? '{}') as { funktionen?: { streak?: boolean } }).funktionen?.streak).toBe(true);
 
     await page.goto('/');
-    await expect(page.locator('[data-wochenwert]')).toHaveCount(3);
-    expect(await wochenNamen(page)).toEqual(['XP diese Woche', 'Streak', 'Momentum']);
-    expect(await spalten(page)).toBe('repeat(3, 1fr)');
+    await expect(page.locator('[data-wochenwert]')).toHaveCount(2);
+    expect(await wochenNamen(page)).toEqual(['XP diese Woche', 'Streak']);
+    expect(await spalten(page)).toBe('repeat(2, 1fr)');
+    await expect(page.locator('[data-kette-faktor]')).toContainText(/Deine Kette gibt ×/);
     await expect(page.locator('[data-wochenwert="Streak"]')).toContainText(String(laengeVorher));
     await expect(page.locator('section[data-heute]')).toHaveCount(abschnittVorher);
     expect(await ketteLaenge(page)).toBe(laengeVorher);

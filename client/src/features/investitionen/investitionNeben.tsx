@@ -1,6 +1,5 @@
 import { type ReactNode } from 'react';
 import type { Attribut, Investition, InvestitionsZiel, Projekt, Vision } from '../../../../shared/api/index.ts';
-import { Icon } from '../../components/Icons.tsx';
 import { bonusProzent } from '../../format.ts';
 import { attributName } from '../../text.ts';
 
@@ -18,10 +17,8 @@ export function zielText(ziel: InvestitionsZiel | null, visionen: Vision[], proj
 }
 
 function zielMarke(art: 'vision' | 'projekt' | 'faehigkeit', name: string) {
-  const icon = art === 'vision' ? 'flag' : art === 'projekt' ? 'target' : 'sparkles';
   return (
-    <span data-ziel={art} data-icon={icon}>
-      <Icon name={icon} className="me-1 inline-block size-3.5 align-middle" aria-hidden="true" />
+    <span data-ziel={art}>
       <span>{name}</span>
     </span>
   );

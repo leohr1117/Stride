@@ -27,7 +27,7 @@ export function BossRing({ ring, erwacht }: { ring: number; erwacht: boolean }) 
 
   return (
     <span className="boss-platz">
-      <span className="boss-ring" style={stil} data-boss-ring="">
+      <span className="boss-ring" style={stil} data-boss-ring="" data-erwacht={erwacht ? '' : undefined}>
         <svg className="boss-ring-bild -rotate-90" aria-hidden="true">
           {voll ? (
             <circle className="bossring-bogen boss-ring-voll" />
@@ -46,7 +46,7 @@ export function BossRing({ ring, erwacht }: { ring: number; erwacht: boolean }) 
         {erwacht ? (
           <span className="boss-ring-symbol" aria-hidden="true">
             <Swords
-              className="boss-symbol text-gefahr"
+              className="boss-symbol"
               style={{ strokeWidth: 'var(--ring-strich)', vectorEffect: 'non-scaling-stroke' }}
             />
           </span>

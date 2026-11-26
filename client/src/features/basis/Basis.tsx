@@ -53,16 +53,45 @@ export function useBasisAktionen() {
   };
 }
 
+function naechsteBasisId(
+  aufgaben: BasisAufgabe[],
+  vorlagen: { id: number; gewichte: { gewicht: number }[] }[] | undefined,
+): number | null {
+  if (!vorlagen) {
+    return null;
+  }
+  const nachId = new Map(vorlagen.map((vorlage) => [vorlage.id, vorlage.gewichte]));
+  let beste: { id: number; summe: number; spitze: number } | null = null;
+  for (const aufgabe of aufgaben) {
+    if (aufgabe.archiviert || aufgabe.heuteEintragId !== null || aufgabe.vorlageId === null) {
+      continue;
+    }
+    const teile = nachId.get(aufgabe.vorlageId) ?? [];
+    const positiv = teile.map((teil) => teil.gewicht).filter((wert) => wert > 0);
+    const summe = positiv.reduce((bisher, wert) => bisher + wert, 0);
+    const spitze = positiv.reduce((hoch, wert) => (wert > hoch ? wert : hoch), 0);
+    if (summe <= 0) {
+      continue;
+    }
+    if (!beste || summe > beste.summe || (summe === beste.summe && spitze > beste.spitze)) {
+      beste = { id: aufgabe.id, summe, spitze };
+    }
+  }
+  return beste?.id ?? null;
+}
+
 export function BasisListe({
   aufgaben,
   mitProjekt,
   onBearbeiten,
   fluchten = false,
+  naechsteId = null,
 }: {
   aufgaben: BasisAufgabe[];
   mitProjekt: boolean;
   onBearbeiten?: (aufgabe: BasisAufgabe) => void;
   fluchten?: boolean;
+  naechsteId?: number | null;
 }) {
   const aktionen = useBasisAktionen();
   return (
@@ -75,6 +104,7 @@ export function BasisListe({
             mitProjekt={mitProjekt}
             laeuft={aktionen.laeuft}
             fluchten={fluchten}
+            naechste={naechsteId === aufgabe.id}
             onErledigen={() => aktionen.erledigen(aufgabe.id)}
             onRueckgaengig={aktionen.rueckgaengig}
             onBearbeiten={onBearbeiten && (() => onBearbeiten(aufgabe))}
@@ -91,6 +121,7 @@ function BasisZeile({
   mitProjekt,
   laeuft,
   fluchten = false,
+  naechste = false,
   onErledigen,
   onRueckgaengig,
   onBearbeiten,
@@ -99,12 +130,14 @@ function BasisZeile({
   mitProjekt: boolean;
   laeuft: boolean;
   fluchten?: boolean;
+  naechste?: boolean;
   onErledigen: () => void;
   onRueckgaengig: (eintragId: number) => void;
   onBearbeiten?: () => void;
 }) {
   const heuteEintragId = aufgabe.heuteEintragId;
   const details = [
+    naechste ? tx('Als Nächstes') : null,
     mitProjekt ? aufgabe.projektName : null,
     aufgabe.stunden !== null ? dauerText(aufgabe.stunden) : null,
   ]
@@ -170,6 +203,7 @@ const EINGEKLAPPT_SCHLUESSEL = 'stride.basisEingeklappt';
 export function BasisKarte() {
   const ebenen = useEbenen();
   const { data: aufgaben, error } = useBasisAufgaben();
+  const { data: vorlagen } = useQuery({ queryKey: SCHLUESSEL.vorlagen, queryFn: api.vorlagen });
   const [eingeklappt, setEingeklappt] = useState(() => leseMerker(EINGEKLAPPT_SCHLUESSEL));
   if (!aufgaben) {
     return <Fehlermeldung fehler={error} />;
@@ -200,7 +234,12 @@ export function BasisKarte() {
       />
       {!eingeklappt && (
         <Flaeche>
-          <BasisListe aufgaben={aktive} mitProjekt={ebenen.projekte} fluchten />
+          <BasisListe
+            aufgaben={aktive}
+            mitProjekt={ebenen.projekte}
+            fluchten
+            naechsteId={naechsteBasisId(aktive, vorlagen)}
+          />
           <DichteZeilen>
             <Zeile titel={tx("Alle Basis-Aufgaben")} nach="/basis" className="text-leise" />
           </DichteZeilen>

@@ -35,7 +35,10 @@ describe('BossRing', () => {
     expect(erwacht).not.toContain('stroke-dasharray');
     expect(erwacht).not.toContain('boss-ring-spur');
     expect(erwacht).toContain('boss-symbol');
-    expect(erwacht).toContain('text-gefahr');
+    expect(erwacht).toContain('data-erwacht');
+    expect(erwacht).not.toContain('text-gefahr');
+    expect(offen).not.toContain('data-erwacht');
+    expect(voll).not.toContain('data-erwacht');
     expect(erwacht).toContain('boss-platz');
 
     const css = readFileSync(join(import.meta.dirname, '../darstellung/styles.css'), 'utf8');
@@ -53,6 +56,10 @@ describe('BossRing', () => {
     expect(block).toContain('grid-area: 1 / 1');
     expect(block).toContain('translateY(calc(var(--ring-d) * 0.012))');
     expect(block).toContain('stroke-linecap: butt');
+    expect(block).toContain('color: var(--leise)');
+    expect(block).toContain('stroke: currentColor');
+    expect(block).toContain('.boss-ring[data-erwacht] circle');
+    expect(block).toContain('stroke: var(--gefahr)');
     expect(block).not.toContain('position: absolute');
     expect(block).not.toMatch(/\d+px/);
 
