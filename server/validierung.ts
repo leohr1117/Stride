@@ -10,6 +10,7 @@ import { FUNKTIONEN } from '../shared/spiel/funktionen.ts';
 import { istLeiste, LEISTEN_SEITEN } from '../shared/spiel/leiste.ts';
 import { PASSWORT_MAX, PASSWORT_MIN } from '../shared/spiel/passwort.ts';
 import { FOKUS_IDS, GEBURTSJAHR_MIN, PROFILNAME_MAX, ZIELSTREBIGKEITEN } from '../shared/spiel/profil.ts';
+import { EFFEKT_STUFEN } from '../shared/spiel/effekte.ts';
 import { istHexFarbe } from '../shared/spiel/farben.ts';
 import { PALETTE_NAME_MAX } from '../shared/features/darstellung/eigenePaletten.ts';
 import { STILE } from '../shared/features/darstellung/stile.ts';
@@ -503,6 +504,7 @@ export const einstellungenAenderungSchema = z.object({
   vorbildFavoritWeg: z.string().trim().min(1).max(80).optional(),
   vorbildFavoritIndex: z.number().int().min(0).max(500).optional(),
   glimmen: z.boolean().optional(),
+  effekte: z.enum(EFFEKT_STUFEN).optional(),
   funktionen: z.preprocess(bekannteFunktionen, z.partialRecord(z.enum(FUNKTIONEN), z.boolean())).optional(),
   ebenen: z.partialRecord(z.enum(EBENEN), z.boolean()).optional(),
   mobilLeiste: z

@@ -9,6 +9,7 @@ interface Darstellung {
   akzent: string;
   hintergrund: string;
   glimmen: boolean;
+  effekte: 'voll' | 'reduziert' | 'aus';
   eigeneFarben?: boolean;
 }
 
@@ -80,6 +81,7 @@ async function leseDarstellung(seite: Page): Promise<Darstellung> {
       akzent: daten.akzent,
       hintergrund: daten.hintergrund,
       glimmen: daten.glimmen,
+      effekte: daten.effekte === 'reduziert' || daten.effekte === 'aus' ? daten.effekte : 'voll',
       eigeneFarben: daten.eigeneFarben,
     };
   });
@@ -249,7 +251,98 @@ test('Darstellung: alle Ansichten, Farben getrennt, Glühen unter Sound', async 
   const abstaende = await missAbstaende(page, 'darstellung');
   pruefeAbstaende(abstaende, 1);
   await ohneSeitlichenUeberlauf(page);
+
+  const effekte = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Effekte', exact: true }) });
+  const zeilenNamen = await effekte
+    .locator('[data-zeile] button')
+    .evaluateAll((liste) => liste.map((element) => element.getAttribute('aria-label')));
+  expect(zeilenNamen).toEqual(['Sound', 'Glühen', 'Bewegung, Voll']);
+  await effekte.getByRole('button', { name: 'Bewegung, Voll', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Bewegung', exact: true });
+  await expect(dialog.getByRole('radio', { name: 'Voll', exact: true })).toBeChecked();
+  await expect(dialog.getByRole('radio', { name: 'Reduziert', exact: true })).toBeVisible();
+  await expect(dialog.getByRole('radio', { name: 'Aus', exact: true })).toBeVisible();
+  const reihenfolge = await dialog.getByRole('radio').evaluateAll((liste) =>
+    liste.map((element) => (element.textContent ?? '').replace(/\s+/g, ' ').trim()),
+  );
+  expect(reihenfolge).toEqual(['Voll', 'Reduziert', 'Aus']);
+  const reduziert = page.waitForResponse(
+    (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
+  );
+  await dialog.getByRole('radio', { name: 'Reduziert', exact: true }).click();
+  await reduziert;
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.locator('html')).toHaveAttribute('data-effekte', 'reduziert');
+  await expect(effekte.getByRole('button', { name: 'Bewegung, Reduziert', exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Darstellung', exact: true })).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('data-effekte', 'reduziert');
+
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  let probe = await liesEffektProbe(page);
+  expect(probe.puls.animationName).toBe('none');
+  expect(probe.puls.filter).not.toBe('none');
+  expect(probe.leuchten.animationName).toBe('none');
+  expect(probe.leuchten.boxShadow).not.toBe('none');
+
+  const aus = page.waitForResponse(
+    (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
+  );
+  await page.getByRole('button', { name: 'Bewegung, Reduziert', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Bewegung', exact: true }).getByRole('radio', { name: 'Aus', exact: true }).click();
+  await aus;
+  await expect(page.locator('html')).toHaveAttribute('data-effekte', 'aus');
+  probe = await liesEffektProbe(page);
+  expect(probe.puls.animationName).toBe('none');
+  expect(probe.puls.filter).toBe('none');
+  expect(probe.leuchten.animationName).toBe('none');
+  expect(probe.leuchten.boxShadow).toBe('none');
+
+  const voll = page.waitForResponse(
+    (antwort) => antwort.url().includes('/api/einstellungen') && antwort.request().method() === 'PATCH' && antwort.ok(),
+  );
+  await page.getByRole('button', { name: 'Bewegung, Aus', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Bewegung', exact: true }).getByRole('radio', { name: 'Voll', exact: true }).click();
+  await voll;
+  await expect(page.locator('html')).toHaveAttribute('data-effekte', 'voll');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  probe = await liesEffektProbe(page);
+  expect(probe.puls.animationName).toBe('none');
+  expect(probe.puls.filter).toBe('none');
+  expect(probe.leuchten.animationName).toBe('none');
+  await page.evaluate(() => document.getElementById('effekt-probe')?.remove());
 });
+
+async function liesEffektProbe(seite: Page): Promise<{
+  puls: { animationName: string; filter: string };
+  leuchten: { animationName: string; boxShadow: string };
+}> {
+  return seite.evaluate(() => {
+    let huelle = document.getElementById('effekt-probe');
+    if (!huelle) {
+      huelle = document.createElement('div');
+      huelle.id = 'effekt-probe';
+      const puls = document.createElement('div');
+      puls.className = 'baum-puls';
+      puls.dataset.probe = 'puls';
+      puls.style.setProperty('--skillfarbe', '#60a5fa');
+      const leuchten = document.createElement('div');
+      leuchten.className = 'skill-leuchten';
+      leuchten.dataset.probe = 'leuchten';
+      leuchten.style.setProperty('--skillfarbe', '#60a5fa');
+      huelle.append(puls, leuchten);
+      document.body.append(huelle);
+    }
+    const puls = huelle.querySelector<HTMLElement>('[data-probe="puls"]');
+    const leuchten = huelle.querySelector<HTMLElement>('[data-probe="leuchten"]');
+    const pulsStil = puls ? getComputedStyle(puls) : null;
+    const leuchtenStil = leuchten ? getComputedStyle(leuchten) : null;
+    return {
+      puls: { animationName: pulsStil?.animationName ?? '', filter: pulsStil?.filter ?? '' },
+      leuchten: { animationName: leuchtenStil?.animationName ?? '', boxShadow: leuchtenStil?.boxShadow ?? '' },
+    };
+  });
+}
 
 test('Eigene Farben bleiben gespeichert und lassen sich zurücksetzen', async ({ page }) => {
   await page.goto('/mehr/darstellung');

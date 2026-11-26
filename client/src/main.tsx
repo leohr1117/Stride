@@ -13,6 +13,7 @@ import { beobachteSichtfeld } from './sichtfeld.ts';
 import { beobachteInstallation, ladeBeiVeraltetenDateienNeu, registriereServiceWorker } from './pwa.ts';
 import { standardVorlage } from '../../shared/features/darstellung/paletten.ts';
 import { SpracheProvider } from './sprache.tsx';
+import { gespeicherteEffektStufe, wendeEffektStufe } from './features/darstellung/effektLauf.ts';
 import { gespeicherteFarben, gespeicherterStil, gespeichertesGlimmen, wendeErscheinung, wendeStilAn } from './features/darstellung/stil.ts';
 import './features/darstellung/styles.css';
 
@@ -45,6 +46,7 @@ const startStil = gespeicherterStil();
 await wendeStilAn(startStil);
 const startFarben = gespeicherteFarben() ?? standardVorlage(startStil, window.matchMedia('(prefers-color-scheme: dark)').matches);
 wendeErscheinung({ ...startFarben, glimmen: gespeichertesGlimmen() });
+wendeEffektStufe(gespeicherteEffektStufe());
 
 createRoot(wurzel).render(
   <StrictMode>

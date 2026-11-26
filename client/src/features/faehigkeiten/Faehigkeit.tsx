@@ -1,17 +1,19 @@
 import { tx, txMenge } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import { useParams } from 'react-router';
 import type { Faehigkeit, SkillKnoten } from '../../../../shared/api/index.ts';
 import { DREYFUS_STUFEN, GRENZEN } from '../../../../shared/spiel/begriffe.ts';
+import { effektDarfFedern } from '../../../../shared/spiel/effekte.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { useFeiern } from '../../components/Belohnung.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { FaehigkeitFormular } from '../../components/FaehigkeitFormular.tsx';
 import { SchnellMenueKnopf, useSchnellAktion } from '../../components/SchnellAktion.tsx';
 import { Icon } from '../../components/Icons.tsx';
+import { useEffektStufe } from '../darstellung/effektLauf.ts';
 import { SkillBaum, skillSchein } from './SkillBaum.tsx';
 import { KopfAktion, useKopf } from '../../components/Kopf.tsx';
 import {
@@ -218,7 +220,7 @@ export function FaehigkeitSeite() {
 
 function SkillRing({ frei, gesamt, farbe, icon }: { frei: number; gesamt: number; farbe: string; icon: string }) {
   const anteil = gesamt === 0 ? 0 : frei / gesamt;
-  const ruhig = useReducedMotion();
+  const ruhig = !effektDarfFedern(useEffektStufe());
   return (
     <div className="relative size-24 shrink-0">
       <svg viewBox="0 0 100 100" className="size-full -rotate-90">

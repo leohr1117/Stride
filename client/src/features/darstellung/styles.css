@@ -686,6 +686,25 @@ html[data-eingabe='zeiger'] :focus {
   }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-glimmen='aus'])[data-effekte='reduziert'] .baum-puls {
+    animation: none;
+    filter: drop-shadow(0 0 3px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm) * 65%), transparent));
+  }
+
+  :root:not([data-glimmen='aus'])[data-effekte='reduziert'] .skill-leuchten {
+    animation: none;
+    box-shadow: 0 0 14px color-mix(in srgb, var(--skillfarbe) calc(var(--glimm) * 55%), transparent);
+  }
+
+  :root[data-effekte='aus'] .baum-puls,
+  :root[data-effekte='aus'] .skill-leuchten {
+    animation: none;
+    filter: none;
+    box-shadow: none;
+  }
+}
+
 :root[data-glimmen='aus'] .skill-leuchten {
   animation: none;
 }

@@ -5,8 +5,10 @@ import { Award, ChevronUp, CircleCheck, Swords, Trophy, X } from 'lucide-react';
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode, type Ref } from 'react';
 import { createPortal } from 'react-dom';
 import type { Belohnung, LevelAufstieg } from '../../../shared/api/index.ts';
+import { groesstesFeierZiel, type EffektGroesse } from '../../../shared/spiel/effekte.ts';
 import { istAn, type Sichtbarkeit } from '../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
+import { useEffektWahl } from '../features/darstellung/effektLauf.ts';
 import { mitVorzeichen, multiplikatorText, zahl } from '../format.ts';
 import { spieleLevelSound, spieleXpSound } from '../sound.ts';
 import { Knopf } from '../ui/index.ts';
@@ -63,6 +65,13 @@ function sichtbareBelohnung(belohnung: Belohnung, sichtbarkeit: Sichtbarkeit): B
   };
 }
 
+function meldungGroesse(belohnung: Belohnung): EffektGroesse {
+  if (belohnung.meilenstein || belohnung.erfolge.length > 0 || istProjektAbschluss(belohnung)) {
+    return 'mittel';
+  }
+  return 'klein';
+}
+
 export function useFeiern(): (belohnung: Belohnung) => void {
   const feiern = useContext(BelohnungKontext);
   if (!feiern) {
@@ -73,11 +82,17 @@ export function useFeiern(): (belohnung: Belohnung) => void {
 
 export function BelohnungProvider({ children }: { children: ReactNode }) {
   const { data: einstellungen } = useQuery({ queryKey: SCHLUESSEL.einstellungen, queryFn: api.einstellungen });
+  const stufe = useEffektWahl();
   const [meldungen, setMeldungen] = useState<Meldung[]>([]);
   const [aufstiege, setAufstiege] = useState<LevelAufstieg[] | null>(null);
   const naechsteId = useRef(0);
   const timer = useRef<number[]>([]);
   const soundAn = einstellungen?.sound ?? true;
+  const gewinner = groesstesFeierZiel(
+    meldungen.map((meldung) => meldungGroesse(meldung.belohnung)),
+    aufstiege !== null && aufstiege.length > 0,
+  );
+  const federn = stufe === 'voll';
 
   useEffect(() => {
     const aktiveTimer = timer.current;
@@ -122,13 +137,25 @@ export function BelohnungProvider({ children }: { children: ReactNode }) {
   return (
     <BelohnungKontext.Provider value={feiern}>
       {children}
-      <XpMeldungen meldungen={meldungen} onEntfernen={entferne} />
-      <LevelAufstiegAnzeige aufstiege={aufstiege} onSchliessen={() => setAufstiege(null)} />
+      <XpMeldungen meldungen={meldungen} bewegt={federn && gewinner === 'meldung'} onEntfernen={entferne} />
+      <LevelAufstiegAnzeige
+        aufstiege={aufstiege}
+        bewegt={federn && gewinner === 'aufstieg'}
+        onSchliessen={() => setAufstiege(null)}
+      />
     </BelohnungKontext.Provider>
   );
 }
 
-function XpMeldungen({ meldungen, onEntfernen }: { meldungen: Meldung[]; onEntfernen: (id: number) => void }) {
+function XpMeldungen({
+  meldungen,
+  bewegt,
+  onEntfernen,
+}: {
+  meldungen: Meldung[];
+  bewegt: boolean;
+  onEntfernen: (id: number) => void;
+}) {
   const neuesteZuerst = [...meldungen].reverse();
   return (
     <div className="pointer-events-none fixed inset-x-0 top-4 z-[60] flex justify-center px-4">
@@ -139,6 +166,7 @@ function XpMeldungen({ meldungen, onEntfernen }: { meldungen: Meldung[]; onEntfe
               key={meldung.id}
               belohnung={meldung.belohnung}
               stapelPlatz={index}
+              bewegt={bewegt}
               onEntfernen={() => onEntfernen(meldung.id)}
             />
           ))}
@@ -152,11 +180,13 @@ function XpMeldung({
   ref,
   belohnung,
   stapelPlatz,
+  bewegt,
   onEntfernen,
 }: {
   ref?: Ref<HTMLDivElement>;
   belohnung: Belohnung;
   stapelPlatz: number;
+  bewegt: boolean;
   onEntfernen: () => void;
 }) {
   const x = useMotionValue(0);
@@ -180,19 +210,19 @@ function XpMeldung({
         vorne ? 'pointer-events-auto relative' : 'pointer-events-none absolute inset-0 overflow-hidden'
       } ${belohnung.meilenstein || istProjektAbschluss(belohnung) ? 'border-xp/60' : 'border-rand'}`}
       style={{ x, zIndex: STAPEL_SICHTBAR - stapelPlatz, transformOrigin: 'bottom center' }}
-      initial={{ opacity: 0, y: -24, scale: 0.9 }}
+      initial={bewegt ? { opacity: 0, y: -24, scale: 0.9 } : false}
       animate={{
         opacity: stapelPlatz < STAPEL_SICHTBAR ? 1 : 0,
         y: stapelPlatz * STAPEL_VERSATZ_PX,
         scale: 1 - stapelPlatz * STAPEL_VERKLEINERUNG,
       }}
       exit={{ opacity: 0, y: -12, scale: 0.95 }}
-      transition={{ type: 'spring', stiffness: 420, damping: 30 }}
+      transition={bewegt ? { type: 'spring', stiffness: 420, damping: 30 } : { duration: 0 }}
       drag={vorne ? 'x' : false}
       dragMomentum={false}
       onDragEnd={beiWischEnde}
     >
-      <motion.div animate={{ opacity: vorne ? 1 : 0 }} transition={{ duration: 0.15 }}>
+      <motion.div animate={{ opacity: vorne ? 1 : 0 }} transition={{ duration: bewegt ? 0.15 : 0 }}>
         <MeldungInhalt belohnung={belohnung} />
       </motion.div>
       {vorne && (
@@ -331,9 +361,11 @@ function aufstiegTitel(aufstieg: LevelAufstieg): string {
 
 function LevelAufstiegAnzeige({
   aufstiege,
+  bewegt,
   onSchliessen,
 }: {
   aufstiege: LevelAufstieg[] | null;
+  bewegt: boolean;
   onSchliessen: () => void;
 }) {
   const haupt = aufstiege?.find((aufstieg) => aufstieg.art === 'charakter') ?? aufstiege?.[0];
@@ -350,9 +382,10 @@ function LevelAufstiegAnzeige({
       {aufstiege && haupt && (
         <motion.div
           className="dialog-scrim fixed inset-0 z-[70] flex items-center justify-center p-6"
-          initial={{ opacity: 0 }}
+          initial={bewegt ? { opacity: 0 } : false}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={bewegt ? undefined : { duration: 0 }}
           onClick={onSchliessen}
         >
           <motion.div
@@ -362,24 +395,24 @@ function LevelAufstiegAnzeige({
             aria-label={titel}
             tabIndex={-1}
             className="w-full max-w-sm rounded-[12px] border border-rand bg-flaeche p-8 text-center shadow-2xl"
-            initial={{ scale: 0.7, opacity: 0 }}
+            initial={bewegt ? { scale: 0.7, opacity: 0 } : false}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 18 }}
+            transition={bewegt ? { type: 'spring', stiffness: 260, damping: 18 } : { duration: 0 }}
             onClick={(ereignis) => ereignis.stopPropagation()}
           >
             <motion.div
               className="mx-auto flex size-28 items-center justify-center rounded-full"
               style={{ background: `radial-gradient(circle, color-mix(in srgb, ${hauptFarbe} 35%, transparent) 0%, transparent 70%)` }}
-              animate={{ scale: [1, 1.08, 1] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+              animate={bewegt ? { scale: [1, 1.08, 1] } : { scale: 1 }}
+              transition={bewegt ? { duration: 1.8, repeat: Infinity, ease: 'easeInOut' } : { duration: 0 }}
             >
               <motion.span
                 className="zahl text-6xl font-black"
                 style={{ color: hauptFarbe }}
-                initial={{ y: 30, opacity: 0 }}
+                initial={bewegt ? { y: 30, opacity: 0 } : false}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.15, type: 'spring', stiffness: 300, damping: 15 }}
+                transition={bewegt ? { delay: 0.15, type: 'spring', stiffness: 300, damping: 15 } : { duration: 0 }}
               >
                 {haupt.nachher}
               </motion.span>

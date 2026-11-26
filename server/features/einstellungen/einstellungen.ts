@@ -50,6 +50,7 @@ import { leseJetzt, lokalesDatum } from '../../services/zeit.ts';
 import { ungueltig } from '../../fehler.ts';
 import { istWeltLeer, wendeFokusAn } from '../../services/profilStart.ts';
 import { wendeStartZielAn, type StartZielArt } from '../../services/startAnlage.ts';
+import { effektStufe, EFFEKT_STUFE_STANDARD, type EffektStufe } from '../../../shared/spiel/effekte.ts';
 import { istGewichtEinheit, STANDARD_GEWICHT_EINHEIT, type GewichtEinheit } from '../../../shared/spiel/training.ts';
 import { kartenWahl, type UebersichtKartenWahl } from '../../../shared/spiel/uebersichtKarten.ts';
 import {
@@ -75,6 +76,7 @@ interface Grundeinstellungen {
   akzent: string;
   hintergrund: string;
   glimmen: boolean;
+  effekte: EffektStufe;
   mobilLeiste: string[];
 }
 
@@ -92,6 +94,7 @@ const STANDARD: Grundeinstellungen = {
   akzent: STANDARD_PALETTE.akzent,
   hintergrund: STANDARD_PALETTE.hintergrund,
   glimmen: true,
+  effekte: EFFEKT_STUFE_STANDARD,
   mobilLeiste: [...LEISTE_STANDARD],
 };
 
@@ -293,6 +296,7 @@ export function ladeEinstellungen(): Einstellungen {
     akzent: eigene?.akzent ?? vorlage.akzent,
     hintergrund: eigene?.hintergrund ?? vorlage.hintergrund,
     glimmen: leseGlimmen(gespeichert.get('glimmen')),
+    effekte: effektStufe(parse(gespeichert.get('effekte'))),
     eigeneFarben: eigene !== undefined,
     ansichtFarben,
     funktionen,
@@ -669,6 +673,9 @@ export function aendereEinstellungen(
     }
     if (aenderung.glimmen !== undefined) {
       speichere('glimmen', aenderung.glimmen);
+    }
+    if (aenderung.effekte !== undefined) {
+      speichere('effekte', aenderung.effekte);
     }
     if (aenderung.mobilLeiste !== undefined) {
       speichere('mobilLeiste', aenderung.mobilLeiste);

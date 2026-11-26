@@ -8,6 +8,7 @@ import { erscheinungAus, standardVorlage, type Farbtrio } from '../../../../shar
 import { gelesenerStil, STANDARD_STIL, type Stil } from '../../../../shared/features/darstellung/stile.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { leseText, merkeText } from '../../speicher.ts';
+import { useEffektWahl } from './effektLauf.ts';
 
 const SPEICHER_SCHLUESSEL = 'stride.stil';
 const PRIMAER_SCHLUESSEL = 'stride.primaer';
@@ -143,6 +144,7 @@ export async function wendeStilAn(stil: Stil): Promise<boolean> {
 }
 
 export function useStilAbgleich(): void {
+  useEffektWahl();
   const { data: einstellungen } = useQuery({ queryKey: SCHLUESSEL.einstellungen, queryFn: api.einstellungen });
   const stil = einstellungen?.stil;
   const primaer = einstellungen?.primaer;

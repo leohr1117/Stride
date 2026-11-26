@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router';
 import { standardVorlage } from '../../../../shared/features/darstellung/paletten.ts';
+import { EFFEKT_STUFEN, type EffektStufe } from '../../../../shared/spiel/effekte.ts';
 import { SPRACH_NAME, SPRACHEN, type Sprache } from '../../../../shared/sprache/kern.ts';
 import { Dialog } from '../../components/Dialog.tsx';
 import { LeistenEditor } from '../../components/LeistenEditor.tsx';
 import { Fehlermeldung, Ladeanzeige, Optionsliste } from '../../ui/index.ts';
 import { Zeile, ZeilenGruppe, ZeileSchalter } from '../../components/Zeile.tsx';
+import { wendeEffektStufe } from '../darstellung/effektLauf.ts';
 import { wendeErscheinung } from '../darstellung/stil.ts';
 import { useSprache } from '../../sprache.tsx';
 import { tx } from '../../text.ts';
@@ -84,6 +86,47 @@ function SprachZeile({ sprache, onWaehlen }: { sprache: Sprache; onWaehlen: (cod
   );
 }
 
+const BEWEGUNG_LABEL: Record<EffektStufe, 'Voll' | 'Reduziert' | 'Aus'> = {
+  voll: 'Voll',
+  reduziert: 'Reduziert',
+  aus: 'Aus',
+};
+
+function BewegungsZeile({
+  stufe,
+  pending,
+  onWaehlen,
+}: {
+  stufe: EffektStufe;
+  pending: boolean;
+  onWaehlen: (stufe: EffektStufe) => void;
+}) {
+  const [offen, setOffen] = useState(false);
+  const label = BEWEGUNG_LABEL[stufe];
+  return (
+    <>
+      <Zeile
+        titel={tx('Bewegung')}
+        name={`${tx('Bewegung')}, ${tx(label)}`}
+        wert={tx(label)}
+        onKlick={() => setOffen(true)}
+        deaktiviert={pending}
+      />
+      <Dialog offen={offen} titel={tx('Bewegung')} onSchliessen={() => setOffen(false)}>
+        <Optionsliste
+          name={tx('Bewegung')}
+          wert={stufe}
+          onAendern={(wahl) => {
+            setOffen(false);
+            onWaehlen(wahl);
+          }}
+          optionen={EFFEKT_STUFEN.map((code) => ({ wert: code, label: BEWEGUNG_LABEL[code] }))}
+        />
+      </Dialog>
+    </>
+  );
+}
+
 function DarstellungListe() {
   const { data, error, isPending, speichern } = useEinstellungen();
   const { sprache, waehle, uebernehme } = useSprache();
@@ -123,6 +166,14 @@ function DarstellungListe() {
                   speichern.mutate({ glimmen });
                 }}
                 deaktiviert={speichern.isPending}
+              />
+              <BewegungsZeile
+                stufe={data.effekte}
+                pending={speichern.isPending}
+                onWaehlen={(effekte) => {
+                  wendeEffektStufe(effekte);
+                  speichern.mutate({ effekte });
+                }}
               />
             </ZeilenGruppe>
           </div>

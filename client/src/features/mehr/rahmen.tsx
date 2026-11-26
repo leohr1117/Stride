@@ -13,6 +13,7 @@ const DARSTELLUNGS_FELDER = new Set<keyof Einstellungen>([
   'hintergrund',
   'glimmen',
   'sound',
+  'effekte',
   'mobilLeiste',
   'geburtsjahr',
   'sprache',

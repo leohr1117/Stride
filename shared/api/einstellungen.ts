@@ -5,6 +5,7 @@ import type { Ebenen, EbenenZahlen } from '../spiel/ebenen.ts';
 import type { Funktionen } from '../spiel/funktionen.ts';
 import type { FokusId, Zielstrebigkeit } from '../spiel/profil.ts';
 import type { FunktionsAttribute } from '../spiel/sichtbarkeit.ts';
+import type { EffektStufe } from '../spiel/effekte.ts';
 import type { GewichtEinheit } from '../spiel/training.ts';
 import type { UebersichtKartenWahl } from '../spiel/uebersichtKarten.ts';
 import type { Sprache } from '../sprache/kern.ts';
@@ -22,6 +23,7 @@ export interface Einstellungen {
   akzent: string;
   hintergrund: string;
   glimmen: boolean;
+  effekte: EffektStufe;
   /** True, wenn die aktuelle Ansicht eigene Farben hat. Sonst gilt ihre Standardpalette. */
   eigeneFarben: boolean;
   /** Eigene Farben je Ansicht. Ansichten ohne Eintrag nutzen die Standardpalette. */
