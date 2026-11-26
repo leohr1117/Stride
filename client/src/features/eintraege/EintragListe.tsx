@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { RotateCcw, Shield, Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { Attribut, ChronikEintrag, Eintrag, EintragFilter, Investition, InvestitionsBuchung, ProtokollArt, ProtokollZeile, SkillEreignis } from '../../../../shared/api/index.ts';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL } from '../../api/index.ts';
@@ -16,6 +16,8 @@ import { attributName, tx } from '../../text.ts';
 import { AbschnittKopf, Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
 import { InvestitionFormular } from '../investitionen/InvestitionBlatt.tsx';
 import { loeschHinweis } from '../investitionen/zahlungAnzeige.ts';
+import { WochenvergleichAnsicht } from './Wochenvergleich.tsx';
+import { wochenSchluessel } from './wochenvergleich.ts';
 
 interface Tag {
   schluessel: string;
@@ -241,18 +243,25 @@ export function EintragListe({
   filter,
   leerText,
   onZuruecksetzen,
+  children,
 }: {
   filter: EintragFilter;
   leerText: string;
   onZuruecksetzen?: () => void;
+  children?: ReactNode;
 }) {
   const [auswahl, setAuswahl] = useState<string | null>(null);
+  const [woche] = useState(() => wochenSchluessel(new Date()));
   const [blatt, setBlatt] = useState<number | null>(null);
   const abfrage = useInfiniteQuery({
     queryKey: SCHLUESSEL.eintraege(filter),
     queryFn: ({ pageParam }) => api.eintraege(filter, pageParam),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (seite) => seite.naechsterCursor ?? undefined,
+  });
+  const vergleich = useQuery({
+    queryKey: SCHLUESSEL.rueckblick(woche),
+    queryFn: () => api.rueckblick(woche),
   });
   const investitionen = useQuery({
     queryKey: SCHLUESSEL.investitionen,
@@ -265,7 +274,7 @@ export function EintragListe({
     enabled: blatt !== null,
   });
 
-  if (abfrage.isPending) {
+  if (abfrage.isPending || vergleich.isPending) {
     return <Ladeanzeige />;
   }
 
@@ -277,7 +286,9 @@ export function EintragListe({
   return (
     <DichteZeilen>
     <div>
-      <Fehlermeldung fehler={abfrage.error ?? investitionen.error ?? attribute.error} />
+      <Fehlermeldung fehler={abfrage.error ?? vergleich.error ?? investitionen.error ?? attribute.error} />
+      {vergleich.data ? <WochenvergleichAnsicht xp={vergleich.data.xp} vorwoche={vergleich.data.xpVorwoche} /> : null}
+      {children ? <div className={vergleich.data ? 'mt-6' : undefined}>{children}</div> : null}
 
       {tage.length === 0 ? (
         <div className="mt-6">

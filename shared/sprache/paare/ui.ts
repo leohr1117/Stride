@@ -908,4 +908,6 @@ export const PAARE = [
   ['Ein Attribut steht nicht zugleich bei Plus und Abzug.', 'An attribute is not both a plus and a deduction.'],
   ['XP', 'XP'],
   ['von', 'by'],
+  ['Diese Woche', 'This week'],
+  ['Vorwoche', 'Previous week'],
 ] as const;

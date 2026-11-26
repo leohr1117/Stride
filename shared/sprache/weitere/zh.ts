@@ -1,5 +1,7 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Diese Woche": "本周",
+  "Vorwoche": "上一周",
   "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "联系表单中的电子邮件可以不填。没有地址就无法回复。",
   "Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.": "运营者可以设置联系表单的发件人。没有这项设置时，仍使用原来的发件人。",
   "Die App heißt Wupo.": "应用的可见名称是 Wupo。",

@@ -1,5 +1,7 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Diese Woche": "Эта неделя",
+  "Vorwoche": "Прошлая неделя",
   "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "В форме контакта адрес эл. почты необязателен. Без него ответ невозможен.",
   "Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.": "Оператор может задать отправителя формы контакта. Без этого указания остаётся прежний отправитель.",
   "Die App heißt Wupo.": "Приложение называется Wupo.",

@@ -110,20 +110,20 @@ export function ChronikSeite() {
         </button>
       </KopfAktion>
 
-      {(rueckblickAn || statistikAn) && (
-        <DichteZeilen>
-          <Liste>
-            {rueckblickAn ? <Zeile titel={tx('Rückblick')} nach="/rueckblick" /> : null}
-            {statistikAn ? <Zeile titel={tx('Statistik')} nach="/statistiken" /> : null}
-          </Liste>
-        </DichteZeilen>
-      )}
-
       <EintragListe
         filter={filter}
         leerText={filterAktiv ? tx('Keine Einträge für diesen Filter.') : tx('Noch keine Einträge.')}
         onZuruecksetzen={filterAktiv ? zuruecksetzen : undefined}
-      />
+      >
+        {(rueckblickAn || statistikAn) && (
+          <DichteZeilen>
+            <Liste>
+              {rueckblickAn ? <Zeile titel={tx('Rückblick')} nach="/rueckblick" /> : null}
+              {statistikAn ? <Zeile titel={tx('Statistik')} nach="/statistiken" /> : null}
+            </Liste>
+          </DichteZeilen>
+        )}
+      </EintragListe>
 
       <Dialog offen={offen} titel={tx('Filter')} onSchliessen={() => setOffen(false)}>
         {entwurf && (

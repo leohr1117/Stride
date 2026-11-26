@@ -2,11 +2,12 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
+import { TAGE_PRO_WOCHE } from '../../../shared/spiel/datum.ts';
 import { RUECKBLICK } from '../../../shared/spiel/xp.ts';
-import { eine, mitWelt, schliesseWelt } from '../../db.ts';
+import { ausfuehren, eine, mitWelt, schliesseWelt } from '../../db.ts';
 import { aendereAttribut } from '../attribute/attribute.ts';
 import { aendereEinstellungen } from '../einstellungen/einstellungen.ts';
-import { lokalesDatum, wochenbeginn } from '../../services/zeit.ts';
+import { lokalesDatum, plusTage, wochenbeginn } from '../../services/zeit.ts';
 import { aktuelleWoche, ladeRueckblick, speichereRueckblick } from './rueckblick.ts';
 
 const DONNERSTAG = '2026-10-22';
@@ -110,6 +111,40 @@ describe('Rückblick Geist-XP', () => {
       expect(gespeichert.belohnung).toBeNull();
       expect(gespeichert.rueckblick.bonusMoeglich).toBe(false);
       expect(geistXp()).toBe(0);
+    });
+  });
+});
+
+describe('Wochenvergleich', () => {
+  it('zählt diese Woche und die Vorwoche wie der Rückblick, ohne Abzug und ohne die Nachbarwochen', () => {
+    mitWelt(welt(), () => {
+      const jetzt = mittag(DONNERSTAG);
+      const beginn = wochenbeginn(jetzt);
+      const vorige = plusTage(beginn, -TAGE_PRO_WOCHE);
+      const naechste = plusTage(beginn, TAGE_PRO_WOCHE);
+      const vorher = ladeRueckblick(aktuelleWoche(jetzt), jetzt);
+      const id = geistId();
+
+      const buche = (xp: number, zeitpunkt: Date) => {
+        ausfuehren(
+          `INSERT INTO xp_ereignisse (quelle, attribut_id, xp, erstellt_am) VALUES ('eintrag', ?, ?, ?)`,
+          id,
+          xp,
+          zeitpunkt.toISOString(),
+        );
+      };
+      buche(11, beginn);
+      buche(20, jetzt);
+      buche(-30, mittag('2026-10-21'));
+      buche(100, naechste);
+      buche(4, vorige);
+      buche(7, mittag('2026-10-15'));
+      buche(50, mittag('2026-10-11'));
+
+      const nachher = ladeRueckblick(aktuelleWoche(jetzt), jetzt);
+      expect(nachher.aktuelleWoche).toBe(true);
+      expect(nachher.xp - vorher.xp).toBe(31);
+      expect(nachher.xpVorwoche - vorher.xpVorwoche).toBe(11);
     });
   });
 });

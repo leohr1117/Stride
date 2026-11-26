@@ -1,5 +1,7 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Diese Woche": "Esta semana",
+  "Vorwoche": "Semana anterior",
   "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "En el formulario de contacto, el correo es opcional. Sin él no es posible responder.",
   "Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.": "Quien opera el servidor puede fijar el remitente del formulario de contacto. Sin esa indicación se mantiene el remitente anterior.",
   "Die App heißt Wupo.": "La aplicación se llama Wupo.",

@@ -1,5 +1,7 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Diese Woche": "今週",
+  "Vorwoche": "前の週",
   "Im Kontaktformular ist die E-Mail-Adresse optional. Ohne sie ist keine Antwort möglich.": "問い合わせフォームのメールアドレスは任意です。ないと返信できません。",
   "Der Betreiber kann den Absender des Kontaktformulars einstellen. Ohne diese Angabe bleibt der bisherige Absender.": "運営者は問い合わせフォームの差出人を設定できます。その指定がなければ、これまでの差出人のままです。",
   "Die App heißt Wupo.": "アプリの表示名は Wupo です。",
