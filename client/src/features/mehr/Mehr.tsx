@@ -21,6 +21,9 @@ import { InstallZeile } from '../../installHinweis.tsx';
 import { kachelText } from './hinweisGeraet.ts';
 import { bereicheAn, kartenStand, verbindungsKurz } from './mehrWerte.ts';
 
+const SEITEN_SYMBOL = 'symbol-platz pointer-events-none text-leise';
+const SEITEN_EINZUG = '68px';
+
 function seitenSymbol(eintrag: NavEintrag, klasse: string | undefined): ReactNode {
   if (eintrag.pfad === '/charakter' && klasse) {
     return <ProfilBild klasse={klasse} groesse="size-5" />;
@@ -56,45 +59,53 @@ export function MehrSeite() {
 
   return (
     <DichteZeilen>
-    <div>
-      <section data-abschnitt="seiten">
-        <AbschnittKopf titel={tx('Seiten')} />
-        <div className="space-y-2">
-          {gruppen.map((gruppe) => (
-            <div key={gruppe.eintraege[0]?.pfad} data-seitenliste="">
-              <Liste>
-                {gruppe.eintraege.map((eintrag) => (
-                  <Zeile
-                    key={eintrag.pfad}
-                    titel={tx(eintrag.label)}
-                    symbol={seitenSymbol(eintrag, uebersicht?.klasse)}
-                    nach={eintrag.pfad}
-                  />
-                ))}
-              </Liste>
-            </div>
-          ))}
+      <div className="space-y-6">
+        <section data-abschnitt="seiten">
+          <AbschnittKopf titel={tx('Seiten')} />
+          <div className="space-y-4">
+            {gruppen.map((gruppe) => (
+              <div key={gruppe.eintraege[0]?.pfad} data-seitenliste="">
+                <Liste className="symbol-liste">
+                  {gruppe.eintraege.map((eintrag) => (
+                    <Zeile
+                      key={eintrag.pfad}
+                      titel={tx(eintrag.label)}
+                      symbol={seitenSymbol(eintrag, uebersicht?.klasse)}
+                      symbolKlasse={SEITEN_SYMBOL}
+                      listenEinzug={SEITEN_EINZUG}
+                      nach={eintrag.pfad}
+                    />
+                  ))}
+                </Liste>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section data-abschnitt="einstellungen">
+          <AbschnittKopf titel={tx('Einstellungen')} />
+          <Liste>
+            {sichtbareMehrBereiche().map((bereich) => (
+              <Fragment key={bereich.id}>
+                <Zeile titel={tx(bereich.label)} wert={werte.get(bereich.id)} nach={bereich.pfad} />
+                {bereich.id === 'benachrichtigungen' ? <InstallZeile /> : null}
+              </Fragment>
+            ))}
+          </Liste>
+        </section>
+        <WasNeuZeile />
+        <div data-abschnitt="rechtliches">
+          <Liste className="symbol-liste">
+            <Zeile
+              titel={tx('Rechtliches')}
+              symbol={<Scale aria-hidden />}
+              symbolKlasse={SEITEN_SYMBOL}
+              listenEinzug={SEITEN_EINZUG}
+              nach={RECHT_HUB_PFAD}
+            />
+          </Liste>
         </div>
-      </section>
-      <section data-abschnitt="einstellungen">
-        <AbschnittKopf titel={tx('Einstellungen')} />
-        <Liste>
-          {sichtbareMehrBereiche().map((bereich) => (
-            <Fragment key={bereich.id}>
-              <Zeile titel={tx(bereich.label)} wert={werte.get(bereich.id)} nach={bereich.pfad} />
-              {bereich.id === 'benachrichtigungen' ? <InstallZeile /> : null}
-            </Fragment>
-          ))}
-        </Liste>
-      </section>
-      <WasNeuZeile />
-      <div className="mt-6" data-abschnitt="rechtliches">
-        <Liste>
-          <Zeile titel={tx('Rechtliches')} symbol={<Scale aria-hidden />} nach={RECHT_HUB_PFAD} />
-        </Liste>
+        <Absender />
       </div>
-      <Absender className="mt-6" />
-    </div>
     </DichteZeilen>
   );
 }
@@ -103,7 +114,7 @@ function WasNeuZeile() {
   const neu = useNeuMarkierung();
   const { version } = versionsAnzeige();
   return (
-    <div className="mt-6" data-version="">
+    <div data-version="">
       <Liste>
         <Zeile
           name={tx('Was ist neu')}

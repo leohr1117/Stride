@@ -75,6 +75,75 @@ test('Mehr ist das Seitenverzeichnis und die Einstellungen', async ({ page }, te
   const stil = ((await gelesen.json()) as { stil: Stil }).stil;
   await expect(zeile('/mehr/darstellung').locator('span.truncate')).toHaveText(STIL_INFO[stil].label);
   await expect(zeile('/mehr/daten').locator('span.truncate')).toHaveCount(0);
+  for (const titel of ['Planen und Tun', 'Rückschau', 'Nachschlagen']) {
+    await expect(page.getByRole('heading', { name: titel, exact: true })).toHaveCount(0);
+  }
+  await expect(page.getByRole('heading', { name: 'Profil', exact: true })).toHaveCount(0);
+  await expect(page.locator('[data-absender]')).toContainText('von');
+  await expect(page.locator('[data-absender] a')).toHaveText('leohr');
+  await expect(page.locator('[data-absender] a')).toHaveAttribute('href', 'https://leohr.de');
+  await expect(page.locator('main .eintrag-fab, main .eintrag-plus')).toHaveCount(0);
+
+  const folge = await page
+    .locator('[data-abschnitt="seiten"], [data-abschnitt="einstellungen"], [data-version], [data-abschnitt="rechtliches"], [data-absender]')
+    .evaluateAll((knoten) =>
+      knoten.map((knoten) => {
+        if (knoten.hasAttribute('data-version')) return 'version';
+        if (knoten.hasAttribute('data-absender')) return 'absender';
+        return knoten.getAttribute('data-abschnitt');
+      }),
+    );
+  expect(folge).toEqual(['seiten', 'einstellungen', 'version', 'rechtliches', 'absender']);
+
+  const heuteZeile = page.locator('[data-seitenliste] [data-zeile]').filter({ has: page.locator('a[href="/"]') });
+  const symbol = heuteZeile.locator('.symbol-platz');
+  const seitenTitel = heuteZeile.locator('.zeile-titel');
+  const symbolKasten = await symbol.boundingBox();
+  const titelKasten = await seitenTitel.boundingBox();
+  expect(symbolKasten).not.toBeNull();
+  expect(titelKasten).not.toBeNull();
+  if (symbolKasten && titelKasten) {
+    expect(symbolKasten.x + symbolKasten.width).toBeLessThanOrEqual(titelKasten.x + 1);
+    expect(symbolKasten.width).toBeGreaterThanOrEqual(39);
+    expect(symbolKasten.width).toBeLessThanOrEqual(41);
+  }
+  await expect(heuteZeile).toHaveAttribute('style', /--liste-einzug:\s*68px/);
+  const kontoZeile = zeile('/mehr/profil');
+  const kontoTitel = await kontoZeile.locator('.zeile-titel').boundingBox();
+  const kontoWert = await kontoZeile.locator('[data-zeile-wert]').boundingBox();
+  expect(kontoTitel).not.toBeNull();
+  expect(kontoWert).not.toBeNull();
+  if (kontoTitel && kontoWert) {
+    expect(kontoWert.x).toBeGreaterThan(kontoTitel.x + kontoTitel.width);
+  }
+  await expect(kontoZeile).toHaveAttribute('style', /--liste-einzug:\s*16px/);
+  const klassenbild = profil.locator('xpath=..').locator('.klassenbild');
+  const klassenKasten = await klassenbild.boundingBox();
+  expect(klassenKasten).not.toBeNull();
+  if (klassenKasten) {
+    expect(klassenKasten.height).toBeGreaterThanOrEqual(19);
+    expect(klassenKasten.height).toBeLessThanOrEqual(21);
+  }
+  const farben = await page.evaluate(() => {
+    const svg = document.querySelector('[data-seitenliste] a[href="/"]')?.parentElement?.querySelector('.symbol-platz svg');
+    const klasse = document.querySelector('[data-seitenliste] a[href="/charakter"]')?.parentElement?.querySelector('.klassenbild');
+    const probe = document.createElement('span');
+    probe.className = 'text-leise';
+    document.body.append(probe);
+    const leise = getComputedStyle(probe).color;
+    probe.className = 'text-haupt';
+    const haupt = getComputedStyle(probe).color;
+    probe.remove();
+    return {
+      symbol: svg instanceof Element ? getComputedStyle(svg).color : '',
+      klasse: klasse instanceof Element ? getComputedStyle(klasse).color : '',
+      leise,
+      haupt,
+    };
+  });
+  expect(farben.symbol).toBe(farben.leise);
+  expect(farben.klasse).toBe(farben.haupt);
+
   await ohneSeitlichenUeberlauf(page);
   await bild('mehr');
 
