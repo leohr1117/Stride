@@ -1986,7 +1986,7 @@ export const TEXTE: Record<string, string> = {
   "Tätigkeiten: {liste}.": "Activités : {liste}.",
   "{liste} und {letzter}": "{liste} et {letzter}",
   "abgeschlossen": "terminé",
-  "Freischalten · +{xp} XP": "Débloquer · +{xp} XP",
+  "Freischalten bringt +{xp} XP": "Débloquer rapporte +{xp} XP",
   "Neuer Anlauf · +{xp}": "Nouvelle tentative · +{xp}",
   "Weitermachen · +{xp}": "Continuer · +{xp}",
   "{name} bis Level {level}": "{name} jusqu'au niveau {level}",

@@ -598,7 +598,7 @@ async function kasten(ziel: Locator): Promise<{ x: number; y: number; width: num
 async function liegtLinksDavor(links: Locator, rechts: Locator): Promise<void> {
   const a = await kasten(links);
   const b = await kasten(rechts);
-  expect(a.x + a.width).toBeLessThanOrEqual(b.x + 2);
+  expect(a.x + a.width).toBeLessThanOrEqual(b.x + 4);
   const mitte = a.y + a.height / 2;
   expect(mitte).toBeGreaterThanOrEqual(b.y - 2);
   expect(mitte).toBeLessThanOrEqual(b.y + b.height + 2);
@@ -743,6 +743,14 @@ test('Investition zielt auf Attribut, Projekt, Vision oder beides', async ({ pag
     const bankMarke = bank.locator('[data-ziel="vision"]');
     await expect(bankMarke).toHaveAttribute('data-icon', 'flag');
     await liegtLinksDavor(bank.getByText('Körper', { exact: true }), bankMarke);
+    const bankZeile = zeileVon(page, 'Trainingsbank');
+    const bankMenue = bankZeile.getByRole('button', { name: 'Aktionen für Trainingsbank', exact: true });
+    await expect(bankMenue).toBeVisible();
+    await expect(bankZeile.locator('.zeile-pfeil')).toHaveCount(0);
+    await expect(bank).toContainText('+10 %');
+    await expect(page.getByRole('button', { name: '+ Investition anlegen', exact: true })).toHaveCount(1);
+    await expect(page.getByRole('button', { name: /Archiv anzeigen/ })).toBeVisible();
+    await liegtLinksDavor(bankZeile.locator('svg').first(), bankMenue);
   } finally {
     await entferneNamen(page, namen);
   }

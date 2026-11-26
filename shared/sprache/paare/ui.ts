@@ -767,7 +767,7 @@ export const PAARE = [
   ['Tätigkeiten: {liste}.', 'Activities: {liste}.'],
   ['{liste} und {letzter}', '{liste}, and {letzter}'],
   ['abgeschlossen', 'finished'],
-  ['Freischalten · +{xp} XP', 'Unlock · +{xp} XP'],
+  ['Freischalten bringt +{xp} XP', 'Unlocking brings +{xp} XP'],
   ['Neuer Anlauf · +{xp}', 'New attempt · +{xp}'],
   ['Weitermachen · +{xp}', 'Keep going · +{xp}'],
   ['{name} bis Level {level}', '{name} until level {level}'],

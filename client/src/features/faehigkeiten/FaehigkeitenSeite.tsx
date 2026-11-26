@@ -1,14 +1,13 @@
 import { tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { api, SCHLUESSEL } from '../../api/index.ts';
 import { ArchivListe } from '../../components/ArchivListe.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { FaehigkeitFormular } from '../../components/FaehigkeitFormular.tsx';
 import { SchnellZeile } from '../../components/SchnellAktion.tsx';
-import { AnlegeZeile, Liste } from '../../components/Zeile.tsx';
+import { AnlegeZeile, Liste, Zeile } from '../../components/Zeile.tsx';
 import { Fehlermeldung, Knopf, Ladeanzeige, Leer, LevelRing } from '../../ui/index.ts';
 
 export function FaehigkeitenSeite() {
@@ -36,7 +35,7 @@ export function FaehigkeitenSeite() {
     <div className="space-y-6">
       <Fehlermeldung fehler={error} />
       {aktive.length === 0 ? (
-        <Leer text={tx('Noch keine Fähigkeiten.')} aktion={<Knopf onClick={() => setNeuOffen(true)}>{tx('Fähigkeit anlegen')}</Knopf>} />
+        <Leer text={tx('Noch keine Fähigkeiten.')} aktion={<Knopf onClick={() => setNeuOffen(true)}>{`+ ${tx('Fähigkeit anlegen')}`}</Knopf>} />
       ) : (
         <Liste>
           {aktive.map((faehigkeit) => (
@@ -51,20 +50,15 @@ export function FaehigkeitenSeite() {
               }}
             >
               {(menue) => (
-                <div className="relative flex items-center gap-3 px-4 py-3">
-                  <LevelRing level={faehigkeit.level.level} anteil={faehigkeit.level.fortschritt} groesse={56} />
-                  <Link to={`/faehigkeiten/${faehigkeit.id}`} aria-label={faehigkeit.name} className="absolute inset-0 z-0" />
-                  <span className="pointer-events-none min-w-0 flex-1">
-                    <span className="block truncate text-base leading-6">{faehigkeit.name}</span>
-                    <span className="block truncate text-[13px] leading-[18px] text-leise">
-                      {tx('Lvl {level}', { level: faehigkeit.level.level })}
-                      {' · '}
-                      {tx(faehigkeit.stufe)}
-                    </span>
-                  </span>
-                  <span className="pointer-events-auto relative z-10">{menue}</span>
-                  <ChevronRight className="pointer-events-none size-5 shrink-0 text-leise" aria-hidden />
-                </div>
+                <Zeile
+                  nach={`/faehigkeiten/${faehigkeit.id}`}
+                  name={faehigkeit.name}
+                  symbol={<LevelRing level={faehigkeit.level.level} anteil={faehigkeit.level.fortschritt} groesse={56} />}
+                  symbolKlasse="pointer-events-none flex shrink-0 items-center justify-center"
+                  titel={faehigkeit.name}
+                  neben={tx(faehigkeit.stufe)}
+                  menue={menue}
+                />
               )}
             </SchnellZeile>
           ))}

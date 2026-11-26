@@ -11,7 +11,7 @@ interface FaehigkeitZeile {
   name: string;
   farbe: string;
   icon: string;
-  knoten: { titel: string; freigeschaltetAm: string | null }[];
+  knoten: { id: number; titel: string; xp: number; freigeschaltetAm: string | null }[];
 }
 
 interface RingForm {
@@ -173,6 +173,18 @@ test('Der Fähigkeitsring beginnt oben und der Baum leuchtet', async ({ page }, 
         expect(abstand).toBeLessThan(12);
       }
       await expect(page.locator('.glimm-fleck')).toBeVisible();
+      await expect(page.locator('.baum-karte')).toHaveCSS('overflow-x', 'auto');
+      const scheibe = page.locator('.baum-knoten').first();
+      const wurzel = page.locator('.baum-wurzel');
+      const spalte = page.locator('.baum-karte [data-zustand]').first();
+      const masse = await scheibe.evaluate((element) => Math.round(element.getBoundingClientRect().width));
+      const wurzelBreite = await wurzel.evaluate((element) => Math.round(element.getBoundingClientRect().width));
+      const spaltenBreite = await spalte.evaluate((element) => Math.round(element.getBoundingClientRect().width));
+      expect(masse).toBe(44);
+      expect(wurzelBreite).toBe(56);
+      expect(spaltenBreite).toBe(104);
+      await expect(page.locator('.baum-knoten svg')).toHaveCount(0);
+      await expect(page.locator('[data-zustand="frei"] [data-schloss]')).toHaveCount(0);
       await expect(page.locator('.baum-frei').first()).toBeVisible();
       const schein = await page.locator('.baum-frei').first().evaluate((element) => getComputedStyle(element).boxShadow);
       expect(schein).toContain('10px');
@@ -195,7 +207,10 @@ test('Der Fähigkeitsring beginnt oben und der Baum leuchtet', async ({ page }, 
       expect(codeRing.weiterX).toBeGreaterThan(8);
       await page.getByRole('button', { name: /Release bauen/ }).click();
       const knoten = page.getByRole('dialog', { name: 'Release bauen', exact: true });
-      await expect(knoten.getByRole('button', { name: /Freischalten/ })).toBeVisible();
+      await expect(knoten.getByRole('button', { name: /Freischalten bringt \+/ })).toBeVisible();
+      const offenKnoten = page.locator('[data-zustand="verfuegbar"]', { hasText: 'Release bauen' });
+      await expect(offenKnoten.locator('.baum-knoten')).toHaveCSS('border-top-style', 'solid');
+      await expect(offenKnoten.locator('[data-schloss]')).toHaveCount(0);
       await warteAufRuhe(page);
       await page.screenshot({ path: `tmp-test/faehigkeit-farben/${projekt}-programmieren-${schema}.png`, fullPage: false });
       await knoten.getByRole('button', { name: 'Schließen', exact: true }).click();
@@ -228,6 +243,8 @@ test('Der Fähigkeitsring beginnt oben und der Baum leuchtet', async ({ page }, 
     }));
     expect(pulsAn.name).toBe('none');
     expect(pulsAn.filter).toBe('none');
+    const leuchtenRuhig = await page.locator('.skill-leuchten').first().evaluate((element) => getComputedStyle(element).animationName);
+    expect(leuchtenRuhig).toBe('none');
     await page.emulateMedia({ reducedMotion: 'no-preference' });
 
     if (projekt === 'handy') {
@@ -243,6 +260,64 @@ test('Der Fähigkeitsring beginnt oben und der Baum leuchtet', async ({ page }, 
         await warteAufRuhe(page);
         await page.screenshot({ path: `tmp-test/faehigkeit-farben/${projekt}-programmieren-${stil}.png`, fullPage: false });
       }
+    }
+
+    const stammFuerSchloss = await faehigkeit(page, 'Programmieren');
+    const eltern = stammFuerSchloss.knoten.find((knoten) => knoten.titel === 'Release bauen');
+    expect(eltern).toBeTruthy();
+    expect(eltern?.freigeschaltetAm).toBeNull();
+    const schlossTitel = `Schlossprobe ${projekt}`;
+    const raeumeSchloss = async () => {
+      await page.evaluate(async (titel) => {
+        const antwort = await fetch('/api/faehigkeiten');
+        if (!antwort.ok) {
+          return;
+        }
+        const liste = (await antwort.json()) as { knoten: { id: number; titel: string }[] }[];
+        for (const eintrag of liste) {
+          for (const knoten of eintrag.knoten) {
+            if (knoten.titel === titel) {
+              await fetch(`/api/knoten/${knoten.id}`, { method: 'DELETE' });
+            }
+          }
+        }
+      }, schlossTitel);
+    };
+    try {
+      await raeumeSchloss();
+      const probeId = await page.evaluate(
+        async ({ faehigkeitId, elternId, titel }) => {
+          const antwort = await fetch(`/api/faehigkeiten/${faehigkeitId}/knoten`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ titel, beschreibung: '', elternId }),
+          });
+          if (!antwort.ok) {
+            throw new Error('Knoten fehlgeschlagen');
+          }
+          const daten = (await antwort.json()) as { knoten: { id: number; titel: string }[] };
+          return daten.knoten.find((knoten) => knoten.titel === titel)?.id ?? 0;
+        },
+        { faehigkeitId: stammFuerSchloss.id, elternId: eltern?.id ?? null, titel: schlossTitel },
+      );
+      expect(probeId).toBeGreaterThan(0);
+      await page.goto(`/faehigkeiten/${stammFuerSchloss.id}`);
+      const gesperrt = page.locator('[data-zustand="gesperrt"]', { hasText: schlossTitel });
+      await expect(gesperrt).toBeVisible();
+      await expect(gesperrt.locator('.baum-knoten')).toHaveCSS('border-top-style', 'dashed');
+      await expect(gesperrt.locator('[data-schloss]')).toBeVisible();
+      await expect(gesperrt.locator('.baum-knoten svg')).toHaveCount(0);
+      await expect(gesperrt.locator('.baum-knoten .zahl')).toBeVisible();
+      await expect(gesperrt.locator('.baum-puls')).toHaveCount(0);
+      const zahlKasten = await gesperrt.locator('.baum-knoten .zahl').boundingBox();
+      const scheibenKasten = await gesperrt.locator('.baum-knoten').boundingBox();
+      expect(zahlKasten && scheibenKasten).toBeTruthy();
+      if (zahlKasten && scheibenKasten) {
+        expect(zahlKasten.x).toBeGreaterThanOrEqual(scheibenKasten.x - 1);
+        expect(zahlKasten.x + zahlKasten.width).toBeLessThanOrEqual(scheibenKasten.x + scheibenKasten.width + 1);
+      }
+    } finally {
+      await raeumeSchloss();
     }
   } finally {
     await speichere(

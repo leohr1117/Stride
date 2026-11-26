@@ -1986,7 +1986,7 @@ export const TEXTE: Record<string, string> = {
   "Tätigkeiten: {liste}.": "活動：{liste}。",
   "{liste} und {letzter}": "{liste}と{letzter}",
   "abgeschlossen": "完了済み",
-  "Freischalten · +{xp} XP": "解放 · +{xp} XP",
+  "Freischalten bringt +{xp} XP": "解放すると +{xp} XP",
   "Neuer Anlauf · +{xp}": "再挑戦 · +{xp}",
   "Weitermachen · +{xp}": "続ける · +{xp}",
   "{name} bis Level {level}": "{name}、レベル {level} まで",

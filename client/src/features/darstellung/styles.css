@@ -675,7 +675,8 @@ html[data-eingabe='zeiger'] :focus {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .baum-puls {
+  .baum-puls,
+  .skill-leuchten {
     animation: none;
     filter: none;
   }

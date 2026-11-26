@@ -1,7 +1,7 @@
 import { tx, txMenge } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
-import { Plus, Sparkles } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Plus } from 'lucide-react';
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import { useParams } from 'react-router';
 import type { Faehigkeit, SkillKnoten } from '../../../../shared/api/index.ts';
@@ -218,6 +218,7 @@ export function FaehigkeitSeite() {
 
 function SkillRing({ frei, gesamt, farbe, icon }: { frei: number; gesamt: number; farbe: string; icon: string }) {
   const anteil = gesamt === 0 ? 0 : frei / gesamt;
+  const ruhig = useReducedMotion();
   return (
     <div className="relative size-24 shrink-0">
       <svg viewBox="0 0 100 100" className="size-full -rotate-90">
@@ -233,7 +234,7 @@ function SkillRing({ frei, gesamt, farbe, icon }: { frei: number; gesamt: number
           strokeDasharray={RING_UMFANG}
           initial={false}
           animate={{ strokeDashoffset: RING_UMFANG * (1 - anteil) }}
-          transition={{ type: 'spring', stiffness: 70, damping: 16 }}
+          transition={ruhig ? { duration: 0 } : { type: 'spring', stiffness: 70, damping: 16 }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -322,11 +323,10 @@ function SkillAktionen({
           type="button"
           onClick={onFreischalten}
           disabled={laeuft}
-          className="skill-leuchten flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3.5 text-base font-semibold text-white transition active:scale-[0.98] disabled:opacity-60"
+          className="skill-leuchten flex min-h-11 w-full items-center justify-center rounded-2xl px-4 py-3.5 text-base font-semibold text-white transition active:scale-[0.98] disabled:opacity-60"
           style={{ backgroundColor: faehigkeit.farbe }}
         >
-          <Sparkles className="size-5" />
-          {tx('Freischalten · +{xp} XP', { xp: zahl(knoten.xp) })}
+          {tx('Freischalten bringt +{xp} XP', { xp: zahl(knoten.xp) })}
         </button>
       )}
 

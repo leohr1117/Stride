@@ -1986,7 +1986,7 @@ export const TEXTE: Record<string, string> = {
   "Tätigkeiten: {liste}.": "活动：{liste}。",
   "{liste} und {letzter}": "{liste}和{letzter}",
   "abgeschlossen": "已结束",
-  "Freischalten · +{xp} XP": "解锁 · +{xp} XP",
+  "Freischalten bringt +{xp} XP": "解锁带来 +{xp} XP",
   "Neuer Anlauf · +{xp}": "再试 · +{xp}",
   "Weitermachen · +{xp}": "继续 · +{xp}",
   "{name} bis Level {level}": "{name}直到等级 {level}",

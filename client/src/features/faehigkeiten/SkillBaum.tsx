@@ -1,4 +1,5 @@
 import { useMemo, type CSSProperties } from 'react';
+import { Lock } from 'lucide-react';
 import type { Faehigkeit, SkillKnoten } from '../../../../shared/api/index.ts';
 import { kompakt } from '../../format.ts';
 import { Icon } from '../../components/Icons.tsx';
@@ -52,13 +53,17 @@ function KnotenScheibe({ zustand, farbe, xp }: { zustand: Zustand; farbe: string
   if (zustand === 'verfuegbar') {
     stil.borderColor = farbe;
   } else if (zustand === 'gesperrt') {
-    stil.borderColor = `color-mix(in srgb, ${farbe} 28%, var(--rand))`;
+    stil.borderColor = 'var(--rand)';
   }
+  const flaeche =
+    zustand === 'frei'
+      ? 'baum-frei border-solid border-transparent text-white'
+      : zustand === 'verfuegbar'
+        ? 'baum-puls border-solid bg-flaeche text-haupt'
+        : 'border-dashed bg-flaeche text-leise';
   return (
     <span
-      className={`baum-knoten relative flex shrink-0 items-center justify-center overflow-hidden rounded-full border-2 transition duration-200 group-hover:scale-105 group-focus-visible:scale-105 group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 ${
-        zustand === 'frei' ? 'baum-frei border-transparent text-white' : zustand === 'verfuegbar' ? 'baum-puls bg-flaeche text-haupt' : 'border-dashed bg-flaeche-2/70 text-haupt'
-      }`}
+      className={`baum-knoten relative flex shrink-0 items-center justify-center overflow-hidden rounded-full border-2 transition duration-200 group-hover:scale-105 group-focus-visible:scale-105 group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 ${flaeche}`}
       style={{ ...stil, width: KNOTEN, height: KNOTEN }}
     >
       <span className={`zahl max-w-full px-0.5 leading-none font-semibold whitespace-nowrap ${xpSchrift(text)}`}>{text}</span>
@@ -135,7 +140,18 @@ function Graph({ daten, onWaehlen }: { daten: BaumDaten; onWaehlen: (id: number)
             className="group absolute flex flex-col items-center gap-1 px-1 text-center"
             style={{ left: punkt.x - SPALTE / 2, top: punkt.y - KNOTEN / 2, width: SPALTE }}
           >
-            <KnotenScheibe zustand={knotenZustand} farbe={faehigkeit.farbe} xp={knoten.xp} />
+            <span className="relative">
+              <KnotenScheibe zustand={knotenZustand} farbe={faehigkeit.farbe} xp={knoten.xp} />
+              {knotenZustand === 'gesperrt' ? (
+                <span
+                  aria-hidden="true"
+                  data-schloss=""
+                  className="pointer-events-none absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-flaeche text-leise"
+                >
+                  <Lock className="size-2.5" strokeWidth={2.5} />
+                </span>
+              ) : null}
+            </span>
             <span
               className={`line-clamp-2 w-full break-words text-[11px] leading-tight ${
                 knotenZustand === 'frei' ? 'font-semibold text-haupt' : knotenZustand === 'verfuegbar' ? 'font-medium text-haupt' : 'text-leise'

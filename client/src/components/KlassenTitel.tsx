@@ -66,24 +66,24 @@ export function KlassenUndTitel({ attribute, klasse }: { attribute: Attribut[]; 
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-xs text-leise">
-              <th className="py-1.5 font-medium">{tx("Können")}</th>
-              <th className="py-1.5 font-medium">{tx("Archetyp")}</th>
-              <th className="py-1.5 font-medium">{tx("Beiname")}</th>
+              <th className="py-2 font-medium">{tx("Können")}</th>
+              <th className="py-2 font-medium">{tx("Archetyp")}</th>
+              <th className="py-2 font-medium">{tx("Beiname")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-rand">
             {KOENNEN_KENNUNGEN.map((kennung) => (
               <tr key={kennung} className={aktiv.has(kennung) ? 'text-haupt' : 'text-leise'}>
-                <td className="py-1.5 break-words">
+                <td className="py-2 break-words">
                   {attributName({ kennung, name: namen.get(kennung) ?? attributVorlage(kennung).name })}
                 </td>
-                <td className={`py-1.5 break-words ${kennung === staerkstes ? 'font-semibold text-akzent' : ''}`}>
+                <td className={`py-2 break-words ${kennung === staerkstes ? 'font-semibold text-akzent' : ''}`}>
                   <span className="inline-flex items-center gap-2">
                     <KlassenBild klasse={ARCHETYP[kennung].name} groesse="size-5" rahmen={false} />
                     {tx(ARCHETYP[kennung].name)}
                   </span>
                 </td>
-                <td className={`py-1.5 break-words ${kennung === zweites ? 'font-semibold text-akzent' : ''}`}>
+                <td className={`py-2 break-words ${kennung === zweites ? 'font-semibold text-akzent' : ''}`}>
                   {tx(ARCHETYP[kennung].beiname)}
                 </td>
               </tr>
@@ -116,7 +116,7 @@ export function KlassenUndTitel({ attribute, klasse }: { attribute: Attribut[]; 
                 {kategorie.stufen.map((stufe) => (
                   <span
                     key={stufe.schluessel}
-                    className={`flex items-center gap-1 rounded-md px-2 py-0.5 text-xs ${
+                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs ${
                       stufe.erreichtAm ? 'bg-xp/15 font-medium text-haupt' : 'bg-flaeche-2 text-leise'
                     }`}
                   >
