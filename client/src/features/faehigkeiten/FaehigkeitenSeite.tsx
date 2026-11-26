@@ -56,7 +56,6 @@ export function FaehigkeitenSeite() {
                   symbol={<LevelRing level={faehigkeit.level.level} anteil={faehigkeit.level.fortschritt} groesse={56} />}
                   symbolKlasse="pointer-events-none flex shrink-0 items-center justify-center"
                   titel={faehigkeit.name}
-                  neben={tx(faehigkeit.stufe)}
                   menue={menue}
                 />
               )}

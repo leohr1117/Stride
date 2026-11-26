@@ -51,10 +51,18 @@ test('Ziele, Laufend und Projekt folgen der Liste', async ({ page }, testInfo) =
   await expect(page.getByRole('heading', { name: 'Laufend', level: 1 })).toBeVisible();
   await expect(page.getByText('Lädt …')).toHaveCount(0);
   await expect(page.locator('main [data-boss-ring]').first()).toBeVisible();
-  await expect(page.getByText(/Erwacht · seit |Entsteht · /).first()).toBeVisible();
   await expect(page.getByRole('button', { name: 'Weiter', exact: true }).first()).toBeVisible();
   await ohneSeitlichenUeberlauf(page);
   await bild('laufend');
+  const bossZeile = page.locator('main .zeile').filter({ has: page.locator('[data-boss-ring]') }).first();
+  const bossTitel = (await bossZeile.locator('p').first().innerText()).trim();
+  await bossZeile.getByRole('button', { name: bossTitel, exact: true }).click();
+  const blatt = page.getByRole('dialog', { name: 'Boss', exact: true });
+  const stand = blatt.locator('[data-boss-stand]');
+  await expect(stand.getByText(/Erwacht · seit |Entsteht · /).first()).toBeVisible();
+  await expect(stand.getByText(/\d+ Eintr(ag|äge) · .+ Std/).first()).toBeVisible();
+  await blatt.getByRole('button', { name: 'Schließen', exact: true }).click();
+  await expect(blatt).toBeHidden();
 
   await page.goto('/ziele');
   await expect(page.getByText('Lädt …')).toHaveCount(0);

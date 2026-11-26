@@ -1,4 +1,4 @@
-import { tx } from '../../text.ts';
+import { tx, txMenge } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CircleCheck, CircleX, Pencil, RotateCcw, Swords, Wind, Wrench } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
@@ -41,6 +41,11 @@ import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { istAn } from '../../../../shared/spiel/sichtbarkeit.ts';
 import { bonusProzent, kurzesDatum, zahl } from '../../format.ts';
 import { useSichtbarkeit } from '../../funktionen.ts';
+
+function projektStand(projekt: Projekt): string {
+  const zaehlung = `${txMenge(projekt.anzahlEintraege, '{anzahl} Einträge', { anzahl: zahl(projekt.anzahlEintraege) })} · ${txMenge(projekt.offeneVorhaben, '{anzahl} Vorhaben offen', { anzahl: zahl(projekt.offeneVorhaben) })}`;
+  return projekt.geschafftAm ? `${tx('Abgeschlossen')} · ${zaehlung}` : zaehlung;
+}
 
 function AbschlussMarke() {
   return (
@@ -140,6 +145,9 @@ export function ProjektSeite() {
             rest: zahl(projekt.level.xpFuerNaechstes - projekt.level.xpImLevel),
             level: projekt.level.level + 1,
           })}
+        </p>
+        <p className="zahl text-[13px] leading-[18px] text-leise" data-projekt-stand="">
+          {projektStand(projekt)}
         </p>
       </div>
       {ebenen.vorhaben && (

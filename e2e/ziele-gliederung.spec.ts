@@ -262,13 +262,22 @@ test('Namen unter einer Vision rücken 16 px und 32 px ein, Level und Menü blei
   const titel = projekt.locator('.zeile-titel');
   await expect(titel).toHaveText(eintrag?.name ?? '');
   await expect(titel).not.toContainText('Abgeschlossen');
-  await expect(neben).toContainText('Einträge');
-  if (eintrag?.geschafftAm) {
-    await expect(neben).toHaveText(/^(?:\d+ Tage(?: · angeknackst)? · )?Abgeschlossen · .+ Einträge · /);
-  } else {
-    await expect(neben).not.toContainText('Abgeschlossen');
+  await expect(projekt).not.toContainText('Einträge');
+  await expect(projekt).not.toContainText('Vorhaben offen');
+  if ((await neben.count()) > 0) {
+    await expect(neben).toHaveText(/^\d[\d.]* Tage(?: · angeknackst)?$/);
   }
   await ohneSeitlichenUeberlauf(page);
+  await page.goto(adresse ?? '/ziele');
+  const stand = page.locator('[data-projekt-stand]');
+  await expect(stand).toContainText(/Eintr/);
+  await expect(stand).toContainText('Vorhaben offen');
+  if (eintrag?.geschafftAm) {
+    await expect(stand).toContainText('Abgeschlossen');
+  } else {
+    await expect(stand).not.toContainText('Abgeschlossen');
+  }
+  await page.goto('/ziele');
 
   const vorlageId = projekte.find((zeile) => zeile.standardVorlageId !== null)?.standardVorlageId;
   expect(vorlageId).toBeTruthy();

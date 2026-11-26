@@ -142,6 +142,10 @@ test('Abgeschlossen bleibt in der Kopfzeile', async ({ page }, testInfo) => {
       expect(untertitelKasten.y).toBeGreaterThan((titelKasten?.y ?? 0) + (titelKasten?.height ?? 0) - 4);
     }
     await expect(untertitel).not.toContainText('abgeschlossen');
+    const stand = page.locator('[data-projekt-stand]');
+    await expect(stand).toContainText('Abgeschlossen');
+    await expect(stand).toContainText(/Eintr/);
+    await expect(stand).toContainText('Vorhaben offen');
     await ohneSeitlichenUeberlauf(page);
     await page.screenshot({ path: `tmp-test/ziele-faehigkeiten/${testInfo.project.name}-kopf.png`, fullPage: false });
 
@@ -150,13 +154,17 @@ test('Abgeschlossen bleibt in der Kopfzeile', async ({ page }, testInfo) => {
     const name = link.locator('.zeile-titel');
     const neben = link.locator('.zeile-neben');
     await expect(name).toHaveText(ziel.name);
-    await expect(neben).toHaveText(/^(?:\d+ Tage(?: · angeknackst)? · )?Abgeschlossen · /);
+    await expect(link).not.toContainText('Abgeschlossen');
+    await expect(link).not.toContainText(/Eintr/);
     await expect(link.locator('.zeile-titel')).not.toContainText('Abgeschlossen');
-    const nameKasten = await name.boundingBox();
-    const nebenKasten = await neben.boundingBox();
-    expect(nameKasten && nebenKasten).toBeTruthy();
-    if (nameKasten && nebenKasten) {
-      expect(nebenKasten.y).toBeGreaterThan(nameKasten.y + nameKasten.height - 4);
+    if ((await neben.count()) > 0) {
+      await expect(neben).toHaveText(/^\d[\d.]* Tage(?: · angeknackst)?$/);
+      const nameKasten = await name.boundingBox();
+      const nebenKasten = await neben.boundingBox();
+      expect(nameKasten && nebenKasten).toBeTruthy();
+      if (nameKasten && nebenKasten) {
+        expect(nebenKasten.y).toBeGreaterThan(nameKasten.y + nameKasten.height - 4);
+      }
     }
   } finally {
     await stelleProjekt(page, ziel.id, { geschafft: ziel.geschafftAm !== null });

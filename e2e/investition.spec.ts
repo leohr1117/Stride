@@ -586,6 +586,18 @@ function zeileVon(seite: Page, name: string): Locator {
   return seite.locator('[data-zeile]').filter({ has: seite.getByRole('button', { name, exact: true }) });
 }
 
+async function oeffneZeile(seite: Page, name: string): Promise<Locator> {
+  await zeileVon(seite, name).getByRole('button', { name, exact: true }).click();
+  const dialog = seite.getByRole('dialog', { name: 'Investition', exact: true });
+  await expect(dialog).toBeVisible();
+  return dialog;
+}
+
+async function schliesseInvestition(dialog: Locator): Promise<void> {
+  await dialog.getByRole('button', { name: 'Schließen', exact: true }).click();
+  await expect(dialog).toBeHidden();
+}
+
 async function kasten(ziel: Locator): Promise<{ x: number; y: number; width: number; height: number }> {
   const box = await ziel.boundingBox();
   expect(box).not.toBeNull();
@@ -706,37 +718,67 @@ test('Investition zielt auf Attribut, Projekt, Vision oder beides', async ({ pag
     await speichern.click();
     await expect(dialog).toBeHidden();
     const nurAttribut = zeileVon(page, 'Nur Attribut').locator('[data-investition-neben]');
-    await expect(nurAttribut.getByText('Körper', { exact: true })).toBeVisible();
+    await expect(nurAttribut).toContainText('+10 %');
+    await expect(nurAttribut).not.toContainText('Körper');
     await expect(nurAttribut.locator('[data-ziel]')).toHaveCount(0);
     await expect(nurAttribut.locator('svg')).toHaveCount(0);
+    const nurAttributBlatt = await oeffneZeile(page, 'Nur Attribut');
+    await expect(nurAttributBlatt.getByRole('button', { name: 'Attribut · Körper' })).toBeVisible();
+    await schliesseInvestition(nurAttributBlatt);
 
     await legeEigene(page, 'Nur Projekt', { attribut: null, projekt: 'Ausdauer' });
     const nurProjekt = zeileVon(page, 'Nur Projekt').locator('[data-investition-neben]');
-    const projektMarke = nurProjekt.locator('[data-ziel="projekt"]');
-    await expect(projektMarke).toContainText('Ausdauer');
-    await expect(projektMarke).not.toHaveAttribute('data-icon', /.+/);
+    await expect(nurProjekt).toContainText('+10 %');
+    await expect(nurProjekt.locator('[data-ziel]')).toHaveCount(0);
     await expect(nurProjekt).not.toContainText('Körper');
     await expect(nurProjekt).not.toContainText('Ressourcen');
+    await expect(nurProjekt).not.toContainText('Ausdauer');
     await expect(nurProjekt.locator('svg')).toHaveCount(0);
+    const nurProjektBlatt = await oeffneZeile(page, 'Nur Projekt');
+    await expect(nurProjektBlatt.getByRole('button', { name: 'Attribut · Keins' })).toBeVisible();
+    await expect(nurProjektBlatt.getByRole('button', { name: 'Projekt · Ausdauer' })).toBeVisible();
+    await schliesseInvestition(nurProjektBlatt);
 
     await legeEigene(page, 'Nur Vision', { attribut: null, projekt: 'Fit und belastbar' });
     const nurVision = zeileVon(page, 'Nur Vision').locator('[data-investition-neben]');
-    const visionMarke = nurVision.locator('[data-ziel="vision"]');
-    await expect(visionMarke).toContainText('Fit und belastbar');
-    await expect(visionMarke.locator('svg')).toHaveCount(0);
+    await expect(nurVision.locator('[data-ziel]')).toHaveCount(0);
+    await expect(nurVision).not.toContainText('Fit und belastbar');
+    await expect(nurVision.locator('svg')).toHaveCount(0);
+    const nurVisionBlatt = await oeffneZeile(page, 'Nur Vision');
+    await expect(nurVisionBlatt.getByRole('button', { name: 'Projekt · Fit und belastbar' })).toBeVisible();
+    await schliesseInvestition(nurVisionBlatt);
 
     await legeEigene(page, 'Beides', { attribut: 'Körper', projekt: 'Ausdauer' });
     const beides = zeileVon(page, 'Beides').locator('[data-investition-neben]');
-    const beidesMarke = beides.locator('[data-ziel="projekt"]');
-    await expect(beidesMarke).toContainText('Ausdauer');
-    await liegtLinksDavor(beides.getByText('Körper', { exact: true }), beidesMarke);
-    await expect(beidesMarke.locator('svg')).toHaveCount(0);
+    await expect(beides.locator('[data-ziel]')).toHaveCount(0);
+    await expect(beides.locator('svg')).toHaveCount(0);
+    await expect(beides).not.toContainText('Körper');
+    await expect(beides).not.toContainText('Ausdauer');
+    const beidesBlatt = await oeffneZeile(page, 'Beides');
+    const beidesAttribut = beidesBlatt.getByRole('button', { name: 'Attribut · Körper' });
+    const beidesProjekt = beidesBlatt.getByRole('button', { name: 'Projekt · Ausdauer' });
+    await expect(beidesAttribut).toBeVisible();
+    await expect(beidesProjekt).toBeVisible();
+    const beidesAttributLage = await kasten(beidesAttribut);
+    const beidesProjektLage = await kasten(beidesProjekt);
+    expect(beidesAttributLage.y + beidesAttributLage.height).toBeLessThanOrEqual(beidesProjektLage.y + 1);
+    await schliesseInvestition(beidesBlatt);
 
     const bank = zeileVon(page, 'Trainingsbank').locator('[data-investition-neben]');
-    const bankMarke = bank.locator('[data-ziel="vision"]');
-    await expect(bankMarke).toContainText('Fit und belastbar');
-    await expect(bankMarke.locator('svg')).toHaveCount(0);
-    await liegtLinksDavor(bank.getByText('Körper', { exact: true }), bankMarke);
+    await expect(bank.locator('[data-ziel]')).toHaveCount(0);
+    await expect(bank.locator('svg')).toHaveCount(0);
+    await expect(bank).toContainText('+10 %');
+    await expect(bank).not.toContainText('Körper');
+    await expect(bank).not.toContainText('Fit und belastbar');
+    const bankBlatt = await oeffneZeile(page, 'Trainingsbank');
+    const bankAttribut = bankBlatt.getByRole('button', { name: 'Attribut · Körper' });
+    const bankZiel = bankBlatt.getByRole('button', { name: 'Projekt · Fit und belastbar' });
+    await expect(bankAttribut).toBeVisible();
+    await expect(bankZiel).toBeVisible();
+    const bankAttributLage = await kasten(bankAttribut);
+    const bankZielLage = await kasten(bankZiel);
+    expect(bankAttributLage.y + bankAttributLage.height).toBeLessThanOrEqual(bankZielLage.y + 1);
+    await schliesseInvestition(bankBlatt);
     const bankZeile = zeileVon(page, 'Trainingsbank');
     const bankMenue = bankZeile.getByRole('button', { name: 'Aktionen für Trainingsbank', exact: true });
     await expect(bankMenue).toBeVisible();
@@ -801,9 +843,14 @@ test('Eine alte Investition mit zweitem Attribut bleibt, bis ein Projekt gewähl
     expect(danach.ziel_art).toBe('projekt');
     expect(danach.ziel_id).not.toBe(ressourcen.id);
     const zeile = zeileVon(page, name).locator('[data-investition-neben]');
-    await expect(zeile.locator('[data-ziel="projekt"]')).toContainText('Ausdauer');
+    await expect(zeile.locator('[data-ziel]')).toHaveCount(0);
     await expect(zeile.locator('[data-icon]')).toHaveCount(0);
     await expect(zeile).not.toContainText('Ressourcen');
+    await expect(zeile).not.toContainText('Ausdauer');
+    const zielBlatt = await oeffneZeile(page, name);
+    await expect(zielBlatt.getByRole('button', { name: 'Projekt · Ausdauer' })).toBeVisible();
+    await expect(zielBlatt.getByText('Wirkt auch auf Ressourcen')).toHaveCount(0);
+    await schliesseInvestition(zielBlatt);
   } finally {
     await entferneNamen(page, [name]);
   }
@@ -847,26 +894,37 @@ test('Investition zielt auf eine Fähigkeit oder auf alle drei', async ({ page }
     await expect(dialog).toBeHidden();
 
     const nurFaehigkeit = zeileVon(page, 'Nur Fähigkeit').locator('[data-investition-neben]');
-    const nurMarke = nurFaehigkeit.locator('[data-ziel="faehigkeit"]');
-    await expect(nurMarke).toContainText('Programmieren');
-    await expect(nurMarke.locator('svg')).toHaveCount(0);
     await expect(nurFaehigkeit.locator('svg')).toHaveCount(0);
-    await expect(nurFaehigkeit.locator('[data-ziel="projekt"], [data-ziel="vision"]')).toHaveCount(0);
+    await expect(nurFaehigkeit.locator('[data-ziel]')).toHaveCount(0);
     await expect(nurFaehigkeit).toContainText('+10 %');
     await expect(nurFaehigkeit).not.toContainText('Körper');
     await expect(nurFaehigkeit).not.toContainText('Ressourcen');
+    await expect(nurFaehigkeit).not.toContainText('Programmieren');
+    const nurFaehigkeitBlatt = await oeffneZeile(page, 'Nur Fähigkeit');
+    await expect(nurFaehigkeitBlatt.getByRole('button', { name: 'Fähigkeit · Programmieren' })).toBeVisible();
+    await expect(nurFaehigkeitBlatt.getByRole('button', { name: 'Attribut · Keins' })).toBeVisible();
+    await schliesseInvestition(nurFaehigkeitBlatt);
 
     await legeEigene(page, 'Alle drei', { attribut: 'Körper', projekt: 'Ausdauer', faehigkeit: 'Programmieren' });
     const alle = zeileVon(page, 'Alle drei').locator('[data-investition-neben]');
-    const koerper = alle.getByText('Körper', { exact: true });
-    const projektMarke = alle.locator('[data-ziel="projekt"]');
-    const skillMarke = alle.locator('[data-ziel="faehigkeit"]');
-    await expect(projektMarke).toContainText('Ausdauer');
-    await expect(skillMarke).toContainText('Programmieren');
-    await liegtLinksDavor(koerper, projektMarke);
-    await liegtLinksDavor(projektMarke, skillMarke);
-    await expect(skillMarke.locator('svg')).toHaveCount(0);
+    await expect(alle.locator('[data-ziel]')).toHaveCount(0);
     await expect(alle.locator('svg')).toHaveCount(0);
+    await expect(alle).not.toContainText('Körper');
+    await expect(alle).not.toContainText('Ausdauer');
+    await expect(alle).not.toContainText('Programmieren');
+    const alleBlatt = await oeffneZeile(page, 'Alle drei');
+    const koerper = alleBlatt.getByRole('button', { name: 'Attribut · Körper' });
+    const projektKnopfBlatt = alleBlatt.getByRole('button', { name: 'Projekt · Ausdauer' });
+    const skillKnopf = alleBlatt.getByRole('button', { name: 'Fähigkeit · Programmieren' });
+    await expect(koerper).toBeVisible();
+    await expect(projektKnopfBlatt).toBeVisible();
+    await expect(skillKnopf).toBeVisible();
+    const koerperLage = await kasten(koerper);
+    const projektLageBlatt = await kasten(projektKnopfBlatt);
+    const skillLage = await kasten(skillKnopf);
+    expect(koerperLage.y + koerperLage.height).toBeLessThanOrEqual(projektLageBlatt.y + 1);
+    expect(projektLageBlatt.y + projektLageBlatt.height).toBeLessThanOrEqual(skillLage.y + 1);
+    await schliesseInvestition(alleBlatt);
 
     for (const name of ['Nur Fähigkeit', 'Alle drei', 'Trainingsbank']) {
       const zeile = zeileVon(page, name);

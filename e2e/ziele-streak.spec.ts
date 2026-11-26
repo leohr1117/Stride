@@ -183,17 +183,15 @@ test('Die Nebenzeile eines Projekts beginnt mit dem Streak und rechts steht nur 
           Math.abs(streakKasten.y - ruheKasten.y) <= 2,
       };
     });
-    expect(aufbau.text).toMatch(/^\d[\d.]* Tage(?: · angeknackst)? · /);
-    expect(aufbau.text).toMatch(/Eintr(?:ag|äge)/);
-    expect(aufbau.text).toContain('Vorhaben offen');
+    expect(aufbau.text).toMatch(/^\d[\d.]* Tage(?: · angeknackst)?$/);
+    expect(aufbau.text).not.toMatch(/Eintr/);
+    expect(aufbau.text).not.toContain('Vorhaben offen');
     expect(aufbau.nowrap).toBe(true);
     expect(aufbau.ellipse).toBe(true);
-    expect(aufbau.gleicheZeile).toBe(true);
     expect(aufbau.hoehe).toBeLessThan(aufbau.zeilenhoehe * 2);
     expect(aufbau.svgAmAnfang).toBe(true);
     expect(Math.abs(aufbau.svgBreite - 12)).toBeLessThanOrEqual(1);
     expect(aufbau.streakFarbe).toBe(aufbau.angeknackst ? aufbau.leiseFarbe : aufbau.sollStreak);
-    expect(aufbau.ruheFarbe).toBe(aufbau.leiseFarbe);
 
     const wert = mitZeile.locator('[data-zeile-wert]');
     await expect(wert).toHaveText(/^Lvl \d+$/);
@@ -207,8 +205,13 @@ test('Die Nebenzeile eines Projekts beginnt mit dem Streak und rechts steht nur 
     expect(mitKasten && ohneKasten && mitHoehe && ohneHoehe).toBeTruthy();
     if (mitKasten && ohneKasten && mitHoehe && ohneHoehe) {
       expect(Math.abs(mitKasten.x + mitKasten.width - (ohneKasten.x + ohneKasten.width))).toBeLessThanOrEqual(2);
-      expect(Math.abs(mitHoehe.height - ohneHoehe.height)).toBeLessThanOrEqual(1);
+      expect(Math.round(mitHoehe.height)).toBe(64);
+      expect(Math.round(ohneHoehe.height)).toBe(48);
     }
+    await page.goto(`/projekte/${serie.id}`);
+    const stand = page.locator('[data-projekt-stand]');
+    await expect(stand).toContainText(/Eintr/);
+    await expect(stand).toContainText('Vorhaben offen');
 
     if (testInfo.project.name === 'handy') {
       fs.mkdirSync('tmp-test/ziele-streak', { recursive: true });

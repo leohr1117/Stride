@@ -12,7 +12,7 @@ import { Liste, Zeile } from '../../components/Zeile.tsx';
 import { BossFormular } from '../bosse/BossFormular.tsx';
 import { BossRing } from '../bosse/BossRing.tsx';
 import { Fehlermeldung, Knopf, Ladeanzeige, Leer, Ueberschrift } from '../../ui/index.ts';
-import { bossZeile, VorhabenKennzahlen } from '../../components/VorhabenInfo.tsx';
+
 
 export function LaufendSeite() {
   const sichtbarkeit = useSichtbarkeit();
@@ -64,7 +64,14 @@ export function LaufendSeite() {
         </section>
       )}
       <Dialog offen={bossBlatt !== null} titel={tx('Boss')} onSchliessen={() => setBossBlatt(null)}>
-        {bossBlatt && <BossFormular key={bossBlatt.id} vorhaben={bossBlatt} onFertig={() => setBossBlatt(null)} />}
+        {bossBlatt && (
+          <BossFormular
+            key={bossBlatt.id}
+            vorhaben={bossBlatt}
+            projektName={bossBlatt.projektName}
+            onFertig={() => setBossBlatt(null)}
+          />
+        )}
       </Dialog>
     </div>
   );
@@ -99,13 +106,6 @@ function LaufendesVorhaben({
           <BossRing ring={boss.ring} erwacht={boss.phase === 'erwacht'} />
           <div className="zeilen-text min-w-0 flex-1">
             <p className="truncate text-base leading-6 font-medium">{vorhaben.titel}</p>
-            <p className="truncate text-[13px] leading-[18px] text-leise">{bossZeile(boss)}</p>
-            {projekteAn && vorhaben.projektName ? (
-              <p className="truncate text-[13px] leading-[18px] text-leise">{vorhaben.projektName}</p>
-            ) : null}
-            <div className="[&_p]:text-[13px]! [&_p]:leading-[18px]!">
-              <VorhabenKennzahlen vorhaben={vorhaben} ohneXp />
-            </div>
           </div>
         </div>
         <Knopf variante="text" className="relative z-10 -my-1 shrink-0" data-schnell-frei="" onClick={weiter}>

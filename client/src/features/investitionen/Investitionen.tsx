@@ -182,16 +182,12 @@ function zahlungsHinweis(eintrag: Investition, attribute: Attribut[]): string | 
 
 export function InvestitionenSeite() {
   useKopf({ titel: 'Investitionen', info: INVESTITION_INFO });
-  const { data: ziele } = useQuery({ queryKey: SCHLUESSEL.ziele, queryFn: api.ziele });
   const { data: attribute = [] } = useQuery({ queryKey: SCHLUESSEL.attribute, queryFn: api.attribute });
   const { data: investitionen, error, isPending } = useQuery({ queryKey: SCHLUESSEL.investitionen, queryFn: api.investitionen });
-  const { data: faehigkeiten = [] } = useQuery({ queryKey: SCHLUESSEL.faehigkeiten, queryFn: api.faehigkeiten });
   const [dialog, setDialog] = useState<Investition | null | 'neu'>(null);
   const liste = investitionen ?? [];
   const eigene = liste.filter((eintrag) => !eintrag.archiviert);
   const archiv = liste.filter((eintrag) => eintrag.archiviert);
-  const visionen = ziele?.visionen ?? [];
-  const alleProjekte = ziele?.projekte ?? [];
 
   if (isPending) {
     return <Ladeanzeige />;
@@ -205,7 +201,7 @@ export function InvestitionenSeite() {
       ) : (
         <Liste>
           {eigene.map((investition) => {
-            const neben = nebenDerInvestition(investition, visionen, alleProjekte, attribute, faehigkeiten);
+            const neben = nebenDerInvestition(investition);
             return (
               <SchnellZeile
                 key={investition.id}
@@ -273,6 +269,7 @@ export function InvestitionenSeite() {
       >
         {dialog !== null && (
           <InvestitionFormular
+            key={dialog === 'neu' ? 'neu' : dialog.id}
             investition={dialog === 'neu' ? null : dialog}
             attribute={attribute}
             onFertig={() => setDialog(null)}

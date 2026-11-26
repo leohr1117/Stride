@@ -426,7 +426,14 @@ test('Laufend ohne Angriffe zeigt den ersten Boss ohne Datum', async ({ page }, 
     const an = await page.request.patch('/api/einstellungen', { data: { funktionen: { bossAngriffe: true } } });
     expect(an.ok()).toBe(true);
     await page.reload();
-    await expect(page.getByText(/Erwacht|Entsteht/)).not.toHaveCount(0);
+    await expect(page.getByText(/Erwacht|Entsteht/)).toHaveCount(0);
+    const bossZeile = page.locator('.zeile', { hasText: 'Erste Version raus' });
+    await bossZeile.getByRole('button', { name: 'Erste Version raus', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Boss', exact: true });
+    await expect(dialog.locator('[data-boss-stand]')).toContainText(/Erwacht|Entsteht/);
+    await expect(dialog.locator('[data-boss-stand]')).toContainText(/Eintr/);
+    await dialog.getByRole('button', { name: 'Schließen', exact: true }).click();
+    await expect(dialog).toBeHidden();
     await ohneSeitlichenUeberlauf(page);
     await bild(page, `${testInfo.project.name}-laufend-an`);
   } finally {

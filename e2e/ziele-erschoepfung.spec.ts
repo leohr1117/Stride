@@ -145,6 +145,12 @@ test('Projekt abschließen aktiviert die Investition und lässt sich öffnen', a
     await page.goto(`/projekte/${ziel.id}`);
     await expect(page.getByRole('heading', { name: ziel.name, exact: true })).toBeVisible();
     await expect(page.getByRole('img', { name: 'abgeschlossen', exact: true })).toBeVisible();
+    const stand = page.locator('[data-projekt-stand]');
+    await expect(stand).toContainText('Abgeschlossen');
+    await expect(stand).toContainText(/Eintr/);
+    await expect(stand).toContainText('Vorhaben offen');
+    await expect(stand).toHaveClass(/text-leise/);
+    expect(await stand.evaluate((element) => getComputedStyle(element).fontSize)).toBe('13px');
     await expect(page.getByRole('region', { name: 'Abschluss', exact: true })).toHaveCount(0);
     await page.getByRole('button', { name: `Aktionen für ${ziel.name}`, exact: true }).click();
     await expect(page.getByRole('menuitem', { name: 'Wieder öffnen', exact: true })).toBeVisible();
@@ -165,11 +171,12 @@ test('Projekt abschließen aktiviert die Investition und lässt sich öffnen', a
     await page.goto('/ziele');
     const projektZeile = page.locator('[data-zeile]').filter({ has: page.locator(`a[href="/projekte/${ziel.id}"]`) });
     const marke = projektZeile.locator('.zeile-neben');
-    await expect(marke).toBeVisible();
-    await expect(marke).toHaveText(/^(?:\d+ Tage(?: · angeknackst)? · )?Abgeschlossen · /);
-    await expect(marke).toHaveClass(/text-leise/);
-    const schrift = await marke.evaluate((element) => getComputedStyle(element).fontSize);
-    expect(schrift).toBe('13px');
+    await expect(projektZeile).not.toContainText('Abgeschlossen');
+    await expect(projektZeile).not.toContainText(/Eintr/);
+    if ((await marke.count()) > 0) {
+      await expect(marke).toHaveText(/^\d[\d.]* Tage(?: · angeknackst)?$/);
+      await expect(marke).toHaveClass(/text-leise/);
+    }
     await expect(projektZeile.locator('.zeile-titel')).toHaveText(ziel.name);
     await expect(projektZeile.locator('.zeile-titel')).not.toContainText('Abgeschlossen');
     await expect(projektZeile).not.toHaveClass(/opacity-50/);

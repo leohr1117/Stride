@@ -1,7 +1,5 @@
-import { type ReactNode } from 'react';
 import type { Attribut, Investition, InvestitionsZiel, Projekt, Vision } from '../../../../shared/api/index.ts';
 import { bonusProzent } from '../../format.ts';
-import { attributName } from '../../text.ts';
 
 export function zielText(ziel: InvestitionsZiel | null, visionen: Vision[], projekte: Projekt[], attribute: Attribut[]): string | null {
   if (!ziel) {
@@ -16,53 +14,10 @@ export function zielText(ziel: InvestitionsZiel | null, visionen: Vision[], proj
   return attribute.find((attribut) => attribut.id === ziel.id)?.name ?? null;
 }
 
-function zielMarke(art: 'vision' | 'projekt' | 'faehigkeit', name: string) {
+export function nebenDerInvestition(investition: Investition) {
   return (
-    <span data-ziel={art}>
-      <span>{name}</span>
+    <span data-investition-neben="">
+      <span>{bonusProzent(investition.bonus)}</span>
     </span>
   );
-}
-
-export function nebenDerInvestition(
-  investition: Investition,
-  visionen: Vision[],
-  projekte: Projekt[],
-  attribute: Attribut[],
-  faehigkeiten: { id: number; name: string }[] = [],
-) {
-  const teile: ReactNode[] = [<span key="bonus">{bonusProzent(investition.bonus)}</span>];
-  const trenner = (key: string) => (
-    <span key={key} aria-hidden="true">
-      {' · '}
-    </span>
-  );
-  if (investition.attributId !== null) {
-    const eintrag = attribute.find((attribut) => attribut.id === investition.attributId);
-    const name = eintrag ? attributName(eintrag) : investition.attributName;
-    if (name) {
-      teile.push(trenner('attribut'), <span key="attribut">{name}</span>);
-    }
-  }
-  const ziel = investition.ziel;
-  if (ziel?.art === 'vision' || ziel?.art === 'projekt') {
-    const name = investition.zielName ?? zielText(ziel, visionen, projekte, attribute);
-    if (name) {
-      teile.push(trenner('ziel'), zielMarke(ziel.art, name));
-    }
-  } else if (ziel?.art === 'attribut') {
-    const eintrag = attribute.find((attribut) => attribut.id === ziel.id);
-    const name = eintrag ? attributName(eintrag) : investition.zielName;
-    if (name) {
-      teile.push(trenner('zweit'), <span key="zweit">{name}</span>);
-    }
-  }
-  if (investition.faehigkeitId !== null) {
-    const name =
-      investition.faehigkeitName ?? faehigkeiten.find((faehigkeit) => faehigkeit.id === investition.faehigkeitId)?.name ?? null;
-    if (name) {
-      teile.push(trenner('faehigkeit'), zielMarke('faehigkeit', name));
-    }
-  }
-  return <span data-investition-neben="">{teile}</span>;
 }

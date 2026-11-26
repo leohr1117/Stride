@@ -235,8 +235,12 @@ test('Bosse zeigen Ring und Datum, das Level erst nach dem Sieg', async ({ page 
   await page.goto('/laufend');
   const erwacht = page.locator('.zeile', { hasText: erwachtTitel });
   const entsteht = page.locator('.zeile', { hasText: 'Kreuzheben 100 Kilo' });
-  await expect(erwacht).toContainText(/Erwacht · seit /);
-  await expect(entsteht).toContainText(/Entsteht · /);
+  await expect(erwacht).not.toContainText(/Erwacht|Entsteht/);
+  await expect(entsteht).not.toContainText(/Erwacht|Entsteht/);
+  await expect(erwacht).not.toContainText(/Eintr/);
+  await expect(entsteht).not.toContainText(/Eintr/);
+  await zeigeBossStand(page, erwacht, erwachtTitel, /Erwacht · seit /);
+  await zeigeBossStand(page, entsteht, 'Kreuzheben 100 Kilo', /Entsteht · /);
   await expect(erwacht.getByText(/\d[\d.]* XP/)).toHaveCount(0);
   await expect(entsteht.getByText(/\d[\d.]* XP/)).toHaveCount(0);
   const gefahrTon = await page.evaluate(() => {
@@ -927,6 +931,15 @@ async function mindestTreffer(ziel: Locator): Promise<void> {
   }
   expect(kasten.width).toBeGreaterThanOrEqual(48);
   expect(kasten.height).toBeGreaterThanOrEqual(48);
+}
+
+async function zeigeBossStand(seite: Page, zeile: Locator, titel: string, muster: RegExp): Promise<void> {
+  await zeile.getByRole('button', { name: titel, exact: true }).click();
+  const dialog = seite.getByRole('dialog', { name: 'Boss', exact: true });
+  await expect(dialog).toContainText(muster);
+  await expect(dialog.locator('[data-boss-stand]')).toContainText(/Eintr/);
+  await dialog.getByRole('button', { name: 'Schließen', exact: true }).click();
+  await expect(dialog).toBeHidden();
 }
 
 async function schliesseDialog(seite: Page, name: string): Promise<void> {

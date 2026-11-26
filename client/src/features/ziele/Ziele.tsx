@@ -1,4 +1,4 @@
-import { tx, txMenge } from '../../text.ts';
+import { tx } from '../../text.ts';
 import { useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
@@ -491,8 +491,6 @@ function OrganisationsKopf({
 
 function ProjektZeile({ projekt, namensEinzug = 0 }: { projekt: Projekt; namensEinzug?: 0 | 16 | 32 }) {
   const einzug = namensEinzugKlasse(namensEinzug);
-  const zaehlung = `${txMenge(projekt.anzahlEintraege, '{anzahl} Einträge', { anzahl: zahl(projekt.anzahlEintraege) })} · ${txMenge(projekt.offeneVorhaben, '{anzahl} Vorhaben offen', { anzahl: zahl(projekt.offeneVorhaben) })}`;
-  const neben = projekt.geschafftAm ? `${tx('Abgeschlossen')} · ${zaehlung}` : zaehlung;
   const mitKette = projekt.kette.laenge >= 2;
   return (
     <SchnellZeile
@@ -507,15 +505,10 @@ function ProjektZeile({ projekt, namensEinzug = 0 }: { projekt: Projekt; namensE
           className={`${projekt.archiviert ? 'opacity-50' : ''}${einzug ? ` ${einzug}` : ''}`}
           neben={
             mitKette ? (
-              <span className="flex min-w-0 items-center">
-                <span className="inline-flex shrink-0 items-center [&_svg]:size-3!">
-                  <KettenAnzeige kette={projekt.kette} />
-                </span>
-                <span className="min-w-0 truncate">{` · ${neben}`}</span>
+              <span className="inline-flex min-w-0 items-center [&_svg]:size-3!">
+                <KettenAnzeige kette={projekt.kette} />
               </span>
-            ) : (
-              neben
-            )
+            ) : undefined
           }
           menue={menue}
           titel={projekt.name}
