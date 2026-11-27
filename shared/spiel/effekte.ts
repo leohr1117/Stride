@@ -53,3 +53,39 @@ export function groesstesFeierZiel(groessen: readonly EffektGroesse[], hatAufsti
   }
   return groessterEffekt(liste)?.ziel ?? null;
 }
+
+/** Tage, an denen die Flamme einen eigenen, etwas größeren Moment macht. */
+export const KETTE_MEILENSTEINE = [7, 30, 100] as const;
+
+export type KetteMoment = 'zucken' | 'meilenstein';
+
+/** Nur bei genau einem Tag mehr. Ein Sprung, ein Rückgang oder derselbe Stand bleibt still. */
+export function ketteMoment(vorher: number, nachher: number): KetteMoment | null {
+  if (!Number.isInteger(vorher) || !Number.isInteger(nachher)) {
+    return null;
+  }
+  if (nachher !== vorher + 1 || nachher < 1) {
+    return null;
+  }
+  if ((KETTE_MEILENSTEINE as readonly number[]).includes(nachher)) {
+    return 'meilenstein';
+  }
+  return 'zucken';
+}
+
+export function ketteMomentGroesse(moment: KetteMoment): EffektGroesse {
+  return moment === 'meilenstein' ? 'mittel' : 'klein';
+}
+
+/**
+ * Die Flamme bewegt sich, wenn kein anderer Effekt streng größer ist.
+ * Gleich große kleine Momente bleiben nebeneinander, ein Level-Aufstieg ist größer.
+ */
+export function ketteDarfSichBewegen(eigene: EffektGroesse, andere: readonly EffektGroesse[]): boolean {
+  const eigeneRang = EFFEKT_RANG[eigene];
+  let hoechsteAndere = 0;
+  for (const groesse of andere) {
+    hoechsteAndere = Math.max(hoechsteAndere, EFFEKT_RANG[groesse]);
+  }
+  return eigeneRang >= hoechsteAndere;
+}

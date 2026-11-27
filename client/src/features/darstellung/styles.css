@@ -622,7 +622,9 @@ html[data-eingabe='zeiger'] :focus {
   .dialog-fenster,
   .knopf,
   .knopf .animate-spin,
-  .bossring-bogen {
+  .bossring-bogen,
+  .kette-zuckt,
+  .kette-meilenstein {
     animation: none;
     transition: none;
   }
@@ -703,6 +705,52 @@ html[data-eingabe='zeiger'] :focus {
     filter: none;
     box-shadow: none;
   }
+
+  :root[data-effekte='reduziert'] .kette-zuckt,
+  :root[data-effekte='reduziert'] .kette-meilenstein,
+  :root[data-effekte='aus'] .kette-zuckt,
+  :root[data-effekte='aus'] .kette-meilenstein {
+    animation: none;
+  }
+}
+
+@keyframes kette-zuckt {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  30% {
+    transform: rotate(-9deg) scale(1.14);
+  }
+  60% {
+    transform: rotate(7deg) scale(1.06);
+  }
+}
+
+@keyframes kette-meilenstein {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  35% {
+    transform: rotate(-12deg) scale(1.4);
+  }
+  70% {
+    transform: rotate(6deg) scale(1.16);
+  }
+}
+
+.kette-zuckt,
+.kette-meilenstein {
+  transform-origin: 50% 100%;
+}
+
+.kette-zuckt {
+  animation: kette-zuckt 700ms ease-in-out 1;
+}
+
+.kette-meilenstein {
+  animation: kette-meilenstein 1100ms ease-in-out 1;
 }
 
 :root[data-glimmen='aus'] .skill-leuchten {

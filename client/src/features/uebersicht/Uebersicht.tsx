@@ -1,6 +1,6 @@
 import { klassenText, tx } from '../../text.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronRight, Flame, RotateCcw } from 'lucide-react';
+import { ChevronRight, RotateCcw } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { WillkommenKarte } from './Willkommen.tsx';
@@ -16,6 +16,7 @@ import { Abschnitt, KurzListe } from '../../components/Ausklappbar.tsx';
 import { DichteZeilen, Zeile } from '../../components/Zeile.tsx';
 import { BasisKarte } from '../basis/Basis.tsx';
 import { useFeiern } from '../../components/Belohnung.tsx';
+import { KettenFlamme } from '../../components/KettenFlamme.tsx';
 import { Icon } from '../../components/Icons.tsx';
 import { useEintragOeffnen } from '../../components/Layout.tsx';
 import {
@@ -114,7 +115,7 @@ export function UebersichtSeite() {
                           className={`flex items-center justify-center gap-1 ${kette.data?.rueckkehr || uebersicht.serie.angeknackst ? 'text-leise' : uebersicht.serie.laenge > 0 ? 'text-streak' : ''}`}
                           title={uebersicht.serie.angeknackst ? tx('Gestern ausgesetzt') : undefined}
                         >
-                          <Flame className="size-4" />
+                          <KettenFlamme laenge={uebersicht.serie.laenge} className="size-4" />
                           {uebersicht.serie.laenge}
                         </span>
                       }

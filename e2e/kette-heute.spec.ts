@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { expect, test, TESTDATUM, type Page } from './uhr.ts';
 import { verweigereEchteDatenbank } from '../server/testpfad.ts';
+import { ketteMoment } from '../shared/spiel/effekte.ts';
 import { kettenLaenge } from '../shared/spiel/kette.ts';
 import { SCHUTZ } from '../shared/spiel/schutz.ts';
 import { anmelden, ohneSeitlichenUeberlauf } from './helfer.ts';
@@ -704,5 +705,230 @@ test('Streak-Zeile bleibt eine Zeile', async ({ page }, testInfo) => {
       .catch(() => undefined);
     await setzeHeute(page, TESTDATUM).catch(() => undefined);
     await page.setViewportSize(ausgang).catch(() => undefined);
+  }
+});
+
+async function streakZahl(seite: Page): Promise<string> {
+  const text = await seite.locator('[data-wochenwert="Streak"] .zahl').innerText();
+  return text.replace(/\s+/g, '');
+}
+
+async function eintragIds(seite: Page): Promise<number[]> {
+  const antwort = await seite.request.get('/api/eintraege?limit=100');
+  expect(antwort.ok()).toBe(true);
+  const daten = (await antwort.json()) as { eintraege: { typ: string; eintrag?: { id: number } }[] };
+  return daten.eintraege.flatMap((zeile) => (zeile.typ === 'eintrag' && zeile.eintrag ? [zeile.eintrag.id] : []));
+}
+
+async function setzeEffekte(seite: Page, stufe: 'voll' | 'reduziert' | 'aus'): Promise<void> {
+  const antwort = await seite.request.patch('/api/einstellungen', { data: { effekte: stufe } });
+  expect(antwort.ok()).toBe(true);
+  await seite.evaluate((wert) => {
+    localStorage.setItem('stride.effekte', wert);
+  }, stufe);
+}
+
+async function tragHeuteEin(seite: Page): Promise<void> {
+  await seite.getByRole('button', { name: 'Eintrag loggen' }).click();
+  const dialog = seite.getByRole('dialog', { name: 'Was hast du getan?' });
+  await expect(dialog).toBeVisible();
+  const knoepfe = dialog.locator('.eintrag-chips').getByRole('button');
+  const anzahl = await knoepfe.count();
+  let gewaehlt = false;
+  for (let index = 0; index < anzahl; index += 1) {
+    const name = (await knoepfe.nth(index).innerText()).trim();
+    if (name.startsWith('+')) {
+      continue;
+    }
+    await knoepfe.nth(index).click();
+    gewaehlt = true;
+    break;
+  }
+  expect(gewaehlt).toBe(true);
+  await dialog.getByRole('button', { name: '15 Min', exact: true }).click();
+  await dialog.getByRole('button', { name: /Eintragen/ }).click();
+  await expect(dialog).toBeHidden();
+}
+
+async function feiernWeg(seite: Page): Promise<void> {
+  const weiter = seite.getByRole('button', { name: 'Weiter', exact: true });
+  if (await weiter.isVisible().catch(() => false)) {
+    await weiter.click();
+  }
+  const toast = seite.locator('.belohnung').getByRole('button', { name: 'Schließen' });
+  if (await toast.isVisible().catch(() => false)) {
+    await toast.click();
+  }
+}
+
+async function flammeLage(seite: Page): Promise<{
+  name: string;
+  position: string;
+  obenGenug: boolean;
+  ueberdeckt: boolean;
+  partikel: number;
+}> {
+  return seite.locator('[data-wochenwert="Streak"] svg.lucide-flame').evaluate((element) => {
+    const bereich = element.getBoundingClientRect();
+    const berechnet = getComputedStyle(element);
+    const snack = document.querySelector('[data-snackbar]')?.getBoundingClientRect();
+    const ueberdeckt = Boolean(
+      snack &&
+        bereich.bottom > snack.top &&
+        bereich.top < snack.bottom &&
+        bereich.right > snack.left &&
+        bereich.left < snack.right,
+    );
+    return {
+      name: berechnet.animationName.replaceAll('"', ''),
+      position: berechnet.position,
+      obenGenug: bereich.bottom < window.innerHeight - 120,
+      ueberdeckt,
+      partikel: element.parentElement?.querySelectorAll('canvas, [data-partikel], [data-konfetti]').length ?? 0,
+    };
+  });
+}
+
+test('Streak-Flamme zuckt bei einem neuen Tag', async ({ page }) => {
+  test.setTimeout(120_000);
+  await anmelden(page);
+  const effektAntwort = await page.request.get('/api/einstellungen');
+  expect(effektAntwort.ok()).toBe(true);
+  const effektDaten = (await effektAntwort.json()) as { effekte?: string };
+  const effektVorher = effektDaten.effekte === 'reduziert' || effektDaten.effekte === 'aus' ? effektDaten.effekte : 'voll';
+  const idsVorher = new Set(await eintragIds(page));
+  let naechste = 0;
+  await page.route('**/api/uebersicht', async (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname !== '/api/uebersicht') {
+      await route.continue();
+      return;
+    }
+    const antwort = await route.fetch();
+    const daten = (await antwort.json()) as { serie?: { laenge: number; angeknackst: boolean } };
+    if (daten.serie) {
+      daten.serie = { laenge: naechste, angeknackst: false };
+    }
+    await route.fulfill({
+      status: antwort.status(),
+      contentType: 'application/json',
+      body: JSON.stringify(daten),
+    });
+  });
+
+  const zeig = async (von: number, stufe: 'voll' | 'reduziert' | 'aus', bewegung: 'reduce' | 'no-preference') => {
+    naechste = von;
+    await page.emulateMedia({ reducedMotion: bewegung });
+    await setzeEffekte(page, stufe);
+    await page.reload();
+    await expect.poll(async () => streakZahl(page)).toBe(String(von));
+    await expect(page.locator('[data-wochenwert="Streak"] [data-kette-effekt]')).toHaveCount(0);
+  };
+
+  try {
+    expect(ketteMoment(4, 5)).toBe('zucken');
+    expect(ketteMoment(6, 7)).toBe('meilenstein');
+    expect(ketteMoment(29, 30)).toBe('meilenstein');
+    expect(ketteMoment(99, 100)).toBe('meilenstein');
+
+    await zeig(4, 'voll', 'no-preference');
+    naechste = 5;
+    await tragHeuteEin(page);
+    await expect
+      .poll(async () => {
+        const effekt = await page.locator('[data-wochenwert="Streak"] svg.lucide-flame').getAttribute('data-kette-effekt');
+        if (effekt) {
+          return effekt;
+        }
+        if ((await streakZahl(page)) !== '5') {
+          return '';
+        }
+        const groesser = await page
+          .locator('.belohnung, .dialog-scrim')
+          .filter({ hasText: /Erfolg:|Meilenstein|Geschafft|Level aufgestiegen/ })
+          .count();
+        return groesser > 0 ? 'still' : '';
+      })
+      .not.toBe('');
+    const zucken = await page.locator('[data-wochenwert="Streak"] svg.lucide-flame').getAttribute('data-kette-effekt');
+    if (zucken === null) {
+      await expect(
+        page.locator('.belohnung, .dialog-scrim').filter({ hasText: /Erfolg:|Meilenstein|Geschafft|Level aufgestiegen/ }),
+      ).toBeVisible();
+    } else {
+      expect(zucken).toBe('zucken');
+      const lage = await flammeLage(page);
+      expect(lage.name).toBe('kette-zuckt');
+      expect(lage.position).not.toBe('fixed');
+      expect(lage.obenGenug).toBe(true);
+      expect(lage.ueberdeckt).toBe(false);
+      expect(lage.partikel).toBe(0);
+    }
+    await feiernWeg(page);
+
+    await zeig(6, 'voll', 'no-preference');
+    naechste = 7;
+    await tragHeuteEin(page);
+    await expect
+      .poll(async () => {
+        const effekt = await page.locator('[data-wochenwert="Streak"] svg.lucide-flame').getAttribute('data-kette-effekt');
+        if (effekt) {
+          return effekt;
+        }
+        if ((await streakZahl(page)) !== '7') {
+          return '';
+        }
+        const groesser = await page.getByText('Level aufgestiegen').count();
+        return groesser > 0 ? 'still' : '';
+      })
+      .not.toBe('');
+    const meilenstein = await page.locator('[data-wochenwert="Streak"] svg.lucide-flame').getAttribute('data-kette-effekt');
+    if (meilenstein === null) {
+      await expect(page.getByText('Level aufgestiegen')).toBeVisible();
+    } else {
+      expect(meilenstein).toBe('meilenstein');
+      const lage = await flammeLage(page);
+      expect(lage.name).toBe('kette-meilenstein');
+      expect(lage.position).not.toBe('fixed');
+      expect(lage.obenGenug).toBe(true);
+      expect(lage.ueberdeckt).toBe(false);
+      expect(lage.partikel).toBe(0);
+    }
+    await feiernWeg(page);
+
+    await zeig(8, 'reduziert', 'reduce');
+    naechste = 9;
+    await tragHeuteEin(page);
+    await expect.poll(async () => streakZahl(page)).toBe('9');
+    const reduziert = await page.locator('[data-wochenwert="Streak"] svg.lucide-flame').getAttribute('data-kette-effekt');
+    if (reduziert === null) {
+      await expect(
+        page.locator('.belohnung, .dialog-scrim').filter({ hasText: /Erfolg:|Meilenstein|Geschafft|Level aufgestiegen/ }),
+      ).toBeVisible();
+    } else {
+      expect(reduziert).toBe('zucken');
+      const lage = await flammeLage(page);
+      expect(lage.name).toBe('none');
+      expect(lage.position).not.toBe('fixed');
+      expect(lage.ueberdeckt).toBe(false);
+      expect(lage.partikel).toBe(0);
+    }
+    await feiernWeg(page);
+
+    await zeig(2, 'aus', 'no-preference');
+    naechste = 3;
+    await tragHeuteEin(page);
+    await expect.poll(async () => streakZahl(page)).toBe('3');
+    await expect(page.locator('[data-wochenwert="Streak"] [data-kette-effekt]')).toHaveCount(0);
+  } finally {
+    await page.unroute('**/api/uebersicht').catch(() => undefined);
+    await page.emulateMedia({ reducedMotion: 'no-preference' }).catch(() => undefined);
+    await setzeEffekte(page, effektVorher).catch(() => undefined);
+    const danach = await eintragIds(page).catch(() => [] as number[]);
+    for (const id of danach) {
+      if (!idsVorher.has(id)) {
+        await loescheStill(page, id).catch(() => undefined);
+      }
+    }
   }
 });

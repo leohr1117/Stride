@@ -9,6 +9,7 @@ import { groesstesFeierZiel, type EffektGroesse } from '../../../shared/spiel/ef
 import { istAn, type Sichtbarkeit } from '../../../shared/spiel/sichtbarkeit.ts';
 import { api, SCHLUESSEL } from '../api/index.ts';
 import { useEffektWahl } from '../features/darstellung/effektLauf.ts';
+import { feierGroesseAus, setzeFeierGroesse } from './feierLage.ts';
 import { mitVorzeichen, multiplikatorText, zahl } from '../format.ts';
 import { spieleLevelSound, spieleXpSound } from '../sound.ts';
 import { Knopf } from '../ui/index.ts';
@@ -85,14 +86,24 @@ export function BelohnungProvider({ children }: { children: ReactNode }) {
   const stufe = useEffektWahl();
   const [meldungen, setMeldungen] = useState<Meldung[]>([]);
   const [aufstiege, setAufstiege] = useState<LevelAufstieg[] | null>(null);
+  const [aufstiegKommt, setAufstiegKommt] = useState(false);
   const naechsteId = useRef(0);
   const timer = useRef<number[]>([]);
   const soundAn = einstellungen?.sound ?? true;
+  const hatAufstieg = aufstiegKommt || (aufstiege !== null && aufstiege.length > 0);
   const gewinner = groesstesFeierZiel(
     meldungen.map((meldung) => meldungGroesse(meldung.belohnung)),
     aufstiege !== null && aufstiege.length > 0,
   );
   const federn = stufe === 'voll';
+  const feierGroesse = feierGroesseAus([
+    ...meldungen.map((meldung) => meldungGroesse(meldung.belohnung)),
+    ...(hatAufstieg ? (['gross'] as const) : []),
+  ]);
+
+  useEffect(() => {
+    setzeFeierGroesse(feierGroesse);
+  }, [feierGroesse]);
 
   useEffect(() => {
     const aktiveTimer = timer.current;
@@ -123,6 +134,7 @@ export function BelohnungProvider({ children }: { children: ReactNode }) {
       }
 
       if (sichtbar.aufstiege.length > 0) {
+        setAufstiegKommt(true);
         planen(() => {
           setAufstiege(sichtbar.aufstiege);
           if (soundAn) {
@@ -141,7 +153,10 @@ export function BelohnungProvider({ children }: { children: ReactNode }) {
       <LevelAufstiegAnzeige
         aufstiege={aufstiege}
         bewegt={federn && gewinner === 'aufstieg'}
-        onSchliessen={() => setAufstiege(null)}
+        onSchliessen={() => {
+          setAufstiege(null);
+          setAufstiegKommt(false);
+        }}
       />
     </BelohnungKontext.Provider>
   );

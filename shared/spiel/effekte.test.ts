@@ -4,6 +4,9 @@ import {
   effektStufe,
   groessterEffekt,
   groesstesFeierZiel,
+  ketteDarfSichBewegen,
+  ketteMoment,
+  ketteMomentGroesse,
   wirksameEffektStufe,
 } from './effekte.ts';
 
@@ -44,5 +47,31 @@ describe('effekte', () => {
     expect(groesstesFeierZiel(['klein', 'mittel'], false)).toBe('meldung');
     expect(groesstesFeierZiel(['mittel'], true)).toBe('aufstieg');
     expect(groesstesFeierZiel([], false)).toBeNull();
+  });
+
+  it('lässt die Flamme bei genau einem Tag mehr zucken und bei 7, 30 und 100 einen größeren Moment machen', () => {
+    expect(ketteMoment(0, 1)).toBe('zucken');
+    expect(ketteMoment(4, 5)).toBe('zucken');
+    expect(ketteMoment(6, 7)).toBe('meilenstein');
+    expect(ketteMoment(7, 8)).toBe('zucken');
+    expect(ketteMoment(29, 30)).toBe('meilenstein');
+    expect(ketteMoment(99, 100)).toBe('meilenstein');
+    expect(ketteMoment(100, 101)).toBe('zucken');
+    expect(ketteMoment(5, 5)).toBeNull();
+    expect(ketteMoment(5, 7)).toBeNull();
+    expect(ketteMoment(8, 7)).toBeNull();
+    expect(ketteMoment(6.5, 7.5)).toBeNull();
+    expect(ketteMomentGroesse('zucken')).toBe('klein');
+    expect(ketteMomentGroesse('meilenstein')).toBe('mittel');
+  });
+
+  it('hält die Flamme still, wenn ein anderer Effekt streng größer ist', () => {
+    expect(ketteDarfSichBewegen('klein', [])).toBe(true);
+    expect(ketteDarfSichBewegen('klein', ['klein'])).toBe(true);
+    expect(ketteDarfSichBewegen('klein', ['mittel'])).toBe(false);
+    expect(ketteDarfSichBewegen('mittel', ['klein'])).toBe(true);
+    expect(ketteDarfSichBewegen('mittel', ['mittel'])).toBe(true);
+    expect(ketteDarfSichBewegen('mittel', ['gross'])).toBe(false);
+    expect(ketteDarfSichBewegen('klein', ['gross'])).toBe(false);
   });
 });
