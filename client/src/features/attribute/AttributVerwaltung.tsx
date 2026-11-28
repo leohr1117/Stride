@@ -37,6 +37,7 @@ import {
   Formular,
   Fortschrittsbalken,
   Knopf,
+  LevelStufe,
   Schalter,
   VorschlagFeld,
   type VorschlagOption,
@@ -110,7 +111,11 @@ export function AttributBereich({
                         />
                       </span>
                     }
-                    wert={<span className={ursache ? 'text-gefahr' : 'text-leise'}>{stufe}</span>}
+                    wert={
+                      <LevelStufe level={attribut.level.level} className={ursache ? 'text-gefahr' : 'text-leise'}>
+                        {stufe}
+                      </LevelStufe>
+                    }
                     rechts={menue}
                   />
                 )}

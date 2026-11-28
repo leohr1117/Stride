@@ -30,6 +30,7 @@ import {
   Knopf,
   Ladeanzeige,
   LevelRing,
+  LevelStufe,
 } from '../../ui/index.ts';
 import { InstallBanner } from '../../installHinweis.tsx';
 import { BewertungKarte } from './Bewertung.tsx';
@@ -400,9 +401,12 @@ function Werte({
                       prozent={prozent}
                       zuNiedrig={ursache}
                     />
-                    <span className={`zahl shrink-0 whitespace-nowrap text-right text-xs ${ursache ? 'text-gefahr' : 'text-leise'}`}>
+                    <LevelStufe
+                      level={attribut.level.level}
+                      className={`zahl shrink-0 whitespace-nowrap text-right text-xs ${ursache ? 'text-gefahr' : 'text-leise'}`}
+                    >
                       {tx('Lvl {level}', { level: attribut.level.level })}
-                    </span>
+                    </LevelStufe>
                   </div>
                 </div>
               </div>

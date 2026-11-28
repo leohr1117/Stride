@@ -1,5 +1,6 @@
 /** Russisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück nach oben": "Обратно вверх",
   "Deine Kette gibt {faktor} XP": "Твоя цепочка даёт {faktor} XP",
   "{aktion} · +{xp} XP, plus Kette": "{aktion} · +{xp} XP, плюс цепочка",
   "{aktion} · +{xp} XP, plus Kette + Meilenstein": "{aktion} · +{xp} XP, плюс цепочка + веха",

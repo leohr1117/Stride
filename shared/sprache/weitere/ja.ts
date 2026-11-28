@@ -1,5 +1,6 @@
 /** Japanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück nach oben": "上へ戻る",
   "Deine Kette gibt {faktor} XP": "連続は {faktor} XP",
   "{aktion} · +{xp} XP, plus Kette": "{aktion} · +{xp} XP、さらに連続",
   "{aktion} · +{xp} XP, plus Kette + Meilenstein": "{aktion} · +{xp} XP、さらに連続 + 節目",

@@ -1,12 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
   effektDarfFedern,
+  effektDarfSichBewegen,
   effektStufe,
   groessterEffekt,
   groesstesFeierZiel,
   ketteDarfSichBewegen,
   ketteMoment,
   ketteMomentGroesse,
+  levelAbstieg,
+  levelAbstiegGroesse,
+  levelWeg,
+  levelWegStrich,
   wirksameEffektStufe,
 } from './effekte.ts';
 
@@ -73,5 +78,46 @@ describe('effekte', () => {
     expect(ketteDarfSichBewegen('mittel', ['mittel'])).toBe(true);
     expect(ketteDarfSichBewegen('mittel', ['gross'])).toBe(false);
     expect(ketteDarfSichBewegen('klein', ['gross'])).toBe(false);
+    expect(ketteDarfSichBewegen('klein', ['mittel'])).toBe(effektDarfSichBewegen('klein', ['mittel']));
+  });
+
+  it('erkennt einen Level-Rückgang und lässt Anstieg und Stand still', () => {
+    expect(levelAbstieg(5, 4)).toBe(true);
+    expect(levelAbstieg(8, 3)).toBe(true);
+    expect(levelAbstieg(1, 0)).toBe(true);
+    expect(levelAbstieg(4, 4)).toBe(false);
+    expect(levelAbstieg(4, 5)).toBe(false);
+    expect(levelAbstieg(1, 1)).toBe(false);
+    expect(levelAbstieg(2.5, 1)).toBe(false);
+    expect(levelAbstieg(0, -1)).toBe(false);
+    expect(levelAbstiegGroesse()).toBe('klein');
+    expect(effektDarfSichBewegen(levelAbstiegGroesse(), [])).toBe(true);
+    expect(effektDarfSichBewegen(levelAbstiegGroesse(), ['klein'])).toBe(true);
+    expect(effektDarfSichBewegen(levelAbstiegGroesse(), ['mittel'])).toBe(false);
+    expect(effektDarfSichBewegen(levelAbstiegGroesse(), ['gross'])).toBe(false);
+  });
+
+  it('legt den Weg im Uhrzeigersinn von der Spitze bis 12 Uhr', () => {
+    expect(levelWeg(Number.NaN)).toBeNull();
+    expect(levelWeg(1)).toBeNull();
+    expect(levelWeg(1.4)).toBeNull();
+    const leer = levelWeg(0);
+    expect(leer).toEqual({ startGrad: 0, endeGrad: 360 });
+    const viertel = levelWeg(0.25);
+    expect(viertel).toEqual({ startGrad: 90, endeGrad: 360 });
+    if (!leer || !viertel) {
+      return;
+    }
+    const voll = levelWegStrich(leer, 42);
+    expect(voll.drehung).toBe(-90);
+    expect(voll.luecke).toBeCloseTo(0);
+    expect(voll.strich).toBeCloseTo(2 * Math.PI * 42);
+    const rest = levelWegStrich(viertel, 42);
+    expect(rest.drehung).toBe(0);
+    expect(rest.strich).toBeGreaterThan(rest.luecke);
+    expect(rest.strich / (rest.strich + rest.luecke)).toBeCloseTo(0.75);
+    const haelfte = levelWeg(0.5);
+    expect(haelfte).toEqual({ startGrad: 180, endeGrad: 360 });
+    expect(levelWegStrich(haelfte ?? { startGrad: 0, endeGrad: 0 }, 42).drehung).toBe(90);
   });
 });

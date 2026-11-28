@@ -500,6 +500,7 @@ export const PAARE = [
   ['Lege zuerst ein Projekt an.', 'Create a project first.'],
   ['Level {level}', 'Level {level}'],
   ['Level {level} behalten', 'Keep level {level}'],
+  ['Zurück nach oben', 'Back upward'],
   ['Level · Beute {xp} XP', 'Level · loot {xp} XP'],
   ['Lvl zu niedrig', 'Level too low'],
   ['Mehr Ansehen bei {name}', 'More reputation from {name}'],

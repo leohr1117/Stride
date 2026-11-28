@@ -19,3 +19,4 @@ export {
   XpAbzug,
   archivBeschriftung,
 } from './Anzeige.tsx';
+export { LevelStufe } from './levelAbstieg.tsx';

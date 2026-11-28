@@ -1,5 +1,6 @@
 /** Chinesisch (vereinfacht). Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück nach oben": "向上回去",
   "Deine Kette gibt {faktor} XP": "你的连续给出 {faktor} XP",
   "{aktion} · +{xp} XP, plus Kette": "{aktion} · +{xp} XP，另加连续",
   "{aktion} · +{xp} XP, plus Kette + Meilenstein": "{aktion} · +{xp} XP，另加连续 + 里程碑",

@@ -753,6 +753,40 @@ html[data-eingabe='zeiger'] :focus {
   animation: kette-meilenstein 1100ms ease-in-out 1;
 }
 
+.level-zurueck,
+.level-weg,
+[data-level-weg] {
+  color: var(--leise);
+  stroke: var(--leise);
+}
+
+@keyframes level-zurueck {
+  from {
+    transform: translateY(-0.28em);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.level-zurueck-bewegung {
+  animation: level-zurueck 800ms ease-out 1;
+}
+
+/* Die Ausnahme steht nach der Animation, sonst gewinnt die spätere Regel. */
+@media (prefers-reduced-motion: reduce) {
+  .level-zurueck-bewegung {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-effekte='reduziert'] .level-zurueck-bewegung,
+  :root[data-effekte='aus'] .level-zurueck-bewegung {
+    animation: none;
+  }
+}
+
 :root[data-glimmen='aus'] .skill-leuchten {
   animation: none;
 }

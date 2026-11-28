@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion';
 import { type CSSProperties, type ReactNode, useId } from 'react';
+import { levelWeg, levelWegStrich } from '../../../shared/spiel/effekte.ts';
 import { prozentPunkte } from '../format.ts';
 import { tx } from '../text.ts';
+import { useLevelAbstieg } from './levelAbstieg.tsx';
 
 export function XpAbzug({ prozent, schrift = 'text-xs' }: { prozent: number; schrift?: string }) {
   return (
@@ -222,6 +224,7 @@ export function LevelRing({
   beschriftung?: string;
 }) {
   const schein = ringId(useId());
+  const { grau, bewegt } = useLevelAbstieg(level);
   const begrenzt = Math.min(1, Math.max(0, anteil));
   const voll = begrenzt >= 0.999;
   const spitze = ringSpitze(begrenzt);
@@ -234,6 +237,37 @@ export function LevelRing({
   const maske = 'radial-gradient(farthest-side, transparent 75.2%, #000 76.4%, #000 91.6%, transparent 92.8%)';
   const labelGroesse = ringSchrift(groesse, 10);
   const zahlGroesse = ringSchrift(groesse, 24);
+  const weg = grau ? levelWeg(begrenzt) : null;
+  const wegStrich = weg ? levelWegStrich(weg, RING_RADIUS) : null;
+  const zahlKlasse = `zahl text-2xl leading-none font-bold${grau ? ' level-zurueck' : ''}${bewegt ? ' level-zurueck-bewegung' : ''}`;
+  const zahlStil: CSSProperties | undefined = zahlGroesse
+    ? { fontSize: zahlGroesse, lineHeight: 1, ...(grau ? { color: 'var(--leise)' } : {}) }
+    : grau
+      ? { color: 'var(--leise)' }
+      : undefined;
+  const wegGrafik = weg && wegStrich ? (
+    <svg
+      viewBox="0 0 100 100"
+      className="pointer-events-none absolute inset-0 overflow-visible"
+      data-level-weg=""
+      role="img"
+      aria-label={tx('Zurück nach oben')}
+    >
+      <circle
+        cx={RING_MITTE}
+        cy={RING_MITTE}
+        r={RING_RADIUS}
+        fill="none"
+        stroke="var(--leise)"
+        strokeWidth={RING_STRICH}
+        strokeLinecap="butt"
+        strokeDasharray={wegStrich.luecke <= 0.001 ? undefined : `${wegStrich.strich} ${wegStrich.luecke}`}
+        transform={`rotate(${wegStrich.drehung} ${RING_MITTE} ${RING_MITTE})`}
+        data-level-weg-start={weg.startGrad}
+        data-level-weg-ende={weg.endeGrad}
+      />
+    </svg>
+  ) : null;
   const zeile = (
     <>
       <span
@@ -242,10 +276,7 @@ export function LevelRing({
       >
         {tx("Level")}
       </span>
-      <span
-        className="zahl text-2xl leading-none font-bold"
-        style={zahlGroesse ? { fontSize: zahlGroesse, lineHeight: 1 } : undefined}
-      >
+      <span className={zahlKlasse} style={zahlStil} data-level-abstieg={grau ? '' : undefined}>
         {level}
       </span>
     </>
@@ -297,6 +328,7 @@ export function LevelRing({
   const grafik = (
     <>
       {bahn}
+      {wegGrafik}
       {spitzeGrafik}
     </>
   );
@@ -311,13 +343,24 @@ export function LevelRing({
         aria-label={name}
       >
         {bahn}
+        {wegGrafik}
         <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">{mitte}</div>
         <span
           data-levelpille=""
           aria-hidden="true"
-          className="pointer-events-none absolute top-full left-1/2 z-10 inline-flex h-5 max-w-full -translate-x-1/2 -translate-y-1/2 items-center rounded-full border-2 border-grund bg-akzent px-2 text-[13px] leading-none font-bold whitespace-nowrap text-akzent-text"
+          className={`pointer-events-none absolute top-full left-1/2 z-10 inline-flex h-5 max-w-full -translate-x-1/2 -translate-y-1/2 items-center rounded-full border-2 border-grund px-2 text-[13px] leading-none font-bold whitespace-nowrap ${grau ? 'level-zurueck bg-flaeche-2' : 'bg-akzent text-akzent-text'}`}
         >
-          {pilleInhalt(level)}
+          {grau ? (
+            <span
+              className={bewegt ? 'level-zurueck-bewegung' : undefined}
+              data-level-abstieg=""
+              style={{ color: 'var(--leise)' }}
+            >
+              {pilleInhalt(level)}
+            </span>
+          ) : (
+            pilleInhalt(level)
+          )}
         </span>
         {spitzeGrafik ? (
           <div className="pointer-events-none absolute inset-0 z-20" data-ringspitze="">

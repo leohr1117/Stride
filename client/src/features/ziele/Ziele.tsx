@@ -15,7 +15,7 @@ import { useEintragOeffnen } from '../../components/Layout.tsx';
 import { Dialog } from '../../components/Dialog.tsx';
 import { DichteZeilen, Liste, Zeile } from '../../components/Zeile.tsx';
 import { Abschnitt } from '../../components/Ausklappbar.tsx';
-import { AbschnittKopf, Farbpunkt, Fehlermeldung, Knopf, Ladeanzeige, Leer } from '../../ui/index.ts';
+import { AbschnittKopf, Farbpunkt, Fehlermeldung, Knopf, Ladeanzeige, Leer, LevelStufe } from '../../ui/index.ts';
 import { ZielDialog, type ZielBearbeitung } from './ZielDialoge.tsx';
 import { ZielMarke } from '../../components/ZielMarke.tsx';
 import { kurzesDatum, zahl } from '../../format.ts';
@@ -425,9 +425,13 @@ function VisionRing({ level, farbe, onOeffnen }: { level: number; farbe: string;
         <circle cx="22" cy="22" r="19" fill="none" stroke={farbe} strokeWidth="1.5" />
       </svg>
       <span className="sr-only">{prefix}</span>
-      <span data-visionszahl="" className="relative zahl text-[10px] leading-none font-semibold">
+      <LevelStufe
+        level={level}
+        className="relative zahl text-[10px] leading-none font-semibold"
+        data-visionszahl=""
+      >
         {sichtbar}
-      </span>
+      </LevelStufe>
     </button>
   );
 }
@@ -514,9 +518,13 @@ function ProjektZeile({ projekt, namensEinzug = 0 }: { projekt: Projekt; namensE
           titel={projekt.name}
           rechts={
             <span className="flex min-w-0 items-center gap-3">
-              <span data-zeile-wert="" className="zeile-wert lvl-pille zahl shrink-0">
+              <LevelStufe
+                level={projekt.level.level}
+                className="zeile-wert lvl-pille zahl shrink-0"
+                data-zeile-wert=""
+              >
                 {tx('Lvl {level}', { level: projekt.level.level })}
-              </span>
+              </LevelStufe>
             </span>
           }
         />

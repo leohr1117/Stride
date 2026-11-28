@@ -11,6 +11,9 @@ describe('LevelRing', () => {
     expect(html).toMatch(/data-ringlicht="" [^>]*r="1.25" fill="white" fill-opacity="0.75"/);
     expect(html).toContain('uppercase');
     expect(html).not.toContain('data-levelpille');
+    expect(html).not.toContain('data-level-abstieg');
+    expect(html).not.toContain('data-level-weg');
+    expect(html).not.toContain('Zurück nach oben');
   });
 
   it('verkleinert die Schrift im kleinen Ring', () => {

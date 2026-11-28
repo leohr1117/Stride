@@ -1,5 +1,6 @@
 /** Französisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück nach oben": "Retour vers le haut",
   "Deine Kette gibt {faktor} XP": "Ta chaîne donne {faktor} XP",
   "{aktion} · +{xp} XP, plus Kette": "{aktion} · +{xp} XP, plus la chaîne",
   "{aktion} · +{xp} XP, plus Kette + Meilenstein": "{aktion} · +{xp} XP, plus la chaîne + jalon",

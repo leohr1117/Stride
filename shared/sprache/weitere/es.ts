@@ -1,5 +1,6 @@
 /** Spanisch. Schlüssel ist der deutsche Text. */
 export const TEXTE: Record<string, string> = {
+  "Zurück nach oben": "De vuelta hacia arriba",
   "Deine Kette gibt {faktor} XP": "Tu racha da {faktor} XP",
   "{aktion} · +{xp} XP, plus Kette": "{aktion} · +{xp} XP, más la racha",
   "{aktion} · +{xp} XP, plus Kette + Meilenstein": "{aktion} · +{xp} XP, más la racha + hito",

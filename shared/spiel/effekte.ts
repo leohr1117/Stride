@@ -78,14 +78,71 @@ export function ketteMomentGroesse(moment: KetteMoment): EffektGroesse {
 }
 
 /**
- * Die Flamme bewegt sich, wenn kein anderer Effekt streng größer ist.
+ * Ein Effekt bewegt sich, wenn kein anderer streng größer ist.
  * Gleich große kleine Momente bleiben nebeneinander, ein Level-Aufstieg ist größer.
  */
-export function ketteDarfSichBewegen(eigene: EffektGroesse, andere: readonly EffektGroesse[]): boolean {
+export function effektDarfSichBewegen(eigene: EffektGroesse, andere: readonly EffektGroesse[]): boolean {
   const eigeneRang = EFFEKT_RANG[eigene];
   let hoechsteAndere = 0;
   for (const groesse of andere) {
     hoechsteAndere = Math.max(hoechsteAndere, EFFEKT_RANG[groesse]);
   }
   return eigeneRang >= hoechsteAndere;
+}
+
+export function ketteDarfSichBewegen(eigene: EffektGroesse, andere: readonly EffektGroesse[]): boolean {
+  return effektDarfSichBewegen(eigene, andere);
+}
+
+/** Ein ruhiger Rückgang. Kleiner als Meilenstein und Level-Aufstieg. */
+export function levelAbstiegGroesse(): EffektGroesse {
+  return 'klein';
+}
+
+/** True, wenn die Stufe um mindestens eine ganze Zahl sinkt. Ein Anstieg bleibt still. */
+export function levelAbstieg(vorher: number, nachher: number): boolean {
+  if (!Number.isInteger(vorher) || !Number.isInteger(nachher)) {
+    return false;
+  }
+  if (vorher < 0 || nachher < 0) {
+    return false;
+  }
+  return nachher < vorher;
+}
+
+export interface LevelWeg {
+  /** Grad ab 12 Uhr, im Uhrzeigersinn. */
+  startGrad: number;
+  /** Wieder 12 Uhr, das Ende des Wegs nach oben. */
+  endeGrad: number;
+}
+
+/** Der ungelaufene Bogen von der Spitze im Uhrzeigersinn bis 12 Uhr. Ein voller Ring hat keinen Restweg. */
+export function levelWeg(anteil: number): LevelWeg | null {
+  if (!Number.isFinite(anteil)) {
+    return null;
+  }
+  const stand = Math.min(1, Math.max(0, anteil));
+  if (stand >= 0.999) {
+    return null;
+  }
+  return { startGrad: stand * 360, endeGrad: 360 };
+}
+
+export interface LevelWegStrich {
+  drehung: number;
+  strich: number;
+  luecke: number;
+}
+
+/** SVG-Kreis startet bei 3 Uhr. Die Drehung legt den Strichanfang auf startGrad ab 12 Uhr. */
+export function levelWegStrich(weg: LevelWeg, radius: number): LevelWegStrich {
+  const umfang = 2 * Math.PI * radius;
+  const anteil = Math.min(1, Math.max(0, (weg.endeGrad - weg.startGrad) / 360));
+  const strich = anteil * umfang;
+  return {
+    drehung: -90 + weg.startGrad,
+    strich,
+    luecke: umfang - strich,
+  };
 }
